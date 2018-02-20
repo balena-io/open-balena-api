@@ -1,0 +1,16 @@
+[Unit]
+Description=open-balena-api
+Requires=confd.service balena-root-ca.service
+After=confd.service balena-root-ca.service
+
+[Service]
+StandardOutput=journal+console
+StandardError=journal+console
+WorkingDirectory=/usr/src/app
+EnvironmentFile=/usr/src/app/config/env
+ExecStart=/usr/src/app/entry.sh
+Restart=always
+SyslogIdentifier=api
+
+[Install]
+WantedBy=basic.target

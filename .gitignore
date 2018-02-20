@@ -1,0 +1,49 @@
+# Numerous always-ignore extensions
+*.diff
+*.err
+*.orig
+*.log
+*.rej
+*.swo
+*.swp
+*.zip
+*.vi
+*~
+*.sass-cache
+.#*
+
+# OS or Editor folders
+.DS_Store
+._*
+Thumbs.db
+.cache
+.project
+.settings
+.tmproj
+*.esproj
+nbproject
+*.sublime-project
+*.sublime-workspace
+.fasttest
+.vscode
+
+# Komodo
+*.komodoproject
+.komodotools
+
+# Folders to ignore
+.idea
+node_modules
+build
+dist
+
+# Node environment
+config/env
+
+# Startup cache files
+/.ts-node
+/.fast-boot.json
+/.coffee
+/.pinejs-cache.json
+/.resin.sbvr
+/.resin-init.sql

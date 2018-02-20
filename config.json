@@ -1,0 +1,13 @@
+{
+	"models": [{
+		"modelName": "resin",
+		"modelFile": "./src/resin.sbvr",
+		"initSqlPath": "./src/resin-init.sql",
+		"apiRoot": "resin"
+	}],
+	"users": [{
+		"username": "guest",
+		"password": " ",
+		"permissions": []
+	}]
+}
