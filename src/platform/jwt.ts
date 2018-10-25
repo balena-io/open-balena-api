@@ -5,6 +5,7 @@ import * as Promise from 'bluebird';
 import * as jsonwebtoken from 'jsonwebtoken';
 import * as randomstring from 'randomstring';
 import * as passport from 'passport';
+import { sbvrUtils } from '@resin/pinejs';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import TypedError = require('typed-error');
 import { captureException } from './errors';
@@ -16,16 +17,54 @@ import {
 	JSON_WEB_TOKEN_SECRET,
 	JSON_WEB_TOKEN_EXPIRY_MINUTES,
 } from '../lib/config';
+
 const EXPIRY_SECONDS = JSON_WEB_TOKEN_EXPIRY_MINUTES * 60;
 
-if (JSON_WEB_TOKEN_SECRET == null) {
-	throw new Error('JWT secret must be provided');
-}
-if (_.isNaN(EXPIRY_SECONDS)) {
-	throw new Error(`Invalid JWT expiry: '${JSON_WEB_TOKEN_EXPIRY_MINUTES}'`);
+class InvalidJwtSecretError extends TypedError {}
+
+export interface ScopedAccessToken {
+	access: ScopedToken;
 }
 
-class InvalidJwtSecretError extends TypedError {}
+export interface ScopedAccessTokenOptions {
+	// The actor of the resulting token
+	actor: number;
+	// A list of permissions
+	permissions: string[];
+	// expires in x seconds
+	expiresIn: number;
+}
+
+export interface ServiceToken extends sbvrUtils.Actor {
+	service: string;
+	apikey: string;
+	permissions: string[];
+}
+
+export interface ScopedToken extends sbvrUtils.Actor {
+	actor: number;
+	permissions: string[];
+}
+
+export interface ApiKey extends sbvrUtils.ApiKey {
+	key: string;
+}
+
+export interface User extends sbvrUtils.User {
+	id: number;
+	actor: number;
+	username: string;
+	email: string;
+	created_at: string;
+	jwt_secret?: string;
+	permissions: string[];
+
+	twoFactorRequired?: boolean;
+	authTime?: number;
+}
+
+export type Creds = ServiceToken | User | ScopedToken;
+export type JwtUser = Creds | ScopedAccessToken;
 
 export const strategy = new JwtStrategy(
 	{
@@ -146,19 +185,6 @@ export const middleware: RequestHandler = (req, res, next) => {
 };
 
 export const isJWT = (token: string): boolean => !!jsonwebtoken.decode(token);
-
-export interface ScopedAccessToken {
-	access: ScopedToken;
-}
-
-export interface ScopedAccessTokenOptions {
-	// The actor of the resulting token
-	actor: number;
-	// A list of permissions
-	permissions: string[];
-	// expires in x seconds
-	expiresIn: number;
-}
 
 export function createScopedAccessToken(
 	options: ScopedAccessTokenOptions,

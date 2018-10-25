@@ -35,22 +35,6 @@ import {
 	DELTA_HOST,
 } from './config';
 
-if (REGISTRY_HOST == null) {
-	throw new Error('REGISTRY_HOST is required');
-}
-if (REGISTRY2_HOST == null) {
-	throw new Error('REGISTRY2_HOST is required');
-}
-if (API_HOST == null) {
-	throw new Error('API_HOST is required');
-}
-if (DELTA_HOST == null) {
-	throw new Error('DELTA_HOST is required');
-}
-if (VPN_HOST == null) {
-	throw new Error('VPN_HOST is required');
-}
-
 export const generateConfig = (req: Request, app: AnyObject) => {
 	const osVersion = req.param('version');
 	const userPromise = getUser(req);

@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { createJwt, SignOptions } from './jwt';
+import { createJwt, SignOptions, User } from './jwt';
 import { retrieveAPIKey } from './api-keys';
 import { Tx, sbvrUtils, resinApi, root } from './index';
 import * as Promise from 'bluebird';

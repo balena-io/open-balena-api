@@ -1,9 +1,5 @@
-import * as Promise from 'bluebird';
-import { readdir } from 'fs';
 import { sbvrUtils } from '../platform';
 import { retrieveAPIKey } from '../platform/api-keys';
-
-const readdirAsync = Promise.promisify(readdir);
 
 sbvrUtils.addPureHook('all', 'all', 'all', {
 	PREPARSE: ({ req }) => {
@@ -13,8 +9,14 @@ sbvrUtils.addPureHook('all', 'all', 'all', {
 	},
 });
 
-readdirAsync(__dirname + '/resources').each(initScript => {
-	if (/\.ts$/.test(initScript)) {
-		return require(__dirname + '/resources/' + initScript);
-	}
-});
+import './resources/api_key';
+import './resources/application';
+import './resources/device';
+import './resources/envvars';
+import './resources/image__is_part_of__release';
+import './resources/image';
+import './resources/release';
+import './resources/service_install';
+import './resources/service_instance';
+import './resources/service';
+import './resources/user';

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as Promise from 'bluebird';
 import * as resinSemver from 'resin-semver';
 
 import { sbvrUtils } from '@resin/pinejs';
@@ -50,7 +51,7 @@ export class WebUrlNotSupportedError extends sbvrUtils.ForbiddenError {
 export const checkDevicesCanHaveDeviceURL = (
 	api: sbvrUtils.PinejsClient,
 	deviceIDs: number[],
-) => {
+): Promise<void> => {
 	return api
 		.get({
 			resource: 'application_type/$count',
@@ -92,7 +93,7 @@ export const checkDevicesCanBeInApplication = (
 	api: sbvrUtils.PinejsClient,
 	appId: number,
 	deviceIds: number[],
-) => {
+): Promise<void> => {
 	return api
 		.get({
 			resource: 'application_type',
