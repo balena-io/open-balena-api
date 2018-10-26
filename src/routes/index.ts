@@ -42,6 +42,7 @@ export const deviceLogsRateLimiter = createRateLimitMiddleware(
 import * as access from '../routes/access';
 import * as apiKeys from '../routes/api-keys';
 import * as applications from '../routes/applications';
+import * as config from '../routes/config';
 import * as deviceTypes from '../routes/device-types';
 import * as deviceLogs from '../routes/device-logs';
 import * as devices from '../routes/devices';
@@ -51,6 +52,8 @@ import * as session from '../routes/session';
 import * as registry from '../routes/registry';
 
 export const setup = (app: Application) => {
+	app.get('/config/vars', config.vars);
+
 	app.post('/login_', loginRateLimiter('body.username'), session.login);
 	app.get('/user/v1/whoami', authorized, session.whoami);
 

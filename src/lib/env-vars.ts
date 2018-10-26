@@ -1,21 +1,18 @@
 import * as _ from 'lodash';
+import { JSONSchema6Definition } from 'json-schema';
 
 export const RESERVED_NAMES = ['RESIN', 'BALENA', 'USER'];
 
 export const RESERVED_NAMESPACES = ['RESIN_', 'BALENA_'];
 
-// Config variables that are allowed to be set by frontend components
+// Config variables that are allowed to be set externally
+// Note that this list will be mutated by the cloud API to add
+// extra variables as for cloud-only features.
 export const WHITELISTED_NAMES = [
 	'RESIN_APP_RESTART_POLICY',
 	'RESIN_APP_RESTART_RETRIES',
 	'RESIN_DEPENDENT_DEVICES_HOOK_ADDRESS',
 	'RESIN_SUPERVISOR_CONNECTIVITY_CHECK',
-	'RESIN_SUPERVISOR_DELTA',
-	'RESIN_SUPERVISOR_DELTA_REQUEST_TIMEOUT',
-	'RESIN_SUPERVISOR_DELTA_RETRY_COUNT',
-	'RESIN_SUPERVISOR_DELTA_RETRY_INTERVAL',
-	'RESIN_SUPERVISOR_DELTA_TOTAL_TIMEOUT', // deprecated since Supervisor 6.2.0
-	'RESIN_SUPERVISOR_DELTA_VERSION',
 	'RESIN_SUPERVISOR_HANDOVER_TIMEOUT',
 	'RESIN_SUPERVISOR_LOCAL_MODE',
 	'RESIN_SUPERVISOR_LOG_CONTROL',
@@ -27,12 +24,6 @@ export const WHITELISTED_NAMES = [
 	'BALENA_APP_RESTART_RETRIES',
 	'BALENA_DEPENDENT_DEVICES_HOOK_ADDRESS',
 	'BALENA_SUPERVISOR_CONNECTIVITY_CHECK',
-	'BALENA_SUPERVISOR_DELTA',
-	'BALENA_SUPERVISOR_DELTA_REQUEST_TIMEOUT',
-	'BALENA_SUPERVISOR_DELTA_RETRY_COUNT',
-	'BALENA_SUPERVISOR_DELTA_RETRY_INTERVAL',
-	'BALENA_SUPERVISOR_DELTA_TOTAL_TIMEOUT', // deprecated since Supervisor 6.2.0 -- maybe not needed?
-	'BALENA_SUPERVISOR_DELTA_VERSION',
 	'BALENA_SUPERVISOR_HANDOVER_TIMEOUT',
 	'BALENA_SUPERVISOR_LOCAL_MODE',
 	'BALENA_SUPERVISOR_LOG_CONTROL',
@@ -70,6 +61,78 @@ export const BLACKLISTED_NAMES = [
 
 export const INVALID_CHARACTER_REGEX = /^\d|\W/;
 export const INVALID_NEWLINE_REGEX = /\r|\n/;
+
+export const DEFAULT_SUPERVISOR_POLL_INTERVAL = 10 * 60 * 1000;
+
+// Note that this list will be mutated by the cloud API to add
+// extra variables as for cloud-only features.
+export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
+	[k: string]: JSONSchema6Definition;
+} = {
+	RESIN_SUPERVISOR_CONNECTIVITY_CHECK: {
+		enum: ['false', 'true'],
+		description: 'Enable / Disable VPN connectivity check',
+		default: 'true',
+	},
+	RESIN_SUPERVISOR_LOG_CONTROL: {
+		enum: ['false', 'true'],
+		description: 'Enable / Disable logs from being sent to Resin',
+		default: 'true',
+	},
+	RESIN_SUPERVISOR_POLL_INTERVAL: {
+		type: 'integer',
+		description: 'Define the Resin API Poll interval in milliseconds',
+		default: DEFAULT_SUPERVISOR_POLL_INTERVAL,
+		minimum: DEFAULT_SUPERVISOR_POLL_INTERVAL,
+		maximum: 86400000,
+	},
+	RESIN_SUPERVISOR_VPN_CONTROL: {
+		enum: ['false', 'true'],
+		description: 'Enable / Disable VPN',
+		default: 'true',
+	},
+	RESIN_SUPERVISOR_PERSISTENT_LOGGING: {
+		enum: ['false', 'true'],
+		description:
+			'Enable persistent logging. Only supported by resin-supervisor >= v7.15.0.',
+		default: 'false',
+	},
+};
+
+export const HOST_CONFIG_VAR_PROPERTIES: {
+	[k: string]: JSONSchema6Definition;
+} = {
+	RESIN_HOST_CONFIG_disable_splash: {
+		enum: ['0', '1'],
+		description: 'Enable / Disable the resin splash screen',
+		default: '1',
+	},
+	RESIN_HOST_CONFIG_dtparam: {
+		type: 'string',
+		description: 'Define DT parameters',
+		default: '"i2c_arm=on","spi=on","audio=on"',
+	},
+	RESIN_HOST_CONFIG_enable_uart: {
+		enum: ['0', '1'],
+		description: 'Enable / Disable UART',
+		default: '1',
+	},
+	RESIN_HOST_CONFIG_gpu_mem: {
+		type: 'integer',
+		description: 'Define device GPU memory in megabytes.',
+		default: 16,
+	},
+};
+
+// the namespace RESIN_HOST_CONFIG_ is only applicable for raspberrypis
+// as it supports the config.txt file
+export const RESIN_HOST_CONFIG_CAPABLE_DEVICE_TYPES = [
+	'raspberry-pi',
+	'raspberry-pi2',
+	'raspberrypi3-64',
+	'raspberrypi3',
+	'fincm3',
+];
 
 const startsWithAny = (ns: string[], name: string) => {
 	return _.some(ns, n => _.startsWith(name, n));
@@ -150,5 +213,3 @@ export const mergeEnvVars = (
 	});
 	return environment;
 };
-
-export const DEFAULT_SUPERVISOR_POLL_INTERVAL = 10 * 60 * 1000;
