@@ -21,10 +21,6 @@ require('fast-boot').start({
 	cacheFile: '.fast-boot.json'
 })
 
-// Support `require()` of *.coffee files
-process.env.COFFEE_CACHE_DIR = '.coffee'
-require('coffee-cache')
-
 // Support `require()` of *.ts files
 process.env.TS_NODE_CACHE_DIRECTORY = '.ts-node'
 require('ts-node/register/transpile-only')
