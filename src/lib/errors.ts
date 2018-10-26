@@ -1,7 +1,7 @@
 import TypedError = require('typed-error');
 import { sbvrUtils } from '../platform';
 
-const { NotFoundError } = sbvrUtils;
+export const { NotFoundError } = sbvrUtils;
 
 export class NoDevicesFoundError extends NotFoundError {}
 

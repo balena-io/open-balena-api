@@ -15,21 +15,14 @@ import { PinejsClientCoreFactory } from 'pinejs-client-core';
 
 import { resinApi, root } from '../platform';
 
-import { UriOptions, CoreOptions, UrlOptions } from 'request';
-
-const DELAY_BETWEEN_DEVICE_REQUEST = 50;
-
-import request = require('./request');
+import { RequestResponse, requestAsync } from './request';
 import { API_VPN_SERVICE_API_KEY } from './config';
-const requestAsync = (Promise.promisify(request, {
-	multiArgs: true,
-}) as any) as (
-	arg1: (UriOptions & CoreOptions) | (UrlOptions & CoreOptions),
-) => Promise<RequestResponse>;
 
 // Degraded network, slow devices, compressed docker binaries and any combination of these factors
 // can cause proxied device requests to surpass the default timeout.
 const DEVICE_REQUEST_TIMEOUT = 50000;
+
+const DELAY_BETWEEN_DEVICE_REQUEST = 50;
 
 const { BadRequestError } = sbvrUtils;
 

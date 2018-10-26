@@ -6,17 +6,20 @@ declare interface BruteReset {
 
 declare namespace Express {
 	export interface Request {
+		apiKey?: ApiKey;
+
+		creds?: Creds;
+
 		user?: User & {
 			twoFactorRequired: false;
-		}; // see ./common.d.ts
-		apiKey?: ApiKey; // see ./common.d.ts
+		};
 
 		partialUser: User & {
 			twoFactorRequired: true;
 		};
-		creds?: Creds;
-		originalUrl?: string;
+
 		untranslatedUrl?: string;
+
 		brute?: BruteReset;
 
 		error?: any;

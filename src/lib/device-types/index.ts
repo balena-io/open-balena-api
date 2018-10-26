@@ -12,7 +12,7 @@ import {
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
 
-const { BadRequestError, NotFoundError } = sbvrUtils;
+export const { BadRequestError, NotFoundError } = sbvrUtils;
 
 export type DeviceType = deviceTypesLib.DeviceType;
 

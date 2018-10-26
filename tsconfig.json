@@ -2,6 +2,9 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"target": "es2015",
+		"declaration": true,
+		"outDir": "dist/",
+		"rootDir": "src/",
 		"noImplicitAny": true,
 		"noUnusedParameters": true,
 		"noUnusedLocals": true,

@@ -20,6 +20,8 @@ interface HookReqCaptureOptions {
 	req?: sbvrUtils.HookReq | Raven.CaptureOptions['req'];
 }
 
+type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
+
 // Raven is actually fine with our trimmed down `req` from hooks, but it isn't typed that way
 // so we have to overwrite and then cast later
 interface CaptureOptions

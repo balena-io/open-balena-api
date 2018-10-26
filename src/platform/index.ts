@@ -129,6 +129,16 @@ export const updateOrInsertModel = (
 type TxFn = (tx: Tx, ...args: any[]) => Promise<any>;
 type TxFnArgs<T> = T extends (tx: Tx, ...args: infer U) => any ? U : any[];
 
+// This gives the resolved return type, eg
+// - `Promise<R>` -> `R`
+// - `Bluebird<R>` -> `R`
+// - `R` -> `R`
+type ResolvableReturnType<T extends (...args: any[]) => any> = T extends (
+	...args: any[]
+) => Promise<infer R>
+	? R
+	: T extends (...args: any[]) => Promise<infer R> ? R : ReturnType<T>;
+
 // wrapInTransaction(someOperation) => fn
 //
 // Wraps a function to run inside a

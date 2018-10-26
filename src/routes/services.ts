@@ -1,9 +1,10 @@
+import * as Promise from 'bluebird';
+import { Request, Response } from 'express';
 import { resinApi } from '../platform';
 import { captureException, handleHttpErrors } from '../platform/errors';
-import { Request, Response } from 'express';
 
 export const vpn = {
-	authDevice: (req: Request, res: Response) =>
+	authDevice: (req: Request, res: Response): void | Promise<void> =>
 		resinApi
 			.get({
 				resource: 'device',
@@ -31,16 +32,19 @@ export const vpn = {
 				captureException(err, 'Error authenticating device for VPN', { req });
 				res.status(500).send(err);
 			}),
-	clientConnect: (req: Request, res: Response) => {
+	clientConnect: (req: Request, res: Response): void | Promise<void> => {
 		const body = req.body || {};
 		if (!body.common_name) {
-			return res.sendStatus(400);
+			res.sendStatus(400);
+			return;
 		}
 		if (!body.virtual_address) {
-			return res.sendStatus(400);
+			res.sendStatus(400);
+			return;
 		}
 		if (!body.service_id) {
-			return res.sendStatus(400);
+			res.sendStatus(400);
+			return;
 		}
 
 		return resinApi
@@ -67,10 +71,11 @@ export const vpn = {
 			});
 	},
 
-	clientDisconnect: (req: Request, res: Response) => {
+	clientDisconnect: (req: Request, res: Response): void | Promise<void> => {
 		const body = req.body || {};
 		if (!body.common_name) {
-			return res.sendStatus(400);
+			res.sendStatus(400);
+			return;
 		}
 
 		return resinApi

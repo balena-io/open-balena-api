@@ -3,7 +3,8 @@ import * as Promise from 'bluebird';
 import { EXTERNAL_HTTP_TIMEOUT_MS } from './config';
 
 type Request = typeof request;
-request.get;
+
+export type RequestResponse = [request.Response, any];
 
 interface PromisifiedRequest extends Request {
 	getAsync(
@@ -33,10 +34,20 @@ interface PromisifiedRequest extends Request {
 	) => Promise<RequestResponse>;
 }
 
-const defaultedRequest = request.defaults({
+export const defaultRequest = request.defaults({
 	timeout: EXTERNAL_HTTP_TIMEOUT_MS,
 });
 
-export = (Promise.promisifyAll(defaultedRequest, {
+const promisifiedRequest = (Promise.promisifyAll(defaultRequest, {
 	multiArgs: true,
 }) as any) as PromisifiedRequest;
+
+export const requestAsync = (Promise.promisify(promisifiedRequest, {
+	multiArgs: true,
+}) as any) as (
+	arg1:
+		| (request.UriOptions & request.CoreOptions)
+		| (request.UrlOptions & request.CoreOptions),
+) => Promise<RequestResponse>;
+
+export default promisifiedRequest;
