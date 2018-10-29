@@ -31,7 +31,7 @@ const { setup } = require('./src')
 
 function onInitMiddleware(app) {
 	const { forwardRequests } = require('./src/platform/versions')
-	forwardRequests(app, 'v4', 'resin')
+	forwardRequests(app, 'v5', 'resin')
 }
 
 function onInitModel() {
