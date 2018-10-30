@@ -94,6 +94,9 @@ export const ROLES: {
 		'resin.service_install.all',
 		'resin.service_label.all',
 		'resin.user.read',
+
+		`resin.service_instance.get?service_type eq 'vpn'`,
+		`resin.device.tunnel-22222?`,
 	],
 };
 
