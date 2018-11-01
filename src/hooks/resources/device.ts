@@ -98,8 +98,8 @@ const createReleaseServiceInstalls = (
 const createAppServiceInstalls = (
 	api: PinejsClient,
 	appId: number,
-	deviceId: number,
-) =>
+	deviceIds: number[],
+): Promise<void> =>
 	// Get the current release for this application
 	api
 		.get({
@@ -112,11 +112,13 @@ const createAppServiceInstalls = (
 				return;
 			}
 
-			return createReleaseServiceInstalls(api, deviceId, {
-				belongs_to__application: appId,
-				status: 'success',
-				commit,
-			});
+			return Promise.map(deviceIds, deviceId =>
+				createReleaseServiceInstalls(api, deviceId, {
+					belongs_to__application: appId,
+					status: 'success',
+					commit,
+				}),
+			).return();
 		});
 
 sbvrUtils.addPureHook('POST', 'resin', 'device', {
@@ -168,7 +170,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'device', {
 
 		const rootApi = api.clone({ passthrough: { tx, req: root } });
 
-		return createAppServiceInstalls(rootApi, request.custom.appId, deviceId);
+		return createAppServiceInstalls(rootApi, request.custom.appId, [deviceId]);
 	},
 });
 
@@ -403,13 +405,16 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		// create new ones for the new application (if the device is moving application)
 		if (args.request.values.belongs_to__application != null) {
 			waitPromises.push(
-				affectedIds.map(deviceId =>
-					args.api
+				affectedIds.tap(deviceIds => {
+					if (deviceIds.length === 0) {
+						return;
+					}
+					return args.api
 						.delete({
 							resource: 'service_install',
 							options: {
 								$filter: {
-									device: deviceId,
+									device: { $id: deviceIds },
 								},
 							},
 						})
@@ -417,10 +422,10 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 							createAppServiceInstalls(
 								args.api,
 								args.request.values.belongs_to__application,
-								deviceId,
+								deviceIds,
 							),
-						),
-				),
+						);
+				}),
 			);
 
 			// Also mark all image installs which are part of the current
