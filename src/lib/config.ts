@@ -35,14 +35,19 @@ export const AUTH_RESINOS_REGISTRY_CODE =
 export const COOKIE_SESSION_SECRET = requiredVar('COOKIE_SESSION_SECRET');
 export const DB_POOL_SIZE = intVar('DB_POOL_SIZE', undefined);
 export const DELTA_HOST = requiredVar('DELTA_HOST');
+export const DEVICE_CONFIG_OPENVPN_CA = requiredVar('DEVICE_CONFIG_OPENVPN_CA');
+export const DEVICE_CONFIG_OPENVPN_CONFIG = requiredVar(
+	'DEVICE_CONFIG_OPENVPN_CONFIG',
+);
+export const DEVICE_CONFIG_SSH_AUTHORIZED_KEYS =
+	process.env.DEVICE_CONFIG_SSH_AUTHORIZED_KEYS || '';
 export const EXTERNAL_HTTP_TIMEOUT_MS = intVar(
 	'EXTERNAL_HTTP_TIMEOUT_MS',
 	25000,
 );
 export const IMAGE_MAKER_URL = requiredVar('IMAGE_MAKER_URL');
 export const IMAGE_STORAGE_BUCKET = requiredVar('IMAGE_STORAGE_BUCKET');
-export const IMAGE_STORAGE_ENDPOINT =
-	requiredVar('IMAGE_STORAGE_ENDPOINT') || undefined;
+export const IMAGE_STORAGE_ENDPOINT = requiredVar('IMAGE_STORAGE_ENDPOINT');
 export const IMAGE_STORAGE_PREFIX = requiredVar('IMAGE_STORAGE_PREFIX');
 export const IMAGE_STORAGE_FORCE_PATH_STYLE =
 	process.env.IMAGE_STORAGE_FORCE_PATH_STYLE === 'true';
