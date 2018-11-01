@@ -414,7 +414,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 							resource: 'service_install',
 							options: {
 								$filter: {
-									device: { $id: deviceIds },
+									device: { $in: deviceIds },
 								},
 							},
 						})
