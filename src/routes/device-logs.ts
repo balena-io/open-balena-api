@@ -4,7 +4,6 @@ import { Request, Response, RequestHandler } from 'express';
 import * as _ from 'lodash';
 import * as ndjson from 'ndjson';
 
-import { PubNubBackend } from '../lib/device-logs/backends/pubnub';
 import { RedisBackend } from '../lib/device-logs/backends/redis';
 import {
 	DeviceLog,
@@ -42,7 +41,6 @@ const DEFAULT_HISTORY_LOGS = 1000;
 const DEFAULT_RETENTION_LIMIT = 1000;
 const DEFAULT_SUBSCRIPTION_LOGS = 0;
 
-const pubnub = new PubNubBackend();
 const redis = new RedisBackend();
 const supervisor = new Supervisor();
 
@@ -191,13 +189,9 @@ function getHistory(
 		return Promise.resolve([]);
 	}
 
+	// TODO: Implement `?since` filter here too in the next phase
 	return getBackend(ctx)
-		.history(ctx)
-		.then(logs => {
-			// TODO: Implement `?since` filter here too in the next phase
-			// TODO: Once the PubNub backend is deleted, the `count` should be moved to the Redis backend
-			return logs.slice(-count);
-		});
+		.history(ctx, count);
 }
 
 // Writing logs section
@@ -412,10 +406,6 @@ function checkWritePermissions(ctx: LogWriteContext): Promise<void> {
 		});
 }
 
-function getBackend(ctx: LogContext): DeviceLogsBackend {
-	// If they cleared logs_channel, we always use redis
-	if (pubnub.available && ctx.logs_channel) {
-		return pubnub;
-	}
+function getBackend(_ctx: LogContext): DeviceLogsBackend {
 	return redis;
 }

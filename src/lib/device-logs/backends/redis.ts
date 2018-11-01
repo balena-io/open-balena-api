@@ -59,7 +59,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		this.subscriptions = new EventEmitter();
 	}
 
-	public history(ctx: LogContext): Promise<DeviceLog[]> {
+	public history(ctx: LogContext, count: number): Promise<DeviceLog[]> {
 		if (!this.connected) {
 			return Promise.reject(new ServiceUnavailableError());
 		}
@@ -68,6 +68,8 @@ export class RedisBackend implements DeviceLogsBackend {
 			this.cmds.lrange(key, 0, -1, callback);
 		}).then((payloads: string[]) => {
 			return _(payloads)
+				// TODO: This slice should be handled in the redis call itself
+				.slice(-count)
 				.map(this.fromRedisLog)
 				.compact()
 				.value();

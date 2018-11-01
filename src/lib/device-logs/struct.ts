@@ -61,7 +61,7 @@ export type AnySupervisorLog = OldSupervisorLog | SupervisorLog;
 export type Subscription = (log: DeviceLog) => void;
 
 export interface DeviceLogsBackend {
-	history(ctx: LogContext): Promise<DeviceLog[]>;
+	history(ctx: LogContext, count: number): Promise<DeviceLog[]>;
 	available: boolean;
 	publish(ctx: LogWriteContext, logs: DeviceLog[]): Promise<any>;
 	subscribe(ctx: LogContext, subscription: Subscription): void;

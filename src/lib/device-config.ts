@@ -26,8 +26,6 @@ import {
 	REGISTRY_HOST,
 	REGISTRY2_HOST,
 	NODE_EXTRA_CA_CERTS,
-	PUBNUB_PUBLISH_KEY,
-	PUBNUB_SUBSCRIBE_KEY,
 	MIXPANEL_TOKEN,
 	VPN_HOST,
 	VPN_PORT,
@@ -83,10 +81,7 @@ export const generateConfig = (req: Request, app: AnyObject) => {
 					deviceType: deviceType.slug,
 					user,
 					apiKey,
-					pubnub: {
-						publish_key: PUBNUB_PUBLISH_KEY,
-						subscribe_key: PUBNUB_SUBSCRIBE_KEY,
-					},
+					pubnub: {},
 					mixpanel: {
 						token: MIXPANEL_TOKEN,
 					},
