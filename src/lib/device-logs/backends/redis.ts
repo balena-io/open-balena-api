@@ -67,12 +67,14 @@ export class RedisBackend implements DeviceLogsBackend {
 			const key = this.getKey(ctx);
 			this.cmds.lrange(key, 0, -1, callback);
 		}).then((payloads: string[]) => {
-			return _(payloads)
-				// TODO: This slice should be handled in the redis call itself
-				.slice(-count)
-				.map(this.fromRedisLog)
-				.compact()
-				.value();
+			return (
+				_(payloads)
+					// TODO: This slice should be handled in the redis call itself
+					.slice(-count)
+					.map(this.fromRedisLog)
+					.compact()
+					.value()
+			);
 		});
 	}
 

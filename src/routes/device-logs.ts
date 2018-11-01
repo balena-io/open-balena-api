@@ -190,8 +190,7 @@ function getHistory(
 	}
 
 	// TODO: Implement `?since` filter here too in the next phase
-	return getBackend(ctx)
-		.history(ctx, count);
+	return getBackend(ctx).history(ctx, count);
 }
 
 // Writing logs section
