@@ -99,26 +99,16 @@ const createAppServiceInstalls = (
 	appId: number,
 	deviceIds: number[],
 ): Promise<void> =>
-	// Get the current release for this application
-	api
-		.get({
-			resource: 'application',
-			id: appId,
-			options: { $select: 'commit' },
-		})
-		.then(({ commit }: AnyObject) => {
-			if (commit == null) {
-				return;
-			}
-
-			return Promise.map(deviceIds, deviceId =>
-				createReleaseServiceInstalls(api, deviceId, {
-					belongs_to__application: appId,
-					status: 'success',
-					commit,
-				}),
-			).return();
-		});
+	Promise.map(deviceIds, deviceId =>
+		createReleaseServiceInstalls(api, deviceId, {
+			should_be_running_on__application: {
+				$any: {
+					$alias: 'a',
+					$expr: { a: { id: appId } },
+				},
+			},
+		}),
+	).return();
 
 sbvrUtils.addPureHook('POST', 'resin', 'device', {
 	POSTPARSE: createActor,

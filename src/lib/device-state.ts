@@ -1,10 +1,7 @@
 import * as _ from 'lodash';
-import * as Promise from 'bluebird';
 import * as semver from 'resin-semver';
 
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './env-vars';
-
-import { PinejsClient, resinApi } from '../platform';
 
 // Set RESIN_SUPERVISOR_POLL_INTERVAL to a minimum of 10 minutes
 export const setMinPollInterval = (config: AnyObject): void => {
@@ -18,62 +15,15 @@ export const setMinPollInterval = (config: AnyObject): void => {
 };
 
 export const getReleaseForDevice = (
-	api: PinejsClient,
 	device: AnyObject,
-): Promise<AnyObject | undefined> => {
+): AnyObject | undefined => {
 	if (device.should_be_running__release[0] != null) {
-		return Promise.resolve(device.should_be_running__release[0]);
-	} else {
-		const app = device.belongs_to__application[0];
-		return releaseFromApp(api, app);
+		return device.should_be_running__release[0];
 	}
-};
-
-const releaseQuery = resinApi.prepare<{ commit: string; appId: number }>({
-	resource: 'release',
-	options: {
-		$select: ['id', 'commit', 'composition'],
-		$expand: {
-			contains__image: {
-				$select: 'id',
-				$expand: {
-					image: {
-						$select: [
-							'id',
-							'is_stored_at__image_location',
-							'is_a_build_of__service',
-							'content_hash',
-						],
-					},
-					image_environment_variable: {
-						$select: ['name', 'value'],
-					},
-					image_label: {
-						$select: ['label_name', 'value'],
-					},
-				},
-			},
-		},
-		$filter: {
-			status: 'success',
-			commit: { '@': 'commit' },
-			belongs_to__application: { '@': 'appId' },
-		},
-		$top: 1,
-	},
-});
-export const releaseFromApp = (
-	api: PinejsClient,
-	app: AnyObject,
-): Promise<AnyObject | undefined> => {
-	if (app.commit == null) {
-		return Promise.resolve(undefined);
+	const app = device.belongs_to__application[0];
+	if (app != null && app.should_be_running__release[0] != null) {
+		return app.should_be_running__release[0];
 	}
-	return releaseQuery(
-		{ commit: app.commit, appId: app.id },
-		undefined,
-		api.passthrough,
-	).then(([release]: AnyObject[]) => release);
 };
 
 export const serviceInstallFromImage = (
