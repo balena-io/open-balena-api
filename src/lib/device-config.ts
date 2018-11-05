@@ -13,7 +13,7 @@ const readFileAsync = Promise.promisify(readFile as (
 import * as deviceConfig from 'resin-device-config';
 import * as resinSemver from 'resin-semver';
 
-import * as deviceTypes from './device-types';
+import { DeviceType } from './device-types';
 
 import { captureException } from '../platform/errors';
 import { getUser } from '../platform/auth';
@@ -33,25 +33,26 @@ import {
 	DELTA_HOST,
 } from './config';
 
-export const generateConfig = (req: Request, app: AnyObject) => {
-	const osVersion = req.param('version');
+export const generateConfig = (
+	req: Request,
+	app: AnyObject,
+	deviceType: DeviceType,
+	osVersion: string,
+) => {
 	const userPromise = getUser(req);
-	const deviceType = req.param('deviceType') || app.device_type;
-	const deviceTypePromise = deviceTypes.findBySlug(deviceType);
 
 	// Devices running ResinOS >= 2.0 can use Registry v2
-	const registryHost = resinSemver.satisfies(osVersion, '^2.0.0')
-		? REGISTRY2_HOST
-		: REGISTRY_HOST;
+	const registryHost = resinSemver.satisfies(osVersion, '<2.0.0')
+		? REGISTRY_HOST
+		: REGISTRY2_HOST;
 
 	const apiKeyPromise = Promise.try(() => {
-		if (resinSemver.satisfies(osVersion, '^2.7.8')) {
-			// Devices running ResinOS >= 2.7.8 can use provisioning keys
-			return createProvisioningApiKey(req, app.id);
-		} else {
+		// Devices running ResinOS >= 2.7.8 can use provisioning keys
+		if (resinSemver.satisfies(osVersion, '<2.7.8')) {
 			// Older ones have to use the old "user api keys"
 			return userPromise.then(user => createUserApiKey(req, user.id));
 		}
+		return createProvisioningApiKey(req, app.id);
 	});
 
 	// There may be multiple CAs, this doesn't matter as all will be passed in the config
@@ -72,9 +73,8 @@ export const generateConfig = (req: Request, app: AnyObject) => {
 	return Promise.join(
 		userPromise,
 		apiKeyPromise,
-		deviceTypePromise,
 		selfSignedRootPromise,
-		(user, apiKey, deviceType, rootCA) => {
+		(user, apiKey, rootCA) => {
 			const config = deviceConfig.generate(
 				{
 					application: app as deviceConfig.GenerateOptions['application'],
