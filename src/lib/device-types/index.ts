@@ -47,6 +47,7 @@ interface DeviceTypeInfo {
 
 const SPECIAL_SLUGS = ['edge'];
 const RETRY_DELAY = 2000; // ms
+const MAX_RETRIES = 20; // lets fetchDeviceTypes to retry for about 2 mins
 const DEVICE_TYPES_CACHE_EXPIRATION = 5 * 60 * 1000; // 5 mins
 
 function sortBuildIds(ids: string[]): string[] {
@@ -92,7 +93,9 @@ const getFirstValidBuild = (
 	});
 };
 
-function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
+function fetchDeviceTypes(
+	retryAttemptsLeft = MAX_RETRIES,
+): Promise<Dictionary<DeviceTypeInfo>> {
 	const result: Dictionary<DeviceTypeInfo> = {};
 	getIsIgnored.clear();
 	getDeviceTypeJson.clear();
@@ -104,29 +107,44 @@ function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 				}
 
 				const sortedBuilds = sortBuildIds(builds!);
-				return getFirstValidBuild(slug, sortedBuilds).then(latestBuildInfo => {
-					if (!latestBuildInfo) {
-						return;
-					}
+				return getFirstValidBuild(slug, sortedBuilds)
+					.then(latestBuildInfo => {
+						if (!latestBuildInfo) {
+							return;
+						}
 
-					result[slug] = {
-						versions: builds,
-						latest: latestBuildInfo,
-					};
+						result[slug] = {
+							versions: builds,
+							latest: latestBuildInfo,
+						};
 
-					_.forEach(
-						(latestBuildInfo.deviceType as DeviceTypeWithAliases).aliases,
-						alias => {
-							result[alias] = result[slug];
-						},
-					);
-				});
+						_.forEach(
+							(latestBuildInfo.deviceType as DeviceTypeWithAliases).aliases,
+							alias => {
+								result[alias] = result[slug];
+							},
+						);
+					})
+					.tapCatch(err => {
+						captureException(
+							err,
+							`Failed to find valid build data for device type: ${slug}`,
+						);
+					});
 			});
 		})
 		.return(result)
 		.catch(err => {
-			captureException(err, 'Failed to get device types');
-			return Promise.delay(RETRY_DELAY).then(fetchDeviceTypes);
+			captureException(
+				_.assign(err, { retryAttemptsLeft }),
+				'Failed to get device types',
+			);
+			if (retryAttemptsLeft >= 1) {
+				return Promise.delay(RETRY_DELAY).then(() =>
+					fetchDeviceTypes(retryAttemptsLeft - 1),
+				);
+			}
+			throw new InternalRequestError(err);
 		});
 }
 
@@ -136,8 +154,7 @@ function updateDeviceTypesCache(
 	freshDeviceTypes: Promise<Dictionary<DeviceTypeInfo>>,
 ) {
 	if (!deviceTypesCache) {
-		deviceTypesCache = freshDeviceTypes;
-		return freshDeviceTypes;
+		return freshDeviceTypes.return();
 	}
 	return Promise.join(
 		deviceTypesCache,
@@ -187,6 +204,12 @@ function fetchDeviceTypesAndReschedule(): Promise<Dictionary<DeviceTypeInfo>> {
 	// in case another api request comes before the first completes
 	if (!deviceTypesCache) {
 		deviceTypesCache = promise;
+		// make sure we remove rejected promises from the cache
+		promise.catch(() => {
+			if (deviceTypesCache === promise) {
+				deviceTypesCache = undefined;
+			}
+		});
 	} else {
 		updateDeviceTypesCache(promise);
 	}
@@ -203,9 +226,7 @@ function getDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	return fetchDeviceTypesAndReschedule();
 }
 
-export const findDeviceTypeInfoBySlug = (
-	slug: string,
-): Promise<DeviceTypeInfo> =>
+const findDeviceTypeInfoBySlug = (slug: string): Promise<DeviceTypeInfo> =>
 	getDeviceTypes().then(deviceTypeInfos => {
 		// the slug can be an alias,
 		// since the Dictionary also has props for the aliases
