@@ -1,6 +1,7 @@
 import * as arraySort from 'array-sort';
 import * as Promise from 'bluebird';
 import * as _ from 'lodash';
+import { InternalRequestError } from '@resin/pinejs/out/sbvr-api/errors';
 import * as deviceTypesLib from '@resin.io/device-types';
 import * as semver from 'resin-semver';
 import { sbvrUtils } from '../../platform';
@@ -282,12 +283,16 @@ export const getImageSize = (slug: string, buildId: string) => {
 					throw new UnknownVersionError(slug, buildId);
 				}
 
-				return getCompressedSize(normalizedSlug, buildId).tapCatch(err => {
-					captureException(
-						err,
-						`Failed to get device type ${slug} compressed size for version ${buildId}`,
-					);
-				});
+				return getCompressedSize(normalizedSlug, buildId);
+			},
+		).catch(
+			err => !(err instanceof UnknownVersionError),
+			(err: Error) => {
+				captureException(
+					err,
+					`Failed to get device type ${slug} compressed size for version ${buildId}`,
+				);
+				throw new InternalRequestError(err);
 			},
 		);
 	});
@@ -322,6 +327,10 @@ export const getImageVersions = (slug: string): Promise<ImageVersions> => {
 					versions: buildIds,
 					latest: buildIds[0],
 				};
+			})
+			.catch(err => {
+				captureException(err, `Failed to get device type ${slug} versions`);
+				throw new InternalRequestError(err);
 			});
 	});
 };
