@@ -58,6 +58,34 @@ function onInitHooks() {
 	)
 }
 
+function createSuperuser() {
+
+	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } = require('./src/lib/config')
+
+	if (!SUPERUSER_EMAIL || !SUPERUSER_PASSWORD) {
+		return;
+	}
+
+	console.log('Creating superuser account...')
+
+	const { runInTransaction, sbvrUtils } = require('./src/platform')
+	const { registerUser } = require('./src/platform/auth')
+	const { ConflictError } = sbvrUtils
+
+	return runInTransaction(tx =>
+		registerUser({ username: 'root', email: SUPERUSER_EMAIL, password: SUPERUSER_PASSWORD }, tx),
+	)
+	.then(() => {
+		console.log('Superuser created successfully!')
+	})
+	.catch(ConflictError, () => {
+		console.log('Superuser already exists!')
+	})
+	.catch((err) => {
+		console.error('Error creating superuser:', err)
+	})
+}
+
 const app = express()
 app.enable('trust proxy')
 
@@ -68,6 +96,7 @@ setup(app, {
 	onInitModel,
 	onInitHooks,
 })
+.tap(createSuperuser)
 .then(({ startServer, runFromCommandLine }) => {
 	if (process.argv.length > 2) {
 		return runFromCommandLine()
