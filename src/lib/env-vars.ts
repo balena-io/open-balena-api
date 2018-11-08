@@ -76,12 +76,12 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 	},
 	RESIN_SUPERVISOR_LOG_CONTROL: {
 		enum: ['false', 'true'],
-		description: 'Enable / Disable logs from being sent to Resin',
+		description: 'Enable / Disable logs from being sent to balena',
 		default: 'true',
 	},
 	RESIN_SUPERVISOR_POLL_INTERVAL: {
 		type: 'integer',
-		description: 'Define the Resin API Poll interval in milliseconds',
+		description: 'Define the balena API poll interval in milliseconds',
 		default: DEFAULT_SUPERVISOR_POLL_INTERVAL,
 		minimum: DEFAULT_SUPERVISOR_POLL_INTERVAL,
 		maximum: 86400000,
@@ -94,7 +94,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 	RESIN_SUPERVISOR_PERSISTENT_LOGGING: {
 		enum: ['false', 'true'],
 		description:
-			'Enable persistent logging. Only supported by resin-supervisor >= v7.15.0.',
+			'Enable persistent logging. Only supported by balena-supervisor >= v7.15.0.',
 		default: 'false',
 	},
 };
@@ -104,7 +104,7 @@ export const HOST_CONFIG_VAR_PROPERTIES: {
 } = {
 	RESIN_HOST_CONFIG_disable_splash: {
 		enum: ['0', '1'],
-		description: 'Enable / Disable the resin splash screen',
+		description: 'Enable / Disable the balena splash screen',
 		default: '1',
 	},
 	RESIN_HOST_CONFIG_dtparam: {
