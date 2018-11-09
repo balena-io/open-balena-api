@@ -352,7 +352,7 @@ const getSubject = Promise.method((req: Request) => {
 		return req.subject;
 	}
 
-	return getUser(req, false).then(
-		user => (user == null ? undefined : user.username),
+	return getUser(req, false).then(user =>
+		user == null ? undefined : user.username,
 	);
 });
