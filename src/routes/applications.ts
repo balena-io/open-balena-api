@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import * as Promise from 'bluebird';
 
 import { generateConfig } from '../lib/device-config';
+import { findBySlug } from '../lib/device-types';
 
 import {
 	captureException,
@@ -39,8 +40,21 @@ export const downloadImageConfig: RequestHandler = (req, res) => {
 		res.status(400).send('An appId is required.');
 		return;
 	}
+
+	const deviceType = req.param('deviceType');
+	const osVersion = req.param('version');
+
+	if (!osVersion) {
+		res.status(400).send('A version is required.');
+		return;
+	}
+
 	return getApp(req)
-		.then(app => generateConfig(req, app))
+		.then(app =>
+			findBySlug(deviceType || app.device_type).then(deviceType =>
+				generateConfig(req, app, deviceType, osVersion),
+			),
+		)
 		.then(config => {
 			res.json(config);
 		})
