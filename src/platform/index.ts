@@ -137,7 +137,9 @@ type ResolvableReturnType<T extends (...args: any[]) => any> = T extends (
 	...args: any[]
 ) => Promise<infer R>
 	? R
-	: T extends (...args: any[]) => Promise<infer R> ? R : ReturnType<T>;
+	: T extends (...args: any[]) => Promise<infer R>
+	? R
+	: ReturnType<T>;
 
 // wrapInTransaction(someOperation) => fn
 //
