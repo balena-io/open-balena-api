@@ -1,6 +1,7 @@
 import * as arraySort from 'array-sort';
 import * as Promise from 'bluebird';
 import * as _ from 'lodash';
+import { InternalRequestError } from '@resin/pinejs/out/sbvr-api/errors';
 import * as deviceTypesLib from '@resin.io/device-types';
 import * as semver from 'resin-semver';
 import { sbvrUtils } from '../../platform';
@@ -80,15 +81,23 @@ const getFirstValidBuild = (
 		return Promise.resolve() as Promise<BuildInfo | undefined>;
 	}
 
-	return getBuildData(slug, versions[0]).then(buildInfo => {
-		if (!buildInfo.ignored && buildInfo.deviceType) {
-			// TS can't infer this correctly and gets confused when
-			// checking it against the Promise return value
-			return buildInfo as BuildInfo;
-		}
+	const buildId = versions[0];
+	return getBuildData(slug, buildId)
+		.catch(err => {
+			captureException(
+				err,
+				`Failed to get device type build data for ${slug}/${buildId}`,
+			);
+		})
+		.then(buildInfo => {
+			if (buildInfo && !buildInfo.ignored && buildInfo.deviceType) {
+				// TS can't infer this correctly and gets confused when
+				// checking it against the Promise return value
+				return buildInfo as BuildInfo;
+			}
 
-		return getFirstValidBuild(slug, _.tail(versions));
-	});
+			return getFirstValidBuild(slug, _.tail(versions));
+		});
 };
 
 function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
@@ -97,30 +106,45 @@ function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	getDeviceTypeJson.clear();
 	return listFolders(IMAGE_STORAGE_PREFIX)
 		.map(slug => {
-			return listFolders(getImageKey(slug)).then(builds => {
-				if (_.isEmpty(builds)) {
-					return;
-				}
-
-				const sortedBuilds = sortBuildIds(builds!);
-				return getFirstValidBuild(slug, sortedBuilds).then(latestBuildInfo => {
-					if (!latestBuildInfo) {
+			return listFolders(getImageKey(slug))
+				.then(builds => {
+					if (_.isEmpty(builds)) {
 						return;
 					}
 
-					result[slug] = {
-						versions: builds,
-						latest: latestBuildInfo,
-					};
+					const sortedBuilds = sortBuildIds(builds);
+					return getFirstValidBuild(slug, sortedBuilds).then(
+						latestBuildInfo => {
+							if (!latestBuildInfo) {
+								return;
+							}
 
-					_.forEach(
-						(latestBuildInfo.deviceType as DeviceTypeWithAliases).aliases,
-						alias => {
-							result[alias] = result[slug];
+							result[slug] = {
+								versions: builds,
+								latest: latestBuildInfo,
+							};
+
+							_.forEach(
+								(latestBuildInfo.deviceType as DeviceTypeWithAliases).aliases,
+								alias => {
+									result[alias] = result[slug];
+								},
+							);
 						},
 					);
-				});
-			});
+				})
+				.catch(err => {
+					captureException(
+						err,
+						`Failed to find a valid build for device type ${slug}`,
+					);
+				})
+				.return(slug);
+		})
+		.then(slugs => {
+			if (_.isEmpty(result) && !_.isEmpty(slugs)) {
+				throw new InternalRequestError('Clould not retrieve any device type');
+			}
 		})
 		.return(result)
 		.catch(err => {
@@ -307,16 +331,20 @@ export const getImageVersions = (slug: string): Promise<ImageVersions> => {
 			return Promise.props({
 				buildId,
 				ignored: getIsIgnored(normalizedSlug, buildId),
-				hasDeviceTypeJson: getDeviceTypeJson(
-					normalizedSlug,
-					buildId,
-				).catchReturn(null),
-			});
+				hasDeviceTypeJson: getDeviceTypeJson(normalizedSlug, buildId),
+			}).catchReturn(undefined);
 		})
 			.filter(
-				({ hasDeviceTypeJson, ignored }) => !!hasDeviceTypeJson && !ignored,
+				buildInfo =>
+					!!buildInfo && !!buildInfo.hasDeviceTypeJson && !buildInfo.ignored,
 			)
 			.then(versionInfos => {
+				if (_.isEmpty(versionInfos) && !_.isEmpty(deviceTypeInfo.versions)) {
+					throw new InternalRequestError(
+						`Clould not retrieve any image version for device type ${slug}`,
+					);
+				}
+
 				const buildIds = _.map(versionInfos, 'buildId');
 				return {
 					versions: buildIds,
