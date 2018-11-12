@@ -17,7 +17,8 @@
     "lint": "resin-lint --typescript src/ && tsc --noEmit --project .",
     "prettify": "prettier --config ./node_modules/resin-lint/config/.prettierrc --write \"src/**/*.ts\" \"typings/**/*.ts\"",
     "prepare": "npm run build",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "test": "npm run build && npm run lint"
   },
   "dependencies": {
     "@resin.io/device-types": "^10.4.1",
