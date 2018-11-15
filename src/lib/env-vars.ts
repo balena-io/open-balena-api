@@ -94,7 +94,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 	RESIN_SUPERVISOR_PERSISTENT_LOGGING: {
 		enum: ['false', 'true'],
 		description:
-			'Enable persistent logging. Only supported by balena-supervisor >= v7.15.0.',
+			'Enable persistent logging. Only supported by supervisor versions >= v7.15.0.',
 		default: 'false',
 	},
 };
