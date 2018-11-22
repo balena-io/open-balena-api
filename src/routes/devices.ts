@@ -14,7 +14,7 @@ import {
 	sbvrUtils,
 	PinejsClient,
 } from '../platform';
-import { checkInt, isValidInteger, getIP, varListInsert } from '../lib/utils';
+import { checkInt, isValidInteger, getIP } from '../lib/utils';
 import { createDeviceApiKey } from '../lib/api-keys';
 import * as randomstring from 'randomstring';
 import { RequestHandler } from 'express';
@@ -25,8 +25,12 @@ import {
 	releaseFromApp,
 	serviceInstallFromImage,
 	formatImageLocation,
-	filterDeviceConfig,
 } from '../lib/device-state';
+import {
+	filterDeviceConfig,
+	fixupConfigVars,
+	varListInsert,
+} from '../lib/env-vars';
 
 export { proxy } from '../lib/device-proxy';
 
@@ -266,8 +270,8 @@ export const receiveOnlineDependentDevices: RequestHandler = (req, res) =>
 // These 2 config vars below are mapped to labels if missing for backwards-compatibility
 // See: https://github.com/resin-io/hq/issues/1340
 const ConfigurationVarsToLabels = {
-	RESIN_SUPERVISOR_UPDATE_STRATEGY: 'io.resin.update.strategy',
-	RESIN_SUPERVISOR_HANDOVER_TIMEOUT: 'io.resin.update.handover-timeout',
+	SUPERVISOR_UPDATE_STRATEGY: 'io.resin.update.strategy',
+	SUPERVISOR_HANDOVER_TIMEOUT: 'io.resin.update.handover-timeout',
 };
 
 export const state: RequestHandler = (req, res) => {
@@ -516,6 +520,8 @@ export const state: RequestHandler = (req, res) => {
 					});
 				}
 
+				local.config = fixupConfigVars(local.config);
+
 				const volumes = composition != null ? composition.volumes || {} : {};
 				const networks = composition != null ? composition.networks || {} : {};
 
@@ -562,10 +568,9 @@ export const state: RequestHandler = (req, res) => {
 									});
 								}
 								if (depApp.application_config_variable != null) {
-									varListInsert(
-										depApp.application_config_variable,
-										dependent.apps[depApp.id].config,
-									);
+									const app = dependent.apps[depApp.id];
+									varListInsert(depApp.application_config_variable, app.config);
+									app.config = _.mapValues(app.config, fixupConfigVars);
 								}
 							})
 							.then(() => {
@@ -584,6 +589,7 @@ export const state: RequestHandler = (req, res) => {
 											depDev.belongs_to__application[0].id
 										];
 									varListInsert(depDev.device_config_variable, app.config);
+									app.config = _.mapValues(app.config, fixupConfigVars);
 
 									release = depReleases[depDev.belongs_to__application[0].id];
 
