@@ -4,6 +4,7 @@ import {
 	authorized,
 	apiKeyMiddleware,
 	permissionRequired,
+	gracefullyDenyDeletedDevices,
 } from '../platform/middleware';
 
 import {
@@ -58,8 +59,18 @@ export const setup = (app: Application) => {
 	app.get('/user/v1/whoami', authorized, session.whoami);
 
 	app.post('/device/register', apiKeyMiddleware, devices.register);
-	app.get('/device/v2/:uuid/state', apiKeyMiddleware, devices.state);
-	app.patch('/device/v2/:uuid/state', apiKeyMiddleware, devices.statePatch);
+	app.get(
+		'/device/v2/:uuid/state',
+		gracefullyDenyDeletedDevices,
+		apiKeyMiddleware,
+		devices.state,
+	);
+	app.patch(
+		'/device/v2/:uuid/state',
+		gracefullyDenyDeletedDevices,
+		apiKeyMiddleware,
+		devices.statePatch,
+	);
 	app.get('/device/v2/:uuid/logs', authorized, deviceLogs.read);
 	app.post(
 		'/device/v2/:uuid/logs',

@@ -2,6 +2,8 @@ import { reqHasPermission, getUser } from './auth';
 import { retrieveAPIKey } from './api-keys';
 import { RequestHandler } from 'express';
 
+import { resinApi, root } from './index';
+
 export const authenticated: RequestHandler = (req, res, next) =>
 	getUser(req, false)
 		.then(() => {
@@ -41,4 +43,33 @@ export const permissionRequired = (permission: string): RequestHandler => (
 	} else {
 		res.sendStatus(401);
 	}
+};
+
+export const gracefullyDenyDeletedDevices: RequestHandler = (
+	req,
+	res,
+	next,
+) => {
+	const { uuid } = req.params;
+
+	const returnCode = req.method == 'GET' ? 304 : 200;
+
+	return resinApi
+		.get({
+			resource: 'device/$count',
+			passthrough: { req: root },
+			options: {
+				$filter: {
+					uuid,
+				},
+			},
+		})
+		.then((devices: number) => {
+			if (devices == 0) {
+				res.sendStatus(returnCode);
+				return;
+			}
+
+			next();
+		});
 };
