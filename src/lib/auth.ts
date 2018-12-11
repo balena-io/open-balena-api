@@ -21,6 +21,7 @@ export const ROLES: {
 		`resin.device.update?${matchesActor}`,
 		`resin.supervisor_release.get?should_manage__device/any(d:d/${matchesActor})`,
 		`resin.application.read?${ownsDevice} or depends_on__application/any(a:a/${ownsDevice})`,
+		`resin.application_type.read`,
 		`resin.device_config_variable.get?device/any(d:d/${matchesActor} or d/belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice})))`,
 		`resin.device_config_variable.set?device/any(d:d/${matchesActor})`,
 		`resin.device_tag.get?device/any(d:d/${matchesActor})`,
