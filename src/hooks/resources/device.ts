@@ -326,9 +326,14 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		}
 
 		if (request.values.is_web_accessible) {
+			const rootApi = api.clone({
+				passthrough: {
+					req: root,
+				},
+			});
 			waitPromises.push(
 				getCurrentRequestAffectedIds(args).then(deviceIds =>
-					checkDevicesCanHaveDeviceURL(api, deviceIds),
+					checkDevicesCanHaveDeviceURL(rootApi, deviceIds),
 				),
 			);
 		}
