@@ -59,7 +59,6 @@ function onInitHooks() {
 }
 
 function createSuperuser() {
-
 	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } = require('./src/lib/config')
 
 	if (!SUPERUSER_EMAIL || !SUPERUSER_PASSWORD) {
@@ -69,18 +68,28 @@ function createSuperuser() {
 	console.log('Creating superuser account...')
 
 	const { runInTransaction, sbvrUtils } = require('./src/platform')
-	const { registerUser } = require('./src/platform/auth')
+	const { registerUser, updatePasswordIfNeeded } = require('./src/platform/auth')
 	const { ConflictError } = sbvrUtils
 
+	const data = {
+		username: 'root',
+		email: SUPERUSER_EMAIL,
+		password: SUPERUSER_PASSWORD
+	}
+
 	return runInTransaction(tx =>
-		registerUser({ username: 'root', email: SUPERUSER_EMAIL, password: SUPERUSER_PASSWORD }, tx),
+		registerUser(data, tx).then(() => {
+			console.log('Superuser created successfully!')
+		})
+		.catch(ConflictError, () => {
+			console.log('Superuser already exists!')
+			return updatePasswordIfNeeded(data.username, SUPERUSER_PASSWORD).then(updated => {
+				if (updated) {
+					console.log('Superuser password changed.')
+				}
+			})
+		})
 	)
-	.then(() => {
-		console.log('Superuser created successfully!')
-	})
-	.catch(ConflictError, () => {
-		console.log('Superuser already exists!')
-	})
 	.catch((err) => {
 		console.error('Error creating superuser:', err)
 	})
