@@ -15,7 +15,7 @@
     "build": "npm run clean && tsc --project . && copyup \"src/**/*.sbvr\" \"src/**/*.sql\" dist/",
     "clean": "rimraf dist/",
     "lint": "resin-lint --typescript src/ && tsc --noEmit --project .",
-    "prettify": "prettier --config ./node_modules/resin-lint/config/.prettierrc --write \"src/**/*.ts\" \"typings/**/*.ts\"",
+    "prettify": "prettier --config ./node_modules/resin-lint/config/.prettierrc --write index.js \"src/**/*.ts\" \"typings/**/*.ts\"",
     "prepare": "npm run build",
     "precommit": "lint-staged",
     "test": "npm run build && npm run lint"
