@@ -17,7 +17,7 @@ if (numWorkers > 1) {
 }
 
 // Use fast-boot to cache require lookups, speeding up startup
-require('fast-boot').start({
+require('fast-boot2').start({
 	cacheFile: '.fast-boot.json',
 });
 
