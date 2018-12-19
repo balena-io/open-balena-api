@@ -11,7 +11,12 @@ import { InternalRequestError } from '@resin/pinejs/out/sbvr-api/errors';
 
 const pseudoRandomBytesAsync = Promise.promisify(crypto.pseudoRandomBytes);
 
-const { BadRequestError, ConflictError, UnauthorizedError } = sbvrUtils;
+const {
+	BadRequestError,
+	ConflictError,
+	UnauthorizedError,
+	NotFoundError,
+} = sbvrUtils;
 
 const SUDO_TOKEN_VALIDITY = 20 * 60 * 1000;
 
@@ -23,6 +28,64 @@ export const userHasPermission = (
 		return false;
 	}
 	return _.includes(user.permissions, permission);
+};
+
+export const comparePassword = (password: string, hash: string) =>
+	sbvrUtils.sbvrTypes.Hashed.compare(password, hash);
+
+export const validatePassword = (password?: string) => {
+	if (!password) {
+		throw new Error('Password required.');
+	}
+	if (password.length < 8) {
+		throw new Error('Password must be at least 8 characters.');
+	}
+};
+
+// Think twice before using this function as it *unconditionally* sets the
+// password for the given user to the given string. This function will also
+// generate a new token secret, effectively invalidating all current login
+// sessions.
+export const setPassword = (user: AnyObject, newPassword: string, tx?: Tx) =>
+	generateNewJwtSecret().then(newJwtSecret =>
+		resinApi.patch({
+			resource: 'user',
+			id: user.id,
+			passthrough: {
+				req: root,
+				tx,
+			},
+			body: {
+				password: newPassword,
+				jwt_secret: newJwtSecret,
+				// erase password_reset_code once we have user-provided password
+				password_reset_code: null,
+				can_reset_password_until__expiry_date: null,
+			},
+		}),
+	);
+
+// Conditionally updates the password for the given user if it differs from
+// the one currently stored, using `setPassword()` which means that function's
+// caveats apply here as well.
+export const updatePasswordIfNeeded = (
+	usernameOrEmail: string,
+	newPassword: string,
+	tx?: Tx,
+): Promise<boolean> => {
+	return findUser(usernameOrEmail, tx).then((user: AnyObject | undefined) => {
+		if (user == null) {
+			throw new NotFoundError('User not found.');
+		}
+		return comparePassword(newPassword, user.password).then(match => {
+			if (match) {
+				return false;
+			}
+			return setPassword(user, newPassword, tx)
+				.return(true)
+				.catchReturn(false);
+		});
+	});
 };
 
 export const checkUserPassword = (
@@ -44,15 +107,11 @@ export const checkUserPassword = (
 			if (user == null) {
 				throw new BadRequestError('User not found.');
 			}
-
-			const hash = user.password;
-			return sbvrUtils.sbvrTypes.Hashed.compare(password, hash).then(
-				passwordIsOk => {
-					if (!passwordIsOk) {
-						throw new BadRequestError('Current password incorrect.');
-					}
-				},
-			);
+			return comparePassword(password, user.password).then(passwordIsOk => {
+				if (!passwordIsOk) {
+					throw new BadRequestError('Current password incorrect.');
+				}
+			});
 		});
 
 export const generateNewJwtSecret = (): Promise<string> =>

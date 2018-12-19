@@ -1,5 +1,9 @@
-import { findUser } from '../platform/auth';
-import { loginUserXHR, getUser } from '../platform/auth';
+import {
+	loginUserXHR,
+	findUser,
+	getUser,
+	comparePassword,
+} from '../platform/auth';
 import { sbvrUtils, resinApi, root } from '../platform';
 import { captureException, handleHttpErrors } from '../platform/errors';
 import { resetCounter } from '../lib/rate-limiting';
@@ -33,7 +37,7 @@ export const login: RequestHandler = (req, res) => {
 				throw new NotFoundError('User not found.');
 			}
 
-			return sbvrUtils.sbvrTypes.Hashed.compare(password, user.password)
+			return comparePassword(password, user.password)
 				.then(res => {
 					if (!res) {
 						throw new BadRequestError('Current password incorrect.');
