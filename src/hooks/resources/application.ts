@@ -191,6 +191,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'application', {
 					],
 					['application_config_variable', 'application'],
 					['application_environment_variable', 'application'],
+					['application_tag', 'application'],
 					['release', 'belongs_to__application'],
 					['service', 'application'],
 					['application', 'depends_on__application'],

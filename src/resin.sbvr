@@ -210,6 +210,9 @@ Term: status
 Term: supervisor version
 	Concept Type: Short Text (Type)
 
+Term: tag key
+	Concept Type: Short Text (Type)
+
 Term: title
 	Concept Type: Short Text (Type)
 
@@ -271,6 +274,10 @@ Term: application
 			Term Form: service environment variable
 			Database Table Name: service environment variable
 
+	Fact type: application has tag key
+		Term Form: application tag
+		Database Table Name: application tag
+
 Term: device
 	Concept Type: actor (Auth)
 
@@ -294,7 +301,15 @@ Term: device
 			Term Form: device service environment variable
 			Database Table Name: device service environment variable
 
+	Fact type: device has tag key
+		Term Form: device tag
+		Database Table Name: device tag
+
 Term: release
+
+Fact type: release has tag key
+	Term Form: release tag
+	Database Table Name: release tag
 
 Fact type: image is downloaded by device
 	Synonymous Form: device downloads image
@@ -540,6 +555,24 @@ Fact type: image environment variable has value
 
 Fact type: device service environment variable has value
 	Necessity: each device service environment variable has exactly one value.
+
+
+-- application tag
+
+Fact type: application tag has value
+	Necessity: each application tag has exactly one value.
+
+
+-- device tag
+
+Fact type: device tag has value
+	Necessity: each device tag has exactly one value.
+
+
+-- release tag
+
+Fact type: release tag has value
+	Necessity: each release tag has exactly one value.
 
 
 -- image install
