@@ -146,6 +146,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'release', releaseUpdateTimestampHook);
 sbvrUtils.addPureHook('POST', 'resin', 'release', releaseUpdateTimestampHook);
 
 addDeleteHookForDependents('release', [
+	['release_tag', 'release'],
 	['image__is_part_of__release', 'is_part_of__release'],
 	['image_install', 'is_provided_by__release'],
 ]);

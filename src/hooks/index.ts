@@ -19,4 +19,5 @@ import './resources/release';
 import './resources/service_install';
 import './resources/service_instance';
 import './resources/service';
+import './resources/tags';
 import './resources/user';

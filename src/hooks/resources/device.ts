@@ -495,6 +495,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 addDeleteHookForDependents('device', [
 	['device_config_variable', 'device'],
 	['device_environment_variable', 'device'],
+	['device_tag', 'device'],
 	['image_install', 'device'],
 	['service_install', 'device'],
 	['gateway_download', 'is_downloaded_by__device'],
