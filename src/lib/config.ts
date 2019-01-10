@@ -1,9 +1,8 @@
 import * as _ from 'lodash';
-import * as memoizee from 'memoizee';
 
 const openVpnConfig = `
 client
-remote VPN_DETAILS
+remote {{VPN_DETAILS}}
 resolv-retry infinite
 
 remote-cert-tls server
@@ -55,15 +54,6 @@ export function intVar<R>(varName: string, defaultValue?: R): number | R {
 	return i;
 }
 
-export const openVpnVar = memoizee(
-	(): string => {
-		return openVpnConfig.replace(
-			'remote VPN_DETAILS',
-			`remote ${requiredVar('VPN_HOST')} ${requiredVar('VPN_PORT')}`,
-		);
-	},
-)();
-
 export const API_HOST = requiredVar('API_HOST');
 export const API_VPN_SERVICE_API_KEY = requiredVar('API_VPN_SERVICE_API_KEY');
 export const AUTH_RESINOS_REGISTRY_CODE =
@@ -72,7 +62,10 @@ export const COOKIE_SESSION_SECRET = requiredVar('COOKIE_SESSION_SECRET');
 export const DB_POOL_SIZE = intVar('DB_POOL_SIZE', undefined);
 export const DELTA_HOST = requiredVar('DELTA_HOST');
 export const DEVICE_CONFIG_OPENVPN_CA = requiredVar('DEVICE_CONFIG_OPENVPN_CA');
-export const DEVICE_CONFIG_OPENVPN_CONFIG = openVpnVar;
+export const DEVICE_CONFIG_OPENVPN_CONFIG = openVpnConfig.replace(
+	'remote {{VPN_DETAILS}}',
+	`remote ${requiredVar('VPN_HOST')} ${requiredVar('VPN_PORT')}`,
+);
 export const DEVICE_CONFIG_SSH_AUTHORIZED_KEYS =
 	process.env.DEVICE_CONFIG_SSH_AUTHORIZED_KEYS || '';
 export const EXTERNAL_HTTP_TIMEOUT_MS = intVar(
