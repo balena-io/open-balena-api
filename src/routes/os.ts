@@ -13,7 +13,7 @@ export const getOsConfiguration = (
 	res.json({
 		services: {
 			openvpn: {
-				config: b64decode(DEVICE_CONFIG_OPENVPN_CONFIG),
+				config: DEVICE_CONFIG_OPENVPN_CONFIG,
 				ca: b64decode(DEVICE_CONFIG_OPENVPN_CA),
 			},
 			ssh: {

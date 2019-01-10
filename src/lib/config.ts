@@ -1,11 +1,37 @@
 import * as _ from 'lodash';
 
+const openVpnConfig = `
+client
+remote {{VPN_DETAILS}}
+resolv-retry infinite
+
+remote-cert-tls server
+ca /etc/openvpn/ca.crt
+auth-user-pass /var/volatile/vpn-auth
+auth-retry none
+script-security 2
+up /etc/openvpn-misc/upscript.sh
+up-restart
+down /etc/openvpn-misc/downscript.sh
+
+comp-lzo
+dev resin-vpn
+dev-type tun
+proto tcp
+nobind
+
+persist-key
+persist-tun
+verb 3
+user openvpn
+group openvpn
+`;
+
 export const requiredVar = (varName: string): string => {
 	const s = process.env[varName];
 	if (s == null) {
-		console.error(`Missing environment variable: ${varName}`);
-		process.exit(1);
-		throw new Error('Unreachable');
+		process.exitCode = 1;
+		throw new Error(`Missing environment variable: ${varName}`);
 	}
 	return s;
 };
@@ -36,8 +62,9 @@ export const COOKIE_SESSION_SECRET = requiredVar('COOKIE_SESSION_SECRET');
 export const DB_POOL_SIZE = intVar('DB_POOL_SIZE', undefined);
 export const DELTA_HOST = requiredVar('DELTA_HOST');
 export const DEVICE_CONFIG_OPENVPN_CA = requiredVar('DEVICE_CONFIG_OPENVPN_CA');
-export const DEVICE_CONFIG_OPENVPN_CONFIG = requiredVar(
-	'DEVICE_CONFIG_OPENVPN_CONFIG',
+export const DEVICE_CONFIG_OPENVPN_CONFIG = openVpnConfig.replace(
+	'remote {{VPN_DETAILS}}',
+	`remote ${requiredVar('VPN_HOST')} ${requiredVar('VPN_PORT')}`,
 );
 export const DEVICE_CONFIG_SSH_AUTHORIZED_KEYS =
 	process.env.DEVICE_CONFIG_SSH_AUTHORIZED_KEYS || '';
