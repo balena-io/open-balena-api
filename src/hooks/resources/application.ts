@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as Promise from 'bluebird';
 
-import * as deviceTypes from '../../lib/device-types';
+import { resolveDeviceType } from '../common';
 import { postDevices } from '../../lib/device-proxy';
 import { Default as DefaultApplicationType } from '../../lib/application-types';
 
@@ -68,7 +68,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 
 sbvrUtils.addPureHook('POST', 'resin', 'application', {
 	POSTPARSE: args => {
-		const { req, request } = args;
+		const { req, request, api } = args;
 		const appName = request.values.app_name;
 
 		if (request.values.application_type == null) {
@@ -79,12 +79,8 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 			throw new Error('App name may only contain [a-zA-Z0-9_-].');
 		}
 
-		return Promise.all([
-			deviceTypes
-				.normalizeDeviceType(request.values.device_type)
-				.then(deviceType => (request.values.device_type = deviceType)),
-			checkDependentApplication(args),
-		])
+		return resolveDeviceType(api, request, 'is_for__device_type')
+			.then(() => checkDependentApplication(args))
 			.then(() => {
 				request.values.VPN_host = VPN_HOST;
 				request.values.VPN_port = VPN_PORT;

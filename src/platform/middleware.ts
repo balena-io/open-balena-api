@@ -28,6 +28,12 @@ export const authorized: RequestHandler = (req, res, next) =>
 			res.sendStatus(401);
 		});
 
+export const identify: RequestHandler = (req, _res, next) =>
+	getUser(req, false).then(() => {
+		next();
+		return null;
+	});
+
 export const apiKeyMiddleware: RequestHandler = (req, _res, next) =>
 	// Note: this won't reply with 401 if there's no api key
 	retrieveAPIKey(req).asCallback(next);

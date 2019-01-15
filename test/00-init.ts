@@ -6,20 +6,18 @@ import * as path from 'path';
 const testFiles = _(process.env.TEST_FILES)
 	.trim()
 	.split(' ')
-	.map(
-		(fileName): ((f: string) => boolean) => {
-			const [op, ...rest] = fileName;
-			const compareFilename = rest.join('');
-			switch (op) {
-				case '<':
-					return f => f < compareFilename;
-				case '>':
-					return f => f > compareFilename;
-				default:
-					return f => f.startsWith(fileName);
-			}
-		},
-	);
+	.map((fileName): ((f: string) => boolean) => {
+		const [op, ...rest] = fileName;
+		const compareFilename = rest.join('');
+		switch (op) {
+			case '<':
+				return f => f < compareFilename;
+			case '>':
+				return f => f > compareFilename;
+			default:
+				return f => f.startsWith(fileName);
+		}
+	});
 
 const prefixes: Dictionary<true> = {};
 

@@ -15,11 +15,9 @@ async function onInitModel() {
 	const insert = _.cloneDeep(appTypes.Default);
 	const filter = { slug: insert.slug };
 	delete insert.slug;
-	return db
-		.transaction(tx =>
-			updateOrInsertModel('application_type', filter, insert, tx),
-		)
-		.return();
+	await db.transaction(tx =>
+		updateOrInsertModel('application_type', filter, insert, tx),
+	);
 }
 
 async function onInitHooks() {
@@ -29,6 +27,10 @@ async function onInitHooks() {
 	const permissionNames = _.uniq(
 		_.flatMap(auth.ROLES).concat(_.flatMap(auth.KEYS, 'permissions')),
 	);
+	const { setSyncMap } = await import('./src/lib/device-types');
+	setSyncMap({
+		name: { name: 'name' },
+	});
 	return db
 		.transaction(tx =>
 			createAll(tx, permissionNames, auth.ROLES, auth.KEYS, {}),
@@ -85,6 +87,12 @@ export const app = express();
 app.enable('trust proxy');
 
 const doRunTests = (process.env.RUN_TESTS || '').trim() === '1';
+
+// we have to load some mocks before the app starts...
+if (doRunTests) {
+	console.log('Loading mocks...');
+	import('./test/test-lib/init_mocks');
+}
 
 setup(app, {
 	config,
