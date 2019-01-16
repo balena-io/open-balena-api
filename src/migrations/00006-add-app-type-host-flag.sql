@@ -1,0 +1,1 @@
+ALTER TABLE "application type" ADD COLUMN "is host os" INTEGER DEFAULT 0 NOT NULL;

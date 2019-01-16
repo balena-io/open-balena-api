@@ -346,6 +346,7 @@ Fact type: application type needs os version range
 	Necessity: each application type needs at most one os version range
 Fact type: application type requires payment
 Fact type: application type is legacy
+Fact type: application type is host os
 Fact type: application type has slug
 	Necessity: each application type has exactly one slug
 	Necessity: each slug is of exactly one application type
