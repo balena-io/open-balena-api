@@ -60,6 +60,7 @@ const getStore = _.once(() => {
 
 	const opts: ExpressBruteRedisOpts = {
 		client,
+		prefix: 'api:ratelimiting:',
 	};
 
 	const redisStore = new ExpressBruteRedis(opts);
