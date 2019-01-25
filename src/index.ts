@@ -57,6 +57,14 @@ export function setup(app: _express.Application, options: SetupOptions) {
 
 	app.disable('x-powered-by');
 
+	app.use('/connectivity-check', (_req, res) => {
+		res.status(204);
+		// Remove some automatically added headers, we want the response to be as small as possible
+		res.removeHeader('ETag');
+		res.removeHeader('Date');
+		res.end();
+	});
+
 	if (SENTRY_DSN != null) {
 		Raven.config(SENTRY_DSN, {
 			captureUnhandledRejections: true,
