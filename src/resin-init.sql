@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 ALTER TABLE "user"
 ALTER COLUMN "password" DROP NOT NULL;
 
@@ -41,7 +43,7 @@ CREATE INDEX IF NOT EXISTS "device_device_type_idx"
 ON "device" ("device type");
 
 CREATE INDEX IF NOT EXISTS "image_is_stored_at_image_location_idx"
-ON "image" ("is stored at-image location");
+ON "image" USING GIN ("is stored at-image location" gin_trgm_ops);
 
 CREATE INDEX IF NOT EXISTS "image_install_installs_image_idx"
 ON "image install" ("installs-image");
