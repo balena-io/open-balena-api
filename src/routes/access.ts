@@ -8,7 +8,7 @@ import { captureException } from '../platform/errors';
 
 const { UnauthorizedError } = sbvrUtils;
 
-const HOSTOS_ACCESS_MIN_RESINOS_VER = '2.0.0';
+const HOSTOS_ACCESS_MIN_OS_VER = '2.0.0';
 
 export function hostOSAccess(
 	req: express.Request,
@@ -78,8 +78,8 @@ export function hostOSAccess(
 						return;
 					}
 
-					// Users are allowed to access hostOS for devices with resinOS >= HOSTOS_ACCESS_MIN_RESINOS_VER
-					if (rSemver.gte(device.os_version, HOSTOS_ACCESS_MIN_RESINOS_VER)) {
+					// Users are allowed to access hostOS for devices with version >= HOSTOS_ACCESS_MIN_OS_VER
+					if (rSemver.gte(device.os_version, HOSTOS_ACCESS_MIN_OS_VER)) {
 						res.sendStatus(200);
 						return;
 					}
