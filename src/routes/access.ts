@@ -8,7 +8,7 @@ import { captureException } from '../platform/errors';
 
 const { UnauthorizedError } = sbvrUtils;
 
-const HOSTOS_ACCESS_MIN_RESINOS_VER = '2.7.5';
+const HOSTOS_ACCESS_MIN_RESINOS_VER = '2.0.0';
 
 export function hostOSAccess(
 	req: express.Request,
