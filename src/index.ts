@@ -39,6 +39,7 @@ export interface SetupFunction {
 export interface SetupOptions {
 	configPath: string; // must be absolute or relative to `process.cwd()`
 	version?: string; // this will be reported along with exceptions to Sentry
+	skipHttpsPaths?: string[]; // a list of paths which should be exempt from https redirection
 
 	onInit?: SetupFunction;
 	onInitMiddleware?: SetupFunction;
@@ -66,7 +67,9 @@ export function setup(app: _express.Application, options: SetupOptions) {
 
 	// redirect to https if needed, except for requests to
 	// the /ping endpoint which must always return 200
-	app.use(fixProtocolMiddleware(['/ping']));
+	app.use(
+		fixProtocolMiddleware(['/ping'].concat(options.skipHttpsPaths || [])),
+	);
 
 	app.use((_req, res, next) => {
 		res.set('X-Frame-Options', 'DENY');
