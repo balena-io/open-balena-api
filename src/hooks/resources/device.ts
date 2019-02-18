@@ -464,15 +464,19 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		if (args.request.values.should_be_running__release !== undefined) {
 			// If the device has been pinned, we should alert the supervisor
 			waitPromises.push(
-				affectedIds.then(deviceIds =>
-					postDevices({
+				affectedIds.then(deviceIds => {
+					if (deviceIds.length === 0) {
+						return;
+					}
+
+					return postDevices({
 						url: '/v1/update',
 						req: root,
 						filter: { id: { $in: deviceIds } },
 						// Don't wait for the posts to complete, as they may take a long time
 						wait: false,
-					}),
-				),
+					});
+				}),
 			);
 
 			// If the device was preloaded, and then pinned, service_installs do not exist
