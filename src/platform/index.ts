@@ -23,7 +23,7 @@ if (!resinApi || !authApi) {
 
 // TODO: Potential races here. They are unlikely but not impossible. Will fix
 // in subsequent PR.
-const _getOrInsertId = (
+const $getOrInsertId = (
 	api: sbvrUtils.PinejsClient,
 	resource: string,
 	body: AnyObject,
@@ -104,12 +104,12 @@ export const getOrInsertId = (
 	resource: string,
 	body: AnyObject,
 	tx?: Tx,
-): Promise<{ id: number }> => _getOrInsertId(authApi, resource, body, tx);
+): Promise<{ id: number }> => $getOrInsertId(authApi, resource, body, tx);
 export const getOrInsertModelId = (
 	resource: string,
 	body: AnyObject,
 	tx?: Tx,
-): Promise<{ id: number }> => _getOrInsertId(resinApi, resource, body, tx);
+): Promise<{ id: number }> => $getOrInsertId(resinApi, resource, body, tx);
 
 export const updateOrInsert = (
 	resource: string,
