@@ -132,30 +132,35 @@ export const checkDevicesCanBeInApplication = (
 						},
 					},
 				})
-				.each((device: AnyObject) => {
-					if (device.os_version == null && device.supervisor_version != null) {
-						throw new DeviceOSVersionIsTooLow(
-							`Device ${
-								device.device_name
-							} is too old to satisfy required version range: ${
-								appType.needs__os_version_range
-							}`,
-						);
-					}
-					if (
-						device.os_version != null &&
-						!resinSemver.satisfies(
-							device.os_version,
-							appType.needs__os_version_range,
-						)
-					) {
-						throw new DeviceOSVersionIsTooLow(
-							`Device ${device.device_name} has OS version ${
-								device.os_version
-							} but needs to satisfy version range: ${
-								appType.needs__os_version_range
-							}`,
-						);
+				.then((devices: AnyObject[]) => {
+					for (const device of devices) {
+						if (
+							device.os_version == null &&
+							device.supervisor_version != null
+						) {
+							throw new DeviceOSVersionIsTooLow(
+								`Device ${
+									device.device_name
+								} is too old to satisfy required version range: ${
+									appType.needs__os_version_range
+								}`,
+							);
+						}
+						if (
+							device.os_version != null &&
+							!resinSemver.satisfies(
+								device.os_version,
+								appType.needs__os_version_range,
+							)
+						) {
+							throw new DeviceOSVersionIsTooLow(
+								`Device ${device.device_name} has OS version ${
+									device.os_version
+								} but needs to satisfy version range: ${
+									appType.needs__os_version_range
+								}`,
+							);
+						}
 					}
 				})
 				.return();
