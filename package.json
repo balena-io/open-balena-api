@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@resin.io/device-types": "^10.5.0",
-    "@resin/pinejs": "^10.1.0",
+    "@resin/pinejs": "^10.6.1",
     "@types/basic-auth": "^1.1.2",
     "@types/bluebird": "^3.5.25",
     "@types/cookie-session": "^2.0.36",
@@ -41,7 +41,7 @@
     "@types/request": "^2.48.1",
     "array-sort": "^1.0.0",
     "avsc": "^5.4.7",
-    "aws-sdk": "^2.417.0",
+    "aws-sdk": "^2.418.0",
     "basic-auth": "^2.0.1",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
