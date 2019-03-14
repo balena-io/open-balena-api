@@ -20,6 +20,7 @@ export const WHITELISTED_NAMES = [
 	'RESIN_SUPERVISOR_UPDATE_STRATEGY',
 	'RESIN_SUPERVISOR_VPN_CONTROL',
 	'RESIN_SUPERVISOR_PERSISTENT_LOGGING',
+	'RESIN_SUPERVISOR_INSTANT_UPDATE_TRIGGER',
 	'BALENA_APP_RESTART_POLICY',
 	'BALENA_APP_RESTART_RETRIES',
 	'BALENA_DEPENDENT_DEVICES_HOOK_ADDRESS',
@@ -31,6 +32,7 @@ export const WHITELISTED_NAMES = [
 	'BALENA_SUPERVISOR_UPDATE_STRATEGY',
 	'BALENA_SUPERVISOR_VPN_CONTROL',
 	'BALENA_SUPERVISOR_PERSISTENT_LOGGING',
+	'BALENA_SUPERVISOR_INSTANT_UPDATE_TRIGGER',
 ];
 
 // Config variable namespaces that are allowed to be set by frontend components
@@ -96,6 +98,12 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		description:
 			'Enable persistent logging. Only supported by supervisor versions >= v7.15.0.',
 		default: 'false',
+	},
+	RESIN_SUPERVISOR_INSTANT_UPDATE_TRIGGER: {
+		enum: ['false', 'true'],
+		description:
+			'Enable/disable triggering updates instantly on startup or after pushing a release. Only supported by supervisor versions >= v9.13.0.',
+		default: 'true',
 	},
 };
 
