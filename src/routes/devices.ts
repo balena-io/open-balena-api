@@ -27,6 +27,7 @@ import {
 	formatImageLocation,
 	filterDeviceConfig,
 } from '../lib/device-state';
+import { db } from '@resin/pinejs/out/sbvr-api/sbvr-utils';
 
 export { proxy } from '../lib/device-proxy';
 
@@ -276,370 +277,372 @@ export const state: RequestHandler = (req, res) => {
 		return res.send(400);
 	}
 
-	const resinApiTx = resinApi.clone({ passthrough: { req } });
+	db.readTransaction!(tx => {
+		const resinApiTx = resinApi.clone({ passthrough: { req, tx } });
 
-	return resinApiTx
-		.get({
-			resource: 'device',
-			options: {
-				$select: ['device_name', 'os_version'],
-				$filter: { uuid },
-				$expand: {
-					device_config_variable: {
-						$select: ['name', 'value'],
-					},
-					device_environment_variable: {
-						$select: ['env_var_name', 'value'],
-					},
-					should_be_running__release: {
-						$select: ['id', 'commit', 'composition'],
-						$expand: {
-							contains__image: {
-								$select: ['id'],
-								$expand: {
-									image: {
-										$select: [
-											'id',
-											'is_stored_at__image_location',
-											'content_hash',
-											'is_a_build_of__service',
-										],
-									},
-									image_label: {
-										$select: ['label_name', 'value'],
-									},
-									image_environment_variable: {
-										$select: ['name', 'value'],
-									},
-								},
-							},
+		return resinApiTx
+			.get({
+				resource: 'device',
+				options: {
+					$select: ['device_name', 'os_version'],
+					$filter: { uuid },
+					$expand: {
+						device_config_variable: {
+							$select: ['name', 'value'],
 						},
-					},
-					service_install: {
-						$select: ['id'],
-						$expand: {
-							service: {
-								$select: ['id', 'service_name'],
-								$expand: {
-									service_environment_variable: {
-										$select: ['name', 'value'],
-									},
-									service_label: {
-										$select: ['label_name', 'value'],
-									},
-								},
-							},
-							device_service_environment_variable: {
-								$select: ['name', 'value'],
-							},
+						device_environment_variable: {
+							$select: ['env_var_name', 'value'],
 						},
-					},
-					belongs_to__application: {
-						$select: ['id', 'app_name', 'commit'],
-						$expand: {
-							application_config_variable: {
-								$select: ['name', 'value'],
-							},
-							application_environment_variable: {
-								$select: ['env_var_name', 'value'],
-							},
-							is_depended_on_by__application: {
-								$select: ['id', 'app_name', 'commit'],
-								$expand: {
-									application_config_variable: {
-										$select: ['name', 'value'],
-									},
-									application_environment_variable: {
-										$select: ['env_var_name', 'value'],
-									},
-								},
-							},
-						},
-					},
-					manages__device: {
-						$select: ['id', 'uuid', 'device_name'],
-						$expand: {
-							belongs_to__application: {
-								$select: ['id', 'depends_on__application', 'commit'],
-								$expand: {
-									service: {
-										$select: ['id'],
-										$top: 1,
-										$expand: {
-											service_environment_variable: {
-												$select: ['name', 'value'],
-											},
+						should_be_running__release: {
+							$select: ['id', 'commit', 'composition'],
+							$expand: {
+								contains__image: {
+									$select: ['id'],
+									$expand: {
+										image: {
+											$select: [
+												'id',
+												'is_stored_at__image_location',
+												'content_hash',
+												'is_a_build_of__service',
+											],
+										},
+										image_label: {
+											$select: ['label_name', 'value'],
+										},
+										image_environment_variable: {
+											$select: ['name', 'value'],
 										},
 									},
 								},
 							},
-							service_install: {
-								$select: ['id'],
-								$top: 1,
-								$expand: {
-									device_service_environment_variable: {
-										$select: ['name', 'value'],
+						},
+						service_install: {
+							$select: ['id'],
+							$expand: {
+								service: {
+									$select: ['id', 'service_name'],
+									$expand: {
+										service_environment_variable: {
+											$select: ['name', 'value'],
+										},
+										service_label: {
+											$select: ['label_name', 'value'],
+										},
 									},
-									service: {
-										$select: ['id'],
-										$expand: {
-											service_environment_variable: {
-												$select: ['name', 'value'],
-											},
+								},
+								device_service_environment_variable: {
+									$select: ['name', 'value'],
+								},
+							},
+						},
+						belongs_to__application: {
+							$select: ['id', 'app_name', 'commit'],
+							$expand: {
+								application_config_variable: {
+									$select: ['name', 'value'],
+								},
+								application_environment_variable: {
+									$select: ['env_var_name', 'value'],
+								},
+								is_depended_on_by__application: {
+									$select: ['id', 'app_name', 'commit'],
+									$expand: {
+										application_config_variable: {
+											$select: ['name', 'value'],
+										},
+										application_environment_variable: {
+											$select: ['env_var_name', 'value'],
 										},
 									},
 								},
 							},
-							device_config_variable: {
-								$select: ['name', 'value'],
-							},
-							device_environment_variable: {
-								$select: ['env_var_name', 'value'],
+						},
+						manages__device: {
+							$select: ['id', 'uuid', 'device_name'],
+							$expand: {
+								belongs_to__application: {
+									$select: ['id', 'depends_on__application', 'commit'],
+									$expand: {
+										service: {
+											$select: ['id'],
+											$top: 1,
+											$expand: {
+												service_environment_variable: {
+													$select: ['name', 'value'],
+												},
+											},
+										},
+									},
+								},
+								service_install: {
+									$select: ['id'],
+									$top: 1,
+									$expand: {
+										device_service_environment_variable: {
+											$select: ['name', 'value'],
+										},
+										service: {
+											$select: ['id'],
+											$expand: {
+												service_environment_variable: {
+													$select: ['name', 'value'],
+												},
+											},
+										},
+									},
+								},
+								device_config_variable: {
+									$select: ['name', 'value'],
+								},
+								device_environment_variable: {
+									$select: ['env_var_name', 'value'],
+								},
 							},
 						},
 					},
 				},
-			},
-		})
-		.then(([device]: AnyObject[]) => {
-			if (!device) {
-				throw new UnauthorizedError();
-			}
-
-			return getReleaseForDevice(resinApiTx, device).then(release => {
-				const services: AnyObject = {};
-
-				const local = {
-					name: device.device_name,
-					config: {} as AnyObject,
-					apps: {} as AnyObject[],
-				};
-
-				// Device and application config variables
-				varListInsert(
-					device.belongs_to__application[0].application_config_variable,
-					local.config,
-				);
-				varListInsert(device.device_config_variable, local.config);
-				local.config = filterDeviceConfig(local.config, device.os_version);
-
-				setMinPollInterval(local.config);
-
-				let composition: AnyObject | undefined = undefined;
-				if (release != null) {
-					// Parse the composition to forward values to the device
-					if (_.isObject(release.composition)) {
-						composition = release.composition;
-					} else {
-						try {
-							composition = JSON.parse(release.composition);
-						} catch (e) {
-							composition = {};
-						}
-					}
-
-					_.each(release.contains__image, ipr => {
-						// extract the per-image information
-						const image = ipr.image[0];
-						let labelList = ipr.image_label || [];
-						let envVars = ipr.image_environment_variable;
-
-						const si = serviceInstallFromImage(device, image);
-						if (si == null) {
-							throw new Error('Could not find service install');
-						}
-						const svc = si.service[0];
-
-						// generate the environment and labels objects
-						labelList = labelList.concat(svc.service_label);
-						envVars = envVars
-							.concat(
-								device.belongs_to__application[0]
-									.application_environment_variable,
-							)
-							.concat(svc.service_environment_variable)
-							.concat(device.device_environment_variable)
-							.concat(si.device_service_environment_variable);
-
-						const labels: AnyObject = {};
-						_.each(labelList, ({ label_name, value }) => {
-							labels[label_name] = value;
-						});
-
-						_.each(ConfigurationVarsToLabels, (labelName, confName) => {
-							if (confName in local.config && !(labelName in labels)) {
-								labels[labelName] = local.config[confName];
-							}
-						});
-
-						const environment = {};
-						varListInsert(envVars, environment);
-
-						const imgRegistry =
-							image.is_stored_at__image_location +
-							(image.content_hash != null ? `@${image.content_hash}` : '');
-
-						services[svc.id] = {
-							imageId: image.id,
-							serviceName: svc.service_name,
-							image: formatImageLocation(imgRegistry),
-							// This needs spoken about...
-							running: true,
-							environment,
-							labels,
-						};
-
-						if (
-							composition != null &&
-							composition.services != null &&
-							composition.services[svc.service_name] != null
-						) {
-							_.each(composition.services[svc.service_name], (v, k) => {
-								if (
-									!_.includes(
-										[
-											'build',
-											'image',
-											'imageId',
-											'serviceName',
-											'labels',
-											'environment',
-										],
-										k,
-									)
-								) {
-									services[svc.id][k] = v;
-								}
-								return true;
-							});
-						}
-					});
+			})
+			.then(([device]: AnyObject[]) => {
+				if (!device) {
+					throw new UnauthorizedError();
 				}
 
-				const volumes = composition != null ? composition.volumes || {} : {};
-				const networks = composition != null ? composition.networks || {} : {};
+				return getReleaseForDevice(resinApiTx, device).then(release => {
+					const services: AnyObject = {};
 
-				const parentApp = device.belongs_to__application[0];
-				local.apps[parentApp.id] = {
-					name: parentApp.app_name,
-					commit: release == null ? undefined : release.commit,
-					releaseId: release == null ? undefined : release.id,
-					services,
-					volumes,
-					networks,
-				};
+					const local = {
+						name: device.device_name,
+						config: {} as AnyObject,
+						apps: {} as AnyObject[],
+					};
 
-				const dependent = {
-					apps: {} as AnyObject,
-					devices: {} as AnyObject,
-				};
+					// Device and application config variables
+					varListInsert(
+						device.belongs_to__application[0].application_config_variable,
+						local.config,
+					);
+					varListInsert(device.device_config_variable, local.config);
+					local.config = filterDeviceConfig(local.config, device.os_version);
 
-				const depReleases: AnyObject = {};
+					setMinPollInterval(local.config);
 
-				return Promise.map(
-					(parentApp.is_depended_on_by__application || []) as AnyObject[],
-					depApp =>
-						// get the release for this application
-						releaseFromApp(resinApiTx, depApp, true)
-							.then(release => {
-								dependent.apps[depApp.id] = {
-									name: depApp.app_name,
-									parentApp: parentApp.id,
-									config: {},
-								};
+					let composition: AnyObject | undefined = undefined;
+					if (release != null) {
+						// Parse the composition to forward values to the device
+						if (_.isObject(release.composition)) {
+							composition = release.composition;
+						} else {
+							try {
+								composition = JSON.parse(release.composition);
+							} catch (e) {
+								composition = {};
+							}
+						}
 
-								depReleases[depApp.id] = release;
+						_.each(release.contains__image, ipr => {
+							// extract the per-image information
+							const image = ipr.image[0];
+							let labelList = ipr.image_label || [];
+							let envVars = ipr.image_environment_variable;
 
-								const image = _.get(release, 'contains__image[0].image[0]');
-								if (release != null && image != null) {
-									_.merge(dependent.apps[depApp.id], {
-										releaseId: release.id,
-										imageId: image.id,
-										commit: depApp.commit,
-										image: formatImageLocation(
-											image.is_stored_at__image_location,
-										),
-									});
+							const si = serviceInstallFromImage(device, image);
+							if (si == null) {
+								throw new Error('Could not find service install');
+							}
+							const svc = si.service[0];
+
+							// generate the environment and labels objects
+							labelList = labelList.concat(svc.service_label);
+							envVars = envVars
+								.concat(
+									device.belongs_to__application[0]
+										.application_environment_variable,
+								)
+								.concat(svc.service_environment_variable)
+								.concat(device.device_environment_variable)
+								.concat(si.device_service_environment_variable);
+
+							const labels: AnyObject = {};
+							_.each(labelList, ({ label_name, value }) => {
+								labels[label_name] = value;
+							});
+
+							_.each(ConfigurationVarsToLabels, (labelName, confName) => {
+								if (confName in local.config && !(labelName in labels)) {
+									labels[labelName] = local.config[confName];
 								}
-								if (depApp.application_config_variable != null) {
-									varListInsert(
-										depApp.application_config_variable,
-										dependent.apps[depApp.id].config,
-									);
-								}
-							})
-							.then(() => {
-								_.each(device.manages__device as AnyObject[], depDev => {
-									dependent.devices[depDev.uuid] = {
-										name: depDev.device_name,
-										apps: {
-											[depDev.belongs_to__application[0].id]: {
-												config: {},
-												environment: {},
-											},
-										},
+							});
+
+							const environment = {};
+							varListInsert(envVars, environment);
+
+							const imgRegistry =
+								image.is_stored_at__image_location +
+								(image.content_hash != null ? `@${image.content_hash}` : '');
+
+							services[svc.id] = {
+								imageId: image.id,
+								serviceName: svc.service_name,
+								image: formatImageLocation(imgRegistry),
+								// This needs spoken about...
+								running: true,
+								environment,
+								labels,
+							};
+
+							if (
+								composition != null &&
+								composition.services != null &&
+								composition.services[svc.service_name] != null
+							) {
+								_.each(composition.services[svc.service_name], (v, k) => {
+									if (
+										!_.includes(
+											[
+												'build',
+												'image',
+												'imageId',
+												'serviceName',
+												'labels',
+												'environment',
+											],
+											k,
+										)
+									) {
+										services[svc.id][k] = v;
+									}
+									return true;
+								});
+							}
+						});
+					}
+
+					const volumes = composition != null ? composition.volumes || {} : {};
+					const networks =
+						composition != null ? composition.networks || {} : {};
+
+					const parentApp = device.belongs_to__application[0];
+					local.apps[parentApp.id] = {
+						name: parentApp.app_name,
+						commit: release == null ? undefined : release.commit,
+						releaseId: release == null ? undefined : release.id,
+						services,
+						volumes,
+						networks,
+					};
+
+					const dependent = {
+						apps: {} as AnyObject,
+						devices: {} as AnyObject,
+					};
+
+					const depReleases: AnyObject = {};
+
+					return Promise.map(
+						(parentApp.is_depended_on_by__application || []) as AnyObject[],
+						depApp =>
+							// get the release for this application
+							releaseFromApp(resinApiTx, depApp, true)
+								.then(release => {
+									dependent.apps[depApp.id] = {
+										name: depApp.app_name,
+										parentApp: parentApp.id,
+										config: {},
 									};
-									const app: AnyObject =
-										dependent.devices[depDev.uuid].apps[
-											depDev.belongs_to__application[0].id
-										];
-									varListInsert(depDev.device_config_variable, app.config);
 
-									release = depReleases[depDev.belongs_to__application[0].id];
+									depReleases[depApp.id] = release;
 
 									const image = _.get(release, 'contains__image[0].image[0]');
-									const svcInstall =
-										image == null
-											? null
-											: serviceInstallFromImage(depDev, image);
+									if (release != null && image != null) {
+										_.merge(dependent.apps[depApp.id], {
+											releaseId: release.id,
+											imageId: image.id,
+											commit: depApp.commit,
+											image: formatImageLocation(
+												image.is_stored_at__image_location,
+											),
+										});
+									}
+									if (depApp.application_config_variable != null) {
+										varListInsert(
+											depApp.application_config_variable,
+											dependent.apps[depApp.id].config,
+										);
+									}
+								})
+								.then(() => {
+									_.each(device.manages__device as AnyObject[], depDev => {
+										dependent.devices[depDev.uuid] = {
+											name: depDev.device_name,
+											apps: {
+												[depDev.belongs_to__application[0].id]: {
+													config: {},
+													environment: {},
+												},
+											},
+										};
+										const app: AnyObject =
+											dependent.devices[depDev.uuid].apps[
+												depDev.belongs_to__application[0].id
+											];
+										varListInsert(depDev.device_config_variable, app.config);
 
-									if (image != null) {
+										release = depReleases[depDev.belongs_to__application[0].id];
+
+										const image = _.get(release, 'contains__image[0].image[0]');
+										const svcInstall =
+											image == null
+												? null
+												: serviceInstallFromImage(depDev, image);
+
+										if (image != null) {
+											varListInsert(
+												image.image_environment_variable,
+												app.environment,
+											);
+										}
 										varListInsert(
-											image.image_environment_variable,
+											depApp.application_environment_variable,
 											app.environment,
 										);
-									}
-									varListInsert(
-										depApp.application_environment_variable,
-										app.environment,
-									);
-									if (
-										svcInstall != null &&
-										svcInstall.service != null &&
-										svcInstall.service[0] != null
-									) {
+										if (
+											svcInstall != null &&
+											svcInstall.service != null &&
+											svcInstall.service[0] != null
+										) {
+											varListInsert(
+												svcInstall.service[0].service_environment_variable,
+												app.environment,
+											);
+										}
 										varListInsert(
-											svcInstall.service[0].service_environment_variable,
+											depDev.device_environment_variable,
 											app.environment,
 										);
-									}
-									varListInsert(
-										depDev.device_environment_variable,
-										app.environment,
-									);
-									if (svcInstall != null) {
-										varListInsert(
-											svcInstall.device_service_environment_variable,
-											app.environment,
-										);
-									}
-								});
-							}),
-				).then(() => {
-					res.json({
-						local,
-						dependent,
+										if (svcInstall != null) {
+											varListInsert(
+												svcInstall.device_service_environment_variable,
+												app.environment,
+											);
+										}
+									});
+								}),
+					).then(() => {
+						res.json({
+							local,
+							dependent,
+						});
 					});
 				});
 			});
-		})
-		.catch(err => {
-			if (handleHttpErrors(req, res, err)) {
-				return;
-			}
-			captureException(err, 'Error getting device state', { req });
-			res.sendStatus(500);
-		});
+	}).catch(err => {
+		if (handleHttpErrors(req, res, err)) {
+			return;
+		}
+		captureException(err, 'Error getting device state', { req });
+		res.sendStatus(500);
+	});
 };
 
 const upsertImageInstall = (
