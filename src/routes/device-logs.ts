@@ -213,8 +213,7 @@ export const store: RequestHandler = wrapInTransaction(
 			})
 			.catch(handleStoreErrors(req, res));
 	},
-	// We have to cast as any otherwise tsc fails with `Cannot read property 'length' of undefined`
-) as any;
+);
 
 export function storeStream(req: Request, res: Response) {
 	const api = resinApi.clone({ passthrough: { req } });

@@ -155,14 +155,6 @@ export const wrapInTransaction = <F extends TxFn>(
 		return db.transaction(tx => fn.apply(this, [tx, ...args]));
 	};
 
-export const runInTransaction = <F extends TxFn>(
-	fn: F,
-	...args: TxFnArgs<F>
-): Promise<ResolvableReturnType<F>> => {
-	const wrappedFn = wrapInTransaction(fn);
-	return wrappedFn(...args);
-};
-
 // Hook helpers
 
 export const getCurrentRequestAffectedIds: typeof sbvrUtils.getAffectedIds = args => {

@@ -7,13 +7,7 @@ import {
 	handleHttpErrors,
 } from '../platform/errors';
 
-import {
-	resinApi,
-	runInTransaction,
-	root,
-	sbvrUtils,
-	PinejsClient,
-} from '../platform';
+import { resinApi, root, sbvrUtils, PinejsClient, db } from '../platform';
 import { checkInt, isValidInteger, getIP, varListInsert } from '../lib/utils';
 import { createDeviceApiKey } from '../lib/api-keys';
 import * as randomstring from 'randomstring';
@@ -27,7 +21,6 @@ import {
 	formatImageLocation,
 	filterDeviceConfig,
 } from '../lib/device-state';
-import { db } from '@resin/pinejs/out/sbvr-api/sbvr-utils';
 
 export { proxy } from '../lib/device-proxy';
 
@@ -71,7 +64,7 @@ export const register: RequestHandler = (req, res) =>
 			req.apiKey.permissions.push('resin.device.create-device-api-key');
 		}
 
-		return runInTransaction(tx =>
+		return db.transaction(tx =>
 			resinApi
 				.post({
 					resource: 'device',
