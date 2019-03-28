@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
 import * as Promise from 'bluebird';
 
+import { RequiredField } from '@resin/pinejs/out/sbvr-api/common-types';
+
 import { Tx } from '@resin/pinejs/out/database-layer/db';
 export { Tx } from '@resin/pinejs/out/database-layer/db';
 
@@ -15,7 +17,13 @@ export type PinejsClient = sbvrUtils.PinejsClient;
 
 export const resinApi = sbvrUtils.api.resin;
 export const authApi = sbvrUtils.api.Auth;
-export const { db, root } = sbvrUtils;
+export const { root } = sbvrUtils;
+const { db: maybeDB } = sbvrUtils;
+if (maybeDB.readTransaction == null) {
+	throw new Error('`readTransaction` is unsupported');
+}
+
+export const db = maybeDB as RequiredField<typeof maybeDB, 'readTransaction'>;
 
 if (!resinApi || !authApi) {
 	throw new Error('PineJS is not initialized!');

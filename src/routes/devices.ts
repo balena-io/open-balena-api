@@ -270,7 +270,7 @@ export const state: RequestHandler = (req, res) => {
 		return res.send(400);
 	}
 
-	db.readTransaction!(tx => {
+	db.readTransaction(tx => {
 		const resinApiTx = resinApi.clone({ passthrough: { req, tx } });
 
 		return resinApiTx
