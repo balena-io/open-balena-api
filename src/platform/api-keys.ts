@@ -2,14 +2,7 @@ import * as Promise from 'bluebird';
 import * as randomstring from 'randomstring';
 import * as _ from 'lodash';
 import { isJWT } from './jwt';
-import {
-	runInTransaction,
-	Tx,
-	sbvrUtils,
-	resinApi,
-	authApi,
-	root,
-} from './index';
+import { Tx, sbvrUtils, resinApi, authApi, root, db } from './index';
 import { Request } from 'express';
 
 interface ApiKeyOptions {
@@ -126,7 +119,7 @@ export const createApiKey = Promise.method(
 				options as InternalApiKeyOptions,
 			);
 		} else {
-			return runInTransaction(tx => {
+			return db.transaction(tx => {
 				options.tx = tx;
 				return _createApiKey(
 					actorType,

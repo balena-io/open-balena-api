@@ -35,24 +35,24 @@ function onInitMiddleware(app) {
 }
 
 function onInitModel() {
-	const { runInTransaction, updateOrInsertModel } = require('./src/platform');
+	const { db, updateOrInsertModel } = require('./src/platform');
 	const appTypes = require('./src/lib/application-types');
 	const insert = _.cloneDeep(appTypes.Default);
 	const filter = { slug: insert.slug };
 	delete insert.slug;
-	return runInTransaction(tx =>
+	return db.transaction(tx =>
 		updateOrInsertModel('application_type', filter, insert, tx),
 	);
 }
 
 function onInitHooks() {
-	const { runInTransaction } = require('./src/platform');
+	const { db } = require('./src/platform');
 	const { createAll } = require('./src/platform/permissions');
 	const auth = require('./src/lib/auth');
 	const permissionNames = _.uniq(
 		_.flatMap(auth.ROLES).concat(_.flatMap(auth.KEYS, 'permissions')),
 	);
-	return runInTransaction(tx =>
+	return db.transaction(tx =>
 		createAll(tx, permissionNames, auth.ROLES, auth.KEYS, {}),
 	);
 }
@@ -66,7 +66,7 @@ function createSuperuser() {
 
 	console.log('Creating superuser account...');
 
-	const { runInTransaction, sbvrUtils } = require('./src/platform');
+	const { db, sbvrUtils } = require('./src/platform');
 	const {
 		registerUser,
 		updatePasswordIfNeeded,
@@ -79,7 +79,7 @@ function createSuperuser() {
 		password: SUPERUSER_PASSWORD,
 	};
 
-	return runInTransaction(tx =>
+	return db.transaction(tx =>
 		registerUser(data, tx)
 			.then(() => {
 				console.log('Superuser created successfully!');
