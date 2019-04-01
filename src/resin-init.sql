@@ -62,3 +62,6 @@ ON "device" ("device name");
 
 CREATE INDEX IF NOT EXISTS "device_uuid_idx"
 ON "device" ("uuid" text_pattern_ops);
+
+CREATE INDEX IF NOT EXISTS "device_is_managed_by_service_instance_idx"
+ON "device" ("is managed by-service instance");
