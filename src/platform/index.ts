@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 
 import { RequiredField } from '@resin/pinejs/out/sbvr-api/common-types';
 
@@ -36,7 +36,7 @@ const $getOrInsertId = (
 	resource: string,
 	body: AnyObject,
 	tx?: Tx,
-): Promise<{ id: number }> => {
+): Bluebird<{ id: number }> => {
 	const apiTx = api.clone({ passthrough: { req: root, tx } });
 	return apiTx
 		.get({
@@ -54,7 +54,7 @@ const $getOrInsertId = (
 						body: body,
 						options: { returnResource: false },
 					})
-					.then(idObj => _.assign({}, idObj, body) as Promise<{ id: number }>);
+					.then(idObj => _.assign({}, idObj, body) as Bluebird<{ id: number }>);
 			} else {
 				return results[0] as { id: number };
 			}
@@ -70,7 +70,7 @@ const _updateOrInsert = (
 	filter: PinejsClientCoreFactory.FilterObj,
 	updateFields: AnyObject,
 	tx?: Tx,
-): Promise<{ id: number }> => {
+): Bluebird<{ id: number }> => {
 	const apiTx = api.clone({ passthrough: { req: root, tx } });
 	return apiTx
 		.get({
@@ -88,7 +88,7 @@ const _updateOrInsert = (
 					resource,
 					body,
 					options: { returnResource: false },
-				}) as Promise<{ id: number }>;
+				}) as Bluebird<{ id: number }>;
 			} else if (results.length > 1) {
 				throw new Error(
 					`updateOrInsert filter not unique for '${resource}': '${JSON.stringify(
@@ -112,29 +112,29 @@ export const getOrInsertId = (
 	resource: string,
 	body: AnyObject,
 	tx?: Tx,
-): Promise<{ id: number }> => $getOrInsertId(authApi, resource, body, tx);
+): Bluebird<{ id: number }> => $getOrInsertId(authApi, resource, body, tx);
 export const getOrInsertModelId = (
 	resource: string,
 	body: AnyObject,
 	tx?: Tx,
-): Promise<{ id: number }> => $getOrInsertId(resinApi, resource, body, tx);
+): Bluebird<{ id: number }> => $getOrInsertId(resinApi, resource, body, tx);
 
 export const updateOrInsert = (
 	resource: string,
 	filter: PinejsClientCoreFactory.FilterObj,
 	updateFields: AnyObject,
 	tx?: Tx,
-): Promise<{ id: number }> =>
+): Bluebird<{ id: number }> =>
 	_updateOrInsert(authApi, resource, filter, updateFields, tx);
 export const updateOrInsertModel = (
 	resource: string,
 	filter: PinejsClientCoreFactory.FilterObj,
 	updateFields: AnyObject,
 	tx?: Tx,
-): Promise<{ id: number }> =>
+): Bluebird<{ id: number }> =>
 	_updateOrInsert(resinApi, resource, filter, updateFields, tx);
 
-type TxFn = (tx: Tx, ...args: any[]) => Promise<any>;
+type TxFn = (tx: Tx, ...args: any[]) => Bluebird<any>;
 type TxFnArgs<T> = T extends (tx: Tx, ...args: infer U) => any ? U : any[];
 
 // This gives the resolved return type, eg
@@ -145,7 +145,7 @@ type ResolvableReturnType<T extends (...args: any[]) => any> = T extends (
 	...args: any[]
 ) => Promise<infer R>
 	? R
-	: T extends (...args: any[]) => Promise<infer R>
+	: T extends (...args: any[]) => Bluebird<infer R>
 	? R
 	: ReturnType<T>;
 
@@ -158,7 +158,7 @@ type ResolvableReturnType<T extends (...args: any[]) => any> = T extends (
 // after waiting on any promise the operation returns
 export const wrapInTransaction = <F extends TxFn>(
 	fn: F,
-): ((...args: TxFnArgs<F>) => Promise<ResolvableReturnType<F>>) =>
+): ((...args: TxFnArgs<F>) => Bluebird<ResolvableReturnType<F>>) =>
 	function(...args) {
 		return db.transaction(tx => fn.apply(this, [tx, ...args]));
 	};
@@ -176,7 +176,7 @@ export const getCurrentRequestAffectedIds: typeof sbvrUtils.getAffectedIds = arg
 export const createActor = ({
 	request,
 	tx,
-}: sbvrUtils.HookArgs): Promise<void> => {
+}: sbvrUtils.HookArgs): Bluebird<void> => {
 	return authApi
 		.post({
 			resource: 'actor',
@@ -204,7 +204,7 @@ export function addDeleteHookForDependents(
 					return;
 				}
 
-				return Promise.mapSeries(
+				return Bluebird.mapSeries(
 					dependents,
 					([dependent, resourceIdField, subDependent]) => {
 						return api
