@@ -1,28 +1,11 @@
 {
+	"extends": "./tsconfig.build",
 	"compilerOptions": {
-		"module": "commonjs",
-		"target": "es2015",
-		"declaration": true,
-		"outDir": "dist/",
-		"rootDir": "src/",
-		"noImplicitAny": true,
-		"noUnusedParameters": true,
-		"noUnusedLocals": true,
-		"preserveConstEnums": true,
-		"removeComments": true,
-		"sourceMap": true,
-		"strictNullChecks": true,
-		"skipLibCheck": true,
-		"lib": [
-			"es6",
-			"es2016.array.include"
-		]
+		"rootDir": "./"
 	},
 	"include": [
 		"src/**/*.ts",
-		"typings/**/*.d.ts"
-	],
-	"exclude": [
-		"node_modules"
+		"typings/**/*.d.ts",
+		"*.ts"
 	]
 }

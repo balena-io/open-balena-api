@@ -37,7 +37,7 @@ export interface SetupFunction {
 }
 
 export interface SetupOptions {
-	configPath: string; // must be absolute or relative to `process.cwd()`
+	config: Parameters<typeof pine.init>[1]; // must be absolute or relative to `process.cwd()`
 	version?: string; // this will be reported along with exceptions to Sentry
 	skipHttpsPaths?: string[]; // a list of paths which should be exempt from https redirection
 
@@ -118,7 +118,7 @@ export function setup(app: _express.Application, options: SetupOptions) {
 		.then(() => setupMiddleware(app))
 		.then(runSetupFunction(app, options.onInitMiddleware))
 		.then(() => configureAppsHandler(app, options.appsHandler))
-		.then(() => pine.init(app, options.configPath))
+		.then(() => pine.init(app, options.config))
 		.then(runSetupFunction(app, options.onInitModel))
 		.then(() => import('./hooks'))
 		.then(runSetupFunction(app, options.onInitHooks))
