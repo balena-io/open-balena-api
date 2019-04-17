@@ -46,8 +46,6 @@ export interface SetupOptions {
 	onInitModel?: SetupFunction;
 	onInitHooks?: SetupFunction;
 	onInitRoutes?: SetupFunction;
-
-	appsHandler?: _express.Handler;
 }
 
 export function setup(app: _express.Application, options: SetupOptions) {
@@ -117,7 +115,6 @@ export function setup(app: _express.Application, options: SetupOptions) {
 	return Promise.try(runSetupFunction(app, options.onInit))
 		.then(() => setupMiddleware(app))
 		.then(runSetupFunction(app, options.onInitMiddleware))
-		.then(() => configureAppsHandler(app, options.appsHandler))
 		.then(() => pine.init(app, options.config))
 		.then(runSetupFunction(app, options.onInitModel))
 		.then(() => import('./hooks'))
@@ -171,19 +168,6 @@ function setupMiddleware(app: _express.Application) {
 	app.use(AUTH_PATH, cookieSession({ secret: COOKIE_SESSION_SECRET }));
 
 	app.use(jwt.middleware);
-}
-
-function configureAppsHandler(
-	app: _express.Application,
-	handler?: _express.Handler,
-) {
-	if (handler == null) {
-		handler = (...args) => {
-			const applicationRoutes: typeof _applicationRoutes = require('./routes/applications');
-			return applicationRoutes.myApps(...args);
-		};
-	}
-	app.get(/\/resin\/(my_application)/, handler);
 }
 
 function startServer(

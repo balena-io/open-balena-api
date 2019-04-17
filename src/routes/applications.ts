@@ -69,19 +69,3 @@ export const downloadImageConfig: RequestHandler = (req, res) => {
 			res.status(500).send(translateError(err));
 		});
 };
-
-export const myApps: RequestHandler = (req, res) =>
-	resinApi
-		.get({
-			resource: 'application',
-			passthrough: { req },
-		})
-		.then(data => {
-			res.send({ d: data });
-		})
-		.catch(err => {
-			if (handleHttpErrors(req, res, err)) {
-				return;
-			}
-			res.sendStatus(500);
-		});
