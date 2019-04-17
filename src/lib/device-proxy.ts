@@ -241,7 +241,7 @@ export function requestDevices({
 					const promises: Array<ReturnType<typeof requestAsync>> = [];
 					const waitPromise = Promise.each(devices, device => {
 						const vpnIp = device.is_managed_by__service_instance[0].ip_address;
-						const deviceUrl = `http://${device.uuid}.resin:${device.api_port ||
+						const deviceUrl = `http://${device.uuid}.balena:${device.api_port ||
 							80}${url}?apikey=${device.api_secret}`;
 						promises.push(
 							requestAsync({
