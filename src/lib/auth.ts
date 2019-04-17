@@ -80,7 +80,6 @@ export const ROLES: {
 		'resin.application_tag.all',
 		'resin.application_type.all',
 		'resin.device.all',
-		`resin.device.tunnel-22222`,
 		'resin.device_config_variable.all',
 		'resin.device_environment_variable.all',
 		'resin.device_tag.all',
