@@ -284,7 +284,7 @@ export const state: RequestHandler = (req, res) => {
 							$select: ['name', 'value'],
 						},
 						device_environment_variable: {
-							$select: ['env_var_name', 'value'],
+							$select: ['name', 'value'],
 						},
 						should_be_running__release: {
 							$select: ['id', 'commit', 'composition'],
@@ -336,7 +336,7 @@ export const state: RequestHandler = (req, res) => {
 									$select: ['name', 'value'],
 								},
 								application_environment_variable: {
-									$select: ['env_var_name', 'value'],
+									$select: ['name', 'value'],
 								},
 								is_depended_on_by__application: {
 									$select: ['id', 'app_name', 'commit'],
@@ -345,7 +345,7 @@ export const state: RequestHandler = (req, res) => {
 											$select: ['name', 'value'],
 										},
 										application_environment_variable: {
-											$select: ['env_var_name', 'value'],
+											$select: ['name', 'value'],
 										},
 									},
 								},
@@ -389,7 +389,7 @@ export const state: RequestHandler = (req, res) => {
 									$select: ['name', 'value'],
 								},
 								device_environment_variable: {
-									$select: ['env_var_name', 'value'],
+									$select: ['name', 'value'],
 								},
 							},
 						},

@@ -162,7 +162,7 @@ addEnvHooks(
 
 addEnvHooks(
 	'application_environment_variable',
-	'env_var_name',
+	'name',
 	checkEnvVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
@@ -235,7 +235,7 @@ addEnvHooks(
 
 addEnvHooks(
 	'device_environment_variable',
-	'env_var_name',
+	'name',
 	checkEnvVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
