@@ -41,17 +41,11 @@ export const getIPv4 = (req: Request): string | undefined => {
 	} catch (e) {}
 };
 
-export type EnvVarList = Array<
-	{ env_var_name: string; value: string } | { name: string; value: string }
->;
+export type EnvVarList = Array<{ name: string; value: string }>;
 
 export const varListInsert = (varList: EnvVarList, obj: Dictionary<string>) => {
 	_.each(varList, evar => {
-		if ('env_var_name' in evar) {
-			obj[evar.env_var_name] = evar.value;
-		} else {
-			obj[evar.name] = evar.value;
-		}
+		obj[evar.name] = evar.value;
 	});
 };
 

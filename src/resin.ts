@@ -1,5 +1,9 @@
 import * as _ from 'lodash';
-import { generateAbstractSqlModel, aliasTable } from './abstract-sql-utils';
+import {
+	generateAbstractSqlModel,
+	aliasTable,
+	renameEnvVarName,
+} from './abstract-sql-utils';
 
 export const apiRoot = 'resin';
 export const modelName = 'resin';
@@ -11,3 +15,5 @@ aliasTable(abstractSql, 'application', 'my application', {
 	extraBinds: [],
 	abstractSqlQuery: ['Resource', 'application'],
 });
+
+renameEnvVarName(abstractSql);
