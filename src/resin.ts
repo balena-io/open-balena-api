@@ -7,4 +7,7 @@ export const migrationsPath = __dirname + '/migrations/';
 export const initSqlPath = __dirname + '/resin-init.sql';
 export const abstractSql = generateAbstractSqlModel(__dirname + '/resin.sbvr');
 
-aliasTable(abstractSql, 'application', 'my application');
+aliasTable(abstractSql, 'application', 'my application', {
+	extraBinds: [],
+	abstractSqlQuery: ['Resource', 'application'],
+});

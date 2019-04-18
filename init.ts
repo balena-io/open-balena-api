@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as express from 'express';
 import { setup } from './src';
-import * as config from './config.json';
+import config = require('./config');
 import { version } from './package.json';
 
 async function onInitMiddleware(app: express.Application) {
