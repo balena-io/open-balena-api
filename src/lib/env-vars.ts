@@ -157,16 +157,16 @@ const checkVarName = (type: string, name: string) => {
 			`${type} names can only contain alphanumeric characters and underscores.`,
 		);
 	}
+
+	if (_.includes(RESERVED_NAMES, name)) {
+		throw new BadRequestError(
+			`${type}s ${RESERVED_NAMES.join(', ')} are reserved`,
+		);
+	}
 };
 
 export const checkConfigVarNameValidity = (name: string) => {
 	checkVarName('Configuration variable', name);
-
-	if (_.includes(RESERVED_NAMES, name)) {
-		throw new BadRequestError(
-			`Configuration variables ${RESERVED_NAMES.join(', ')} are reserved`,
-		);
-	}
 	if (!startsWithAny(RESERVED_NAMESPACES, name)) {
 		throw new BadRequestError(
 			'Configuration variables must be part of one of the following namespaces: ' +
@@ -183,11 +183,6 @@ export const checkEnvVarNameValidity = (name: string) => {
 			`Environment variables beginning with ${RESERVED_NAMESPACES.join(
 				', ',
 			)} are reserved.`,
-		);
-	}
-	if (_.includes(RESERVED_NAMES, name)) {
-		throw new BadRequestError(
-			`Environment variables ${RESERVED_NAMES.join(', ')} are reserved`,
 		);
 	}
 };

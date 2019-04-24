@@ -37,8 +37,7 @@ const triggerDevices = (
 // Env vars hooks
 const addEnvHooks = (
 	resource: string,
-	nameProp: string,
-	validateFn: Function,
+	validateFn: ValidateFn,
 	buildFilter: (
 		args: sbvrUtils.HookArgs & {
 			tx: Tx;
@@ -48,8 +47,8 @@ const addEnvHooks = (
 	let postParseHook: sbvrUtils.Hooks['POSTPARSE'];
 	if (_.isFunction(validateFn)) {
 		postParseHook = ({ request }) => {
-			const varName = request.values[nameProp];
-			const varValue = request.values['value'];
+			const varName = request.values.name;
+			const varValue = request.values.value;
 			return validateFn({ varName, varValue });
 		};
 	}
@@ -117,7 +116,6 @@ const checkEnvVarValidity: ValidateFn = ({ varName, varValue }) => {
 
 addEnvHooks(
 	'application_config_variable',
-	'name',
 	checkConfigVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
@@ -162,7 +160,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'application_environment_variable',
-	'name',
 	checkEnvVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
@@ -203,7 +200,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'device_config_variable',
-	'name',
 	checkConfigVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
@@ -235,7 +231,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'device_environment_variable',
-	'name',
 	checkEnvVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
@@ -267,7 +262,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'service_environment_variable',
-	'name',
 	checkEnvVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
@@ -332,7 +326,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'device_service_environment_variable',
-	'name',
 	checkEnvVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
