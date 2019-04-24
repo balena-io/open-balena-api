@@ -25,6 +25,10 @@ persist-tun
 verb 3
 user openvpn
 group openvpn
+
+reneg-bytes 0
+reneg-pkts 0
+reneg-sec 0
 `;
 
 export const requiredVar = (varName: string): string => {
