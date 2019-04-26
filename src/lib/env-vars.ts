@@ -1,5 +1,8 @@
 import * as _ from 'lodash';
 import { JSONSchema6Definition } from 'json-schema';
+import { sbvrUtils } from '../platform';
+
+const { BadRequestError } = sbvrUtils;
 
 export const RESERVED_NAMES = ['RESIN', 'BALENA', 'USER'];
 
@@ -150,22 +153,22 @@ interface EnvVars extends Dictionary<string> {}
 
 const checkVarName = (type: string, name: string) => {
 	if (INVALID_CHARACTER_REGEX.test(name)) {
-		throw new Error(
+		throw new BadRequestError(
 			`${type} names can only contain alphanumeric characters and underscores.`,
+		);
+	}
+
+	if (_.includes(RESERVED_NAMES, name)) {
+		throw new BadRequestError(
+			`${type}s ${RESERVED_NAMES.join(', ')} are reserved`,
 		);
 	}
 };
 
 export const checkConfigVarNameValidity = (name: string) => {
 	checkVarName('Configuration variable', name);
-
-	if (_.includes(RESERVED_NAMES, name)) {
-		throw new Error(
-			`Configuration variables ${RESERVED_NAMES.join(', ')} are reserved`,
-		);
-	}
 	if (!startsWithAny(RESERVED_NAMESPACES, name)) {
-		throw new Error(
+		throw new BadRequestError(
 			'Configuration variables must be part of one of the following namespaces: ' +
 				RESERVED_NAMESPACES.join(', '),
 		);
@@ -176,22 +179,19 @@ export const checkEnvVarNameValidity = (name: string) => {
 	checkVarName('Environment variable', name);
 
 	if (startsWithAny(RESERVED_NAMESPACES, name)) {
-		throw new Error(
+		throw new BadRequestError(
 			`Environment variables beginning with ${RESERVED_NAMESPACES.join(
 				', ',
 			)} are reserved.`,
-		);
-	}
-	if (_.includes(RESERVED_NAMES, name)) {
-		throw new Error(
-			`Environment variables ${RESERVED_NAMES.join(', ')} are reserved`,
 		);
 	}
 };
 
 export const checkEnvVarValueValidity = (value: string) => {
 	if (INVALID_NEWLINE_REGEX.test(value)) {
-		throw new Error('Variable values cannot contain line break characters');
+		throw new BadRequestError(
+			'Variable values cannot contain line break characters',
+		);
 	}
 };
 

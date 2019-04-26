@@ -11,7 +11,7 @@ import * as Promise from 'bluebird';
 import { captureException } from '../../platform/errors';
 
 interface ValidateFn {
-	(args: { varName?: string; varValue?: string }): void;
+	(varName?: string, varValue?: string): void;
 }
 
 const triggerDevices = (
@@ -37,22 +37,16 @@ const triggerDevices = (
 // Env vars hooks
 const addEnvHooks = (
 	resource: string,
-	nameProp: string,
-	validateFn: Function,
+	validateFn: ValidateFn,
 	buildFilter: (
 		args: sbvrUtils.HookArgs & {
 			tx: Tx;
 		},
 	) => Promise<PinejsClientCoreFactory.Filter | undefined>,
-) => {
-	let postParseHook: sbvrUtils.Hooks['POSTPARSE'];
-	if (_.isFunction(validateFn)) {
-		postParseHook = ({ request }) => {
-			const varName = request.values[nameProp];
-			const varValue = request.values['value'];
-			return validateFn({ varName, varValue });
-		};
-	}
+): void => {
+	const postParseHook: sbvrUtils.Hooks['POSTPARSE'] = ({ request }) => {
+		return validateFn(request.values.name, request.values.value);
+	};
 	const preRunHook: sbvrUtils.Hooks['PRERUN'] = args =>
 		buildFilter(args)
 			.then(filter => {
@@ -97,7 +91,7 @@ const addEnvHooks = (
 	sbvrUtils.addPureHook('DELETE', 'resin', resource, envVarHook);
 };
 
-const checkConfigVarValidity: ValidateFn = ({ varName, varValue }) => {
+const checkConfigVarValidity: ValidateFn = (varName, varValue) => {
 	if (varName != null) {
 		checkConfigVarNameValidity(varName);
 	}
@@ -106,7 +100,7 @@ const checkConfigVarValidity: ValidateFn = ({ varName, varValue }) => {
 	}
 };
 
-const checkEnvVarValidity: ValidateFn = ({ varName, varValue }) => {
+const checkEnvVarValidity: ValidateFn = (varName, varValue) => {
 	if (varName != null) {
 		checkEnvVarNameValidity(varName);
 	}
@@ -117,7 +111,6 @@ const checkEnvVarValidity: ValidateFn = ({ varName, varValue }) => {
 
 addEnvHooks(
 	'application_config_variable',
-	'name',
 	checkConfigVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
@@ -162,7 +155,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'application_environment_variable',
-	'name',
 	checkEnvVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
@@ -203,7 +195,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'device_config_variable',
-	'name',
 	checkConfigVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
@@ -235,7 +226,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'device_environment_variable',
-	'name',
 	checkEnvVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
@@ -267,7 +257,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'service_environment_variable',
-	'name',
 	checkEnvVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
@@ -332,7 +321,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'device_service_environment_variable',
-	'name',
 	checkEnvVarValidity,
 	(
 		args: sbvrUtils.HookArgs & {
