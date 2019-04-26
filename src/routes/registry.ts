@@ -20,7 +20,7 @@ import {
 	REGISTRY2_HOST,
 } from '../lib/config';
 
-const { UnauthorizedError } = sbvrUtils;
+const { BadRequestError, UnauthorizedError } = sbvrUtils;
 
 // Set a large expiry so that huge pulls/pushes go through
 // without needing to re-authenticate mid-process.
@@ -329,23 +329,34 @@ const generateToken = (
 	return jsonwebtoken.sign(payload, CERT.key, options);
 };
 
-export const token: RequestHandler = (req, res) => {
-	const scopes = _.castArray(req.query.scope);
+export const token: RequestHandler = (req, res) =>
+	Promise.try(() => {
+		const { scope } = req.query;
+		let scopes: string[];
+		if (_.isString(scope)) {
+			scopes = [scope];
+		} else if (_.isArray(scope)) {
+			scopes = scope;
+		} else if (_.isObject(scope)) {
+			scopes = _.values(scope);
+		} else {
+			throw new BadRequestError('Invalid scope');
+		}
 
-	return Promise.join(
-		getSubject(req),
-		authorizeRequest(req, scopes),
-		(sub, access) => {
-			const token = generateToken(sub, REGISTRY2_HOST, access);
-			res.send({ token });
-		},
-	).catch(err => {
+		return Promise.join(
+			getSubject(req),
+			authorizeRequest(req, scopes),
+			(sub, access) => {
+				const token = generateToken(sub, REGISTRY2_HOST, access);
+				res.send({ token });
+			},
+		);
+	}).catch(err => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
 		res.sendStatus(400); // bad request
 	});
-};
 
 const getSubject = Promise.method((req: Request) => {
 	if (req.subject) {
