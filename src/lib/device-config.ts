@@ -41,10 +41,10 @@ export const generateConfig = (
 ) => {
 	const userPromise = getUser(req);
 
-	// Devices running ResinOS >= 2.0 can use Registry v2
-	const registryHost = resinSemver.satisfies(osVersion, '<2.0.0')
-		? REGISTRY_HOST
-		: REGISTRY2_HOST;
+	// Devices running ResinOS >=1.2.1 are capable of using Registry v2, while earlier ones must use v1
+	const registryHost = resinSemver.gte(osVersion, '1.2.1')
+		? REGISTRY2_HOST
+		: REGISTRY_HOST;
 
 	const apiKeyPromise = Promise.try(() => {
 		// Devices running ResinOS >= 2.7.8 can use provisioning keys
