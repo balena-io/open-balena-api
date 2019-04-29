@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { JSONSchema6Definition } from 'json-schema';
-import { sbvrUtils } from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
 
 const { BadRequestError } = sbvrUtils;
 
