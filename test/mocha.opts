@@ -1,0 +1,6 @@
+--reporter spec
+--sort
+--timeout 20000
+--delay
+--exit
+index.js

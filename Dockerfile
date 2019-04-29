@@ -7,7 +7,7 @@ RUN npm ci --unsafe-perm --production --ignore-scripts && npm cache clean --forc
 
 COPY . /usr/src/app
 
-RUN npx tsc --noEmit
+RUN npx tsc --noEmit --project ./tsconfig.build.json
 
 COPY config/services/ /etc/systemd/system/
 

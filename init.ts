@@ -81,8 +81,10 @@ async function createSuperuser() {
 		});
 }
 
-const app = express();
+export const app = express();
 app.enable('trust proxy');
+
+const doRunTests = (process.env.RUN_TESTS || '').trim() === '1';
 
 setup(app, {
 	config,
@@ -92,11 +94,14 @@ setup(app, {
 	onInitHooks,
 })
 	.tap(createSuperuser)
-	.then(({ startServer, runFromCommandLine }) => {
-		if (process.argv.length > 2) {
-			return runFromCommandLine();
-		}
+	.then(({ startServer }) => {
 		return startServer(process.env.PORT || 1337).return();
+	})
+	.then(() => {
+		if (doRunTests) {
+			console.log('Running tests...');
+			require('./test/00-init');
+		}
 	})
 	.catch(err => {
 		console.error('Failed to initialize:', err);
