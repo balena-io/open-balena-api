@@ -1,655 +1,678 @@
 - commits:
-  - author: Gergely Imreh
-    body: |-
-      That OS version and upwards have docker with capability to pull
-      from registry v2.
-    footers:
-      change-type: minor
-      signed-off-by: Gergely Imreh <gergely@balena.io>
-    hash: 9fa9f17256d3c975f1fa590d5d132433d1b20646
-    subject: 'device-config: allow devices going back to v1.2.1 to use registry v2'
-  date: "2019-04-29T09:32:40Z"
+    - subject: 'versionbot: add machine readable changelog'
+      hash: 95c57fb121cda374e36e45aaf82ee36877e8b82f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Gergely Imreh <gergely@balena.io>
+        signed-off-by: Gergely Imreh <gergely@balena.io>
+      author: Gergely Imreh
+  version: 0.18.1
+  date: 2019-04-29T11:23:22.500Z
+- commits:
+    - author: Gergely Imreh
+      body: |-
+        That OS version and upwards have docker with capability to pull
+        from registry v2.
+      footers:
+        change-type: minor
+        signed-off-by: Gergely Imreh <gergely@balena.io>
+      hash: 9fa9f17256d3c975f1fa590d5d132433d1b20646
+      subject: 'device-config: allow devices going back to v1.2.1 to use registry v2'
+  date: '2019-04-29T09:32:40Z'
   version: 0.18.0
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: 41b3e535f633862c8191c0ee94b2a089179316ef
-    subject: Handle requesting registry scopes with explicit indices above 20
-  date: "2019-04-26T19:16:24Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: 41b3e535f633862c8191c0ee94b2a089179316ef
+      subject: Handle requesting registry scopes with explicit indices above 20
+  date: '2019-04-26T19:16:24Z'
   version: 0.17.4
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: 501a5cb839d7bd6e24a4e702c9b2d55f6a7ccdae
-    subject: Use more accurate `BadRequestError`s for invalid env var names
-  - author: Pagan Gazzard
-    body: ""
-    hash: ec8543f76672e23a36353f2d38444f74867a3e64
-    subject: Remove unnecessary `nameProp` argument from `addEnvHooks`
-  - author: Pagan Gazzard
-    body: ""
-    hash: 8ca26a0368feaf72a40d528fc462dbb953426797
-    subject: Avoid unnecessary object creation on env var validation
-  date: "2019-04-26T09:24:50Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: 501a5cb839d7bd6e24a4e702c9b2d55f6a7ccdae
+      subject: Use more accurate `BadRequestError`s for invalid env var names
+    - author: Pagan Gazzard
+      body: ''
+      hash: ec8543f76672e23a36353f2d38444f74867a3e64
+      subject: Remove unnecessary `nameProp` argument from `addEnvHooks`
+    - author: Pagan Gazzard
+      body: ''
+      hash: 8ca26a0368feaf72a40d528fc462dbb953426797
+      subject: Avoid unnecessary object creation on env var validation
+  date: '2019-04-26T09:24:50Z'
   version: 0.17.3
 - commits:
-  - author: Will Boyce
-    body: |-
-      Allowing the server to dictate when keys are renegotiated allows us to
-      control load spikes more effectively.
-    footers:
-      change-type: patch
-      signed-off-by: Will Boyce <will@balena.io>
-    hash: de52f7e24057f12b0b9381d462ca1d0d0ea5a8d6
-    subject: 'os-config: disable client-initiated vpn tls key renegotiation'
-  date: "2019-04-24T12:32:57Z"
+    - author: Will Boyce
+      body: |-
+        Allowing the server to dictate when keys are renegotiated allows us to
+        control load spikes more effectively.
+      footers:
+        change-type: patch
+        signed-off-by: Will Boyce <will@balena.io>
+      hash: de52f7e24057f12b0b9381d462ca1d0d0ea5a8d6
+      subject: 'os-config: disable client-initiated vpn tls key renegotiation'
+  date: '2019-04-24T12:32:57Z'
   version: 0.17.2
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: f4676ba5237d374c9148db9855e7e0ce29bddb38
-    subject: Remove unused `DEVICE_CONFIG_OPENVPN_CONFIG` fron env backend
-  date: "2019-04-19T14:06:00Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: f4676ba5237d374c9148db9855e7e0ce29bddb38
+      subject: Remove unused `DEVICE_CONFIG_OPENVPN_CONFIG` fron env backend
+  date: '2019-04-19T14:06:00Z'
   version: 0.17.1
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: minor
-    hash: ef31eaefa2c75a3e6f61268bdc60af4b1e39f970
-    subject: Rename `env_var_name` to `name` to match cloud
-  date: "2019-04-18T15:54:23Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: minor
+      hash: ef31eaefa2c75a3e6f61268bdc60af4b1e39f970
+      subject: Rename `env_var_name` to `name` to match cloud
+  date: '2019-04-18T15:54:23Z'
   version: 0.17.0
 - commits:
-  - author: Rich Bayliss
-    body: |-
-      Add missing changes to make the `my_application` resource return
-      results, instead of throwing an exception.
-    footers:
-      change-type: patch
-      signed-off-by: Rich Bayliss <rich@balena.io>
-    hash: 065454c21c7308b9e51395186a8023fc3b11b6a7
-    subject: 'fix: Changes required to make `my_application` resource available'
-  date: "2019-04-18T13:38:33Z"
+    - author: Rich Bayliss
+      body: |-
+        Add missing changes to make the `my_application` resource return
+        results, instead of throwing an exception.
+      footers:
+        change-type: patch
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      hash: 065454c21c7308b9e51395186a8023fc3b11b6a7
+      subject: 'fix: Changes required to make `my_application` resource available'
+  date: '2019-04-18T13:38:33Z'
   version: 0.16.1
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: minor
-    hash: 12bab4ff126f8156afa8aa1ad62f8776746d7c6e
-    subject: Handle `my_applications` within pinejs
-  date: "2019-04-17T14:18:41Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: minor
+      hash: 12bab4ff126f8156afa8aa1ad62f8776746d7c6e
+      subject: Handle `my_applications` within pinejs
+  date: '2019-04-17T14:18:41Z'
   version: 0.16.0
 - commits:
-  - author: Will Boyce
-    body: ""
-    footers:
-      change-type: patch
-      signed-off-by: Will Boyce <will@balena.io>
-    hash: 285091d355eb71099925d8e0eb5748aa50213de5
-    subject: 'device-proxy: use `.balena` tld in favour of `.resin`'
-  date: "2019-04-17T12:13:03Z"
+    - author: Will Boyce
+      body: ''
+      footers:
+        change-type: patch
+        signed-off-by: Will Boyce <will@balena.io>
+      hash: 285091d355eb71099925d8e0eb5748aa50213de5
+      subject: 'device-proxy: use `.balena` tld in favour of `.resin`'
+  date: '2019-04-17T12:13:03Z'
   version: 0.15.2
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: 76063693f447bdd155abe12004d52e51831fe7a9
-    subject: Update method-override to 3.x
-  date: "2019-04-17T09:52:51Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: 76063693f447bdd155abe12004d52e51831fe7a9
+      subject: Update method-override to 3.x
+  date: '2019-04-17T09:52:51Z'
   version: 0.15.1
 - commits:
-  - author: Pagan Gazzard
-    body: |-
-      Also splits index.js to make sure the bulk of it is typed
-      Update pinejs from 10.8.0 to 10.11.0
-    footers:
-      change-type: minor
-    hash: 384f53606795d4b565d8a851b86316ce4fcfbcb9
-    subject: Rename `configPath` to `config` and make sure config.json is valid
-  date: "2019-04-15T18:37:57Z"
+    - author: Pagan Gazzard
+      body: |-
+        Also splits index.js to make sure the bulk of it is typed
+        Update pinejs from 10.8.0 to 10.11.0
+      footers:
+        change-type: minor
+      hash: 384f53606795d4b565d8a851b86316ce4fcfbcb9
+      subject: Rename `configPath` to `config` and make sure config.json is valid
+  date: '2019-04-15T18:37:57Z'
   version: 0.15.0
 - commits:
-  - author: Pablo Carranza Velez
-    body: |-
-      Added to the supervisor in https://github.com/balena-io/balena-supervisor/pull/934
-      We add this variable to the whitelist and add the information so that the UI can show it and allow changing it.
-    footers:
-      change-type: minor
-      signed-off-by: Pablo Carranza Velez <pablocarranza@gmail.com>
-    hash: ed41b29c8211d37897f656ed5b55594f3317aebe
-    subject: Whitelist the new RESIN_SUPERVISOR_INSTANT_UPDATE_TRIGGER configuration
-      variable
-  date: "2019-04-11T18:27:19Z"
+    - author: Pablo Carranza Velez
+      body: >-
+        Added to the supervisor in
+        https://github.com/balena-io/balena-supervisor/pull/934
+
+        We add this variable to the whitelist and add the information so that
+        the UI can show it and allow changing it.
+      footers:
+        change-type: minor
+        signed-off-by: Pablo Carranza Velez <pablocarranza@gmail.com>
+      hash: ed41b29c8211d37897f656ed5b55594f3317aebe
+      subject: >-
+        Whitelist the new RESIN_SUPERVISOR_INSTANT_UPDATE_TRIGGER configuration
+        variable
+  date: '2019-04-11T18:27:19Z'
   version: 0.14.0
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: f827088cd504c62753390d2f3929d9b9de708914
-    subject: Fix `ResolvableReturnType` typing
-  date: "2019-04-02T15:20:27Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: f827088cd504c62753390d2f3929d9b9de708914
+      subject: Fix `ResolvableReturnType` typing
+  date: '2019-04-02T15:20:27Z'
   version: 0.13.3
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: c0e11d4fd0080a74ca67568062ec8133fa9deb68
-    subject: Add CODEOWNERS file
-  date: "2019-04-01T13:32:08Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: c0e11d4fd0080a74ca67568062ec8133fa9deb68
+      subject: Add CODEOWNERS file
+  date: '2019-04-01T13:32:08Z'
   version: 0.13.2
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: da963b34c86e0f3a5bb7caefcf5cfad82a1de49e
-    subject: Add an index for the vpn's service instance lookup
-  date: "2019-04-01T13:18:22Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: da963b34c86e0f3a5bb7caefcf5cfad82a1de49e
+      subject: Add an index for the vpn's service instance lookup
+  date: '2019-04-01T13:18:22Z'
   version: 0.13.1
 - commits:
-  - author: Pagan Gazzard
-    body: Update pinejs from 10.6.1 to 10.8.0
-    footers:
-      change-type: patch
-    hash: 4f7200e14388b379e4b068a64acbf2d4f4d62a9c
-    subject: Use a readTransaction for device state
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: minor
-    hash: 1f5005153dcf8aeb20622b6f23cc0131b9afd74a
-    subject: Remove runInTransaction wrapper to avoid unnecessary function creation
-  - author: Pagan Gazzard
-    body: ""
-    hash: 4ce469103710955e23754b09a94f8d1793cf82bc
-    subject: Avoid need to repeateadly check for `readTransaction` existence
-  date: "2019-03-28T11:00:59Z"
+    - author: Pagan Gazzard
+      body: Update pinejs from 10.6.1 to 10.8.0
+      footers:
+        change-type: patch
+      hash: 4f7200e14388b379e4b068a64acbf2d4f4d62a9c
+      subject: Use a readTransaction for device state
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: minor
+      hash: 1f5005153dcf8aeb20622b6f23cc0131b9afd74a
+      subject: Remove runInTransaction wrapper to avoid unnecessary function creation
+    - author: Pagan Gazzard
+      body: ''
+      hash: 4ce469103710955e23754b09a94f8d1793cf82bc
+      subject: Avoid need to repeateadly check for `readTransaction` existence
+  date: '2019-03-28T11:00:59Z'
   version: 0.13.0
 - commits:
-  - author: Stevche Radevski
-    body: |-
-      This will allow us to store the pre
-      and post-image build logs as shown in
-      the terminal.
-    footers:
-      change-type: minor
-      signed-off-by: Stevche Radevski <stevche@balena.io>
-    hash: e781deead7e08e4fc35e33769ab8262fdc941f2b
-    subject: Add build log to release resource
-  date: "2019-03-19T14:19:56Z"
+    - author: Stevche Radevski
+      body: |-
+        This will allow us to store the pre
+        and post-image build logs as shown in
+        the terminal.
+      footers:
+        change-type: minor
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      hash: e781deead7e08e4fc35e33769ab8262fdc941f2b
+      subject: Add build log to release resource
+  date: '2019-03-19T14:19:56Z'
   version: 0.12.0
 - commits:
-  - author: Giovanni Garufi
-    body: ""
-    footers:
-      change-type: patch
-      signed-off-by: Giovanni Garufi <giovanni@balena.io>
-    hash: 95f5354c3cea4239f43fa87bc4c5694eb4e2dcdb
-    subject: Add pinejs as upstream in repo.yml
-  date: "2019-03-12T10:52:19Z"
+    - author: Giovanni Garufi
+      body: ''
+      footers:
+        change-type: patch
+        signed-off-by: Giovanni Garufi <giovanni@balena.io>
+      hash: 95f5354c3cea4239f43fa87bc4c5694eb4e2dcdb
+      subject: Add pinejs as upstream in repo.yml
+  date: '2019-03-12T10:52:19Z'
   version: 0.11.8
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: caecfba8a3e80d3843474fad0915b17c4e66c4f5
-    subject: Update pinejs to 10.6.1
-  date: "2019-03-11T16:46:41Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: caecfba8a3e80d3843474fad0915b17c4e66c4f5
+      subject: Update pinejs to 10.6.1
+  date: '2019-03-11T16:46:41Z'
   version: 0.11.7
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: 4f709b4fbd6dca52feb4727b607ac6ee2255f75a
-    subject: Avoid issues with updated bluebird typings
-  date: "2019-03-08T15:39:40Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: 4f709b4fbd6dca52feb4727b607ac6ee2255f75a
+      subject: Avoid issues with updated bluebird typings
+  date: '2019-03-08T15:39:40Z'
   version: 0.11.6
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: 5079352fbad6b149c8c2a340aa6e5b15f63539a0
-    subject: Update open-balena-base to v5.3.1
-  date: "2019-03-05T17:27:21Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: 5079352fbad6b149c8c2a340aa6e5b15f63539a0
+      subject: Update open-balena-base to v5.3.1
+  date: '2019-03-05T17:27:21Z'
   version: 0.11.5
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: 511c17d80964f62aa2d76b6ebc67eaeda0f25224
-    subject: Switch _ to $ due to the special meaning of _ in typescript
-  date: "2019-02-25T15:14:36Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: 511c17d80964f62aa2d76b6ebc67eaeda0f25224
+      subject: Switch _ to $ due to the special meaning of _ in typescript
+  date: '2019-02-25T15:14:36Z'
   version: 0.11.4
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: 57924042098f1b5cae8301f0ffa5481626986b8f
-    subject: Add connectivity-check endpoint that just sends a 204
-  date: "2019-02-22T17:14:40Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: 57924042098f1b5cae8301f0ffa5481626986b8f
+      subject: Add connectivity-check endpoint that just sends a 204
+  date: '2019-02-22T17:14:40Z'
   version: 0.11.3
 - commits:
-  - author: Thodoris Greasidis
-    body: ""
-    footers:
-      change-type: patch
-      resolves: '#58'
-      signed-off-by: Thodoris Greasidis <thodoris@balena.io>
-    hash: e1f297fa7b886a0959d1f81f5bbd71f695f05cd5
-    subject: Fix setting release to zero filtered devices 404 error
-  date: "2019-02-18T11:20:38Z"
+    - author: Thodoris Greasidis
+      body: ''
+      footers:
+        change-type: patch
+        resolves: '#58'
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      hash: e1f297fa7b886a0959d1f81f5bbd71f695f05cd5
+      subject: Fix setting release to zero filtered devices 404 error
+  date: '2019-02-18T11:20:38Z'
   version: 0.11.2
 - commits:
-  - author: dt-rush
-    body: ""
-    footers:
-      change-type: patch
-      signed-off-by: Nick Payne <nickp@balena.io>
-    hash: 1ae803dd28fdd873704c16b8fe7bc584c0eac9b2
-    subject: added `skipHttpsPaths` to setup options
-  date: "2019-02-14T15:35:47Z"
+    - author: dt-rush
+      body: ''
+      footers:
+        change-type: patch
+        signed-off-by: Nick Payne <nickp@balena.io>
+      hash: 1ae803dd28fdd873704c16b8fe7bc584c0eac9b2
+      subject: added `skipHttpsPaths` to setup options
+  date: '2019-02-14T15:35:47Z'
   version: 0.11.1
 - commits:
-  - author: Gergely Imreh
-    body: ""
-    footers:
-      change-type: minor
-      signed-off-by: Gergely Imreh <gergely@balena.io>
-    hash: 6a4bc0a36385b66bd13b1cd6e7a5b185272c8460
-    subject: 'access: lower host OS access to OS version 2.0.0'
-  - author: Gergely Imreh
-    body: ""
-    footers:
-      change-type: patch
-      signed-off-by: Gergely Imreh <gergely@balena.io>
-    hash: 3b7cb2ac0370fdddbbd60dc841c7f35d75d99bdd
-    subject: 'access: update variable name to remove previous company mention'
-  date: "2019-01-31T10:14:45Z"
+    - author: Gergely Imreh
+      body: ''
+      footers:
+        change-type: minor
+        signed-off-by: Gergely Imreh <gergely@balena.io>
+      hash: 6a4bc0a36385b66bd13b1cd6e7a5b185272c8460
+      subject: 'access: lower host OS access to OS version 2.0.0'
+    - author: Gergely Imreh
+      body: ''
+      footers:
+        change-type: patch
+        signed-off-by: Gergely Imreh <gergely@balena.io>
+      hash: 3b7cb2ac0370fdddbbd60dc841c7f35d75d99bdd
+      subject: 'access: update variable name to remove previous company mention'
+  date: '2019-01-31T10:14:45Z'
   version: 0.11.0
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: 50bcbace0adfd9e4ab7624b16cf72433f7b2c388
-    subject: Fix husky warning
-  date: "2019-01-28T18:48:10Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: 50bcbace0adfd9e4ab7624b16cf72433f7b2c388
+      subject: Fix husky warning
+  date: '2019-01-28T18:48:10Z'
   version: 0.10.2
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: d1fe33a318f0e01c84620500d21160623affe8f1
-    subject: Add correct image location index migration
-  date: "2019-01-28T14:46:37Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: d1fe33a318f0e01c84620500d21160623affe8f1
+      subject: Add correct image location index migration
+  date: '2019-01-28T14:46:37Z'
   version: 0.10.1
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: minor
-    hash: 60d1067ab486efb2360a1d637612fac1ca6d1cfa
-    subject: Use a GIN trigram index for image_location to speed up endswith queries
-  date: "2019-01-28T13:32:28Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: minor
+      hash: 60d1067ab486efb2360a1d637612fac1ca6d1cfa
+      subject: Use a GIN trigram index for image_location to speed up endswith queries
+  date: '2019-01-28T13:32:28Z'
   version: 0.10.0
 - commits:
-  - author: Andreas Fitzek
-    body: |-
-      This scopes the rate limit entries for redis
-      into a prefix called `api:ratelimiting:`.
-    footers:
-      change-type: minor
-      signed-off-by: Andreas Fitzek <andreas@balena.io>
-    hash: 70c7727e7ebb405ed2d58939a6b49f4b87057fb2
-    subject: ✨ Add redis prefix for rate limiting
-  date: "2019-01-16T13:02:23Z"
+    - author: Andreas Fitzek
+      body: |-
+        This scopes the rate limit entries for redis
+        into a prefix called `api:ratelimiting:`.
+      footers:
+        change-type: minor
+        signed-off-by: Andreas Fitzek <andreas@balena.io>
+      hash: 70c7727e7ebb405ed2d58939a6b49f4b87057fb2
+      subject: ✨ Add redis prefix for rate limiting
+  date: '2019-01-16T13:02:23Z'
   version: 0.9.0
 - commits:
-  - author: Heds Simons
-    body: |-
-      We've currently got multiple sources of truth for
-      the OpenVPN config. This change ensures there's a single
-      point which is dynamically filled in for the appropriate
-      VPN endpoints.
-    footers:
-      change-type: patch
-      connects-to: '#46'
-      signed-off-by: Heds Simons <heds@balena.io>
-    hash: cce8a88c5e2c07266a3b83d791f97bc1ea238cf6
-    subject: 'config: Embed device OpenVPN config'
-  - author: Heds Simons
-    body: ""
-    footers:
-      signed-off-by: Heds Simons <heds@balena.io>
-    hash: 27ba463f4fa4c9ef26c1d3a6d652bc5faf3f76b4
-    subject: Update code post-peer review.
-  date: "2019-01-10T13:15:01Z"
+    - author: Heds Simons
+      body: |-
+        We've currently got multiple sources of truth for
+        the OpenVPN config. This change ensures there's a single
+        point which is dynamically filled in for the appropriate
+        VPN endpoints.
+      footers:
+        change-type: patch
+        connects-to: '#46'
+        signed-off-by: Heds Simons <heds@balena.io>
+      hash: cce8a88c5e2c07266a3b83d791f97bc1ea238cf6
+      subject: 'config: Embed device OpenVPN config'
+    - author: Heds Simons
+      body: ''
+      footers:
+        signed-off-by: Heds Simons <heds@balena.io>
+      hash: 27ba463f4fa4c9ef26c1d3a6d652bc5faf3f76b4
+      subject: Update code post-peer review.
+  date: '2019-01-10T13:15:01Z'
   version: 0.8.1
 - commits:
-  - author: Akis Kesoglou
-    body: ""
-    footers:
-      change-type: minor
-    hash: 52530935134413969d2950239d8a4ea874225845
-    subject: Add support for application, device and release tags
-  date: "2019-01-09T13:59:00Z"
+    - author: Akis Kesoglou
+      body: ''
+      footers:
+        change-type: minor
+      hash: 52530935134413969d2950239d8a4ea874225845
+      subject: 'Add support for application, device and release tags'
+  date: '2019-01-09T13:59:00Z'
   version: 0.8.0
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: 0a38e92db26aa04b722089569552fd82ba1ba08d
-    subject: Switch/update to fast-boot2 1.0.8 to avoid unnecessary existsSync calls
-  date: "2018-12-19T13:53:49Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: 0a38e92db26aa04b722089569552fd82ba1ba08d
+      subject: Switch/update to fast-boot2 1.0.8 to avoid unnecessary existsSync calls
+  date: '2018-12-19T13:53:49Z'
   version: 0.7.4
 - commits:
-  - author: Akis Kesoglou
-    body: ""
-    footers:
-      change-type: patch
-    hash: 0cf31b2d7b182248e421549f6a97b5362c8c4e4c
-    subject: Add ability to reset the superuser password
-  - author: Akis Kesoglou
-    body: ""
-    footers:
-      change-type: patch
-    hash: 3cf487b2d72b47909a2d4ef3dc0d0324bf582a33
-    subject: Run Prettify over index.js
-  date: "2018-12-19T09:15:46Z"
+    - author: Akis Kesoglou
+      body: ''
+      footers:
+        change-type: patch
+      hash: 0cf31b2d7b182248e421549f6a97b5362c8c4e4c
+      subject: Add ability to reset the superuser password
+    - author: Akis Kesoglou
+      body: ''
+      footers:
+        change-type: patch
+      hash: 3cf487b2d72b47909a2d4ef3dc0d0324bf582a33
+      subject: Run Prettify over index.js
+  date: '2018-12-19T09:15:46Z'
   version: 0.7.3
 - commits:
-  - author: Rich Bayliss
-    body: |-
-      This check should be performed as the root user and not require the
-      device API key to have access to the application_type records.
-    footers:
-      change-type: patch
-      signed-off-by: Rich Bayliss <rich@balena.io>
-    hash: 0ab6dbf24d29acd43f97d7b8ae1fec8a9137940f
-    subject: 'hooks: Escalate permission to root when setting is_web_accessible'
-  date: "2018-12-12T14:34:28Z"
+    - author: Rich Bayliss
+      body: |-
+        This check should be performed as the root user and not require the
+        device API key to have access to the application_type records.
+      footers:
+        change-type: patch
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      hash: 0ab6dbf24d29acd43f97d7b8ae1fec8a9137940f
+      subject: 'hooks: Escalate permission to root when setting is_web_accessible'
+  date: '2018-12-12T14:34:28Z'
   version: 0.7.2
 - commits:
-  - author: Rich Bayliss
-    body: ""
-    footers:
-      change-type: patch
-      signed-off-by: Rich Bayliss <rich@balena.io>
-    hash: 79130af2ccdd1a30b3e5e216433cce7c4cf3ea3a
-    subject: 'permissions: Device API key should have read access to application_type'
-  date: "2018-12-11T10:54:23Z"
+    - author: Rich Bayliss
+      body: ''
+      footers:
+        change-type: patch
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      hash: 79130af2ccdd1a30b3e5e216433cce7c4cf3ea3a
+      subject: 'permissions: Device API key should have read access to application_type'
+  date: '2018-12-11T10:54:23Z'
   version: 0.7.1
 - commits:
-  - author: Pagan Gazzard
-    body: Updates to odata-to-abstract-sql v3.0.0
-    footers:
-      change-type: minor
-    hash: 2666e2517cfe485c08c815ce7e81c2ae9fe623a2
-    subject: Update to pinejs 10
-  date: "2018-12-07T17:43:18Z"
+    - author: Pagan Gazzard
+      body: Updates to odata-to-abstract-sql v3.0.0
+      footers:
+        change-type: minor
+      hash: 2666e2517cfe485c08c815ce7e81c2ae9fe623a2
+      subject: Update to pinejs 10
+  date: '2018-12-07T17:43:18Z'
   version: 0.7.0
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: af8181bfaaf50f0d949921c4f17d00b746f9ae51
-    subject: Update open-balena-base to v5.0.1
-  date: "2018-12-03T13:02:02Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: af8181bfaaf50f0d949921c4f17d00b746f9ae51
+      subject: Update open-balena-base to v5.0.1
+  date: '2018-12-03T13:02:02Z'
   version: 0.6.2
 - commits:
-  - author: Rich Bayliss
-    body: |-
-      If a device is deleted from all applications but left connected and
-      online then it will keep sending state polls. This patch will send back
-      a valid response, but not actually do anything with the request.
-    footers:
-      change-type: patch
-      signed-off-by: Rich Bayliss <rich@balena.io>
-    hash: 7d5ef36911f5e084b31fb37e797d78a2e04665af
-    subject: 'state: Send valid response to invalid devices polling the state endpoint'
-  date: "2018-11-28T17:17:17Z"
+    - author: Rich Bayliss
+      body: |-
+        If a device is deleted from all applications but left connected and
+        online then it will keep sending state polls. This patch will send back
+        a valid response, but not actually do anything with the request.
+      footers:
+        change-type: patch
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      hash: 7d5ef36911f5e084b31fb37e797d78a2e04665af
+      subject: 'state: Send valid response to invalid devices polling the state endpoint'
+  date: '2018-11-28T17:17:17Z'
   version: 0.6.1
 - commits:
-  - author: Rich Bayliss
-    body: |-
-      When deleting an application an error is thrown due to an invalid
-      dependant resource. This patch removes that dependency
-    footers:
-      change-type: minor
-      signed-off-by: Rich Bayliss <rich@balena.io>
-    hash: d6e1967834b5fc3dbd44a8a21a085829a03939a0
-    subject: 'bug: Remove dependency from release delete hook'
-  date: "2018-11-19T18:38:13Z"
+    - author: Rich Bayliss
+      body: |-
+        When deleting an application an error is thrown due to an invalid
+        dependant resource. This patch removes that dependency
+      footers:
+        change-type: minor
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      hash: d6e1967834b5fc3dbd44a8a21a085829a03939a0
+      subject: 'bug: Remove dependency from release delete hook'
+  date: '2018-11-19T18:38:13Z'
   version: 0.6.0
 - commits:
-  - author: Thodoris Greasidis
-    body: ""
-    footers:
-      change-type: patch
-      see: https://github.com/balena-io/open-balena-api/pull/26#discussion_r231946843
-      signed-off-by: Thodoris Greasidis <thodoris@balena.io>
-    hash: 8f9f4ded64d4aeefb3c05eb214a8810e65b43577
-    subject: 'env-vars: Update persistent logging description'
-  date: "2018-11-15T08:07:51Z"
+    - author: Thodoris Greasidis
+      body: ''
+      footers:
+        change-type: patch
+        see: >-
+          https://github.com/balena-io/open-balena-api/pull/26#discussion_r231946843
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      hash: 8f9f4ded64d4aeefb3c05eb214a8810e65b43577
+      subject: 'env-vars: Update persistent logging description'
+  date: '2018-11-15T08:07:51Z'
   version: 0.5.4
 - commits:
-  - author: Thodoris Greasidis
-    body: ""
-    footers:
-      change-type: patch
-      resolves: '#30'
-      signed-off-by: Thodoris Greasidis <thodoris@balena.io>
-    hash: cc88041f33caf05519d75c00078ca6a695fccef5
-    subject: Add a test script that builds and runs the linter on the sources
-  - author: Thodoris Greasidis
-    body: ""
-    footers:
-      change-type: patch
-      signed-off-by: Thodoris Greasidis <thodoris@balena.io>
-    hash: 0ce0f735bb80a6586cd6cdea460a75a3282d03c7
-    subject: Fix resinCI npm tests by adding testing platforms
-  date: "2018-11-12T15:42:37Z"
+    - author: Thodoris Greasidis
+      body: ''
+      footers:
+        change-type: patch
+        resolves: '#30'
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      hash: cc88041f33caf05519d75c00078ca6a695fccef5
+      subject: Add a test script that builds and runs the linter on the sources
+    - author: Thodoris Greasidis
+      body: ''
+      footers:
+        change-type: patch
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      hash: 0ce0f735bb80a6586cd6cdea460a75a3282d03c7
+      subject: Fix resinCI npm tests by adding testing platforms
+  date: '2018-11-12T15:42:37Z'
   version: 0.5.3
 - commits:
-  - author: Thodoris Greasidis
-    body: ""
-    footers:
-      change-type: patch
-      resolves: '#14'
-      signed-off-by: Thodoris Greasidis <thodoris@balena.io>
-    hash: 54c3b7d91e80cdba921e04ff840f65c73b38e29c
-    subject: 'device-types: Harden against S3 errors'
-  date: "2018-11-12T11:52:36Z"
+    - author: Thodoris Greasidis
+      body: ''
+      footers:
+        change-type: patch
+        resolves: '#14'
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      hash: 54c3b7d91e80cdba921e04ff840f65c73b38e29c
+      subject: 'device-types: Harden against S3 errors'
+  date: '2018-11-12T11:52:36Z'
   version: 0.5.2
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: a6425c1c70218566849a0ae1b62ad023a773d498
-    subject: Update package-lock.json
-  date: "2018-11-09T12:47:00Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: a6425c1c70218566849a0ae1b62ad023a773d498
+      subject: Update package-lock.json
+  date: '2018-11-09T12:47:00Z'
   version: 0.5.1
 - commits:
-  - author: Akis Kesoglou
-    body: This moves resolving the device type and OS version to callers of `generateConfig`
-      so that it can be parameterised.
-    footers:
-      change-type: minor
-    hash: 7b22f86c152fb6880112ae5ad5fda238d506b01a
-    subject: Make config generation more generic
-  date: "2018-11-09T12:23:22Z"
+    - author: Akis Kesoglou
+      body: >-
+        This moves resolving the device type and OS version to callers of
+        `generateConfig` so that it can be parameterised.
+      footers:
+        change-type: minor
+      hash: 7b22f86c152fb6880112ae5ad5fda238d506b01a
+      subject: Make config generation more generic
+  date: '2018-11-09T12:23:22Z'
   version: 0.5.0
 - commits:
-  - author: Thodoris Greasidis
-    body: ""
-    footers:
-      change-type: minor
-      resolves: '#25'
-      signed-off-by: Thodoris Greasidis <thodoris@balena.io>
-    hash: b972210d9253089136402d03f8f90ff2b4223b15
-    subject: 'env-vars: Change descriptions for the balena rename'
-  date: "2018-11-08T15:24:10Z"
+    - author: Thodoris Greasidis
+      body: ''
+      footers:
+        change-type: minor
+        resolves: '#25'
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      hash: b972210d9253089136402d03f8f90ff2b4223b15
+      subject: 'env-vars: Change descriptions for the balena rename'
+  date: '2018-11-08T15:24:10Z'
   version: 0.4.0
 - commits:
-  - author: Rich Bayliss
-    body: |-
-      If the container is started with the following ENV vars set;
-      - SUPERUSER_EMAIL
-      - SUPERUSER_PASSWORD
-      then on startup, it will try and create the admin user with these values.
-    footers:
-      change-type: patch
-      signed-off-by: Rich Bayliss <rich@balena.io>
-    hash: f73928c327aefa96f1e2ea0be82a28c0ab0b67c1
-    subject: 'auth: Create admin account on first run'
-  date: "2018-11-07T10:23:46Z"
+    - author: Rich Bayliss
+      body: >-
+        If the container is started with the following ENV vars set;
+
+        - SUPERUSER_EMAIL
+
+        - SUPERUSER_PASSWORD
+
+        then on startup, it will try and create the admin user with these
+        values.
+      footers:
+        change-type: patch
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      hash: f73928c327aefa96f1e2ea0be82a28c0ab0b67c1
+      subject: 'auth: Create admin account on first run'
+  date: '2018-11-07T10:23:46Z'
   version: 0.3.7
 - commits:
-  - author: Will Boyce
-    body: ""
-    footers:
-      change-type: patch
-      connects-to: '#18'
-      signed-off-by: Will Boyce <will@balena.io>
-    hash: ee4526f5eb4e8e9591ef8c531742510e51f09fa7
-    subject: 'perms: Permit users permissions required to ssh into a device'
-  date: "2018-11-06T12:17:57Z"
+    - author: Will Boyce
+      body: ''
+      footers:
+        change-type: patch
+        connects-to: '#18'
+        signed-off-by: Will Boyce <will@balena.io>
+      hash: ee4526f5eb4e8e9591ef8c531742510e51f09fa7
+      subject: 'perms: Permit users permissions required to ssh into a device'
+  date: '2018-11-06T12:17:57Z'
   version: 0.3.6
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: 9c0093f64455670b45724358ebdff346e657d88d
-    subject: Update to ts-node 7
-  date: "2018-11-02T13:56:54Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: 9c0093f64455670b45724358ebdff346e657d88d
+      subject: Update to ts-node 7
+  date: '2018-11-02T13:56:54Z'
   version: 0.3.5
 - commits:
-  - author: Akis Kesoglou
-    body: This ensures the variables for OpenVPN are properly set in the environment
-      and also moves them into `lib/config`.
-    footers:
-      change-type: patch
-    hash: 3adde2e1c115d23f1fb83bb8e9780fb1bcac4545
-    subject: Add missing VPN env vars
-  date: "2018-11-02T11:48:53Z"
+    - author: Akis Kesoglou
+      body: >-
+        This ensures the variables for OpenVPN are properly set in the
+        environment and also moves them into `lib/config`.
+      footers:
+        change-type: patch
+      hash: 3adde2e1c115d23f1fb83bb8e9780fb1bcac4545
+      subject: Add missing VPN env vars
+  date: '2018-11-02T11:48:53Z'
   version: 0.3.4
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: bb5ca674620b558c04042fce981f0aec48b45f7c
-    subject: Fix typo
-  date: "2018-11-01T15:04:12Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: bb5ca674620b558c04042fce981f0aec48b45f7c
+      subject: Fix typo
+  date: '2018-11-01T15:04:12Z'
   version: 0.3.3
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: e60ebfabe2ac4dcaff42bda6975f20b6da930297
-    subject: Reduce api queries used to update service installs by using $in
-  date: "2018-11-01T13:59:15Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: e60ebfabe2ac4dcaff42bda6975f20b6da930297
+      subject: Reduce api queries used to update service installs by using $in
+  date: '2018-11-01T13:59:15Z'
   version: 0.3.2
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: 3d8bba018ead39856c87d1f913c4e1a4f66a7f9c
-    subject: Add precommit hook for linting
-  date: "2018-11-01T13:06:28Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: 3d8bba018ead39856c87d1f913c4e1a4f66a7f9c
+      subject: Add precommit hook for linting
+  date: '2018-11-01T13:06:28Z'
   version: 0.3.1
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: minor
-    hash: 13f5f679c8bdae06c5829b57a70c8fa23e7a781c
-    subject: Drop the pubnub backend
-  date: "2018-11-01T12:20:16Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: minor
+      hash: 13f5f679c8bdae06c5829b57a70c8fa23e7a781c
+      subject: Drop the pubnub backend
+  date: '2018-11-01T12:20:16Z'
   version: 0.3.0
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: minor
-    hash: 60d2dbfaeb4376eddce7ff0abb264eeb1d6abf52
-    subject: Update to open-balena-base 5.0.0, including nodejs 10
-  date: "2018-10-30T16:06:12Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: minor
+      hash: 60d2dbfaeb4376eddce7ff0abb264eeb1d6abf52
+      subject: 'Update to open-balena-base 5.0.0, including nodejs 10'
+  date: '2018-10-30T16:06:12Z'
   version: 0.2.0
 - commits:
-  - author: Pagan Gazzard
-    body: ""
-    footers:
-      change-type: patch
-    hash: 15775a6f8eeb5ec42a77ce4110cf2baecc6ef88f
-    subject: Update resin-device-config to 5.x
-  date: "2018-10-29T21:25:49Z"
+    - author: Pagan Gazzard
+      body: ''
+      footers:
+        change-type: patch
+      hash: 15775a6f8eeb5ec42a77ce4110cf2baecc6ef88f
+      subject: Update resin-device-config to 5.x
+  date: '2018-10-29T21:25:49Z'
   version: 0.1.4
 - commits:
-  - author: Akis Kesoglou
-    body: ""
-    footers:
-      change-type: patch
-    hash: c8248ef4c73d7a696f07a163af6900e954f7b34a
-    subject: Expose API as v5
-  date: "2018-10-29T20:34:20Z"
+    - author: Akis Kesoglou
+      body: ''
+      footers:
+        change-type: patch
+      hash: c8248ef4c73d7a696f07a163af6900e954f7b34a
+      subject: Expose API as v5
+  date: '2018-10-29T20:34:20Z'
   version: 0.1.3
 - commits:
-  - author: Akis Kesoglou
-    body: ""
-    footers:
-      change-type: patch
-    hash: c3385dbb797961779efb45703274eacd75f54042
-    subject: Add license to package.json
-  date: "2018-10-29T12:24:28Z"
+    - author: Akis Kesoglou
+      body: ''
+      footers:
+        change-type: patch
+      hash: c3385dbb797961779efb45703274eacd75f54042
+      subject: Add license to package.json
+  date: '2018-10-29T12:24:28Z'
   version: 0.1.2
 - commits:
-  - author: Akis Kesoglou
-    body: ""
-    footers:
-      change-type: patch
-    hash: 419824a9aaeba723904128eebbac42bd45e87053
-    subject: Update dependencies
-  date: "2018-10-26T22:36:28Z"
+    - author: Akis Kesoglou
+      body: ''
+      footers:
+        change-type: patch
+      hash: 419824a9aaeba723904128eebbac42bd45e87053
+      subject: Update dependencies
+  date: '2018-10-26T22:36:28Z'
   version: 0.1.1
 - commits:
-  - author: Tim Perry
-    body: ""
-    footers:
-      change-type: minor
-    hash: a3fd144c2a4a372368790b42d3aa1db9fbceacae
-    subject: Add the /config/var endpoint
-  date: "2018-10-26T16:07:34Z"
+    - author: Tim Perry
+      body: ''
+      footers:
+        change-type: minor
+      hash: a3fd144c2a4a372368790b42d3aa1db9fbceacae
+      subject: Add the /config/var endpoint
+  date: '2018-10-26T16:07:34Z'
   version: 0.1.0
 - commits:
-  - author: Akis Kesoglou
-    body: ""
-    footers:
-      change-type: patch
-    hash: ba1e99afcfe04f802af3dd8febf86e12dab9651e
-    subject: Ensure project can be published as an NPM module
-  date: "2018-10-26T15:44:13Z"
+    - author: Akis Kesoglou
+      body: ''
+      footers:
+        change-type: patch
+      hash: ba1e99afcfe04f802af3dd8febf86e12dab9651e
+      subject: Ensure project can be published as an NPM module
+  date: '2018-10-26T15:44:13Z'
   version: 0.0.2
