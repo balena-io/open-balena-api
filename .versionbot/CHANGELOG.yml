@@ -1,4 +1,14 @@
 - commits:
+    - subject: Fix import ordering issue
+      hash: d4f207d8b7d9c55ef0f173fd3e58d20d46a964bc
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.18.2
+  date: 2019-04-29T12:32:17.257Z
+- commits:
     - subject: 'versionbot: add machine readable changelog'
       hash: 95c57fb121cda374e36e45aaf82ee36877e8b82f
       body: ''
