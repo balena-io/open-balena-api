@@ -1,4 +1,19 @@
 - commits:
+    - subject: 'tests: Add test framework'
+      hash: 52c6eebcc45f637d15b48b7ea7942e6011b891eb
+      body: |
+        Add a test framework to allow testing of the openBalena API
+
+        Added CircleCI pipeline to run tests.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Rich Bayliss <rich@balena.io>
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      author: Rich Bayliss
+  version: 0.18.3
+  date: 2019-05-01T09:06:36.206Z
+- commits:
     - subject: Fix import ordering issue
       hash: d4f207d8b7d9c55ef0f173fd3e58d20d46a964bc
       body: ''
