@@ -1,4 +1,21 @@
 - commits:
+    - subject: Disable the service start limit
+      hash: d69d9b2355616685dfb570be6aa6c14ccc97a7c2
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Update open-balena-base to v7.0.2
+      hash: d363fa289386f39de9af1bc3a3eb0690b35d9ea0
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.18.4
+  date: 2019-05-06T11:23:47.208Z
+- commits:
     - subject: 'tests: Add test framework'
       hash: 52c6eebcc45f637d15b48b7ea7942e6011b891eb
       body: |
