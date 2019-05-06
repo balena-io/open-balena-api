@@ -11,6 +11,7 @@ EnvironmentFile=/usr/src/app/config/env
 ExecStart=/usr/src/app/entry.sh
 Restart=always
 SyslogIdentifier=api
+StartLimitIntervalSec=0
 
 [Install]
 WantedBy=basic.target
