@@ -23,6 +23,11 @@ require('fast-boot2').start({
 
 // Support `require()` of *.ts files
 process.env.TS_NODE_CACHE_DIRECTORY = '.ts-node';
-require('ts-node/register/transpile-only');
+try {
+	require('ts-node/register/transpile-only');
+} catch (e) {
+	// Ignore failure to load ts-node as it should be from running in a container
+	// where the ts code has already been compiled
+}
 
 require('./init.ts');
