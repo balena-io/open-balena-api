@@ -1,4 +1,21 @@
 - commits:
+    - subject: Add typed-error upstream to repo.yml
+      hash: d50d88a873988aa2c9cf1f50ed721fbf92565869
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Add open-balena-base upstream to repo.yml
+      hash: 2d039de7c4c8f8728a5a5af931fa83f55ef2a303
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.18.5
+  date: 2019-05-08T16:12:46.186Z
+- commits:
     - subject: Disable the service start limit
       hash: d69d9b2355616685dfb570be6aa6c14ccc97a7c2
       body: ''
