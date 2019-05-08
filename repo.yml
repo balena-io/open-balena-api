@@ -2,3 +2,5 @@ type: 'node'
 upstream:
   - repo: pinejs
     url: https://github.com/balena-io/pinejs
+  - repo: 'open-balena-base'
+    url: 'https://github.com/balena-io/open-balena-base'
