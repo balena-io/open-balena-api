@@ -1,4 +1,18 @@
 - commits:
+    - subject: 'bug: Resolve NPM dependency issues preventing startup'
+      hash: 13842dee794bd12465ba97572a7a3ee0a19b7fc6
+      body: |
+        Add `ts-node` as a dependency, as it had been marked as devOnly
+        in a previous PR.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Rich Bayliss <rich@balena.io>
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      author: Rich Bayliss
+  version: 0.18.6
+  date: 2019-05-10T11:05:12.524Z
+- commits:
     - subject: Add typed-error upstream to repo.yml
       hash: d50d88a873988aa2c9cf1f50ed721fbf92565869
       body: ''
