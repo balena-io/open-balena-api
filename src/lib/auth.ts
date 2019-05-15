@@ -69,6 +69,9 @@ export const ROLES: {
 		`resin.image.push?image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/${belongsToApplicationOrIsManagedByDevice}))`,
 
 		`resin.device.write-log?${matchesActor}`,
+
+		`resin.user.get`,
+		`resin.user__has__public_key.get`,
 	],
 	// also default-user (see below)
 	'named-user-api-key': [
