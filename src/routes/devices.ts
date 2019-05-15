@@ -264,139 +264,139 @@ const ConfigurationVarsToLabels = {
 	RESIN_SUPERVISOR_HANDOVER_TIMEOUT: 'io.resin.update.handover-timeout',
 };
 
+const stateQuery = resinApi.prepare<{ uuid: string }>({
+	resource: 'device',
+	options: {
+		$select: ['device_name', 'os_version'],
+		$filter: { uuid: { '@': 'uuid' } },
+		$expand: {
+			device_config_variable: {
+				$select: ['name', 'value'],
+			},
+			device_environment_variable: {
+				$select: ['name', 'value'],
+			},
+			should_be_running__release: {
+				$select: ['id', 'commit', 'composition'],
+				$expand: {
+					contains__image: {
+						$select: ['id'],
+						$expand: {
+							image: {
+								$select: [
+									'id',
+									'is_stored_at__image_location',
+									'content_hash',
+									'is_a_build_of__service',
+								],
+							},
+							image_label: {
+								$select: ['label_name', 'value'],
+							},
+							image_environment_variable: {
+								$select: ['name', 'value'],
+							},
+						},
+					},
+				},
+			},
+			service_install: {
+				$select: ['id'],
+				$expand: {
+					service: {
+						$select: ['id', 'service_name'],
+						$expand: {
+							service_environment_variable: {
+								$select: ['name', 'value'],
+							},
+							service_label: {
+								$select: ['label_name', 'value'],
+							},
+						},
+					},
+					device_service_environment_variable: {
+						$select: ['name', 'value'],
+					},
+				},
+			},
+			belongs_to__application: {
+				$select: ['id', 'app_name', 'commit'],
+				$expand: {
+					application_config_variable: {
+						$select: ['name', 'value'],
+					},
+					application_environment_variable: {
+						$select: ['name', 'value'],
+					},
+					is_depended_on_by__application: {
+						$select: ['id', 'app_name', 'commit'],
+						$expand: {
+							application_config_variable: {
+								$select: ['name', 'value'],
+							},
+							application_environment_variable: {
+								$select: ['name', 'value'],
+							},
+						},
+					},
+				},
+			},
+			manages__device: {
+				$select: ['id', 'uuid', 'device_name'],
+				$expand: {
+					belongs_to__application: {
+						$select: ['id', 'depends_on__application', 'commit'],
+						$expand: {
+							service: {
+								$select: ['id'],
+								$top: 1,
+								$expand: {
+									service_environment_variable: {
+										$select: ['name', 'value'],
+									},
+								},
+							},
+						},
+					},
+					service_install: {
+						$select: ['id'],
+						$top: 1,
+						$expand: {
+							device_service_environment_variable: {
+								$select: ['name', 'value'],
+							},
+							service: {
+								$select: ['id'],
+								$expand: {
+									service_environment_variable: {
+										$select: ['name', 'value'],
+									},
+								},
+							},
+						},
+					},
+					device_config_variable: {
+						$select: ['name', 'value'],
+					},
+					device_environment_variable: {
+						$select: ['name', 'value'],
+					},
+				},
+			},
+		},
+	},
+});
+
 export const state: RequestHandler = (req, res) => {
 	const uuid = req.param('uuid');
 	if (!uuid) {
 		return res.send(400);
 	}
 
-	db.readTransaction(tx => {
-		const resinApiTx = resinApi.clone({ passthrough: { req, tx } });
-
-		return resinApiTx
-			.get({
-				resource: 'device',
-				options: {
-					$select: ['device_name', 'os_version'],
-					$filter: { uuid },
-					$expand: {
-						device_config_variable: {
-							$select: ['name', 'value'],
-						},
-						device_environment_variable: {
-							$select: ['name', 'value'],
-						},
-						should_be_running__release: {
-							$select: ['id', 'commit', 'composition'],
-							$expand: {
-								contains__image: {
-									$select: ['id'],
-									$expand: {
-										image: {
-											$select: [
-												'id',
-												'is_stored_at__image_location',
-												'content_hash',
-												'is_a_build_of__service',
-											],
-										},
-										image_label: {
-											$select: ['label_name', 'value'],
-										},
-										image_environment_variable: {
-											$select: ['name', 'value'],
-										},
-									},
-								},
-							},
-						},
-						service_install: {
-							$select: ['id'],
-							$expand: {
-								service: {
-									$select: ['id', 'service_name'],
-									$expand: {
-										service_environment_variable: {
-											$select: ['name', 'value'],
-										},
-										service_label: {
-											$select: ['label_name', 'value'],
-										},
-									},
-								},
-								device_service_environment_variable: {
-									$select: ['name', 'value'],
-								},
-							},
-						},
-						belongs_to__application: {
-							$select: ['id', 'app_name', 'commit'],
-							$expand: {
-								application_config_variable: {
-									$select: ['name', 'value'],
-								},
-								application_environment_variable: {
-									$select: ['name', 'value'],
-								},
-								is_depended_on_by__application: {
-									$select: ['id', 'app_name', 'commit'],
-									$expand: {
-										application_config_variable: {
-											$select: ['name', 'value'],
-										},
-										application_environment_variable: {
-											$select: ['name', 'value'],
-										},
-									},
-								},
-							},
-						},
-						manages__device: {
-							$select: ['id', 'uuid', 'device_name'],
-							$expand: {
-								belongs_to__application: {
-									$select: ['id', 'depends_on__application', 'commit'],
-									$expand: {
-										service: {
-											$select: ['id'],
-											$top: 1,
-											$expand: {
-												service_environment_variable: {
-													$select: ['name', 'value'],
-												},
-											},
-										},
-									},
-								},
-								service_install: {
-									$select: ['id'],
-									$top: 1,
-									$expand: {
-										device_service_environment_variable: {
-											$select: ['name', 'value'],
-										},
-										service: {
-											$select: ['id'],
-											$expand: {
-												service_environment_variable: {
-													$select: ['name', 'value'],
-												},
-											},
-										},
-									},
-								},
-								device_config_variable: {
-									$select: ['name', 'value'],
-								},
-								device_environment_variable: {
-									$select: ['name', 'value'],
-								},
-							},
-						},
-					},
-				},
-			})
-			.then(([device]: AnyObject[]) => {
+	db.readTransaction(tx =>
+		stateQuery({ uuid }, undefined, { req, tx }).then(
+			([device]: AnyObject[]) => {
+				const resinApiTx = resinApi.clone({ passthrough: { req, tx } });
 				if (!device) {
 					throw new UnauthorizedError();
 				}
@@ -628,8 +628,9 @@ export const state: RequestHandler = (req, res) => {
 						});
 					});
 				});
-			});
-	}).catch(err => {
+			},
+		),
+	).catch(err => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}

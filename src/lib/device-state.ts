@@ -84,7 +84,7 @@ export const serviceInstallFromImage = (
 	}
 
 	let id: number;
-	if (_.isObject(image.is_a_build_of__service)) {
+	if (typeof image.is_a_build_of__service === 'object') {
 		id = image.is_a_build_of__service.__id;
 	} else {
 		id = image.is_a_build_of__service;
