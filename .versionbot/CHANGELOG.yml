@@ -1,4 +1,14 @@
 - commits:
+    - subject: Update target to es2018
+      hash: b3bab02244ae85e4805db95eec92a3ae61fb0d92
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.19.0
+  date: 2019-05-15T15:25:47.366Z
+- commits:
     - subject: 'bug: Resolve NPM dependency issues preventing startup'
       hash: 13842dee794bd12465ba97572a7a3ee0a19b7fc6
       body: |
