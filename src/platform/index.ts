@@ -40,7 +40,7 @@ const $getOrInsertId = (
 	const apiTx = api.clone({ passthrough: { req: root, tx } });
 	return apiTx
 		.get({
-			resource: resource,
+			resource,
 			options: {
 				$select: 'id',
 				$filter: body,
@@ -50,8 +50,8 @@ const $getOrInsertId = (
 			if (results.length === 0) {
 				return apiTx
 					.post({
-						resource: resource,
-						body: body,
+						resource,
+						body,
 						options: { returnResource: false },
 					})
 					.then(idObj => _.assign({}, idObj, body) as Bluebird<{ id: number }>);
@@ -193,7 +193,7 @@ export const createActor = ({
 
 export function addDeleteHookForDependents(
 	resource: string,
-	dependents: [string, string, string[]?][],
+	dependents: Array<[string, string, string[]?]>,
 ) {
 	sbvrUtils.addPureHook('DELETE', 'resin', resource, {
 		PRERUN: args => {

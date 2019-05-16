@@ -338,7 +338,7 @@ function getReadContext(api: PinejsClient, req: Request): Promise<LogContext> {
 				$select: ['id', 'logs_channel'],
 			},
 		})
-		.then(([ctx]: Array<LogContext>) => {
+		.then(([ctx]: LogContext[]) => {
 			if (!ctx) {
 				throw new NotFoundError('No device with uuid ' + uuid);
 			}
@@ -373,7 +373,7 @@ function getWriteContext(
 				},
 			},
 		})
-		.then(([ctx]: Array<LogWriteContext>) => {
+		.then(([ctx]: LogWriteContext[]) => {
 			if (!ctx) {
 				throw new NotFoundError('No device with uuid ' + uuid);
 			}
@@ -398,7 +398,7 @@ function checkWritePermissions(ctx: LogWriteContext): Promise<void> {
 		})
 		.then((allowedDevices: { d?: Array<{ id: number }> }) => {
 			const device = allowedDevices.d && allowedDevices.d[0];
-			if (!device || device.id != ctx.id) {
+			if (!device || device.id !== ctx.id) {
 				throw new UnauthorizedError('Not allowed to write device logs');
 			}
 		});

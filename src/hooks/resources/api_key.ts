@@ -20,7 +20,7 @@ const deleteApiKeyHooks: sbvrUtils.Hooks = {
 				resource =>
 					authApi
 						.delete({
-							resource: resource,
+							resource,
 							passthrough: {
 								tx: args.tx,
 								req: root,

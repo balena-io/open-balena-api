@@ -87,7 +87,7 @@
     "lint-staged": "^8.1.7",
     "mocha": "^6.1.4",
     "prettier": "^1.17.1",
-    "resin-lint": "^2.0.0",
+    "resin-lint": "^2.0.1",
     "rimraf": "^2.6.3",
     "supertest": "^4.0.2"
   },

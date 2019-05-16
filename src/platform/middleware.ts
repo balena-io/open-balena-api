@@ -52,7 +52,7 @@ export const gracefullyDenyDeletedDevices: RequestHandler = (
 ) => {
 	const { uuid } = req.params;
 
-	const returnCode = req.method == 'GET' ? 304 : 200;
+	const returnCode = req.method === 'GET' ? 304 : 200;
 
 	return resinApi
 		.get({
@@ -65,7 +65,7 @@ export const gracefullyDenyDeletedDevices: RequestHandler = (
 			},
 		})
 		.then((devices: number) => {
-			if (devices == 0) {
+			if (devices === 0) {
 				res.sendStatus(returnCode);
 				return;
 			}

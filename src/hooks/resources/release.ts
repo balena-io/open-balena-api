@@ -9,7 +9,7 @@ const updateLatestRelease = (id: number, { request, api }: HookArgs) => {
 		return api
 			.get({
 				resource: 'release',
-				id: id,
+				id,
 				options: {
 					$select: ['commit'],
 					$expand: {

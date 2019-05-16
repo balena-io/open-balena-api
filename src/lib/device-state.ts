@@ -11,7 +11,7 @@ export const setMinPollInterval = (config: AnyObject) => {
 	const pollInterval =
 		config.RESIN_SUPERVISOR_POLL_INTERVAL == null
 			? 0
-			: parseInt(config.RESIN_SUPERVISOR_POLL_INTERVAL);
+			: parseInt(config.RESIN_SUPERVISOR_POLL_INTERVAL, 10);
 	// Multicontainer supervisor requires the poll interval to be a string
 	config.RESIN_SUPERVISOR_POLL_INTERVAL =
 		'' + Math.max(pollInterval, DEFAULT_SUPERVISOR_POLL_INTERVAL);

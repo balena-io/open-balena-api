@@ -249,7 +249,7 @@ export function requestDevices({
 								json: data,
 								proxy: `http://resin_api:${API_VPN_SERVICE_API_KEY}@${vpnIp}:3128`,
 								tunnel: true,
-								method: method,
+								method,
 								timeout: DEVICE_REQUEST_TIMEOUT,
 							}),
 						);

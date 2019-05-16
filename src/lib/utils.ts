@@ -38,7 +38,7 @@ export const getIPv4 = (req: Request): string | undefined => {
 		} else if (ip instanceof ipaddr.IPv6 && ip.isIPv4MappedAddress()) {
 			return ip.toIPv4Address().toString();
 		}
-	} catch (e) {}
+	} catch {}
 };
 
 export type EnvVarList = Array<{ name: string; value: string }>;

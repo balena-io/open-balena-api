@@ -177,7 +177,7 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = (userId, existingToken) => {
 			}
 			const newTokenData: Partial<User> = _.pick(userData, tokenFields);
 
-			let tokenData = {
+			const tokenData = {
 				...existingToken,
 				...newTokenData,
 				...{ permissions: permissionData },

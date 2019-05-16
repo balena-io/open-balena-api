@@ -147,22 +147,22 @@ export const setApiKey = (
 
 export type PermissionSet = string[];
 
-export type RolePermissionsMap = {
+export interface RolePermissionsMap {
 	[roleName: string]: PermissionSet;
-};
+}
 
-export type ApiKeyPermissionsMap = {
+export interface ApiKeyPermissionsMap {
 	[keyName: string]: {
 		key?: string;
 		permissions: PermissionSet;
 	};
-};
+}
 
 export type EmailSet = string[];
 
-export type UserRoleMap = {
+export interface UserRoleMap {
 	[roleName: string]: EmailSet;
-};
+}
 
 export function createAll(
 	tx: Tx,
@@ -236,7 +236,7 @@ export function createAll(
 								resource: 'role__has__permission',
 								body: {
 									role: role.id,
-									permission: permission,
+									permission,
 								},
 								options: { returnResource: false },
 							}),

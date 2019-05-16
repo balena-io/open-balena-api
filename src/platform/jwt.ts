@@ -80,11 +80,7 @@ export const strategy = new JwtStrategy(
 				if (jwtUser == null) {
 					throw new InvalidJwtSecretError();
 				}
-				const {
-					resinApi,
-					sbvrUtils,
-					root,
-				}: typeof _platform = require('./index');
+				const { resinApi, root }: typeof _platform = require('./index');
 				if ('service' in jwtUser && jwtUser.service) {
 					const { service, apikey } = jwtUser;
 					return sbvrUtils.getApiKeyPermissions(apikey).then(permissions => {

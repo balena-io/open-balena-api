@@ -347,8 +347,9 @@ export const token: RequestHandler = (req, res) =>
 			getSubject(req),
 			authorizeRequest(req, scopes),
 			(sub, access) => {
-				const token = generateToken(sub, REGISTRY2_HOST, access);
-				res.send({ token });
+				res.send({
+					token: generateToken(sub, REGISTRY2_HOST, access),
+				});
 			},
 		);
 	}).catch(err => {
