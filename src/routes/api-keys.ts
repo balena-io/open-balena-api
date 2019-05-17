@@ -6,7 +6,11 @@ import {
 	createNamedUserApiKey as $createNamedUserApiKey,
 } from '../lib/api-keys';
 import { getUser } from '../platform/auth';
-import { captureException, translateError } from '../platform/errors';
+import {
+	captureException,
+	translateError,
+	handleHttpErrors,
+} from '../platform/errors';
 import { RequestHandler } from 'express';
 
 export const createDeviceApiKey: RequestHandler = (req, res) => {
@@ -21,6 +25,9 @@ export const createDeviceApiKey: RequestHandler = (req, res) => {
 			res.json(apiKey);
 		})
 		.catch(err => {
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
 			captureException(err, 'Error generating device API key', { req });
 			res.status(500).send(translateError(err));
 		});
@@ -38,6 +45,9 @@ export const createProvisioningApiKey: RequestHandler = (req, res) => {
 			res.json(apiKey);
 		})
 		.catch(err => {
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
 			captureException(err, 'Error generating provisioning API key', { req });
 			res.status(500).send(translateError(err));
 		});
@@ -51,6 +61,9 @@ export const createUserApiKey: RequestHandler = (req, res) =>
 			res.json(apiKey);
 		})
 		.catch(err => {
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
 			captureException(err, 'Error generating user API key', { req });
 			res.status(500).send(translateError(err));
 		});
@@ -66,6 +79,9 @@ export const createNamedUserApiKey: RequestHandler = (req, res) => {
 			res.json(apiKey);
 		})
 		.catch(err => {
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
 			captureException(err, 'Error generating named user API key', { req });
 			res.status(500).send(translateError(err));
 		});
