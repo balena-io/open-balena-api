@@ -1,4 +1,14 @@
 - commits:
+    - subject: Silence expected API key related rejections
+      hash: d9e10e7128be9c562bcabbd58243830c6b2d1e01
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+  version: 0.19.3
+  date: 2019-05-17T11:47:13.587Z
+- commits:
     - subject: Update dependencies
       hash: a01960d25643dd5da4f090638db8e87b297c00c5
       body: ''
