@@ -244,16 +244,21 @@ export function requestDevices({
 						const vpnIp = device.is_managed_by__service_instance[0].ip_address;
 						const deviceUrl = `http://${device.uuid}.balena:${device.api_port ||
 							80}${url}?apikey=${device.api_secret}`;
-						promises.push(
-							requestAsync({
-								uri: deviceUrl,
-								json: data,
-								proxy: `http://resin_api:${API_VPN_SERVICE_API_KEY}@${vpnIp}:3128`,
-								tunnel: true,
-								method,
-								timeout: DEVICE_REQUEST_TIMEOUT,
-							}),
-						);
+						let p = requestAsync({
+							uri: deviceUrl,
+							json: data,
+							proxy: `http://resin_api:${API_VPN_SERVICE_API_KEY}@${vpnIp}:3128`,
+							tunnel: true,
+							method,
+							timeout: DEVICE_REQUEST_TIMEOUT,
+						});
+						if (!wait) {
+							// this force-cast is super ugly but harmless because clearly noone
+							// cares about the return value of the promise (since wait == false)
+							// so we just need to satisfy the compiler
+							p = p.catchReturn((undefined as any) as RequestResponse);
+						}
+						promises.push(p);
 						// We add a delay between each notification so that we do not in essence
 						// trigger a DDOS from resin devices against us, but we do not wait for
 						// completion of individual requests because doing so could cause a
