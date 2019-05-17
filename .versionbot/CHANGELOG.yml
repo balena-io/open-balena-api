@@ -1,4 +1,14 @@
 - commits:
+    - subject: Update dependencies
+      hash: a01960d25643dd5da4f090638db8e87b297c00c5
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.19.2
+  date: 2019-05-17T10:44:43.341Z
+- commits:
     - subject: Make use of a prepared query for device state query
       hash: ffa3f0bbba27d2c7246a45ab4ed4ff342a5c772c
       body: ''
