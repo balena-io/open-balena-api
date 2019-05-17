@@ -170,7 +170,8 @@ export function requestDevices(
 		wait: false;
 	},
 ): Promise<void>;
-// This override is identical to the main form in order for `postDevices` to be able to call it with the generic form
+// This override is identical to the main form in order for `postDevices` to be able
+// to call it with the generic form
 export function requestDevices(
 	opts: RequestDevicesOpts,
 ): Promise<void | RequestResponse[]>;
@@ -253,16 +254,18 @@ export function requestDevices({
 								timeout: DEVICE_REQUEST_TIMEOUT,
 							}),
 						);
-						// We add a delay between each notification so that we do not in essence trigger a DDOS from resin
-						// devices against us, but we do not wait for completion of individual requests because doing so
-						// could cause a terrible UX if we have a device time out, as that would block all the subsequent
-						// notifications
+						// We add a delay between each notification so that we do not in essence
+						// trigger a DDOS from resin devices against us, but we do not wait for
+						// completion of individual requests because doing so could cause a
+						// terrible UX if we have a device time out, as that would block all the
+						// subsequent notifications
 						return Promise.delay(DELAY_BETWEEN_DEVICE_REQUEST);
 					}).then(() => Promise.all(promises));
 
 					if (!wait) {
-						// We return null if not waiting in order to stop bluebird warnings, and we cast as void to keep the
-						// void typing (ie that the result should not be used for this case)
+						// We return null if not waiting in order to stop bluebird warnings,
+						// and we cast as void to keep the void typing (ie that the result
+						// should not be used for this case)
 						return (null as any) as void;
 					}
 					return waitPromise;
