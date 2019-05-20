@@ -1,4 +1,14 @@
 - commits:
+    - subject: Some linting fixes for resin-lint 3
+      hash: 808fc3e1ec9b21d8df1166bc3265d92d6bfa1c59
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.19.4
+  date: 2019-05-20T12:11:09.118Z
+- commits:
     - subject: Silence expected API key related rejections
       hash: d9e10e7128be9c562bcabbd58243830c6b2d1e01
       body: ''
