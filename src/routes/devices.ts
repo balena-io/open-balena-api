@@ -420,7 +420,7 @@ export const state: RequestHandler = (req, res) => {
 
 					setMinPollInterval(local.config);
 
-					let composition: AnyObject | undefined = undefined;
+					let composition: AnyObject | undefined;
 					if (release != null) {
 						// Parse the composition to forward values to the device
 						if (_.isObject(release.composition)) {
@@ -801,7 +801,7 @@ export const statePatch: RequestHandler = (req, res) => {
 	// device name
 	const { local, dependent } = values;
 
-	let apps: undefined | AnyObject[] = undefined;
+	let apps: undefined | AnyObject[];
 	let deviceBody: undefined | AnyObject;
 	if (local != null) {
 		apps = local.apps;
@@ -857,8 +857,8 @@ export const statePatch: RequestHandler = (req, res) => {
 							([imageIdStr, svc]) => {
 								const imageId = _.parseInt(imageIdStr, 10);
 								imageIds.push(imageId);
-								let { status, download_progress, releaseId } = svc;
-								releaseId = _.parseInt(releaseId, 10);
+								const { status, download_progress } = svc;
+								const releaseId = _.parseInt(svc.releaseId, 10);
 
 								if (!_.isFinite(imageId)) {
 									throw new BadRequestError(
@@ -919,7 +919,7 @@ export const statePatch: RequestHandler = (req, res) => {
 						Promise.map(
 							_.toPairs(images as AnyObject),
 							([imageIdStr, { status, download_progress }]) => {
-								let imageId = parseInt(imageIdStr, 10);
+								const imageId = parseInt(imageIdStr, 10);
 								imageIds.push(imageId);
 								return upsertGatewayDownload(
 									resinApiTx,

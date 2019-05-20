@@ -53,7 +53,7 @@ export class Supervisor {
 	}
 
 	private isOldLog(log: AnySupervisorLog): log is OldSupervisorLog {
-		const old = <OldSupervisorLog>log;
+		const old: OldSupervisorLog = log;
 		return !!(old.is_stderr || old.is_system || old.image_id);
 	}
 

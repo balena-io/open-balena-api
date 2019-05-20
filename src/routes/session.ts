@@ -38,8 +38,8 @@ export const login: RequestHandler = (req, res) => {
 			}
 
 			return comparePassword(password, user.password)
-				.then(res => {
-					if (!res) {
+				.then(matches => {
+					if (!matches) {
 						throw new BadRequestError('Current password incorrect.');
 					}
 					return resinApi.patch({

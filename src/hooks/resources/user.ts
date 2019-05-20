@@ -65,7 +65,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 			resource =>
 				authApiTx
 					.delete({
-						resource: resource,
+						resource,
 						options: {
 							$filter: {
 								user: userId,

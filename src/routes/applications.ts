@@ -41,7 +41,7 @@ export const downloadImageConfig: RequestHandler = (req, res) => {
 		return;
 	}
 
-	const deviceType = req.param('deviceType');
+	const deviceTypeSlug = req.param('deviceType');
 	const osVersion = req.param('version');
 
 	if (!osVersion) {
@@ -51,7 +51,7 @@ export const downloadImageConfig: RequestHandler = (req, res) => {
 
 	return getApp(req)
 		.then(app =>
-			findBySlug(deviceType || app.device_type).then(deviceType =>
+			findBySlug(deviceTypeSlug || app.device_type).then(deviceType =>
 				generateConfig(req, app, deviceType, osVersion),
 			),
 		)
