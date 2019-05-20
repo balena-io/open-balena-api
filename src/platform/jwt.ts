@@ -7,7 +7,7 @@ import * as randomstring from 'randomstring';
 import * as passport from 'passport';
 import { sbvrUtils } from '@resin/pinejs';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import TypedError = require('typed-error');
+import { TypedError } from 'typed-error';
 import { captureException } from './errors';
 import { RequestHandler } from 'express';
 

@@ -1,4 +1,4 @@
-import TypedError = require('typed-error');
+import { TypedError } from 'typed-error';
 import { sbvrUtils } from '../platform';
 
 export const { NotFoundError } = sbvrUtils;
