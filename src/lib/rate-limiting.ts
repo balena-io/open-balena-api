@@ -35,11 +35,7 @@ interface ExpressBruteRedisOpts extends redis.ClientOpts {
  Retry to connect to the redis server every 200 ms. To allow recovering
  in case the redis server goes offline and comes online again.
 */
-const redisRetryStrategy: redis.RetryStrategy = (
-	_opts: redis.RetryStrategyOptions,
-): number | Error => {
-	return 200;
-};
+const redisRetryStrategy: redis.RetryStrategy = _.constant(200);
 
 // Use redis as a store.
 const getStore = _.once(() => {
@@ -52,7 +48,7 @@ const getStore = _.once(() => {
 		port: REDIS_PORT,
 		retry_strategy: redisRetryStrategy,
 		enable_offline_queue: false,
-	} as redis.ClientOpts);
+	});
 
 	// we need to bind to this error handler otherwise a redis error would kill
 	// the whole process
@@ -73,16 +69,12 @@ const redisErrorHandler = (options: StoreErrorOptions) => {
 	options.next();
 };
 
-const createExpressBrute = (options?: ExpressBrute.Options): ExpressBrute => {
-	return new ExpressBrute(getStore(), options);
-};
-
 const failDebug: ExpressBrute.FailTooManyRequests = (
-	req: _express.Request,
-	res: _express.Response,
-	next: _express.NextFunction,
-	nextValidRequestDate: Date,
-): void => {
+	req,
+	res,
+	next,
+	nextValidRequestDate,
+) => {
 	console.error('Blocked by rate limiting: ' + req.originalUrl);
 	ExpressBrute.FailTooManyRequests(req, res, next, nextValidRequestDate);
 };
@@ -92,12 +84,14 @@ export const SECONDS_PER_HOUR = 60 * 60;
 export const MINUTES = 60 * SECONDS;
 export const HOURS = 60 * MINUTES;
 
-export const getUserIDFromCreds = (req: _express.Request): Promise<string> => {
-	if (req.creds != null && 'id' in req.creds) {
-		return Promise.resolve(`userID:${req.creds.id}`);
-	}
-	return Promise.resolve(`nouserID`);
-};
+export const getUserIDFromCreds = Promise.method(
+	(req: _express.Request): string => {
+		if (req.creds != null && 'id' in req.creds) {
+			return `userID:${req.creds.id}`;
+		}
+		return `nouserID`;
+	},
+);
 
 export const resetCounter = (req: _express.Request): Promise<void> => {
 	return Promise.fromCallback<void>(cb => {
@@ -119,7 +113,7 @@ export function createRateLimit(opts: ExpressBrute.Options): ExpressBrute {
 	if (opts.freeRetries !== undefined) {
 		opts.freeRetries *= RATE_LIMIT_FACTOR;
 	}
-	return createExpressBrute(opts);
+	return new ExpressBrute(getStore(), opts);
 }
 
 export type PartialRateLimitMiddleware = (
