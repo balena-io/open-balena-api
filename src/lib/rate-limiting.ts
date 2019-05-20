@@ -105,17 +105,6 @@ export const resetCounter = (req: _express.Request): Promise<void> => {
 	});
 };
 
-export function createRateLimit(opts: ExpressBrute.Options): ExpressBrute {
-	Object.assign(opts, {
-		handleStoreError: redisErrorHandler,
-		failCallback: failDebug,
-	});
-	if (opts.freeRetries !== undefined) {
-		opts.freeRetries *= RATE_LIMIT_FACTOR;
-	}
-	return new ExpressBrute(getStore(), opts);
-}
-
 export type PartialRateLimitMiddleware = (
 	field?:
 		| string
@@ -123,9 +112,18 @@ export type PartialRateLimitMiddleware = (
 ) => _express.RequestHandler;
 
 export const createRateLimitMiddleware = (
-	expressBrute: ExpressBrute,
-	expressBruteMiddleware: Partial<ExpressBrute.Middleware>,
+	expressBruteOpts: ExpressBrute.Options,
+	expressBruteMiddleware: Partial<ExpressBrute.Middleware> = {},
 ): PartialRateLimitMiddleware => {
+	Object.assign(expressBruteOpts, {
+		handleStoreError: redisErrorHandler,
+		failCallback: failDebug,
+	});
+	if (expressBruteOpts.freeRetries !== undefined) {
+		expressBruteOpts.freeRetries *= RATE_LIMIT_FACTOR;
+	}
+	const expressBrute = new ExpressBrute(getStore(), expressBruteOpts);
+
 	return _.partial(
 		$createRateLimitMiddleware,
 		expressBrute,
