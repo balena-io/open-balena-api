@@ -150,19 +150,20 @@ const $createRateLimitMiddleware = (
 	}
 
 	if (field != null) {
-		expressBruteMiddleware.key = (
-			req: _express.Request,
-			res: _express.Response,
-			next: _express.NextFunction,
-		) => {
-			if (_.isFunction(field)) {
+		let keyFn: _express.Handler;
+		if (_.isFunction(field)) {
+			keyFn = (req, res, next) => {
 				field(req, res)
 					.catch(_.noop)
 					.then(next);
-			} else {
-				next(_.get(req, field));
-			}
-		};
+			};
+		} else {
+			const path = _.toPath(field);
+			keyFn = (req, _res, next) => {
+				next(_.get(req, path));
+			};
+		}
+		expressBruteMiddleware.key = keyFn;
 		return expressBrute.getMiddleware(expressBruteMiddleware);
 	} else {
 		return expressBrute.prevent;
