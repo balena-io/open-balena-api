@@ -1,4 +1,14 @@
 - commits:
+    - subject: Fix error when calling `checkDevicesCanHaveDeviceURL` with no devices
+      hash: fa77c1138aeb0042ddff69ccc104d1125dad5cfd
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.20.2
+  date: 2019-05-21T16:07:19.121Z
+- commits:
     - subject: Catch proxy request rejections to avoid excessive error reporting
       hash: 5404214329e3e6092b98c3730625cd46d034e799
       body: ''
