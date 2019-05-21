@@ -11,30 +11,26 @@ import {
 	SECONDS,
 	HOURS,
 	SECONDS_PER_HOUR,
-	createRateLimit,
 	createRateLimitMiddleware,
 } from '../lib/rate-limiting';
 
 // Rate limit for unauthenticated access
-export const loginRateLimiter = createRateLimitMiddleware(
-	createRateLimit({
-		freeRetries: 10, // 10 tries
-		minWait: 1 * HOURS, // wait 1 hour after 10 tries (in ms)
-		maxWait: 1 * HOURS, // wait 1 hour after 10 tries (in ms)
-		lifetime: 2 * SECONDS_PER_HOUR, // reset counter after 2 hours (in seconds)
-	}),
-	{},
-);
+export const loginRateLimiter = createRateLimitMiddleware({
+	freeRetries: 10, // 10 tries
+	minWait: 1 * HOURS, // wait 1 hour after 10 tries (in ms)
+	maxWait: 1 * HOURS, // wait 1 hour after 10 tries (in ms)
+	lifetime: 2 * SECONDS_PER_HOUR, // reset counter after 2 hours (in seconds)
+});
 
 // Rate limit for device log creation, a maximum of 15 batches every 10 second window
 export const deviceLogsRateLimiter = createRateLimitMiddleware(
-	createRateLimit({
+	{
 		freeRetries: 14, // allow 15 device log batches (1+14 "retries") per window
 		minWait: 10 * SECONDS,
 		maxWait: 10 * SECONDS,
 		lifetime: 10, // reset counter after 10 seconds (from the first batch of the window)
 		refreshTimeoutOnRequest: false,
-	}),
+	},
 	{
 		ignoreIP: true,
 	},
