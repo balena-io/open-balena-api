@@ -170,7 +170,8 @@ export function requestDevices(
 		wait: false;
 	},
 ): Promise<void>;
-// This override is identical to the main form in order for `postDevices` to be able to call it with the generic form
+// This override is identical to the main form in order for `postDevices` to be able
+// to call it with the generic form
 export function requestDevices(
 	opts: RequestDevicesOpts,
 ): Promise<void | RequestResponse[]>;
@@ -243,26 +244,33 @@ export function requestDevices({
 						const vpnIp = device.is_managed_by__service_instance[0].ip_address;
 						const deviceUrl = `http://${device.uuid}.balena:${device.api_port ||
 							80}${url}?apikey=${device.api_secret}`;
-						promises.push(
-							requestAsync({
-								uri: deviceUrl,
-								json: data,
-								proxy: `http://resin_api:${API_VPN_SERVICE_API_KEY}@${vpnIp}:3128`,
-								tunnel: true,
-								method,
-								timeout: DEVICE_REQUEST_TIMEOUT,
-							}),
-						);
-						// We add a delay between each notification so that we do not in essence trigger a DDOS from resin
-						// devices against us, but we do not wait for completion of individual requests because doing so
-						// could cause a terrible UX if we have a device time out, as that would block all the subsequent
-						// notifications
+						let p = requestAsync({
+							uri: deviceUrl,
+							json: data,
+							proxy: `http://resin_api:${API_VPN_SERVICE_API_KEY}@${vpnIp}:3128`,
+							tunnel: true,
+							method,
+							timeout: DEVICE_REQUEST_TIMEOUT,
+						});
+						if (!wait) {
+							// this force-cast is super ugly but harmless because clearly noone
+							// cares about the return value of the promise (since wait == false)
+							// so we just need to satisfy the compiler
+							p = p.catchReturn((undefined as any) as RequestResponse);
+						}
+						promises.push(p);
+						// We add a delay between each notification so that we do not in essence
+						// trigger a DDOS from resin devices against us, but we do not wait for
+						// completion of individual requests because doing so could cause a
+						// terrible UX if we have a device time out, as that would block all the
+						// subsequent notifications
 						return Promise.delay(DELAY_BETWEEN_DEVICE_REQUEST);
 					}).then(() => Promise.all(promises));
 
 					if (!wait) {
-						// We return null if not waiting in order to stop bluebird warnings, and we cast as void to keep the
-						// void typing (ie that the result should not be used for this case)
+						// We return null if not waiting in order to stop bluebird warnings,
+						// and we cast as void to keep the void typing (ie that the result
+						// should not be used for this case)
 						return (null as any) as void;
 					}
 					return waitPromise;
