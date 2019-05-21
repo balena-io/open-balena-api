@@ -1,4 +1,14 @@
 - commits:
+    - subject: Catch proxy request rejections to avoid excessive error reporting
+      hash: 5404214329e3e6092b98c3730625cd46d034e799
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+  version: 0.20.1
+  date: 2019-05-21T11:45:11.136Z
+- commits:
     - subject: Only convert field to a path once
       hash: aa483d712bd8222ef895c84bd4f02a7d7e650677
       body: ''
