@@ -1,4 +1,28 @@
 - commits:
+    - subject: Only convert field to a path once
+      hash: aa483d712bd8222ef895c84bd4f02a7d7e650677
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Merge `createRateLimit` and `createRateLimitMiddleware`
+      hash: e0e6be18df1740d60d6fd20a6379e3f3c685d56c
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+    - subject: Simplify rate-limiting
+      hash: 442ddaedd865f0a4ace6342d59c9665590247a53
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.20.0
+  date: 2019-05-20T18:06:42.715Z
+- commits:
     - subject: Update typed-error to 3.1.0
       hash: 7ba397da9f1765258c533d454aa49dbacb9c0b79
       body: |
