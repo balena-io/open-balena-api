@@ -52,6 +52,9 @@ export const checkDevicesCanHaveDeviceURL = (
 	api: sbvrUtils.PinejsClient,
 	deviceIDs: number[],
 ): Promise<void> => {
+	if (deviceIDs.length === 0) {
+		return Promise.resolve();
+	}
 	return api
 		.get({
 			resource: 'application_type/$count',
