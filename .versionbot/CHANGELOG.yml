@@ -1,4 +1,14 @@
 - commits:
+    - subject: Avoid paying the cost of jwt auth if there's no chance of success
+      hash: 36dcc785a6da9b5d3a95e0ee62b6df918a66642e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.20.3
+  date: 2019-05-22T18:56:00.895Z
+- commits:
     - subject: Fix error when calling `checkDevicesCanHaveDeviceURL` with no devices
       hash: fa77c1138aeb0042ddff69ccc104d1125dad5cfd
       body: ''
