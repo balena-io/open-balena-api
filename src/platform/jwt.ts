@@ -66,13 +66,15 @@ export interface User extends sbvrUtils.User {
 export type Creds = ServiceToken | User | ScopedToken;
 export type JwtUser = Creds | ScopedAccessToken;
 
+const jwtFromRequest = ExtractJwt.versionOneCompatibility({
+	tokenBodyField: '_token',
+	authScheme: 'Bearer',
+});
+
 export const strategy = new JwtStrategy(
 	{
 		secretOrKey: JSON_WEB_TOKEN_SECRET,
-		jwtFromRequest: ExtractJwt.versionOneCompatibility({
-			tokenBodyField: '_token',
-			authScheme: 'Bearer',
-		}),
+		jwtFromRequest,
 	},
 	(jwtUser: JwtUser, done) =>
 		Promise.try(
@@ -144,6 +146,13 @@ export const createJwt = (
 };
 
 export const middleware: RequestHandler = (req, res, next) => {
+	const jwtString = jwtFromRequest(req);
+	if (!jwtString || typeof jwtString !== 'string' || !jwtString.includes('.')) {
+		// If we don't have any possibility of a valid jwt string then we avoid
+		// attempting authentication with it altogether
+		return next();
+	}
+
 	const authenticate = passport.authenticate(
 		'jwt',
 		{ session: false },
