@@ -272,7 +272,7 @@ export const findBySlug = (slug: string): Promise<DeviceType> =>
 		});
 
 export const normalizeDeviceType = (slug: string): Promise<string> => {
-	if (_.includes(SPECIAL_SLUGS, slug)) {
+	if (SPECIAL_SLUGS.includes(slug)) {
 		return Promise.resolve(slug);
 	}
 
@@ -294,7 +294,7 @@ export const getImageSize = (slug: string, buildId: string) => {
 			buildId = deviceType.buildId;
 		}
 
-		if (!_.includes(deviceTypeInfo.versions, buildId)) {
+		if (!deviceTypeInfo.versions.includes(buildId)) {
 			throw new UnknownVersionError(slug, buildId);
 		}
 

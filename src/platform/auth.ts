@@ -24,10 +24,10 @@ export const userHasPermission = (
 	user: undefined | sbvrUtils.User,
 	permission: string,
 ): boolean => {
-	if (user == null) {
+	if (user == null || user.permissions == null) {
 		return false;
 	}
-	return _.includes(user.permissions, permission);
+	return user.permissions.includes(permission);
 };
 
 export const comparePassword = (password: string, hash: string) =>
@@ -320,7 +320,7 @@ export const findUser = (
 	}
 
 	let loginField;
-	if (_.includes(loginInfo, '@')) {
+	if (loginInfo.includes('@')) {
 		loginField = 'email';
 	} else {
 		loginField = 'username';

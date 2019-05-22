@@ -189,7 +189,7 @@ export function requestDevices({
 		);
 	}
 	method = method.toUpperCase();
-	if (!_.includes(['PUT', 'PATCH', 'POST', 'HEAD', 'DELETE', 'GET'], method)) {
+	if (!['PUT', 'PATCH', 'POST', 'HEAD', 'DELETE', 'GET'].includes(method)) {
 		return Promise.reject(new BadRequestError(`Invalid method '${method}'`));
 	}
 	return resinApi

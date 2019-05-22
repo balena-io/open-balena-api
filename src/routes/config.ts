@@ -24,10 +24,7 @@ export const vars: RequestHandler = (req, res) => {
 		properties: {
 			...SUPERVISOR_CONFIG_VAR_PROPERTIES,
 
-			...(_.includes(
-				RESIN_HOST_CONFIG_CAPABLE_DEVICE_TYPES,
-				req.query.deviceType,
-			)
+			...(RESIN_HOST_CONFIG_CAPABLE_DEVICE_TYPES.includes(req.query.deviceType)
 				? HOST_CONFIG_VAR_PROPERTIES
 				: {}),
 		},
