@@ -436,7 +436,8 @@ export const state: RequestHandler = (req, res) => {
 						_.each(release.contains__image, ipr => {
 							// extract the per-image information
 							const image = ipr.image[0];
-							let labelList = ipr.image_label || [];
+							let labelList: Array<{ label_name: string; value: string }> =
+								ipr.image_label || [];
 							let envVars = ipr.image_environment_variable;
 
 							const si = serviceInstallFromImage(device, image);
@@ -457,7 +458,7 @@ export const state: RequestHandler = (req, res) => {
 								.concat(si.device_service_environment_variable);
 
 							const labels: AnyObject = {};
-							_.each(labelList, ({ label_name, value }) => {
+							labelList.forEach(({ label_name, value }) => {
 								labels[label_name] = value;
 							});
 
@@ -562,7 +563,7 @@ export const state: RequestHandler = (req, res) => {
 									}
 								})
 								.then(() => {
-									_.each(device.manages__device as AnyObject[], depDev => {
+									_.each(device.manages__device, depDev => {
 										dependent.devices[depDev.uuid] = {
 											name: depDev.device_name,
 											apps: {

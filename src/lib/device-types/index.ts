@@ -170,8 +170,7 @@ function updateDeviceTypesCache(
 				_.keys(cachedDeviceTypes),
 				_.keys(freshDeviceTypes),
 			);
-			_.forEach(
-				removedDeviceTypes,
+			removedDeviceTypes.forEach(
 				removedDeviceType => delete cachedDeviceTypes[removedDeviceType],
 			);
 
