@@ -66,7 +66,7 @@ const $getOrInsertId = (
 // Given a filter, if a resource exists which supports said filter,
 // update it to the values specified in updateFields, otherwise
 // insert it with a combination of the filter and updateFields value
-const _updateOrInsert = (
+const $updateOrInsert = (
 	api: PinejsClient,
 	resource: string,
 	filter: PinejsClientCoreFactory.FilterObj,
@@ -127,14 +127,14 @@ export const updateOrInsert = (
 	updateFields: AnyObject,
 	tx?: Tx,
 ): Bluebird<{ id: number }> =>
-	_updateOrInsert(authApi, resource, filter, updateFields, tx);
+	$updateOrInsert(authApi, resource, filter, updateFields, tx);
 export const updateOrInsertModel = (
 	resource: string,
 	filter: PinejsClientCoreFactory.FilterObj,
 	updateFields: AnyObject,
 	tx?: Tx,
 ): Bluebird<{ id: number }> =>
-	_updateOrInsert(resinApi, resource, filter, updateFields, tx);
+	$updateOrInsert(resinApi, resource, filter, updateFields, tx);
 
 type TxFn = (tx: Tx, ...args: any[]) => Bluebird<any>;
 type TxFnArgs<T> = T extends (tx: Tx, ...args: infer U) => any ? U : any[];
