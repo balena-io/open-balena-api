@@ -291,5 +291,5 @@ export function postDevices(
 export function postDevices(
 	opts: FixedMethodRequestDevicesOpts,
 ): Promise<void | RequestResponse[]> {
-	return requestDevices(_.defaults({ method: 'POST' }, opts));
+	return requestDevices({ ...opts, method: 'POST' });
 }

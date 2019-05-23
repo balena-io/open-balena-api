@@ -83,7 +83,9 @@ export const getOrInsertApiKey = (
 						passthrough: { req: root },
 						body,
 					})
-					.then((idObj: AnyObject) => _.assign({}, idObj, body))
+					.then((idObj: { id: number }) => {
+						return { ...idObj, ...body };
+					})
 					.tap(apiKey =>
 						authApiTx.post({
 							resource: 'api_key__has__role',

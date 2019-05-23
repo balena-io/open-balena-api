@@ -115,10 +115,8 @@ export const createRateLimitMiddleware = (
 	expressBruteOpts: ExpressBrute.Options,
 	expressBruteMiddleware: Partial<ExpressBrute.Middleware> = {},
 ): PartialRateLimitMiddleware => {
-	Object.assign(expressBruteOpts, {
-		handleStoreError: redisErrorHandler,
-		failCallback: failDebug,
-	});
+	expressBruteOpts.handleStoreError = redisErrorHandler;
+	expressBruteOpts.failCallback = failDebug;
 	if (expressBruteOpts.freeRetries !== undefined) {
 		expressBruteOpts.freeRetries *= RATE_LIMIT_FACTOR;
 	}

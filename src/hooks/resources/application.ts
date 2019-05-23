@@ -85,11 +85,9 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 			checkDependentApplication(args),
 		])
 			.then(() => {
-				_.assign(request.values, {
-					VPN_host: VPN_HOST,
-					VPN_port: VPN_PORT,
-					should_track_latest_release: true,
-				});
+				request.values.VPN_host = VPN_HOST;
+				request.values.VPN_port = VPN_PORT;
+				request.values.should_track_latest_release = true;
 				if (request.values.slug == null) {
 					request.values.slug = appName.toLowerCase();
 				}
