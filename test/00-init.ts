@@ -16,7 +16,7 @@ const testFiles = _(process.env.TEST_FILES)
 				case '>':
 					return f => f > compareFilename;
 				default:
-					return f => _.startsWith(f, fileName);
+					return f => f.startsWith(fileName);
 			}
 		},
 	);

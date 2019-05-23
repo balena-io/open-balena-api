@@ -146,7 +146,7 @@ export const RESIN_HOST_CONFIG_CAPABLE_DEVICE_TYPES = [
 ];
 
 const startsWithAny = (ns: string[], name: string) => {
-	return _.some(ns, n => _.startsWith(name, n));
+	return _.some(ns, n => name.startsWith(n));
 };
 
 interface EnvVars extends Dictionary<string> {}
