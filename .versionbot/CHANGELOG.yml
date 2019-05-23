@@ -1,4 +1,14 @@
 - commits:
+    - subject: Switch from `_.includes` to native `.includes`
+      hash: f9523e390da13d83224c835d61151ce37a2abcea
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.20.4
+  date: 2019-05-23T10:48:23.001Z
+- commits:
     - subject: Avoid paying the cost of jwt auth if there's no chance of success
       hash: 36dcc785a6da9b5d3a95e0ee62b6df918a66642e
       body: ''
