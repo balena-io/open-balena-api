@@ -491,17 +491,14 @@ export const state: RequestHandler = (req, res) => {
 							) {
 								_.each(composition.services[svc.service_name], (v, k) => {
 									if (
-										!_.includes(
-											[
-												'build',
-												'image',
-												'imageId',
-												'serviceName',
-												'labels',
-												'environment',
-											],
-											k,
-										)
+										![
+											'build',
+											'image',
+											'imageId',
+											'serviceName',
+											'labels',
+											'environment',
+										].includes(k)
 									) {
 										services[svc.id][k] = v;
 									}

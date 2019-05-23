@@ -141,7 +141,7 @@ function runSetupFunction(app: _express.Application, fn?: SetupFunction) {
 
 function fixProtocolMiddleware(skipUrls: string[] = []): _express.Handler {
 	return (req, res, next) => {
-		if (req.protocol === 'https' || _.includes(skipUrls, req.url)) {
+		if (req.protocol === 'https' || skipUrls.includes(req.url)) {
 			return next();
 		}
 		res.redirect(301, `https://${req.hostname}${req.url}`);

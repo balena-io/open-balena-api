@@ -158,7 +158,7 @@ const checkVarName = (type: string, name: string) => {
 		);
 	}
 
-	if (_.includes(RESERVED_NAMES, name)) {
+	if (RESERVED_NAMES.includes(name)) {
 		throw new BadRequestError(
 			`${type}s ${RESERVED_NAMES.join(', ')} are reserved`,
 		);

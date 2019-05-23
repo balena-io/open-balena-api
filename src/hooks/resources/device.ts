@@ -225,7 +225,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		if (
 			request.values.is_connected_to_vpn != null ||
 			request.values.should_be_running__release !== undefined ||
-			_.includes([false, 0], request.values.is_online) ||
+			[false, 0].includes(request.values.is_online) ||
 			request.values.belongs_to__application != null ||
 			request.values.device_name != null
 		) {
@@ -382,7 +382,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		// offline, when the gateway comes back it's its job to set the dependent
 		// device back to online as need be.
 		const isOnline = args.request.values.is_online;
-		if (_.includes([false, 0], isOnline)) {
+		if ([false, 0].includes(isOnline)) {
 			waitPromises.push(
 				affectedIds.then(deviceIds => {
 					if (deviceIds.length === 0) {
