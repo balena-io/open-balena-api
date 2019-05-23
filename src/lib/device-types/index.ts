@@ -332,23 +332,24 @@ export const getImageVersions = (slug: string): Promise<ImageVersions> => {
 				ignored: getIsIgnored(normalizedSlug, buildId),
 				hasDeviceTypeJson: getDeviceTypeJson(normalizedSlug, buildId),
 			}).catchReturn(undefined);
-		})
-			.filter(
-				buildInfo =>
-					!!buildInfo && !!buildInfo.hasDeviceTypeJson && !buildInfo.ignored,
-			)
-			.then(versionInfos => {
-				if (_.isEmpty(versionInfos) && !_.isEmpty(deviceTypeInfo.versions)) {
-					throw new InternalRequestError(
-						`Clould not retrieve any image version for device type ${slug}`,
-					);
-				}
+		}).then(versionInfo => {
+			const filteredInfo = versionInfo.filter(
+				(buildInfo): buildInfo is NonNullable<typeof buildInfo> =>
+					buildInfo != null &&
+					!!buildInfo.hasDeviceTypeJson &&
+					!buildInfo.ignored,
+			);
+			if (_.isEmpty(filteredInfo) && !_.isEmpty(deviceTypeInfo.versions)) {
+				throw new InternalRequestError(
+					`Clould not retrieve any image version for device type ${slug}`,
+				);
+			}
 
-				const buildIds = _.map(versionInfos, 'buildId');
-				return {
-					versions: buildIds,
-					latest: buildIds[0],
-				};
-			});
+			const buildIds = filteredInfo.map(({ buildId }) => buildId);
+			return {
+				versions: buildIds,
+				latest: buildIds[0],
+			};
+		});
 	});
 };

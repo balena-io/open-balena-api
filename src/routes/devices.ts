@@ -176,7 +176,10 @@ export const receiveOnlineDependentDevices: RequestHandler = (req, res) =>
 			})
 			.then((devices: AnyObject[]) =>
 				// Get the local_id for each dependent device that needs to be provisioned
-				_.difference(online_dependent_devices, _.map(devices, 'local_id')),
+				_.difference(
+					online_dependent_devices,
+					devices.map(({ local_id }) => local_id),
+				),
 			)
 			.map(localId =>
 				// Provision new dependent devices

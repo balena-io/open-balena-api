@@ -228,8 +228,7 @@ export function createAll(
 							},
 						})
 						.then((rolePermissions: AnyObject[]) => {
-							const rolePermissionIds: number[] = _.map(
-								rolePermissions,
+							const rolePermissionIds: number[] = rolePermissions.map(
 								({ permission }) => permission.__id,
 							);
 							return _.difference(permissions, rolePermissionIds);
