@@ -1,4 +1,42 @@
 - commits:
+    - subject: Use native map in preference
+      hash: 014234b287e4ee4625b015436368cd45ee91b3ae
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Prefer native startsWith
+      hash: a68d588b6bba9e5b19d33cf8d9a2aec833681ada
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Remove unnecessary uses of _.merge
+      hash: 3d841e23c376d5b2445296203c3d5974f0b1ad6d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Switch to native forEach
+      hash: 2bd5a653e86a49b0778c873e703a934f10aa037c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Use object spreads instead of _.assign
+      hash: ed5d43c2ffbe4f37eba14e6b37ccc5833f6f306e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.20.5
+  date: 2019-05-23T16:45:17.378Z
+- commits:
     - subject: Switch from `_.includes` to native `.includes`
       hash: f9523e390da13d83224c835d61151ce37a2abcea
       body: ''
