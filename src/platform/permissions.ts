@@ -126,6 +126,7 @@ export const setApiKey = (
 		)
 		.then(apiKey => {
 			if (key) {
+				apiKey.key = key;
 				return (
 					authApi
 						.patch({
@@ -140,7 +141,7 @@ export const setApiKey = (
 							},
 						})
 						// authApi.patch doesn't resolve to the result, have to manually return here
-						.return(_.merge(apiKey, { key }))
+						.return(apiKey)
 				);
 			} else {
 				return apiKey;

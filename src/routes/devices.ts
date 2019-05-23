@@ -546,7 +546,7 @@ export const state: RequestHandler = (req, res) => {
 
 									const image = _.get(release, 'contains__image[0].image[0]');
 									if (release != null && image != null) {
-										_.merge(dependent.apps[depApp.id], {
+										Object.assign(dependent.apps[depApp.id], {
 											releaseId: release.id,
 											imageId: image.id,
 											commit: depApp.commit,
