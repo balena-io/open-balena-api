@@ -83,7 +83,9 @@ export const getOrInsertApiKey = (
 						passthrough: { req: root },
 						body,
 					})
-					.then((idObj: AnyObject) => _.assign({}, idObj, body))
+					.then((idObj: { id: number }) => {
+						return { ...idObj, ...body };
+					})
 					.tap(apiKey =>
 						authApiTx.post({
 							resource: 'api_key__has__role',
@@ -124,6 +126,7 @@ export const setApiKey = (
 		)
 		.then(apiKey => {
 			if (key) {
+				apiKey.key = key;
 				return (
 					authApi
 						.patch({
@@ -138,7 +141,7 @@ export const setApiKey = (
 							},
 						})
 						// authApi.patch doesn't resolve to the result, have to manually return here
-						.return(_.merge(apiKey, { key }))
+						.return(apiKey)
 				);
 			} else {
 				return apiKey;
@@ -225,8 +228,7 @@ export function createAll(
 							},
 						})
 						.then((rolePermissions: AnyObject[]) => {
-							const rolePermissionIds: number[] = _.map(
-								rolePermissions,
+							const rolePermissionIds: number[] = rolePermissions.map(
 								({ permission }) => permission.__id,
 							);
 							return _.difference(permissions, rolePermissionIds);

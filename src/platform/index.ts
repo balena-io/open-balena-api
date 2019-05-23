@@ -54,7 +54,9 @@ const $getOrInsertId = (
 						body,
 						options: { returnResource: false },
 					})
-					.then(idObj => _.assign({}, idObj, body) as Bluebird<{ id: number }>);
+					.then((idObj: { id: number }) => {
+						return { ...idObj, ...body };
+					});
 			} else {
 				return results[0] as { id: number };
 			}

@@ -176,7 +176,10 @@ export const receiveOnlineDependentDevices: RequestHandler = (req, res) =>
 			})
 			.then((devices: AnyObject[]) =>
 				// Get the local_id for each dependent device that needs to be provisioned
-				_.difference(online_dependent_devices, _.map(devices, 'local_id')),
+				_.difference(
+					online_dependent_devices,
+					devices.map(({ local_id }) => local_id),
+				),
 			)
 			.map(localId =>
 				// Provision new dependent devices
@@ -436,7 +439,8 @@ export const state: RequestHandler = (req, res) => {
 						_.each(release.contains__image, ipr => {
 							// extract the per-image information
 							const image = ipr.image[0];
-							let labelList = ipr.image_label || [];
+							let labelList: Array<{ label_name: string; value: string }> =
+								ipr.image_label || [];
 							let envVars = ipr.image_environment_variable;
 
 							const si = serviceInstallFromImage(device, image);
@@ -457,7 +461,7 @@ export const state: RequestHandler = (req, res) => {
 								.concat(si.device_service_environment_variable);
 
 							const labels: AnyObject = {};
-							_.each(labelList, ({ label_name, value }) => {
+							labelList.forEach(({ label_name, value }) => {
 								labels[label_name] = value;
 							});
 
@@ -545,7 +549,7 @@ export const state: RequestHandler = (req, res) => {
 
 									const image = _.get(release, 'contains__image[0].image[0]');
 									if (release != null && image != null) {
-										_.merge(dependent.apps[depApp.id], {
+										Object.assign(dependent.apps[depApp.id], {
 											releaseId: release.id,
 											imageId: image.id,
 											commit: depApp.commit,
@@ -562,7 +566,7 @@ export const state: RequestHandler = (req, res) => {
 									}
 								})
 								.then(() => {
-									_.each(device.manages__device as AnyObject[], depDev => {
+									_.each(device.manages__device, depDev => {
 										dependent.devices[depDev.uuid] = {
 											name: depDev.device_name,
 											apps: {

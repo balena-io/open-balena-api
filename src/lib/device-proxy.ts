@@ -84,7 +84,7 @@ const validateSupervisorResponse = (
 };
 
 const multiResponse = (responses: RequestResponse[]) =>
-	_.map(responses, ([response]) => _.pick(response, 'statusCode', 'body'));
+	responses.map(([response]) => _.pick(response, 'statusCode', 'body'));
 
 export const proxy = (req: Request, res: Response) => {
 	const filter: PinejsClientCoreFactory.Filter = {};
@@ -228,7 +228,7 @@ export function requestDevices({
 							is_managed_by__service_instance: { $select: 'ip_address' },
 						},
 						$filter: {
-							id: { $in: _.map(devices, 'id') },
+							id: { $in: devices.map(({ id }) => id) },
 							is_managed_by__service_instance: {
 								$any: {
 									$alias: 'si',
@@ -291,5 +291,5 @@ export function postDevices(
 export function postDevices(
 	opts: FixedMethodRequestDevicesOpts,
 ): Promise<void | RequestResponse[]> {
-	return requestDevices(_.defaults({ method: 'POST' }, opts));
+	return requestDevices({ ...opts, method: 'POST' });
 }

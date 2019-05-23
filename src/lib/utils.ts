@@ -44,7 +44,7 @@ export const getIPv4 = (req: Request): string | undefined => {
 export type EnvVarList = Array<{ name: string; value: string }>;
 
 export const varListInsert = (varList: EnvVarList, obj: Dictionary<string>) => {
-	_.each(varList, evar => {
+	varList.forEach(evar => {
 		obj[evar.name] = evar.value;
 	});
 };

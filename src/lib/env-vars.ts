@@ -146,7 +146,7 @@ export const RESIN_HOST_CONFIG_CAPABLE_DEVICE_TYPES = [
 ];
 
 const startsWithAny = (ns: string[], name: string) => {
-	return _.some(ns, n => _.startsWith(name, n));
+	return _.some(ns, n => name.startsWith(n));
 };
 
 interface EnvVars extends Dictionary<string> {}
@@ -207,16 +207,16 @@ export const mergeEnvVars = (
 	deviceEnvVars: EnvVar[] = [],
 ) => {
 	const environment: EnvVars = {};
-	_.each(appConfigVars, appConfigVar => {
+	appConfigVars.forEach(appConfigVar => {
 		environment[appConfigVar.name] = appConfigVar.value;
 	});
-	_.each(appEnvVars, appEnvVar => {
+	appEnvVars.forEach(appEnvVar => {
 		environment[appEnvVar.name] = appEnvVar.value;
 	});
-	_.each(deviceConfigVars, deviceConfigVar => {
+	deviceConfigVars.forEach(deviceConfigVar => {
 		environment[deviceConfigVar.name] = deviceConfigVar.value;
 	});
-	_.each(deviceEnvVars, deviceEnvVar => {
+	deviceEnvVars.forEach(deviceEnvVar => {
 		environment[deviceEnvVar.name] = deviceEnvVar.value;
 	});
 	return environment;

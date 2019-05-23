@@ -18,4 +18,4 @@ const addTagHooks = (resource: string) => {
 	sbvrUtils.addPureHook('PATCH', 'resin', resource, tagHook);
 };
 
-_.each(['application_tag', 'device_tag', 'release_tag'], addTagHooks);
+['application_tag', 'device_tag', 'release_tag'].forEach(addTagHooks);

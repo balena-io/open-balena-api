@@ -10,7 +10,7 @@ export const checkTagKeyValidity = (key: string) => {
 		throw new Error('Tag keys cannot contain whitespace.');
 	}
 	RESERVED_NAMESPACES.forEach(ns => {
-		if (_.startsWith(key, ns)) {
+		if (key.startsWith(ns)) {
 			throw new Error(`Tag keys beginning with ${ns} are reserved.`);
 		}
 	});

@@ -62,7 +62,7 @@ const addEnvHooks = (
 						},
 					})
 					.then((devices: AnyObject[]) => {
-						args.request.custom.devices = _.map(devices, 'id');
+						args.request.custom.devices = devices.map(({ id }) => id);
 					});
 			})
 			.tapCatch(err => {
