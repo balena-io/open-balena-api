@@ -149,8 +149,6 @@ const startsWithAny = (ns: string[], name: string) => {
 	return _.some(ns, n => name.startsWith(n));
 };
 
-interface EnvVars extends Dictionary<string> {}
-
 const checkVarName = (type: string, name: string) => {
 	if (INVALID_CHARACTER_REGEX.test(name)) {
 		throw new BadRequestError(
@@ -193,31 +191,4 @@ export const checkEnvVarValueValidity = (value: string) => {
 			'Variable values cannot contain line break characters',
 		);
 	}
-};
-
-export interface EnvVar {
-	name: string;
-	value: string;
-}
-
-export const mergeEnvVars = (
-	appConfigVars: EnvVar[],
-	appEnvVars: EnvVar[],
-	deviceConfigVars: EnvVar[] = [],
-	deviceEnvVars: EnvVar[] = [],
-) => {
-	const environment: EnvVars = {};
-	appConfigVars.forEach(appConfigVar => {
-		environment[appConfigVar.name] = appConfigVar.value;
-	});
-	appEnvVars.forEach(appEnvVar => {
-		environment[appEnvVar.name] = appEnvVar.value;
-	});
-	deviceConfigVars.forEach(deviceConfigVar => {
-		environment[deviceConfigVar.name] = deviceConfigVar.value;
-	});
-	deviceEnvVars.forEach(deviceEnvVar => {
-		environment[deviceEnvVar.name] = deviceEnvVar.value;
-	});
-	return environment;
 };
