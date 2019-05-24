@@ -1,4 +1,4 @@
-import Express = require('express');
+import { RequestHandler } from 'express';
 import { b64decode } from '../lib/utils';
 import {
 	DEVICE_CONFIG_OPENVPN_CA,
@@ -6,10 +6,7 @@ import {
 	DEVICE_CONFIG_SSH_AUTHORIZED_KEYS,
 } from '../lib/config';
 
-export const getOsConfiguration = (
-	_req: Express.Request,
-	res: Express.Response,
-) => {
+export const getOsConfiguration: RequestHandler = (_req, res) => {
 	res.json({
 		services: {
 			openvpn: {

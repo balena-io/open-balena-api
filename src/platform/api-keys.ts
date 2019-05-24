@@ -17,7 +17,7 @@ interface InternalApiKeyOptions extends ApiKeyOptions {
 	tx: Tx;
 }
 
-const _createApiKey = (
+const $createApiKey = (
 	actorType: string,
 	roleName: string,
 	req: Request,
@@ -111,7 +111,7 @@ export const createApiKey = Promise.method(
 			options.apiKey = randomstring.generate();
 		}
 		if (options.tx != null) {
-			return _createApiKey(
+			return $createApiKey(
 				actorType,
 				roleName,
 				req,
@@ -121,7 +121,7 @@ export const createApiKey = Promise.method(
 		} else {
 			return db.transaction(tx => {
 				options.tx = tx;
-				return _createApiKey(
+				return $createApiKey(
 					actorType,
 					roleName,
 					req,
