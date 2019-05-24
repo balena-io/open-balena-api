@@ -584,15 +584,16 @@ export const state: RequestHandler = (req, res) => {
 
 										release = depReleases[depDev.belongs_to__application[0].id];
 
-										const image = _.get(release, 'contains__image[0].image[0]');
+										const ipr = _.get(release, 'contains__image[0]');
+										const image = _.get(ipr, 'image[0]');
 										const svcInstall =
 											image == null
 												? null
 												: serviceInstallFromImage(depDev, image);
 
-										if (image != null) {
+										if (ipr != null) {
 											varListInsert(
-												image.image_environment_variable,
+												ipr.image_environment_variable,
 												app.environment,
 											);
 										}

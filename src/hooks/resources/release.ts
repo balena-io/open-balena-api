@@ -86,9 +86,10 @@ const updateLatestRelease = (id: number, { request, api }: HookArgs) => {
 									si => si.device.__id as number,
 								);
 								return Promise.map(deviceIds, deviceId => {
-									const existingServiceIds: number[] = serviceInstallsByDevice[
-										deviceId
-									].map(si => si.installs__service.__id);
+									const existingServiceIds: number[] = _.map(
+										serviceInstallsByDevice[deviceId],
+										si => si.installs__service.__id,
+									);
 									const deviceServiceIds = _.difference(
 										serviceIds,
 										existingServiceIds,
