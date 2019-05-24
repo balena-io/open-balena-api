@@ -1,4 +1,14 @@
 - commits:
+    - subject: Remove unused code
+      hash: 51d84754a7844fa2bae76027b917ea1d1f6961e0
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.21.0
+  date: 2019-05-24T11:44:48.770Z
+- commits:
     - subject: Switch from `_` to `$` prefix for functions that are used
       hash: 0c1dd9aa6c767b988084d3ff70ccfafa4f7fb348
       body: ''
