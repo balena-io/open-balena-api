@@ -1,4 +1,21 @@
 - commits:
+    - subject: Fix fetching `image_environment_variable` in the state endpoint
+      hash: c6f3aaea71f53fcd31788f5562dfcc7099d2ebbc
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Fix overzealous conversion to native map
+      hash: ea9c6dae6f0cde433c5100b9500714119acb2f11
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.20.6
+  date: 2019-05-24T08:21:25.835Z
+- commits:
     - subject: Use native map in preference
       hash: 014234b287e4ee4625b015436368cd45ee91b3ae
       body: ''
