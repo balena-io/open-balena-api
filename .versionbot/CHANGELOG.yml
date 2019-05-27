@@ -1,4 +1,14 @@
 - commits:
+    - subject: Use a prepared query for getting the release for an app
+      hash: fc815fd669d7aea4ff95706ecc5bbc26ce1c2ca4
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.22.0
+  date: 2019-05-27T11:22:57.304Z
+- commits:
     - subject: Remove unused code
       hash: 51d84754a7844fa2bae76027b917ea1d1f6961e0
       body: ''
