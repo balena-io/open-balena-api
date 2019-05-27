@@ -283,7 +283,7 @@ const stateQuery = resinApi.prepare<{ uuid: string }>({
 				$select: ['id', 'commit', 'composition'],
 				$expand: {
 					contains__image: {
-						$select: ['id'],
+						$select: 'id',
 						$expand: {
 							image: {
 								$select: [
@@ -345,21 +345,10 @@ const stateQuery = resinApi.prepare<{ uuid: string }>({
 				},
 			},
 			manages__device: {
-				$select: ['id', 'uuid', 'device_name'],
+				$select: ['uuid', 'device_name'],
 				$expand: {
 					belongs_to__application: {
-						$select: ['id', 'depends_on__application', 'commit'],
-						$expand: {
-							service: {
-								$select: ['id'],
-								$top: 1,
-								$expand: {
-									service_environment_variable: {
-										$select: ['name', 'value'],
-									},
-								},
-							},
-						},
+						$select: 'id',
 					},
 					service_install: {
 						$select: ['id'],
@@ -531,7 +520,7 @@ export const state: RequestHandler = (req, res) => {
 						devices: {} as AnyObject,
 					};
 
-					const depReleases: AnyObject = {};
+					const depReleases: Dictionary<AnyObject> = {};
 
 					return Promise.map(
 						(parentApp.is_depended_on_by__application || []) as AnyObject[],
@@ -567,22 +556,21 @@ export const state: RequestHandler = (req, res) => {
 								})
 								.then(() => {
 									_.each(device.manages__device, depDev => {
+										const depAppId = depDev.belongs_to__application[0].id;
 										dependent.devices[depDev.uuid] = {
 											name: depDev.device_name,
 											apps: {
-												[depDev.belongs_to__application[0].id]: {
+												[depAppId]: {
 													config: {},
 													environment: {},
 												},
 											},
 										};
 										const app: AnyObject =
-											dependent.devices[depDev.uuid].apps[
-												depDev.belongs_to__application[0].id
-											];
+											dependent.devices[depDev.uuid].apps[depAppId];
 										varListInsert(depDev.device_config_variable, app.config);
 
-										release = depReleases[depDev.belongs_to__application[0].id];
+										release = depReleases[depAppId];
 
 										const ipr = _.get(release, 'contains__image[0]');
 										const image = _.get(ipr, 'image[0]');
