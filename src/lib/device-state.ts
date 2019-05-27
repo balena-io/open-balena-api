@@ -20,7 +20,7 @@ export const setMinPollInterval = (config: AnyObject) => {
 export const getReleaseForDevice = (
 	api: PinejsClient,
 	device: AnyObject,
-): Promise<AnyObject> => {
+): Promise<AnyObject | undefined> => {
 	if (device.should_be_running__release[0] != null) {
 		return Promise.resolve(device.should_be_running__release[0]);
 	} else {
@@ -65,7 +65,10 @@ const releaseQuery = resinApi.prepare<{ commit: string; appId: number }>({
 export const releaseFromApp = (
 	api: PinejsClient,
 	app: AnyObject,
-): Promise<AnyObject> => {
+): Promise<AnyObject | undefined> => {
+	if (app.commit == null) {
+		return Promise.resolve(undefined);
+	}
 	return releaseQuery(
 		{ commit: app.commit, appId: app.id },
 		undefined,
