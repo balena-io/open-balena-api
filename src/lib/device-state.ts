@@ -4,7 +4,7 @@ import * as semver from 'resin-semver';
 
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './env-vars';
 
-import { PinejsClient } from '../platform';
+import { PinejsClient, resinApi } from '../platform';
 
 // Set RESIN_SUPERVISOR_POLL_INTERVAL to a minimum of 10 minutes
 export const setMinPollInterval = (config: AnyObject) => {
@@ -20,59 +20,57 @@ export const setMinPollInterval = (config: AnyObject) => {
 export const getReleaseForDevice = (
 	api: PinejsClient,
 	device: AnyObject,
-	singleContainer = false,
 ): Promise<AnyObject> => {
 	if (device.should_be_running__release[0] != null) {
 		return Promise.resolve(device.should_be_running__release[0]);
 	} else {
 		const app = device.belongs_to__application[0];
-		return releaseFromApp(api, app, singleContainer);
+		return releaseFromApp(api, app);
 	}
 };
 
+const releaseQuery = resinApi.prepare<{ commit: string; appId: number }>({
+	resource: 'release',
+	options: {
+		$select: ['id', 'commit', 'composition'],
+		$expand: {
+			contains__image: {
+				$select: 'id',
+				$expand: {
+					image: {
+						$select: [
+							'id',
+							'is_stored_at__image_location',
+							'is_a_build_of__service',
+							'content_hash',
+						],
+					},
+					image_environment_variable: {
+						$select: ['name', 'value'],
+					},
+					image_label: {
+						$select: ['label_name', 'value'],
+					},
+				},
+			},
+		},
+		$filter: {
+			status: 'success',
+			commit: { '@': 'commit' },
+			belongs_to__application: { '@': 'appId' },
+		},
+		$top: 1,
+	},
+});
 export const releaseFromApp = (
 	api: PinejsClient,
 	app: AnyObject,
-	singleContainer = false,
-) => {
-	let containsImgObj = {};
-	if (singleContainer) {
-		containsImgObj = { $top: 1 };
-	}
-	return api
-		.get({
-			resource: 'release',
-			options: {
-				$select: ['id', 'commit', 'composition'],
-				$expand: {
-					contains__image: _.merge(containsImgObj, {
-						$select: 'id',
-						$expand: {
-							image: {
-								$select: [
-									'id',
-									'is_stored_at__image_location',
-									'is_a_build_of__service',
-									'content_hash',
-								],
-							},
-							image_environment_variable: {
-								$select: ['name', 'value'],
-							},
-							image_label: {
-								$select: ['label_name', 'value'],
-							},
-						},
-					}),
-				},
-				$filter: {
-					status: 'success',
-					commit: app.commit,
-					belongs_to__application: app.id,
-				},
-			},
-		})
-		.then(([release]: AnyObject[]) => release);
+): Promise<AnyObject> => {
+	return releaseQuery(
+		{ commit: app.commit, appId: app.id },
+		undefined,
+		api.passthrough,
+	).then(([release]: AnyObject[]) => release);
 };
 
 export const serviceInstallFromImage = (

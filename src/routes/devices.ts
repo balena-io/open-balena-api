@@ -537,7 +537,7 @@ export const state: RequestHandler = (req, res) => {
 						(parentApp.is_depended_on_by__application || []) as AnyObject[],
 						depApp =>
 							// get the release for this application
-							releaseFromApp(resinApiTx, depApp, true)
+							releaseFromApp(resinApiTx, depApp)
 								.then(release => {
 									dependent.apps[depApp.id] = {
 										name: depApp.app_name,
