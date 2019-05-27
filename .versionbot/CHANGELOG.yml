@@ -1,4 +1,14 @@
 - commits:
+    - subject: Simplify device state query
+      hash: 6909b64e5d46c48061ffd2711ed15e6069f963e7
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.22.1
+  date: 2019-05-27T12:32:17.976Z
+- commits:
     - subject: Use a prepared query for getting the release for an app
       hash: fc815fd669d7aea4ff95706ecc5bbc26ce1c2ca4
       body: ''
