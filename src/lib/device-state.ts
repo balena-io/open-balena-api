@@ -7,7 +7,7 @@ import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './env-vars';
 import { PinejsClient, resinApi } from '../platform';
 
 // Set RESIN_SUPERVISOR_POLL_INTERVAL to a minimum of 10 minutes
-export const setMinPollInterval = (config: AnyObject) => {
+export const setMinPollInterval = (config: AnyObject): void => {
 	const pollInterval =
 		config.RESIN_SUPERVISOR_POLL_INTERVAL == null
 			? 0
@@ -106,13 +106,12 @@ export const formatImageLocation = (imageLocation: string) =>
 export const filterDeviceConfig = (
 	configVars: Dictionary<string>,
 	osVersion: string,
-): Dictionary<string> => {
+): void => {
 	// ResinOS >= 2.x has a read-only file system, and this var causes the
 	// supervisor to run `systemctl enable|disable [unit]`, which does not
 	// persist over reboots. This causes the supervisor to go into a reboot
 	// loop, so filter out this var for these os versions.
 	if (semver.gte(osVersion, '2.0.0')) {
-		return _.omit(configVars, 'RESIN_HOST_LOG_TO_DISPLAY');
+		delete configVars.RESIN_HOST_LOG_TO_DISPLAY;
 	}
-	return configVars;
 };
