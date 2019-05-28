@@ -475,11 +475,15 @@ export const state: RequestHandler = (req, res) => {
 								composition.services != null &&
 								composition.services[svc.service_name] != null
 							) {
-								_.each(composition.services[svc.service_name], (v, k) => {
-									if (!(k in services[svc.id])) {
-										services[svc.id][k] = v;
-									}
-								});
+								const compositionService =
+									composition.services[svc.service_name];
+								// We remove the `build` properly explicitly as it's expected to be present
+								// for the builder, but makes no sense for the supervisor to support
+								delete compositionService.build;
+								services[svc.id] = {
+									...compositionService,
+									...services[svc.id],
+								};
 							}
 						});
 					}
