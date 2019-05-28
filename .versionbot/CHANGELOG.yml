@@ -1,4 +1,14 @@
 - commits:
+    - subject: More device state simplification
+      hash: d1702ba810df088cc5c6055f8ead503bf35444ee
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.22.3
+  date: 2019-05-28T09:56:06.665Z
+- commits:
     - subject: Fix `releaseFromApp` when the app has no commit associated
       hash: 4c5f8f8e2a9670196af664fa9cf1f5776e84e759
       body: ''
