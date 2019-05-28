@@ -520,7 +520,7 @@ export const state: RequestHandler = (req, res) => {
 						devices: {} as AnyObject,
 					};
 
-					const depReleases: Dictionary<AnyObject> = {};
+					const depReleases: Dictionary<AnyObject | undefined> = {};
 
 					return Promise.map(
 						(parentApp.is_depended_on_by__application || []) as AnyObject[],
