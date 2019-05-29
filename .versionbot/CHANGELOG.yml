@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add an entry for the supervisor mixpanel controlling var
+      hash: 55a2cc0df5664fdfaafe710943de673b191df5df
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Cameron Diver <cameron@balena.io>
+        signed-off-by: Cameron Diver <cameron@balena.io>
+      author: Cameron Diver
+  version: 0.22.5
+  date: 2019-05-29T12:54:06.655Z
+- commits:
     - subject: Fix filtering out 'build' properties from services
       hash: d1cafb5975b8f715ae08b426c253762774274613
       body: ''
