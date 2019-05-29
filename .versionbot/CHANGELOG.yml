@@ -1,4 +1,36 @@
 - commits:
+    - subject: Update open-balena-base to 7.2.0
+      hash: fa0d33e38f989ca4fd0788dfeedda27a01467759
+      body: |
+        Update open-balena-base from 7.0.2 to 7.2.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Add default htop settings to hide threads and use a tree view
+              hash: c5d98f753b326b2b684ad997d470b0510eac86d2
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: open-balena-base-7.2.0
+          date: 2019-05-29T12:59:56.714Z
+        - commits:
+            - subject: Update nodejs to 10.16.0 and npm to 6.9.0
+              hash: 74815baf4ab2f617d2cd3301609ef21ea8aa4079
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: open-balena-base-7.1.0
+          date: 2019-05-29T11:12:37.555Z
+  version: 0.23.0
+  date: 2019-05-29T14:12:35.398Z
+- commits:
     - subject: Add an entry for the supervisor mixpanel controlling var
       hash: 55a2cc0df5664fdfaafe710943de673b191df5df
       body: ''
