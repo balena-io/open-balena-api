@@ -20,6 +20,8 @@ const {
 
 const SUDO_TOKEN_VALIDITY = 20 * 60 * 1000;
 
+const USERNAME_BLACKLIST = ['root'];
+
 export const userHasPermission = (
 	user: undefined | sbvrUtils.User,
 	permission: string,
@@ -356,6 +358,9 @@ export const registerUser = (
 	},
 	tx: Tx,
 ): Promise<AnyObject> => {
+	if (USERNAME_BLACKLIST.includes(userData.username)) {
+		throw new ConflictError('This username is blacklisted');
+	}
 	return findUser(userData.email, tx)
 		.then(existingUser => {
 			if (existingUser) {
