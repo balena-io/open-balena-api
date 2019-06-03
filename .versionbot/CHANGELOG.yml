@@ -1,4 +1,17 @@
 - commits:
+    - subject: ✨ Add `host` flag to application type model
+      hash: 200af08b4d7e78739c7a60eb3338b94fa7dd57a9
+      body: |
+        Add a `host` flag to the application type model.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Andreas Fitzek <andreas@balena.io>
+        signed-off-by: Andreas Fitzek <andreas@balena.io>
+      author: Andreas Fitzek
+  version: 0.24.0
+  date: 2019-06-03T08:44:49.085Z
+- commits:
     - subject: Update dependencies
       hash: cf1808998c969793f06718ad19eb265fe97abce5
       body: |
