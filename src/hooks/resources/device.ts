@@ -35,27 +35,25 @@ const createReleaseServiceInstalls = (
 	deviceId: number,
 	releaseFilter: PinejsClientCoreFactory.Filter,
 ): Promise<void> =>
-	api
-		.get({
-			resource: 'service',
-			options: {
-				$select: 'id',
-				$filter: {
-					is_built_by__image: {
-						$any: {
-							$alias: 'i',
-							$expr: {
-								i: {
-									is_part_of__release: {
-										$any: {
-											$alias: 'ipr',
-											$expr: {
-												ipr: {
-													release: {
-														$any: {
-															$alias: 'r',
-															$expr: { r: releaseFilter },
-														},
+	(api.get({
+		resource: 'service',
+		options: {
+			$select: 'id',
+			$filter: {
+				is_built_by__image: {
+					$any: {
+						$alias: 'i',
+						$expr: {
+							i: {
+								is_part_of__release: {
+									$any: {
+										$alias: 'ipr',
+										$expr: {
+											ipr: {
+												release: {
+													$any: {
+														$alias: 'r',
+														$expr: { r: releaseFilter },
 													},
 												},
 											},
@@ -66,15 +64,16 @@ const createReleaseServiceInstalls = (
 						},
 					},
 				},
-				$expand: {
-					'service_install/$count': {
-						$filter: {
-							device: deviceId,
-						},
+			},
+			$expand: {
+				'service_install/$count': {
+					$filter: {
+						device: deviceId,
 					},
 				},
 			},
-		})
+		},
+	}) as Promise<AnyObject[]>)
 		.map(service => {
 			// Filter out any services which do have a service install attached
 			if (service.service_install > 0) {
@@ -220,7 +219,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 	},
 	PRERUN: args => {
 		const { api, request } = args;
-		const waitPromises: Array<Promise<any>> = [];
+		const waitPromises: Array<PromiseLike<any>> = [];
 
 		if (
 			request.values.is_connected_to_vpn != null ||
@@ -353,7 +352,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		return Promise.all(waitPromises);
 	},
 	POSTRUN: args => {
-		const waitPromises: Array<Promise<any>> = [];
+		const waitPromises: Array<PromiseLike<any>> = [];
 		const affectedIds = args.request.custom.affectedIds as ReturnType<
 			typeof getCurrentRequestAffectedIds
 		>;
