@@ -14,6 +14,7 @@ export interface ApplicationType {
 	supports_gateway_mode: boolean;
 	requires_payment: boolean;
 	is_legacy: boolean;
+	is_host_os: boolean;
 	needs__os_version_range: null | string;
 	maximum_device_count: null | number;
 	description: string;
@@ -28,6 +29,7 @@ export const Default: ApplicationType = {
 	supports_gateway_mode: true,
 	requires_payment: false,
 	is_legacy: false,
+	is_host_os: false,
 	needs__os_version_range: '>=2.11.0',
 	maximum_device_count: null,
 	description:
