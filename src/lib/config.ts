@@ -97,6 +97,8 @@ export const REGISTRY2_HOST = requiredVar('REGISTRY2_HOST');
 export const REGISTRY_HOST = requiredVar('REGISTRY_HOST');
 export const SENTRY_DSN = process.env.SENTRY_DSN;
 export const SUPERUSER_EMAIL = process.env.SUPERUSER_EMAIL || '';
+export const SUPERUSER_USERNAME =
+	process.env.SUPERUSER_EMAIL || SUPERUSER_EMAIL.split('@')[0];
 export const SUPERUSER_PASSWORD = process.env.SUPERUSER_PASSWORD || '';
 export const TOKEN_AUTH_BUILDER_TOKEN = requiredVar('TOKEN_AUTH_BUILDER_TOKEN');
 export const TOKEN_AUTH_CERT_ISSUER = requiredVar('TOKEN_AUTH_CERT_ISSUER');

@@ -37,9 +37,11 @@ async function onInitHooks() {
 }
 
 async function createSuperuser() {
-	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } = await import(
-		'./src/lib/config'
-	);
+	const {
+		SUPERUSER_USERNAME,
+		SUPERUSER_EMAIL,
+		SUPERUSER_PASSWORD,
+	} = await import('./src/lib/config');
 
 	if (!SUPERUSER_EMAIL || !SUPERUSER_PASSWORD) {
 		return;
@@ -54,7 +56,7 @@ async function createSuperuser() {
 	const { ConflictError } = sbvrUtils;
 
 	const data = {
-		username: 'root',
+		username: SUPERUSER_USERNAME,
 		email: SUPERUSER_EMAIL,
 		password: SUPERUSER_PASSWORD,
 	};
