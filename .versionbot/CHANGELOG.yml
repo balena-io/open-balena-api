@@ -1,4 +1,14 @@
 - commits:
+    - subject: Avoid unnecessary writes on login by adding an optional hook
+      hash: 5ec762336ac98c6989d35857b7b822813c64eefe
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.24.2
+  date: 2019-06-04T17:05:19.264Z
+- commits:
     - subject: Update pinejs
       hash: 64614733ed12f6c5e00716d479c90d83c0ab8101
       body: |
