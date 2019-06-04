@@ -46,6 +46,8 @@ export interface SetupOptions {
 	onInitModel?: SetupFunction;
 	onInitHooks?: SetupFunction;
 	onInitRoutes?: SetupFunction;
+
+	onLogin?: (user: AnyObject) => PromiseLike<void> | void;
 }
 
 export function setup(app: _express.Application, options: SetupOptions) {
@@ -120,7 +122,7 @@ export function setup(app: _express.Application, options: SetupOptions) {
 		.then(() => import('./hooks'))
 		.then(runSetupFunction(app, options.onInitHooks))
 		.then(() => import('./routes'))
-		.then(routes => routes.setup(app))
+		.then(routes => routes.setup(app, options.onLogin))
 		.then(runSetupFunction(app, options.onInitRoutes))
 		.then(() => app.use(Raven.errorHandler()))
 		.return({

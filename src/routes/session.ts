@@ -4,10 +4,11 @@ import {
 	getUser,
 	comparePassword,
 } from '../platform/auth';
-import { sbvrUtils, resinApi, root } from '../platform';
+import { sbvrUtils } from '../platform';
 import { captureException, handleHttpErrors } from '../platform/errors';
 import { resetCounter } from '../lib/rate-limiting';
 import { RequestHandler } from 'express';
+import { SetupOptions } from '..';
 
 const { BadRequestError, NotFoundError } = sbvrUtils;
 
@@ -24,7 +25,10 @@ export const whoami: RequestHandler = (req, res) =>
 			res.sendStatus(500);
 		});
 
-export const login: RequestHandler = (req, res) => {
+export const login = (onLogin: SetupOptions['onLogin']): RequestHandler => (
+	req,
+	res,
+) => {
 	const { username, password } = req.body;
 
 	if (!(username && password)) {
@@ -42,20 +46,9 @@ export const login: RequestHandler = (req, res) => {
 					if (!matches) {
 						throw new BadRequestError('Current password incorrect.');
 					}
-					return resinApi.patch({
-						resource: 'user',
-						id: user.id,
-						passthrough: { req: root },
-						body: {
-							// FIXME: we need `id` set below because otherwise the request
-							// will fail because body will be empty as the password related
-							// fields are filtered out because they're not defined on the
-							// open source model.
-							id: user.id,
-							password_reset_code: null,
-							can_reset_password_until__expiry_date: null,
-						},
-					});
+					if (onLogin) {
+						return onLogin(user);
+					}
 				})
 				.then(() => resetCounter(req))
 				.then(() => loginUserXHR(res, user.id));

@@ -47,11 +47,16 @@ import * as os from '../routes/os';
 import * as services from '../routes/services';
 import * as session from '../routes/session';
 import * as registry from '../routes/registry';
+import { SetupOptions } from '..';
 
-export const setup = (app: Application) => {
+export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.get('/config/vars', config.vars);
 
-	app.post('/login_', loginRateLimiter('body.username'), session.login);
+	app.post(
+		'/login_',
+		loginRateLimiter('body.username'),
+		session.login(onLogin),
+	);
 	app.get('/user/v1/whoami', authorized, session.whoami);
 
 	app.post('/device/register', apiKeyMiddleware, devices.register);
