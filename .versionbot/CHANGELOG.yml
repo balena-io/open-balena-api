@@ -1,4 +1,26 @@
 - commits:
+    - subject: Update open-balena-base to 7.2.1
+      hash: 89307def86db669729b58c6efad92e753931ed8f
+      body: |
+        Update open-balena-base from 7.2.0 to 7.2.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Fix adding htoprc
+              hash: 24f7afc3559227e3c58cfcf1483aab91f034be5f
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-7.2.1
+          date: 2019-06-03T13:55:28.382Z
+  version: 0.24.3
+  date: 2019-06-06T18:47:24.636Z
+- commits:
     - subject: Avoid unnecessary writes on login by adding an optional hook
       hash: 5ec762336ac98c6989d35857b7b822813c64eefe
       body: ''
