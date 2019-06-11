@@ -39,6 +39,7 @@ export const deviceLogsRateLimiter = createRateLimitMiddleware(
 import * as access from '../routes/access';
 import * as apiKeys from '../routes/api-keys';
 import * as applications from '../routes/applications';
+import * as auth from '../routes/auth';
 import * as config from '../routes/config';
 import * as deviceTypes from '../routes/device-types';
 import * as deviceLogs from '../routes/device-logs';
@@ -137,6 +138,12 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	);
 
 	app.get('/auth/v1/token', registry.basicApiKeyAuthenticate, registry.token);
+
+	app.get(
+		'/auth/v1/public-keys/:username',
+		apiKeyMiddleware,
+		auth.getUserPublicKeys,
+	);
 
 	app.get('/access/v1/hostos/:device_uuid', authorized, access.hostOSAccess);
 
