@@ -24,7 +24,6 @@ export const WHITELISTED_NAMES = [
 	'RESIN_SUPERVISOR_VPN_CONTROL',
 	'RESIN_SUPERVISOR_PERSISTENT_LOGGING',
 	'RESIN_SUPERVISOR_INSTANT_UPDATE_TRIGGER',
-	'RESIN_SUPERVISOR_MIXPANEL_REPORT',
 	'BALENA_APP_RESTART_POLICY',
 	'BALENA_APP_RESTART_RETRIES',
 	'BALENA_DEPENDENT_DEVICES_HOOK_ADDRESS',
@@ -37,7 +36,6 @@ export const WHITELISTED_NAMES = [
 	'BALENA_SUPERVISOR_VPN_CONTROL',
 	'BALENA_SUPERVISOR_PERSISTENT_LOGGING',
 	'BALENA_SUPERVISOR_INSTANT_UPDATE_TRIGGER',
-	'BALENA_SUPERVISOR_MIXPANEL_REPORT',
 ];
 
 // Config variable namespaces that are allowed to be set by frontend components
@@ -108,12 +106,6 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		enum: ['false', 'true'],
 		description:
 			'Enable/disable triggering updates instantly on startup or after pushing a release. Only supported by supervisor versions >= v9.13.0.',
-		default: 'true',
-	},
-	RESIN_SUPERVISOR_MIXPANEL_REPORT: {
-		enum: ['false', 'true'],
-		description:
-			'Enable/disable the reporting of mixpanel events from the device. Only supported by supervisor versions >= v9.15.8.',
 		default: 'true',
 	},
 };
