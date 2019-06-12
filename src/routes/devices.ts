@@ -653,17 +653,19 @@ const upsertImageInstall = (
 				});
 			} else {
 				// we need to update the current image install
+				const body = {
+					status,
+					download_progress: dlProg,
+					is_provided_by__release: releaseId,
+				};
 				return api.patch({
 					resource: 'image_install',
-					body: {
-						status,
-						download_progress: dlProg,
-						is_provided_by__release: releaseId,
-					},
+					body,
 					options: {
 						$filter: {
 							installs__image: imageId,
 							device: deviceId,
+							$not: body,
 						},
 					},
 				});
@@ -820,6 +822,9 @@ export const statePatch: RequestHandler = (req, res) => {
 							resinApiTx.patch({
 								resource: 'device',
 								id: device.id,
+								options: {
+									$filter: { $not: deviceBody },
+								},
 								body: deviceBody,
 							}),
 						);
@@ -863,19 +868,23 @@ export const statePatch: RequestHandler = (req, res) => {
 						// the service_install values
 						const rootApi = resinApiTx.clone({ passthrough: { req: root } });
 
-						const filter: PinejsClientCoreFactory.Filter = {
-							device: device.id,
-						};
-
-						if (imageIds.length !== 0) {
-							filter.$not = { image: { $in: imageIds } };
-						}
+						const body = { status: 'deleted' };
 
 						waitPromises.push(
 							rootApi.patch({
 								resource: 'image_install',
-								body: { status: 'deleted' },
-								options: { $filter: filter },
+								body,
+								options: {
+									$filter: {
+										device: device.id,
+										$not: [
+											body,
+											...(imageIds.length !== 0
+												? [{ image: { $in: imageIds } }]
+												: []),
+										],
+									},
+								},
 							}),
 						);
 					}

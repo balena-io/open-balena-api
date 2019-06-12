@@ -77,62 +77,59 @@ export const strategy = new JwtStrategy(
 		jwtFromRequest,
 	},
 	(jwtUser: JwtUser, done) =>
-		Promise.try(
-			(): Creds | Promise<Creds> => {
-				if (jwtUser == null) {
-					throw new InvalidJwtSecretError();
-				}
-				const { resinApi, root }: typeof _platform = require('./index');
-				if ('service' in jwtUser && jwtUser.service) {
-					const { service, apikey } = jwtUser;
-					return sbvrUtils.getApiKeyPermissions(apikey).then(permissions => {
-						return { service, apikey, permissions };
+		Promise.try((): Creds | Promise<Creds> => {
+			if (jwtUser == null) {
+				throw new InvalidJwtSecretError();
+			}
+			const { resinApi, root }: typeof _platform = require('./index');
+			if ('service' in jwtUser && jwtUser.service) {
+				const { service, apikey } = jwtUser;
+				return sbvrUtils.getApiKeyPermissions(apikey).then(permissions => {
+					return { service, apikey, permissions };
+				});
+			} else if (
+				'access' in jwtUser &&
+				jwtUser.access != null &&
+				jwtUser.access.actor &&
+				jwtUser.access != null &&
+				jwtUser.access.permissions
+			) {
+				return jwtUser.access;
+			} else if ('id' in jwtUser) {
+				return resinApi
+					.get({
+						resource: 'user',
+						id: jwtUser.id,
+						passthrough: { req: root },
+						options: {
+							$select: ['actor', 'jwt_secret'],
+						},
+					})
+					.then((user: AnyObject) => {
+						if (user == null) {
+							throw new InvalidJwtSecretError();
+						}
+
+						// Default both to null so that we don't hit issues with null !== undefined
+						const userSecret = user.jwt_secret != null ? user.jwt_secret : null;
+						const jwtSecret =
+							jwtUser.jwt_secret != null ? jwtUser.jwt_secret : null;
+
+						if (userSecret !== jwtSecret) {
+							throw new InvalidJwtSecretError();
+						}
+
+						jwtUser.actor = user.actor;
+						return sbvrUtils.getUserPermissions(jwtUser.id);
+					})
+					.then(permissions => {
+						jwtUser.permissions = permissions;
+						return jwtUser;
 					});
-				} else if (
-					'access' in jwtUser &&
-					jwtUser.access != null &&
-					jwtUser.access.actor &&
-					jwtUser.access != null &&
-					jwtUser.access.permissions
-				) {
-					return jwtUser.access;
-				} else if ('id' in jwtUser) {
-					return resinApi
-						.get({
-							resource: 'user',
-							id: jwtUser.id,
-							passthrough: { req: root },
-							options: {
-								$select: ['actor', 'jwt_secret'],
-							},
-						})
-						.then((user: AnyObject) => {
-							if (user == null) {
-								throw new InvalidJwtSecretError();
-							}
-
-							// Default both to null so that we don't hit issues with null !== undefined
-							const userSecret =
-								user.jwt_secret != null ? user.jwt_secret : null;
-							const jwtSecret =
-								jwtUser.jwt_secret != null ? jwtUser.jwt_secret : null;
-
-							if (userSecret !== jwtSecret) {
-								throw new InvalidJwtSecretError();
-							}
-
-							jwtUser.actor = user.actor;
-							return sbvrUtils.getUserPermissions(jwtUser.id);
-						})
-						.then(permissions => {
-							jwtUser.permissions = permissions;
-							return jwtUser;
-						});
-				} else {
-					throw new Error('Invalid JWT');
-				}
-			},
-		).nodeify(done),
+			} else {
+				throw new Error('Invalid JWT');
+			}
+		}).nodeify(done),
 );
 
 export const createJwt = (

@@ -365,15 +365,19 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			args.request.values.device_name != null
 		) {
 			waitPromises.push(
-				affectedIds.then(deviceIds =>
-					postDevices({
+				affectedIds.then(deviceIds => {
+					if (deviceIds.length === 0) {
+						return;
+					}
+
+					return postDevices({
 						url: '/v1/update',
 						req: root,
 						filter: { id: { $in: deviceIds } },
 						// Don't wait for the posts to complete, as they may take a long time
 						wait: false,
-					}),
-				),
+					});
+				}),
 			);
 		}
 
