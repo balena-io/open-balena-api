@@ -796,125 +796,130 @@ export const statePatch: RequestHandler = (req, res) => {
 		custom.ipAddress = getIP(req);
 	}
 
-	const resinApiTx = resinApi.clone({ passthrough: { req, custom } });
-	const imageIds: number[] = [];
+	return db
+		.transaction(tx => {
+			const resinApiTx = resinApi.clone({ passthrough: { req, custom, tx } });
+			const imageIds: number[] = [];
 
-	return resinApiTx
-		.get({
-			resource: 'device',
-			options: {
-				$select: 'id',
-				$filter: { uuid },
-			},
-		})
-		.then(([device]: AnyObject[]) => {
-			if (device == null) {
-				throw new UnauthorizedError();
-			}
-
-			return Promise.try(() => {
-				if (!_.isEmpty(deviceBody)) {
-					resinApiTx.patch({
-						resource: 'device',
-						id: device.id,
-						body: deviceBody,
-					});
-				}
-			})
-				.then(() => {
-					if (apps == null) {
-						return;
+			return resinApiTx
+				.get({
+					resource: 'device',
+					options: {
+						$select: 'id',
+						$filter: { uuid },
+					},
+				})
+				.then(([device]: AnyObject[]) => {
+					if (device == null) {
+						throw new UnauthorizedError();
 					}
 
-					return Promise.map(_.toPairs(apps), ([, app]) => {
-						if (app.services == null) {
-							return;
+					return Promise.try(() => {
+						if (!_.isEmpty(deviceBody)) {
+							resinApiTx.patch({
+								resource: 'device',
+								id: device.id,
+								body: deviceBody,
+							});
 						}
-						return Promise.map(
-							_.toPairs(app.services as AnyObject[]),
-							([imageIdStr, svc]) => {
-								const imageId = _.parseInt(imageIdStr, 10);
-								imageIds.push(imageId);
-								const { status, download_progress } = svc;
-								const releaseId = _.parseInt(svc.releaseId, 10);
+					})
+						.then(() => {
+							if (apps == null) {
+								return;
+							}
 
-								if (!_.isFinite(imageId)) {
-									throw new BadRequestError(
-										'Invalid image ID value in request',
-									);
+							return Promise.map(_.toPairs(apps), ([, app]) => {
+								if (app.services == null) {
+									return;
 								}
-								if (!_.isFinite(releaseId)) {
-									throw new BadRequestError(
-										'Invalid release ID value in request',
-									);
-								}
+								return Promise.map(
+									_.toPairs(app.services as AnyObject[]),
+									([imageIdStr, svc]) => {
+										const imageId = _.parseInt(imageIdStr, 10);
+										imageIds.push(imageId);
+										const { status, download_progress } = svc;
+										const releaseId = _.parseInt(svc.releaseId, 10);
 
-								return upsertImageInstall(
-									resinApiTx,
-									imageId,
-									device.id,
-									status,
-									download_progress,
-									releaseId,
-								);
-							},
-						).return();
-					}).return();
-				})
-				.then(() => {
-					if (apps == null) {
-						return;
-					}
+										if (!_.isFinite(imageId)) {
+											throw new BadRequestError(
+												'Invalid image ID value in request',
+											);
+										}
+										if (!_.isFinite(releaseId)) {
+											throw new BadRequestError(
+												'Invalid release ID value in request',
+											);
+										}
 
-					// Get access to a root api, as images shouldn't be allowed to change
-					// the service_install values
-					const rootApi = resinApiTx.clone({ passthrough: { req: root } });
-
-					const filter: PinejsClientCoreFactory.Filter = { device: device.id };
-
-					if (imageIds.length !== 0) {
-						filter.$not = { image: { $in: imageIds } };
-					}
-
-					return rootApi
-						.patch({
-							resource: 'image_install',
-							body: { status: 'deleted' },
-							options: { $filter: filter },
+										return upsertImageInstall(
+											resinApiTx,
+											imageId,
+											device.id,
+											status,
+											download_progress,
+											releaseId,
+										);
+									},
+								).return();
+							}).return();
 						})
-						.return();
-				})
-				.then(() => {
-					// Handle dependent devices if necessary
-					const depApps: undefined | AnyObject[] =
-						dependent == null ? undefined : dependent.apps;
-					if (depApps == null) {
-						return;
-					}
+						.then(() => {
+							if (apps == null) {
+								return;
+							}
 
-					const imageIds: number[] = [];
-					return Promise.map(_.values(depApps), ({ images }) =>
-						Promise.map(
-							_.toPairs(images as AnyObject),
-							([imageIdStr, { status, download_progress }]) => {
-								const imageId = parseInt(imageIdStr, 10);
-								imageIds.push(imageId);
-								return upsertGatewayDownload(
-									resinApiTx,
-									device.id,
-									imageId,
-									status,
-									download_progress,
-								);
-							},
-						),
-					).then(() =>
-						deleteOldGatewayDownloads(resinApiTx, device.id, imageIds),
-					);
-				})
-				.then(() => {
-					res.sendStatus(200);
+							// Get access to a root api, as images shouldn't be allowed to change
+							// the service_install values
+							const rootApi = resinApiTx.clone({ passthrough: { req: root } });
+
+							const filter: PinejsClientCoreFactory.Filter = {
+								device: device.id,
+							};
+
+							if (imageIds.length !== 0) {
+								filter.$not = { image: { $in: imageIds } };
+							}
+
+							return rootApi
+								.patch({
+									resource: 'image_install',
+									body: { status: 'deleted' },
+									options: { $filter: filter },
+								})
+								.return();
+						})
+						.then(() => {
+							// Handle dependent devices if necessary
+							const depApps: undefined | AnyObject[] =
+								dependent == null ? undefined : dependent.apps;
+							if (depApps == null) {
+								return;
+							}
+
+							const imageIds: number[] = [];
+							return Promise.map(_.values(depApps), ({ images }) =>
+								Promise.map(
+									_.toPairs(images as AnyObject),
+									([imageIdStr, { status, download_progress }]) => {
+										const imageId = parseInt(imageIdStr, 10);
+										imageIds.push(imageId);
+										return upsertGatewayDownload(
+											resinApiTx,
+											device.id,
+											imageId,
+											status,
+											download_progress,
+										);
+									},
+								),
+							).then(() =>
+								deleteOldGatewayDownloads(resinApiTx, device.id, imageIds),
+							);
+						});
 				});
+		})
+		.then(() => {
+			res.sendStatus(200);
 		})
 		.catch(err => {
 			if (handleHttpErrors(req, res, err)) {
