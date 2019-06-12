@@ -1,4 +1,14 @@
 - commits:
+    - subject: Simplify and increase parallelisation of state patch endpoint
+      hash: 217fbdc10bd3670ecf50721d056c1b78353af896
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.24.5
+  date: 2019-06-12T16:18:40.865Z
+- commits:
     - subject: Run state patch in a transaction
       hash: d1413e356c8f1481ee5d2097b1dbffb25c1565d5
       body: ''
