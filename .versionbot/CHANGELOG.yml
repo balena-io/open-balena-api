@@ -1,4 +1,14 @@
 - commits:
+    - subject: Avoid unnecessary writes on the state patch endpoint
+      hash: be6d025998861db1b90141a930160d37e498c62b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.24.6
+  date: 2019-06-12T16:55:10.971Z
+- commits:
     - subject: Simplify and increase parallelisation of state patch endpoint
       hash: 217fbdc10bd3670ecf50721d056c1b78353af896
       body: ''
