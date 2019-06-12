@@ -144,11 +144,7 @@ export const checkDevicesCanBeInApplication = (
 							device.supervisor_version != null
 						) {
 							throw new DeviceOSVersionIsTooLow(
-								`Device ${
-									device.device_name
-								} is too old to satisfy required version range: ${
-									appType.needs__os_version_range
-								}`,
+								`Device ${device.device_name} is too old to satisfy required version range: ${appType.needs__os_version_range}`,
 							);
 						}
 						if (
@@ -159,11 +155,7 @@ export const checkDevicesCanBeInApplication = (
 							)
 						) {
 							throw new DeviceOSVersionIsTooLow(
-								`Device ${device.device_name} has OS version ${
-									device.os_version
-								} but needs to satisfy version range: ${
-									appType.needs__os_version_range
-								}`,
+								`Device ${device.device_name} has OS version ${device.os_version} but needs to satisfy version range: ${appType.needs__os_version_range}`,
 							);
 						}
 					}

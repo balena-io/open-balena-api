@@ -107,18 +107,16 @@ export const generateConfig = (
 			);
 
 			_(deviceType.options!)
-				.flatMap(
-					(opt): DeviceTypeOption[] | DeviceTypeOption => {
-						if (opt.isGroup && ['network', 'advanced'].includes(opt.name)) {
-							// already handled above
-							return [];
-						} else if (opt.isGroup) {
-							return opt.options;
-						} else {
-							return opt;
-						}
-					},
-				)
+				.flatMap((opt): DeviceTypeOption[] | DeviceTypeOption => {
+					if (opt.isGroup && ['network', 'advanced'].includes(opt.name)) {
+						// already handled above
+						return [];
+					} else if (opt.isGroup) {
+						return opt.options;
+					} else {
+						return opt;
+					}
+				})
 				.each(({ name: optionName }) => {
 					config[optionName] = req.param(optionName);
 				});
