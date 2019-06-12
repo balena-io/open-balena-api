@@ -1,4 +1,14 @@
 - commits:
+    - subject: Run state patch in a transaction
+      hash: d1413e356c8f1481ee5d2097b1dbffb25c1565d5
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.24.4
+  date: 2019-06-12T15:57:07.367Z
+- commits:
     - subject: Update open-balena-base to 7.2.1
       hash: 89307def86db669729b58c6efad92e753931ed8f
       body: |
