@@ -869,21 +869,21 @@ export const statePatch: RequestHandler = (req, res) => {
 						const rootApi = resinApiTx.clone({ passthrough: { req: root } });
 
 						const body = { status: 'deleted' };
+						const filter: PinejsClientCoreFactory.Filter = {
+							device: device.id,
+						};
+						if (imageIds.length !== 0) {
+							filter.$not = [body, { image: { $in: imageIds } }];
+						} else {
+							filter.$not = body;
+						}
 
 						waitPromises.push(
 							rootApi.patch({
 								resource: 'image_install',
 								body,
 								options: {
-									$filter: {
-										device: device.id,
-										$not: [
-											body,
-											...(imageIds.length !== 0
-												? [{ image: { $in: imageIds } }]
-												: []),
-										],
-									},
+									$filter: filter,
 								},
 							}),
 						);
