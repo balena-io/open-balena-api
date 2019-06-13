@@ -1,4 +1,14 @@
 - commits:
+    - subject: Fix error when deleting all image installs in the patch endpoint
+      hash: 5c6cd8c199bc6c6e0d082bb578de48db88c84449
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.24.7
+  date: 2019-06-13T12:21:28.460Z
+- commits:
     - subject: Avoid unnecessary writes on the state patch endpoint
       hash: be6d025998861db1b90141a930160d37e498c62b
       body: ''
