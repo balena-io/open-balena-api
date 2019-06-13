@@ -622,8 +622,8 @@ const upsertImageInstall = (
 	imageId: number,
 	deviceId: number,
 	status: string,
-	dlProg: number,
 	releaseId: number,
+	dlProg?: number,
 ): Promise<void> =>
 	api
 		.get({
@@ -653,11 +653,13 @@ const upsertImageInstall = (
 				});
 			} else {
 				// we need to update the current image install
-				const body = {
+				const body: AnyObject = {
 					status,
-					download_progress: dlProg,
 					is_provided_by__release: releaseId,
 				};
+				if (dlProg !== undefined) {
+					body.download_progress = dlProg;
+				}
 				return api.patch({
 					resource: 'image_install',
 					body,
@@ -857,8 +859,8 @@ export const statePatch: RequestHandler = (req, res) => {
 										imageId,
 										device.id,
 										status,
-										download_progress,
 										releaseId,
+										download_progress,
 									),
 								);
 							});
