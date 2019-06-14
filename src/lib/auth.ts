@@ -28,7 +28,8 @@ export const ROLES: {
 		`resin.application_config_variable.get?${applicationControlsDevice}`,
 		`resin.release.read?should_be_running_on__device/any(d:d/${matchesActor})`,
 		`resin.release.read?${belongsToApplicationOrIsManagedByDevice}`,
-		`resin.device_environment_variable.get?device/any(d:d/${matchesActor} or d/belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice})))`,
+		`resin.device_environment_variable.get?device/any(d:d/belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice})))`,
+		`resin.device_environment_variable.all?device/any(d:d/${matchesActor})`,
 		`resin.application_environment_variable.get?${applicationControlsDevice}`,
 
 		// Dependent device permissions
@@ -43,6 +44,7 @@ export const ROLES: {
 		`resin.service_environment_variable.get?service/any(s:s/${applicationControlsDevice})`,
 
 		`resin.device_service_environment_variable.get?service_install/any(si:si/installs__service/any(s:s/${applicationControlsDevice}))`,
+		`resin.device_service_environment_variable.all?service_install/any(si:si/device/any(d:d/${matchesActor}))`,
 
 		`resin.image__is_part_of__release.get?is_part_of__release/any(r:r/${belongsToApplicationOrIsManagedByDevice})`,
 
