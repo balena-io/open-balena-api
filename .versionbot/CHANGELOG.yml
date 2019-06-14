@@ -1,4 +1,14 @@
 - commits:
+    - subject: Cache the resolved subject for /auth/v1/token requests for 5 minutes
+      hash: 598ba291937aa1f3631a8daa29e16cb8165815f0
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.25.0
+  date: 2019-06-14T16:18:10.186Z
+- commits:
     - subject: Fix issue with undefined download progress
       hash: 1b909bbd53c37fbaab7c2d1987449fd8fa3dd9ad
       body: ''
