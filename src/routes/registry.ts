@@ -5,12 +5,11 @@ import * as _ from 'lodash';
 import * as uuid from 'node-uuid';
 import * as BasicAuth from 'basic-auth';
 import * as jsonwebtoken from 'jsonwebtoken';
-import { resinApi, root, sbvrUtils, PinejsClient } from '../platform';
+import { resinApi, root, sbvrUtils } from '../platform';
 import * as Promise from 'bluebird';
 
 import { captureException, handleHttpErrors } from '../platform/errors';
 import { retrieveAPIKey } from '../platform/api-keys';
-import { getUser } from '../platform/auth';
 
 import { registryAuth as CERT } from '../lib/certs';
 import { RequestHandler, Request } from 'express';
@@ -19,6 +18,8 @@ import {
 	TOKEN_AUTH_BUILDER_TOKEN,
 	REGISTRY2_HOST,
 } from '../lib/config';
+import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
+import * as memoize from 'memoizee';
 
 const { BadRequestError, UnauthorizedError } = sbvrUtils;
 
@@ -58,60 +59,11 @@ type Scope = [Access['type'], Access['name'], Access['actions']];
 export const basicApiKeyAuthenticate: RequestHandler = (req, _res, next) => {
 	const creds = BasicAuth.parse(req.headers['authorization']!);
 	if (creds) {
-		req.params['apikey'] = creds.pass;
+		req.params.subject = creds.name;
+		req.params.apikey = creds.pass;
 	}
-	return retrieveAPIKey(req)
-		.then(() => {
-			if (!creds || req.apiKey == null || _.isEmpty(req.apiKey.permissions)) {
-				return;
-			}
-			const rootApi = resinApi.clone({ passthrough: { req: root } });
-			return checkApiKeyBelongsToDevice(
-				rootApi,
-				creds.pass,
-				creds.name.replace(/^d_/, ''),
-			).then(isValid => {
-				if (!isValid) {
-					return;
-				}
-				req.subject = creds.name;
-			});
-		})
-		.asCallback(next);
+	return retrieveAPIKey(req).asCallback(next);
 };
-
-const checkApiKeyBelongsToDevice = (
-	api: PinejsClient,
-	apiKey: string,
-	uuid: string,
-): Promise<boolean> =>
-	api
-		.get({
-			resource: 'device',
-			options: {
-				$select: ['id'],
-				$filter: {
-					uuid,
-					actor: {
-						$any: {
-							$alias: 'a',
-							$expr: {
-								a: {
-									api_key: {
-										$any: {
-											$alias: 'k',
-											$expr: { k: { key: apiKey } },
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		})
-		.then(([device]: AnyObject[]) => device != null && device.id != null)
-		.catchReturn(false);
 
 const parseScope = (req: Request, scope: string): Scope | undefined => {
 	try {
@@ -359,12 +311,92 @@ export const token: RequestHandler = (req, res) =>
 		res.sendStatus(400); // bad request
 	});
 
-const getSubject = Promise.method((req: Request) => {
-	if (req.subject) {
-		return req.subject;
+const $getSubject = memoize(
+	(apiKey: string, subject?: string): Promise<string | undefined> =>
+		Promise.try(() => {
+			if (subject) {
+				// Try to resolve as a device api key first, using the passed in subject
+				return resinApi
+					.get({
+						resource: 'device',
+						passthrough: { req: root },
+						options: {
+							$select: ['id'],
+							$filter: {
+								// uuids are passed as `d_${uuid}`
+								uuid: subject.replace(/^d_/, ''),
+								actor: {
+									$any: {
+										$alias: 'a',
+										$expr: {
+											a: {
+												api_key: {
+													$any: {
+														$alias: 'k',
+														$expr: { k: { key: apiKey } },
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					})
+					.then(([device]: AnyObject[]) => device != null && device.id != null)
+					.catchReturn(false);
+			}
+			return false;
+		}).then(isValid => {
+			if (isValid) {
+				return subject;
+			}
+			// If resolving as a device api key fails then instead try to resolve to the user api key username
+			return resinApi
+				.get({
+					resource: 'user',
+					passthrough: { req: root },
+					options: {
+						$select: 'username',
+						$filter: {
+							actor: {
+								$any: {
+									$alias: 'a',
+									$expr: {
+										a: {
+											api_key: {
+												$any: {
+													$alias: 'k',
+													$expr: {
+														k: { key: apiKey },
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+						$top: 1,
+					},
+				})
+				.then(([user]: AnyObject[]) => {
+					if (user) {
+						return user.username;
+					}
+				});
+		}),
+	{
+		promise: true,
+		maxAge: 5 * 60 * 1000,
+		primitive: true,
+	},
+);
+const getSubject = (req: Request): Resolvable<undefined | string> => {
+	if (req.apiKey != null && !_.isEmpty(req.apiKey.permissions)) {
+		return $getSubject(req.apiKey.key, req.params.subject);
+	} else if (req.user) {
+		// If there's no api key then try to use the username from the JWT
+		return req.user.username;
 	}
-
-	return getUser(req, false).then(user =>
-		user == null ? undefined : user.username,
-	);
-});
+};
