@@ -11,6 +11,7 @@ import {
 	PinejsClient,
 	createActor,
 	getCurrentRequestAffectedIds,
+	addDeleteHookForDependents,
 } from '../../platform';
 const { BadRequestError, ConflictError } = sbvrUtils;
 import { captureException } from '../../platform/errors';
@@ -177,73 +178,16 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'application', {
 					// If there's a specific app targeted we make sure we give a 404 for backwards compatibility
 					throw new Error('Application(s) not found.');
 				}
-				return;
 			}
-			const { req, api } = args;
-			return Promise.mapSeries(
-				[
-					[
-						'device',
-						'belongs_to__application',
-						['release', 'belongs_to__application'],
-					],
-					['application_config_variable', 'application'],
-					['application_environment_variable', 'application'],
-					['application_tag', 'application'],
-					['release', 'belongs_to__application'],
-					['service', 'application'],
-					['application', 'depends_on__application'],
-				],
-				([resource, filterField, dependent]: [string, string, string[]?]) =>
-					api
-						.delete({
-							resource,
-							options: {
-								$filter: {
-									[filterField]: { $in: appIds },
-								},
-							},
-						})
-						.tapCatch(err => {
-							captureException(err, 'Error deleting application ' + resource, {
-								req,
-							});
-						})
-						.then(() => {
-							if (dependent != null) {
-								const [depResource, depFilter] = dependent;
-								return api
-									.delete({
-										resource: depResource,
-										options: {
-											$filter: {
-												[depFilter]: { $in: appIds },
-											},
-										},
-									})
-									.return()
-									.tapCatch(err => {
-										captureException(
-											err,
-											'Error deleting application ' + dependent,
-											{ req },
-										);
-									});
-							}
-						}),
-			)
-				.then(() =>
-					// Because service depends on the release hooks being ran, we need to
-					// delete the service entries here, to avoid database errors
-					api.delete({
-						resource: 'service',
-						options: {
-							$filter: {
-								application: { $in: appIds },
-							},
-						},
-					}),
-				)
-				.return();
 		}),
 });
+
+addDeleteHookForDependents('application', [
+	['device', 'belongs_to__application'],
+	['application_config_variable', 'application'],
+	['application_environment_variable', 'application'],
+	['application_tag', 'application'],
+	['release', 'belongs_to__application'],
+	['service', 'application'],
+	['application', 'depends_on__application'],
+]);
