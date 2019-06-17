@@ -67,7 +67,6 @@ export const BLACKLISTED_NAMES = [
 ];
 
 export const INVALID_CHARACTER_REGEX = /^\d|\W/;
-export const INVALID_NEWLINE_REGEX = /\r|\n/;
 
 export const DEFAULT_SUPERVISOR_POLL_INTERVAL = 10 * 60 * 1000;
 
@@ -189,14 +188,6 @@ export const checkEnvVarNameValidity = (name: string) => {
 			`Environment variables beginning with ${RESERVED_NAMESPACES.join(
 				', ',
 			)} are reserved.`,
-		);
-	}
-};
-
-export const checkEnvVarValueValidity = (value: string) => {
-	if (INVALID_NEWLINE_REGEX.test(value)) {
-		throw new BadRequestError(
-			'Variable values cannot contain line break characters',
 		);
 	}
 };
