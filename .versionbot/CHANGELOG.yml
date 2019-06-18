@@ -1,4 +1,22 @@
 - commits:
+    - subject: 'auth: allow device API keys to fully control the device''s env vars'
+      hash: 0caf89ca702eefba3bf5533a9c15e37d8ed2b5f4
+      body: >
+        Both device env vars and device service env vars are covered. Previously
+
+        could only read the variables, but should be able to
+        create/change/delete
+
+        as well.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Gergely Imreh <gergely@balena.io>
+        signed-off-by: Gergely Imreh <gergely@balena.io>
+      author: Gergely Imreh
+  version: 0.26.0
+  date: 2019-06-17T16:08:08.989Z
+- commits:
     - subject: Cache the resolved subject for /auth/v1/token requests for 5 minutes
       hash: 598ba291937aa1f3631a8daa29e16cb8165815f0
       body: ''
