@@ -1,4 +1,21 @@
 - commits:
+    - subject: Use `addDeleteHookForDependents` for application deletes
+      hash: 6fab506ad7bdb17d25714e81cce9f5ca6167b959
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Remove unnecessary sub dependent support - the deletes are run in order
+      hash: 626ea4ba07804c762362a818464e8ade8e8ac573
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.27.0
+  date: 2019-06-19T12:33:24.130Z
+- commits:
     - subject: 'auth: allow device API keys to fully control the device''s env vars'
       hash: 0caf89ca702eefba3bf5533a9c15e37d8ed2b5f4
       body: >
