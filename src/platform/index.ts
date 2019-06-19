@@ -195,7 +195,7 @@ export const createActor = ({
 
 export function addDeleteHookForDependents(
 	resource: string,
-	dependents: Array<[string, string, string[]?]>,
+	dependents: Array<[string, string]>,
 ) {
 	sbvrUtils.addPureHook('DELETE', 'resin', resource, {
 		PRERUN: args => {
@@ -208,7 +208,7 @@ export function addDeleteHookForDependents(
 
 				return Bluebird.mapSeries(
 					dependents,
-					([dependent, resourceIdField, subDependent]) => {
+					([dependent, resourceIdField]) => {
 						return api
 							.delete({
 								resource: dependent,
@@ -226,26 +226,6 @@ export function addDeleteHookForDependents(
 										req,
 									},
 								);
-							})
-							.then(() => {
-								if (subDependent != null) {
-									const [depResource, depFilter] = subDependent;
-									return api
-										.delete({
-											resource: depResource,
-											options: {
-												$filter: {
-													[depFilter]: { $in: resourceIds },
-												},
-											},
-										})
-										.return()
-										.tapCatch(err => {
-											captureException(err, 'Error deleting ' + depResource, {
-												req,
-											});
-										});
-								}
 							});
 					},
 				).return();
