@@ -1,4 +1,28 @@
 - commits:
+    - subject: Update open-balena-base to 7.2.2
+      hash: 63cc014fd070b6004c50b3634c4e07096872dddd
+      body: |
+        Update open-balena-base from 7.2.1 to 7.2.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: 'systemd: move StartLimitIntervalSec to proper conf section'
+              hash: d8e86fb27e02975a98ff271ec5c7f30c6f1dcd03
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Matthew McGinn <matthew@balena.io>
+                signed-off-by: Matthew McGinn <matthew@balena.io>
+              author: Matthew McGinn
+          version: open-balena-base-7.2.2
+          date: 2019-06-19T14:32:09.638Z
+  version: 0.27.1
+  date: 2019-06-20T11:07:40.979Z
+- commits:
     - subject: Use `addDeleteHookForDependents` for application deletes
       hash: 6fab506ad7bdb17d25714e81cce9f5ca6167b959
       body: ''
