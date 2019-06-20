@@ -9,14 +9,8 @@ ADD COLUMN IF NOT EXISTS "email" TEXT;
 ALTER TABLE "user"
 ADD COLUMN IF NOT EXISTS "jwt secret" VARCHAR(255) NULL;
 
-CREATE INDEX IF NOT EXISTS "release_application_idx"
-ON "release" ("belongs to-application");
-
-CREATE INDEX IF NOT EXISTS "release_commit_idx"
-ON "release" ("commit");
-
-CREATE INDEX IF NOT EXISTS "release_status_idx"
-ON "release" ("status");
+CREATE INDEX IF NOT EXISTS "release_application_commit_status_idx"
+ON "release" ("belongs to-application", "commit", "status");
 
 CREATE INDEX IF NOT EXISTS "api_key_actor_idx"
 ON "api key" ("is of-actor");
