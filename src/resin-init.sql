@@ -33,9 +33,6 @@ ON "application" ("actor");
 CREATE INDEX IF NOT EXISTS "device_application_idx"
 ON "device" ("belongs to-application");
 
-CREATE INDEX IF NOT EXISTS "api_key_key_idx"
-ON "api key" ("key");
-
 CREATE INDEX IF NOT EXISTS "application_device_type_idx"
 ON "application" ("device type");
 
