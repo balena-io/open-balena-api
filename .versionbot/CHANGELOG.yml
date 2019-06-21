@@ -1,4 +1,14 @@
 - commits:
+    - subject: Merge release indexes to allow for better utilisation
+      hash: 0da884c147b61abd9a8c0288c9bb44e170b92ebd
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.27.3
+  date: 2019-06-21T12:28:11.805Z
+- commits:
     - subject: 'Drop duplicate api key index, it''s already index via a unique index'
       hash: d5e8eab263e9d11ae5dc9472e6637637f9ba473a
       body: ''
