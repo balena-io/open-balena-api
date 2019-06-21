@@ -1,4 +1,14 @@
 - commits:
+    - subject: 'Drop duplicate api key index, it''s already index via a unique index'
+      hash: d5e8eab263e9d11ae5dc9472e6637637f9ba473a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.27.2
+  date: 2019-06-20T16:24:34.033Z
+- commits:
     - subject: Update open-balena-base to 7.2.2
       hash: 63cc014fd070b6004c50b3634c4e07096872dddd
       body: |
