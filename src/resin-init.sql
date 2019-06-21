@@ -33,6 +33,9 @@ ON "application" ("device type");
 CREATE INDEX IF NOT EXISTS "device_device_type_idx"
 ON "device" ("device type");
 
+CREATE INDEX IF NOT EXISTS "image_status_push_timestamp_idx"
+ON "image" ("status", "push timestamp");
+
 CREATE INDEX IF NOT EXISTS "image_is_stored_at_image_location_idx"
 ON "image" USING GIN ("is stored at-image location" gin_trgm_ops);
 
