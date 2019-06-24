@@ -220,9 +220,7 @@ export function storeStream(req: Request, res: Response) {
 	return getWriteContext(api, req)
 		.tap(checkWritePermissions)
 		.tap(addRetentionLimit)
-		.then(ctx => {
-			return handleStreamingWrite(ctx, res);
-		})
+		.then(ctx => handleStreamingWrite(ctx, res))
 		.catch(handleStoreErrors(req, res));
 }
 
@@ -317,15 +315,15 @@ function handleStreamingWrite(ctx: LogWriteContext, res: Response): void {
 			.then(() => {
 				// If headers were sent, it means the connection is ended
 				if (!res.headersSent || buffer.length) {
-					// We do not return the schedule promise as the recursion causes a memory leak
-					schedule();
-					// We return null here to avoid promise warnings
-					return null;
+					return schedule();
 				}
 			})
 			.catch(errHandler);
+		// We do not return the schedule promise as the recursion causes a memory leak,
+		// but we do return null instead to avoid promise warnings
+		return (null as unknown) as void;
 	}
-	schedule();
+	return schedule();
 }
 
 function getReadContext(api: PinejsClient, req: Request): Promise<LogContext> {
