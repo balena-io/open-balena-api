@@ -1,4 +1,14 @@
 - commits:
+    - subject: Add some indexes for delete cascading
+      hash: 1d2f51abe82d89557841a88f19d6ef968502c631
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.27.6
+  date: 2019-06-24T17:27:01.366Z
+- commits:
     - subject: Fix unreturned promise warning in log-stream
       hash: 276c96f44502c8c29de23dd4e90527c07e0daf00
       body: ''
