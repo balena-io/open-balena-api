@@ -36,6 +36,9 @@ ON "device" ("device type");
 CREATE INDEX IF NOT EXISTS "image_status_push_timestamp_idx"
 ON "image" ("status", "push timestamp");
 
+CREATE INDEX IF NOT EXISTS "image_is_build_of_service_idx"
+ON "image" ("is a build of-service");
+
 CREATE INDEX IF NOT EXISTS "image_is_stored_at_image_location_idx"
 ON "image" USING GIN ("is stored at-image location" gin_trgm_ops);
 
@@ -59,3 +62,9 @@ ON "device" ("uuid" text_pattern_ops);
 
 CREATE INDEX IF NOT EXISTS "device_is_managed_by_service_instance_idx"
 ON "device" ("is managed by-service instance");
+
+CREATE INDEX IF NOT EXISTS "ipr_ipr_idx"
+ON "image-is part of-release" ("is part of-release");
+
+CREATE INDEX IF NOT EXISTS "ii_ipr_idx"
+ON "image install" ("is provided by-release");
