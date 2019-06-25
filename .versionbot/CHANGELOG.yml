@@ -1,4 +1,17 @@
 - commits:
+    - subject: Block removal of the currently deployed release in isolation
+      hash: c1e2a8bacef3581a011c8d56070fc2f466b9f341
+      body: |
+        This still allows removing all releases at once, in order to allow
+        application deletes but avoids other modifications that make the
+        release undeployable
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.27.7
+  date: 2019-06-25T17:45:43.131Z
+- commits:
     - subject: Add some indexes for delete cascading
       hash: 1d2f51abe82d89557841a88f19d6ef968502c631
       body: ''
