@@ -60,17 +60,18 @@ function sortBuildIds(ids: string[]): string[] {
 }
 
 const getBuildData = (slug: string, buildId: string) => {
-	return Promise.all([
+	return Promise.join(
 		getIsIgnored(slug, buildId),
 		getDeviceTypeJson(slug, buildId).catchReturn(undefined),
-	]).then(([ignored, deviceType]) => {
-		const buildInfo = {
-			ignored,
-			deviceType,
-		};
+		(ignored, deviceType) => {
+			const buildInfo = {
+				ignored,
+				deviceType,
+			};
 
-		return buildInfo;
-	});
+			return buildInfo;
+		},
+	);
 };
 
 const getFirstValidBuild = (
@@ -143,7 +144,7 @@ function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 		})
 		.then(slugs => {
 			if (_.isEmpty(result) && !_.isEmpty(slugs)) {
-				throw new InternalRequestError('Clould not retrieve any device type');
+				throw new InternalRequestError('Could not retrieve any device type');
 			}
 		})
 		.return(result)
@@ -341,7 +342,7 @@ export const getImageVersions = (slug: string): Promise<ImageVersions> => {
 			);
 			if (_.isEmpty(filteredInfo) && !_.isEmpty(deviceTypeInfo.versions)) {
 				throw new InternalRequestError(
-					`Clould not retrieve any image version for device type ${slug}`,
+					`Could not retrieve any image version for device type ${slug}`,
 				);
 			}
 
