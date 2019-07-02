@@ -1,4 +1,16 @@
 - commits:
+    - subject: Avoid fetching deleted image installs for log write context
+      hash: 20208fb012a09a88c4bdae361b4d62df5951d668
+      body: |
+        This both reduces the amount of data we need to fetch from the database
+        as well as reducing the amount of data we need to keep in memory
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.27.9
+  date: 2019-07-02T14:49:09.926Z
+- commits:
     - subject: Minor cleanup and typo fixes
       hash: e28a0a9508facb000b0804f8e8f9f0b11c042a46
       body: ''
