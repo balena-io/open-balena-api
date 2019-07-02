@@ -367,6 +367,9 @@ function getWriteContext(
 								$expand: { is_a_build_of__service: { $select: 'id' } },
 							},
 						},
+						$filter: {
+							status: { $ne: 'deleted' },
+						},
 					},
 				},
 			},
