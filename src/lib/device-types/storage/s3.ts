@@ -40,7 +40,7 @@ const s3Client = new UnauthenticatedS3Facade(
 	}),
 );
 
-export function getFileInfo(path: string) {
+function getFileInfo(path: string) {
 	const req = s3Client.headObject({
 		Bucket: S3_BUCKET,
 		Key: path,

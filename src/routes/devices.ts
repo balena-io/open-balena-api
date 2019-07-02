@@ -112,7 +112,7 @@ export const register: RequestHandler = (req, res) =>
 // This endpoint will:
 // If the dependent device does not already exist it will be provisioned.
 // If an existing managed dependent device is not in the array it will be set as unmanaged.
-// If an existing dependent device is in the array and umanaged it will be managed by this gateway.
+// If an existing dependent device is in the array and unmanaged it will be managed by this gateway.
 // If a dependent device is in the array and is already managed by this gateway the
 // is_locked_until__date will be updated.
 // If a dependent device is in the array and is already managed by a different gateway
