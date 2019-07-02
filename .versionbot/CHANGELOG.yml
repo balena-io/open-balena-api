@@ -1,4 +1,14 @@
 - commits:
+    - subject: Minor cleanup and typo fixes
+      hash: e28a0a9508facb000b0804f8e8f9f0b11c042a46
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.27.8
+  date: 2019-06-28T18:07:27.958Z
+- commits:
     - subject: Block removal of the currently deployed release in isolation
       hash: c1e2a8bacef3581a011c8d56070fc2f466b9f341
       body: |
