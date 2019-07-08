@@ -45,6 +45,15 @@ export const permissionRequired = (permission: string): RequestHandler => (
 	}
 };
 
+const checkDeviceExistsQuery = resinApi.prepare<{ uuid: string }>({
+	resource: 'device/$count',
+	passthrough: { req: root },
+	options: {
+		$filter: {
+			uuid: { '@': 'uuid' },
+		},
+	},
+});
 export const gracefullyDenyDeletedDevices: RequestHandler = (
 	req,
 	res,
@@ -54,22 +63,12 @@ export const gracefullyDenyDeletedDevices: RequestHandler = (
 
 	const returnCode = req.method === 'GET' ? 304 : 200;
 
-	return resinApi
-		.get({
-			resource: 'device/$count',
-			passthrough: { req: root },
-			options: {
-				$filter: {
-					uuid,
-				},
-			},
-		})
-		.then((devices: number) => {
-			if (devices === 0) {
-				res.sendStatus(returnCode);
-				return;
-			}
+	return checkDeviceExistsQuery({ uuid }).then((devices: number) => {
+		if (devices === 0) {
+			res.sendStatus(returnCode);
+			return;
+		}
 
-			next();
-		});
+		next();
+	});
 };
