@@ -6,6 +6,7 @@ import { sbvrUtils } from '../platform';
 import { API_VPN_SERVICE_API_KEY, VPN_SERVICE_API_KEY } from './config';
 
 const matchesActor = 'actor eq @__ACTOR_ID';
+const matchesUser = `user/any(u:u/${matchesActor})`;
 const ownsDevice = `owns__device/any(d:d/${matchesActor})`;
 const belongsToApplicationOrIsManagedByDevice = `belongs_to__application/any(a:a/owns__device/any(d:d/${matchesActor} or d/is_managed_by__device/any(md:md/${matchesActor})))`;
 const applicationControlsDevice = `application/any(a:a/${ownsDevice} or a/depends_on__application/any(da:da/${ownsDevice}))`;
@@ -45,6 +46,7 @@ export const ROLES: {
 		"resin.service_instance.get?service_type eq 'vpn'",
 		'resin.service_label.all',
 		'resin.user.read',
+		`resin.user__has__public_key.all?${matchesUser}`,
 	],
 };
 
