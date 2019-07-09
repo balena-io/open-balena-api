@@ -1,4 +1,28 @@
 - commits:
+    - subject: Use a prepared query for `gracefullyDenyDeletedDevices` middleware
+      hash: 05009c575227937340c5dce68298172e065e143a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Use a prepared query for `getUser` helper
+      hash: bbdaba551754035cd4daf20c1926fb7e8d67bc1c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Use a prepared query for vpn auth requests
+      hash: cc4270adcc6c810a9eae1dcf1dde9d0fe256a420
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.28.1
+  date: 2019-07-08T16:20:45.596Z
+- commits:
     - subject: Update open-balena-base to 8.0.0
       hash: 06320a5bcfc1aa247784784799d3e8e345fe3af4
       body: |
