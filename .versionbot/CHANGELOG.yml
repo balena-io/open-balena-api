@@ -1,4 +1,14 @@
 - commits:
+    - subject: Fix key comparison
+      hash: e4b41461720f01177bad99f430c144bb7b4b7aad
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.28.2
+  date: 2019-07-09T16:50:35.916Z
+- commits:
     - subject: Use a prepared query for `gracefullyDenyDeletedDevices` middleware
       hash: 05009c575227937340c5dce68298172e065e143a
       body: ''
