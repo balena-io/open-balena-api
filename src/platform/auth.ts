@@ -245,7 +245,7 @@ const getUserQuery = resinApi.prepare<{ key: string }>({
 								$any: {
 									$alias: 'k',
 									$expr: {
-										k: { '@': 'key' },
+										k: { key: { '@': 'key' } },
 									},
 								},
 							},
