@@ -3,19 +3,18 @@ import { Request, Response } from 'express';
 import { resinApi } from '../platform';
 import { captureException, handleHttpErrors } from '../platform/errors';
 
+const authQuery = resinApi.prepare<{ uuid: string }>({
+	resource: 'device',
+	options: {
+		$select: 'id',
+		$filter: {
+			uuid: { '@': 'uuid' },
+		},
+	},
+});
 export const vpn = {
 	authDevice: (req: Request, res: Response): void | Promise<void> =>
-		resinApi
-			.get({
-				resource: 'device',
-				passthrough: { req },
-				options: {
-					$select: ['id'],
-					$filter: {
-						uuid: req.param('device_uuid'),
-					},
-				},
-			})
+		authQuery({ uuid: req.param('device_uuid') }, undefined, { req })
 			.then(([device]: AnyObject[]) => {
 				// for now, if the api key is able to read the device,
 				// it has vpn access

@@ -230,6 +230,33 @@ export const updateUserXHR = (res: Response, req: Request): Promise<void> =>
 export const reqHasPermission = (req: Request, permission: string): boolean =>
 	userHasPermission(req.apiKey || req.user, permission);
 
+const getUserQuery = resinApi.prepare<{ key: string }>({
+	resource: 'user',
+	passthrough: { req: root },
+	options: {
+		$select: userFields,
+		$filter: {
+			actor: {
+				$any: {
+					$alias: 'a',
+					$expr: {
+						a: {
+							api_key: {
+								$any: {
+									$alias: 'k',
+									$expr: {
+										k: { '@': 'key' },
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		$top: 1,
+	},
+});
 export function getUser(
 	req: Request | sbvrUtils.HookReq,
 	required?: true,
@@ -271,43 +298,15 @@ export function getUser(
 			return;
 		}
 
-		return resinApi
-			.get({
-				resource: 'user',
-				passthrough: { req: root },
-				options: {
-					$select: userFields,
-					$filter: {
-						actor: {
-							$any: {
-								$alias: 'a',
-								$expr: {
-									a: {
-										api_key: {
-											$any: {
-												$alias: 'k',
-												$expr: {
-													k: { key },
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-					$top: 1,
-				},
-			})
-			.then(([user]: AnyObject[]) => {
-				if (user) {
-					// Store it in `req` to be compatible with JWTs and for caching
-					req.user = req.creds = _.pick(user, userFields) as User;
-				} else if (required) {
-					throw new UnauthorizedError('User not found for API key');
-				}
-				return req.user;
-			});
+		return getUserQuery({ key }).then(([user]: AnyObject[]) => {
+			if (user) {
+				// Store it in `req` to be compatible with JWTs and for caching
+				req.user = req.creds = _.pick(user, userFields) as User;
+			} else if (required) {
+				throw new UnauthorizedError('User not found for API key');
+			}
+			return req.user;
+		});
 	});
 }
 
