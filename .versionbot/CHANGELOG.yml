@@ -1,4 +1,50 @@
 - commits:
+    - subject: 'registry: Allow registry authentication for docker login'
+      hash: 738a2816dd86c6bd7787ce3f1ce4e56db6e54534
+      body: |
+        docker login happens with no scopes provided (unlike docker pull and
+        push, where there's always a scope). In this login case, provide
+        authentication for an empty scope. This means any username/password
+        is allowed for login, but nonetheless this does not weaken access, as
+        on pull and push the request will be rechecked whether it can access
+        the specific images.
+
+        This allows docker login to work again, that stopped working in
+        v0.17.4, that is #85
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Gergely Imreh <gergely@balena.io>
+        signed-off-by: Gergely Imreh <gergely@balena.io>
+      author: Gergely Imreh
+    - subject: Update open-balena-base to 8.0.1
+      hash: 7d452394d175f5ed082f9d0cb2983d2ef0785e57
+      body: |
+        Update open-balena-base from 8.0.0 to 8.0.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: 'mdns: Ensure multipart subdomains are allowed'
+              hash: bc5903d77867c3c969f1e7193cbef69dab12eeef
+              body: |
+                Debian Buster now uses Avahi 0.7 instead of
+                0.6.32. This means that there is now a stricter
+                policy defining MDNS domains. This commit allows
+                us to use multipart subdomains.
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Heds Simons <heds@balena.io>
+                signed-off-by: Heds Simons <heds@balena.io>
+              author: Heds Simons
+          version: open-balena-base-8.0.1
+          date: 2019-07-17T15:08:57.053Z
+  version: 0.28.3
+  date: 2019-07-18T16:18:00.698Z
+- commits:
     - subject: Fix key comparison
       hash: e4b41461720f01177bad99f430c144bb7b4b7aad
       body: ''
