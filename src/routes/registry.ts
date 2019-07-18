@@ -21,7 +21,7 @@ import {
 import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
 import * as memoize from 'memoizee';
 
-const { BadRequestError, UnauthorizedError } = sbvrUtils;
+const { UnauthorizedError } = sbvrUtils;
 
 // Set a large expiry so that huge pulls/pushes go through
 // without needing to re-authenticate mid-process.
@@ -292,7 +292,7 @@ export const token: RequestHandler = (req, res) =>
 		} else if (_.isObject(scope)) {
 			scopes = _.values(scope);
 		} else {
-			throw new BadRequestError('Invalid scope');
+			scopes = [];
 		}
 
 		return Promise.join(
