@@ -1,4 +1,17 @@
 - commits:
+    - subject: Revert "Add an entry for the supervisor mixpanel controlling var"
+      hash: af86cbc769ea2dcb0d2ba7c9c37bb612c6955d39
+      body: |
+        This reverts commit 55a2cc0df5664fdfaafe710943de673b191df5df.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Cameron Diver <cameron@balena.io>
+        signed-off-by: Cameron Diver <cameron@balena.io>
+      author: Cameron Diver
+  version: 0.28.4
+  date: 2019-07-24T12:29:08.707Z
+- commits:
     - subject: 'registry: Allow registry authentication for docker login'
       hash: 738a2816dd86c6bd7787ce3f1ce4e56db6e54534
       body: |
