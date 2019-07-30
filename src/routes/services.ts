@@ -12,6 +12,36 @@ const authQuery = resinApi.prepare<{ uuid: string }>({
 		},
 	},
 });
+const clientConnectQuery = resinApi.prepare<{ uuid: string }>({
+	method: 'PATCH',
+	resource: 'device',
+	options: {
+		$filter: {
+			uuid: { '@': 'uuid' },
+		},
+	},
+	body: {
+		is_connected_to_vpn: true,
+	},
+});
+const clientDisconnectQuery = resinApi.prepare<{
+	uuid: string;
+	serviceId: number;
+}>({
+	method: 'PATCH',
+	resource: 'device',
+	options: {
+		$filter: {
+			uuid: { '@': 'uuid' },
+			// Only disconnect if still managed by this vpn
+			is_managed_by__service_instance: { '@': 'serviceId' },
+		},
+	},
+	body: {
+		is_connected_to_vpn: false,
+		vpn_address: null,
+	},
+});
 export const vpn = {
 	authDevice: (req: Request, res: Response): void | Promise<void> =>
 		authQuery({ uuid: req.param('device_uuid') }, undefined, { req })
@@ -46,21 +76,14 @@ export const vpn = {
 			return;
 		}
 
-		return resinApi
-			.patch({
-				resource: 'device',
-				passthrough: { req },
-				options: {
-					$filter: {
-						uuid: body.common_name,
-					},
-				},
-				body: {
-					is_connected_to_vpn: true,
-					vpn_address: body.virtual_address,
-					is_managed_by__service_instance: body.service_id,
-				},
-			})
+		return clientConnectQuery(
+			{ uuid: body.common_name },
+			{
+				vpn_address: body.virtual_address,
+				is_managed_by__service_instance: body.service_id,
+			},
+			{ req },
+		)
 			.then(() => {
 				res.sendStatus(200);
 			})
@@ -76,23 +99,16 @@ export const vpn = {
 			res.sendStatus(400);
 			return;
 		}
+		if (!body.service_id) {
+			res.sendStatus(400);
+			return;
+		}
 
-		return resinApi
-			.patch({
-				resource: 'device',
-				passthrough: { req },
-				options: {
-					$filter: {
-						uuid: body.common_name,
-						// Only disconnect if still managed by this vpn
-						is_managed_by__service_instance: body.service_id,
-					},
-				},
-				body: {
-					is_connected_to_vpn: false,
-					vpn_address: null,
-				},
-			})
+		return clientDisconnectQuery(
+			{ uuid: body.common_name, serviceId: body.service_id },
+			undefined,
+			{ req },
+		)
 			.then(() => {
 				res.sendStatus(200);
 			})
