@@ -1,4 +1,14 @@
 - commits:
+    - subject: Use prepared queries for vpn client connect/disconnect
+      hash: 5b507eb16c319d375662a9ae5aa8ab587176b72f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.28.5
+  date: 2019-07-30T10:27:00.611Z
+- commits:
     - subject: Revert "Add an entry for the supervisor mixpanel controlling var"
       hash: af86cbc769ea2dcb0d2ba7c9c37bb612c6955d39
       body: |
