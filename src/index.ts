@@ -22,6 +22,7 @@ import * as jwt from './platform/jwt';
 passport.use(jwt.strategy);
 
 import {
+	API_HOST,
 	DB_POOL_SIZE,
 	SENTRY_DSN,
 	NODE_ENV,
@@ -146,7 +147,7 @@ function fixProtocolMiddleware(skipUrls: string[] = []): _express.Handler {
 		if (req.protocol === 'https' || skipUrls.includes(req.url)) {
 			return next();
 		}
-		res.redirect(301, `https://${req.hostname}${req.url}`);
+		res.redirect(301, `https://${API_HOST}${req.url}`);
 	};
 }
 
