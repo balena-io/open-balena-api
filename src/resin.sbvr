@@ -183,6 +183,9 @@ Term: provisioning state
 Term: public address
 	Concept Type: Short Text (Type)
 
+Term: public key
+	Concept Type: Text (Type)
+
 Term: push timestamp
 	Concept Type: Date Time (Type)
 
@@ -333,6 +336,15 @@ Fact type: image is part of release
 
 Fact type: user (Auth) has email
 	Necessity: each user (Auth) has at most one email.
+
+Fact type: user (Auth) has public key
+	Term Form: user public key
+
+
+-- user public key
+
+Fact type: user public key has title
+    Necessity: each user public key has exactly one title
 
 
 -- application type

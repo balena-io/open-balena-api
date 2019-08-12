@@ -54,7 +54,7 @@ async function createSuperuser() {
 	const { ConflictError } = sbvrUtils;
 
 	const data = {
-		username: 'root',
+		username: 'admin',
 		email: SUPERUSER_EMAIL,
 		password: SUPERUSER_PASSWORD,
 	};
