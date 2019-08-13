@@ -107,7 +107,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	`resin.device.write-log?${matchesActor}`,
 ];
 
-ROLES['default-api-key'] = [
+ROLES['device-api-key'] = [
 	...DEVICE_API_KEY_PERMISSIONS,
 	`resin.user.get`,
 	`resin.user__has__public_key.get`,
