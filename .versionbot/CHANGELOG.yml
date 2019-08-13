@@ -1,4 +1,16 @@
 - commits:
+    - subject: 'auth: fix typo in device-api-key permissions'
+      hash: 956712b764af7f1f8d62941218426ea9bc5fa7a3
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Will Boyce <will@balena.io>
+        signed-off-by: Will Boyce <will@balena.io>
+      author: Will Boyce
+  version: 0.29.1
+  date: 2019-08-13T14:41:54.288Z
+- commits:
     - subject: 'perms: grant user api keys perms to CRUD public keys'
       hash: 3296b435ef6cc7759e675859fd1059d52f8da4d2
       body: ''
