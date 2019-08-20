@@ -1,4 +1,30 @@
 - commits:
+    - subject: Update open-balena-base to 8.0.3
+      hash: 401af748db1efd900da2174d1f5d09e216587a96
+      body: |
+        Update open-balena-base from 8.0.2 to 8.0.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: "\U0001F512: Update Node to 10.16.3 and NPM to 6.10.3"
+              hash: 8714ca3fee1ff44187e0a0c4b6c648d0c2fe550c
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+                Connects-to: '#91'
+                connects-to: '#91'
+                Signed-off-by: Andreas Fitzek <andreas@balena.io>
+                signed-off-by: Andreas Fitzek <andreas@balena.io>
+              author: Andreas Fitzek
+          version: open-balena-base-8.0.3
+          date: 2019-08-16T12:10:08.587Z
+  version: 0.30.1
+  date: 2019-08-20T09:29:23.724Z
+- commits:
     - subject: "\U0001F4A5\U0001F5C3 : Add device types table and link it"
       hash: fc2e443e596b03fdc0040607f6cda859bf2d64c8
       body: |
