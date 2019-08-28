@@ -28,10 +28,10 @@ CREATE INDEX IF NOT EXISTS "device_application_idx"
 ON "device" ("belongs to-application");
 
 CREATE INDEX IF NOT EXISTS "application_device_type_idx"
-ON "application" ("is for-device type");
+ON "application" ("device type");
 
 CREATE INDEX IF NOT EXISTS "device_device_type_idx"
-ON "device" ("is of-device type");
+ON "device" ("device type");
 
 CREATE INDEX IF NOT EXISTS "image_status_push_timestamp_idx"
 ON "image" ("status", "push timestamp");

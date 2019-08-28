@@ -3,7 +3,6 @@ import { Application } from 'express';
 import {
 	authorized,
 	apiKeyMiddleware,
-	identify,
 	permissionRequired,
 	gracefullyDenyDeletedDevices,
 } from '../platform/middleware';
@@ -148,16 +147,14 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 
 	app.get('/access/v1/hostos/:device_uuid', authorized, access.hostOSAccess);
 
-	app.get('/device-types/v1', identify, deviceTypes.getDeviceTypes);
-	app.get('/device-types/v1/:deviceType', identify, deviceTypes.getDeviceType);
+	app.get('/device-types/v1', deviceTypes.getDeviceTypes);
+	app.get('/device-types/v1/:deviceType', deviceTypes.getDeviceType);
 	app.get(
 		'/device-types/v1/:deviceType/images',
-		identify,
 		deviceTypes.listAvailableImageVersions,
 	);
 	app.get(
 		'/device-types/v1/:deviceType/images/:version/download-size',
-		identify,
 		deviceTypes.downloadImageSize,
 	);
 

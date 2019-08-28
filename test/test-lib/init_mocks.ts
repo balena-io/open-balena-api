@@ -1,3 +1,0 @@
-import('./aws-mock');
-
-export {};

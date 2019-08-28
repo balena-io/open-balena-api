@@ -7,6 +7,7 @@ import {
 	checkDevicesCanBeInApplication,
 } from '../../lib/application-types';
 
+import * as deviceTypes from '../../lib/device-types';
 import * as haikuName from '../../lib/haiku-name';
 import { postDevices } from '../../lib/device-proxy';
 
@@ -20,7 +21,6 @@ import {
 } from '../../platform';
 const { BadRequestError } = sbvrUtils;
 import { InaccessibleAppError } from '../../lib/errors';
-import { resolveDeviceType } from '../common';
 
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
 
@@ -126,7 +126,8 @@ sbvrUtils.addPureHook('POST', 'resin', 'device', {
 
 sbvrUtils.addPureHook('POST', 'resin', 'device', {
 	POSTPARSE: args => {
-		const { request, api } = args;
+		const { request } = args;
+		const waitPromises = [];
 
 		// Check for extra whitespace characters
 		if (
@@ -140,18 +141,25 @@ sbvrUtils.addPureHook('POST', 'resin', 'device', {
 		// Keep the app ID for later -- we'll need it in the POSTRUN hook
 		request.custom.appId = request.values.belongs_to__application;
 
-		request.values.device_name =
-			request.values.device_name || haikuName.generate();
-		request.values.uuid =
-			request.values.uuid || crypto.pseudoRandomBytes(31).toString('hex');
+		// transform to canonical slug in case the UI and API are out of sync
+		waitPromises.push(
+			deviceTypes
+				.normalizeDeviceType(request.values.device_type)
+				.then(deviceType => {
+					request.values.device_type = deviceType;
+					request.values.device_name =
+						request.values.device_name || haikuName.generate();
+					request.values.uuid =
+						request.values.uuid || crypto.pseudoRandomBytes(31).toString('hex');
 
-		if (!/^[a-f0-9]{32}([a-f0-9]{30})?$/.test(request.values.uuid)) {
-			throw new BadRequestError(
-				'Device UUID must be a 32 or 62 character long lower case hex string.',
-			);
-		}
-
-		return resolveDeviceType(api, request, 'is_of__device_type');
+					if (!/^[a-f0-9]{32}([a-f0-9]{30})?$/.test(request.values.uuid)) {
+						throw new BadRequestError(
+							'Device UUID must be a 32 or 62 character long lower case hex string.',
+						);
+					}
+				}),
+		);
+		return Promise.all(waitPromises);
 	},
 	POSTRUN: ({ request, api, tx, result: deviceId }) => {
 		// Don't try to add service installs if the device wasn't created
