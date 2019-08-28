@@ -79,7 +79,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 			throw new Error('App name may only contain [a-zA-Z0-9_-].');
 		}
 
-		return resolveDeviceType(api, request, 'is_for__device_type')
+		return resolveDeviceType(api, request, 'is_for__device_type_table')
 			.then(() => checkDependentApplication(args))
 			.then(() => {
 				request.values.VPN_host = VPN_HOST;

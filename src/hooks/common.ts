@@ -29,7 +29,7 @@ export const resolveDeviceType = (
 			}
 
 			return api.get({
-				resource: 'device_type',
+				resource: 'device_type_table',
 				id: request.values[fkValue],
 				options: {
 					$select: ['slug'],
@@ -40,6 +40,8 @@ export const resolveDeviceType = (
 			if (!dt) {
 				throw new deviceTypes.InvalidDeviceTypeError();
 			}
+			// set device_type_slug in case the FK column was used.
+			request.values.device_type = dt.slug;
 			return deviceTypes.findBySlug(api, dt.slug);
 		});
 };
