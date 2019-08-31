@@ -4,6 +4,15 @@ import * as semver from 'resin-semver';
 
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './env-vars';
 
+import {
+	Application,
+	Device,
+	Image,
+	getExpanded,
+	Release,
+	PineDeferred,
+	ServiceInstall,
+} from '../models';
 import { PinejsClient, resinApi } from '../platform';
 
 // Set RESIN_SUPERVISOR_POLL_INTERVAL to a minimum of 10 minutes
@@ -19,12 +28,13 @@ export const setMinPollInterval = (config: AnyObject): void => {
 
 export const getReleaseForDevice = (
 	api: PinejsClient,
-	device: AnyObject,
-): Promise<AnyObject | undefined> => {
-	if (device.should_be_running__release[0] != null) {
-		return Promise.resolve(device.should_be_running__release[0]);
+	device: Device,
+): Promise<Release | undefined> => {
+	const release = getExpanded(device.should_be_running__release);
+	if (release != null) {
+		return Promise.resolve(release);
 	} else {
-		const app = device.belongs_to__application[0];
+		const app = getExpanded(device.belongs_to__application)!;
 		return releaseFromApp(api, app);
 	}
 };
@@ -64,8 +74,8 @@ const releaseQuery = resinApi.prepare<{ commit: string; appId: number }>({
 });
 export const releaseFromApp = (
 	api: PinejsClient,
-	app: AnyObject,
-): Promise<AnyObject | undefined> => {
+	app: Application,
+): Promise<Release | undefined> => {
 	if (app.commit == null) {
 		return Promise.resolve(undefined);
 	}
@@ -73,25 +83,28 @@ export const releaseFromApp = (
 		{ commit: app.commit, appId: app.id },
 		undefined,
 		api.passthrough,
-	).then(([release]: AnyObject[]) => release);
+	).then(([release]: Release[]) => release);
 };
 
 export const serviceInstallFromImage = (
-	device: AnyObject,
-	image?: AnyObject,
-): undefined | AnyObject => {
+	device: Device,
+	image?: Image | Overwrite<Image, { is_a_build_of__service: number }>,
+): ServiceInstall | undefined => {
 	if (image == null) {
 		return;
 	}
 
 	let id: number;
 	if (typeof image.is_a_build_of__service === 'object') {
-		id = image.is_a_build_of__service.__id;
+		id = (image.is_a_build_of__service as PineDeferred).__id;
 	} else {
-		id = image.is_a_build_of__service;
+		id = image.is_a_build_of__service as number;
 	}
 
-	return _.find(device.service_install, si => si.service[0].id === id);
+	return _.find(
+		device.service_install,
+		si => getExpanded(si.service)!.id === id,
+	);
 };
 
 export const formatImageLocation = (imageLocation: string) =>
