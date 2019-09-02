@@ -6,4 +6,6 @@ declare global {
 	interface Dictionary<T> {
 		[key: string]: T;
 	}
+
+	type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
 }
