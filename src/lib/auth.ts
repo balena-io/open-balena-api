@@ -22,7 +22,7 @@ export const ROLES: {
 		'resin.actor.delete?id eq @__ACTOR_ID',
 		'resin.api_key.read?is_of__actor eq @__ACTOR_ID',
 		'resin.application.all',
-		'resin.device_type.read',
+		'resin.device_type_table.read',
 		'resin.application_config_variable.all',
 		'resin.application_environment_variable.all',
 		'resin.application_tag.all',
@@ -52,7 +52,7 @@ export const ROLES: {
 };
 
 export const DEVICE_API_KEY_PERMISSIONS = [
-	`resin.device_type.get?describes_device/any(d:d/${matchesActor})`,
+	`resin.device_type_table.get?describes_device/any(d:d/${matchesActor})`,
 	`resin.device.get?${matchesActor}`,
 	`resin.device.update?${matchesActor}`,
 	`resin.supervisor_release.get?should_manage__device/any(d:d/${matchesActor})`,
