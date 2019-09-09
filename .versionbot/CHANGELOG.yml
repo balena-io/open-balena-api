@@ -1,4 +1,16 @@
 - commits:
+    - subject: "\U0001F5C3 : Introduce renamed dt slug field for device and application resources"
+      hash: 0b7da9274b37d3af06cc42685f621a649f675cff
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Andreas Fitzek <andreas@balena.io>
+        signed-off-by: Andreas Fitzek <andreas@balena.io>
+      author: Andreas Fitzek
+  version: 0.31.0
+  date: 2019-09-09T10:28:27.483Z
+- commits:
     - subject: Update open-balena-base to 8.0.3
       hash: 401af748db1efd900da2174d1f5d09e216587a96
       body: |
