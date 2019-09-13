@@ -17,7 +17,7 @@
     "build": "npm run clean && tsc --project ./tsconfig.build.json && copyup \"src/**/*.sbvr\" \"src/**/*.sql\" dist/",
     "clean": "rimraf dist/",
     "lint": "resin-lint --typescript src/ init.ts && tsc --noEmit --project .",
-    "prettify": "prettier --config ./node_modules/resin-lint/config/.prettierrc --write index.js init.ts \"src/**/*.ts\" \"typings/**/*.ts\"",
+    "prettify": "prettier --config ./node_modules/resin-lint/config/.prettierrc --write index.js init.ts \"src/**/*.ts\" \"test/**/*.ts\" \"typings/**/*.ts\"",
     "prepare": "npm run build",
     "test": "IMAGE_NAME=test-open-balena-api ./automation/test.sh",
     "posttest": "docker rmi test-open-balena-api"
@@ -91,6 +91,7 @@
     "mocha": "^6.1.4",
     "mockery": "^2.1.0",
     "prettier": "^1.18.2",
+    "requestmock": "^1.4.0",
     "resin-lint": "^2.0.1",
     "rimraf": "^2.6.3",
     "supertest": "^4.0.2"

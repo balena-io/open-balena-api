@@ -128,6 +128,7 @@ addEnvHooks(
 			if (envVarIds.length === 0) {
 				return;
 			}
+
 			return {
 				belongs_to__application: {
 					$any: {
@@ -263,46 +264,34 @@ addEnvHooks(
 			tx: Tx;
 		},
 	) => {
-		if (args.req.body.service != null) {
-			return Promise.resolve({
-				service_install: {
+		const serviceFilter = (filter: any) =>
+			Promise.resolve({
+				belongs_to__application: {
 					$any: {
-						$alias: 'si',
+						$alias: 'app',
 						$expr: {
-							si: {
-								service: {
+							app: {
+								owns__release: {
 									$any: {
-										$alias: 's',
-										$expr: { s: { id: args.req.body.service } },
-									},
-								},
-							},
-						},
-					},
-				},
-			});
-		}
-
-		return getCurrentRequestAffectedIds(args).then(envVarIds => {
-			if (envVarIds.length === 0) {
-				return;
-			}
-			return {
-				service_install: {
-					$any: {
-						$alias: 'si',
-						$expr: {
-							si: {
-								service: {
-									$any: {
-										$alias: 's',
+										$alias: 'release',
 										$expr: {
-											s: {
-												service_environment_variable: {
+											release: {
+												contains__image: {
 													$any: {
-														$alias: 'e',
+														$alias: 'ipr',
 														$expr: {
-															e: { id: { $in: envVarIds } },
+															ipr: {
+																image: {
+																	is_a_build_of__service: {
+																		$any: {
+																			$alias: 'service',
+																			$expr: {
+																				service: filter,
+																			},
+																		},
+																	},
+																},
+															},
 														},
 													},
 												},
@@ -314,7 +303,29 @@ addEnvHooks(
 						},
 					},
 				},
-			};
+			});
+
+		// when POSTing a new variable...
+		if (args.req.body.service != null) {
+			return serviceFilter({ id: { $in: [args.req.body.service] } });
+		}
+
+		return getCurrentRequestAffectedIds(args).then(envVarIds => {
+			if (envVarIds.length === 0) {
+				return Promise.resolve(null);
+			}
+			return serviceFilter({
+				service_environment_variable: {
+					$any: {
+						$alias: 'sev',
+						$expr: {
+							sev: {
+								id: { $in: envVarIds },
+							},
+						},
+					},
+				},
+			});
 		});
 	},
 );
@@ -327,6 +338,7 @@ addEnvHooks(
 			tx: Tx;
 		},
 	) => {
+		// this block covers POST requests...
 		if (args.req.body.service_install != null) {
 			return Promise.resolve({
 				service_install: {
@@ -336,24 +348,24 @@ addEnvHooks(
 					},
 				},
 			});
+		} else if (args.req.body.belongs_to__device != null) {
+			return Promise.resolve({
+				id: args.req.body.belongs_to__device,
+			});
 		}
 
+		// this covers PATCH/PUT and DELETE requests...
 		return getCurrentRequestAffectedIds(args).then(envVarIds => {
 			if (envVarIds.length === 0) {
 				return;
 			}
 			return {
-				service_install: {
+				owns__device_service_environment_variable: {
 					$any: {
-						$alias: 's',
+						$alias: 'dsev',
 						$expr: {
-							s: {
-								device_service_environment_variable: {
-									$any: {
-										$alias: 'e',
-										$expr: { e: { id: { $in: envVarIds } } },
-									},
-								},
+							dsev: {
+								id: { $in: envVarIds },
 							},
 						},
 					},

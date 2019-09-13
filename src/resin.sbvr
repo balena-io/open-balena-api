@@ -305,6 +305,13 @@ Term: device
 			Term Form: device service environment variable
 			Database Table Name: device service environment variable
 
+		Fact type: device service environment variable belongs to device
+			Synonymous Form: device owns device service environment variable
+			Necessity: each device service environment variable belongs to exactly one device
+
+		Fact type: device service environment variable applies to service
+			Necessity: each device service environment variable applies to exactly one service
+
 	Fact type: device has tag key
 		Term Form: device tag
 		Database Table Name: device tag

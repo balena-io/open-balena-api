@@ -3,6 +3,9 @@ import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { app } from '../init';
+import supertest = require('./test-lib/supertest');
+
 const testFiles = _(process.env.TEST_FILES)
 	.trim()
 	.split(' ')
@@ -20,6 +23,12 @@ const testFiles = _(process.env.TEST_FILES)
 	});
 
 const prefixes: Dictionary<true> = {};
+
+before(async () => {
+	await supertest(app)
+		.get('/device-types/v1')
+		.expect(200);
+});
 
 Promise.resolve(fs.promises.readdir(__dirname))
 	.call('sort')

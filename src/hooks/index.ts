@@ -12,6 +12,7 @@ sbvrUtils.addPureHook('all', 'all', 'all', {
 import './resources/api_key';
 import './resources/application';
 import './resources/device';
+import './resources/device_service_environment_variable';
 import './resources/envvars';
 import './resources/image__is_part_of__release';
 import './resources/image';

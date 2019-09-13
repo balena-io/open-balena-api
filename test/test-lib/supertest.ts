@@ -19,5 +19,7 @@ export = function(app: express.Express, user?: string | UserObjectParam) {
 	if (_.isString(token)) {
 		req.set('Authorization', `Bearer ${token}`);
 	}
-	return req as ReturnType<typeof supertest.agent>;
+
+	const fn = req as ReturnType<typeof supertest.agent>;
+	return fn;
 };

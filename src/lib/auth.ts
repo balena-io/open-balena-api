@@ -79,8 +79,10 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 
 	`resin.service_environment_variable.get?service/any(s:s/${applicationControlsDevice})`,
 
-	`resin.device_service_environment_variable.get?service_install/any(si:si/installs__service/any(s:s/${applicationControlsDevice}))`,
-	`resin.device_service_environment_variable.all?service_install/any(si:si/device/any(d:d/${matchesActor}))`,
+	// `resin.device_service_environment_variable.get?service_install/any(si:si/installs__service/any(s:s/${applicationControlsDevice}))`,
+	// `resin.device_service_environment_variable.all?service_install/any(si:si/device/any(d:d/${matchesActor}))`,
+	`resin.device_service_environment_variable.get?applies_to__service/any(s:s/${applicationControlsDevice})`,
+	`resin.device_service_environment_variable.all?belongs_to__device/any(d:d/${matchesActor})`,
 
 	`resin.image__is_part_of__release.get?is_part_of__release/any(r:r/${belongsToApplicationOrIsManagedByDevice})`,
 

@@ -77,6 +77,8 @@ runapi () {
 		-e VPN_PORT=5433 \
 		-e VPN_SERVICE_API_KEY=vpn_service_api_key \
 		-e VPN_SERVICE_CONNECTIONS=5 \
+		-e SUPERUSER_EMAIL=test@balena \
+		-e SUPERUSER_PASSWORD=Password \
 		$extra_vol_args \
 		$extra_env_args \
 		$image_name
