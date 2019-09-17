@@ -18,9 +18,6 @@ const updateLatestRelease = (id: number, { request, api }: HookArgs) => {
 							$expand: {
 								owns__device: {
 									$select: ['id'],
-									$filter: {
-										should_be_running__release: null,
-									},
 								},
 							},
 						},
