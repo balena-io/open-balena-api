@@ -1,4 +1,16 @@
 - commits:
+    - subject: Also create service installs for devices that are currently pinned
+      hash: 957c37016d693758c28bd4ece185bec2e9086d0d
+      body: |
+        This stops an issue when a pinned device is later unpinned and needs
+        service installs for services that were created whilst it was pinned
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.31.1
+  date: 2019-09-17T18:35:53.625Z
+- commits:
     - subject: "\U0001F5C3 : Introduce renamed dt slug field for device and application resources"
       hash: 0b7da9274b37d3af06cc42685f621a649f675cff
       body: ''
