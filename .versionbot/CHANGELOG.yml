@@ -1,4 +1,25 @@
 - commits:
+    - subject: Return the container contract from the device state endpoint
+      hash: a23b5666ca1d263ea33c735209ce92a155342924
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Cameron Diver <cameron@balena.io>
+        signed-off-by: Cameron Diver <cameron@balena.io>
+      author: Cameron Diver
+    - subject: Add a contract JSON field to the image resource
+      hash: b4a2eaed995d07113d597c9f1591511a553e8a73
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Cameron Diver <cameron@balena.io>
+        signed-off-by: Cameron Diver <cameron@balena.io>
+      author: Cameron Diver
+  version: 0.32.0
+  date: 2019-09-19T13:22:54.275Z
+- commits:
     - subject: Add an editorconfig file
       hash: f5f15799242883462e2bb2d0352e02e588deb03c
       body: ''
