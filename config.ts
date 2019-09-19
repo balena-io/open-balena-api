@@ -7,7 +7,7 @@ export = {
 		{
 			username: 'guest',
 			password: ' ',
-			permissions: ['resin.device_type_table.get'],
+			permissions: ['resin.device_type.get'],
 		},
 	],
 } as Config;

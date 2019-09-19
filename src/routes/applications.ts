@@ -22,9 +22,9 @@ const getApp = (req: Request): Promise<AnyObject> =>
 			id: req.param('appId'),
 			passthrough: { req },
 			options: {
-				$select: ['id', 'app_name', 'device_type'],
+				$select: ['id', 'app_name'],
 				$expand: {
-					is_for__device_type_table: {
+					is_for__device_type: {
 						$select: ['slug'],
 					},
 				},
@@ -58,8 +58,8 @@ export const downloadImageConfig: RequestHandler = (req, res) => {
 
 	return getApp(req)
 		.then(app =>
-			findBySlug(api, deviceTypeSlug || app.device_type).then(deviceType =>
-				generateConfig(req, app, deviceType, osVersion),
+			findBySlug(api, deviceTypeSlug || app.is_for__device_type[0].slug).then(
+				deviceType => generateConfig(req, app, deviceType, osVersion),
 			),
 		)
 		.then(config => {

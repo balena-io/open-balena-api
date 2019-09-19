@@ -105,9 +105,6 @@ Term: date
 Term: device name
 	Concept Type: Short Text (Type)
 
-Term: device type
-	Concept Type: Short Text (Type)
-
 Term: dockerfile
 	Concept Type: Text (Type)
 
@@ -252,7 +249,7 @@ Term: application type
 Term: config
 Term: image
 Term: service instance
-Term: device type table
+Term: device type
 
 Term: application
 	Concept Type: actor (Auth)
@@ -379,10 +376,8 @@ Fact type: application has app name
 Fact type: application has slug
 	Necessity: each application has exactly one slug
 	Necessity: each slug is of exactly one application
-Fact type: application has device type
-	Necessity: each application has exactly one device type
-Fact type: application is for device type table
-	Necessity: each application is for at most one device type table
+Fact type: application is for device type
+	Necessity: each application is for exactly one device type
 Fact type: application has VPN host
 	Necessity: each application has exactly one VPN host.
 Fact type: application has VPN port
@@ -417,11 +412,9 @@ Fact type: device has device name
 	Necessity: each device has at most one device name.
 Fact type: device has note
 	Necessity: each device has at most one note.
-Fact type: device has device type
-	Necessity: each device has exactly one device type.
-Fact type: device is of device type table
-	Synonymous Form: device type table describes device
-	Necessity: each device is of at most one device type table.
+Fact type: device is of device type
+	Synonymous Form: device type describes device
+	Necessity: each device is of exactly one device type.
 Fact type: device belongs to application
 	Synonymous Form: application owns device
 	Necessity: each device belongs to at most one application.
@@ -484,14 +477,14 @@ Fact type: application config variable has value
 Fact type: device config variable has value
 	Necessity: each device config variable has exactly one value.
 
--- device type table
+-- device type
 
-Fact type: device type table has slug
-	Necessity: each device type table has exactly one slug
-	Necessity: each slug is of exactly one device type table
+Fact type: device type has slug
+	Necessity: each device type has exactly one slug
+	Necessity: each slug is of exactly one device type
 
-Fact type: device type table has name (Auth)
-	Necessity: each device type table has exactly one name (Auth)
+Fact type: device type has name (Auth)
+	Necessity: each device type has exactly one name (Auth)
 
 -- release
 

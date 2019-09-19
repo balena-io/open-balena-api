@@ -55,7 +55,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 		}
 
 		return Promise.all([
-			resolveDeviceType(api, request, 'is_for__device_type_table'),
+			resolveDeviceType(api, request, 'is_for__device_type'),
 			checkDependentApplication(args),
 		])
 			.then(() => {
