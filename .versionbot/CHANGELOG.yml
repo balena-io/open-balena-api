@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add an editorconfig file
+      hash: f5f15799242883462e2bb2d0352e02e588deb03c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Lucian <lucian.buzzo@gmail.com>
+        signed-off-by: Lucian <lucian.buzzo@gmail.com>
+      author: Lucian
+  version: 0.31.2
+  date: 2019-09-19T11:12:57.394Z
+- commits:
     - subject: Also create service installs for devices that are currently pinned
       hash: 957c37016d693758c28bd4ece185bec2e9086d0d
       body: |
