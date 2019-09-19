@@ -291,6 +291,7 @@ const stateQuery = resinApi.prepare<{ uuid: string }>({
 									'is_stored_at__image_location',
 									'content_hash',
 									'is_a_build_of__service',
+									'contract',
 								],
 							},
 							image_label: {
@@ -466,6 +467,7 @@ export const state: RequestHandler = (req, res) => {
 								image: formatImageLocation(imgRegistry),
 								// This needs spoken about...
 								running: true,
+								contract: image.contract,
 								environment,
 								labels,
 							};
