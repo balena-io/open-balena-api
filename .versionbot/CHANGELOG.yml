@@ -1,4 +1,553 @@
 - commits:
+    - subject: Update dependencies
+      hash: 1221252c91e567873409a53d808e50cb94282adb
+      body: |
+        Update pinejs from 10.15.4 to 10.20.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update dependencies
+              hash: 3a0efa4ff88ac798d83e061177b440f3c20effaf
+              body: |
+                Update abstract-sql-compiler from 6.8.1 to 6.9.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: >-
+                        Add support for resolving directly circular dependencies
+                        on postgres
+                      hash: 0912d3d9d51af3b03f4fe253eb3c8ff341a66886
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                  version: abstract-sql-compiler-6.9.0
+                  date: 2019-09-16T12:57:07.546Z
+          version: pinejs-10.20.0
+          date: 2019-09-19T13:02:54.586Z
+        - commits:
+            - subject: Avoid caching odata urls with a hardcoded key parameter
+              hash: d6956046af7941f66b491c520241fcc5efb83140
+              body: >
+                These have enough potential permutations to use up the cache
+                space
+
+                for marginal benefit
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-10.19.7
+          date: 2019-09-18T12:43:38.203Z
+        - commits:
+            - subject: Update dependencies
+              hash: ec70b8b17ebc575dd6c43c1c3682aa1c5844c8e6
+              body: |
+                Update abstract-sql-compiler from 6.8.0 to 6.8.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: >-
+                        Optimise finding of existing binds when adding a bind
+                        variable
+                      hash: 7f45a56eacc2a9fa69734a9f22778a83c4d4edf8
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: abstract-sql-compiler-6.8.1
+                  date: 2019-09-10T17:45:47.587Z
+          version: pinejs-10.19.6
+          date: 2019-09-11T12:05:41.857Z
+        - commits:
+            - subject: Update dependencies
+              hash: ac7ace8d823106ee7ff83fcb3ef77a4f915343df
+              body: |
+                Update abstract-sql-compiler from 6.7.1 to 6.8.0
+                Update odata-to-abstract-sql from 4.0.0 to 4.1.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Add support for `TableNode` definitions
+                      hash: 3e13d631b82bc9e8cb2adc55176670348662829f
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                    - subject: Add typings support for `ResourceNode`s in join nodes
+                      hash: 01dbff7e16ce58b90a4055b0ec23cd9cbeeee22d
+                      body: |
+                        Update abstract-sql-compiler from 6.7.1 to 6.8.0
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Add support for inner/left/right/full joins
+                              hash: d2af541da7d0f7f2b6c25adb4929a410374e5887
+                              body: ''
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                              author: Pagan Gazzard
+                          version: abstract-sql-compiler-6.8.0
+                          date: 2019-08-29T16:44:13.607Z
+                  version: odata-to-abstract-sql-4.1.0
+                  date: 2019-08-29T17:45:27.127Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: 10baad559daafbf22b5c94cd26ad6db2d89b77f9
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: odata-to-abstract-sql-4.0.1
+                  date: 2019-08-22T17:15:23.248Z
+                - commits:
+                    - subject: Add support for inner/left/right/full joins
+                      hash: d2af541da7d0f7f2b6c25adb4929a410374e5887
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                  version: abstract-sql-compiler-6.8.0
+                  date: 2019-08-29T16:44:13.607Z
+          version: pinejs-10.19.5
+          date: 2019-08-29T18:15:19.135Z
+        - commits:
+            - subject: Accept `instanceof Error` as valid errors
+              hash: 73f534136e663677b8bdc0aac9e8e6d25738b318
+              body: |
+                This fixes issues where `err.message` is not a string
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-10.19.4
+          date: 2019-08-23T19:00:20.421Z
+        - commits:
+            - subject: Update dependencies
+              hash: 8c9923b5a0751059c98d4bdfa91edb07676aaabe
+              body: |
+                Update pinejs-client-core from 5.5.4 to 5.6.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: >-
+                        Add 'upsert' method supporting natural keys, requires
+                        Pinejs ^10.19.1
+                      hash: c8ebfceec3ecc1cc57ee6942db35730c6d993192
+                      body: |
+                        Detects unique constrain errors by 409 statusCodes.
+                        Because of this, the upsert() method is only
+                        supported when Pinejs ^10.19.0 is used.
+                      footer:
+                        Resolves: '#77'
+                        resolves: '#77'
+                        Change-type: minor
+                        change-type: minor
+                        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                      author: Thodoris Greasidis
+                  version: pinejs-client-js-5.6.0
+                  date: 2019-07-12T20:46:17.091Z
+          version: pinejs-10.19.3
+          date: 2019-08-20T17:23:34.414Z
+        - commits:
+            - subject: >-
+                Correctly use the database table name for prettifying constraint
+                errors
+              hash: a404968634727e7b7a487a9e92cfaf5b0651f1bf
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-10.19.2
+          date: 2019-07-26T16:11:36.386Z
+        - commits:
+            - subject: >-
+                Only send the error message as the response body for constraint
+                errors
+              hash: b2d03a17a9481283a59b8db847733794df7fd9e4
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-10.19.1
+          date: 2019-07-08T09:30:12.360Z
+        - commits:
+            - subject: Return a more accurate 409 status for constraint errors
+              hash: 5d6ebc0ee505f075504a7e8f8d0ec40b45b8f64f
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: pinejs-10.19.0
+          date: 2019-07-05T18:25:25.299Z
+        - commits:
+            - subject: Schedule clearing compile cache on any use
+              hash: e39372ca836fb2a531cc11897d15feac9e9feb91
+              body: |
+                This means the cache will also be freed in the cache hit case
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-10.18.1
+          date: 2019-07-05T17:38:22.374Z
+        - commits:
+            - subject: Add caching of odata that uses parameter aliases
+              hash: 5d5478c276ccfb16ddbea1b5a70eb2ceabd9dd33
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: pinejs-10.18.0
+          date: 2019-07-04T15:08:17.687Z
+        - commits:
+            - subject: Don't generate a `resourceURI` if there is no resource id
+              hash: ddbf4cdcf595255e03effe1f8afbf46f5a80f5b6
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-10.17.3
+          date: 2019-07-04T14:56:46.685Z
+        - commits:
+            - subject: >-
+                Stop sending `type` in the response as it's always an empty
+                string
+              hash: 114596be881e90b801c2ca996a74698dc67c594b
+              body: >
+                It provides no useful info and just increases gc,
+                JSON.stringify, and
+
+                bandwidth costs
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-10.17.2
+          date: 2019-07-02T20:59:27.988Z
+        - commits:
+            - subject: Clear the cache upon persisting it to disk
+              hash: 6f6c9a6c37e46e02cbcc618a3ee2a357fc0c7469
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-10.17.1
+          date: 2019-07-02T14:53:01.633Z
+        - commits:
+            - subject: '✨: Support TS migrations'
+              hash: 2f763ce9ca22298b7f6f51f1f60f95337ff61be3
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Andreas Fitzek <andreas@balena.io>
+                signed-off-by: Andreas Fitzek <andreas@balena.io>
+              author: Andreas Fitzek
+          version: pinejs-10.17.0
+          date: 2019-06-25T18:35:24.398Z
+        - commits:
+            - subject: >-
+                Fix missing `promise: true` option for memoized
+                `$getApiKeyPermissions`
+              hash: 71c758ac498efb8c638fb50212fcabdb3196c6aa
+              body: |
+                Update abstract-sql-compiler from 6.7.0 to 6.7.1
+                Update pinejs-client-core from 5.5.1 to 5.5.4
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: >-
+                        Remove unnecessary `string` type that is handled by the
+                        `Params` type
+                      hash: 0ab1242860aa8b3ed4162a5ee25081c640297676
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: pinejs-client-js-5.5.4
+                  date: 2019-06-18T14:46:38.983Z
+                - commits:
+                    - subject: >-
+                        Use an .npmrc to prevent creating a package-lock on each
+                        install
+                      hash: 993c4ae09c3ba50e1d48e4156e86a7c890e54749
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                      author: Thodoris Greasidis
+                  version: pinejs-client-js-5.5.3
+                  date: 2019-06-18T10:24:38.995Z
+                - commits:
+                    - subject: >-
+                        Add some type casting so that it compiles on TypeScript
+                        3.5
+                      hash: 695c053ceab9b146a8b755f9b041eb03e70b5914
+                      body: ''
+                      footer:
+                        Resolves: '#79'
+                        resolves: '#79'
+                        Change-type: patch
+                        change-type: patch
+                        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                      author: Thodoris Greasidis
+                  version: pinejs-client-js-5.5.2
+                  date: 2019-06-10T10:48:07.772Z
+                - commits:
+                    - subject: >-
+                        Change `IsDistinctFrom` for postgres to a version that
+                        can use indexes
+                      hash: 5046d5eb8127811eaced5308ea06d4ba092ed5f2
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                    - subject: >-
+                        Optimise `IsDistinctFrom`/`IsNotDistinctFrom` when
+                        either arg is `Null`
+                      hash: 664385a73a8ab881d388141692a9cfad7d7b2358
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: abstract-sql-compiler-6.7.1
+                  date: 2019-06-17T16:02:58.721Z
+          version: pinejs-10.16.1
+          date: 2019-06-20T12:52:07.788Z
+        - commits:
+            - subject: Fix handling of odata eq/ne when fields contain null
+              hash: 21a1cd0c885b2228ed7d8a1afeba6ec003d6bb95
+              body: |
+                Update abstract-sql-compiler from 6.6.0 to 6.7.0
+                Update odata-to-abstract-sql from 3.3.0 to 4.0.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Update tsconfig target to es2018
+                      hash: 11305a9db04d1c63df1c71ecf521b076658bad15
+                      body: ''
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                    - subject: >-
+                        Use `IsDistinctFrom`/`IsNotDistinctFrom` for odata
+                        `eq`/`ne`
+                      hash: 96d697be6e9b190d4bf34d715b13bfa641a37091
+                      body: |
+                        This fixes comparing fields that contain null values
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                  version: odata-to-abstract-sql-4.0.0
+                  date: 2019-06-14T14:48:18.262Z
+                - commits:
+                    - subject: Add support for `IsDistinctFrom`/`IsNotDistinctFrom`
+                      hash: 5ba68820fc21f2a4bd622677d3abdc122bb78af2
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                  version: abstract-sql-compiler-6.7.0
+                  date: 2019-06-14T14:12:55.045Z
+          version: pinejs-10.16.0
+          date: 2019-06-14T15:02:44.632Z
+        - commits:
+            - subject: Remove unused odata options to improve cache hits
+              hash: 735855831216367f29003b45d5f625fd16981f32
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-10.15.7
+          date: 2019-06-10T11:17:29.373Z
+        - commits:
+            - subject: Update odata-parser to make use of its types
+              hash: 8a2537e3cac1736e940145b1a17fe057aea23a93
+              body: |
+                Update odata-parser from 1.0.4 to 1.2.0
+                Update odata-to-abstract-sql from 3.2.0 to 3.3.0
+                Update sbvr-parser from 0.2.2 to 0.2.3
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Make use of odata-parser types
+                      hash: b8ca21dd56d9b0d38b989dfdc5334d35247ac536
+                      body: |
+                        Update abstract-sql-compiler from 6.5.0 to 6.6.0
+                        Update odata-parser from 1.0.4 to 1.1.1
+                        Update sbvr-parser from 0.2.2 to 0.2.3
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Improve typings
+                              hash: 11ace6373275b227497acbf2e40c2a33884adf7e
+                              body: ''
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                          version: odata-parser-1.1.1
+                          date: 2019-06-07T12:56:16.974Z
+                        - commits:
+                            - subject: Add typings
+                              hash: a2c4bfe660bbe8d5de554f15cd89ef5a9c30de74
+                              body: ''
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                              author: Pagan Gazzard
+                          version: odata-parser-1.1.0
+                          date: 2019-06-06T12:47:33.222Z
+                        - commits:
+                            - subject: >-
+                                Improve aliased from handling in
+                                `getReferencedFields`
+                              hash: dcfff55b813d38434208a9e07c818d1d32f521ef
+                              body: >
+                                We do this by using basic scope info to prune
+                                aliased table references
+
+                                which also allows us to handle aliased select
+                                queries in the from
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                              author: Pagan Gazzard
+                          version: abstract-sql-compiler-6.6.0
+                          date: 2019-06-03T12:33:58.507Z
+                        - commits:
+                            - subject: >-
+                                Use an abstract-sql-optimiser prepass to
+                                simplify getReferencedFields
+                              hash: 6fc850fc820d691c823ad698d8d499cf55126cf4
+                              body: ''
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                          version: abstract-sql-compiler-6.5.1
+                          date: 2019-06-03T12:14:07.176Z
+                        - commits:
+                            - subject: Optimise exactly 0 to not exists
+                              hash: dcb0cd00b8b4b08486e49d18e2b69e61162ae952
+                              body: ''
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                          version: sbvr-parser-0.2.3
+                          date: 2019-06-04T21:07:20.967Z
+                  version: odata-to-abstract-sql-3.3.0
+                  date: 2019-06-07T13:08:08.073Z
+                - commits:
+                    - subject: Optimise exactly 0 to not exists
+                      hash: dcb0cd00b8b4b08486e49d18e2b69e61162ae952
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: sbvr-parser-0.2.3
+                  date: 2019-06-04T21:07:20.967Z
+                - commits:
+                    - subject: Support `;` for separating expand options
+                      hash: 3af2ad056411015b25f7479550e5c194dfbaa4db
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                  version: odata-parser-1.2.0
+                  date: 2019-06-07T14:49:44.320Z
+                - commits:
+                    - subject: Improve typings
+                      hash: 11ace6373275b227497acbf2e40c2a33884adf7e
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: odata-parser-1.1.1
+                  date: 2019-06-07T12:56:16.974Z
+                - commits:
+                    - subject: Add typings
+                      hash: a2c4bfe660bbe8d5de554f15cd89ef5a9c30de74
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                  version: odata-parser-1.1.0
+                  date: 2019-06-06T12:47:33.222Z
+          version: pinejs-10.15.6
+          date: 2019-06-10T10:42:25.232Z
+        - commits:
+            - subject: Remove unnecessary `process.env` accesses
+              hash: 239a4e9a32882bfac5b62957d505d61d7261af75
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-10.15.5
+          date: 2019-06-04T15:49:36.833Z
+  version: 0.32.1
+  date: 2019-09-19T13:42:47.903Z
+- commits:
     - subject: Return the container contract from the device state endpoint
       hash: a23b5666ca1d263ea33c735209ce92a155342924
       body: ''
