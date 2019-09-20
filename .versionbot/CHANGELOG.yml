@@ -1,4 +1,14 @@
 - commits:
+    - subject: Convert application and device commit hashes to release references
+      hash: 41f05ad582014223f8760a6439030bc0392afb2b
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.33.0
+  date: 2019-09-20T09:47:27.613Z
+- commits:
     - subject: Prettify and lint test files
       hash: fca93e709a11972e5f8dbecd6f35eb10f3fa3517
       body: ''
