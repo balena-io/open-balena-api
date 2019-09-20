@@ -8,7 +8,6 @@ import { Default as DefaultApplicationType } from '../../lib/application-types';
 import {
 	sbvrUtils,
 	root,
-	PinejsClient,
 	createActor,
 	getCurrentRequestAffectedIds,
 	addDeleteHookForDependents,
@@ -38,30 +37,6 @@ const checkDependentApplication: Hooks['POSTPARSE'] = ({ request, api }) => {
 	}
 };
 
-const throwErrorIfCommitChangeIsInvalid = (
-	api: PinejsClient,
-	commit: string,
-	appId: number,
-) =>
-	api
-		.get({
-			resource: 'release/$count',
-			options: {
-				$filter: {
-					commit,
-					belongs_to__application: appId,
-					status: 'success',
-				},
-			},
-		})
-		.then(count => {
-			if (count === 0) {
-				throw new sbvrUtils.BadRequestError(
-					'Commit is either invalid, or linked to an unsuccessful release',
-				);
-			}
-		});
-
 sbvrUtils.addPureHook('POST', 'resin', 'application', {
 	POSTPARSE: createActor,
 });
@@ -79,8 +54,10 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 			throw new Error('App name may only contain [a-zA-Z0-9_-].');
 		}
 
-		return resolveDeviceType(api, request, 'is_for__device_type_table')
-			.then(() => checkDependentApplication(args))
+		return Promise.all([
+			resolveDeviceType(api, request, 'is_for__device_type_table'),
+			checkDependentApplication(args),
+		])
 			.then(() => {
 				request.values.VPN_host = VPN_HOST;
 				request.values.VPN_port = VPN_PORT;
@@ -104,7 +81,7 @@ sbvrUtils.addPureHook('PUT', 'resin', 'application', {
 sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 	PRERUN: args => {
 		const waitPromises = [checkDependentApplication(args)];
-		const { request, api } = args;
+		const { request } = args;
 		const appName = request.values.app_name;
 
 		if (appName) {
@@ -128,13 +105,9 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 			);
 		}
 
-		if (request.values.commit != null) {
+		if (request.values.should_be_running__release != null) {
 			// Used to make sure we've fetched the affected ids for the POSTRUN hook
-			waitPromises.push(
-				getCurrentRequestAffectedIds(args).map(appId =>
-					throwErrorIfCommitChangeIsInvalid(api, request.values.commit, appId),
-				),
-			);
+			waitPromises.push(getCurrentRequestAffectedIds(args));
 		}
 
 		return Promise.all(waitPromises);
@@ -142,8 +115,8 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 	POSTRUN: args => {
 		const { request } = args;
 		const waitPromises = [];
-		if (request.values.commit != null) {
-			// Only update apps if they have had their commit changed.
+		if (request.values.should_be_running__release != null) {
+			// Only update apps if they have had their release changed.
 			waitPromises.push(
 				request.custom.affectedIds.then((ids: number[]) => {
 					if (ids.length === 0) {
@@ -174,6 +147,21 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'application', {
 					// If there's a specific app targeted we make sure we give a 404 for backwards compatibility
 					throw new Error('Application(s) not found.');
 				}
+			}
+			if (appIds.length > 0) {
+				// We need to null `should_be_running__release` or otherwise we have a circular dependency and cannot delete either
+				return args.api
+					.patch({
+						resource: 'application',
+						options: {
+							$filter: {
+								id: { $in: appIds },
+								should_be_running__release: { $ne: null },
+							},
+						},
+						body: { should_be_running__release: null },
+					})
+					.return();
 			}
 		}),
 });

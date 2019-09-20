@@ -11,7 +11,7 @@ const updateLatestRelease = (id: number, { request, api }: HookArgs) => {
 				resource: 'release',
 				id,
 				options: {
-					$select: ['commit'],
+					$select: 'id',
 					$expand: {
 						belongs_to__application: {
 							$select: ['id'],
@@ -51,7 +51,7 @@ const updateLatestRelease = (id: number, { request, api }: HookArgs) => {
 							},
 						},
 						body: {
-							commit: release.commit,
+							should_be_running__release: release.id,
 						},
 					})
 					.then(() => {

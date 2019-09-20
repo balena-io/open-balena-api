@@ -387,8 +387,9 @@ Fact type: application has VPN host
 	Necessity: each application has exactly one VPN host.
 Fact type: application has VPN port
 	Necessity: each application has exactly one VPN port.
-Fact type: application has commit
-	Necessity: each application has at most one commit.
+Fact type: application should be running release
+	Synonymous Form: release should be running on application
+	Necessity: each application should be running at most one release.
 Fact type: application1 depends on application2
 	Synonymous Form: application2 is depended on by application1
 	Necessity: each application1 depends on at most one application2.
@@ -440,8 +441,8 @@ Fact type: device has vpn address
 	Necessity: each device has at most one vpn address
 Fact type: device has ip address
 	Necessity: each device has at most one ip address
-Fact type: device is on commit
-	Necessity: each device is on at most one commit.
+Fact type: device is running release
+	Necessity: each device is running at most one release.
 Fact type: device has download progress
 	Necessity: each device has at most one download progress.
 Fact type: device has status
@@ -646,4 +647,5 @@ Rule: It is necessary that each device1 that is managed by a device2, belongs to
 Rule: It is necessary that each image that has a status that is equal to "success", has a push timestamp.
 Rule: It is necessary that each release1 that has a status that is equal to "success" and has a commit1, belongs to an application that owns exactly one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.
 Rule: It is necessary that each device that should be running a release, should be running a release that belongs to an application that the device belongs to.
-Rule: It is necessary that each application that has a commit1 and owns at least 1 release that has a commit2 that is equal to the commit1, owns a release that has a commit3 that is equal to the commit1 and has a status that is equal to "success".
+Rule: It is necessary that each application that should be running a release, should be running a release that has a status that is equal to "success" and belongs to the application.
+--Rule: It is necessary that each application that should be running a release1, owns a release that has a status that is equal to "success".
