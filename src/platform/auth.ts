@@ -36,6 +36,16 @@ export const userHasPermission = (
 export const comparePassword = (password: string, hash: string) =>
 	sbvrUtils.sbvrTypes.Hashed.compare(password, hash);
 
+/**
+ * A known invalid comparisson to emulate a wrong password error.
+ * Used to prevent exposing information via timing attacks.
+ */
+export const runInvalidPasswordComparison = () =>
+	comparePassword(
+		'',
+		'$2b$10$Wj6ud7bYmcAw4B1uuORsnuYODUKSkrH6dVwG1zoUhDeTCjwsxlp5.',
+	);
+
 export const validatePassword = (password?: string) => {
 	if (!password) {
 		throw new Error('Password required.');

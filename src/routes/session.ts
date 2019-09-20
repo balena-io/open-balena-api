@@ -3,6 +3,7 @@ import {
 	findUser,
 	getUser,
 	comparePassword,
+	runInvalidPasswordComparison,
 } from '../platform/auth';
 import { sbvrUtils } from '../platform';
 import { captureException, handleHttpErrors } from '../platform/errors';
@@ -41,7 +42,12 @@ export const login = (onLogin: SetupOptions['onLogin']): RequestHandler => (
 				throw new NotFoundError('User not found.');
 			}
 
-			return comparePassword(password, user.password)
+			const passwordComparison =
+				user.password == null
+					? runInvalidPasswordComparison()
+					: comparePassword(password, user.password);
+
+			return passwordComparison
 				.then(matches => {
 					if (!matches) {
 						throw new BadRequestError('Current password incorrect.');
