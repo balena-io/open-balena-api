@@ -1,4 +1,16 @@
 - commits:
+    - subject: Prettify and lint test files
+      hash: fca93e709a11972e5f8dbecd6f35eb10f3fa3517
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Lucian <lucian.buzzo@gmail.com>
+        signed-off-by: Lucian <lucian.buzzo@gmail.com>
+      author: Lucian
+  version: 0.32.2
+  date: 2019-09-19T16:21:26.754Z
+- commits:
     - subject: Update dependencies
       hash: 1221252c91e567873409a53d808e50cb94282adb
       body: |
