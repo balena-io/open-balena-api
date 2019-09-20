@@ -6,4 +6,6 @@ declare global {
 	interface Dictionary<T> {
 		[key: string]: T;
 	}
+
+	type Writable<T> = { -readonly [K in keyof T]: T[K] };
 }
