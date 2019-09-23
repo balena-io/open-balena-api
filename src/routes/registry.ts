@@ -8,6 +8,7 @@ import * as jsonwebtoken from 'jsonwebtoken';
 import { resinApi, root, sbvrUtils } from '../platform';
 import * as Promise from 'bluebird';
 
+import { User as DbUser } from '../models';
 import { captureException, handleHttpErrors } from '../platform/errors';
 import { retrieveAPIKey } from '../platform/api-keys';
 
@@ -380,7 +381,7 @@ const $getSubject = memoize(
 						$top: 1,
 					},
 				})
-				.then(([user]: AnyObject[]) => {
+				.then(([user]: [Pick<DbUser, 'username'>?]) => {
 					if (user) {
 						return user.username;
 					}
