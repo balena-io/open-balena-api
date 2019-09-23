@@ -1,4 +1,25 @@
 - commits:
+    - subject: Fix a password comparison with null that the typing revealed
+      hash: e9cd19dc2b95b70e3595d5aa3ff8691909a97e3c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+    - subject: 'platform/auth: Type the result of findUser()'
+      hash: 4a4703b1c4a4de6c7649d4b401ff7bf6772f5673
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+  version: 0.33.1
+  date: 2019-09-22T14:02:27.594Z
+- commits:
     - subject: Convert application and device commit hashes to release references
       hash: 41f05ad582014223f8760a6439030bc0392afb2b
       body: ''
