@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { User as DbUser } from '../models';
 import { createJwt, SignOptions, User } from './jwt';
 import { retrieveAPIKey } from './api-keys';
 import { Tx, sbvrUtils, resinApi, root } from './index';
@@ -34,6 +35,16 @@ export const userHasPermission = (
 
 export const comparePassword = (password: string, hash: string) =>
 	sbvrUtils.sbvrTypes.Hashed.compare(password, hash);
+
+/**
+ * A known invalid comparisson to emulate a wrong password error.
+ * Used to prevent exposing information via timing attacks.
+ */
+export const runInvalidPasswordComparison = () =>
+	comparePassword(
+		'',
+		'$2b$10$Wj6ud7bYmcAw4B1uuORsnuYODUKSkrH6dVwG1zoUhDeTCjwsxlp5.',
+	);
 
 export const validatePassword = (password?: string) => {
 	if (!password) {
@@ -315,7 +326,7 @@ export function getUser(
 export const findUser = (
 	loginInfo: string,
 	tx?: Tx,
-): Promise<AnyObject | undefined> => {
+): Promise<Pick<DbUser, typeof $select[number]> | undefined> => {
 	if (!loginInfo) {
 		return Promise.resolve(undefined);
 	}
@@ -326,6 +337,8 @@ export const findUser = (
 	} else {
 		loginField = 'username';
 	}
+	const $select = ['id', 'actor', 'username', 'password'] as const;
+	type UserResult = Pick<DbUser, typeof $select[number]>;
 	return resinApi
 		.get({
 			resource: 'user',
@@ -344,10 +357,10 @@ export const findUser = (
 						},
 					],
 				},
-				$select: ['id', 'actor', 'username', 'password'],
+				$select: $select as Writable<typeof $select>,
 			},
 		})
-		.then(([user]: AnyObject[]) => user);
+		.then(([user]: [UserResult?]) => user);
 };
 
 export const registerUser = (
