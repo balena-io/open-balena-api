@@ -465,10 +465,15 @@ export const state: RequestHandler = (req, res) => {
 							image: formatImageLocation(imgRegistry),
 							// This needs spoken about...
 							running: true,
-							contract: image.contract,
 							environment,
 							labels,
 						};
+						// Don't send a null contract as this is a waste
+						// of bandwidth (a null contract is the same as
+						// the lack of a contract field)
+						if (image.contract != null) {
+							services[svc.id].contract = image.contract;
+						}
 
 						if (
 							composition != null &&
