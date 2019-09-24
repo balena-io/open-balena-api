@@ -1,4 +1,16 @@
 - commits:
+    - subject: Dont send a null contract from the state endpoint
+      hash: 429b32a0d2ace6443f415bb5b685d42144f37b2d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Cameron Diver <cameron@balena.io>
+        signed-off-by: Cameron Diver <cameron@balena.io>
+      author: Cameron Diver
+  version: 0.33.2
+  date: 2019-09-24T12:48:12.850Z
+- commits:
     - subject: Fix a password comparison with null that the typing revealed
       hash: e9cd19dc2b95b70e3595d5aa3ff8691909a97e3c
       body: ''
