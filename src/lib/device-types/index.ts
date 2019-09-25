@@ -342,7 +342,12 @@ function getDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	return fetchDeviceTypesAndReschedule();
 }
 
-export const getAccessibleSlugs = (
+/**
+ * Performs access controls for slugs against the database
+ * @param api The pinejs client
+ * @param slugs The slugs to check, these cannot be aliases.
+ */
+const getAccessibleSlugs = (
 	api: PinejsClient,
 	slugs?: string[],
 ): Promise<string[]> => {
@@ -368,25 +373,23 @@ export const findDeviceTypeInfoBySlug = (
 	api: PinejsClient,
 	slug: string,
 ): Promise<DeviceTypeInfo> =>
-	getAccessibleSlugs(api, [slug])
-		.then((accessibleDeviceTypes: string[]) => {
-			if (_.includes(accessibleDeviceTypes, slug)) {
-				// We can access the device type slug
-				return;
-			}
-			// We cannot access the device type
+	getDeviceTypes().then(deviceTypeInfos => {
+		// the slug can be an alias,
+		// since the Dictionary also has props for the aliases
+		const deviceTypeInfo = deviceTypeInfos[slug];
+		if (!deviceTypeInfo || !deviceTypeInfo.latest) {
 			throw new UnknownDeviceTypeError(slug);
-		})
-		.then(getDeviceTypes)
-		.then(deviceTypeInfos => {
-			// the slug can be an alias,
-			// since the Dictionary also has props for the aliases
-			const deviceTypeInfo = deviceTypeInfos[slug];
-			if (!deviceTypeInfo || !deviceTypeInfo.latest) {
-				throw new UnknownDeviceTypeError(slug);
-			}
-			return deviceTypeInfos[slug];
-		});
+		}
+
+		return getAccessibleSlugs(api, [deviceTypeInfo.latest.deviceType.slug])
+			.then(([accessibleSlug]) => {
+				if (accessibleSlug != deviceTypeInfo.latest.deviceType.slug) {
+					// We cannot access the device type
+					throw new UnknownDeviceTypeError(slug);
+				}
+			})
+			.return(deviceTypeInfo);
+	});
 
 export const validateSlug = (slug?: string) => {
 	if (slug == null || !/^[\w-]+$/.test(slug)) {
