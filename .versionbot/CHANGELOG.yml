@@ -1,4 +1,18 @@
 - commits:
+    - subject: "\U0001F41B: All device type slug lookups"
+      hash: 4d1f59faf11566a84598225fcbc64e91401e3e0e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Connects-to: '#174'
+        connects-to: '#174'
+        Signed-off-by: Andreas Fitzek <andreas@balena.io>
+        signed-off-by: Andreas Fitzek <andreas@balena.io>
+      author: Andreas Fitzek
+  version: 0.33.3
+  date: 2019-09-25T13:41:58.281Z
+- commits:
     - subject: Dont send a null contract from the state endpoint
       hash: 429b32a0d2ace6443f415bb5b685d42144f37b2d
       body: ''
