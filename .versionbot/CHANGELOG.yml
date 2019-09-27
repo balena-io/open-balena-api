@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix password comparisons with null hash
+      hash: f3b335e5f84e280ad1e79aac68ef74343c20470f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+  version: 0.33.6
+  date: 2019-09-27T22:07:54.169Z
+- commits:
     - subject: Add release is running on device synonymous form
       hash: 69cd9614fb526a7d5fcfe590a9a5733bd9834046
       body: ''
