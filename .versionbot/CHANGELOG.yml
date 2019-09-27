@@ -1,4 +1,14 @@
 - commits:
+    - subject: Minimise the device state read transaction is open
+      hash: 6dd22381b773febf7755773f6fc7e369f0b225dc
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.33.4
+  date: 2019-09-27T11:48:03.657Z
+- commits:
     - subject: "\U0001F41B: All device type slug lookups"
       hash: 4d1f59faf11566a84598225fcbc64e91401e3e0e
       body: ''
