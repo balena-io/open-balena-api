@@ -442,6 +442,7 @@ Fact type: device has vpn address
 Fact type: device has ip address
 	Necessity: each device has at most one ip address
 Fact type: device is running release
+	Synonymous Form: release is running on device
 	Necessity: each device is running at most one release.
 Fact type: device has download progress
 	Necessity: each device has at most one download progress.
