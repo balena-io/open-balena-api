@@ -8,6 +8,7 @@ import * as passport from 'passport';
 import { sbvrUtils } from '@resin/pinejs';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { TypedError } from 'typed-error';
+import { User as DbUser } from '../models';
 import { captureException } from './errors';
 import { RequestHandler } from 'express';
 
@@ -105,7 +106,7 @@ export const strategy = new JwtStrategy(
 							$select: ['actor', 'jwt_secret'],
 						},
 					})
-					.then((user: AnyObject) => {
+					.then((user: Pick<DbUser, 'actor' | 'jwt_secret'>) => {
 						if (user == null) {
 							throw new InvalidJwtSecretError();
 						}

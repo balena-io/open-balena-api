@@ -12,7 +12,7 @@ interface PineResourceBase extends WithId {
 
 export interface User extends PineResourceBase, WithActor {
 	username: string;
-	password?: string;
-	jwt_secret?: string;
-	email?: string;
+	password: string | null;
+	jwt_secret: string | null;
+	email: string | null;
 }

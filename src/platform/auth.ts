@@ -33,18 +33,20 @@ export const userHasPermission = (
 	return user.permissions.includes(permission);
 };
 
-export const comparePassword = (password: string, hash: string) =>
-	sbvrUtils.sbvrTypes.Hashed.compare(password, hash);
-
 /**
  * A known invalid comparisson to emulate a wrong password error.
  * Used to prevent exposing information via timing attacks.
  */
-export const runInvalidPasswordComparison = () =>
-	comparePassword(
+const runInvalidPasswordComparison = () =>
+	sbvrUtils.sbvrTypes.Hashed.compare(
 		'',
 		'$2b$10$Wj6ud7bYmcAw4B1uuORsnuYODUKSkrH6dVwG1zoUhDeTCjwsxlp5.',
 	);
+
+export const comparePassword = (password: string, hash: string | null) =>
+	hash == null
+		? runInvalidPasswordComparison()
+		: sbvrUtils.sbvrTypes.Hashed.compare(password, hash);
 
 export const validatePassword = (password?: string) => {
 	if (!password) {
@@ -86,10 +88,11 @@ export const updatePasswordIfNeeded = (
 	newPassword: string,
 	tx?: Tx,
 ): Promise<boolean> => {
-	return findUser(usernameOrEmail, tx).then((user: AnyObject | undefined) => {
+	return findUser(usernameOrEmail, tx).then(user => {
 		if (user == null) {
 			throw new NotFoundError('User not found.');
 		}
+
 		return comparePassword(newPassword, user.password).then(match => {
 			if (match) {
 				return false;
@@ -116,10 +119,11 @@ export const checkUserPassword = (
 				$select: ['password', 'id'],
 			},
 		})
-		.then((user: AnyObject) => {
+		.then((user: Pick<DbUser, 'password' | 'id'>) => {
 			if (user == null) {
 				throw new BadRequestError('User not found.');
 			}
+
 			return comparePassword(password, user.password).then(passwordIsOk => {
 				if (!passwordIsOk) {
 					throw new BadRequestError('Current password incorrect.');
