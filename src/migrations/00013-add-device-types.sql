@@ -1,8 +1,7 @@
 -- create device types table
 
-CREATE TABLE IF NOT EXISTS "device type" (
+CREATE TABLE IF NOT EXISTS "device type table" (
 	"created at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
-,	"modified at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 ,	"id" SERIAL NOT NULL PRIMARY KEY
 ,	"slug" VARCHAR(255) NOT NULL UNIQUE
 ,	"name" VARCHAR(255) NOT NULL
@@ -10,7 +9,7 @@ CREATE TABLE IF NOT EXISTS "device type" (
 
 -- populate device types table
 
-INSERT INTO "device type" ("slug", "name")
+INSERT INTO "device type table" ("slug", "name")
 	SELECT "dt" AS "slug", "dt" AS "name" FROM
 	(
 		SELECT dt FROM
@@ -23,7 +22,7 @@ INSERT INTO "device type" ("slug", "name")
 
 
 -- insert current dt from s3 as dts
-INSERT INTO "device type" ("slug", "name") VALUES
+INSERT INTO "device type table" ("slug", "name") VALUES
   (
     'am571x-evm',
     'AM571X EVM (DISCONTINUED)'
@@ -268,35 +267,20 @@ INSERT INTO "device type" ("slug", "name") VALUES
     'zynq-xz702',
     'Zynq ZC702 (DISCONTINUED)'
   )
-ON CONFLICT ON CONSTRAINT "device type_slug_key"
+ON CONFLICT ON CONSTRAINT "device type table_slug_key"
 DO UPDATE SET "name" = EXCLUDED.name;
 
 -- fix up application table
 
-ALTER TABLE "application" ADD COLUMN "is for-device type" INTEGER NULL;
+ALTER TABLE "application" ADD COLUMN "is for-device type table" INTEGER NULL;
 
-UPDATE "application"
-SET "is for-device type" = (
-	SELECT "id"
-	FROM "device type"
-	WHERE "slug" = lower("application"."device type")
-);
-
-ALTER TABLE "application" ALTER COLUMN "is for-device type" SET NOT NULL;
-ALTER TABLE "application" ADD CONSTRAINT "application_is for-device type_fkey" FOREIGN KEY ("is for-device type") REFERENCES "device type" ("id");
-ALTER TABLE "application" DROP COLUMN "device type";
+ALTER TABLE "application"
+ADD CONSTRAINT "application_is for-device type_fkey" FOREIGN KEY ("is for-device type table") REFERENCES "device type table" ("id");
 
 -- fix up device table
 
-ALTER TABLE "device" ADD COLUMN "is-device type" INTEGER NULL;
+ALTER TABLE "device" ADD COLUMN "is of-device type table" INTEGER NULL;
 
-UPDATE "device"
-SET "is-device type" = (
-	SELECT "id"
-	FROM "device type"
-	WHERE "slug" = lower("device"."device type")
-);
+ALTER TABLE "device"
+ADD CONSTRAINT "device_is-device type_fkey" FOREIGN KEY ("is of-device type table") REFERENCES "device type table" ("id");
 
-ALTER TABLE "device" ALTER COLUMN "is-device type" SET NOT NULL;
-ALTER TABLE "device" ADD CONSTRAINT "device_is-device type_fkey" FOREIGN KEY ("is-device type") REFERENCES "device type" ("id");
-ALTER TABLE "device" DROP COLUMN "device type";
