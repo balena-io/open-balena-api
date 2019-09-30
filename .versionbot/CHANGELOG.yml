@@ -1,4 +1,16 @@
 - commits:
+    - subject: "\U0001F41B: Fix initial dt migration"
+      hash: 390dc592d2da8e695814d3f5a670ce1eab66cb7a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andreas Fitzek <andreas@balena.io>
+        signed-off-by: Andreas Fitzek <andreas@balena.io>
+      author: Andreas Fitzek
+  version: 0.33.7
+  date: 2019-09-30T07:22:00.803Z
+- commits:
     - subject: Fix password comparisons with null hash
       hash: f3b335e5f84e280ad1e79aac68ef74343c20470f
       body: ''
