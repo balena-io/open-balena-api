@@ -1,4 +1,17 @@
 - commits:
+    - subject: "\U0001F41B: Double migration prefix"
+      hash: c42509cbf3a7e24b644766d3847662188c007e54
+      body: |
+        We had two migrations with 00014.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andreas Fitzek <andreas@balena.io>
+        signed-off-by: Andreas Fitzek <andreas@balena.io>
+      author: Andreas Fitzek
+  version: 0.33.8
+  date: 2019-09-30T07:47:04.271Z
+- commits:
     - subject: "\U0001F41B: Fix initial dt migration"
       hash: 390dc592d2da8e695814d3f5a670ce1eab66cb7a
       body: ''
