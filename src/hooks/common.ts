@@ -29,7 +29,7 @@ export const resolveDeviceType = (
 			}
 
 			return api.get({
-				resource: 'device_type_table',
+				resource: 'device_type',
 				id: request.values[fkValue],
 				options: {
 					$select: ['slug'],

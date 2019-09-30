@@ -230,7 +230,7 @@ function updateDTModel(
 	);
 	return apiTx
 		.get({
-			resource: 'device_type_table',
+			resource: 'device_type',
 			options: {
 				$filter: {
 					slug: deviceType.slug,
@@ -246,7 +246,7 @@ function updateDTModel(
 				_.merge(body, updateFields);
 				return apiTx
 					.post({
-						resource: 'device_type_table',
+						resource: 'device_type',
 						body,
 						options: { returnResource: false },
 					})
@@ -271,7 +271,7 @@ function updateDTModel(
 				// do a patch with the id
 				return apiTx
 					.patch({
-						resource: 'device_type_table',
+						resource: 'device_type',
 						id: results[0].id,
 						body: updateFields,
 						options: {
@@ -361,7 +361,7 @@ const getAccessibleSlugs = (
 	}
 	return api
 		.get({
-			resource: 'device_type_table',
+			resource: 'device_type',
 			options,
 		})
 		.then((accessibleDeviceTypes: { slug: string }[]) => {
@@ -499,7 +499,7 @@ export const getDeviceTypeIdBySlug = (
 	return normalizeDeviceType(api, slug)
 		.then(deviceType => {
 			return api.get({
-				resource: 'device_type_table',
+				resource: 'device_type',
 				options: {
 					$select: ['id', 'slug'],
 					$filter: {

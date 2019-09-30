@@ -141,7 +141,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'device', {
 			);
 		}
 
-		return resolveDeviceType(api, request, 'is_of__device_type_table');
+		return resolveDeviceType(api, request, 'is_of__device_type');
 	},
 	POSTRUN: ({ request, api, tx, result: deviceId }) => {
 		// Don't try to add service installs if the device wasn't created
