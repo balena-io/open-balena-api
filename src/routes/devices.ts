@@ -299,6 +299,9 @@ const stateQuery = resinApi.prepare<{ uuid: string }>({
 		$expand: {
 			device_config_variable: {
 				$select: ['name', 'value'],
+				$orderby: {
+					name: 'asc',
+				},
 			},
 			device_environment_variable: {
 				$select: ['name', 'value'],
@@ -328,6 +331,9 @@ const stateQuery = resinApi.prepare<{ uuid: string }>({
 				$expand: {
 					application_config_variable: {
 						$select: ['name', 'value'],
+						$orderby: {
+							name: 'asc',
+						},
 					},
 					application_environment_variable: {
 						$select: ['name', 'value'],
@@ -337,6 +343,9 @@ const stateQuery = resinApi.prepare<{ uuid: string }>({
 						$expand: {
 							application_config_variable: {
 								$select: ['name', 'value'],
+								$orderby: {
+									name: 'asc',
+								},
 							},
 							application_environment_variable: {
 								$select: ['name', 'value'],

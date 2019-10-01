@@ -21,16 +21,20 @@ async function onInitModel() {
 }
 
 async function onInitHooks() {
-	const { db } = await import('./src/platform');
+	const { db, resinApi } = await import('./src/platform');
 	const { createAll } = await import('./src/platform/permissions');
 	const auth = await import('./src/lib/auth');
 	const permissionNames = _.uniq(
 		_.flatMap(auth.ROLES).concat(_.flatMap(auth.KEYS, 'permissions')),
 	);
-	const { setSyncMap } = await import('./src/lib/device-types');
+	const { setSyncMap, deviceTypes } = await import('./src/lib/device-types');
 	setSyncMap({
 		name: { name: 'name' },
 	});
+
+	// this will pre-fetch the device types and populate the cache...
+	deviceTypes(resinApi);
+
 	return db
 		.transaction(tx =>
 			createAll(tx, permissionNames, auth.ROLES, auth.KEYS, {}),

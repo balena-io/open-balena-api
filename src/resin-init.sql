@@ -9,6 +9,9 @@ ADD COLUMN IF NOT EXISTS "email" TEXT;
 ALTER TABLE "user"
 ADD COLUMN IF NOT EXISTS "jwt secret" VARCHAR(255) NULL;
 
+ALTER TABLE "device"
+ALTER COLUMN "api heartbeat state" SET DEFAULT 'unknown';
+
 CREATE INDEX IF NOT EXISTS "release_application_commit_status_idx"
 ON "release" ("belongs to-application", "commit", "status");
 
