@@ -80,6 +80,8 @@ export const IMAGE_MAKER_URL = requiredVar('IMAGE_MAKER_URL');
 export const IMAGE_STORAGE_BUCKET = requiredVar('IMAGE_STORAGE_BUCKET');
 export const IMAGE_STORAGE_ENDPOINT = requiredVar('IMAGE_STORAGE_ENDPOINT');
 export const IMAGE_STORAGE_PREFIX = requiredVar('IMAGE_STORAGE_PREFIX');
+export const IMAGE_STORAGE_ACCESS_KEY = process.env.IMAGE_STORAGE_ACCESS_KEY;
+export const IMAGE_STORAGE_SECRET_KEY = process.env.IMAGE_STORAGE_SECRET_KEY;
 export const IMAGE_STORAGE_FORCE_PATH_STYLE =
 	process.env.IMAGE_STORAGE_FORCE_PATH_STYLE === 'true';
 export const JSON_WEB_TOKEN_EXPIRY_MINUTES = intVar(

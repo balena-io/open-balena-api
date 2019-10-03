@@ -2,6 +2,7 @@ import * as AWS from 'aws-sdk';
 import * as Promise from 'bluebird';
 import * as _ from 'lodash';
 import * as mockery from 'mockery';
+import { assert } from 'chai';
 
 import $getObjectMocks = require('../fixtures/s3/getObject.json');
 import listObjectsV2Mocks = require('../fixtures/s3/listObjectsV2.json');
@@ -56,6 +57,17 @@ const toReturnType = <T extends (...args: any[]) => any>(result: {
 type UnauthenticatedRequestParams = { [key: string]: any };
 
 class S3Mock {
+	constructor(params: AWS.S3.Types.ClientConfiguration) {
+		assert(
+			params.accessKeyId == process.env.IMAGE_STORAGE_ACCESS_KEY,
+			'S3 access key not matching',
+		);
+		assert(
+			params.secretAccessKey == process.env.IMAGE_STORAGE_SECRET_KEY,
+			'S3 secret key not matching',
+		);
+	}
+
 	makeUnauthenticatedRequest(
 		operation: string,
 		params?: UnauthenticatedRequestParams,
