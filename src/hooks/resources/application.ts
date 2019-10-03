@@ -149,19 +149,73 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'application', {
 				}
 			}
 			if (appIds.length > 0) {
-				// We need to null `should_be_running__release` or otherwise we have a circular dependency and cannot delete either
+				// find devices which are
+				// not part of any of the applications that are about to be deleted
+				// but run a release that belongs to any of the applications that
+				// is about to be deleted
 				return args.api
-					.patch({
-						resource: 'application',
+					.get({
+						resource: 'device',
+						passthrough: {
+							req: root,
+						},
 						options: {
+							$select: ['uuid'],
 							$filter: {
-								id: { $in: appIds },
-								should_be_running__release: { $ne: null },
+								$not: {
+									belongs_to__application: {
+										$in: appIds,
+									},
+								},
+								is_running__release: {
+									$any: {
+										$alias: 'r',
+										$expr: {
+											r: {
+												belongs_to__application: {
+													$in: appIds,
+												},
+											},
+										},
+									},
+								},
 							},
 						},
-						body: { should_be_running__release: null },
 					})
-					.return();
+					.then((devices: AnyObject[]) => {
+						if (devices.length === 0) {
+							return;
+						}
+
+						const uuids = devices.map(({ uuid }) => uuid);
+						throw new BadRequestError('updateRequired', {
+							error: 'updateRequired',
+							message: `Can't delete application(s) ${_.join(
+								appIds,
+								', ',
+							)} because following devices are still running releases that belong to these application(s): ${_.join(
+								uuids,
+								', ',
+							)}`,
+							appids: appIds,
+							uuids,
+						});
+					})
+					.then(() => {
+						// We need to null `should_be_running__release` or otherwise we have a circular dependency and cannot delete either
+						return args.api
+							.patch({
+								resource: 'application',
+								options: {
+									$filter: {
+										id: { $in: appIds },
+										should_be_running__release: { $ne: null },
+									},
+								},
+								body: { should_be_running__release: null },
+							})
+							.return();
+					});
 			}
 		}),
 });
