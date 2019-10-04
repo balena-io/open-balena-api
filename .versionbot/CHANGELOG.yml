@@ -1,4 +1,20 @@
 - commits:
+    - subject: >-
+        env-vars: whitelist other Raspberry-Pi devices for config capable device
+        types
+      hash: fbb8215737823edf645f5a0df6559c348f174a58
+      body: |
+        Pi4, RevPi, NPE. Covers things now from
+        https://github.com/balena-os/balena-raspberrypi
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Gergely Imreh <gergely@balena.io>
+        signed-off-by: Gergely Imreh <gergely@balena.io>
+      author: Gergely Imreh
+  version: 0.35.1
+  date: 2019-10-04T15:13:36.568Z
+- commits:
     - subject: "✨\U0001F527: Add support for authenticated image storage access"
       hash: 5416a66fc96cfaae463db78a5df8f21efb8928ee
       body: |
