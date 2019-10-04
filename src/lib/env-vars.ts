@@ -142,7 +142,10 @@ export const RESIN_HOST_CONFIG_CAPABLE_DEVICE_TYPES = [
 	'raspberry-pi2',
 	'raspberrypi3-64',
 	'raspberrypi3',
+	'raspberrypi4-64',
 	'fincm3',
+	'revpi-core-3',
+	'npe-x500-m3',
 ];
 
 const startsWithAny = (ns: string[], name: string) => {
