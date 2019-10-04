@@ -1,4 +1,20 @@
 - commits:
+    - subject: "✨\U0001F527: Add support for authenticated image storage access"
+      hash: 5416a66fc96cfaae463db78a5df8f21efb8928ee
+      body: |
+        This adds support for authenticated image storage access,
+        via the optional environment variables:
+        - IMAGE_STORAGE_ACCESS_KEY
+        - IMAGE_STORAGE_SECRET_KEY
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Andreas Fitzek <andreas@balena.io>
+        signed-off-by: Andreas Fitzek <andreas@balena.io>
+      author: Andreas Fitzek
+  version: 0.35.0
+  date: 2019-10-03T13:29:51.155Z
+- commits:
     - subject: "\U0001F5C3 \U0001F4A5: Renaming dt table"
       hash: 81b1879ef762a6b3d888b6f19b0f0a93d23a5e87
       body: |
