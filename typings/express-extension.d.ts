@@ -6,6 +6,7 @@ declare interface BruteReset {
 
 declare namespace Express {
 	export interface Request {
+		prefetchApiKey?: ApiKey;
 		apiKey?: ApiKey;
 
 		creds?: Creds;

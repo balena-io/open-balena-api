@@ -171,6 +171,16 @@ function setupMiddleware(app: _express.Application) {
 	app.use(AUTH_PATH, cookieSession({ secret: COOKIE_SESSION_SECRET }));
 
 	app.use(jwt.middleware);
+
+	app.use((
+		req,
+		res,
+		next, // Only import on demand to avoid issues with import ordering
+	) =>
+		import('./platform/middleware').then(({ prefetchApiKeyMiddleware }) =>
+			prefetchApiKeyMiddleware(req, res, next),
+		),
+	);
 }
 
 function startServer(
