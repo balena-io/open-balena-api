@@ -1,4 +1,14 @@
 - commits:
+    - subject: Avoid unnecessary object creation
+      hash: a5f41f7dcd5e218fa5bf7a50d5035194915178cb
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.35.3
+  date: 2019-10-07T15:51:34.689Z
+- commits:
     - subject: 'feature: Add API heartbeat state mechanism'
       hash: c494f8e825f033b0faa2094609c8c70abe76a3c7
       body: |
