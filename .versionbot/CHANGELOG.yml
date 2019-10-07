@@ -1,4 +1,17 @@
 - commits:
+    - subject: Allow scoped access tokens to use the whoami endpoint
+      hash: 6d4aff50a4a2a6c39c9c758db80a43f04ef01c98
+      body: |
+        Fixes #166
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Lucian <lucian.buzzo@gmail.com>
+        signed-off-by: Lucian <lucian.buzzo@gmail.com>
+      author: Lucian
+  version: 0.36.0
+  date: 2019-10-07T16:22:03.997Z
+- commits:
     - subject: Avoid unnecessary object creation
       hash: a5f41f7dcd5e218fa5bf7a50d5035194915178cb
       body: ''
