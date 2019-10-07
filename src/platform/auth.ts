@@ -197,7 +197,7 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = (userId, existingToken) => {
 			const tokenData = {
 				...existingToken,
 				...newTokenData,
-				...{ permissions: permissionData },
+				permissions: permissionData,
 			} as User;
 
 			if (!_.isFinite(tokenData.authTime)) {
