@@ -75,6 +75,9 @@ Vocabulary: resin
 
 -- Resource fields (in AZ order)
 
+Term: api heartbeat state
+	Concept Type: Short Text (Type)
+
 Term: api port
 	Concept Type: Integer (Type)
 
@@ -284,6 +287,10 @@ Term: application
 
 Term: device
 	Concept Type: actor (Auth)
+
+	Fact type: device has api heartbeat state
+		Necessity: each device has exactly one api heartbeat state
+		Necessity: each device has an api heartbeat state that is equal to "online" or "offline" or "timeout" or "unknown"
 
 	Fact type: device has env var name
 		Term Form: device environment variable

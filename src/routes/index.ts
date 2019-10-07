@@ -1,4 +1,9 @@
+import * as _ from 'lodash';
 import { Application } from 'express';
+import { RequestHandler } from 'express';
+import { captureException } from '../platform/errors';
+import * as DeviceOnlineState from '../lib/device-online-state';
+import { API_HEARTBEAT_STATE_ENABLED } from '../lib/config';
 
 import {
 	authorized,
@@ -22,6 +27,37 @@ export const loginRateLimiter = createRateLimitMiddleware({
 	maxWait: 1 * HOURS, // wait 1 hour after 10 tries (in ms)
 	lifetime: 2 * SECONDS_PER_HOUR, // reset counter after 2 hours (in seconds)
 });
+
+export const registerDeviceStateEvent = (
+	pathToUuid: _.PropertyPath,
+): RequestHandler => {
+	// only register the state event if the feature is active...
+	if (API_HEARTBEAT_STATE_ENABLED !== 1) {
+		return (_req, _res, next) => {
+			next();
+		};
+	}
+
+	pathToUuid = _.toPath(pathToUuid);
+
+	return (req, _res, next) => {
+		const uuid = _.get(req, pathToUuid, '');
+		if (uuid !== '') {
+			DeviceOnlineState.getPollInterval(uuid)
+				.then(pollInterval =>
+					DeviceOnlineState.manager.captureEventFor(uuid, pollInterval / 1000),
+				)
+				.catch(err => {
+					captureException(
+						err,
+						`Unable to capture the API heartbeat event for device: ${uuid}`,
+					);
+				});
+		}
+
+		next();
+	};
+};
 
 // Rate limit for device log creation, a maximum of 15 batches every 10 second window
 export const deviceLogsRateLimiter = createRateLimitMiddleware(
@@ -66,6 +102,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 		'/device/v2/:uuid/state',
 		gracefullyDenyDeletedDevices,
 		apiKeyMiddleware,
+		registerDeviceStateEvent('params.uuid'),
 		devices.state,
 	);
 	app.patch(
