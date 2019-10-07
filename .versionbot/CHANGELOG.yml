@@ -1,4 +1,18 @@
 - commits:
+    - subject: 'feature: Add API heartbeat state mechanism'
+      hash: c494f8e825f033b0faa2094609c8c70abe76a3c7
+      body: |
+        Tracks a device between API state polls in order to mark it as
+        offline if it fails to poll within it's scheduled poll interval.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Rich Bayliss <rich@balena.io>
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      author: Rich Bayliss
+  version: 0.35.2
+  date: 2019-10-07T08:40:46.259Z
+- commits:
     - subject: >-
         env-vars: whitelist other Raspberry-Pi devices for config capable device
         types
