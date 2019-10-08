@@ -3,7 +3,12 @@ import { Application } from 'express';
 import { RequestHandler } from 'express';
 import { captureException } from '../platform/errors';
 import * as DeviceOnlineState from '../lib/device-online-state';
-import { API_HEARTBEAT_STATE_ENABLED } from '../lib/config';
+import {
+	API_HEARTBEAT_STATE_ENABLED,
+	SECONDS_PER_HOUR,
+	HOURS,
+	SECONDS,
+} from '../lib/config';
 
 import {
 	authorized,
@@ -13,12 +18,7 @@ import {
 	gracefullyDenyDeletedDevices,
 } from '../platform/middleware';
 
-import {
-	SECONDS,
-	HOURS,
-	SECONDS_PER_HOUR,
-	createRateLimitMiddleware,
-} from '../lib/rate-limiting';
+import { createRateLimitMiddleware } from '../lib/rate-limiting';
 
 // Rate limit for unauthenticated access
 export const loginRateLimiter = createRateLimitMiddleware({
