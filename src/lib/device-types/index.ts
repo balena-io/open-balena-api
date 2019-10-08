@@ -13,7 +13,8 @@ import {
 	getIsIgnored,
 	getLogoUrl,
 } from './build-info-facade';
-import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
+import { getImageKey, listFolders } from './storage';
+import { fetchExternalDeviceTypes } from './storage/gh';
 
 const { InternalRequestError, root, api } = sbvrUtils;
 export const { BadRequestError, NotFoundError } = sbvrUtils;
@@ -125,7 +126,28 @@ async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	getIsIgnored.clear();
 	getDeviceTypeJson.clear();
 	try {
-		const slugs = await listFolders(IMAGE_STORAGE_PREFIX);
+		let externalSlugs: string[] = [];
+
+		try {
+			externalSlugs = await fetchExternalDeviceTypes();
+		} catch (err) {
+			// we don't want to rely on this, in cases where we run in an airgapped
+			// environemnt or cannot connect to GH at the moment.
+			captureException(err, 'Failed to fetch external device types');
+		}
+
+		const dbSlugs = (await api.resin.get({
+			resource: 'device_type',
+			passthrough: { req: root },
+			options: {
+				$select: ['slug'],
+			},
+		})) as AnyObject[];
+
+		const slugs = _.union(
+			externalSlugs,
+			dbSlugs.map(({ slug }) => slug),
+		);
 		await Bluebird.map(slugs, async slug => {
 			try {
 				const builds = await listFolders(getImageKey(slug));
@@ -230,11 +252,10 @@ async function updateDTModel(
 				$filter: filter,
 			},
 		});
-		return;
 	}
 }
 
-function syncDataModel(
+async function syncDataModel(
 	types: Dictionary<DeviceTypeInfo>,
 	propertyMap: typeof syncSettings['map'],
 ) {

@@ -1,0 +1,1067 @@
+{
+	"getArchiveLink/balena-io/contracts/master": "https://codeload.github.com/balena-io/contracts/legacy.tar.gz/master",
+	"getBranch/balena-io/contracts/master": {
+		"name": "master",
+		"commit": {
+		  "sha": "7d6d5c24de0467e5e95c9c21c8655ebcbd2704de",
+		  "node_id": "MDY6Q29tbWl0MTA2Njk3MjgyOjdkNmQ1YzI0ZGUwNDY3ZTVlOTVjOWMyMWM4NjU1ZWJjYmQyNzA0ZGU=",
+		  "commit": {
+			"author": {
+			  "name": "Balena CI",
+			  "email": "34882892+balena-ci@users.noreply.github.com",
+			  "date": "2019-12-04T22:26:19Z"
+			},
+			"committer": {
+			  "name": "Balena CI",
+			  "email": "34882892+balena-ci@users.noreply.github.com",
+			  "date": "2019-12-04T22:26:19Z"
+			},
+			"message": "v1.1.86",
+			"tree": {
+			  "sha": "d6e47e8beb17670b50dd7a5fb9f6c5afbad05863",
+			  "url": "https://api.github.com/repos/balena-io/contracts/git/trees/d6e47e8beb17670b50dd7a5fb9f6c5afbad05863"
+			},
+			"url": "https://api.github.com/repos/balena-io/contracts/git/commits/7d6d5c24de0467e5e95c9c21c8655ebcbd2704de",
+			"comment_count": 0,
+			"verification": {
+			  "verified": false,
+			  "reason": "unsigned",
+			  "signature": null,
+			  "payload": null
+			}
+		  },
+		  "url": "https://api.github.com/repos/balena-io/contracts/commits/7d6d5c24de0467e5e95c9c21c8655ebcbd2704de",
+		  "html_url": "https://github.com/balena-io/contracts/commit/7d6d5c24de0467e5e95c9c21c8655ebcbd2704de",
+		  "comments_url": "https://api.github.com/repos/balena-io/contracts/commits/7d6d5c24de0467e5e95c9c21c8655ebcbd2704de/comments",
+		  "author": {
+			"login": "balena-ci",
+			"id": 34882892,
+			"node_id": "MDQ6VXNlcjM0ODgyODky",
+			"avatar_url": "https://avatars0.githubusercontent.com/u/34882892?v=4",
+			"gravatar_id": "",
+			"url": "https://api.github.com/users/balena-ci",
+			"html_url": "https://github.com/balena-ci",
+			"followers_url": "https://api.github.com/users/balena-ci/followers",
+			"following_url": "https://api.github.com/users/balena-ci/following{/other_user}",
+			"gists_url": "https://api.github.com/users/balena-ci/gists{/gist_id}",
+			"starred_url": "https://api.github.com/users/balena-ci/starred{/owner}{/repo}",
+			"subscriptions_url": "https://api.github.com/users/balena-ci/subscriptions",
+			"organizations_url": "https://api.github.com/users/balena-ci/orgs",
+			"repos_url": "https://api.github.com/users/balena-ci/repos",
+			"events_url": "https://api.github.com/users/balena-ci/events{/privacy}",
+			"received_events_url": "https://api.github.com/users/balena-ci/received_events",
+			"type": "User",
+			"site_admin": false
+		  },
+		  "committer": {
+			"login": "balena-ci",
+			"id": 34882892,
+			"node_id": "MDQ6VXNlcjM0ODgyODky",
+			"avatar_url": "https://avatars0.githubusercontent.com/u/34882892?v=4",
+			"gravatar_id": "",
+			"url": "https://api.github.com/users/balena-ci",
+			"html_url": "https://github.com/balena-ci",
+			"followers_url": "https://api.github.com/users/balena-ci/followers",
+			"following_url": "https://api.github.com/users/balena-ci/following{/other_user}",
+			"gists_url": "https://api.github.com/users/balena-ci/gists{/gist_id}",
+			"starred_url": "https://api.github.com/users/balena-ci/starred{/owner}{/repo}",
+			"subscriptions_url": "https://api.github.com/users/balena-ci/subscriptions",
+			"organizations_url": "https://api.github.com/users/balena-ci/orgs",
+			"repos_url": "https://api.github.com/users/balena-ci/repos",
+			"events_url": "https://api.github.com/users/balena-ci/events{/privacy}",
+			"received_events_url": "https://api.github.com/users/balena-ci/received_events",
+			"type": "User",
+			"site_admin": false
+		  },
+		  "parents": [
+			{
+			  "sha": "ccf0a687b6b9a34b8b1527831620eb13eb63abd8",
+			  "url": "https://api.github.com/repos/balena-io/contracts/commits/ccf0a687b6b9a34b8b1527831620eb13eb63abd8",
+			  "html_url": "https://github.com/balena-io/contracts/commit/ccf0a687b6b9a34b8b1527831620eb13eb63abd8"
+			}
+		  ]
+		},
+		"_links": {
+		  "self": "https://api.github.com/repos/balena-io/contracts/branches/master",
+		  "html": "https://github.com/balena-io/contracts/tree/master"
+		},
+		"protected": true,
+		"protection": {
+		  "enabled": true,
+		  "required_status_checks": {
+			"enforcement_level": "non_admins",
+			"contexts": [
+			  "ResinCI/check-commits/commits",
+			  "ResinCI/check-files/license",
+			  "ResinCI/check-files/readme",
+			  "ResinCI/store-github/store-github",
+			  "ResinCI/check-versionist/versionist",
+			  "ci/circleci: build"
+			]
+		  }
+		},
+		"protection_url": "https://api.github.com/repos/balena-io/contracts/branches/master/protection"
+	},
+	"balena-io/contracts/contracts/hw.device-type": [
+		{
+			"name": "am571x-evm",
+			"path": "contracts/hw.device-type/am571x-evm",
+			"sha": "2c0d7ac290f43794a70a564b15404b860210dc47",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/am571x-evm?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/am571x-evm",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/2c0d7ac290f43794a70a564b15404b860210dc47",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/am571x-evm?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/2c0d7ac290f43794a70a564b15404b860210dc47",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/am571x-evm"
+			}
+		},
+		{
+			"name": "apalis-imx6q",
+			"path": "contracts/hw.device-type/apalis-imx6q",
+			"sha": "f5a34410b97e3d76f37584389a0b141cc507116f",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/apalis-imx6q?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/apalis-imx6q",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/f5a34410b97e3d76f37584389a0b141cc507116f",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/apalis-imx6q?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/f5a34410b97e3d76f37584389a0b141cc507116f",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/apalis-imx6q"
+			}
+		},
+		{
+			"name": "artik10",
+			"path": "contracts/hw.device-type/artik10",
+			"sha": "135324b97d65ce2a85bd58fbdbf0a998856113a2",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/artik10?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/artik10",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/135324b97d65ce2a85bd58fbdbf0a998856113a2",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/artik10?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/135324b97d65ce2a85bd58fbdbf0a998856113a2",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/artik10"
+			}
+		},
+		{
+			"name": "artik5",
+			"path": "contracts/hw.device-type/artik5",
+			"sha": "b3e6fbc93cdda88a3875e5452dbbeac180c7241e",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/artik5?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/artik5",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/b3e6fbc93cdda88a3875e5452dbbeac180c7241e",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/artik5?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/b3e6fbc93cdda88a3875e5452dbbeac180c7241e",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/artik5"
+			}
+		},
+		{
+			"name": "artik530",
+			"path": "contracts/hw.device-type/artik530",
+			"sha": "0c82c432a01ec1987712c3f96ab41a5d2e5fc813",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/artik530?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/artik530",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/0c82c432a01ec1987712c3f96ab41a5d2e5fc813",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/artik530?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/0c82c432a01ec1987712c3f96ab41a5d2e5fc813",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/artik530"
+			}
+		},
+		{
+			"name": "artik533s",
+			"path": "contracts/hw.device-type/artik533s",
+			"sha": "755ae507d13218074e13fb8385ff585502cf22da",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/artik533s?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/artik533s",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/755ae507d13218074e13fb8385ff585502cf22da",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/artik533s?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/755ae507d13218074e13fb8385ff585502cf22da",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/artik533s"
+			}
+		},
+		{
+			"name": "artik710",
+			"path": "contracts/hw.device-type/artik710",
+			"sha": "2c0ee1d12057b4436196493c50710654be848a5d",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/artik710?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/artik710",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/2c0ee1d12057b4436196493c50710654be848a5d",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/artik710?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/2c0ee1d12057b4436196493c50710654be848a5d",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/artik710"
+			}
+		},
+		{
+			"name": "asus-tinker-board-s",
+			"path": "contracts/hw.device-type/asus-tinker-board-s",
+			"sha": "99d7521462267e48c2f77c1e96bb3d44ca6f4665",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/asus-tinker-board-s?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/asus-tinker-board-s",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/99d7521462267e48c2f77c1e96bb3d44ca6f4665",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/asus-tinker-board-s?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/99d7521462267e48c2f77c1e96bb3d44ca6f4665",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/asus-tinker-board-s"
+			}
+		},
+		{
+			"name": "asus-tinker-board",
+			"path": "contracts/hw.device-type/asus-tinker-board",
+			"sha": "447a7a179b52c67b00ff6182d4369fe1dfe95a9e",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/asus-tinker-board?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/asus-tinker-board",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/447a7a179b52c67b00ff6182d4369fe1dfe95a9e",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/asus-tinker-board?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/447a7a179b52c67b00ff6182d4369fe1dfe95a9e",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/asus-tinker-board"
+			}
+		},
+		{
+			"name": "bananapi-m1-plus",
+			"path": "contracts/hw.device-type/bananapi-m1-plus",
+			"sha": "f398b50e967b9b18c006f12c6c00a427dd27bf1b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/bananapi-m1-plus?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/bananapi-m1-plus",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/f398b50e967b9b18c006f12c6c00a427dd27bf1b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/bananapi-m1-plus?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/f398b50e967b9b18c006f12c6c00a427dd27bf1b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/bananapi-m1-plus"
+			}
+		},
+		{
+			"name": "beaglebone-black",
+			"path": "contracts/hw.device-type/beaglebone-black",
+			"sha": "d2efbf38bebded2c1b5d6ac362bd78e777f1aca4",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/beaglebone-black?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/beaglebone-black",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/d2efbf38bebded2c1b5d6ac362bd78e777f1aca4",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/beaglebone-black?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/d2efbf38bebded2c1b5d6ac362bd78e777f1aca4",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/beaglebone-black"
+			}
+		},
+		{
+			"name": "beaglebone-green-wifi",
+			"path": "contracts/hw.device-type/beaglebone-green-wifi",
+			"sha": "e21fedcc7f0147915dc215334b5b06e7573bf4a8",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/beaglebone-green-wifi?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/beaglebone-green-wifi",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/e21fedcc7f0147915dc215334b5b06e7573bf4a8",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/beaglebone-green-wifi?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/e21fedcc7f0147915dc215334b5b06e7573bf4a8",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/beaglebone-green-wifi"
+			}
+		},
+		{
+			"name": "beaglebone-green",
+			"path": "contracts/hw.device-type/beaglebone-green",
+			"sha": "b3cf7ff43788cd99ef2a8de1195988fe0c622370",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/beaglebone-green?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/beaglebone-green",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/b3cf7ff43788cd99ef2a8de1195988fe0c622370",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/beaglebone-green?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/b3cf7ff43788cd99ef2a8de1195988fe0c622370",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/beaglebone-green"
+			}
+		},
+		{
+			"name": "colibri-imx6dl",
+			"path": "contracts/hw.device-type/colibri-imx6dl",
+			"sha": "ffe406821565af89da9e6e733297c386bc298609",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/colibri-imx6dl?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/colibri-imx6dl",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/ffe406821565af89da9e6e733297c386bc298609",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/colibri-imx6dl?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/ffe406821565af89da9e6e733297c386bc298609",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/colibri-imx6dl"
+			}
+		},
+		{
+			"name": "cybertan-ze250",
+			"path": "contracts/hw.device-type/cybertan-ze250",
+			"sha": "f2841ffae2af5dd0ad2fa948fba11ad170f94d9a",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/cybertan-ze250?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/cybertan-ze250",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/f2841ffae2af5dd0ad2fa948fba11ad170f94d9a",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/cybertan-ze250?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/f2841ffae2af5dd0ad2fa948fba11ad170f94d9a",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/cybertan-ze250"
+			}
+		},
+		{
+			"name": "edge",
+			"path": "contracts/hw.device-type/edge",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/edge?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/edge",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/edge?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/edge"
+			}
+		},
+		{
+			"name": "fincm3",
+			"path": "contracts/hw.device-type/fincm3",
+			"sha": "9b9910eb0c4750c13f732f7edaef9a0d9c568b15",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/fincm3?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/fincm3",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/9b9910eb0c4750c13f732f7edaef9a0d9c568b15",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/fincm3?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/9b9910eb0c4750c13f732f7edaef9a0d9c568b15",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/fincm3"
+			}
+		},
+		{
+			"name": "generic-aarch64",
+			"path": "contracts/hw.device-type/generic-aarch64",
+			"sha": "739bf1352e860d45cee052b46bd51b980c682342",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/generic-aarch64?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/generic-aarch64",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/739bf1352e860d45cee052b46bd51b980c682342",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/generic-aarch64?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/739bf1352e860d45cee052b46bd51b980c682342",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/generic-aarch64"
+			}
+		},
+		{
+			"name": "generic-amd64",
+			"path": "contracts/hw.device-type/generic-amd64",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/generic-amd64?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/generic-amd64",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/generic-amd64?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/generic-amd64"
+			}
+		},
+		{
+			"name": "generic-armv7",
+			"path": "contracts/hw.device-type/generic-armv7",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/generic-armv7?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/generic-armv7",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/generic-armv7?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/generic-armv7"
+			}
+		},
+		{
+			"name": "generic-armv7ahf",
+			"path": "contracts/hw.device-type/generic-armv7ahf",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/generic-armv7ahf?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/generic-armv7ahf",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/generic-armv7ahf?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/generic-armv7ahf"
+			}
+		},
+		{
+			"name": "generic",
+			"path": "contracts/hw.device-type/generic",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/generic?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/generic",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/generic?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/generic"
+			}
+		},
+		{
+			"name": "hummingboard",
+			"path": "contracts/hw.device-type/hummingboard",
+			"sha": "db4df696c73349846c4539a5ed935aae7837e683",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/hummingboard?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/hummingboard",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/db4df696c73349846c4539a5ed935aae7837e683",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/hummingboard?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/db4df696c73349846c4539a5ed935aae7837e683",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/hummingboard"
+			}
+		},
+		{
+			"name": "imx6ul-var-dart",
+			"path": "contracts/hw.device-type/imx6ul-var-dart",
+			"sha": "4b9793a65957fb1a833f796c8b82338601539322",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/imx6ul-var-dart?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/imx6ul-var-dart",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/4b9793a65957fb1a833f796c8b82338601539322",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/imx6ul-var-dart?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/4b9793a65957fb1a833f796c8b82338601539322",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/imx6ul-var-dart"
+			}
+		},
+		{
+			"name": "intel-edison",
+			"path": "contracts/hw.device-type/intel-edison",
+			"sha": "1f26f1df3764d38d399a7661ef92f6b4ef88069e",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/intel-edison?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/intel-edison",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/1f26f1df3764d38d399a7661ef92f6b4ef88069e",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/intel-edison?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/1f26f1df3764d38d399a7661ef92f6b4ef88069e",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/intel-edison"
+			}
+		},
+		{
+			"name": "intel-nuc",
+			"path": "contracts/hw.device-type/intel-nuc",
+			"sha": "72220b52b60ffdcc98bff3d8666dd0fd7464fe97",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/intel-nuc?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/intel-nuc",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/72220b52b60ffdcc98bff3d8666dd0fd7464fe97",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/intel-nuc?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/72220b52b60ffdcc98bff3d8666dd0fd7464fe97",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/intel-nuc"
+			}
+		},
+		{
+			"name": "iot2000",
+			"path": "contracts/hw.device-type/iot2000",
+			"sha": "32f4fb7a019146a72daa14d33ce6f9977644b1c1",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/iot2000?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/iot2000",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/32f4fb7a019146a72daa14d33ce6f9977644b1c1",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/iot2000?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/32f4fb7a019146a72daa14d33ce6f9977644b1c1",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/iot2000"
+			}
+		},
+		{
+			"name": "jetson-tx1",
+			"path": "contracts/hw.device-type/jetson-tx1",
+			"sha": "9dd765f4dec6a5d4355543aaa109c281b65911b5",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/jetson-tx1?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/jetson-tx1",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/9dd765f4dec6a5d4355543aaa109c281b65911b5",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/jetson-tx1?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/9dd765f4dec6a5d4355543aaa109c281b65911b5",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/jetson-tx1"
+			}
+		},
+		{
+			"name": "jetson-tx2",
+			"path": "contracts/hw.device-type/jetson-tx2",
+			"sha": "9bd80ccc9ac2af3cea5457a679f27975eea82bcb",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/jetson-tx2?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/jetson-tx2",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/9bd80ccc9ac2af3cea5457a679f27975eea82bcb",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/jetson-tx2?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/9bd80ccc9ac2af3cea5457a679f27975eea82bcb",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/jetson-tx2"
+			}
+		},
+		{
+			"name": "kitra520",
+			"path": "contracts/hw.device-type/kitra520",
+			"sha": "c09795257d376d50a1a17f636b5ce25fff5d860e",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/kitra520?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/kitra520",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/c09795257d376d50a1a17f636b5ce25fff5d860e",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/kitra520?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/c09795257d376d50a1a17f636b5ce25fff5d860e",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/kitra520"
+			}
+		},
+		{
+			"name": "kitra710",
+			"path": "contracts/hw.device-type/kitra710",
+			"sha": "3e78b6271a438f52a6e61ff2ab85c30da3fcac91",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/kitra710?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/kitra710",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/3e78b6271a438f52a6e61ff2ab85c30da3fcac91",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/kitra710?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/3e78b6271a438f52a6e61ff2ab85c30da3fcac91",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/kitra710"
+			}
+		},
+		{
+			"name": "nitrogen6x",
+			"path": "contracts/hw.device-type/nitrogen6x",
+			"sha": "3633719207dd9a0418f535b6e8fcc0672c2eeb9b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/nitrogen6x?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/nitrogen6x",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/3633719207dd9a0418f535b6e8fcc0672c2eeb9b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/nitrogen6x?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/3633719207dd9a0418f535b6e8fcc0672c2eeb9b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/nitrogen6x"
+			}
+		},
+		{
+			"name": "odroid-c1",
+			"path": "contracts/hw.device-type/odroid-c1",
+			"sha": "5d24f9325c928f9b05ca74ee1b045ec1603cc4a4",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/odroid-c1?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/odroid-c1",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/5d24f9325c928f9b05ca74ee1b045ec1603cc4a4",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/odroid-c1?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/5d24f9325c928f9b05ca74ee1b045ec1603cc4a4",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/odroid-c1"
+			}
+		},
+		{
+			"name": "odroid-xu4",
+			"path": "contracts/hw.device-type/odroid-xu4",
+			"sha": "5d9e17b4c600435c09cca042e5efc8010b42472b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/odroid-xu4?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/odroid-xu4",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/5d9e17b4c600435c09cca042e5efc8010b42472b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/odroid-xu4?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/5d9e17b4c600435c09cca042e5efc8010b42472b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/odroid-xu4"
+			}
+		},
+		{
+			"name": "orangepi-plus2",
+			"path": "contracts/hw.device-type/orangepi-plus2",
+			"sha": "485b5d58a6e2ff78b5228a5abb119758a90cc744",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/orangepi-plus2?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/orangepi-plus2",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/485b5d58a6e2ff78b5228a5abb119758a90cc744",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/orangepi-plus2?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/485b5d58a6e2ff78b5228a5abb119758a90cc744",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/orangepi-plus2"
+			}
+		},
+		{
+			"name": "orbitty-tx2",
+			"path": "contracts/hw.device-type/orbitty-tx2",
+			"sha": "52259d8b32b35b29654051366d75a45fba2f1f12",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/orbitty-tx2?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/orbitty-tx2",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/52259d8b32b35b29654051366d75a45fba2f1f12",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/orbitty-tx2?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/52259d8b32b35b29654051366d75a45fba2f1f12",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/orbitty-tx2"
+			}
+		},
+		{
+			"name": "parallella",
+			"path": "contracts/hw.device-type/parallella",
+			"sha": "5584c234e69c18e2df25882a593482829f9b9053",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/parallella?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/parallella",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/5584c234e69c18e2df25882a593482829f9b9053",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/parallella?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/5584c234e69c18e2df25882a593482829f9b9053",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/parallella"
+			}
+		},
+		{
+			"name": "qemux86-64",
+			"path": "contracts/hw.device-type/qemux86-64",
+			"sha": "f06071b1b19579e4ef727efe82c72ef07bd2ebdf",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/qemux86-64?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/qemux86-64",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/f06071b1b19579e4ef727efe82c72ef07bd2ebdf",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/qemux86-64?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/f06071b1b19579e4ef727efe82c72ef07bd2ebdf",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/qemux86-64"
+			}
+		},
+		{
+			"name": "qemux86",
+			"path": "contracts/hw.device-type/qemux86",
+			"sha": "9326b3570681cf41210d2bcc4d7a309e78e65ee7",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/qemux86?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/qemux86",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/9326b3570681cf41210d2bcc4d7a309e78e65ee7",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/qemux86?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/9326b3570681cf41210d2bcc4d7a309e78e65ee7",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/qemux86"
+			}
+		},
+		{
+			"name": "raspberry-pi",
+			"path": "contracts/hw.device-type/raspberry-pi",
+			"sha": "325975c1b276bdadc40be04948eb5bae608c749c",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/raspberry-pi?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/raspberry-pi",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/325975c1b276bdadc40be04948eb5bae608c749c",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/raspberry-pi?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/325975c1b276bdadc40be04948eb5bae608c749c",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/raspberry-pi"
+			}
+		},
+		{
+			"name": "raspberry-pi2",
+			"path": "contracts/hw.device-type/raspberry-pi2",
+			"sha": "145dbdb0d435b03e6a5340c8505ece88114dfd30",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/raspberry-pi2?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/raspberry-pi2",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/145dbdb0d435b03e6a5340c8505ece88114dfd30",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/raspberry-pi2?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/145dbdb0d435b03e6a5340c8505ece88114dfd30",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/raspberry-pi2"
+			}
+		},
+		{
+			"name": "raspberrypi3-64",
+			"path": "contracts/hw.device-type/raspberrypi3-64",
+			"sha": "dab0cab410055028d89037fcbec3a95b28dba59f",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/raspberrypi3-64?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/raspberrypi3-64",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/dab0cab410055028d89037fcbec3a95b28dba59f",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/raspberrypi3-64?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/dab0cab410055028d89037fcbec3a95b28dba59f",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/raspberrypi3-64"
+			}
+		},
+		{
+			"name": "raspberrypi3",
+			"path": "contracts/hw.device-type/raspberrypi3",
+			"sha": "32588454f598ccbfc994b18b5a2d31c4a72886c3",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/raspberrypi3?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/raspberrypi3",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/32588454f598ccbfc994b18b5a2d31c4a72886c3",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/raspberrypi3?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/32588454f598ccbfc994b18b5a2d31c4a72886c3",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/raspberrypi3"
+			}
+		},
+		{
+			"name": "revpi-core-3",
+			"path": "contracts/hw.device-type/revpi-core-3",
+			"sha": "8fff7f8e3f318ccffad8f3221cb28e5aaeba64ee",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/revpi-core-3?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/revpi-core-3",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8fff7f8e3f318ccffad8f3221cb28e5aaeba64ee",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/revpi-core-3?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8fff7f8e3f318ccffad8f3221cb28e5aaeba64ee",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/revpi-core-3"
+			}
+		},
+		{
+			"name": "skx2",
+			"path": "contracts/hw.device-type/skx2",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/skx2?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/skx2",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/skx2?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/skx2"
+			}
+		},
+		{
+			"name": "spacely-tx2",
+			"path": "contracts/hw.device-type/spacely-tx2",
+			"sha": "ffad20e073b8dc42154a5e385b4e7c2ee80e3a07",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/spacely-tx2?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/spacely-tx2",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/ffad20e073b8dc42154a5e385b4e7c2ee80e3a07",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/spacely-tx2?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/ffad20e073b8dc42154a5e385b4e7c2ee80e3a07",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/spacely-tx2"
+			}
+		},
+		{
+			"name": "ts4900",
+			"path": "contracts/hw.device-type/ts4900",
+			"sha": "ad680fac8bc9b00f66ad69a610408c2e734ca635",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/ts4900?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/ts4900",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/ad680fac8bc9b00f66ad69a610408c2e734ca635",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/ts4900?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/ad680fac8bc9b00f66ad69a610408c2e734ca635",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/ts4900"
+			}
+		},
+		{
+			"name": "ts7700",
+			"path": "contracts/hw.device-type/ts7700",
+			"sha": "99ec4f8b095a75e2fbd1ffc828366feab6ed0464",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/ts7700?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/ts7700",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/99ec4f8b095a75e2fbd1ffc828366feab6ed0464",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/ts7700?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/99ec4f8b095a75e2fbd1ffc828366feab6ed0464",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/ts7700"
+			}
+		},
+		{
+			"name": "up-board",
+			"path": "contracts/hw.device-type/up-board",
+			"sha": "fa704d1064896c7666e4b6f465ded1298d02eecb",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/up-board?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/up-board",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/fa704d1064896c7666e4b6f465ded1298d02eecb",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/up-board?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/fa704d1064896c7666e4b6f465ded1298d02eecb",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/up-board"
+			}
+		},
+		{
+			"name": "beaglebone-mx",
+			"path": "contracts/hw.device-type/beaglebone-mx",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/beaglebone-mx?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/beaglebone-mx",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/beaglebone-mx?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/beaglebone-mx"
+			}
+		},
+		{
+			"name": "dt-with-ignored-release",
+			"path": "contracts/hw.device-type/dt-with-ignored-release",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-ignored-release?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-ignored-release",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-ignored-release?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-ignored-release"
+			}
+		},
+		{
+			"name": "dt-with-403-ignore-file-release",
+			"path": "contracts/hw.device-type/dt-with-403-ignore-file-release",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-403-ignore-file-release?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-403-ignore-file-release",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-403-ignore-file-release?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-403-ignore-file-release"
+			}
+		},
+		{
+			"name": "dt-with-empty-device-type-json-release",
+			"path": "contracts/hw.device-type/dt-with-empty-device-type-json-release",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-empty-device-type-json-release?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-empty-device-type-json-release",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-empty-device-type-json-release?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-empty-device-type-json-release"
+			}
+		},
+		{
+			"name": "dt-with-404-device-type-json-release",
+			"path": "contracts/hw.device-type/dt-with-404-device-type-json-release",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-404-device-type-json-release?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-404-device-type-json-release",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-404-device-type-json-release?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-404-device-type-json-release"
+			}
+		},
+		{
+			"name": "dt-with-500-ignore-file-release",
+			"path": "contracts/hw.device-type/dt-with-500-ignore-file-release",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-500-ignore-file-release?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-500-ignore-file-release",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-500-ignore-file-release?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-500-ignore-file-release"
+			}
+		},
+		{
+			"name": "dt-with-500-device-type-json-release",
+			"path": "contracts/hw.device-type/dt-with-500-device-type-json-release",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-500-device-type-json-release?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-500-device-type-json-release",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-500-device-type-json-release?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-500-device-type-json-release"
+			}
+		},
+		{
+			"name": "dt-with-no-valid-releases",
+			"path": "contracts/hw.device-type/dt-with-no-valid-releases",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-no-valid-releases?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-no-valid-releases",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-no-valid-releases?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-no-valid-releases"
+			}
+		},
+		{
+			"name": "dt-with-failing-listing",
+			"path": "contracts/hw.device-type/dt-with-failing-listing",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-failing-listing?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-failing-listing",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/dt-with-failing-listing?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/dt-with-failing-listing"
+			}
+		},
+		{
+			"name": "via-vab820-quad",
+			"path": "contracts/hw.device-type/via-vab820-quad",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/via-vab820-quad?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/via-vab820-quad",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/via-vab820-quad?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/via-vab820-quad"
+			}
+		},
+		{
+			"name": "zynq-xz702",
+			"path": "contracts/hw.device-type/zynq-xz702",
+			"sha": "8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"size": 0,
+			"url": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/zynq-xz702?ref=master",
+			"html_url": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/zynq-xz702",
+			"git_url": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+			"download_url": null,
+			"type": "dir",
+			"_links": {
+				"self": "https://api.github.com/repos/balena-io/contracts/contents/contracts/hw.device-type/zynq-xz702?ref=master",
+				"git": "https://api.github.com/repos/balena-io/contracts/git/trees/8259e2cd078f4ec999bb66c3f8d953c29728209b",
+				"html": "https://github.com/balena-io/contracts/tree/master/contracts/hw.device-type/zynq-xz702"
+			}
+		}
+	]
+}

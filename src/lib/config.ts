@@ -103,6 +103,22 @@ export const DEVICE_CONFIG_SSH_AUTHORIZED_KEYS = optionalVar(
 	'DEVICE_CONFIG_SSH_AUTHORIZED_KEYS',
 	'',
 );
+export const DEVICE_TYPE_REPO_OWNER = optionalVar(
+	'DEVICE_TYPE_REPO_OWNER',
+	'balena-io',
+);
+export const DEVICE_TYPE_REPO_NAME = optionalVar(
+	'DEVICE_TYPE_REPO_NAME',
+	'contracts',
+);
+export const DEVICE_TYPE_REPO_PATH = optionalVar(
+	'DEVICE_TYPE_REPO_PATH',
+	'contracts/hw.device-type',
+);
+export const DEVICE_TYPE_REPO_REF = optionalVar(
+	'DEVICE_TYPE_REPO_REF',
+	'master',
+);
 export const EXTERNAL_HTTP_TIMEOUT_MS = intVar(
 	'EXTERNAL_HTTP_TIMEOUT_MS',
 	25000,
