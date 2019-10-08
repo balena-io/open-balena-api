@@ -34,9 +34,32 @@ export const identify: RequestHandler = (req, _res, next) =>
 		return null;
 	});
 
-export const apiKeyMiddleware: RequestHandler = (req, _res, next) =>
+export const prefetchApiKeyMiddleware: RequestHandler = (req, _res, next) => {
+	if (req.apiKey) {
+		// If the api key is already set then we just reuse that and keep it
+		if (!req.prefetchApiKey) {
+			req.prefetchApiKey = req.apiKey;
+		}
+		return next();
+	}
 	// Note: this won't reply with 401 if there's no api key
-	retrieveAPIKey(req).asCallback(next);
+	return retrieveAPIKey(req)
+		.then(() => {
+			// We move the apiKey to the prefetchApiKey and delete it, so that it will only
+			// be used if the full `apiKeyMiddleware` is later used
+			req.prefetchApiKey = req.apiKey;
+			delete req.apiKey;
+		})
+		.asCallback(next);
+};
+
+export const apiKeyMiddleware: RequestHandler = (req, _res, next) => {
+	// Note: this won't reply with 401 if there's no api key
+	if (req.prefetchApiKey && !req.apiKey) {
+		req.apiKey = req.prefetchApiKey;
+	}
+	return next();
+};
 
 export const permissionRequired = (permission: string): RequestHandler => (
 	req,
