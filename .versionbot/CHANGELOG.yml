@@ -1,4 +1,14 @@
 - commits:
+    - subject: Move time based constants to config.ts
+      hash: 6505f3fab7b942c0b28c351070bd53b9392731eb
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.37.0
+  date: 2019-10-08T14:08:46.604Z
+- commits:
     - subject: Allow scoped access tokens to use the whoami endpoint
       hash: 6d4aff50a4a2a6c39c9c758db80a43f04ef01c98
       body: |
