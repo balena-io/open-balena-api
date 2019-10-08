@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use a middleware to prefetch api key auth
+      hash: 59d1124d382422b5acb73687c888d52f1b7a2c8e
+      body: |
+        This allows us to access the api key details before committing to
+        allowing auth via api key, which is useful downstream.
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.38.0
+  date: 2019-10-08T14:31:15.839Z
+- commits:
     - subject: Move time based constants to config.ts
       hash: 6505f3fab7b942c0b28c351070bd53b9392731eb
       body: ''
