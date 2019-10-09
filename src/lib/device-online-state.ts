@@ -86,25 +86,32 @@ const getPollIntervalForParentApplication = resinApi.prepare<{ uuid: string }>({
 	},
 });
 
+// the maximum time the supervisor will wait between polls...
+export const POLL_JITTER_FACTOR = 1.5;
+
 export const getPollInterval = (uuid: string): Bluebird<number> => {
-	return getPollIntervalForDevice({ uuid })
-		.then((pollIntervals: Array<{ value: string }>) => {
-			if (pollIntervals.length >= 1) {
-				return pollIntervals;
-			}
+	return (
+		getPollIntervalForDevice({ uuid })
+			.then((pollIntervals: Array<{ value: string }>) => {
+				if (pollIntervals.length >= 1) {
+					return pollIntervals;
+				}
 
-			return getPollIntervalForParentApplication({ uuid });
-		})
-		.then((pollIntervals: Array<{ value: string }>) => {
-			if (pollIntervals.length === 0) {
-				return DEFAULT_SUPERVISOR_POLL_INTERVAL;
-			}
+				return getPollIntervalForParentApplication({ uuid });
+			})
+			.then((pollIntervals: Array<{ value: string }>) => {
+				if (pollIntervals.length === 0) {
+					return DEFAULT_SUPERVISOR_POLL_INTERVAL;
+				}
 
-			return Math.max(
-				parseInt(pollIntervals[0].value, 10),
-				DEFAULT_SUPERVISOR_POLL_INTERVAL,
-			);
-		});
+				return Math.max(
+					parseInt(pollIntervals[0].value, 10) || 0,
+					DEFAULT_SUPERVISOR_POLL_INTERVAL,
+				);
+			})
+			// adjust the value for the jitter in the Supervisor...
+			.then(pollInterval => pollInterval * POLL_JITTER_FACTOR)
+	);
 };
 
 // these align to the text enums coming from the SBVR definition of available values...
@@ -338,7 +345,7 @@ class DeviceOnlineStateManager {
 						uuid,
 						DeviceOnlineStates.Online,
 						DeviceOnlineStates.Timeout,
-						timeoutSeconds,
+						Math.ceil(timeoutSeconds), // always make this a whole number of seconds, and round up to make sure we dont expire too soon...
 					);
 				})
 		);
