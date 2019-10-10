@@ -13,8 +13,8 @@ import stateMock = require('../src/lib/device-online-state');
 import configMock = require('../src/lib/config');
 import envMock = require('../src/lib/env-vars');
 
-const POLL_SEC = 3,
-	TIMEOUT_SEC = 3;
+const POLL_MSEC = 3000,
+	TIMEOUT_MSEC = 3000;
 
 class StateTracker {
 	public states: Dictionary<stateMock.DeviceOnlineStates> = {};
@@ -30,16 +30,16 @@ class StateTracker {
 const tracker = new StateTracker();
 
 // mock the value for the default poll interval...
-(envMock as AnyObject)['DEFAULT_SUPERVISOR_POLL_INTERVAL'] = POLL_SEC * 1000;
+(envMock as AnyObject)['DEFAULT_SUPERVISOR_POLL_INTERVAL'] = POLL_MSEC;
 
 // mock the value for the timeout grace period...
-(configMock as AnyObject)['API_HEARTBEAT_STATE_TIMEOUT_SECONDS'] = TIMEOUT_SEC;
+(configMock as AnyObject)['API_HEARTBEAT_STATE_TIMEOUT_SECONDS'] = Math.floor(
+	TIMEOUT_MSEC / 1000,
+);
 
 // mock the device state lib to hook the update of Pine models...
-const updateDeviceModel: Function = (stateMock.manager as AnyObject)[
-	'updateDeviceModel'
-];
-(stateMock.manager as AnyObject)['updateDeviceModel'] = (
+const updateDeviceModel = stateMock.manager['updateDeviceModel'];
+stateMock.manager['updateDeviceModel'] = (
 	uuid: string,
 	newState: stateMock.DeviceOnlineStates,
 ) => {
@@ -99,7 +99,7 @@ describe('Device State v2', () => {
 		describe('Poll Interval Acquisition', () => {
 			it('Should see default value when not overridden', async () => {
 				const pollInterval = await stateMock.getPollInterval(device.uuid);
-				expect(pollInterval).to.equal(POLL_SEC * 1000);
+				expect(pollInterval).to.equal(POLL_MSEC * stateMock.POLL_JITTER_FACTOR);
 			});
 
 			it('Should see the application-specific value if one exists', async () => {
@@ -113,7 +113,7 @@ describe('Device State v2', () => {
 					.expect(201);
 
 				const pollInterval = await stateMock.getPollInterval(device.uuid);
-				expect(pollInterval).to.equal(123000);
+				expect(pollInterval).to.equal(123000 * stateMock.POLL_JITTER_FACTOR);
 			});
 
 			it('Should see the device-specific value if one exists', async () => {
@@ -127,7 +127,7 @@ describe('Device State v2', () => {
 					.expect(201);
 
 				const pollInterval = await stateMock.getPollInterval(device.uuid);
-				expect(pollInterval).to.equal(321000);
+				expect(pollInterval).to.equal(321000 * stateMock.POLL_JITTER_FACTOR);
 			});
 
 			it('Should see the default value if the device-specific value is less than it', async () => {
@@ -136,12 +136,12 @@ describe('Device State v2', () => {
 						`/resin/device_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and device eq ${device.id}`,
 					)
 					.send({
-						value: `${POLL_SEC * 1000 - 100}`,
+						value: `${POLL_MSEC - 100}`,
 					})
 					.expect(200);
 
 				const pollInterval = await stateMock.getPollInterval(device.uuid);
-				expect(pollInterval).to.equal(POLL_SEC * 1000);
+				expect(pollInterval).to.equal(POLL_MSEC * stateMock.POLL_JITTER_FACTOR);
 
 				await supertest(app, admin)
 					.delete(
@@ -156,12 +156,12 @@ describe('Device State v2', () => {
 						`/resin/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${applicationId}`,
 					)
 					.send({
-						value: `${POLL_SEC * 1000 - 200}`,
+						value: `${POLL_MSEC - 200}`,
 					})
 					.expect(200);
 
 				const pollInterval = await stateMock.getPollInterval(device.uuid);
-				expect(pollInterval).to.equal(POLL_SEC * 1000);
+				expect(pollInterval).to.equal(POLL_MSEC * stateMock.POLL_JITTER_FACTOR);
 
 				await supertest(app, admin)
 					.delete(
@@ -172,6 +172,9 @@ describe('Device State v2', () => {
 		});
 
 		describe('Event Tracking', () => {
+			const devicePollInterval =
+				Math.ceil((POLL_MSEC * stateMock.POLL_JITTER_FACTOR) / 1000) * 1000;
+
 			it('Should see state initialy as "unknown"', async () => {
 				const { body } = await supertest(app, admin)
 					.get(`/resin/device(${device.id})`)
@@ -204,8 +207,9 @@ describe('Device State v2', () => {
 				);
 			});
 
-			it(`Should see state become "timeout" following a delay of ${POLL_SEC} seconds (plus 1 second to be sure)`, async () => {
-				await Bluebird.delay((POLL_SEC + 1) * 1000);
+			it(`Should see state become "timeout" following a delay of ${devicePollInterval /
+				1000} seconds (plus 1 second to be sure)`, async () => {
+				await Bluebird.delay(devicePollInterval + 1000);
 
 				expect(tracker.states[device.uuid]).to.equal(
 					stateMock.DeviceOnlineStates.Timeout,
@@ -242,9 +246,10 @@ describe('Device State v2', () => {
 				);
 			});
 
-			it(`Should see state become "offline" following a delay of ${POLL_SEC +
-				TIMEOUT_SEC} seconds (plus 1 second to be sure)`, async () => {
-				await Bluebird.delay((POLL_SEC + TIMEOUT_SEC + 1) * 1000);
+			it(`Should see state become "offline" following a delay of ${(devicePollInterval +
+				TIMEOUT_MSEC) /
+				1000} seconds (plus 1 second to be sure)`, async () => {
+				await Bluebird.delay(devicePollInterval + TIMEOUT_MSEC + 1000);
 				expect(tracker.states[device.uuid]).to.equal(
 					stateMock.DeviceOnlineStates.Offline,
 				);
