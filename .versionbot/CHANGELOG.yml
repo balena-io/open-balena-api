@@ -1,4 +1,14 @@
 - commits:
+    - subject: Add api heartbeart state index
+      hash: ded147dd93bc2a0487706141bd08426b18668e2d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.38.3
+  date: 2019-10-10T17:09:12.191Z
+- commits:
     - subject: 'fix: API heartbeat allow for poll jitter'
       hash: e50bba314e4d08899b3847ee01d2e13d6f4c6fc0
       body: |
