@@ -60,6 +60,9 @@ ON "image install" ("device");
 CREATE INDEX IF NOT EXISTS "device_name_idx"
 ON "device" ("device name");
 
+CREATE INDEX IF NOT EXISTS "device_api heartbeat state_idx"
+ON "device" ("api heartbeat state");
+
 CREATE INDEX IF NOT EXISTS "device_uuid_idx"
 ON "device" ("uuid" text_pattern_ops);
 
