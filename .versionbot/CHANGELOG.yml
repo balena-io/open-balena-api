@@ -1,4 +1,20 @@
 - commits:
+    - subject: 'fix: API heartbeat allow for poll jitter'
+      hash: e50bba314e4d08899b3847ee01d2e13d6f4c6fc0
+      body: |
+        The supervisor introduced a "jitter" to the supplied poll interval
+        value of between 0.5x and 1.5x the configured value. The state mechanims
+        will now always account for the 1.5x case, so devices will be considered
+        online for the max possible time.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Rich Bayliss <rich@balena.io>
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      author: Rich Bayliss
+  version: 0.38.2
+  date: 2019-10-09T23:20:08.446Z
+- commits:
     - subject: Update dependencies
       hash: 139dbdfa23515374996c27e1c0d2833cf95d9a39
       body: |
