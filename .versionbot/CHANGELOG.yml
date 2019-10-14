@@ -1,4 +1,15 @@
 - commits:
+    - subject: Stop logging of every rate limited request
+      hash: 4fd6284b15647d16dfb41a2dc8864bd235f54bf5
+      body: |
+        They can be identified via the 429 instead, along with more info
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.38.4
+  date: 2019-10-14T12:01:24.526Z
+- commits:
     - subject: Add api heartbeart state index
       hash: ded147dd93bc2a0487706141bd08426b18668e2d
       body: ''
