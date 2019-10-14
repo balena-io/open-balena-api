@@ -69,16 +69,6 @@ const redisErrorHandler = (options: StoreErrorOptions) => {
 	options.next();
 };
 
-const failDebug: ExpressBrute.FailTooManyRequests = (
-	req,
-	res,
-	next,
-	nextValidRequestDate,
-) => {
-	console.error('Blocked by rate limiting: ' + req.originalUrl);
-	ExpressBrute.FailTooManyRequests(req, res, next, nextValidRequestDate);
-};
-
 export const getUserIDFromCreds = Promise.method(
 	(req: _express.Request): string => {
 		if (req.creds != null && 'id' in req.creds) {
@@ -111,7 +101,7 @@ export const createRateLimitMiddleware = (
 	expressBruteMiddleware: Partial<ExpressBrute.Middleware> = {},
 ): PartialRateLimitMiddleware => {
 	expressBruteOpts.handleStoreError = redisErrorHandler;
-	expressBruteOpts.failCallback = failDebug;
+	expressBruteOpts.failCallback = ExpressBrute.FailTooManyRequests;
 	if (expressBruteOpts.freeRetries !== undefined) {
 		expressBruteOpts.freeRetries *= RATE_LIMIT_FACTOR;
 	}
