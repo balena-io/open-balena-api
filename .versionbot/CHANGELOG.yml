@@ -1,4 +1,16 @@
 - commits:
+    - subject: Disable registry v1
+      hash: 17f354c399a90860b14bbacf5fe72e365e649334
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Michael Angelos Simos <michalis@balena.io>
+        signed-off-by: Michael Angelos Simos <michalis@balena.io>
+      author: Michael Angelos Simos
+  version: 0.39.0
+  date: 2019-10-16T16:07:19.479Z
+- commits:
     - subject: "\U0001F41B: Add explaining error for failed application deletions"
       hash: 61a0ae917ebdf175de9032cf70d4fd792caf9b39
       body: |
