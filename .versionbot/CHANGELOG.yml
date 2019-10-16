@@ -1,4 +1,20 @@
 - commits:
+    - subject: "\U0001F41B: Add explaining error for failed application deletions"
+      hash: 61a0ae917ebdf175de9032cf70d4fd792caf9b39
+      body: |
+        If devices where moved between applications, but are still
+        running a release that belongs to the old application,
+        the old application cannot be deleted because of a foreign
+        key relation, between the device and the release `is running-release`.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andreas Fitzek <andreas@balena.io>
+        signed-off-by: Andreas Fitzek <andreas@balena.io>
+      author: Andreas Fitzek
+  version: 0.38.5
+  date: 2019-10-16T11:33:57.741Z
+- commits:
     - subject: Stop logging of every rate limited request
       hash: 4fd6284b15647d16dfb41a2dc8864bd235f54bf5
       body: |
