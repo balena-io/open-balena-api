@@ -65,7 +65,6 @@ runapi () {
 		-e REDIS_HOST=$redis_id \
 		-e REDIS_PORT=6379 \
 		-e REGISTRY2_HOST=registry2.balenadev.io \
-		-e REGISTRY_HOST=registry.balenadev.io \
 		-e REQUEST_MOCK_DEBUG=0 \
 		-e RUN_TESTS=1 \
 		-e SUPERUSER_EMAIL=test@balena.io \

@@ -17,13 +17,15 @@ import { DeviceType } from './device-types';
 
 import { captureException } from '../platform/errors';
 import { getUser } from '../platform/auth';
+import { sbvrUtils } from '../platform';
 import { createUserApiKey, createProvisioningApiKey } from './api-keys';
 import { Request } from 'express';
 import { Option as DeviceTypeOption } from '@resin.io/device-types';
 
+const { BadRequestError } = sbvrUtils;
+
 // FIXME(refactor): many of the following are resin-specific
 import {
-	REGISTRY_HOST,
 	REGISTRY2_HOST,
 	NODE_EXTRA_CA_CERTS,
 	MIXPANEL_TOKEN,
@@ -42,9 +44,12 @@ export const generateConfig = (
 	const userPromise = getUser(req);
 
 	// Devices running ResinOS >=1.2.1 are capable of using Registry v2, while earlier ones must use v1
-	const registryHost = resinSemver.gte(osVersion, '1.2.1')
-		? REGISTRY2_HOST
-		: REGISTRY_HOST;
+	if (resinSemver.lte(osVersion, '1.2.0')) {
+		throw new BadRequestError(
+			'balenaOS versions <= 1.2.0 are no longer supported, please update',
+		);
+	}
+	const registryHost = REGISTRY2_HOST;
 
 	const apiKeyPromise = Promise.try(() => {
 		// Devices running ResinOS >= 2.7.8 can use provisioning keys
