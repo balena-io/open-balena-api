@@ -109,7 +109,6 @@ export const RATE_LIMIT_MEMORY_BACKEND = process.env.RATE_LIMIT_MEMORY_BACKEND;
 export const REDIS_HOST = requiredVar('REDIS_HOST');
 export const REDIS_PORT = intVar('REDIS_PORT');
 export const REGISTRY2_HOST = requiredVar('REGISTRY2_HOST');
-export const REGISTRY_HOST = requiredVar('REGISTRY_HOST');
 export const SENTRY_DSN = process.env.SENTRY_DSN;
 export const SUPERUSER_EMAIL = process.env.SUPERUSER_EMAIL || '';
 export const SUPERUSER_PASSWORD = process.env.SUPERUSER_PASSWORD || '';
