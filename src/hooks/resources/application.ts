@@ -119,7 +119,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 				if (ids.length === 0) {
 					return;
 				}
-				postDevices({
+				return postDevices({
 					url: '/v1/update',
 					req: root,
 					filter: {
