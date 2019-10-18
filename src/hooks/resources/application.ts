@@ -124,6 +124,9 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 					req: root,
 					filter: {
 						belongs_to__application: { $in: ids },
+						is_running__release: {
+							$ne: request.values.should_be_running__release,
+						},
 						should_be_running__release: null,
 					},
 					// Don't wait for the posts to complete, as they may take a long time and we've already sent the prompt to update.
