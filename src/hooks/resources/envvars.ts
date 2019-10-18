@@ -1,7 +1,6 @@
 import { sbvrUtils } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
 
-import { getCurrentRequestAffectedIds } from '../../platform';
 import { captureException } from '../../platform/errors';
 
 import { postDevices } from '../../lib/device-proxy';
@@ -118,7 +117,7 @@ addEnvHooks(
 			};
 		}
 
-		const envVarIds = await getCurrentRequestAffectedIds(args);
+		const envVarIds = await sbvrUtils.getAffectedIds(args);
 		if (envVarIds.length === 0) {
 			return;
 		}
@@ -160,7 +159,7 @@ addEnvHooks(
 				belongs_to__application: args.req.body.application,
 			};
 		}
-		const envVarIds = await getCurrentRequestAffectedIds(args);
+		const envVarIds = await sbvrUtils.getAffectedIds(args);
 		if (envVarIds.length === 0) {
 			return;
 		}
@@ -198,7 +197,7 @@ addEnvHooks(
 			return { id: args.req.body.device };
 		}
 
-		const envVarIds = await getCurrentRequestAffectedIds(args);
+		const envVarIds = await sbvrUtils.getAffectedIds(args);
 		if (envVarIds.length === 0) {
 			return;
 		}
@@ -228,7 +227,7 @@ addEnvHooks(
 			return { id: args.req.body.device };
 		}
 
-		const envVarIds = await getCurrentRequestAffectedIds(args);
+		const envVarIds = await sbvrUtils.getAffectedIds(args);
 		if (envVarIds.length === 0) {
 			return;
 		}
@@ -273,7 +272,7 @@ addEnvHooks(
 			};
 		}
 
-		const envVarIds = await getCurrentRequestAffectedIds(args);
+		const envVarIds = await sbvrUtils.getAffectedIds(args);
 		if (envVarIds.length === 0) {
 			return;
 		}
@@ -327,7 +326,7 @@ addEnvHooks(
 			};
 		}
 
-		const envVarIds = await getCurrentRequestAffectedIds(args);
+		const envVarIds = await sbvrUtils.getAffectedIds(args);
 		if (envVarIds.length === 0) {
 			return;
 		}

@@ -2,14 +2,13 @@ import * as Bluebird from 'bluebird';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
-import { getCurrentRequestAffectedIds } from '../../platform';
 import { captureException } from '../../platform/errors';
 
 const { api } = sbvrUtils;
 
 const deleteApiKeyHooks: sbvrUtils.Hooks = {
 	PRERUN: async (args) => {
-		const keyIds = await getCurrentRequestAffectedIds(args);
+		const keyIds = await sbvrUtils.getAffectedIds(args);
 		if (keyIds.length === 0) {
 			return;
 		}
