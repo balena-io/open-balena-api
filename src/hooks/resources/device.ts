@@ -232,28 +232,32 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 							throw new InaccessibleAppError();
 						}
 
-						return getCurrentRequestAffectedIds(args)
-							.then(deviceIds =>
-								// and get the devices being affected and store them for the POSTRUN...
-								args.api.get({
+						return getCurrentRequestAffectedIds(args).then(deviceIds => {
+							if (deviceIds.length === 0) {
+								return;
+							}
+							// and get the devices being affected and store them for the POSTRUN...
+							return args.api
+								.get({
 									resource: 'device',
 									options: {
+										$select: 'id',
 										$filter: {
 											id: {
 												$in: deviceIds,
 											},
-										},
-										$expand: {
 											belongs_to__application: {
-												$select: 'id',
+												$ne: args.request.values.belongs_to__application,
 											},
 										},
 									},
-								}),
-							)
-							.then(devices => {
-								request.custom.devices = devices;
-							});
+								})
+								.then((devices: Array<{ id: number }>) => {
+									request.custom.movedDevices = devices.map(
+										device => device.id,
+									);
+								});
+						});
 					}),
 			);
 		}
@@ -418,32 +422,24 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 				}),
 			);
 
-			// Also mark all image installs which are part of the current
-			// application as deleted.
-			waitPromises.push(
-				(args.request.custom.devices as Promise<AnyObject[]>).map(device => {
-					if (
-						device.belongs_to__application[0].id ===
-						args.request.values.belongs_to__application
-					) {
-						return;
-					}
-
-					return args.api
-						.patch({
-							resource: 'image_install',
-							body: {
-								status: 'deleted',
+			// Also mark all image installs of moved devices as deleted because
+			// they're for the previous application.
+			const { movedDevices } = args.request.custom;
+			if (movedDevices.length > 0) {
+				waitPromises.push(
+					args.api.patch({
+						resource: 'image_install',
+						body: {
+							status: 'deleted',
+						},
+						options: {
+							$filter: {
+								device: { $in: movedDevices },
 							},
-							options: {
-								$filter: {
-									device: device.id,
-								},
-							},
-						})
-						.return();
-				}),
-			);
+						},
+					}),
+				);
+			}
 		}
 
 		if (args.request.values.should_be_running__release !== undefined) {
