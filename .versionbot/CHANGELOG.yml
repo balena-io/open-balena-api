@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fixes and optimisations for moving devices
+      hash: 9e6093823d77e347e9d907495bd3e7e2224aa84d
+      body: |
+        This fixes the case of an attempted move affected no devices and also
+        correctly waits for all of the image install patches to complete
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.39.1
+  date: 2019-10-18T21:20:08.495Z
+- commits:
     - subject: Disable registry v1
       hash: 17f354c399a90860b14bbacf5fe72e365e649334
       body: ''
