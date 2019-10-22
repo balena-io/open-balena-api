@@ -1,4 +1,14 @@
 - commits:
+    - subject: Add ability for clients to register hooks for device state endpoint
+      hash: a1242a58361b7f917f12c52175d9644652bf5f8c
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Akis Kesoglou
+  version: 0.40.0
+  date: 2019-10-22T14:18:05.283Z
+- commits:
     - subject: Fixes and optimisations for moving devices
       hash: 9e6093823d77e347e9d907495bd3e7e2224aa84d
       body: |
