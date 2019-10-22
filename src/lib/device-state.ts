@@ -47,6 +47,35 @@ export const serviceInstallFromImage = (
 export const formatImageLocation = (imageLocation: string) =>
 	imageLocation.toLowerCase();
 
+export type DeviceConfigHook = (
+	configVars: Dictionary<string>,
+	osVersion: string,
+) => void;
+
+export interface HookRegistry {
+	deviceConfig: DeviceConfigHook[];
+}
+
+const STATE_ENDPOINT_HOOKS: HookRegistry = {
+	deviceConfig: [],
+};
+
+export function registerHook<Key extends keyof HookRegistry>(
+	name: Key,
+	fn: typeof STATE_ENDPOINT_HOOKS[Key][number],
+) {
+	STATE_ENDPOINT_HOOKS[name].push(fn);
+}
+
+function runHook<Key extends keyof HookRegistry>(
+	name: Key,
+	args: Parameters<typeof STATE_ENDPOINT_HOOKS[Key][number]>,
+) {
+	STATE_ENDPOINT_HOOKS[name].forEach(hook =>
+		hook(...(args as Parameters<typeof hook>)),
+	);
+}
+
 // Some config vars cause issues with certain versions of resinOS.
 // This function will check the OS version against the config
 // vars and filter any which cause problems, returning a new map to
@@ -64,4 +93,6 @@ export const filterDeviceConfig = (
 	if (semver.gte(osVersion, '2.0.0')) {
 		delete configVars.RESIN_HOST_LOG_TO_DISPLAY;
 	}
+
+	runHook('deviceConfig', [configVars, osVersion]);
 };
