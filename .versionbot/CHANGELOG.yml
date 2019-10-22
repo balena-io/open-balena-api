@@ -1,4 +1,14 @@
 - commits:
+    - subject: Fix cases where logs requests would exit without being cleaned up
+      hash: 91f0a4fbd7f75394c3694390e5a027cf716942ac
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.40.1
+  date: 2019-10-22T17:45:24.662Z
+- commits:
     - subject: Add ability for clients to register hooks for device state endpoint
       hash: a1242a58361b7f917f12c52175d9644652bf5f8c
       body: ''
