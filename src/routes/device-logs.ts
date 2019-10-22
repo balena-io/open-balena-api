@@ -23,6 +23,7 @@ import {
 	Tx,
 	wrapInTransaction,
 } from '../platform';
+import onFinished = require('on-finished');
 
 const {
 	BadRequestError,
@@ -124,8 +125,8 @@ function handleStreamingRead(ctx: LogContext, res: Response) {
 		}
 	}
 
-	ctx.req.on('aborted', close);
-	res.on('close', close);
+	onFinished(ctx.req, close);
+	onFinished(res, close);
 
 	// Subscribe in parallel so we don't miss logs in between
 	getBackend(ctx).subscribe(ctx, onLog);
@@ -256,7 +257,7 @@ function handleStreamingWrite(ctx: LogWriteContext, res: Response): void {
 	let buffer: DeviceLog[] = [];
 	const parser = ndjson.parse();
 
-	function close(err?: Error) {
+	function close(err?: Error | null) {
 		if (!res.headersSent) {
 			// Handle both errors and normal close here
 			if (err) {
@@ -278,8 +279,8 @@ function handleStreamingWrite(ctx: LogWriteContext, res: Response): void {
 		}
 	});
 
-	req.on('error', close);
-	res.on('error', close).on('close', close);
+	onFinished(req, close);
+	onFinished(res, close);
 
 	// Support optional GZip encoding
 	if (req.get('Content-Encoding') === 'gzip') {
