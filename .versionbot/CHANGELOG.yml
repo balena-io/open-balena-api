@@ -1,4 +1,28 @@
 - commits:
+    - subject: Only notify devices on app pinning if they're on a different release
+      hash: 94f888bb9449c218fccd8086a4a3eb14035c794c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Only notify devices on app pinning if they're unpinned
+      hash: b44e04c41155ee887329ad65f41918775cd7c6ac
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Correctly wait on fetching the list of devices for update notification
+      hash: d95fc71b3b1b8d62efcb52c9d196d43bb242e73b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.41.1
+  date: 2019-10-23T08:59:16.333Z
+- commits:
     - subject: Update open-balena-base to 9.0.0
       hash: 705f12e0e2bcda2ba8ec7873a3391ede5ce825ce
       body: |
