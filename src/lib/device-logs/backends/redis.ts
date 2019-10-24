@@ -65,16 +65,12 @@ export class RedisBackend implements DeviceLogsBackend {
 		}
 		const key = this.getKey(ctx);
 		const payloads = await Bluebird.fromCallback<string[]>(callback => {
-			this.cmds.lrange(key, 0, -1, callback);
+			this.cmds.lrange(key, count === Infinity ? 0 : -count, -1, callback);
 		});
-		return (
-			_(payloads)
-				// TODO: This slice should be handled in the redis call itself
-				.slice(-count)
-				.map(this.fromRedisLog)
-				.compact()
-				.value()
-		);
+		return _(payloads)
+			.map(this.fromRedisLog)
+			.compact()
+			.value();
 	}
 
 	public get available(): boolean {
