@@ -1,4 +1,42 @@
 - commits:
+    - subject: Avoid duplicate Date.now() calls
+      hash: aad24acfa0aa71722cf5a1547d8dc231691aaf2f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Perform the log limiting in the redis fetch
+      hash: d194e92114b8bb2020cf111273a7f00d48580e2f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert redis logs backend to async/await
+      hash: abf006ba7009e16ec8ac4cdf222ed05490aaa37f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert device-logs to async/await
+      hash: 7675460bbdd047260a8121e322aaa102711fa7aa
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Change tsconfig target to es2020 with node 12
+      hash: 07fb52eab6420bd19372dba99d3c13be9d31c2c9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.41.2
+  date: 2019-10-24T14:00:28.276Z
+- commits:
     - subject: Only notify devices on app pinning if they're on a different release
       hash: 94f888bb9449c218fccd8086a4a3eb14035c794c
       body: ''
