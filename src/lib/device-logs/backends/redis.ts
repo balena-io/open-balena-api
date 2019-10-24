@@ -1,4 +1,4 @@
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 import * as avro from 'avsc';
 import { EventEmitter } from 'events';
 import * as _ from 'lodash';
@@ -12,12 +12,12 @@ import {
 } from '../struct';
 import { captureException } from '../../../platform/errors';
 import { sbvrUtils } from '../../../platform';
-import { REDIS_HOST, REDIS_PORT } from '../../config';
+import { REDIS_HOST, REDIS_PORT, DAYS, MINUTES } from '../../config';
 
 const { ServiceUnavailableError, BadRequestError } = sbvrUtils;
 
 // Expire after 30 days of inactivity
-const KEY_EXPIRATION = 30 * 24 * 60 * 60 * 1000;
+const KEY_EXPIRATION = 30 * DAYS;
 const VERSION = 1;
 const BUFFER_ENCODING = 'binary';
 
@@ -59,23 +59,22 @@ export class RedisBackend implements DeviceLogsBackend {
 		this.subscriptions = new EventEmitter();
 	}
 
-	public history(ctx: LogContext, count: number): Promise<DeviceLog[]> {
+	public async history(ctx: LogContext, count: number): Promise<DeviceLog[]> {
 		if (!this.connected) {
-			return Promise.reject(new ServiceUnavailableError());
+			throw new ServiceUnavailableError();
 		}
-		return Promise.fromCallback(callback => {
-			const key = this.getKey(ctx);
+		const key = this.getKey(ctx);
+		const payloads = await Bluebird.fromCallback<string[]>(callback => {
 			this.cmds.lrange(key, 0, -1, callback);
-		}).then((payloads: string[]) => {
-			return (
-				_(payloads)
-					// TODO: This slice should be handled in the redis call itself
-					.slice(-count)
-					.map(this.fromRedisLog)
-					.compact()
-					.value()
-			);
 		});
+		return (
+			_(payloads)
+				// TODO: This slice should be handled in the redis call itself
+				.slice(-count)
+				.map(this.fromRedisLog)
+				.compact()
+				.value()
+		);
 	}
 
 	public get available(): boolean {
@@ -83,9 +82,9 @@ export class RedisBackend implements DeviceLogsBackend {
 		return !this.cmds.should_buffer;
 	}
 
-	public publish(ctx: LogWriteContext, logs: DeviceLog[]): Promise<any> {
+	public async publish(ctx: LogWriteContext, logs: DeviceLog[]): Promise<any> {
 		if (!this.connected) {
-			return Promise.reject(new ServiceUnavailableError());
+			throw new ServiceUnavailableError();
 		}
 
 		const limit = ctx.retention_limit || 0;
@@ -103,7 +102,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		}
 		// Devices with no new logs eventually expire
 		tx.pexpire(key, KEY_EXPIRATION);
-		return Promise.fromCallback(callback => {
+		return Bluebird.fromCallback(callback => {
 			tx.exec(callback);
 		});
 	}
@@ -139,7 +138,7 @@ export class RedisBackend implements DeviceLogsBackend {
 			'error',
 			_.throttle((err: Error) => {
 				captureException(err, 'Redis error');
-			}, 300e3),
+			}, 5 * MINUTES),
 		);
 		return client;
 	}
@@ -174,7 +173,6 @@ export class RedisBackend implements DeviceLogsBackend {
 			return log as DeviceLog;
 		} catch (err) {
 			captureException(err, `Failed to deserialize a Redis log: ${payload}`);
-			return;
 		}
 	}
 

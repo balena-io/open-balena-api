@@ -24,6 +24,7 @@ import {
 	wrapInTransaction,
 } from '../platform';
 import onFinished = require('on-finished');
+import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
 
 const {
 	BadRequestError,
@@ -185,13 +186,13 @@ function getCount(
 function getHistory(
 	ctx: LogContext,
 	defaultCount: number,
-): Bluebird<DeviceLog[]> {
+): Resolvable<DeviceLog[]> {
 	const { query } = ctx.req;
 	const count = getCount(query.count, defaultCount);
 
 	// Optimize the case where the caller doesn't need any history
 	if (!count) {
-		return Bluebird.resolve([]);
+		return [];
 	}
 
 	// TODO: Implement `?since` filter here too in the next phase
