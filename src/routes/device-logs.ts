@@ -96,9 +96,10 @@ async function handleStreamingRead(ctx: LogContext, res: Response) {
 		}
 		state = StreamState.Writable;
 		if (dropped) {
+			const now = Date.now();
 			onLog({
-				createdAt: Date.now(),
-				timestamp: Date.now(),
+				createdAt: now,
+				timestamp: now,
 				isStdErr: true,
 				isSystem: true,
 				message: `Warning: Suppressed ${dropped} message(s) due to slow reading`,
