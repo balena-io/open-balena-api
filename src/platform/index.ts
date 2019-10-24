@@ -136,7 +136,7 @@ export const updateOrInsertModel = (
 ): Bluebird<{ id: number }> =>
 	$updateOrInsert(resinApi, resource, filter, updateFields, tx);
 
-type TxFn = (tx: Tx, ...args: any[]) => Bluebird<any>;
+type TxFn = (tx: Tx, ...args: any[]) => PromiseLike<any>;
 type TxFnArgs<T> = T extends (tx: Tx, ...args: infer U) => any ? U : any[];
 
 // This gives the resolved return type, eg

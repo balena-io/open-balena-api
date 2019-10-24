@@ -1,4 +1,3 @@
-import * as Promise from 'bluebird';
 import { Request } from 'express';
 import { PinejsClient } from '../../platform';
 
