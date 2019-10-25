@@ -155,6 +155,10 @@ export const middleware: RequestHandler = (req, res, next) => {
 		'jwt',
 		{ session: false },
 		(err: Error, auth: Creds) => {
+			// Clear the body token field in case it exists to avoid any
+			// possible leaking
+			delete req.body.tokenBodyField;
+
 			if (err instanceof InvalidJwtSecretError) {
 				return res.sendStatus(401);
 			}
