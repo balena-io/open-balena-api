@@ -1,4 +1,14 @@
 - commits:
+    - subject: Clear JWT body token after authing
+      hash: a90d78776c3087810e8d3753a4abf928fa6b3695
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.41.3
+  date: 2019-10-24T19:56:34.669Z
+- commits:
     - subject: Avoid duplicate Date.now() calls
       hash: aad24acfa0aa71722cf5a1547d8dc231691aaf2f
       body: ''
