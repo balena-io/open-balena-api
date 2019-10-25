@@ -5,13 +5,11 @@ import { expect } from 'chai';
 import supertest = require('./test-lib/supertest');
 
 describe('Basic', () => {
-	it('check /ping route is OK', () => {
-		return supertest(app)
+	it('check /ping route is OK', async () => {
+		const res = await supertest(app)
 			.get('/ping')
-			.expect(200)
-			.then(res => {
-				expect(res.text).to.equal('OK');
-			});
+			.expect(200);
+		expect(res.text).to.equal('OK');
 	});
 
 	it('check /config/vars are correct', () => {

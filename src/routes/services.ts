@@ -1,4 +1,3 @@
-import * as Promise from 'bluebird';
 import { Request, Response } from 'express';
 import { resinApi } from '../platform';
 import { captureException, handleHttpErrors } from '../platform/errors';
@@ -43,25 +42,29 @@ const clientDisconnectQuery = resinApi.prepare<{
 	},
 });
 export const vpn = {
-	authDevice: (req: Request, res: Response): void | Promise<void> =>
-		authQuery({ uuid: req.param('device_uuid') }, undefined, { req })
-			.then(([device]: AnyObject[]) => {
-				// for now, if the api key is able to read the device,
-				// it has vpn access
-				if (device) {
-					res.sendStatus(200);
-				} else {
-					res.sendStatus(403);
-				}
-			})
-			.catch(err => {
-				if (handleHttpErrors(req, res, err)) {
-					return;
-				}
-				captureException(err, 'Error authenticating device for VPN', { req });
-				res.status(500).send(err);
-			}),
-	clientConnect: (req: Request, res: Response): void | Promise<void> => {
+	authDevice: async (req: Request, res: Response): Promise<void> => {
+		try {
+			const [device] = (await authQuery(
+				{ uuid: req.param('device_uuid') },
+				undefined,
+				{ req },
+			)) as AnyObject[];
+			// for now, if the api key is able to read the device,
+			// it has vpn access
+			if (device) {
+				res.sendStatus(200);
+			} else {
+				res.sendStatus(403);
+			}
+		} catch (err) {
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
+			captureException(err, 'Error authenticating device for VPN', { req });
+			res.status(500).send(err);
+		}
+	},
+	clientConnect: async (req: Request, res: Response): Promise<void> => {
 		const body = req.body || {};
 		if (!body.common_name) {
 			res.sendStatus(400);
@@ -76,24 +79,23 @@ export const vpn = {
 			return;
 		}
 
-		return clientConnectQuery(
-			{ uuid: body.common_name },
-			{
-				vpn_address: body.virtual_address,
-				is_managed_by__service_instance: body.service_id,
-			},
-			{ req },
-		)
-			.then(() => {
-				res.sendStatus(200);
-			})
-			.catch(err => {
-				captureException(err, 'Error with vpn client connect', { req });
-				res.status(500).send(err);
-			});
+		try {
+			await clientConnectQuery(
+				{ uuid: body.common_name },
+				{
+					vpn_address: body.virtual_address,
+					is_managed_by__service_instance: body.service_id,
+				},
+				{ req },
+			);
+			res.sendStatus(200);
+		} catch (err) {
+			captureException(err, 'Error with vpn client connect', { req });
+			res.status(500).send(err);
+		}
 	},
 
-	clientDisconnect: (req: Request, res: Response): void | Promise<void> => {
+	clientDisconnect: async (req: Request, res: Response): Promise<void> => {
 		const body = req.body || {};
 		if (!body.common_name) {
 			res.sendStatus(400);
@@ -104,17 +106,16 @@ export const vpn = {
 			return;
 		}
 
-		return clientDisconnectQuery(
-			{ uuid: body.common_name, serviceId: body.service_id },
-			undefined,
-			{ req },
-		)
-			.then(() => {
-				res.sendStatus(200);
-			})
-			.catch(err => {
-				captureException(err, 'Error with vpn client disconnect', { req });
-				res.status(500).send(err);
-			});
+		try {
+			await clientDisconnectQuery(
+				{ uuid: body.common_name, serviceId: body.service_id },
+				undefined,
+				{ req },
+			);
+			res.sendStatus(200);
+		} catch (err) {
+			captureException(err, 'Error with vpn client disconnect', { req });
+			res.status(500).send(err);
+		}
 	},
 };
