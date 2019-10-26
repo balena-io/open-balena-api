@@ -137,7 +137,7 @@ export const KEYS: {
 } = {
 	'service.api': {
 		key: API_VPN_SERVICE_API_KEY,
-		permissions: ['resin.device.tunnel-48484'],
+		permissions: ['service.api', 'resin.device.tunnel-48484'],
 	},
 	'service.vpn': {
 		key: VPN_SERVICE_API_KEY,
