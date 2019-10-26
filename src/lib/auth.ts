@@ -160,8 +160,10 @@ export const getServiceFromRequest = (req: {
 	if (req.apiKey == null || req.apiKey.permissions == null) {
 		return;
 	}
-	return req.apiKey.permissions
-		.filter(perm => perm.startsWith(SERVICE_PREFIX))
-		.map(perm => perm.replace(SERVICE_PREFIX, ''))
-		.shift();
+	const servicePerm = req.apiKey.permissions.find(perm =>
+		perm.startsWith(SERVICE_PREFIX),
+	);
+	if (servicePerm) {
+		return servicePerm.replace(SERVICE_PREFIX, '');
+	}
 };
