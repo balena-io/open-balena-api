@@ -1,4 +1,14 @@
 - commits:
+    - subject: Fix write access check
+      hash: c5eea4e5db7bfabea24fbf4eaff9ffb795ddfdb9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.41.8
+  date: 2019-10-29T14:40:19.149Z
+- commits:
     - subject: Export `Access` interface for use downstream
       hash: b71c1499a672fcec337756a4eeed637fd4f1dcd6
       body: ''
