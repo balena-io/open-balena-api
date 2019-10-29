@@ -166,7 +166,7 @@ const resolveAccess = async (
 
 			const hasReadAccess = needsPull && resolveReadAccess(req, image);
 			const hasWriteAccess =
-				(await needsPush) && resolveWriteAccess(req, image);
+				(await needsPush) && (await resolveWriteAccess(req, image));
 
 			const actions = _.clone(defaultActions);
 			if (hasReadAccess) {
