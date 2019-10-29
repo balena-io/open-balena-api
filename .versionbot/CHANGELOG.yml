@@ -1,4 +1,14 @@
 - commits:
+    - subject: Export `Access` interface for use downstream
+      hash: b71c1499a672fcec337756a4eeed637fd4f1dcd6
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.41.7
+  date: 2019-10-29T12:44:58.810Z
+- commits:
     - subject: Fix case where streaming logs errors might not be caught properly
       hash: edeff96c9e42b29ef9086e2a5bb77459e2df18fd
       body: ''
