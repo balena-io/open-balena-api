@@ -54,10 +54,11 @@ export async function read(req: Request, res: Response) {
 		const ctx = await getReadContext(api, req);
 		if (req.query.stream === '1') {
 			addRetentionLimit(ctx);
-			return handleStreamingRead(ctx, res);
+			await handleStreamingRead(ctx, res);
+		} else {
+			const logs = await getHistory(ctx, DEFAULT_HISTORY_LOGS);
+			res.json(logs);
 		}
-		const logs = await getHistory(ctx, DEFAULT_HISTORY_LOGS);
-		res.json(logs);
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
 			return;
@@ -67,7 +68,10 @@ export async function read(req: Request, res: Response) {
 	}
 }
 
-async function handleStreamingRead(ctx: LogContext, res: Response) {
+async function handleStreamingRead(
+	ctx: LogContext,
+	res: Response,
+): Promise<void> {
 	let state: StreamState = StreamState.Buffering;
 	let dropped = 0;
 	const buffer: DeviceLog[] = [];
