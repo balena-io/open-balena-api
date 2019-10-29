@@ -6,7 +6,7 @@ import * as uuid from 'node-uuid';
 import * as BasicAuth from 'basic-auth';
 import * as jsonwebtoken from 'jsonwebtoken';
 import { resinApi, root, sbvrUtils } from '../platform';
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 
 import { User as DbUser } from '../models';
 import { captureException, handleHttpErrors } from '../platform/errors';
@@ -89,56 +89,51 @@ const parseScope = (req: Request, scope: string): Scope | undefined => {
 	return;
 };
 
-const grantAllToBuilder = (parsedScopes: Scope[]): Promise<Access[]> =>
-	Promise.try(() =>
-		_.map(parsedScopes, scope => {
-			const [type, name, requestedActions] = scope;
-			let allowedActions = ['pull', 'push'];
-			if (name === RESINOS_REPOSITORY) {
-				allowedActions = ['pull'];
-			}
-			if (SUPERVISOR_REPOSITORIES.test(name)) {
-				allowedActions = ['pull'];
-			}
-			return {
-				type,
-				name,
-				actions: _.intersection(requestedActions, allowedActions),
-			};
-		}),
-	);
+const grantAllToBuilder = (parsedScopes: Scope[]): Access[] =>
+	parsedScopes.map(scope => {
+		const [type, name, requestedActions] = scope;
+		let allowedActions = ['pull', 'push'];
+		if (name === RESINOS_REPOSITORY) {
+			allowedActions = ['pull'];
+		}
+		if (SUPERVISOR_REPOSITORIES.test(name)) {
+			allowedActions = ['pull'];
+		}
+		return {
+			type,
+			name,
+			actions: _.intersection(requestedActions, allowedActions),
+		};
+	});
 
 const resolveReadAccess = (_req: Request, image?: AnyObject): boolean =>
 	image != null && image.id != null;
 
-const resolveWriteAccess = (
+const resolveWriteAccess = async (
 	req: Request,
 	image?: AnyObject,
 ): Promise<boolean> => {
 	if (image == null || image.id == null) {
-		return Promise.resolve(false);
+		return false;
 	}
-	return resinApi
-		.post({
+	try {
+		const res = (await resinApi.post({
 			url: `image(${image.id})/canAccess`,
 			passthrough: { req },
 			body: { action: 'push' },
-		})
-		.then(
-			(res: AnyObject) =>
-				res.d != null && res.d[0] != null && res.d[0].id === image.id,
-		)
-		.catch(err => {
-			if (!(err instanceof UnauthorizedError)) {
-				captureException(err, 'Failed to resolve registry write access', {
-					req,
-				});
-			}
-			return false;
-		});
+		})) as AnyObject;
+		return res.d != null && res.d[0] != null && res.d[0].id === image.id;
+	} catch (err) {
+		if (!(err instanceof UnauthorizedError)) {
+			captureException(err, 'Failed to resolve registry write access', {
+				req,
+			});
+		}
+		return false;
+	}
 };
 
-const resolveAccess = (
+const resolveAccess = async (
 	req: Request,
 	type: string,
 	name: string,
@@ -146,18 +141,17 @@ const resolveAccess = (
 	requestedActions: string[],
 	defaultActions: string[] = [],
 ): Promise<Access> => {
-	return Promise.try(() => {
-		// Do as few queries as possible
-		const needsPull =
-			requestedActions.includes('pull') && !defaultActions.includes('pull');
-		const needsPush =
-			requestedActions.includes('push') && !defaultActions.includes('push');
-		if (!needsPush && !needsPull) {
-			return defaultActions;
-		}
-
-		return resinApi
-			.get({
+	let allowedActions;
+	// Do as few queries as possible
+	const needsPull =
+		requestedActions.includes('pull') && !defaultActions.includes('pull');
+	const needsPush =
+		requestedActions.includes('push') && !defaultActions.includes('push');
+	if (!needsPush && !needsPull) {
+		allowedActions = defaultActions;
+	} else {
+		try {
+			const [image] = (await resinApi.get({
 				resource: 'image',
 				passthrough: { req },
 				options: {
@@ -168,43 +162,39 @@ const resolveAccess = (
 						},
 					},
 				},
-			})
-			.then(([image]: AnyObject[]) =>
-				Promise.join(
-					needsPull && resolveReadAccess(req, image),
-					needsPush && resolveWriteAccess(req, image),
-					(hasReadAccess, hasWriteAccess) => {
-						const actions = _.clone(defaultActions);
-						if (hasReadAccess) {
-							actions.push('pull');
-						}
-						if (hasWriteAccess) {
-							actions.push('push');
-						}
-						return actions;
-					},
-				),
-			);
-	})
-		.catch(err => {
+			})) as AnyObject[];
+
+			const hasReadAccess = needsPull && resolveReadAccess(req, image);
+			const hasWriteAccess =
+				(await needsPush) && resolveWriteAccess(req, image);
+
+			const actions = _.clone(defaultActions);
+			if (hasReadAccess) {
+				actions.push('pull');
+			}
+			if (hasWriteAccess) {
+				actions.push('push');
+			}
+			allowedActions = actions;
+		} catch (err) {
 			if (!(err instanceof UnauthorizedError)) {
 				captureException(err, 'Failed to resolve registry access', { req });
 			}
-			return defaultActions;
-		})
-		.then(allowedActions => {
-			return {
-				name,
-				type,
-				actions: _.intersection(requestedActions, allowedActions),
-			};
-		});
+			allowedActions = defaultActions;
+		}
+	}
+
+	return {
+		name,
+		type,
+		actions: _.intersection(requestedActions, allowedActions),
+	};
 };
 
 const authorizeRequest = (
 	req: Request,
 	scopes: string[],
-): Promise<Access[]> => {
+): Resolvable<Access[]> => {
 	const parsedScopes: Scope[] = _(scopes)
 		.map(scope => parseScope(req, scope))
 		.compact()
@@ -214,7 +204,7 @@ const authorizeRequest = (
 		return grantAllToBuilder(parsedScopes);
 	}
 
-	return Promise.map(parsedScopes, ([type, name, requestedActions]) => {
+	return Bluebird.map(parsedScopes, ([type, name, requestedActions]) => {
 		if (name === RESINOS_REPOSITORY) {
 			let allowedActions = ['pull'];
 			if (
@@ -282,8 +272,8 @@ const generateToken = (
 	return jsonwebtoken.sign(payload, CERT.key, options);
 };
 
-export const token: RequestHandler = (req, res) =>
-	Promise.try(() => {
+export const token: RequestHandler = async (req, res) => {
+	try {
 		const { scope } = req.query;
 		let scopes: string[];
 		if (_.isString(scope)) {
@@ -296,70 +286,34 @@ export const token: RequestHandler = (req, res) =>
 			scopes = [];
 		}
 
-		return Promise.join(
+		const [sub, access] = await Promise.all([
 			getSubject(req),
 			authorizeRequest(req, scopes),
-			(sub, access) => {
-				res.send({
-					token: generateToken(sub, REGISTRY2_HOST, access),
-				});
-			},
-		);
-	}).catch(err => {
+		]);
+		res.send({
+			token: generateToken(sub, REGISTRY2_HOST, access),
+		});
+	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
 		res.sendStatus(400); // bad request
-	});
+	}
+};
 
 const $getSubject = memoize(
-	(apiKey: string, subject?: string): Promise<string | undefined> =>
-		Promise.try(() => {
-			if (subject) {
+	async (apiKey: string, subject?: string): Promise<string | undefined> => {
+		if (subject) {
+			try {
 				// Try to resolve as a device api key first, using the passed in subject
-				return resinApi
-					.get({
-						resource: 'device',
-						passthrough: { req: root },
-						options: {
-							$select: ['id'],
-							$filter: {
-								// uuids are passed as `d_${uuid}`
-								uuid: subject.replace(/^d_/, ''),
-								actor: {
-									$any: {
-										$alias: 'a',
-										$expr: {
-											a: {
-												api_key: {
-													$any: {
-														$alias: 'k',
-														$expr: { k: { key: apiKey } },
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					})
-					.then(([device]: AnyObject[]) => device != null && device.id != null)
-					.catchReturn(false);
-			}
-			return false;
-		}).then(isValid => {
-			if (isValid) {
-				return subject;
-			}
-			// If resolving as a device api key fails then instead try to resolve to the user api key username
-			return resinApi
-				.get({
-					resource: 'user',
+				const [device] = (await resinApi.get({
+					resource: 'device',
 					passthrough: { req: root },
 					options: {
-						$select: 'username',
+						$select: ['id'],
 						$filter: {
+							// uuids are passed as `d_${uuid}`
+							uuid: subject.replace(/^d_/, ''),
 							actor: {
 								$any: {
 									$alias: 'a',
@@ -368,9 +322,7 @@ const $getSubject = memoize(
 											api_key: {
 												$any: {
 													$alias: 'k',
-													$expr: {
-														k: { key: apiKey },
-													},
+													$expr: { k: { key: apiKey } },
 												},
 											},
 										},
@@ -378,15 +330,45 @@ const $getSubject = memoize(
 								},
 							},
 						},
-						$top: 1,
 					},
-				})
-				.then(([user]: [Pick<DbUser, 'username'>?]) => {
-					if (user) {
-						return user.username;
-					}
-				});
-		}),
+				})) as AnyObject[];
+				if (device != null && device.id != null) {
+					return subject;
+				}
+			} catch {}
+		}
+		// If resolving as a device api key fails then instead try to resolve to the user api key username
+		const [user] = (await resinApi.get({
+			resource: 'user',
+			passthrough: { req: root },
+			options: {
+				$select: 'username',
+				$filter: {
+					actor: {
+						$any: {
+							$alias: 'a',
+							$expr: {
+								a: {
+									api_key: {
+										$any: {
+											$alias: 'k',
+											$expr: {
+												k: { key: apiKey },
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				$top: 1,
+			},
+		})) as [Pick<DbUser, 'username'>?];
+		if (user) {
+			return user.username;
+		}
+	},
 	{
 		promise: true,
 		maxAge: 5 * 60 * 1000,
