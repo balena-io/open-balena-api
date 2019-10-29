@@ -1,4 +1,28 @@
 - commits:
+    - subject: Async/await routes/registry.ts
+      hash: 0182898bdb6e3f5985e12f59c9e55eb055492fa9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Async/await routes/session.ts
+      hash: b32b55b86aa58ed842cdd5efe67aa16d4dfecb89
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Async/await routes/services.ts
+      hash: bcd4089dcdbc4258ab80aacd81baf0e4ba0fef42
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.41.5
+  date: 2019-10-29T10:11:24.535Z
+- commits:
     - subject: Add service name to the api service api key
       hash: 0de2bf14ecbaeb7e8ddb1c8b0e3c08376770d029
       body: ''
