@@ -1,4 +1,14 @@
 - commits:
+    - subject: Fix case where streaming logs errors might not be caught properly
+      hash: edeff96c9e42b29ef9086e2a5bb77459e2df18fd
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.41.6
+  date: 2019-10-29T11:37:08.573Z
+- commits:
     - subject: Async/await routes/registry.ts
       hash: 0182898bdb6e3f5985e12f59c9e55eb055492fa9
       body: ''
