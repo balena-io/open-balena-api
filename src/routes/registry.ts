@@ -48,7 +48,7 @@ const NEW_REGISTRY_REGEX = /(^(\d+)\/[\d\-]+$|^(v2\/[a-z0-9]+)(-[0-9]+)?)/;
 //		push,pull
 const SCOPE_PARSE_REGEX = /^([a-z]+):([a-z0-9_-]+\/[a-z0-9_-]+|\d+\/[\d\-]+|v2\/[a-z0-9]+-[0-9]+)(?::[a-z0-9]+|@sha256:[a-f0-9]+)?:((?:push|pull|,)+)$/;
 
-interface Access {
+export interface Access {
 	name: string;
 	type: string;
 	actions: string[];
