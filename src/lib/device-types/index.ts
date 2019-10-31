@@ -41,9 +41,21 @@ interface BuildInfo {
 	deviceType: DeviceType;
 }
 
+interface ESRLineInfo {
+	latest: string;
+	versions: string[];
+}
+
+interface ESRInfo {
+	next: ESRLineInfo;
+	current: ESRLineInfo;
+	sunset: ESRLineInfo;
+}
+
 interface DeviceTypeInfo {
 	latest: BuildInfo;
 	versions: string[];
+	esr?: ESRInfo;
 }
 
 const SPECIAL_SLUGS = ['edge'];
@@ -66,6 +78,20 @@ const syncSettings = {
 
 export function setSyncMap(map: typeof syncSettings['map']) {
 	syncSettings.map = map;
+}
+
+const deviceTypeHooks = {
+	enrichDeviceTypes: (
+		_slug: string,
+	): Promise<Partial<DeviceTypeInfo> | void> => {
+		return Promise.resolve();
+	},
+};
+
+export function setEnrichDeviceTypes(
+	v: typeof deviceTypeHooks.enrichDeviceTypes,
+) {
+	deviceTypeHooks.enrichDeviceTypes = v;
 }
 
 function sortBuildIds(ids: string[]): string[] {
@@ -133,25 +159,30 @@ function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 					}
 
 					const sortedBuilds = sortBuildIds(builds);
-					return getFirstValidBuild(slug, sortedBuilds).then(
-						latestBuildInfo => {
-							if (!latestBuildInfo) {
-								return;
-							}
+					return deviceTypeHooks.enrichDeviceTypes(slug).then(enrichedDT => {
+						return getFirstValidBuild(slug, sortedBuilds).then(
+							latestBuildInfo => {
+								if (!latestBuildInfo) {
+									return;
+								}
 
-							result[slug] = {
-								versions: builds,
-								latest: latestBuildInfo,
-							};
+								result[slug] = _.assign(
+									{
+										versions: builds,
+										latest: latestBuildInfo,
+									},
+									enrichedDT,
+								);
 
-							_.forEach(
-								(latestBuildInfo.deviceType as DeviceTypeWithAliases).aliases,
-								alias => {
-									result[alias] = result[slug];
-								},
-							);
-						},
-					);
+								_.forEach(
+									(latestBuildInfo.deviceType as DeviceTypeWithAliases).aliases,
+									alias => {
+										result[alias] = result[slug];
+									},
+								);
+							},
+						);
+					});
 				})
 				.catch(err => {
 					captureException(
@@ -490,6 +521,7 @@ export const getImageSize = (
 export interface ImageVersions {
 	versions: string[];
 	latest: string;
+	esr?: ESRInfo;
 }
 
 export const getDeviceTypeIdBySlug = (
@@ -541,10 +573,17 @@ export const getImageVersions = (
 			}
 
 			const buildIds = filteredInfo.map(({ buildId }) => buildId);
-			return {
+
+			const result: ImageVersions = {
 				versions: buildIds,
 				latest: buildIds[0],
 			};
+
+			if (deviceTypeInfo.esr) {
+				result.esr = deviceTypeInfo.esr;
+			}
+
+			return result;
 		});
 	});
 };
