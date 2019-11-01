@@ -3,6 +3,7 @@ import { app } from '../init';
 import { expect } from './test-lib/chai';
 
 import * as Bluebird from 'bluebird';
+import * as _ from 'lodash';
 import * as mockery from 'mockery';
 import * as fakeDevice from './test-lib/fake-device';
 import supertest = require('./test-lib/supertest');
@@ -12,9 +13,10 @@ import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from '../src/lib/config';
 import stateMock = require('../src/lib/device-online-state');
 import configMock = require('../src/lib/config');
 import envMock = require('../src/lib/env-vars');
+import sinon = require('sinon');
 
-const POLL_MSEC = 3000,
-	TIMEOUT_MSEC = 3000;
+const POLL_MSEC = 1000,
+	TIMEOUT_MSEC = 1000;
 
 class StateTracker {
 	public states: Dictionary<stateMock.DeviceOnlineStates> = {};
@@ -38,19 +40,36 @@ const tracker = new StateTracker();
 );
 
 // mock the device state lib to hook the update of Pine models...
-const updateDeviceModel = stateMock.manager['updateDeviceModel'];
-stateMock.manager['updateDeviceModel'] = (
+(stateMock.DeviceOnlineStateManager as AnyObject)[
+	'QUEUE_STATS_INTERVAL_MSEC'
+] = 1000;
+const updateDeviceModel = stateMock.getInstance()['updateDeviceModel'];
+stateMock.getInstance()['updateDeviceModel'] = function(
 	uuid: string,
 	newState: stateMock.DeviceOnlineStates,
-) => {
+) {
 	tracker.stateUpdated(uuid, newState);
-	return updateDeviceModel(uuid, newState);
+	return updateDeviceModel.call(this, uuid, newState);
 };
 
 // register the mocks...
 mockery.registerMock('../src/lib/env-vars', envMock);
 mockery.registerMock('../src/lib/config', configMock);
 mockery.registerMock('../src/lib/device-online-state', stateMock);
+
+const waitFor = async (fn: Function, timeout: number = 10000) => {
+	let testLimit = Math.max(timeout, 50) / 50;
+	let result = fn();
+	while (!result && testLimit > 0) {
+		await Bluebird.delay(50);
+		testLimit--;
+		result = fn();
+	}
+
+	if (!result) {
+		throw new Error('Timeout waiting for result');
+	}
+};
 
 describe('Device State v2', () => {
 	let admin: string;
@@ -175,6 +194,24 @@ describe('Device State v2', () => {
 			const devicePollInterval =
 				Math.ceil((POLL_MSEC * stateMock.POLL_JITTER_FACTOR) / 1000) * 1000;
 
+			const stateChangeEventSpy = sinon.spy();
+			stateMock.getInstance().on('change', args => {
+				if (args.uuid != device.uuid) {
+					return;
+				}
+
+				stateChangeEventSpy(args);
+			});
+
+			it('Should see the stats event emitted more than three times', async () => {
+				const statsEventSpy = sinon.spy();
+				stateMock.getInstance().on('stats', statsEventSpy);
+
+				await waitFor(() => statsEventSpy.callCount >= 3);
+
+				stateMock.getInstance().off('stats', statsEventSpy);
+			});
+
 			it('Should see state initialy as "unknown"', async () => {
 				const { body } = await supertest(app, admin)
 					.get(`/resin/device(${device.id})`)
@@ -189,7 +226,10 @@ describe('Device State v2', () => {
 			});
 
 			it('Should see state become "online" after a state poll', async () => {
+				stateChangeEventSpy.resetHistory();
 				await device.getStateV2();
+
+				await waitFor(() => stateChangeEventSpy.called);
 
 				expect(tracker.states[device.uuid]).to.equal(
 					stateMock.DeviceOnlineStates.Online,
@@ -208,8 +248,11 @@ describe('Device State v2', () => {
 			});
 
 			it(`Should see state become "timeout" following a delay of ${devicePollInterval /
-				1000} seconds (plus 1 second to be sure)`, async () => {
-				await Bluebird.delay(devicePollInterval + 1000);
+				1000} seconds`, async () => {
+				stateChangeEventSpy.resetHistory();
+				await Bluebird.delay(devicePollInterval);
+
+				await waitFor(() => stateChangeEventSpy.called);
 
 				expect(tracker.states[device.uuid]).to.equal(
 					stateMock.DeviceOnlineStates.Timeout,
@@ -228,7 +271,11 @@ describe('Device State v2', () => {
 			});
 
 			it(`Should see state become "online" again, following a state poll`, async () => {
+				stateChangeEventSpy.resetHistory();
+
 				await device.getStateV2();
+
+				await waitFor(() => stateChangeEventSpy.called);
 
 				expect(tracker.states[device.uuid]).to.equal(
 					stateMock.DeviceOnlineStates.Online,
@@ -248,8 +295,14 @@ describe('Device State v2', () => {
 
 			it(`Should see state become "offline" following a delay of ${(devicePollInterval +
 				TIMEOUT_MSEC) /
-				1000} seconds (plus 1 second to be sure)`, async () => {
-				await Bluebird.delay(devicePollInterval + TIMEOUT_MSEC + 1000);
+				1000} seconds`, async () => {
+				stateChangeEventSpy.resetHistory();
+
+				await Bluebird.delay(devicePollInterval + TIMEOUT_MSEC);
+
+				// it will be called for TIMEOUT and OFFLINE...
+				await waitFor(() => stateChangeEventSpy.calledTwice);
+
 				expect(tracker.states[device.uuid]).to.equal(
 					stateMock.DeviceOnlineStates.Offline,
 				);
