@@ -41,18 +41,18 @@ interface BuildInfo {
 	deviceType: DeviceType;
 }
 
-interface ESRLineInfo {
+export interface ESRLineInfo {
 	latest: string;
 	versions: string[];
 }
 
-interface ESRInfo {
+export interface ESRInfo {
 	next: ESRLineInfo;
 	current: ESRLineInfo;
 	sunset: ESRLineInfo;
 }
 
-interface DeviceTypeInfo {
+export interface DeviceTypeInfo {
 	latest: BuildInfo;
 	versions: string[];
 	esr?: ESRInfo;
