@@ -80,18 +80,31 @@ export function setSyncMap(map: typeof syncSettings['map']) {
 	syncSettings.map = map;
 }
 
-const deviceTypeHooks = {
-	enrichDeviceTypes: (
+export interface ESRInterface {
+	enrichDeviceType: (
+		api: PinejsClient,
+		slug: string,
+	) => Promise<Partial<DeviceTypeInfo> | void>;
+	hasVersion: (
+		_api: PinejsClient,
 		_slug: string,
-	): Promise<Partial<DeviceTypeInfo> | void> => {
+		_esrVersion: string,
+	) => Promise<boolean>;
+}
+
+const esrSystem: ESRInterface = {
+	enrichDeviceType: (_api, _slug) => {
 		return Promise.resolve();
+	},
+	hasVersion: (_api, _slug, _esr) => {
+		return Promise.resolve(false);
 	},
 };
 
-export function setEnrichDeviceTypes(
-	v: typeof deviceTypeHooks.enrichDeviceTypes,
-) {
-	deviceTypeHooks.enrichDeviceTypes = v;
+// Allow to set up esr specific interface
+export function setESRInterface(providedESR: ESRInterface) {
+	esrSystem.enrichDeviceType = providedESR.enrichDeviceType;
+	esrSystem.hasVersion = providedESR.hasVersion;
 }
 
 function sortBuildIds(ids: string[]): string[] {
@@ -159,30 +172,25 @@ function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 					}
 
 					const sortedBuilds = sortBuildIds(builds);
-					return deviceTypeHooks.enrichDeviceTypes(slug).then(enrichedDT => {
-						return getFirstValidBuild(slug, sortedBuilds).then(
-							latestBuildInfo => {
-								if (!latestBuildInfo) {
-									return;
-								}
+					return getFirstValidBuild(slug, sortedBuilds).then(
+						latestBuildInfo => {
+							if (!latestBuildInfo) {
+								return;
+							}
 
-								result[slug] = _.assign(
-									{
-										versions: builds,
-										latest: latestBuildInfo,
-									},
-									enrichedDT,
-								);
+							result[slug] = {
+								versions: builds,
+								latest: latestBuildInfo,
+							};
 
-								_.forEach(
-									(latestBuildInfo.deviceType as DeviceTypeWithAliases).aliases,
-									alias => {
-										result[alias] = result[slug];
-									},
-								);
-							},
-						);
-					});
+							_.forEach(
+								(latestBuildInfo.deviceType as DeviceTypeWithAliases).aliases,
+								alias => {
+									result[alias] = result[slug];
+								},
+							);
+						},
+					);
 				})
 				.catch(err => {
 					captureException(
@@ -413,13 +421,19 @@ export const findDeviceTypeInfoBySlug = (
 		}
 
 		return getAccessibleSlugs(api, [deviceTypeInfo.latest.deviceType.slug])
-			.then(([accessibleSlug]) => {
+			.tap(([accessibleSlug]) => {
 				if (accessibleSlug != deviceTypeInfo.latest.deviceType.slug) {
 					// We cannot access the device type
 					throw new UnknownDeviceTypeError(slug);
 				}
 			})
-			.return(deviceTypeInfo);
+			.then(([accessibleSlug]) => {
+				return esrSystem
+					.enrichDeviceType(api, accessibleSlug)
+					.then(esrInformation => {
+						return _.assign({}, deviceTypeInfo, esrInformation);
+					});
+			});
 	});
 
 export const validateSlug = (slug?: string) => {
@@ -495,26 +509,52 @@ export const getImageSize = (
 			buildId = deviceType.buildId;
 		}
 
-		if (!deviceTypeInfo.versions.includes(buildId)) {
-			throw new UnknownVersionError(slug, buildId);
-		}
+		const isNormalVersion = deviceTypeInfo.versions.includes(buildId);
 
-		return Promise.join(
-			getIsIgnored(normalizedSlug, buildId),
-			getDeviceTypeJson(normalizedSlug, buildId),
-			(ignored, hasDeviceTypeJson) => {
-				if (ignored || !hasDeviceTypeJson) {
+		return Promise.try(() => {
+			if (!isNormalVersion) {
+				return esrSystem.hasVersion(api, slug, buildId);
+			}
+			return false;
+		})
+			.tap(isESRVersion => {
+				if (!isNormalVersion && !isESRVersion) {
 					throw new UnknownVersionError(slug, buildId);
 				}
+			})
+			.then(isESRVersion => {
+				if (isNormalVersion) {
+					return Promise.join(
+						getIsIgnored(normalizedSlug, buildId),
+						getDeviceTypeJson(normalizedSlug, buildId),
+						(ignored, hasDeviceTypeJson) => {
+							if (ignored || !hasDeviceTypeJson) {
+								throw new UnknownVersionError(slug, buildId);
+							}
 
-				return getCompressedSize(normalizedSlug, buildId).tapCatch(err => {
+							return getCompressedSize(normalizedSlug, buildId).tapCatch(
+								err => {
+									captureException(
+										err,
+										`Failed to get device type ${slug} compressed size for version ${buildId}`,
+									);
+								},
+							);
+						},
+					);
+				}
+				// now we handle the ESR case
+				return getCompressedSize(
+					normalizedSlug,
+					buildId,
+					isESRVersion,
+				).tapCatch(err => {
 					captureException(
 						err,
-						`Failed to get device type ${slug} compressed size for version ${buildId}`,
+						`Failed to get device type ${slug} compressed size for esr version ${buildId}`,
 					);
 				});
-			},
-		);
+			});
 	});
 };
 
@@ -549,41 +589,47 @@ export const getImageVersions = (
 	api: PinejsClient,
 	slug: string,
 ): Promise<ImageVersions> => {
-	return findDeviceTypeInfoBySlug(api, slug).then(deviceTypeInfo => {
-		const deviceType = deviceTypeInfo.latest.deviceType;
-		const normalizedSlug = deviceType.slug;
+	return findDeviceTypeInfoBySlug(api, slug)
+		.then(deviceTypeInfo => {
+			return esrSystem.enrichDeviceType(api, slug).then(enriched => {
+				return _.assign({}, deviceTypeInfo, enriched);
+			});
+		})
+		.then(deviceTypeInfo => {
+			const deviceType = deviceTypeInfo.latest.deviceType;
+			const normalizedSlug = deviceType.slug;
 
-		return Promise.map(deviceTypeInfo.versions, buildId => {
-			return Promise.props({
-				buildId,
-				ignored: getIsIgnored(normalizedSlug, buildId),
-				hasDeviceTypeJson: getDeviceTypeJson(normalizedSlug, buildId),
-			}).catchReturn(undefined);
-		}).then(versionInfo => {
-			const filteredInfo = versionInfo.filter(
-				(buildInfo): buildInfo is NonNullable<typeof buildInfo> =>
-					buildInfo != null &&
-					!!buildInfo.hasDeviceTypeJson &&
-					!buildInfo.ignored,
-			);
-			if (_.isEmpty(filteredInfo) && !_.isEmpty(deviceTypeInfo.versions)) {
-				throw new InternalRequestError(
-					`Could not retrieve any image version for device type ${slug}`,
+			return Promise.map(deviceTypeInfo.versions, buildId => {
+				return Promise.props({
+					buildId,
+					ignored: getIsIgnored(normalizedSlug, buildId),
+					hasDeviceTypeJson: getDeviceTypeJson(normalizedSlug, buildId),
+				}).catchReturn(undefined);
+			}).then(versionInfo => {
+				const filteredInfo = versionInfo.filter(
+					(buildInfo): buildInfo is NonNullable<typeof buildInfo> =>
+						buildInfo != null &&
+						!!buildInfo.hasDeviceTypeJson &&
+						!buildInfo.ignored,
 				);
-			}
+				if (_.isEmpty(filteredInfo) && !_.isEmpty(deviceTypeInfo.versions)) {
+					throw new InternalRequestError(
+						`Could not retrieve any image version for device type ${slug}`,
+					);
+				}
 
-			const buildIds = filteredInfo.map(({ buildId }) => buildId);
+				const buildIds = filteredInfo.map(({ buildId }) => buildId);
 
-			const result: ImageVersions = {
-				versions: buildIds,
-				latest: buildIds[0],
-			};
+				const result: ImageVersions = {
+					versions: buildIds,
+					latest: buildIds[0],
+				};
 
-			if (deviceTypeInfo.esr) {
-				result.esr = deviceTypeInfo.esr;
-			}
+				if (deviceTypeInfo.esr) {
+					result.esr = deviceTypeInfo.esr;
+				}
 
-			return result;
+				return result;
+			});
 		});
-	});
 };
