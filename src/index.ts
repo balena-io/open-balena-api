@@ -189,7 +189,7 @@ function startServer(
 ): Promise<Server> {
 	let server: Server;
 	return Promise.fromCallback(cb => {
-		server = app.listen(port, cb);
+		server = app.listen(port, cb as (...args: any[]) => void);
 	}).then(() => {
 		console.log(`Server listening in ${app.get('env')} mode on port ${port}`);
 		return server;

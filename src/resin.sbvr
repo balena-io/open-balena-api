@@ -290,7 +290,7 @@ Term: device
 
 	Fact type: device has api heartbeat state
 		Necessity: each device has exactly one api heartbeat state
-		Necessity: each device has an api heartbeat state that is equal to "online" or "offline" or "timeout" or "unknown"
+		Definition: "online" or "offline" or "timeout" or "unknown"
 
 	Fact type: device has env var name
 		Term Form: device environment variable
