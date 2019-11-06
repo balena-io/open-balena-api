@@ -11,7 +11,7 @@ import {
 	Subscription,
 } from '../struct';
 import { captureException } from '../../../platform/errors';
-import { sbvrUtils } from '../../../platform';
+import { sbvrUtils } from '@resin/pinejs';
 import { REDIS_HOST, REDIS_PORT, DAYS, MINUTES } from '../../config';
 
 const { ServiceUnavailableError, BadRequestError } = sbvrUtils;
@@ -34,16 +34,6 @@ const schema = avro.Type.forSchema({
 		{ name: 'message', type: 'string' },
 	],
 });
-
-export interface DeviceLog {
-	message: string;
-	// These 2 dates are timestamps including milliseconds
-	createdAt: number;
-	timestamp: number;
-	isSystem: boolean;
-	isStdErr: boolean;
-	serviceId?: number;
-}
 
 export class RedisBackend implements DeviceLogsBackend {
 	private cmds: redis.RedisClient;
