@@ -194,7 +194,7 @@ const resolveAccess = async (
 const authorizeRequest = (
 	req: Request,
 	scopes: string[],
-): Resolvable<Access[]> => {
+): Access[] | PromiseLike<Access[]> => {
 	const parsedScopes: Scope[] = _(scopes)
 		.map(scope => parseScope(req, scope))
 		.compact()
@@ -291,7 +291,7 @@ export const token: RequestHandler = async (req, res) => {
 			authorizeRequest(req, scopes),
 		]);
 		res.send({
-			token: generateToken(sub, REGISTRY2_HOST, access),
+			token: generateToken(sub, REGISTRY2_HOST, access!),
 		});
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {

@@ -35,7 +35,7 @@
     "@types/jsonwebtoken": "^8.3.4",
     "@types/lodash": "^4.14.144",
     "@types/memoizee": "^0.4.3",
-    "@types/node": "^12.12.5",
+    "@types/node": "^12.12.6",
     "@types/node-uuid": "0.0.28",
     "@types/on-finished": "^2.3.1",
     "@types/passport-jwt": "^3.0.2",
@@ -46,7 +46,7 @@
     "@types/rsmq": "^0.3.27",
     "array-sort": "^1.0.0",
     "avsc": "^5.4.16",
-    "aws-sdk": "^2.562.0",
+    "aws-sdk": "^2.565.0",
     "basic-auth": "^2.0.1",
     "bluebird": "^3.7.1",
     "body-parser": "^1.19.0",
@@ -79,7 +79,7 @@
     "thirty-two": "^1.0.0",
     "ts-node": "^7.0.1",
     "typed-error": "^3.1.0",
-    "typescript": "^3.6.4"
+    "typescript": "^3.7.2"
   },
   "devDependencies": {
     "@types/chai": "^4.2.4",
