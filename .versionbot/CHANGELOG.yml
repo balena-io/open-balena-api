@@ -1,4 +1,14 @@
 - commits:
+    - subject: Update typescript to 3.7
+      hash: b598dd8254c6710907f9458fd39e7c110b923580
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.42.1
+  date: 2019-11-07T16:34:45.680Z
+- commits:
     - subject: Use enum definitions instead of rules
       hash: debcc4d5abe822182771b1fe97697a570a473119
       body: ''
