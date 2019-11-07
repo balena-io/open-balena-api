@@ -22,7 +22,6 @@ async function onInitModel() {
 }
 
 async function onInitHooks() {
-	const { resinApi } = await import('./src/platform');
 	const { createAll } = await import('./src/platform/permissions');
 	const auth = await import('./src/lib/auth');
 	const permissionNames = _.uniq(
@@ -34,7 +33,7 @@ async function onInitHooks() {
 	});
 
 	// this will pre-fetch the device types and populate the cache...
-	deviceTypes(resinApi);
+	deviceTypes(sbvrUtils.api.resin);
 
 	return sbvrUtils.db
 		.transaction(tx =>

@@ -8,7 +8,7 @@ import {
 } from '../platform/errors';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { resinApi, PinejsClient } from '../platform';
+import { PinejsClient } from '../platform';
 import { checkInt, isValidInteger, getIP, varListInsert } from '../lib/utils';
 import { createDeviceApiKey } from '../lib/api-keys';
 import * as randomstring from 'randomstring';
@@ -24,7 +24,7 @@ import {
 
 export { proxy } from '../lib/device-proxy';
 
-const { BadRequestError, UnauthorizedError, root } = sbvrUtils;
+const { BadRequestError, UnauthorizedError, root, api } = sbvrUtils;
 
 export const register: RequestHandler = (req, res) =>
 	Promise.try(() => {
@@ -65,7 +65,7 @@ export const register: RequestHandler = (req, res) =>
 		}
 
 		return sbvrUtils.db.transaction(tx =>
-			resinApi
+			api.resin
 				.post({
 					resource: 'device',
 					passthrough: { req, tx },
@@ -160,7 +160,7 @@ export const receiveOnlineDependentDevices: RequestHandler = (req, res) =>
 			throw new BadRequestError('expiry_date not found or invalid');
 		}
 
-		const resinApiTx = resinApi.clone({ passthrough: { req } });
+		const resinApiTx = api.resin.clone({ passthrough: { req } });
 
 		// Get all existing dependent devices, these are used figure out
 		// which of the online_dependent_devices needs to be provisioned
@@ -292,7 +292,7 @@ const releaseExpand = {
 		},
 	},
 };
-const stateQuery = resinApi.prepare<{ uuid: string }>({
+const stateQuery = api.resin.prepare<{ uuid: string }>({
 	resource: 'device',
 	options: {
 		$select: ['device_name', 'os_version'],
@@ -806,7 +806,7 @@ export const statePatch: RequestHandler = (req, res) => {
 
 	return sbvrUtils.db
 		.transaction(tx => {
-			const resinApiTx = resinApi.clone({ passthrough: { req, custom, tx } });
+			const resinApiTx = api.resin.clone({ passthrough: { req, custom, tx } });
 
 			return resinApiTx
 				.get({

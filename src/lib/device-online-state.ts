@@ -2,7 +2,6 @@ import * as Bluebird from 'bluebird';
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './env-vars';
 import { noop } from 'lodash';
 import { sbvrUtils } from '@resin/pinejs';
-import { resinApi } from '../platform';
 import { captureException } from '../platform/errors';
 import {
 	createPromisifedRedisClient,
@@ -16,9 +15,9 @@ import {
 	API_HEARTBEAT_STATE_TIMEOUT_SECONDS,
 } from './config';
 
-const { root } = sbvrUtils;
+const { root, api } = sbvrUtils;
 
-const getPollIntervalForDevice = resinApi.prepare<{ uuid: string }>({
+const getPollIntervalForDevice = api.resin.prepare<{ uuid: string }>({
 	resource: 'device_config_variable',
 	passthrough: { req: root },
 	options: {
@@ -48,24 +47,26 @@ const getPollIntervalForDevice = resinApi.prepare<{ uuid: string }>({
 	},
 });
 
-const getPollIntervalForParentApplication = resinApi.prepare<{ uuid: string }>({
-	resource: 'application_config_variable',
-	passthrough: { req: root },
-	options: {
-		$select: ['name', 'value'],
-		$top: 1,
-		$filter: {
-			application: {
-				$any: {
-					$alias: 'a',
-					$expr: {
-						a: {
-							owns__device: {
-								$any: {
-									$alias: 'd',
-									$expr: {
-										d: {
-											uuid: { '@': 'uuid' },
+const getPollIntervalForParentApplication = api.resin.prepare<{ uuid: string }>(
+	{
+		resource: 'application_config_variable',
+		passthrough: { req: root },
+		options: {
+			$select: ['name', 'value'],
+			$top: 1,
+			$filter: {
+				application: {
+					$any: {
+						$alias: 'a',
+						$expr: {
+							a: {
+								owns__device: {
+									$any: {
+										$alias: 'd',
+										$expr: {
+											d: {
+												uuid: { '@': 'uuid' },
+											},
 										},
 									},
 								},
@@ -73,21 +74,21 @@ const getPollIntervalForParentApplication = resinApi.prepare<{ uuid: string }>({
 						},
 					},
 				},
+				name: {
+					$in: [
+						'BALENA_SUPERVISOR_POLL_INTERVAL',
+						'RESIN_SUPERVISOR_POLL_INTERVAL',
+					],
+				},
 			},
-			name: {
-				$in: [
-					'BALENA_SUPERVISOR_POLL_INTERVAL',
-					'RESIN_SUPERVISOR_POLL_INTERVAL',
-				],
+			$orderby: {
+				// we want the last value that would have been passed
+				// to the supervisor, as that is the one it would have used.
+				name: 'desc',
 			},
-		},
-		$orderby: {
-			// we want the last value that would have been passed
-			// to the supervisor, as that is the one it would have used.
-			name: 'desc',
 		},
 	},
-});
+);
 
 // the maximum time the supervisor will wait between polls...
 export const POLL_JITTER_FACTOR = 1.5;
@@ -170,7 +171,7 @@ class DeviceOnlineStateManager {
 			api_heartbeat_state: newState,
 		};
 
-		return resinApi
+		return api.resin
 			.patch({
 				resource: 'device',
 				options: {

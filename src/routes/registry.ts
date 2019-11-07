@@ -6,7 +6,6 @@ import * as uuid from 'node-uuid';
 import * as BasicAuth from 'basic-auth';
 import * as jsonwebtoken from 'jsonwebtoken';
 import { sbvrUtils } from '@resin/pinejs';
-import { resinApi } from '../platform';
 import * as Bluebird from 'bluebird';
 
 import { User as DbUser } from '../models';
@@ -23,7 +22,7 @@ import {
 import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
 import * as memoize from 'memoizee';
 
-const { UnauthorizedError, root } = sbvrUtils;
+const { UnauthorizedError, root, api } = sbvrUtils;
 
 // Set a large expiry so that huge pulls/pushes go through
 // without needing to re-authenticate mid-process.
@@ -118,7 +117,7 @@ const resolveWriteAccess = async (
 		return false;
 	}
 	try {
-		const res = (await resinApi.post({
+		const res = (await api.resin.post({
 			url: `image(${image.id})/canAccess`,
 			passthrough: { req },
 			body: { action: 'push' },
@@ -152,7 +151,7 @@ const resolveAccess = async (
 		allowedActions = defaultActions;
 	} else {
 		try {
-			const [image] = (await resinApi.get({
+			const [image] = (await api.resin.get({
 				resource: 'image',
 				passthrough: { req },
 				options: {
@@ -307,7 +306,7 @@ const $getSubject = memoize(
 		if (subject) {
 			try {
 				// Try to resolve as a device api key first, using the passed in subject
-				const [device] = (await resinApi.get({
+				const [device] = (await api.resin.get({
 					resource: 'device',
 					passthrough: { req: root },
 					options: {
@@ -339,7 +338,7 @@ const $getSubject = memoize(
 			} catch {}
 		}
 		// If resolving as a device api key fails then instead try to resolve to the user api key username
-		const [user] = (await resinApi.get({
+		const [user] = (await api.resin.get({
 			resource: 'user',
 			passthrough: { req: root },
 			options: {

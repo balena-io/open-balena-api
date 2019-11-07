@@ -2,10 +2,9 @@ import { reqHasPermission, getUser } from './auth';
 import { retrieveAPIKey } from './api-keys';
 import { RequestHandler } from 'express';
 
-import { resinApi } from './index';
 import { sbvrUtils } from '@resin/pinejs';
 
-const { root } = sbvrUtils;
+const { root, api } = sbvrUtils;
 
 export const authenticated: RequestHandler = (req, res, next) =>
 	getUser(req, false)
@@ -77,7 +76,7 @@ export const permissionRequired = (permission: string): RequestHandler => (
 	}
 };
 
-const checkDeviceExistsQuery = resinApi.prepare<{ uuid: string }>({
+const checkDeviceExistsQuery = api.resin.prepare<{ uuid: string }>({
 	resource: 'device/$count',
 	passthrough: { req: root },
 	options: {

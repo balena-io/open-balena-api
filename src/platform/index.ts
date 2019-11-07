@@ -14,13 +14,8 @@ export type PinejsClient = sbvrUtils.PinejsClient;
 
 const { root, api } = sbvrUtils;
 
-export const resinApi = api.resin;
 if (sbvrUtils.db.readTransaction == null) {
 	throw new Error('`readTransaction` is unsupported');
-}
-
-if (!resinApi || !api.Auth) {
-	throw new Error('PineJS is not initialized!');
 }
 
 // TODO: Potential races here. They are unlikely but not impossible. Will fix
@@ -113,7 +108,7 @@ export const getOrInsertModelId = (
 	resource: string,
 	body: AnyObject,
 	tx?: Tx,
-): Bluebird<{ id: number }> => $getOrInsertId(resinApi, resource, body, tx);
+): Bluebird<{ id: number }> => $getOrInsertId(api.resin, resource, body, tx);
 
 export const updateOrInsert = (
 	resource: string,
@@ -128,7 +123,7 @@ export const updateOrInsertModel = (
 	updateFields: AnyObject,
 	tx?: Tx,
 ): Bluebird<{ id: number }> =>
-	$updateOrInsert(resinApi, resource, filter, updateFields, tx);
+	$updateOrInsert(api.resin, resource, filter, updateFields, tx);
 
 type TxFn = (tx: Tx, ...args: any[]) => PromiseLike<any>;
 type TxFnArgs<T> = T extends (tx: Tx, ...args: infer U) => any ? U : any[];

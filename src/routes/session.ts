@@ -7,13 +7,12 @@ import {
 } from '../platform/auth';
 import { User as DbUser } from '../models';
 import { sbvrUtils } from '@resin/pinejs';
-import { resinApi } from '../platform';
 import { captureException, handleHttpErrors } from '../platform/errors';
 import { resetCounter } from '../lib/rate-limiting';
 import { RequestHandler } from 'express';
 import { SetupOptions } from '..';
 
-const { BadRequestError, NotFoundError, root } = sbvrUtils;
+const { BadRequestError, NotFoundError, root, api } = sbvrUtils;
 
 export const whoami: RequestHandler = async (req, res) => {
 	try {
@@ -25,7 +24,7 @@ export const whoami: RequestHandler = async (req, res) => {
 			// First we check to see if this token can access the user resource,
 			// then if it can, we retrieve user document that corresponds to the
 			// `actor` value on the token using root privileges.
-			const [userWithId] = (await resinApi.get({
+			const [userWithId] = (await api.resin.get({
 				resource: 'user',
 				passthrough: { req },
 				options: {
@@ -43,7 +42,7 @@ export const whoami: RequestHandler = async (req, res) => {
 			if (userWithId) {
 				// If we reach this step, then the token has access and we can
 				// retrieve the user document in full
-				const { id, username, email } = (await resinApi.get({
+				const { id, username, email } = (await api.resin.get({
 					resource: 'user',
 					passthrough: { req: root },
 					id: userWithId.id,

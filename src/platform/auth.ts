@@ -3,7 +3,7 @@ import { User as DbUser } from '../models';
 import { createJwt, SignOptions, User } from './jwt';
 import { retrieveAPIKey } from './api-keys';
 import { sbvrUtils } from '@resin/pinejs';
-import { Tx, resinApi } from './index';
+import { Tx } from './index';
 import * as Promise from 'bluebird';
 import * as crypto from 'crypto';
 import * as base32 from 'thirty-two';
@@ -19,6 +19,7 @@ const {
 	NotFoundError,
 	InternalRequestError,
 	root,
+	api,
 } = sbvrUtils;
 
 const SUDO_TOKEN_VALIDITY = 20 * 60 * 1000;
@@ -65,7 +66,7 @@ export const validatePassword = (password?: string) => {
 // sessions.
 export const setPassword = (user: AnyObject, newPassword: string, tx?: Tx) =>
 	generateNewJwtSecret().then(newJwtSecret =>
-		resinApi.patch({
+		api.resin.patch({
 			resource: 'user',
 			id: user.id,
 			passthrough: {
@@ -110,7 +111,7 @@ export const checkUserPassword = (
 	password: string,
 	userId: number,
 ): Promise<void> =>
-	resinApi
+	api.resin
 		.get({
 			resource: 'user',
 			id: userId,
@@ -179,7 +180,7 @@ export function setUserTokenDataCallback(fn: GetUserTokenDataFn) {
 }
 
 let $getUserTokenDataCallback: GetUserTokenDataFn = (userId, existingToken) => {
-	const userData = resinApi.get({
+	const userData = api.resin.get({
 		resource: 'user',
 		id: userId,
 		passthrough: { req: root },
@@ -249,7 +250,7 @@ export const updateUserXHR = (res: Response, req: Request): Promise<void> =>
 export const reqHasPermission = (req: Request, permission: string): boolean =>
 	userHasPermission(req.apiKey || req.user, permission);
 
-const getUserQuery = resinApi.prepare<{ key: string }>({
+const getUserQuery = api.resin.prepare<{ key: string }>({
 	resource: 'user',
 	passthrough: { req: root },
 	options: {
@@ -345,7 +346,7 @@ export const findUser = (
 	}
 	const $select = ['id', 'actor', 'username', 'password'] as const;
 	type UserResult = Pick<DbUser, typeof $select[number]>;
-	return resinApi
+	return api.resin
 		.get({
 			resource: 'user',
 			passthrough: {
@@ -395,7 +396,7 @@ export const registerUser = (
 		})
 		.then(encodedKey => {
 			// Create the user in the platform
-			return resinApi.post({
+			return api.resin.post({
 				resource: 'user',
 				body: {
 					...userData,

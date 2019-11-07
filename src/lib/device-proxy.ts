@@ -13,8 +13,6 @@ import { sbvrUtils } from '@resin/pinejs';
 import { Request, Response } from 'express';
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
 
-import { resinApi } from '../platform';
-
 import { RequestResponse, requestAsync } from './request';
 import { API_VPN_SERVICE_API_KEY } from './config';
 
@@ -24,7 +22,7 @@ const DEVICE_REQUEST_TIMEOUT = 50000;
 
 const DELAY_BETWEEN_DEVICE_REQUEST = 50;
 
-const { BadRequestError, root } = sbvrUtils;
+const { BadRequestError, root, api } = sbvrUtils;
 
 const badSupervisorResponse = (
 	req: Request,
@@ -192,7 +190,7 @@ export function requestDevices({
 	if (!['PUT', 'PATCH', 'POST', 'HEAD', 'DELETE', 'GET'].includes(method)) {
 		return Promise.reject(new BadRequestError(`Invalid method '${method}'`));
 	}
-	return resinApi
+	return api.resin
 		.get({
 			resource: 'device',
 			options: {
@@ -218,7 +216,7 @@ export function requestDevices({
 				throw new NoDevicesFoundError('No online device(s) found');
 			}
 			// And now fetch device data with full privs
-			return resinApi
+			return api.resin
 				.get({
 					resource: 'device',
 					passthrough: { req: root },

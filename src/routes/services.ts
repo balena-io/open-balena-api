@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
-import { resinApi } from '../platform';
 import { captureException, handleHttpErrors } from '../platform/errors';
+import { sbvrUtils } from '@resin/pinejs';
 
-const authQuery = resinApi.prepare<{ uuid: string }>({
+const { api } = sbvrUtils;
+
+const authQuery = api.resin.prepare<{ uuid: string }>({
 	resource: 'device',
 	options: {
 		$select: 'id',
@@ -11,7 +13,7 @@ const authQuery = resinApi.prepare<{ uuid: string }>({
 		},
 	},
 });
-const clientConnectQuery = resinApi.prepare<{ uuid: string }>({
+const clientConnectQuery = api.resin.prepare<{ uuid: string }>({
 	method: 'PATCH',
 	resource: 'device',
 	options: {
@@ -23,7 +25,7 @@ const clientConnectQuery = resinApi.prepare<{ uuid: string }>({
 		is_connected_to_vpn: true,
 	},
 });
-const clientDisconnectQuery = resinApi.prepare<{
+const clientDisconnectQuery = api.resin.prepare<{
 	uuid: string;
 	serviceId: number;
 }>({

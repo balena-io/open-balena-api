@@ -4,10 +4,9 @@ import * as Promise from 'bluebird';
 import * as rSemver from 'resin-semver';
 import { reqHasPermission } from '../platform/auth';
 import { sbvrUtils } from '@resin/pinejs';
-import { resinApi } from '../platform';
 import { captureException } from '../platform/errors';
 
-const { UnauthorizedError } = sbvrUtils;
+const { UnauthorizedError, api } = sbvrUtils;
 
 const HOSTOS_ACCESS_MIN_OS_VER = '2.0.0';
 
@@ -15,7 +14,7 @@ export function hostOSAccess(
 	req: express.Request,
 	res: express.Response,
 ): Promise<void> {
-	return resinApi
+	return api.resin
 		.get({
 			resource: 'device',
 			options: {
@@ -41,7 +40,7 @@ export function hostOSAccess(
 
 			const device = devices[0];
 
-			return resinApi
+			return api.resin
 				.post({
 					resource: 'device',
 					id: device.id,

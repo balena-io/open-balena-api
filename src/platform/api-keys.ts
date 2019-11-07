@@ -3,7 +3,7 @@ import * as randomstring from 'randomstring';
 import * as _ from 'lodash';
 import { isJWT } from './jwt';
 import { sbvrUtils } from '@resin/pinejs';
-import { Tx, resinApi } from './index';
+import { Tx } from './index';
 import { Request } from 'express';
 
 const { root, api } = sbvrUtils;
@@ -27,7 +27,7 @@ const $createApiKey = (
 	actorTypeID: number,
 	{ apiKey, tx, name, description }: InternalApiKeyOptions,
 ): Promise<string> =>
-	resinApi
+	api.resin
 		.get({
 			resource: actorType,
 			id: actorTypeID,
@@ -42,7 +42,7 @@ const $createApiKey = (
 				throw new Error(`No ${actorType} found to associate with the api key`);
 			}
 
-			return resinApi
+			return api.resin
 				.post({
 					url: `${actorType}(${actorTypeID})/canAccess`,
 					passthrough: { req, tx },

@@ -2,17 +2,19 @@ import * as Promise from 'bluebird';
 import { RequestHandler } from 'express';
 import * as _ from 'lodash';
 import * as deviceTypesLib from '../lib/device-types';
-import { resinApi } from '../platform';
 import {
 	captureException,
 	translateError,
 	handleHttpErrors,
 } from '../platform/errors';
+import { sbvrUtils } from '@resin/pinejs';
+
+const { api } = sbvrUtils;
 
 export const getDeviceTypes: RequestHandler = (req, res) => {
-	const api = resinApi.clone({ passthrough: { req } });
+	const resinApi = api.resin.clone({ passthrough: { req } });
 	return deviceTypesLib
-		.deviceTypes(api)
+		.deviceTypes(resinApi)
 		.then(deviceTypes => {
 			res.json(deviceTypes);
 		})
@@ -27,9 +29,9 @@ export const getDeviceTypes: RequestHandler = (req, res) => {
 
 export const getDeviceType: RequestHandler = (req, res) =>
 	Promise.try(() => {
-		const api = resinApi.clone({ passthrough: { req } });
+		const resinApi = api.resin.clone({ passthrough: { req } });
 		const slug = deviceTypesLib.validateSlug(req.params.deviceType);
-		return deviceTypesLib.findBySlug(api, slug);
+		return deviceTypesLib.findBySlug(resinApi, slug);
 	})
 		.then(data => res.json(data))
 		.catch(err => {
@@ -44,9 +46,9 @@ export const getDeviceType: RequestHandler = (req, res) =>
 
 export const listAvailableImageVersions: RequestHandler = (req, res) =>
 	Promise.try(() => {
-		const api = resinApi.clone({ passthrough: { req } });
+		const resinApi = api.resin.clone({ passthrough: { req } });
 		const slug = deviceTypesLib.validateSlug(req.params.deviceType);
-		return deviceTypesLib.getImageVersions(api, slug);
+		return deviceTypesLib.getImageVersions(resinApi, slug);
 	})
 		.then(data => res.json(data))
 		.catch(err => {
@@ -62,10 +64,10 @@ const DOWNLOAD_TIMEOUT = 30000; // we must respond within this time
 export const downloadImageSize: RequestHandler = (req, res) => {
 	req.setTimeout(DOWNLOAD_TIMEOUT, _.noop);
 	return Promise.try(() => {
-		const api = resinApi.clone({ passthrough: { req } });
+		const resinApi = api.resin.clone({ passthrough: { req } });
 		const slug = deviceTypesLib.validateSlug(req.params.deviceType);
 		const buildId: string = req.params.version || 'latest';
-		return deviceTypesLib.getImageSize(api, slug, buildId);
+		return deviceTypesLib.getImageSize(resinApi, slug, buildId);
 	})
 		.then(size => {
 			res.send({ size });
