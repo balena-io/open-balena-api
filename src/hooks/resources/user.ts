@@ -4,7 +4,8 @@ import * as Promise from 'bluebird';
 import { assignUserRole } from '../../platform/permissions';
 import { captureException } from '../../platform/errors';
 
-import { sbvrUtils, authApi, root, createActor } from '../../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { authApi, root, createActor } from '../../platform';
 import { getUser } from '../../platform/auth';
 
 sbvrUtils.addPureHook('POST', 'resin', 'user', {

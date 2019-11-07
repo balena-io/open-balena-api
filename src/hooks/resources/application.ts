@@ -5,8 +5,8 @@ import { resolveDeviceType } from '../common';
 import { postDevices } from '../../lib/device-proxy';
 import { Default as DefaultApplicationType } from '../../lib/application-types';
 
+import { sbvrUtils } from '@resin/pinejs';
 import {
-	sbvrUtils,
 	root,
 	createActor,
 	getCurrentRequestAffectedIds,

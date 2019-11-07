@@ -3,7 +3,8 @@ import * as _ from 'lodash';
 import * as Promise from 'bluebird';
 import * as rSemver from 'resin-semver';
 import { reqHasPermission } from '../platform/auth';
-import { resinApi, sbvrUtils } from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { resinApi } from '../platform';
 import { captureException } from '../platform/errors';
 
 const { UnauthorizedError } = sbvrUtils;

@@ -9,7 +9,7 @@ import {
 } from '../platform/errors';
 
 import { checkInt } from './utils';
-import { sbvrUtils } from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
 import { Request, Response } from 'express';
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
 

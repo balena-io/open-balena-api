@@ -6,7 +6,8 @@ import {
 	comparePassword,
 } from '../platform/auth';
 import { User as DbUser } from '../models';
-import { resinApi, root, sbvrUtils } from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { resinApi, root } from '../platform';
 import { captureException, handleHttpErrors } from '../platform/errors';
 import { resetCounter } from '../lib/rate-limiting';
 import { RequestHandler } from 'express';

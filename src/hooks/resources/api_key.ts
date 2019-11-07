@@ -1,9 +1,5 @@
-import {
-	sbvrUtils,
-	authApi,
-	root,
-	getCurrentRequestAffectedIds,
-} from '../../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { authApi, root, getCurrentRequestAffectedIds } from '../../platform';
 
 import { captureException } from '../../platform/errors';
 import * as Promise from 'bluebird';

@@ -4,7 +4,8 @@ import * as _ from 'lodash';
 import { InternalRequestError } from '@resin/pinejs/out/sbvr-api/errors';
 import * as deviceTypesLib from '@resin.io/device-types';
 import * as semver from 'resin-semver';
-import { sbvrUtils, PinejsClient, resinApi, root, Tx } from '../../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { PinejsClient, resinApi, root, Tx } from '../../platform';
 import { captureException } from '../../platform/errors';
 import {
 	getCompressedSize,

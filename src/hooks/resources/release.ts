@@ -1,6 +1,7 @@
 import * as Promise from 'bluebird';
 import * as _ from 'lodash';
-import { sbvrUtils, addDeleteHookForDependents } from '../../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { addDeleteHookForDependents } from '../../platform';
 import { HookArgs } from '@resin/pinejs/out/sbvr-api/sbvr-utils';
 
 const updateLatestRelease = (id: number, { request, api }: HookArgs) => {

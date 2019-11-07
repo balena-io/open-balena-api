@@ -7,7 +7,6 @@ import { Tx } from '@resin/pinejs/out/database-layer/db';
 export { Tx } from '@resin/pinejs/out/database-layer/db';
 
 import { sbvrUtils } from '@resin/pinejs';
-export { sbvrUtils } from '@resin/pinejs';
 
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
 

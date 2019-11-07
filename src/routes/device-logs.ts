@@ -16,13 +16,8 @@ import {
 } from '../lib/device-logs/struct';
 import { Supervisor } from '../lib/device-logs/supervisor';
 import { captureException, handleHttpErrors } from '../platform/errors';
-import {
-	PinejsClient,
-	resinApi,
-	sbvrUtils,
-	Tx,
-	wrapInTransaction,
-} from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { PinejsClient, resinApi, Tx, wrapInTransaction } from '../platform';
 import onFinished = require('on-finished');
 import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
 

@@ -10,8 +10,8 @@ import {
 import * as haikuName from '../../lib/haiku-name';
 import { postDevices } from '../../lib/device-proxy';
 
+import { sbvrUtils } from '@resin/pinejs';
 import {
-	sbvrUtils,
 	root,
 	PinejsClient,
 	createActor,

@@ -2,7 +2,7 @@
 // Declares permissions assigned to default roles and API keys
 //
 
-import { sbvrUtils } from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
 import { API_VPN_SERVICE_API_KEY, VPN_SERVICE_API_KEY } from './config';
 
 const matchesActor = 'actor eq @__ACTOR_ID';

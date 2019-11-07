@@ -2,7 +2,8 @@ import * as Promise from 'bluebird';
 import * as randomstring from 'randomstring';
 import * as _ from 'lodash';
 import { isJWT } from './jwt';
-import { Tx, sbvrUtils, resinApi, authApi, root, db } from './index';
+import { sbvrUtils } from '@resin/pinejs';
+import { Tx, resinApi, authApi, root, db } from './index';
 import { Request } from 'express';
 
 interface ApiKeyOptions {

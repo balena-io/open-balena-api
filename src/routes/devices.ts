@@ -7,7 +7,8 @@ import {
 	handleHttpErrors,
 } from '../platform/errors';
 
-import { resinApi, root, sbvrUtils, PinejsClient, db } from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { resinApi, root, PinejsClient, db } from '../platform';
 import { checkInt, isValidInteger, getIP, varListInsert } from '../lib/utils';
 import { createDeviceApiKey } from '../lib/api-keys';
 import * as randomstring from 'randomstring';

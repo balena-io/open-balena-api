@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { sbvrUtils } from '../../platform';
+import { sbvrUtils } from '@resin/pinejs';
 import {
 	DeviceLog,
 	LogWriteContext,

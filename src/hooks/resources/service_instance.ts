@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { sbvrUtils } from '../../platform';
+import { sbvrUtils } from '@resin/pinejs';
 import { getIP } from '../../lib/utils';
 import { getServiceFromRequest } from '../../lib/auth';
 

@@ -5,7 +5,8 @@ import * as _ from 'lodash';
 import * as uuid from 'node-uuid';
 import * as BasicAuth from 'basic-auth';
 import * as jsonwebtoken from 'jsonwebtoken';
-import { resinApi, root, sbvrUtils } from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { resinApi, root } from '../platform';
 import * as Bluebird from 'bluebird';
 
 import { User as DbUser } from '../models';

@@ -3,6 +3,7 @@ import * as express from 'express';
 import { setup } from './src';
 import config = require('./config');
 import { version } from './package.json';
+import { sbvrUtils } from '@resin/pinejs';
 
 async function onInitMiddleware(app: express.Application) {
 	const { forwardRequests } = await import('./src/platform/versions');
@@ -53,7 +54,7 @@ async function createSuperuser() {
 
 	console.log('Creating superuser account...');
 
-	const { db, sbvrUtils } = await import('./src/platform');
+	const { db } = await import('./src/platform');
 	const { registerUser, updatePasswordIfNeeded } = await import(
 		'./src/platform/auth'
 	);

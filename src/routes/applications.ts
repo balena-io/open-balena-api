@@ -10,7 +10,8 @@ import {
 	translateError,
 	handleHttpErrors,
 } from '../platform/errors';
-import { resinApi, sbvrUtils } from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { resinApi } from '../platform';
 import { RequestHandler, Request } from 'express';
 
 const { UnauthorizedError } = sbvrUtils;
