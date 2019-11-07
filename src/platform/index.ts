@@ -12,14 +12,14 @@ import { captureException } from './errors';
 
 export type PinejsClient = sbvrUtils.PinejsClient;
 
-export const resinApi = sbvrUtils.api.resin;
-export const authApi = sbvrUtils.api.Auth;
-const { root } = sbvrUtils;
+const { root, api } = sbvrUtils;
+
+export const resinApi = api.resin;
 if (sbvrUtils.db.readTransaction == null) {
 	throw new Error('`readTransaction` is unsupported');
 }
 
-if (!resinApi || !authApi) {
+if (!resinApi || !api.Auth) {
 	throw new Error('PineJS is not initialized!');
 }
 
@@ -108,7 +108,7 @@ export const getOrInsertId = (
 	resource: string,
 	body: AnyObject,
 	tx?: Tx,
-): Bluebird<{ id: number }> => $getOrInsertId(authApi, resource, body, tx);
+): Bluebird<{ id: number }> => $getOrInsertId(api.Auth, resource, body, tx);
 export const getOrInsertModelId = (
 	resource: string,
 	body: AnyObject,
@@ -121,7 +121,7 @@ export const updateOrInsert = (
 	updateFields: AnyObject,
 	tx?: Tx,
 ): Bluebird<{ id: number }> =>
-	$updateOrInsert(authApi, resource, filter, updateFields, tx);
+	$updateOrInsert(api.Auth, resource, filter, updateFields, tx);
 export const updateOrInsertModel = (
 	resource: string,
 	filter: PinejsClientCoreFactory.FilterObj,
@@ -173,18 +173,16 @@ export const createActor = ({
 	request,
 	tx,
 }: sbvrUtils.HookArgs): Bluebird<void> => {
-	return authApi
-		.post({
-			resource: 'actor',
-			passthrough: {
-				tx,
-				req: root,
-			},
-			options: { returnResource: false },
-		})
-		.then((result: AnyObject) => {
-			request.values.actor = result.id;
-		});
+	return api.Auth.post({
+		resource: 'actor',
+		passthrough: {
+			tx,
+			req: root,
+		},
+		options: { returnResource: false },
+	}).then((result: AnyObject) => {
+		request.values.actor = result.id;
+	});
 };
 
 export function addDeleteHookForDependents(

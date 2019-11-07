@@ -3,10 +3,10 @@ import * as randomstring from 'randomstring';
 import * as _ from 'lodash';
 import { isJWT } from './jwt';
 import { sbvrUtils } from '@resin/pinejs';
-import { Tx, resinApi, authApi } from './index';
+import { Tx, resinApi } from './index';
 import { Request } from 'express';
 
-const { root } = sbvrUtils;
+const { root, api } = sbvrUtils;
 
 interface ApiKeyOptions {
 	apiKey?: string;
@@ -56,7 +56,7 @@ const $createApiKey = (
 						throw new sbvrUtils.ForbiddenError();
 					}
 
-					const authApiTx = authApi.clone({
+					const authApiTx = api.Auth.clone({
 						passthrough: {
 							tx,
 							req: root,
