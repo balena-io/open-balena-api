@@ -12,7 +12,6 @@ import {
 	getIsIgnored,
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
-import { db } from '../../platform';
 
 const { InternalRequestError } = sbvrUtils;
 export const { BadRequestError, NotFoundError } = sbvrUtils;
@@ -294,7 +293,7 @@ function syncDataModel(
 		);
 		return;
 	}
-	return db.transaction(tx => {
+	return sbvrUtils.db.transaction(tx => {
 		return Promise.each(Object.values(types), deviceTypeInfo => {
 			const deviceType = deviceTypeInfo.latest.deviceType;
 			return updateDTModel(deviceType, propertyMap, tx);

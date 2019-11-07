@@ -8,7 +8,7 @@ import {
 } from '../platform/errors';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { resinApi, root, PinejsClient, db } from '../platform';
+import { resinApi, root, PinejsClient } from '../platform';
 import { checkInt, isValidInteger, getIP, varListInsert } from '../lib/utils';
 import { createDeviceApiKey } from '../lib/api-keys';
 import * as randomstring from 'randomstring';
@@ -64,7 +64,7 @@ export const register: RequestHandler = (req, res) =>
 			req.apiKey.permissions.push('resin.device.create-device-api-key');
 		}
 
-		return db.transaction(tx =>
+		return sbvrUtils.db.transaction(tx =>
 			resinApi
 				.post({
 					resource: 'device',
@@ -395,7 +395,9 @@ export const state: RequestHandler = (req, res) => {
 		return res.send(400);
 	}
 
-	db.readTransaction(tx => stateQuery({ uuid }, undefined, { req, tx }))
+	sbvrUtils.db.readTransaction!(tx =>
+		stateQuery({ uuid }, undefined, { req, tx }),
+	)
 		.then(([device]: AnyObject[]) => {
 			if (!device) {
 				throw new UnauthorizedError();
@@ -802,7 +804,7 @@ export const statePatch: RequestHandler = (req, res) => {
 		custom.ipAddress = getIP(req);
 	}
 
-	return db
+	return sbvrUtils.db
 		.transaction(tx => {
 			const resinApiTx = resinApi.clone({ passthrough: { req, custom, tx } });
 

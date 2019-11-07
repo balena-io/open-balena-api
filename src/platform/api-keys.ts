@@ -3,7 +3,7 @@ import * as randomstring from 'randomstring';
 import * as _ from 'lodash';
 import { isJWT } from './jwt';
 import { sbvrUtils } from '@resin/pinejs';
-import { Tx, resinApi, authApi, root, db } from './index';
+import { Tx, resinApi, authApi, root } from './index';
 import { Request } from 'express';
 
 interface ApiKeyOptions {
@@ -120,7 +120,7 @@ export const createApiKey = Promise.method(
 				options as InternalApiKeyOptions,
 			);
 		} else {
-			return db.transaction(tx => {
+			return sbvrUtils.db.transaction(tx => {
 				options.tx = tx;
 				return $createApiKey(
 					actorType,

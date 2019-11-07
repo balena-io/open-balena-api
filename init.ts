@@ -11,18 +11,18 @@ async function onInitMiddleware(app: express.Application) {
 }
 
 async function onInitModel() {
-	const { db, updateOrInsertModel } = await import('./src/platform');
+	const { updateOrInsertModel } = await import('./src/platform');
 	const appTypes = await import('./src/lib/application-types');
 	const insert = _.cloneDeep(appTypes.Default);
 	const filter = { slug: insert.slug };
 	delete insert.slug;
-	await db.transaction(tx =>
+	await sbvrUtils.db.transaction(tx =>
 		updateOrInsertModel('application_type', filter, insert, tx),
 	);
 }
 
 async function onInitHooks() {
-	const { db, resinApi } = await import('./src/platform');
+	const { resinApi } = await import('./src/platform');
 	const { createAll } = await import('./src/platform/permissions');
 	const auth = await import('./src/lib/auth');
 	const permissionNames = _.uniq(
@@ -36,7 +36,7 @@ async function onInitHooks() {
 	// this will pre-fetch the device types and populate the cache...
 	deviceTypes(resinApi);
 
-	return db
+	return sbvrUtils.db
 		.transaction(tx =>
 			createAll(tx, permissionNames, auth.ROLES, auth.KEYS, {}),
 		)
@@ -54,7 +54,6 @@ async function createSuperuser() {
 
 	console.log('Creating superuser account...');
 
-	const { db } = await import('./src/platform');
 	const { registerUser, updatePasswordIfNeeded } = await import(
 		'./src/platform/auth'
 	);
@@ -66,7 +65,7 @@ async function createSuperuser() {
 		password: SUPERUSER_PASSWORD,
 	};
 
-	return db
+	return sbvrUtils.db
 		.transaction(tx =>
 			registerUser(data, tx)
 				.then(() => {
