@@ -15,10 +15,12 @@ import {
 const { BadRequestError, ConflictError } = sbvrUtils;
 import { captureException } from '../../platform/errors';
 
-import { Hooks } from '@resin/pinejs/out/sbvr-api/sbvr-utils';
 import { VPN_HOST, VPN_PORT } from '../../lib/config';
 
-const checkDependentApplication: Hooks['POSTPARSE'] = ({ request, api }) => {
+const checkDependentApplication: sbvrUtils.Hooks['POSTPARSE'] = ({
+	request,
+	api,
+}) => {
 	const dependsOnApplicationId = request.values.belongs_to__application;
 	if (dependsOnApplicationId != null) {
 		api

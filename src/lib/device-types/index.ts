@@ -1,7 +1,6 @@
 import * as arraySort from 'array-sort';
 import * as Promise from 'bluebird';
 import * as _ from 'lodash';
-import { InternalRequestError } from '@resin/pinejs/out/sbvr-api/errors';
 import * as deviceTypesLib from '@resin.io/device-types';
 import * as semver from 'resin-semver';
 import { sbvrUtils } from '@resin/pinejs';
@@ -15,6 +14,7 @@ import {
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
 import { db } from '../../platform';
 
+const { InternalRequestError } = sbvrUtils;
 export const { BadRequestError, NotFoundError } = sbvrUtils;
 
 export type DeviceType = deviceTypesLib.DeviceType;

@@ -1,11 +1,11 @@
-import { HookRequest } from '@resin/pinejs/out/sbvr-api/sbvr-utils';
+import { sbvrUtils } from '@resin/pinejs';
 import { PinejsClient } from '../platform/index';
 import * as deviceTypes from '../lib/device-types';
 import * as Promise from 'bluebird';
 
 export const resolveDeviceType = (
 	api: PinejsClient,
-	request: HookRequest,
+	request: sbvrUtils.HookRequest,
 	fkValue: string,
 ) => {
 	return Promise.try(() => {
