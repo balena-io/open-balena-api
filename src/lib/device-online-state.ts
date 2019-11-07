@@ -1,7 +1,8 @@
 import * as Bluebird from 'bluebird';
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './env-vars';
 import { noop } from 'lodash';
-import { resinApi, root } from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { resinApi } from '../platform';
 import { captureException } from '../platform/errors';
 import {
 	createPromisifedRedisClient,
@@ -14,6 +15,8 @@ import {
 	API_HEARTBEAT_STATE_ENABLED,
 	API_HEARTBEAT_STATE_TIMEOUT_SECONDS,
 } from './config';
+
+const { root } = sbvrUtils;
 
 const getPollIntervalForDevice = resinApi.prepare<{ uuid: string }>({
 	resource: 'device_config_variable',

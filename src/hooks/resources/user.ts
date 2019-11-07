@@ -5,8 +5,10 @@ import { assignUserRole } from '../../platform/permissions';
 import { captureException } from '../../platform/errors';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { authApi, root, createActor } from '../../platform';
+import { authApi, createActor } from '../../platform';
 import { getUser } from '../../platform/auth';
+
+const { root } = sbvrUtils;
 
 sbvrUtils.addPureHook('POST', 'resin', 'user', {
 	POSTPARSE: createActor,

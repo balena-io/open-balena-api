@@ -13,7 +13,7 @@ import { sbvrUtils } from '@resin/pinejs';
 import { Request, Response } from 'express';
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
 
-import { resinApi, root } from '../platform';
+import { resinApi } from '../platform';
 
 import { RequestResponse, requestAsync } from './request';
 import { API_VPN_SERVICE_API_KEY } from './config';
@@ -24,7 +24,7 @@ const DEVICE_REQUEST_TIMEOUT = 50000;
 
 const DELAY_BETWEEN_DEVICE_REQUEST = 50;
 
-const { BadRequestError } = sbvrUtils;
+const { BadRequestError, root } = sbvrUtils;
 
 const badSupervisorResponse = (
 	req: Request,

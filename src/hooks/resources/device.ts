@@ -12,13 +12,12 @@ import { postDevices } from '../../lib/device-proxy';
 
 import { sbvrUtils } from '@resin/pinejs';
 import {
-	root,
 	PinejsClient,
 	createActor,
 	getCurrentRequestAffectedIds,
 	addDeleteHookForDependents,
 } from '../../platform';
-const { BadRequestError } = sbvrUtils;
+const { BadRequestError, root } = sbvrUtils;
 import { InaccessibleAppError } from '../../lib/errors';
 import { resolveDeviceType } from '../common';
 

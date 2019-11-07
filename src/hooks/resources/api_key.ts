@@ -1,8 +1,10 @@
 import { sbvrUtils } from '@resin/pinejs';
-import { authApi, root, getCurrentRequestAffectedIds } from '../../platform';
+import { authApi, getCurrentRequestAffectedIds } from '../../platform';
 
 import { captureException } from '../../platform/errors';
 import * as Promise from 'bluebird';
+
+const { root } = sbvrUtils;
 
 const deleteApiKeyHooks: sbvrUtils.Hooks = {
 	PRERUN: args =>

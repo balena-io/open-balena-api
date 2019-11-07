@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import * as deviceTypesLib from '@resin.io/device-types';
 import * as semver from 'resin-semver';
 import { sbvrUtils } from '@resin/pinejs';
-import { PinejsClient, resinApi, root, Tx } from '../../platform';
+import { PinejsClient, resinApi, Tx } from '../../platform';
 import { captureException } from '../../platform/errors';
 import {
 	getCompressedSize,
@@ -13,7 +13,7 @@ import {
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
 
-const { InternalRequestError } = sbvrUtils;
+const { InternalRequestError, root } = sbvrUtils;
 export const { BadRequestError, NotFoundError } = sbvrUtils;
 
 export type DeviceType = deviceTypesLib.DeviceType;

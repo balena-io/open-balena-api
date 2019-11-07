@@ -2,7 +2,10 @@ import { reqHasPermission, getUser } from './auth';
 import { retrieveAPIKey } from './api-keys';
 import { RequestHandler } from 'express';
 
-import { resinApi, root } from './index';
+import { resinApi } from './index';
+import { sbvrUtils } from '@resin/pinejs';
+
+const { root } = sbvrUtils;
 
 export const authenticated: RequestHandler = (req, res, next) =>
 	getUser(req, false)

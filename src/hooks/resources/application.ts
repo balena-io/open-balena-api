@@ -7,12 +7,11 @@ import { Default as DefaultApplicationType } from '../../lib/application-types';
 
 import { sbvrUtils } from '@resin/pinejs';
 import {
-	root,
 	createActor,
 	getCurrentRequestAffectedIds,
 	addDeleteHookForDependents,
 } from '../../platform';
-const { BadRequestError, ConflictError } = sbvrUtils;
+const { BadRequestError, ConflictError, root } = sbvrUtils;
 import { captureException } from '../../platform/errors';
 
 import { VPN_HOST, VPN_PORT } from '../../lib/config';

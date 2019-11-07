@@ -3,8 +3,10 @@ import * as randomstring from 'randomstring';
 import * as _ from 'lodash';
 import { isJWT } from './jwt';
 import { sbvrUtils } from '@resin/pinejs';
-import { Tx, resinApi, authApi, root } from './index';
+import { Tx, resinApi, authApi } from './index';
 import { Request } from 'express';
+
+const { root } = sbvrUtils;
 
 interface ApiKeyOptions {
 	apiKey?: string;

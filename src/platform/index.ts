@@ -14,7 +14,7 @@ export type PinejsClient = sbvrUtils.PinejsClient;
 
 export const resinApi = sbvrUtils.api.resin;
 export const authApi = sbvrUtils.api.Auth;
-export const { root } = sbvrUtils;
+const { root } = sbvrUtils;
 if (sbvrUtils.db.readTransaction == null) {
 	throw new Error('`readTransaction` is unsupported');
 }

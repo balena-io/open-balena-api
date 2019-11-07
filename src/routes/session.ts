@@ -7,13 +7,13 @@ import {
 } from '../platform/auth';
 import { User as DbUser } from '../models';
 import { sbvrUtils } from '@resin/pinejs';
-import { resinApi, root } from '../platform';
+import { resinApi } from '../platform';
 import { captureException, handleHttpErrors } from '../platform/errors';
 import { resetCounter } from '../lib/rate-limiting';
 import { RequestHandler } from 'express';
 import { SetupOptions } from '..';
 
-const { BadRequestError, NotFoundError } = sbvrUtils;
+const { BadRequestError, NotFoundError, root } = sbvrUtils;
 
 export const whoami: RequestHandler = async (req, res) => {
 	try {

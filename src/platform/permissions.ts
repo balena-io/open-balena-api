@@ -2,9 +2,12 @@ import * as _ from 'lodash';
 import * as Promise from 'bluebird';
 import * as randomstring from 'randomstring';
 
-import { Tx, authApi, getOrInsertId, root } from './index';
+import { Tx, authApi, getOrInsertId } from './index';
 import { findUser } from './auth';
 import { captureException } from './errors';
+import { sbvrUtils } from '@resin/pinejs';
+
+const { root } = sbvrUtils;
 
 // role and permission helpers
 

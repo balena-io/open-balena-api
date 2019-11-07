@@ -21,6 +21,8 @@ import {
 
 const EXPIRY_SECONDS = JSON_WEB_TOKEN_EXPIRY_MINUTES * 60;
 
+const { root } = sbvrUtils;
+
 class InvalidJwtSecretError extends TypedError {}
 
 export interface ScopedAccessToken {
@@ -82,7 +84,7 @@ export const strategy = new JwtStrategy(
 			if (jwtUser == null) {
 				throw new InvalidJwtSecretError();
 			}
-			const { resinApi, root }: typeof _platform = require('./index');
+			const { resinApi }: typeof _platform = require('./index');
 			if ('service' in jwtUser && jwtUser.service) {
 				const { service, apikey } = jwtUser;
 				return sbvrUtils.getApiKeyPermissions(apikey).then(permissions => {

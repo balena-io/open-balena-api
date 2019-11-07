@@ -6,7 +6,7 @@ import * as uuid from 'node-uuid';
 import * as BasicAuth from 'basic-auth';
 import * as jsonwebtoken from 'jsonwebtoken';
 import { sbvrUtils } from '@resin/pinejs';
-import { resinApi, root } from '../platform';
+import { resinApi } from '../platform';
 import * as Bluebird from 'bluebird';
 
 import { User as DbUser } from '../models';
@@ -23,7 +23,7 @@ import {
 import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
 import * as memoize from 'memoizee';
 
-const { UnauthorizedError } = sbvrUtils;
+const { UnauthorizedError, root } = sbvrUtils;
 
 // Set a large expiry so that huge pulls/pushes go through
 // without needing to re-authenticate mid-process.

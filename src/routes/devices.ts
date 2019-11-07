@@ -8,7 +8,7 @@ import {
 } from '../platform/errors';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { resinApi, root, PinejsClient } from '../platform';
+import { resinApi, PinejsClient } from '../platform';
 import { checkInt, isValidInteger, getIP, varListInsert } from '../lib/utils';
 import { createDeviceApiKey } from '../lib/api-keys';
 import * as randomstring from 'randomstring';
@@ -24,7 +24,7 @@ import {
 
 export { proxy } from '../lib/device-proxy';
 
-const { BadRequestError, UnauthorizedError } = sbvrUtils;
+const { BadRequestError, UnauthorizedError, root } = sbvrUtils;
 
 export const register: RequestHandler = (req, res) =>
 	Promise.try(() => {

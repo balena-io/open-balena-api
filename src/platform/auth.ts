@@ -3,7 +3,7 @@ import { User as DbUser } from '../models';
 import { createJwt, SignOptions, User } from './jwt';
 import { retrieveAPIKey } from './api-keys';
 import { sbvrUtils } from '@resin/pinejs';
-import { Tx, resinApi, root } from './index';
+import { Tx, resinApi } from './index';
 import * as Promise from 'bluebird';
 import * as crypto from 'crypto';
 import * as base32 from 'thirty-two';
@@ -18,6 +18,7 @@ const {
 	UnauthorizedError,
 	NotFoundError,
 	InternalRequestError,
+	root,
 } = sbvrUtils;
 
 const SUDO_TOKEN_VALIDITY = 20 * 60 * 1000;
