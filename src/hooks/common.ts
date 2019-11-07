@@ -1,5 +1,5 @@
 import { sbvrUtils } from '@resin/pinejs';
-import { PinejsClient } from '../platform/index';
+import { PinejsClient } from '../platform';
 import * as deviceTypes from '../lib/device-types';
 import * as Promise from 'bluebird';
 
