@@ -102,6 +102,9 @@ Term: content hash
 Term: contract
 	Concept Type: JSON (Type)
 
+Term: cpu architecture
+	Concept Type: Short Text (Type)
+
 Term: date
 	Concept Type: Date Time (Type)
 
@@ -492,6 +495,9 @@ Fact type: device type has slug
 
 Fact type: device type has name (Auth)
 	Necessity: each device type has exactly one name (Auth)
+
+Fact type: device type has cpu architecture
+	Necessity: each device type has at most one cpu architecture
 
 -- release
 

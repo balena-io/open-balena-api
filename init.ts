@@ -30,6 +30,9 @@ async function onInitHooks() {
 	const { setSyncMap, deviceTypes } = await import('./src/lib/device-types');
 	setSyncMap({
 		name: { name: 'name' },
+		cpu_architecture: {
+			name: 'arch',
+		},
 	});
 
 	// this will pre-fetch the device types and populate the cache...
