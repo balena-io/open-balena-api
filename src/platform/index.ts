@@ -1,13 +1,10 @@
 import * as _ from 'lodash';
 import * as Bluebird from 'bluebird';
 
-import { RequiredField } from '@resin/pinejs/out/sbvr-api/common-types';
-
 import { Tx } from '@resin/pinejs/out/database-layer/db';
 export { Tx } from '@resin/pinejs/out/database-layer/db';
 
 import { sbvrUtils } from '@resin/pinejs';
-export { sbvrUtils } from '@resin/pinejs';
 
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
 
@@ -15,18 +12,10 @@ import { captureException } from './errors';
 
 export type PinejsClient = sbvrUtils.PinejsClient;
 
-export const resinApi = sbvrUtils.api.resin;
-export const authApi = sbvrUtils.api.Auth;
-export const { root } = sbvrUtils;
-const { db: maybeDB } = sbvrUtils;
-if (maybeDB.readTransaction == null) {
+const { root, api } = sbvrUtils;
+
+if (sbvrUtils.db.readTransaction == null) {
 	throw new Error('`readTransaction` is unsupported');
-}
-
-export const db = maybeDB as RequiredField<typeof maybeDB, 'readTransaction'>;
-
-if (!resinApi || !authApi) {
-	throw new Error('PineJS is not initialized!');
 }
 
 // TODO: Potential races here. They are unlikely but not impossible. Will fix
@@ -114,12 +103,12 @@ export const getOrInsertId = (
 	resource: string,
 	body: AnyObject,
 	tx?: Tx,
-): Bluebird<{ id: number }> => $getOrInsertId(authApi, resource, body, tx);
+): Bluebird<{ id: number }> => $getOrInsertId(api.Auth, resource, body, tx);
 export const getOrInsertModelId = (
 	resource: string,
 	body: AnyObject,
 	tx?: Tx,
-): Bluebird<{ id: number }> => $getOrInsertId(resinApi, resource, body, tx);
+): Bluebird<{ id: number }> => $getOrInsertId(api.resin, resource, body, tx);
 
 export const updateOrInsert = (
 	resource: string,
@@ -127,14 +116,14 @@ export const updateOrInsert = (
 	updateFields: AnyObject,
 	tx?: Tx,
 ): Bluebird<{ id: number }> =>
-	$updateOrInsert(authApi, resource, filter, updateFields, tx);
+	$updateOrInsert(api.Auth, resource, filter, updateFields, tx);
 export const updateOrInsertModel = (
 	resource: string,
 	filter: PinejsClientCoreFactory.FilterObj,
 	updateFields: AnyObject,
 	tx?: Tx,
 ): Bluebird<{ id: number }> =>
-	$updateOrInsert(resinApi, resource, filter, updateFields, tx);
+	$updateOrInsert(api.resin, resource, filter, updateFields, tx);
 
 type TxFn = (tx: Tx, ...args: any[]) => PromiseLike<any>;
 type TxFnArgs<T> = T extends (tx: Tx, ...args: infer U) => any ? U : any[];
@@ -162,7 +151,7 @@ export const wrapInTransaction = <F extends TxFn>(
 	fn: F,
 ): ((...args: TxFnArgs<F>) => Bluebird<ResolvableReturnType<F>>) =>
 	function(...args) {
-		return db.transaction(tx => fn.apply(this, [tx, ...args]));
+		return sbvrUtils.db.transaction(tx => fn.apply(this, [tx, ...args]));
 	};
 
 // Hook helpers
@@ -179,18 +168,16 @@ export const createActor = ({
 	request,
 	tx,
 }: sbvrUtils.HookArgs): Bluebird<void> => {
-	return authApi
-		.post({
-			resource: 'actor',
-			passthrough: {
-				tx,
-				req: root,
-			},
-			options: { returnResource: false },
-		})
-		.then((result: AnyObject) => {
-			request.values.actor = result.id;
-		});
+	return api.Auth.post({
+		resource: 'actor',
+		passthrough: {
+			tx,
+			req: root,
+		},
+		options: { returnResource: false },
+	}).then((result: AnyObject) => {
+		request.values.actor = result.id;
+	});
 };
 
 export function addDeleteHookForDependents(

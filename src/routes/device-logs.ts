@@ -16,13 +16,8 @@ import {
 } from '../lib/device-logs/struct';
 import { Supervisor } from '../lib/device-logs/supervisor';
 import { captureException, handleHttpErrors } from '../platform/errors';
-import {
-	PinejsClient,
-	resinApi,
-	sbvrUtils,
-	Tx,
-	wrapInTransaction,
-} from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { PinejsClient, Tx, wrapInTransaction } from '../platform';
 import onFinished = require('on-finished');
 import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
 
@@ -32,6 +27,7 @@ const {
 	UnauthorizedError,
 	ServiceUnavailableError,
 	UnsupportedMediaTypeError,
+	api,
 } = sbvrUtils;
 
 const HEARTBEAT_INTERVAL = 58e3;
@@ -50,8 +46,8 @@ const supervisor = new Supervisor();
 
 export async function read(req: Request, res: Response) {
 	try {
-		const api = resinApi.clone({ passthrough: { req } });
-		const ctx = await getReadContext(api, req);
+		const resinApi = api.resin.clone({ passthrough: { req } });
+		const ctx = await getReadContext(resinApi, req);
 		if (req.query.stream === '1') {
 			addRetentionLimit(ctx);
 			await handleStreamingRead(ctx, res);
@@ -208,9 +204,9 @@ function getHistory(
 
 export const store: RequestHandler = wrapInTransaction(
 	async (tx: Tx, req: Request, res: Response) => {
-		const api = resinApi.clone({ passthrough: { req, tx } });
+		const resinApi = api.resin.clone({ passthrough: { req, tx } });
 		try {
-			const ctx = await getWriteContext(api, req);
+			const ctx = await getWriteContext(resinApi, req);
 			await checkWritePermissions(ctx);
 			addRetentionLimit(ctx);
 			const body: AnySupervisorLog[] = req.body;
@@ -226,9 +222,9 @@ export const store: RequestHandler = wrapInTransaction(
 );
 
 export async function storeStream(req: Request, res: Response) {
-	const api = resinApi.clone({ passthrough: { req } });
+	const resinApi = api.resin.clone({ passthrough: { req } });
 	try {
-		const ctx = await getWriteContext(api, req);
+		const ctx = await getWriteContext(resinApi, req);
 		await checkWritePermissions(ctx);
 		addRetentionLimit(ctx);
 		handleStreamingWrite(ctx, res);

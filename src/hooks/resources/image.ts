@@ -1,7 +1,10 @@
 import * as Promise from 'bluebird';
 import * as crypto from 'crypto';
-import { sbvrUtils, root, addDeleteHookForDependents } from '../../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { addDeleteHookForDependents } from '../../platform';
 import { REGISTRY2_HOST } from '../../lib/config';
+
+const { root } = sbvrUtils;
 
 sbvrUtils.addPureHook('POST', 'resin', 'image', {
 	POSTPARSE: ({ request, api, tx }) => {

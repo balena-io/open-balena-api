@@ -10,15 +10,14 @@ import {
 import * as haikuName from '../../lib/haiku-name';
 import { postDevices } from '../../lib/device-proxy';
 
+import { sbvrUtils } from '@resin/pinejs';
 import {
-	sbvrUtils,
-	root,
 	PinejsClient,
 	createActor,
 	getCurrentRequestAffectedIds,
 	addDeleteHookForDependents,
 } from '../../platform';
-const { BadRequestError } = sbvrUtils;
+const { BadRequestError, root } = sbvrUtils;
 import { InaccessibleAppError } from '../../lib/errors';
 import { resolveDeviceType } from '../common';
 

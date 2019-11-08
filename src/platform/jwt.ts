@@ -1,5 +1,3 @@
-import * as _platform from '.';
-
 import * as _ from 'lodash';
 import * as Promise from 'bluebird';
 import * as jsonwebtoken from 'jsonwebtoken';
@@ -20,6 +18,8 @@ import {
 } from '../lib/config';
 
 const EXPIRY_SECONDS = JSON_WEB_TOKEN_EXPIRY_MINUTES * 60;
+
+const { root, api } = sbvrUtils;
 
 class InvalidJwtSecretError extends TypedError {}
 
@@ -82,7 +82,6 @@ export const strategy = new JwtStrategy(
 			if (jwtUser == null) {
 				throw new InvalidJwtSecretError();
 			}
-			const { resinApi, root }: typeof _platform = require('./index');
 			if ('service' in jwtUser && jwtUser.service) {
 				const { service, apikey } = jwtUser;
 				return sbvrUtils.getApiKeyPermissions(apikey).then(permissions => {
@@ -97,7 +96,7 @@ export const strategy = new JwtStrategy(
 			) {
 				return jwtUser.access;
 			} else if ('id' in jwtUser) {
-				return resinApi
+				return api.resin
 					.get({
 						resource: 'user',
 						id: jwtUser.id,

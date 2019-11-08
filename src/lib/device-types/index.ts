@@ -1,10 +1,10 @@
 import * as arraySort from 'array-sort';
 import * as Promise from 'bluebird';
 import * as _ from 'lodash';
-import { InternalRequestError } from '@resin/pinejs/out/sbvr-api/errors';
 import * as deviceTypesLib from '@resin.io/device-types';
 import * as semver from 'resin-semver';
-import { sbvrUtils, PinejsClient, resinApi, root, Tx } from '../../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { PinejsClient, Tx } from '../../platform';
 import { captureException } from '../../platform/errors';
 import {
 	getCompressedSize,
@@ -12,8 +12,8 @@ import {
 	getIsIgnored,
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
-import { db } from '../../platform';
 
+const { InternalRequestError, root, api } = sbvrUtils;
 export const { BadRequestError, NotFoundError } = sbvrUtils;
 
 export type DeviceType = deviceTypesLib.DeviceType;
@@ -211,7 +211,7 @@ function updateDTModel(
 	propertyMap: typeof syncSettings['map'],
 	tx: Tx,
 ) {
-	const apiTx = resinApi.clone({ passthrough: { req: root, tx } });
+	const apiTx = api.resin.clone({ passthrough: { req: root, tx } });
 	const updateFields = _.mapValues(
 		propertyMap,
 		source => (deviceType as AnyObject)[source.name] || source.default,
@@ -293,7 +293,7 @@ function syncDataModel(
 		);
 		return;
 	}
-	return db.transaction(tx => {
+	return sbvrUtils.db.transaction(tx => {
 		return Promise.each(Object.values(types), deviceTypeInfo => {
 			const deviceType = deviceTypeInfo.latest.deviceType;
 			return updateDTModel(deviceType, propertyMap, tx);

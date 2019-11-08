@@ -7,7 +7,8 @@ import {
 	handleHttpErrors,
 } from '../platform/errors';
 
-import { resinApi, root, sbvrUtils, PinejsClient, db } from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { PinejsClient } from '../platform';
 import { checkInt, isValidInteger, getIP, varListInsert } from '../lib/utils';
 import { createDeviceApiKey } from '../lib/api-keys';
 import * as randomstring from 'randomstring';
@@ -23,7 +24,7 @@ import {
 
 export { proxy } from '../lib/device-proxy';
 
-const { BadRequestError, UnauthorizedError } = sbvrUtils;
+const { BadRequestError, UnauthorizedError, root, api } = sbvrUtils;
 
 export const register: RequestHandler = (req, res) =>
 	Promise.try(() => {
@@ -63,8 +64,8 @@ export const register: RequestHandler = (req, res) =>
 			req.apiKey.permissions.push('resin.device.create-device-api-key');
 		}
 
-		return db.transaction(tx =>
-			resinApi
+		return sbvrUtils.db.transaction(tx =>
+			api.resin
 				.post({
 					resource: 'device',
 					passthrough: { req, tx },
@@ -159,7 +160,7 @@ export const receiveOnlineDependentDevices: RequestHandler = (req, res) =>
 			throw new BadRequestError('expiry_date not found or invalid');
 		}
 
-		const resinApiTx = resinApi.clone({ passthrough: { req } });
+		const resinApiTx = api.resin.clone({ passthrough: { req } });
 
 		// Get all existing dependent devices, these are used figure out
 		// which of the online_dependent_devices needs to be provisioned
@@ -291,7 +292,7 @@ const releaseExpand = {
 		},
 	},
 };
-const stateQuery = resinApi.prepare<{ uuid: string }>({
+const stateQuery = api.resin.prepare<{ uuid: string }>({
 	resource: 'device',
 	options: {
 		$select: ['device_name', 'os_version'],
@@ -394,7 +395,9 @@ export const state: RequestHandler = (req, res) => {
 		return res.send(400);
 	}
 
-	db.readTransaction(tx => stateQuery({ uuid }, undefined, { req, tx }))
+	sbvrUtils.db.readTransaction!(tx =>
+		stateQuery({ uuid }, undefined, { req, tx }),
+	)
 		.then(([device]: AnyObject[]) => {
 			if (!device) {
 				throw new UnauthorizedError();
@@ -801,9 +804,9 @@ export const statePatch: RequestHandler = (req, res) => {
 		custom.ipAddress = getIP(req);
 	}
 
-	return db
+	return sbvrUtils.db
 		.transaction(tx => {
-			const resinApiTx = resinApi.clone({ passthrough: { req, custom, tx } });
+			const resinApiTx = api.resin.clone({ passthrough: { req, custom, tx } });
 
 			return resinApiTx
 				.get({

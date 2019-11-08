@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import { sbvrUtils, addDeleteHookForDependents } from '../../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { addDeleteHookForDependents } from '../../platform';
 
 sbvrUtils.addPureHook('POST', 'resin', 'image__is_part_of__release', {
 	POSTRUN: ({ api, result: platformId }) => {

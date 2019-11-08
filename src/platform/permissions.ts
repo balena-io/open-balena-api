@@ -2,9 +2,12 @@ import * as _ from 'lodash';
 import * as Promise from 'bluebird';
 import * as randomstring from 'randomstring';
 
-import { Tx, authApi, getOrInsertId, root } from './index';
+import { Tx, getOrInsertId } from './index';
 import { findUser } from './auth';
 import { captureException } from './errors';
+import { sbvrUtils } from '@resin/pinejs';
+
+const { root, api } = sbvrUtils;
 
 // role and permission helpers
 
@@ -43,7 +46,7 @@ export const getOrInsertApiKey = (
 	role: { id: number },
 	tx: Tx,
 ): Promise<AnyObject> => {
-	const authApiTx = authApi.clone({
+	const authApiTx = api.Auth.clone({
 		passthrough: {
 			tx,
 			req: root,
@@ -128,18 +131,17 @@ export const setApiKey = (
 			if (key) {
 				apiKey.key = key;
 				return (
-					authApi
-						.patch({
-							resource: 'api_key',
-							id: apiKey.id,
-							passthrough: {
-								req: root,
-								tx,
-							},
-							body: {
-								key,
-							},
-						})
+					api.Auth.patch({
+						resource: 'api_key',
+						id: apiKey.id,
+						passthrough: {
+							req: root,
+							tx,
+						},
+						body: {
+							key,
+						},
+					})
 						// authApi.patch doesn't resolve to the result, have to manually return here
 						.return(apiKey)
 				);
@@ -174,7 +176,7 @@ export function createAll(
 	apiKeyMap: ApiKeyPermissionsMap,
 	userMap: UserRoleMap,
 ) {
-	const apiTx = authApi.clone({ passthrough: { req: root, tx } });
+	const apiTx = api.Auth.clone({ passthrough: { req: root, tx } });
 
 	const permissionsCache = apiTx
 		.get({

@@ -1,9 +1,12 @@
 import * as Promise from 'bluebird';
 import * as _ from 'lodash';
-import { sbvrUtils, addDeleteHookForDependents } from '../../platform';
-import { HookArgs } from '@resin/pinejs/out/sbvr-api/sbvr-utils';
+import { sbvrUtils } from '@resin/pinejs';
+import { addDeleteHookForDependents } from '../../platform';
 
-const updateLatestRelease = (id: number, { request, api }: HookArgs) => {
+const updateLatestRelease = (
+	id: number,
+	{ request, api }: sbvrUtils.HookArgs,
+) => {
 	// We only track builds that are successful
 	if (request.values.status === 'success') {
 		return api

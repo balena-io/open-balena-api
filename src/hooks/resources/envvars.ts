@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import { sbvrUtils, Tx, getCurrentRequestAffectedIds } from '../../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { Tx, getCurrentRequestAffectedIds } from '../../platform';
 import {
 	checkEnvVarNameValidity,
 	checkConfigVarNameValidity,

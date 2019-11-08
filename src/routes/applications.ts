@@ -10,13 +10,13 @@ import {
 	translateError,
 	handleHttpErrors,
 } from '../platform/errors';
-import { resinApi, sbvrUtils } from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
 import { RequestHandler, Request } from 'express';
 
-const { UnauthorizedError } = sbvrUtils;
+const { UnauthorizedError, api } = sbvrUtils;
 
 const getApp = (req: Request): Promise<AnyObject> =>
-	resinApi
+	api.resin
 		.get({
 			resource: 'application',
 			id: req.param('appId'),
@@ -54,13 +54,14 @@ export const downloadImageConfig: RequestHandler = (req, res) => {
 		return;
 	}
 
-	const api = resinApi.clone({ passthrough: { req } });
+	const resinApi = api.resin.clone({ passthrough: { req } });
 
 	return getApp(req)
 		.then(app =>
-			findBySlug(api, deviceTypeSlug || app.is_for__device_type[0].slug).then(
-				deviceType => generateConfig(req, app, deviceType, osVersion),
-			),
+			findBySlug(
+				resinApi,
+				deviceTypeSlug || app.is_for__device_type[0].slug,
+			).then(deviceType => generateConfig(req, app, deviceType, osVersion)),
 		)
 		.then(config => {
 			res.json(config);

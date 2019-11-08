@@ -4,32 +4,33 @@ import * as Promise from 'bluebird';
 import { assignUserRole } from '../../platform/permissions';
 import { captureException } from '../../platform/errors';
 
-import { sbvrUtils, authApi, root, createActor } from '../../platform';
+import { sbvrUtils } from '@resin/pinejs';
+import { createActor } from '../../platform';
 import { getUser } from '../../platform/auth';
+
+const { root, api } = sbvrUtils;
 
 sbvrUtils.addPureHook('POST', 'resin', 'user', {
 	POSTPARSE: createActor,
 
 	POSTRUN: ({ result, tx }) =>
-		authApi
-			.get({
-				resource: 'role',
-				passthrough: {
-					tx,
-					req: root,
+		api.Auth.get({
+			resource: 'role',
+			passthrough: {
+				tx,
+				req: root,
+			},
+			options: {
+				$filter: {
+					name: 'default-user',
 				},
-				options: {
-					$filter: {
-						name: 'default-user',
-					},
-				},
-			})
-			.then(([role]: AnyObject[]) => {
-				if (role == null) {
-					throw new Error('Unable to find the default user role');
-				}
-				return assignUserRole(result, role.id, tx);
-			}),
+			},
+		}).then(([role]: AnyObject[]) => {
+			if (role == null) {
+				throw new Error('Unable to find the default user role');
+			}
+			return assignUserRole(result, role.id, tx);
+		}),
 });
 
 sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
@@ -53,7 +54,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 	PRERUN: ({ req, request, tx, api }) => {
 		const { userId } = request.custom;
 
-		const authApiTx = authApi.clone({
+		const authApiTx = sbvrUtils.api.Auth.clone({
 			passthrough: {
 				tx,
 				req: root,

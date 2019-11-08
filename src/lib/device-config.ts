@@ -17,7 +17,7 @@ import { DeviceType } from './device-types';
 
 import { captureException } from '../platform/errors';
 import { getUser } from '../platform/auth';
-import { sbvrUtils } from '../platform';
+import { sbvrUtils } from '@resin/pinejs';
 import { createUserApiKey, createProvisioningApiKey } from './api-keys';
 import { Request } from 'express';
 import { Option as DeviceTypeOption } from '@resin.io/device-types';

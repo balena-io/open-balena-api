@@ -5,20 +5,21 @@ import { resolveDeviceType } from '../common';
 import { postDevices } from '../../lib/device-proxy';
 import { Default as DefaultApplicationType } from '../../lib/application-types';
 
+import { sbvrUtils } from '@resin/pinejs';
 import {
-	sbvrUtils,
-	root,
 	createActor,
 	getCurrentRequestAffectedIds,
 	addDeleteHookForDependents,
 } from '../../platform';
-const { BadRequestError, ConflictError } = sbvrUtils;
+const { BadRequestError, ConflictError, root } = sbvrUtils;
 import { captureException } from '../../platform/errors';
 
-import { Hooks } from '@resin/pinejs/out/sbvr-api/sbvr-utils';
 import { VPN_HOST, VPN_PORT } from '../../lib/config';
 
-const checkDependentApplication: Hooks['POSTPARSE'] = ({ request, api }) => {
+const checkDependentApplication: sbvrUtils.Hooks['POSTPARSE'] = ({
+	request,
+	api,
+}) => {
 	const dependsOnApplicationId = request.values.belongs_to__application;
 	if (dependsOnApplicationId != null) {
 		api

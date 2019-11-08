@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 
-import { resinApi } from '../platform';
 import { handleHttpErrors } from '../platform/errors';
+import { sbvrUtils } from '@resin/pinejs';
 
 export const getUserPublicKeys: RequestHandler = (req, res) => {
 	const { username } = req.params;
@@ -10,7 +10,7 @@ export const getUserPublicKeys: RequestHandler = (req, res) => {
 		return res.send(400);
 	}
 
-	return resinApi
+	return sbvrUtils.api.resin
 		.get({
 			resource: 'user__has__public_key',
 			options: {
