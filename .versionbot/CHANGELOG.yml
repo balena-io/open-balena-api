@@ -1,4 +1,49 @@
 - commits:
+    - subject: Remove `resinApi` export from platform/index
+      hash: 8bfbdf6c6a8481f3048a146a61f002fc924daa89
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+    - subject: Remove `authApi` export from platform/index
+      hash: 4813253eb89a916b0f9a794742172d7378c07167
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+    - subject: Remove `root` export from platform/index
+      hash: b6aa3a56a25b549375c8b893560c9a339527d183
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+    - subject: Remove `db` export from platform/index
+      hash: 049f25e1a33f081fba72f3afb3e24f9348d26da4
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+    - subject: Remove unnecessary path based imports into pinejs
+      hash: 94b2c9dccf069ef49cfeadbce32ad7f3e425529d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Remove `sbvrUtils` export from platform/index
+      hash: 24c2d417522526934872ee554c920eb878f26616
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.43.0
+  date: 2019-11-07T16:48:48.637Z
+- commits:
     - subject: Update typescript to 3.7
       hash: b598dd8254c6710907f9458fd39e7c110b923580
       body: ''
