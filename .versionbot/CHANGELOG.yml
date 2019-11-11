@@ -1,4 +1,20 @@
 - commits:
+    - subject: 'metrics: Emit events for key points in the API heartbeat flow'
+      hash: bdc3935baf819db73e7b211a7496636096b47e2b
+      body: >
+        - `change` whenever a device state should change with start/end times
+        from the call to the DB confirm.
+
+        - `stats` every 10sec to log the current RSMQ queue stats
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Rich Bayliss <rich@balena.io>
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      author: Rich Bayliss
+  version: 0.43.1
+  date: 2019-11-11T15:24:46.036Z
+- commits:
     - subject: Remove `resinApi` export from platform/index
       hash: 8bfbdf6c6a8481f3048a146a61f002fc924daa89
       body: ''
