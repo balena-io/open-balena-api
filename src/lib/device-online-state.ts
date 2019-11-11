@@ -1,4 +1,5 @@
 import * as Bluebird from 'bluebird';
+import * as _ from 'lodash';
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './env-vars';
 import { noop } from 'lodash';
 import { sbvrUtils } from '@resin/pinejs';
@@ -14,41 +15,44 @@ import {
 	API_HEARTBEAT_STATE_ENABLED,
 	API_HEARTBEAT_STATE_TIMEOUT_SECONDS,
 } from './config';
+import * as events from 'eventemitter3';
 
 const { root, api } = sbvrUtils;
 
-const getPollIntervalForDevice = api.resin.prepare<{ uuid: string }>({
-	resource: 'device_config_variable',
-	passthrough: { req: root },
-	options: {
-		$select: ['name', 'value'],
-		$top: 1,
-		$expand: {
-			device: {
-				$filter: { uuid: { '@': 'uuid' } },
+export const getPollInterval = async (uuid: string) => {
+	const getPollIntervalForDevice = api.resin.prepare<{ uuid: string }>({
+		resource: 'device_config_variable',
+		passthrough: { req: root },
+		options: {
+			$select: ['name', 'value'],
+			$top: 1,
+			$expand: {
+				device: {
+					$filter: { uuid: { '@': 'uuid' } },
+				},
+			},
+			$filter: {
+				device: {
+					uuid: { '@': 'uuid' },
+				},
+				name: {
+					$in: [
+						'BALENA_SUPERVISOR_POLL_INTERVAL',
+						'RESIN_SUPERVISOR_POLL_INTERVAL',
+					],
+				},
+			},
+			$orderby: {
+				// we want the last value that would have been passed
+				// to the supervisor, as that is the one it would have used.
+				name: 'desc',
 			},
 		},
-		$filter: {
-			device: {
-				uuid: { '@': 'uuid' },
-			},
-			name: {
-				$in: [
-					'BALENA_SUPERVISOR_POLL_INTERVAL',
-					'RESIN_SUPERVISOR_POLL_INTERVAL',
-				],
-			},
-		},
-		$orderby: {
-			// we want the last value that would have been passed
-			// to the supervisor, as that is the one it would have used.
-			name: 'desc',
-		},
-	},
-});
+	});
 
-const getPollIntervalForParentApplication = api.resin.prepare<{ uuid: string }>(
-	{
+	const getPollIntervalForParentApplication = api.resin.prepare<{
+		uuid: string;
+	}>({
 		resource: 'application_config_variable',
 		passthrough: { req: root },
 		options: {
@@ -87,13 +91,8 @@ const getPollIntervalForParentApplication = api.resin.prepare<{ uuid: string }>(
 				name: 'desc',
 			},
 		},
-	},
-);
+	});
 
-// the maximum time the supervisor will wait between polls...
-export const POLL_JITTER_FACTOR = 1.5;
-
-export const getPollInterval = (uuid: string): Bluebird<number> => {
 	return (
 		getPollIntervalForDevice({ uuid })
 			.then((pollIntervals: Array<{ value: string }>) => {
@@ -118,6 +117,9 @@ export const getPollInterval = (uuid: string): Bluebird<number> => {
 	);
 };
 
+// the maximum time the supervisor will wait between polls...
+export const POLL_JITTER_FACTOR = 1.5;
+
 // these align to the text enums coming from the SBVR definition of available values...
 export const enum DeviceOnlineStates {
 	Unknown = 'unknown',
@@ -126,17 +128,65 @@ export const enum DeviceOnlineStates {
 	Online = 'online',
 }
 
-class DeviceOnlineStateManager {
+interface MetricEventArgs {
+	startAt: number;
+	endAt: number;
+	err?: any;
+}
+
+export declare interface DeviceOnlineStateManager {
+	emit(
+		event: 'change',
+		args: MetricEventArgs & { uuid: string; newState: DeviceOnlineStates },
+	): boolean;
+	emit(
+		event: 'stats',
+		args: MetricEventArgs & {
+			totalsent: number;
+			totalrecv: number;
+			msgs: number;
+			hiddenmsgs: number;
+		},
+	): boolean;
+
+	on(
+		event: 'change',
+		listener: (
+			args: MetricEventArgs & { uuid: string; newState: DeviceOnlineStates },
+		) => void,
+	): this;
+	on(
+		event: 'stats',
+		listener: (
+			args: MetricEventArgs & {
+				totalsent: number;
+				totalrecv: number;
+				msgs: number;
+				hiddenmsgs: number;
+			},
+		) => void,
+	): this;
+	on(event: string, listener: Function): this;
+}
+
+export class DeviceOnlineStateManager extends events.EventEmitter {
 	private static readonly REDIS_NAMESPACE = 'device-online-state';
 	private static readonly EXPIRED_QUEUE = 'expired';
 	private static readonly RSMQ_READ_TIMEOUT = 30;
+	private static readonly QUEUE_STATS_INTERVAL_MSEC = 10000;
 
+	private readonly featureIsEnabled: boolean;
+
+	isConsuming: boolean = false;
 	rsmq: RedisSMQ;
 	redis: PromisifedRedisClient;
 
-	constructor() {
+	public constructor() {
+		super();
+		this.featureIsEnabled = API_HEARTBEAT_STATE_ENABLED === 1;
+
 		// return early if the feature isn't active...
-		if (API_HEARTBEAT_STATE_ENABLED !== 1) {
+		if (!this.featureIsEnabled) {
 			return;
 		}
 
@@ -160,20 +210,62 @@ class DeviceOnlineStateManager {
 					throw err;
 				}
 			})
-			.then(() => {
-				return this.consume();
-			});
+			.then(() =>
+				this.setupQueueStatsEmitter(
+					DeviceOnlineStateManager.QUEUE_STATS_INTERVAL_MSEC,
+				),
+			);
 	}
 
-	private updateDeviceModel(uuid: string, newState: DeviceOnlineStates) {
+	private async setupQueueStatsEmitter(interval: number) {
+		return setTimeout(async () => {
+			try {
+				const startAt = Date.now();
+				const queueAttributes = await this.rsmq.getQueueAttributesAsync({
+					qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
+				});
+				const endAt = Date.now();
+
+				this.emit('stats', {
+					startAt,
+					endAt,
+					totalsent: queueAttributes.totalsent,
+					totalrecv: queueAttributes.totalrecv,
+					msgs: queueAttributes.msgs,
+					hiddenmsgs: queueAttributes.hiddenmsgs,
+				});
+			} catch (err) {
+				captureException(
+					err,
+					'RSMQ: Unable to acquire and emit the queue stats.',
+				);
+			} finally {
+				this.setupQueueStatsEmitter(interval);
+			}
+		}, interval).unref();
+	}
+
+	private async updateDeviceModel(
+		uuid: string,
+		newState: DeviceOnlineStates,
+	): Promise<boolean> {
 		// patch the api_heartbeat_state value to the new state...
 		const body = {
 			api_heartbeat_state: newState,
 		};
 
-		return api.resin
-			.patch({
+		const eventArgs = {
+			uuid,
+			newState,
+			startAt: Date.now(),
+			endAt: Date.now(),
+			err: undefined,
+		};
+
+		try {
+			await api.resin.patch({
 				resource: 'device',
+				passthrough: { req: root },
 				options: {
 					$filter: {
 						uuid,
@@ -181,24 +273,18 @@ class DeviceOnlineStateManager {
 					},
 				},
 				body,
-				passthrough: {
-					req: root,
-				},
-			})
-			.return(true)
-			.catch(err => {
-				captureException(
-					err,
-					'DeviceStateManager: Error updating the API with the device new state.',
-				);
-
-				return false;
 			});
-	}
-
-	// event emitters
-	private deviceOnline(uuid: string) {
-		return this.updateDeviceModel(uuid, DeviceOnlineStates.Online);
+		} catch (err) {
+			eventArgs.err = err;
+			captureException(
+				err,
+				'DeviceStateManager: Error updating the API with the device new state.',
+			);
+		} finally {
+			eventArgs.endAt = Date.now();
+			this.emit('change', eventArgs);
+			return eventArgs.err !== undefined;
+		}
 	}
 
 	private consume() {
@@ -312,8 +398,17 @@ class DeviceOnlineStateManager {
 			);
 	}
 
+	public start() {
+		if (this.isConsuming) {
+			return;
+		}
+
+		this.isConsuming = true;
+		return this.consume();
+	}
+
 	public captureEventFor(uuid: string, timeoutSeconds: number) {
-		if (API_HEARTBEAT_STATE_ENABLED !== 1) {
+		if (!this.featureIsEnabled) {
 			return Promise.resolve();
 		}
 
@@ -340,8 +435,10 @@ class DeviceOnlineStateManager {
 				})
 				.then(setDeviceOnline => {
 					if (setDeviceOnline) {
-						return this.deviceOnline(uuid).return();
+						return this.updateDeviceModel(uuid, DeviceOnlineStates.Online);
 					}
+
+					return false;
 				})
 				// record the activity...
 				.then(() => {
@@ -356,4 +453,4 @@ class DeviceOnlineStateManager {
 	}
 }
 
-export const manager = new DeviceOnlineStateManager();
+export const getInstance = _.once(() => new DeviceOnlineStateManager());

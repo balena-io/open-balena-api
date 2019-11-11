@@ -125,12 +125,15 @@ export function setup(app: _express.Application, options: SetupOptions) {
 		.then(() => import('./routes'))
 		.then(routes => routes.setup(app, options.onLogin))
 		.then(runSetupFunction(app, options.onInitRoutes))
-		.then(() => app.use(Raven.errorHandler()))
-		.return({
-			app,
-			startServer: _.partial(startServer, app),
-			runCommand: _.partial(runCommand, app),
-			runFromCommandLine: _.partial(runFromCommandLine, app),
+		.then(() => {
+			app.use(Raven.errorHandler());
+
+			return {
+				app,
+				startServer: _.partial(startServer, app),
+				runCommand: _.partial(runCommand, app),
+				runFromCommandLine: _.partial(runFromCommandLine, app),
+			};
 		});
 }
 
