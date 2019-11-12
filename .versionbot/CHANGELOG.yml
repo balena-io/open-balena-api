@@ -1,4 +1,16 @@
 - commits:
+    - subject: 'fix: Ensure API heartbeat queue consumption is started during setup'
+      hash: 0c24b86db62e300aba3a4b70ac729b21a311afc6
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Rich Bayliss <rich@balena.io>
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      author: Rich Bayliss
+  version: 0.43.2
+  date: 2019-11-12T12:19:37.112Z
+- commits:
     - subject: 'metrics: Emit events for key points in the API heartbeat flow'
       hash: bdc3935baf819db73e7b211a7496636096b47e2b
       body: >
