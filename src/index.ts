@@ -21,6 +21,8 @@ import * as pineEnv from '@resin/pinejs/out/config-loader/env';
 import * as jwt from './platform/jwt';
 passport.use(jwt.strategy);
 
+import * as deviceOnlineState from './lib/device-online-state';
+
 import {
 	API_HOST,
 	DB_POOL_SIZE,
@@ -127,6 +129,9 @@ export function setup(app: _express.Application, options: SetupOptions) {
 		.then(runSetupFunction(app, options.onInitRoutes))
 		.then(() => {
 			app.use(Raven.errorHandler());
+
+			// start consuming the API heartbeat state queue...
+			deviceOnlineState.getInstance().start();
 
 			return {
 				app,

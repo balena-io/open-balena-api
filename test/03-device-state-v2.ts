@@ -39,10 +39,6 @@ const tracker = new StateTracker();
 	TIMEOUT_MSEC / 1000,
 );
 
-// mock the device state lib to hook the update of Pine models...
-(stateMock.DeviceOnlineStateManager as AnyObject)[
-	'QUEUE_STATS_INTERVAL_MSEC'
-] = 1000;
 const updateDeviceModel = stateMock.getInstance()['updateDeviceModel'];
 stateMock.getInstance()['updateDeviceModel'] = function(
 	uuid: string,
