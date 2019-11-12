@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as semver from 'resin-semver';
 
-import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './env-vars';
+import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './config';
 
 // Set RESIN_SUPERVISOR_POLL_INTERVAL to a minimum of 10 minutes
 export const setMinPollInterval = (config: AnyObject): void => {

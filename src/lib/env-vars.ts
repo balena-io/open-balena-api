@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { JSONSchema6Definition } from 'json-schema';
 import { sbvrUtils } from '@resin/pinejs';
+import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './config';
 
 const { BadRequestError } = sbvrUtils;
 
@@ -66,8 +67,6 @@ export const BLACKLISTED_NAMES = [
 
 export const INVALID_CHARACTER_REGEX = /^\d|\W/;
 export const INVALID_NEWLINE_REGEX = /\r|\n/;
-
-export const DEFAULT_SUPERVISOR_POLL_INTERVAL = 10 * 60 * 1000;
 
 // Note that this list will be mutated by the cloud API to add
 // extra variables as for cloud-only features.

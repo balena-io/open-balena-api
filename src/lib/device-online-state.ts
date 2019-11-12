@@ -1,6 +1,5 @@
 import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
-import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './env-vars';
 import { noop } from 'lodash';
 import { sbvrUtils } from '@resin/pinejs';
 import { captureException } from '../platform/errors';
@@ -14,6 +13,7 @@ import {
 	REDIS_PORT,
 	API_HEARTBEAT_STATE_ENABLED,
 	API_HEARTBEAT_STATE_TIMEOUT_SECONDS,
+	DEFAULT_SUPERVISOR_POLL_INTERVAL,
 } from './config';
 import * as events from 'eventemitter3';
 
