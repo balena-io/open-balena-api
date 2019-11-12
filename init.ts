@@ -4,7 +4,6 @@ import { setup } from './src';
 import config = require('./config');
 import { version } from './package.json';
 import { sbvrUtils } from '@resin/pinejs';
-import * as deviceOnlineState from './src/lib/device-online-state';
 
 async function onInitMiddleware(app: express.Application) {
 	const { forwardRequests } = await import('./src/platform/versions');
@@ -107,10 +106,6 @@ setup(app, {
 })
 	.tap(createSuperuser)
 	.then(({ startServer }) => startServer(process.env.PORT || 1337).return())
-	.then(() => {
-		console.log('Starting API heartbeat state worker...');
-		deviceOnlineState.getInstance().start();
-	})
 	.then(() => {
 		if (doRunTests) {
 			console.log('Running tests...');
