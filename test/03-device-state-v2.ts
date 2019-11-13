@@ -12,7 +12,6 @@ import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from '../src/lib/config';
 
 import stateMock = require('../src/lib/device-online-state');
 import configMock = require('../src/lib/config');
-import envMock = require('../src/lib/env-vars');
 import sinon = require('sinon');
 
 const POLL_MSEC = 1000,
@@ -32,7 +31,7 @@ class StateTracker {
 const tracker = new StateTracker();
 
 // mock the value for the default poll interval...
-(envMock as AnyObject)['DEFAULT_SUPERVISOR_POLL_INTERVAL'] = POLL_MSEC;
+(configMock as AnyObject)['DEFAULT_SUPERVISOR_POLL_INTERVAL'] = POLL_MSEC;
 
 // mock the value for the timeout grace period...
 (configMock as AnyObject)['API_HEARTBEAT_STATE_TIMEOUT_SECONDS'] = Math.floor(
@@ -49,7 +48,6 @@ stateMock.getInstance()['updateDeviceModel'] = function(
 };
 
 // register the mocks...
-mockery.registerMock('../src/lib/env-vars', envMock);
 mockery.registerMock('../src/lib/config', configMock);
 mockery.registerMock('../src/lib/device-online-state', stateMock);
 
