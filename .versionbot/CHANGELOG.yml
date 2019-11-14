@@ -1,4 +1,14 @@
 - commits:
+    - subject: Fix disabling online heartbeat
+      hash: da5081e79c3ec94865bf609001f985765ae19a1c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.43.4
+  date: 2019-11-14T15:54:50.511Z
+- commits:
     - subject: Move DEFAULT_SUPERVISOR_POLL_INTERVAL to a config var
       hash: 3d5558e306065eab5b1f2a1458d087af39d66138
       body: ''
