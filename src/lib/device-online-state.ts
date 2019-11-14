@@ -399,7 +399,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 	}
 
 	public start() {
-		if (this.isConsuming) {
+		if (this.isConsuming || !this.featureIsEnabled) {
 			return;
 		}
 
