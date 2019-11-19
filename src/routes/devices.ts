@@ -833,7 +833,10 @@ export const statePatch: RequestHandler = async (req, res) => {
 					},
 				})) as AnyObject[];
 
-				deviceBody!.is_running__release = release.id;
+				if (release != null) {
+					// Only set the running release if it's valid, otherwise just silently ignore it
+					deviceBody!.is_running__release = release.id;
+				}
 			}
 
 			const waitPromises: Array<PromiseLike<any>> = [];
