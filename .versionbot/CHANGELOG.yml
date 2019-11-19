@@ -1,4 +1,14 @@
 - commits:
+    - subject: Only set the running release in state patch if it's valid
+      hash: 81c17140020c95fb4870e6cf0e81cce2861ed00f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.43.6
+  date: 2019-11-19T16:38:39.097Z
+- commits:
     - subject: Convert routes/devices to async/await
       hash: 36e2b27962092ede95aa4e4621fedcabd9c8d2d9
       body: ''
