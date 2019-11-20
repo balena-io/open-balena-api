@@ -66,9 +66,10 @@ export interface User extends sbvrUtils.User {
 
 export type Creds = ServiceToken | User | ScopedToken;
 export type JwtUser = Creds | ScopedAccessToken;
+const TOKEN_BODY_FIELD = '_token';
 
 const jwtFromRequest = ExtractJwt.versionOneCompatibility({
-	tokenBodyField: '_token',
+	tokenBodyField: TOKEN_BODY_FIELD,
 	authScheme: 'Bearer',
 });
 
@@ -156,7 +157,13 @@ export const middleware: RequestHandler = (req, res, next) => {
 		(err: Error, auth: Creds) => {
 			// Clear the body token field in case it exists to avoid any
 			// possible leaking
-			delete req.body.tokenBodyField;
+			// store the potential body token in the authorziation header
+			// so that it can be used later on as well
+			const possibleToken = req.body[TOKEN_BODY_FIELD];
+			delete req.body[TOKEN_BODY_FIELD];
+			if (possibleToken && !req.headers.authorization) {
+				req.headers.authorization = `Bearer ${possibleToken}`;
+			}
 
 			if (err instanceof InvalidJwtSecretError) {
 				return res.sendStatus(401);
