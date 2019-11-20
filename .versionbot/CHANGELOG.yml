@@ -1,4 +1,16 @@
 - commits:
+    - subject: "\U0001F41B: Fix device route"
+      hash: 832c9985e90e018c687b7c26c6d0a4b374f75731
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andreas Fitzek <andreas@balena.io>
+        signed-off-by: Andreas Fitzek <andreas@balena.io>
+      author: Andreas Fitzek
+  version: 0.43.7
+  date: 2019-11-20T10:48:48.164Z
+- commits:
     - subject: Only set the running release in state patch if it's valid
       hash: 81c17140020c95fb4870e6cf0e81cce2861ed00f
       body: ''
