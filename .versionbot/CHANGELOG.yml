@@ -1,4 +1,18 @@
 - commits:
+    - subject: "\U0001F41B: Use transaction on receiveOnlineDependentDevices"
+      hash: ac9f1adfc42cbf3379bea55b15d3f5457aebfb5a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Connects-to: '#220'
+        connects-to: '#220'
+        Signed-off-by: Andreas Fitzek <andreas@balena.io>
+        signed-off-by: Andreas Fitzek <andreas@balena.io>
+      author: Andreas Fitzek
+  version: 0.43.9
+  date: 2019-11-20T14:11:40.647Z
+- commits:
     - subject: "\U0001F41B: Token handling for JWT body token"
       hash: cc1d4d2e0c3333846610f13a08d4c5431d36919d
       body: ''
