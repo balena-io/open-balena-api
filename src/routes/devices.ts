@@ -158,87 +158,89 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 			throw new BadRequestError('expiry_date not found or invalid');
 		}
 
-		const resinApiTx = api.resin.clone({ passthrough: { req } });
+		await sbvrUtils.db.transaction(async tx => {
+			const resinApiTx = api.resin.clone({ passthrough: { tx, req } });
 
-		// Get all existing dependent devices, these are used figure out
-		// which of the online_dependent_devices needs to be provisioned
-		const devices = (await resinApiTx.get({
-			resource: 'device',
-			options: {
-				$select: 'local_id',
-				$filter: {
-					belongs_to__application: dependent_app,
-				},
-			},
-		})) as AnyObject[];
-		// Get the local_id for each dependent device that needs to be provisioned
-		const toBeProvisioned = _.difference(
-			online_dependent_devices,
-			devices.map(({ local_id }) => local_id),
-		);
-		await Bluebird.map(toBeProvisioned, localId =>
-			// Provision new dependent devices
-			resinApiTx.post({
+			// Get all existing dependent devices, these are used figure out
+			// which of the online_dependent_devices needs to be provisioned
+			const devices = (await resinApiTx.get({
 				resource: 'device',
-				body: {
-					uuid: randomstring.generate({ length: 62, charset: 'hex' }),
-					belongs_to__user: user,
-					belongs_to__application: dependent_app,
-					device_type: dependent_device_type,
-					local_id: localId,
-					logs_channel: randomstring.generate({ length: 62, charset: 'hex' }),
+				options: {
+					$select: 'local_id',
+					$filter: {
+						belongs_to__application: dependent_app,
+					},
 				},
-				options: { returnResource: false },
-			}),
-		);
-		// Set all dependent devices currently being managed by
-		// this gateway to unmanaged
-		await resinApiTx.patch({
-			resource: 'device',
-			options: {
-				$filter: {
-					is_managed_by__device: gateway,
-					belongs_to__application: dependent_app,
-				},
-			},
-			body: {
-				is_managed_by__device: null,
-				is_locked_until__date: null,
-				is_online: false,
-			},
-		});
-
-		if (!_.isEmpty(online_dependent_devices)) {
-			// Set all dependent devices that are in online_dependent_devices
-			// and unmanaged to managed
+			})) as AnyObject[];
+			// Get the local_id for each dependent device that needs to be provisioned
+			const toBeProvisioned = _.difference(
+				online_dependent_devices,
+				devices.map(({ local_id }) => local_id),
+			);
+			await Bluebird.map(toBeProvisioned, localId =>
+				// Provision new dependent devices
+				resinApiTx.post({
+					resource: 'device',
+					body: {
+						uuid: randomstring.generate({ length: 62, charset: 'hex' }),
+						belongs_to__user: user,
+						belongs_to__application: dependent_app,
+						device_type: dependent_device_type,
+						local_id: localId,
+						logs_channel: randomstring.generate({ length: 62, charset: 'hex' }),
+					},
+					options: { returnResource: false },
+				}),
+			);
+			// Set all dependent devices currently being managed by
+			// this gateway to unmanaged
 			await resinApiTx.patch({
 				resource: 'device',
 				options: {
 					$filter: {
-						local_id: { $in: online_dependent_devices },
+						is_managed_by__device: gateway,
 						belongs_to__application: dependent_app,
-						$or: [
-							{
-								is_managed_by__device: null,
-							},
-							{
-								is_locked_until__date: null,
-							},
-							{
-								is_locked_until__date: { $le: { $now: {} } },
-							},
-						],
 					},
 				},
 				body: {
-					is_managed_by__device: gateway,
-					is_locked_until__date: expiry_date,
-					is_online: true,
+					is_managed_by__device: null,
+					is_locked_until__date: null,
+					is_online: false,
 				},
 			});
-		}
 
-		res.sendStatus(200);
+			if (!_.isEmpty(online_dependent_devices)) {
+				// Set all dependent devices that are in online_dependent_devices
+				// and unmanaged to managed
+				await resinApiTx.patch({
+					resource: 'device',
+					options: {
+						$filter: {
+							local_id: { $in: online_dependent_devices },
+							belongs_to__application: dependent_app,
+							$or: [
+								{
+									is_managed_by__device: null,
+								},
+								{
+									is_locked_until__date: null,
+								},
+								{
+									is_locked_until__date: { $le: { $now: {} } },
+								},
+							],
+						},
+					},
+					body: {
+						is_managed_by__device: gateway,
+						is_locked_until__date: expiry_date,
+						is_online: true,
+					},
+				});
+			}
+
+			res.sendStatus(200);
+		});
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
 			return;
