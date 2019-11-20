@@ -14,4 +14,4 @@ redis_id=$(runredis)
 api_id=$(runapi $IMAGE_NAME $db_id $redis_id)
 setup $api_id
 
-docker exec $api_id /bin/sh -c 'npx mocha'
+docker exec $api_id /bin/sh -c 'npx ava'

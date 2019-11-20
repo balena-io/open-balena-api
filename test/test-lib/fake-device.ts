@@ -1,4 +1,3 @@
-import 'mocha';
 import { expect } from 'chai';
 import * as uuid from 'node-uuid';
 import * as randomstring from 'randomstring';

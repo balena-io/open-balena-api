@@ -86,16 +86,15 @@
   "devDependencies": {
     "@types/chai": "^4.2.4",
     "@types/chai-as-promised": "^7.1.2",
-    "@types/mocha": "^5.2.7",
     "@types/mockery": "^1.4.29",
     "@types/sinon": "^7.5.0",
     "@types/supertest": "^2.0.8",
+    "ava": "^2.4.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "copyfiles": "^2.1.1",
     "husky": "^3.0.9",
     "lint-staged": "^9.4.2",
-    "mocha": "^6.2.2",
     "mockery": "^2.1.0",
     "prettier": "^1.18.2",
     "resin-lint": "^2.0.1",
@@ -110,5 +109,20 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "ava": {
+    "concurrency": 1,
+    "compileEnhancements": false,
+    "files": [
+      "test/*.ts",
+      "!test/00-init.ts"
+    ],
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register/transpile-only"
+    ],
+    "failWithoutAssertions": false
   }
 }

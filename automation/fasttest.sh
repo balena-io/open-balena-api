@@ -95,4 +95,4 @@ if [[ -z "$test_versions" ]]; then
 else
 	echo "Running versions:$test_versions"
 fi
-docker exec ${extra_env} --env TEST_VERSIONS="$test_versions" --env TEST_FILES="$test_files" -it $api_id ./node_modules/.bin/mocha --bail ${extra_args}
+docker exec ${extra_env} --env TEST_VERSIONS="$test_versions" --env TEST_FILES="$test_files" -it $api_id npx ava --bail ${extra_args}
