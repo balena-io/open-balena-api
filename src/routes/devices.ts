@@ -208,37 +208,35 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 			},
 		});
 
-		if (_.isEmpty(online_dependent_devices)) {
-			return;
-		}
-
-		// Set all dependent devices that are in online_dependent_devices
-		// and unmanaged to managed
-		await resinApiTx.patch({
-			resource: 'device',
-			options: {
-				$filter: {
-					local_id: { $in: online_dependent_devices },
-					belongs_to__application: dependent_app,
-					$or: [
-						{
-							is_managed_by__device: null,
-						},
-						{
-							is_locked_until__date: null,
-						},
-						{
-							is_locked_until__date: { $le: { $now: {} } },
-						},
-					],
+		if (!_.isEmpty(online_dependent_devices)) {
+			// Set all dependent devices that are in online_dependent_devices
+			// and unmanaged to managed
+			await resinApiTx.patch({
+				resource: 'device',
+				options: {
+					$filter: {
+						local_id: { $in: online_dependent_devices },
+						belongs_to__application: dependent_app,
+						$or: [
+							{
+								is_managed_by__device: null,
+							},
+							{
+								is_locked_until__date: null,
+							},
+							{
+								is_locked_until__date: { $le: { $now: {} } },
+							},
+						],
+					},
 				},
-			},
-			body: {
-				is_managed_by__device: gateway,
-				is_locked_until__date: expiry_date,
-				is_online: true,
-			},
-		});
+				body: {
+					is_managed_by__device: gateway,
+					is_locked_until__date: expiry_date,
+					is_online: true,
+				},
+			});
+		}
 
 		res.sendStatus(200);
 	} catch (err) {
