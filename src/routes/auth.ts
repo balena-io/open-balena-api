@@ -1,17 +1,16 @@
 import { RequestHandler } from 'express';
 
-import { handleHttpErrors } from '../platform/errors';
+import { handleHttpErrors, captureException } from '../platform/errors';
 import { sbvrUtils } from '@resin/pinejs';
 
-export const getUserPublicKeys: RequestHandler = (req, res) => {
+export const getUserPublicKeys: RequestHandler = async (req, res) => {
 	const { username } = req.params;
 
 	if (username == null) {
 		return res.send(400);
 	}
-
-	return sbvrUtils.api.resin
-		.get({
+	try {
+		const data = (await sbvrUtils.api.resin.get({
 			resource: 'user__has__public_key',
 			options: {
 				$select: 'public_key',
@@ -27,12 +26,15 @@ export const getUserPublicKeys: RequestHandler = (req, res) => {
 				},
 			},
 			passthrough: { req },
-		})
-		.then((data: Array<{ public_key: string }>) => {
-			const authorizedKeys = data.map(e => e.public_key).join('\n');
-			res.status(200).send(authorizedKeys);
-		})
-		.catch(err => {
-			handleHttpErrors(req, res, err);
-		});
+		})) as Array<{ public_key: string }>;
+
+		const authorizedKeys = data.map(e => e.public_key).join('\n');
+		res.status(200).send(authorizedKeys);
+	} catch (err) {
+		if (handleHttpErrors(req, res, err)) {
+			return;
+		}
+		captureException(err, 'Error getting public keys', { req });
+		res.sendStatus(500);
+	}
 };
