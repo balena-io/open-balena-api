@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 
-import * as Promise from 'bluebird';
 import * as fs from 'fs';
 
 import * as deviceConfig from 'resin-device-config';
@@ -28,7 +27,7 @@ import {
 	DELTA_HOST,
 } from './config';
 
-export const generateConfig = (
+export const generateConfig = async (
 	req: Request,
 	app: AnyObject,
 	deviceType: DeviceType,
@@ -44,87 +43,84 @@ export const generateConfig = (
 	}
 	const registryHost = REGISTRY2_HOST;
 
-	const apiKeyPromise = Promise.try(() => {
+	const apiKeyPromise = (async () => {
 		// Devices running ResinOS >= 2.7.8 can use provisioning keys
 		if (resinSemver.satisfies(osVersion, '<2.7.8')) {
 			// Older ones have to use the old "user api keys"
-			return userPromise.then(user => createUserApiKey(req, user.id));
+			const user = await userPromise;
+			return createUserApiKey(req, user.id);
 		}
 		return createProvisioningApiKey(req, app.id);
-	});
+	})();
 
 	// There may be multiple CAs, this doesn't matter as all will be passed in the config
-	const selfSignedRootPromise = Promise.try(() => {
+	const selfSignedRootPromise = (async () => {
 		const caFile = NODE_EXTRA_CA_CERTS;
 		if (!caFile) {
 			return;
 		}
-		return fs.promises
-			.stat(caFile)
-			.then(() => fs.promises.readFile(caFile, 'utf8'))
-			.then(pem => Buffer.from(pem).toString('base64'))
-			.catch(err => {
-				if (err.code === 'ENOENT') {
-					return;
-				}
+		try {
+			await fs.promises.stat(caFile);
+			const pem = await fs.promises.readFile(caFile, 'utf8');
+			return Buffer.from(pem).toString('base64');
+		} catch (err) {
+			if (err.code !== 'ENOENT') {
 				captureException(err, 'Self-signed root CA could not be read');
-			});
-	});
-
-	return Promise.join(
-		userPromise,
-		apiKeyPromise,
-		selfSignedRootPromise,
-		(user, apiKey, rootCA) => {
-			const config = deviceConfig.generate(
-				{
-					application: app as deviceConfig.GenerateOptions['application'],
-					deviceType: deviceType.slug,
-					user,
-					apiKey,
-					pubnub: {},
-					mixpanel: {
-						token: MIXPANEL_TOKEN,
-					},
-					vpnPort: VPN_PORT,
-					endpoints: {
-						api: `https://${API_HOST}`,
-						delta: `https://${DELTA_HOST}`,
-						registry: registryHost,
-						vpn: VPN_HOST,
-					},
-					version: osVersion,
-				},
-				{
-					appUpdatePollInterval:
-						_.parseInt(req.param('appUpdatePollInterval')) * 60 * 1000,
-					network: req.param('network'),
-					wifiSsid: req.param('wifiSsid'),
-					wifiKey: req.param('wifiKey'),
-					ip: req.param('ip'),
-					gateway: req.param('gateway'),
-					netmask: req.param('netmask'),
-				},
-			);
-
-			_(deviceType.options!)
-				.flatMap((opt): DeviceTypeOption[] | DeviceTypeOption => {
-					if (opt.isGroup && ['network', 'advanced'].includes(opt.name)) {
-						// already handled above
-						return [];
-					} else if (opt.isGroup) {
-						return opt.options;
-					} else {
-						return opt;
-					}
-				})
-				.each(({ name: optionName }) => {
-					config[optionName] = req.param(optionName);
-				});
-			if (rootCA != null) {
-				config.balenaRootCA = rootCA;
 			}
-			return config;
+		}
+	})();
+
+	const user = await userPromise;
+	const apiKey = await apiKeyPromise;
+	const rootCA = await selfSignedRootPromise;
+
+	const config = deviceConfig.generate(
+		{
+			application: app as deviceConfig.GenerateOptions['application'],
+			deviceType: deviceType.slug,
+			user,
+			apiKey,
+			pubnub: {},
+			mixpanel: {
+				token: MIXPANEL_TOKEN,
+			},
+			vpnPort: VPN_PORT,
+			endpoints: {
+				api: `https://${API_HOST}`,
+				delta: `https://${DELTA_HOST}`,
+				registry: registryHost,
+				vpn: VPN_HOST,
+			},
+			version: osVersion,
+		},
+		{
+			appUpdatePollInterval:
+				_.parseInt(req.param('appUpdatePollInterval')) * 60 * 1000,
+			network: req.param('network'),
+			wifiSsid: req.param('wifiSsid'),
+			wifiKey: req.param('wifiKey'),
+			ip: req.param('ip'),
+			gateway: req.param('gateway'),
+			netmask: req.param('netmask'),
 		},
 	);
+
+	_(deviceType.options!)
+		.flatMap((opt): DeviceTypeOption[] | DeviceTypeOption => {
+			if (opt.isGroup && ['network', 'advanced'].includes(opt.name)) {
+				// already handled above
+				return [];
+			} else if (opt.isGroup) {
+				return opt.options;
+			} else {
+				return opt;
+			}
+		})
+		.each(({ name: optionName }) => {
+			config[optionName] = req.param(optionName);
+		});
+	if (rootCA != null) {
+		config.balenaRootCA = rootCA;
+	}
+	return config;
 };
