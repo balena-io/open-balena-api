@@ -1,4 +1,21 @@
 - commits:
+    - subject: Convert device-config to async/await
+      hash: bf726e1f04613983d259aabc97eac4e2debec530
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Switch to fs.promises instead of Bluebird.promisify for device-config
+      hash: 65750e9670bc492bcb0e1e5d89e72b0e862fe0bf
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.43.13
+  date: 2019-11-22T17:38:03.721Z
+- commits:
     - subject: Update dependencies
       hash: 1d1f1460dcee2dfb4fe2b53b1c0b04e8080b047e
       body: |
