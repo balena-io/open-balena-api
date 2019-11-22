@@ -21,6 +21,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'user', {
 				req: root,
 			},
 			options: {
+				$select: 'id',
 				$filter: {
 					name: 'default-user',
 				},
