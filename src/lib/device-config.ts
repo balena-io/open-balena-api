@@ -1,16 +1,7 @@
 import * as _ from 'lodash';
 
 import * as Promise from 'bluebird';
-import { stat, readFile, PathLike } from 'fs';
-
-const statAsync = Promise.promisify(stat);
-const readFileAsync = Promise.promisify(
-	readFile as (
-		path: PathLike | number,
-		options: { encoding: string; flag?: string } | string,
-		callback: (err: NodeJS.ErrnoException, data: string) => void,
-	) => void,
-);
+import * as fs from 'fs';
 
 import * as deviceConfig from 'resin-device-config';
 import * as resinSemver from 'resin-semver';
@@ -68,11 +59,14 @@ export const generateConfig = (
 		if (!caFile) {
 			return;
 		}
-		return statAsync(caFile)
-			.then(() => readFileAsync(caFile, 'utf8'))
+		return fs.promises
+			.stat(caFile)
+			.then(() => fs.promises.readFile(caFile, 'utf8'))
 			.then(pem => Buffer.from(pem).toString('base64'))
-			.catch({ code: 'ENOENT' }, _.noop)
 			.catch(err => {
+				if (err.code === 'ENOENT') {
+					return;
+				}
 				captureException(err, 'Self-signed root CA could not be read');
 			});
 	});
