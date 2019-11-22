@@ -4,11 +4,13 @@ import * as Promise from 'bluebird';
 import { stat, readFile, PathLike } from 'fs';
 
 const statAsync = Promise.promisify(stat);
-const readFileAsync = Promise.promisify(readFile as (
-	path: PathLike | number,
-	options: { encoding: string; flag?: string } | string,
-	callback: (err: NodeJS.ErrnoException, data: string) => void,
-) => void);
+const readFileAsync = Promise.promisify(
+	readFile as (
+		path: PathLike | number,
+		options: { encoding: string; flag?: string } | string,
+		callback: (err: NodeJS.ErrnoException, data: string) => void,
+	) => void,
+);
 
 import * as deviceConfig from 'resin-device-config';
 import * as resinSemver from 'resin-semver';

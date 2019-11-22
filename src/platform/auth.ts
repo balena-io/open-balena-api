@@ -220,9 +220,9 @@ export const createSessionToken = (
 	userId: number,
 	{ existingToken, jwtOptions }: ExtraParams = {},
 ): Promise<string> => {
-	return Promise.resolve($getUserTokenDataCallback(userId, existingToken)).then(
-		tokenData => createJwt(tokenData, jwtOptions),
-	);
+	return Promise.resolve(
+		$getUserTokenDataCallback(userId, existingToken),
+	).then(tokenData => createJwt(tokenData, jwtOptions));
 };
 
 const sendXHRToken = (res: Response, statusCode = 200) => (
