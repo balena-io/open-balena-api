@@ -12,6 +12,7 @@ import {
 	getIsIgnored,
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
+import { PinejsClientCoreFactory } from 'pinejs-client-core';
 
 const { InternalRequestError, root, api } = sbvrUtils;
 export const { BadRequestError, NotFoundError } = sbvrUtils;
@@ -351,7 +352,7 @@ const getAccessibleSlugs = (
 	api: PinejsClient,
 	slugs?: string[],
 ): Promise<string[]> => {
-	const options: AnyObject = {
+	const options: PinejsClientCoreFactory.ODataOptions = {
 		$select: ['slug'],
 	};
 	if (slugs) {

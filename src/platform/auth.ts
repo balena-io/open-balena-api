@@ -184,6 +184,9 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = (userId, existingToken) => {
 		resource: 'user',
 		id: userId,
 		passthrough: { req: root },
+		options: {
+			$select: tokenFields,
+		},
 	});
 
 	const permissionData = sbvrUtils.getUserPermissions(userId);

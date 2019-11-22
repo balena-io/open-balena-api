@@ -41,7 +41,7 @@ export const assignUserPermission = (
 
 // api key helpers
 
-export const getOrInsertApiKey = (
+const getOrInsertApiKey = (
 	actorId: number,
 	role: { id: number },
 	tx: Tx,
@@ -57,6 +57,7 @@ export const getOrInsertApiKey = (
 			resource: 'api_key',
 			passthrough: { req: root },
 			options: {
+				$select: ['id', 'key'],
 				$filter: {
 					is_of__actor: actorId,
 					has__role: {
