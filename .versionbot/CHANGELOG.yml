@@ -1,4 +1,22 @@
 - commits:
+    - subject: Advertise X-Balena-Client as accepted CORS header
+      hash: 7fa7e3039a06c9da58b031568356ec5136422e26
+      body: |
+        Balena modules are going to use this to report their
+        name and version.
+      footer:
+        Resolves: '#222'
+        resolves: '#222'
+        HQ: 'https://github.com/balena-io/balena/issues/2036'
+        hq: 'https://github.com/balena-io/balena/issues/2036'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+  version: 0.44.0
+  date: 2019-11-22T18:14:42.563Z
+- commits:
     - subject: Convert device-config to async/await
       hash: bf726e1f04613983d259aabc97eac4e2debec530
       body: ''
