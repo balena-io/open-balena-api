@@ -1,4 +1,14 @@
 - commits:
+    - subject: Add missing `$select`s
+      hash: 3202a92365a8e17fe4dbd7b59d406522870f9dad
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.43.11
+  date: 2019-11-22T14:45:42.415Z
+- commits:
     - subject: Convert routes/access to async/await
       hash: 62603823c7cdd20ca91c42fe1bc5e49720a1c3bf
       body: ''
