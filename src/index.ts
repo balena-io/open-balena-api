@@ -106,7 +106,7 @@ export function setup(app: _express.Application, options: SetupOptions) {
 		);
 		res.header(
 			'Access-Control-Allow-Headers',
-			'Content-Type, Authorization, Application-Record-Count, MaxDataServiceVersion, X-Requested-With',
+			'Content-Type, Authorization, Application-Record-Count, MaxDataServiceVersion, X-Requested-With, X-Balena-Client',
 		);
 		res.header('Access-Control-Allow-Credentials', 'true');
 		res.header('Access-Control-Max-Age', '86400');
