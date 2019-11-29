@@ -72,8 +72,11 @@ export async function hostOSAccess(
 			return;
 		}
 
-		// Users are allowed to access hostOS for devices with version >= HOSTOS_ACCESS_MIN_OS_VER
-		if (rSemver.gte(device.os_version, HOSTOS_ACCESS_MIN_OS_VER)) {
+		// Users are allowed to access hostOS for devices with version >= HOSTOS_ACCESS_MIN_OS_VER or if the version is still unknown
+		if (
+			!device.os_version ||
+			rSemver.gte(device.os_version, HOSTOS_ACCESS_MIN_OS_VER)
+		) {
 			res.sendStatus(200);
 			return;
 		}
