@@ -1,4 +1,16 @@
 - commits:
+    - subject: Allow hostOS access if the os version is unknown
+      hash: 13e8b68bb4dcce48b2a1d2b64baa35ceb5718a7d
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+  version: 0.45.0
+  date: 2019-11-29T12:51:52.615Z
+- commits:
     - subject: Advertise X-Balena-Client as accepted CORS header
       hash: 7fa7e3039a06c9da58b031568356ec5136422e26
       body: |
