@@ -33,6 +33,9 @@ ON "device" ("belongs to-application");
 CREATE INDEX IF NOT EXISTS "application_device_type_idx"
 ON "application" ("is for-device type");
 
+CREATE INDEX IF NOT EXISTS "application_is_host_idx"
+ON "application" ("is host");
+
 CREATE INDEX IF NOT EXISTS "device_device_type_idx"
 ON "device" ("is of-device type");
 
