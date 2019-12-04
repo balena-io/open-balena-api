@@ -17,7 +17,11 @@ async function onInitModel() {
 	const filter = { slug: insert.slug };
 	delete insert.slug;
 	await sbvrUtils.db.transaction(tx =>
-		updateOrInsertModel('application_type', filter, insert, tx),
+		updateOrInsertModel('application_type', filter, insert, tx).then(
+			inserted => {
+				appTypes.Default.id = inserted.id;
+			},
+		),
 	);
 }
 
