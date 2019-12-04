@@ -1,4 +1,16 @@
 - commits:
+    - subject: "\U0001F3A8: Make application type id dynamically injected"
+      hash: 1386603fdd05a3b148ef0a34114860b22b24a17d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andreas Fitzek <andreas@balena.io>
+        signed-off-by: Andreas Fitzek <andreas@balena.io>
+      author: Andreas Fitzek
+  version: 0.46.1
+  date: 2019-12-04T12:02:32.392Z
+- commits:
     - subject: "\U0001F5C3 : Move host os field to application resource"
       hash: f7304751eb5c648eccf4fb6443609e4b65bcb997
       body: ''
