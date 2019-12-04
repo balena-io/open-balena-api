@@ -5,7 +5,7 @@ import * as resinSemver from 'resin-semver';
 import { sbvrUtils } from '@resin/pinejs';
 
 export interface ApplicationType {
-	id: number;
+	id?: number;
 	name: string;
 	slug: string;
 
@@ -20,7 +20,6 @@ export interface ApplicationType {
 }
 
 export const Default: ApplicationType = {
-	id: 0,
 	name: 'Default',
 	slug: 'default',
 	supports_web_url: false,
