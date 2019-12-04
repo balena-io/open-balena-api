@@ -1,4 +1,16 @@
 - commits:
+    - subject: "\U0001F5C3 : Move host os field to application resource"
+      hash: f7304751eb5c648eccf4fb6443609e4b65bcb997
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Andreas Fitzek <andreas@balena.io>
+        signed-off-by: Andreas Fitzek <andreas@balena.io>
+      author: Andreas Fitzek
+  version: 0.46.0
+  date: 2019-12-02T15:37:03.117Z
+- commits:
     - subject: Allow hostOS access if the os version is unknown
       hash: 13e8b68bb4dcce48b2a1d2b64baa35ceb5718a7d
       body: ''
