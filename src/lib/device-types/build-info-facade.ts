@@ -1,7 +1,13 @@
 import * as Promise from 'bluebird';
 import * as memoizee from 'memoizee';
 import * as deviceTypesLib from '@resin.io/device-types';
-import { fileExists, getFile, getFolderSize, getImageKey } from './storage';
+import {
+	fileExists,
+	getFile,
+	getFolderSize,
+	getImageKey,
+	getESRImageKey,
+} from './storage';
 
 export type DeviceType = deviceTypesLib.DeviceType;
 
@@ -37,7 +43,16 @@ export const getDeviceTypeJson = memoizee(
 );
 
 export const getCompressedSize = memoizee(
-	(normalizedSlug: string, buildId: string): Promise<number> => {
+	(
+		normalizedSlug: string,
+		buildId: string,
+		isEsr: boolean = false,
+	): Promise<number> => {
+		if (isEsr) {
+			return getFolderSize(
+				getESRImageKey(normalizedSlug, buildId, 'compressed'),
+			);
+		}
 		return getFolderSize(getImageKey(normalizedSlug, buildId, 'compressed'));
 	},
 	{
