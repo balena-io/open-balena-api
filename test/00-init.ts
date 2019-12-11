@@ -52,4 +52,23 @@ Promise.resolve(fs.promises.readdir(__dirname))
 			require(`./${fileName}`);
 		});
 	})
+	.then(() => fs.promises.readdir(path.join(__dirname, 'scenarios')))
+	.each(filename => {
+		const ext = path.extname(filename);
+		if (ext !== '.ts') {
+			return;
+		}
+		filename = path.basename(filename, ext);
+
+		if (
+			testFiles.length > 0 &&
+			!_.some(testFiles, testFile => testFile(filename))
+		) {
+			return;
+		}
+
+		describe(`Scenario: ${filename}`, () => {
+			require(path.join(__dirname, 'scenarios', filename));
+		});
+	})
 	.done(run);

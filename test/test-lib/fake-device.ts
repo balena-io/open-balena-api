@@ -11,8 +11,37 @@ export type Device = {
 	id: number;
 	uuid: string;
 	token: string;
-	getStateV2: () => AnyObject;
+	getStateV2: () => Promise<DeviceState>;
 };
+
+interface DeviceStateApp {
+	name: string;
+	commit: string;
+	releaseId: number;
+	services: _.Dictionary<{
+		image: string;
+		volumes: string[];
+		imageId: number;
+		serviceName: string;
+		running: boolean;
+		environment: _.Dictionary<string>;
+		labels: _.Dictionary<string>;
+	}>;
+	volumes: _.Dictionary<_.Dictionary<string>>;
+	networks: _.Dictionary<AnyObject>;
+}
+
+export interface DeviceState {
+	local: {
+		name: string;
+		config: _.Dictionary<string>;
+		apps: _.Dictionary<DeviceStateApp>;
+	};
+	dependent: {
+		apps: _.Dictionary<DeviceStateApp>;
+		devices: AnyObject;
+	};
+}
 
 export async function provisionDevice(
 	admin: string,
@@ -60,7 +89,7 @@ export async function provisionDevice(
 		})
 		.expect(200);
 
-	device.getStateV2 = async () => {
+	device.getStateV2 = async (): Promise<DeviceState> => {
 		const { body: state } = await supertest(app, device)
 			.get(`/device/v2/${device.uuid}/state`)
 			.expect(200);
