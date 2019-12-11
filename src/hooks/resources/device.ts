@@ -442,7 +442,43 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		}
 
 		if (args.request.values.should_be_running__release !== undefined) {
-			// If the device has been pinned, we should alert the supervisor
+			// If the device was preloaded, and then pinned, service_installs do not exist
+			// for this device+release combination. We need to create these
+			if (args.request.values.should_be_running__release != null) {
+				waitPromises.push(
+					affectedIds.map(dId =>
+						createReleaseServiceInstalls(args.api, dId, {
+							id: args.request.values.should_be_running__release,
+						}),
+					),
+				);
+			} else {
+				waitPromises.push(
+					affectedIds.map(id =>
+						args.api
+							.get({
+								id,
+								resource: 'device',
+								options: {
+									$expand: {
+										belongs_to__application: {
+											$select: 'id',
+										},
+									},
+								},
+							})
+							.then((device: any) =>
+								createAppServiceInstalls(
+									args.api,
+									device.belongs_to__application[0].id,
+									[id],
+								),
+							),
+					),
+				);
+			}
+
+			// If the device has been pinned/un-pinned then we should alert the supervisor
 			waitPromises.push(
 				affectedIds.then(deviceIds => {
 					if (deviceIds.length === 0) {
@@ -458,18 +494,6 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 					});
 				}),
 			);
-
-			// If the device was preloaded, and then pinned, service_installs do not exist
-			// for this device+release combination. We need to create these
-			if (args.request.values.should_be_running__release != null) {
-				waitPromises.push(
-					affectedIds.map(dId =>
-						createReleaseServiceInstalls(args.api, dId, {
-							id: args.request.values.should_be_running__release,
-						}),
-					),
-				);
-			}
 		}
 
 		return Promise.all(waitPromises).return();
