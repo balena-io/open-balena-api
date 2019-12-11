@@ -1,4 +1,19 @@
 - commits:
+    - subject: 'bug: Fix cases of device missing service_install records'
+      hash: 97b4ea3ae0e343a02b488d411782c6ef5f4eb368
+      body: |
+        If a device is pinned to a release, and a new application release is
+        created, that device will now be able to run the new release if
+        un-pinned.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Rich Bayliss <rich@balena.io>
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      author: Rich Bayliss
+  version: 0.46.2
+  date: 2019-12-11T11:27:49.052Z
+- commits:
     - subject: "\U0001F3A8: Make application type id dynamically injected"
       hash: 1386603fdd05a3b148ef0a34114860b22b24a17d
       body: ''
