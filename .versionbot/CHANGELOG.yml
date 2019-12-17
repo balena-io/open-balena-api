@@ -1,4 +1,16 @@
 - commits:
+    - subject: 'env-vars: make "Enable / Disable" consistent across vars'
+      hash: a659abdaae41cbbafdfd439fa08c243450f5c902
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+  version: 0.46.4
+  date: 2019-12-17T13:18:32.660Z
+- commits:
     - subject: Add indexes for device state endpoint
       hash: d5ddc9f21ccffebfb8f228809ba7d2416254f164
       body: ''
