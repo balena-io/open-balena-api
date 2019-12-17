@@ -1,4 +1,14 @@
 - commits:
+    - subject: Add indexes for device state endpoint
+      hash: d5ddc9f21ccffebfb8f228809ba7d2416254f164
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.46.3
+  date: 2019-12-16T15:20:22.819Z
+- commits:
     - subject: 'bug: Fix cases of device missing service_install records'
       hash: 97b4ea3ae0e343a02b488d411782c6ef5f4eb368
       body: |
