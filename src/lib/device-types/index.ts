@@ -82,7 +82,7 @@ function sortBuildIds(ids: string[]): string[] {
 const getBuildData = (slug: string, buildId: string) => {
 	return Promise.join(
 		getIsIgnored(slug, buildId),
-		getDeviceTypeJson(slug, buildId).catchReturn(undefined),
+		getDeviceTypeJson(slug, buildId).catch(() => undefined),
 		(ignored, deviceType) => {
 			const buildInfo = {
 				ignored,
@@ -477,11 +477,12 @@ export const getImageSize = (
 					throw new UnknownVersionError(slug, buildId);
 				}
 
-				return getCompressedSize(normalizedSlug, buildId).tapCatch(err => {
+				return getCompressedSize(normalizedSlug, buildId).catch(err => {
 					captureException(
 						err,
 						`Failed to get device type ${slug} compressed size for version ${buildId}`,
 					);
+					throw err;
 				});
 			},
 		);
