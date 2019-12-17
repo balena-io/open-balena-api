@@ -48,17 +48,11 @@ ON "image" ("is a build of-service");
 CREATE INDEX IF NOT EXISTS "image_is_stored_at_image_location_idx"
 ON "image" USING GIN ("is stored at-image location" gin_trgm_ops);
 
-CREATE INDEX IF NOT EXISTS "image_install_installs_image_idx"
-ON "image install" ("installs-image");
-
 CREATE INDEX IF NOT EXISTS "device_is_managed_by_device_idx"
 ON "device" ("is managed by-device");
 
 CREATE INDEX IF NOT EXISTS "application_depends_on_application_idx"
 ON "application" ("depends on-application");
-
-CREATE INDEX IF NOT EXISTS "image_install_device_idx"
-ON "image install" ("device");
 
 CREATE INDEX IF NOT EXISTS "device_name_idx"
 ON "device" ("device name");
@@ -72,8 +66,25 @@ ON "device" ("uuid" text_pattern_ops);
 CREATE INDEX IF NOT EXISTS "device_is_managed_by_service_instance_idx"
 ON "device" ("is managed by-service instance");
 
-CREATE INDEX IF NOT EXISTS "ipr_ipr_idx"
-ON "image-is part of-release" ("is part of-release");
-
 CREATE INDEX IF NOT EXISTS "ii_ipr_idx"
 ON "image install" ("is provided by-release");
+
+-- Optimisation for device state query
+CREATE INDEX IF NOT EXISTS "image_install_image_device_idx"
+ON "image install" ("installs-image", "device");
+
+-- Optimisation for device state query
+CREATE INDEX IF NOT EXISTS "image_install_device_image_idx"
+ON "image install" ("device", "installs-image");
+
+-- Optimisation for device state query
+CREATE INDEX IF NOT EXISTS "ipr_ipr_image_idx"
+ON "image-is part of-release" ("is part of-release", "image");
+
+-- Optimisation for device state query
+CREATE INDEX IF NOT EXISTS "device_id_actor_managed_device_idx"
+ON "device" ("id", "actor", "is managed by-device");
+
+-- Optimisation for device state query
+CREATE INDEX IF NOT EXISTS "release_id_belongs_to_app_idx"
+ON "release" ("id", "belongs to-application");
