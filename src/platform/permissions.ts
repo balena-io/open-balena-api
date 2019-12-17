@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 import * as randomstring from 'randomstring';
 
 import { Tx, getOrInsertId } from './index';
@@ -24,11 +24,10 @@ export const assignRolePermission = (
 ) => getOrInsertId('role__has__permission', { role, permission }, tx);
 
 const assignRolePermissions = (roleId: number, permissions: string[], tx: Tx) =>
-	Promise.map(permissions, name =>
-		getOrInsertPermissionId(name, tx).then(permission =>
-			assignRolePermission(roleId, permission.id, tx),
-		),
-	);
+	Bluebird.map(permissions, async name => {
+		const permission = await getOrInsertPermissionId(name, tx);
+		await assignRolePermission(roleId, permission.id, tx);
+	});
 
 export const assignUserRole = (user: number, role: number, tx: Tx) =>
 	getOrInsertId('user__has__role', { user, role }, tx);
@@ -41,7 +40,7 @@ export const assignUserPermission = (
 
 // api key helpers
 
-const getOrInsertApiKey = (
+const getOrInsertApiKey = async (
 	actorId: number,
 	role: { id: number },
 	tx: Tx,
@@ -52,104 +51,89 @@ const getOrInsertApiKey = (
 			req: root,
 		},
 	});
-	return authApiTx
-		.get({
-			resource: 'api_key',
-			passthrough: { req: root },
-			options: {
-				$select: ['id', 'key'],
-				$filter: {
-					is_of__actor: actorId,
-					has__role: {
-						$any: {
-							$alias: 'khr',
-							$expr: {
-								khr: { role: role.id },
-							},
+	const apiKeys = (await authApiTx.get({
+		resource: 'api_key',
+		passthrough: { req: root },
+		options: {
+			$select: ['id', 'key'],
+			$filter: {
+				is_of__actor: actorId,
+				has__role: {
+					$any: {
+						$alias: 'khr',
+						$expr: {
+							khr: { role: role.id },
 						},
 					},
 				},
 			},
-		})
-		.then((apiKeys: AnyObject[]) => {
-			const len = apiKeys.length;
+		},
+	})) as AnyObject[];
+	const len = apiKeys.length;
 
-			if (len === 0) {
-				const key = randomstring.generate();
-				const body = {
-					is_of__actor: actorId,
-					key,
-				};
+	if (len === 0) {
+		const key = randomstring.generate();
+		const body = {
+			is_of__actor: actorId,
+			key,
+		};
 
-				return authApiTx
-					.post({
-						resource: 'api_key',
-						passthrough: { req: root },
-						body,
-					})
-					.then((idObj: { id: number }) => {
-						return { ...idObj, ...body };
-					})
-					.tap(apiKey =>
-						authApiTx.post({
-							resource: 'api_key__has__role',
-							passthrough: { req: root },
-							body: {
-								api_key: apiKey.id,
-								role: role.id,
-							},
-							options: { returnResource: false },
-						}),
-					);
-			} else {
-				if (len > 1) {
-					console.warn(
-						`Actor ID ${actorId} has ${len} API keys for role ${role.id}`,
-					);
-				}
-				return apiKeys[0];
-			}
+		const idObj = (await authApiTx.post({
+			resource: 'api_key',
+			passthrough: { req: root },
+			body,
+		})) as { id: number };
+		const apiKey = { ...idObj, ...body };
+		await authApiTx.post({
+			resource: 'api_key__has__role',
+			passthrough: { req: root },
+			body: {
+				api_key: apiKey.id,
+				role: role.id,
+			},
+			options: { returnResource: false },
 		});
+		return apiKey;
+	} else {
+		if (len > 1) {
+			console.warn(
+				`Actor ID ${actorId} has ${len} API keys for role ${role.id}`,
+			);
+		}
+		return apiKeys[0];
+	}
 };
 
-export const setApiKey = (
-	role: string,
+export const setApiKey = async (
+	roleName: string,
 	permissions: string[],
 	key: string,
 	tx: Tx,
-): Promise<AnyObject> =>
-	getOrInsertRoleId(role, tx)
-		.tap(role => assignRolePermissions(role.id, permissions, tx))
-		.then(role =>
-			findUser('guest', tx).then(user => {
-				if (user == null || user.actor == null) {
-					throw new Error('Cannot find guest user');
-				}
-				return getOrInsertApiKey(user.actor, role, tx);
-			}),
-		)
-		.then(apiKey => {
-			if (key) {
-				apiKey.key = key;
-				return (
-					api.Auth.patch({
-						resource: 'api_key',
-						id: apiKey.id,
-						passthrough: {
-							req: root,
-							tx,
-						},
-						body: {
-							key,
-						},
-					})
-						// authApi.patch doesn't resolve to the result, have to manually return here
-						.return(apiKey)
-				);
-			} else {
-				return apiKey;
-			}
+): Promise<AnyObject> => {
+	const role = await getOrInsertRoleId(roleName, tx);
+	await assignRolePermissions(role.id, permissions, tx);
+	const user = await findUser('guest', tx);
+	if (user == null || user.actor == null) {
+		throw new Error('Cannot find guest user');
+	}
+	const apiKey = await getOrInsertApiKey(user.actor, role, tx);
+
+	if (key) {
+		apiKey.key = key;
+		await api.Auth.patch({
+			resource: 'api_key',
+			id: apiKey.id,
+			passthrough: {
+				req: root,
+				tx,
+			},
+			body: {
+				key,
+			},
 		});
+	}
+	return apiKey;
+};
 
 export type PermissionSet = string[];
 
@@ -206,168 +190,162 @@ export function createAll(
 						.then(({ id }: AnyObject) => id);
 				}
 			}
-			return Promise.props<Dictionary<number>>(result);
+			return Bluebird.props<Dictionary<number>>(result);
 		});
 
-	const createRolePermissions = (permissionNames: string[], roleName: string) =>
-		getOrInsertRoleId(roleName, tx)
-			.tap(role => {
-				if (permissionNames.length === 0) {
-					return;
-				}
-				return permissionsCache.then(permissionsCache => {
-					const permissions = _.values(
-						_.pick(permissionsCache, permissionNames),
-					);
-					const addPermissionsPromise = apiTx
-						.get({
-							resource: 'role__has__permission',
-							options: {
-								$select: 'permission',
-								$filter: {
-									role: role.id,
-									permission: { $in: permissions },
-								},
-							},
-						})
-						.then((rolePermissions: AnyObject[]) => {
-							const rolePermissionIds: number[] = rolePermissions.map(
-								({ permission }) => permission.__id,
-							);
-							return _.difference(permissions, rolePermissionIds);
-						})
-						.map(permission =>
-							apiTx.post({
-								resource: 'role__has__permission',
-								body: {
-									role: role.id,
-									permission,
-								},
-								options: { returnResource: false },
-							}),
-						);
-					const deletePermissionsPromise = apiTx.delete({
-						resource: 'role__has__permission',
-						options: {
-							$filter: {
-								role: role.id,
-								$not: { permission: { $in: permissions } },
-							},
+	const createRolePermissions = async (
+		permissionNames: string[],
+		roleName: string,
+	): Promise<{ id: number }> => {
+		try {
+			const role = await getOrInsertRoleId(roleName, tx);
+			if (permissionNames.length === 0) {
+				return role;
+			}
+			const permissions = _.values(
+				_.pick(await permissionsCache, permissionNames),
+			);
+			const addPermissionsPromise = apiTx
+				.get({
+					resource: 'role__has__permission',
+					options: {
+						$select: 'permission',
+						$filter: {
+							role: role.id,
+							permission: { $in: permissions },
 						},
-					});
-					return Promise.all([addPermissionsPromise, deletePermissionsPromise]);
-				});
-			})
-			.tapCatch(err => {
-				captureException(err, `Error on configuring ${roleName}`);
-			});
-
-	const rolesPromise = Promise.props<Dictionary<{ id: number }>>(
-		_.mapValues(roleMap, createRolePermissions),
-	)
-		.tap(roles =>
-			// Assign user roles
-			Promise.all(
-				_.map(userMap, (userEmails, roleName) =>
-					Promise.mapSeries(userEmails, email =>
-						findUser(email, tx)
-							.then(user => {
-								if (user == null || user.id == null) {
-									throw new Error(`User ${email} not found.`);
-								}
-								return assignUserRole(user.id, roles[roleName].id, tx);
-							})
-							.catch(_.noop),
-					),
-				),
-			),
-		)
-		.tap(() =>
-			// Remove stale permissions, preserving unassigned ones.
-			permissionsCache.then(permissions =>
-				apiTx
-					.delete({
-						resource: 'permission',
-						options: {
-							$filter: {
-								$not: {
-									$or: [
-										{
-											is_of__role: {
-												$any: {
-													$alias: 'rhp',
-													$expr: { rhp: { id: { $ne: null } } },
-												},
-											},
-										},
-										{
-											is_of__user: {
-												$any: {
-													$alias: 'uhp',
-													$expr: { uhp: { id: { $ne: null } } },
-												},
-											},
-										},
-										{
-											is_of__api_key: {
-												$any: {
-													$alias: 'ahp',
-													$expr: { ahp: { id: { $ne: null } } },
-												},
-											},
-										},
-										{ id: { $in: _.values(permissions) } },
-									],
-								},
-							},
-						},
-					})
-					.tapCatch(err => {
-						captureException(err, 'Error on clearing stale permissions');
-					}),
-			),
-		);
-
-	const apiKeysPromise = Promise.map(
-		_.toPairs(apiKeyMap),
-		([role, { permissions, key }]) =>
-			createRolePermissions(permissions, role)
-				.then(role =>
-					findUser('guest', tx).then(user => {
-						if (user == null || user.actor == null) {
-							throw new Error('Cannot find guest user');
-						}
-						return getOrInsertApiKey(user.actor, role, tx);
-					}),
-				)
-				.then(apiKey => {
-					if (!key) {
-						return apiKey.key;
-					}
-					return (
-						apiTx
-							.patch({
-								resource: 'api_key',
-								id: apiKey.id,
-								passthrough: {
-									req: root,
-									tx,
-								},
-								body: {
-									key,
-								},
-							})
-							// authApi.patch doesn't resolve to the result,
-							// have to manually return here
-							.return(key)
-					);
+					},
 				})
-				.catch(err => {
-					captureException(err, `Error creating ${role} API key!`);
-				}),
+				.then((rolePermissions: AnyObject[]) => {
+					const rolePermissionIds: number[] = rolePermissions.map(
+						({ permission }) => permission.__id,
+					);
+					return _.difference(permissions, rolePermissionIds);
+				})
+				.map(permission =>
+					apiTx.post({
+						resource: 'role__has__permission',
+						body: {
+							role: role.id,
+							permission,
+						},
+						options: { returnResource: false },
+					}),
+				);
+			const deletePermissionsPromise = apiTx.delete({
+				resource: 'role__has__permission',
+				options: {
+					$filter: {
+						role: role.id,
+						$not: { permission: { $in: permissions } },
+					},
+				},
+			});
+			await Promise.all([addPermissionsPromise, deletePermissionsPromise]);
+			return role;
+		} catch (err) {
+			captureException(err, `Error on configuring ${roleName}`);
+			throw err;
+		}
+	};
+
+	const rolesPromise = Bluebird.props<Dictionary<{ id: number }>>(
+		_.mapValues(roleMap, createRolePermissions),
+	).tap(async roles => {
+		// Assign user roles
+		await Bluebird.all(
+			_.map(userMap, async (userEmails, roleName) => {
+				for (const email of userEmails) {
+					try {
+						const user = await findUser(email, tx);
+						if (user == null || user.id == null) {
+							throw new Error(`User ${email} not found.`);
+						}
+						await assignUserRole(user.id, roles[roleName].id, tx);
+					} catch {}
+				}
+			}),
+		);
+		// Remove stale permissions, preserving unassigned ones.
+		const permissions = await permissionsCache;
+		try {
+			await apiTx.delete({
+				resource: 'permission',
+				options: {
+					$filter: {
+						$not: {
+							$or: [
+								{
+									is_of__role: {
+										$any: {
+											$alias: 'rhp',
+											$expr: { rhp: { id: { $ne: null } } },
+										},
+									},
+								},
+								{
+									is_of__user: {
+										$any: {
+											$alias: 'uhp',
+											$expr: { uhp: { id: { $ne: null } } },
+										},
+									},
+								},
+								{
+									is_of__api_key: {
+										$any: {
+											$alias: 'ahp',
+											$expr: { ahp: { id: { $ne: null } } },
+										},
+									},
+								},
+								{ id: { $in: _.values(permissions) } },
+							],
+						},
+					},
+				},
+			});
+		} catch (err) {
+			captureException(err, 'Error on clearing stale permissions');
+			throw err;
+		}
+	});
+
+	const apiKeysPromise = Bluebird.map(
+		_.toPairs(apiKeyMap),
+		async ([roleName, { permissions, key }]) => {
+			try {
+				const role = await createRolePermissions(permissions, roleName);
+				const user = await findUser('guest', tx);
+				if (user == null || user.actor == null) {
+					throw new Error('Cannot find guest user');
+				}
+				const apiKey = await getOrInsertApiKey(user.actor, role, tx);
+
+				if (!key) {
+					return apiKey.key;
+				}
+				await apiTx.patch({
+					resource: 'api_key',
+					id: apiKey.id,
+					passthrough: {
+						req: root,
+						tx,
+					},
+					body: {
+						key,
+					},
+				});
+				// authApi.patch doesn't resolve to the result,
+				// have to manually return here
+				return key;
+			} catch (err) {
+				captureException(err, `Error creating ${roleName} API key!`);
+			}
+		},
 	);
 
-	return Promise.props({
+	return Bluebird.props({
 		roles: rolesPromise,
 		apiKeys: apiKeysPromise,
 	});
