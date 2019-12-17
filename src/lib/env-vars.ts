@@ -104,7 +104,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 	RESIN_SUPERVISOR_INSTANT_UPDATE_TRIGGER: {
 		enum: ['false', 'true'],
 		description:
-			'Enable/disable triggering updates instantly on startup or after pushing a release. Only supported by supervisor versions >= v9.13.0.',
+			'Enable / Disable triggering updates instantly on startup or after pushing a release. Only supported by supervisor versions >= v9.13.0.',
 		default: 'true',
 	},
 };
