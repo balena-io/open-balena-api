@@ -1,5 +1,4 @@
 import * as AWS from 'aws-sdk';
-import * as Promise from 'bluebird';
 import * as path from 'path';
 import * as _ from 'lodash';
 import {
@@ -60,7 +59,7 @@ function getFileInfo(path: string) {
 		Bucket: S3_BUCKET,
 		Key: path,
 	});
-	return Promise.resolve(req.promise());
+	return req.promise();
 }
 
 export function getFile(path: string) {
@@ -68,10 +67,10 @@ export function getFile(path: string) {
 		Bucket: S3_BUCKET,
 		Key: path,
 	});
-	return Promise.resolve(req.promise());
+	return req.promise();
 }
 
-export function getFolderSize(
+export async function getFolderSize(
 	folder: string,
 	marker?: string,
 ): Promise<number> {
@@ -80,17 +79,18 @@ export function getFolderSize(
 		Prefix: `${folder}/`,
 		ContinuationToken: marker,
 	});
-	return Promise.resolve(req.promise()).then(res => {
-		const size = _.sumBy(res.Contents, 'Size');
-		const marker = res.NextContinuationToken;
-		if (marker && res.IsTruncated) {
-			return getFolderSize(folder, marker).then(newSize => size + newSize);
-		}
-		return size;
-	});
+	const res = await req.promise();
+
+	const size = _.sumBy(res.Contents, 'Size');
+	const nextMarker = res.NextContinuationToken;
+	if (nextMarker && res.IsTruncated) {
+		const newSize = await getFolderSize(folder, nextMarker);
+		return size + newSize;
+	}
+	return size;
 }
 
-export function listFolders(
+export async function listFolders(
 	folder: string,
 	marker?: string,
 ): Promise<string[]> {
@@ -101,33 +101,33 @@ export function listFolders(
 		ContinuationToken: marker,
 	});
 
-	return Promise.resolve(req.promise()).then(res => {
-		const objects = _(res.CommonPrefixes)
-			.map('Prefix')
-			// only keep the folder paths (which are ending with `/`)
-			.filter(p => p != null && p.endsWith('/'))
-			.map((p: string) =>
-				// get the name of the immediately contained folder
-				path.basename(p),
-			)
-			.value();
-		const marker = res.NextContinuationToken;
-		if (marker && res.IsTruncated) {
-			return listFolders(folder, marker).then(newObjects =>
-				objects.concat(newObjects),
-			);
-		}
-		return objects;
-	});
+	const res = await req.promise();
+
+	const objects = _(res.CommonPrefixes)
+		.map('Prefix')
+		// only keep the folder paths (which are ending with `/`)
+		.filter(p => p != null && p.endsWith('/'))
+		.map((p: string) =>
+			// get the name of the immediately contained folder
+			path.basename(p),
+		)
+		.value();
+	const nextMarker = res.NextContinuationToken;
+	if (nextMarker && res.IsTruncated) {
+		const newObjects = await listFolders(folder, nextMarker);
+		return objects.concat(newObjects);
+	}
+	return objects;
 }
 
-export function fileExists(path: string): Promise<boolean> {
-	return getFileInfo(path)
-		.return(true)
-		.catch(err => {
-			if (err.statusCode === 404) {
-				return false;
-			}
-			throw err;
-		});
+export async function fileExists(path: string): Promise<boolean> {
+	try {
+		await getFileInfo(path);
+		return true;
+	} catch (err) {
+		if (err.statusCode === 404) {
+			return false;
+		}
+		throw err;
+	}
 }

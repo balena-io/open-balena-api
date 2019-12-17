@@ -125,43 +125,40 @@ function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	const result: Dictionary<DeviceTypeInfo> = {};
 	getIsIgnored.clear();
 	getDeviceTypeJson.clear();
-	return listFolders(IMAGE_STORAGE_PREFIX)
-		.map(slug => {
-			return listFolders(getImageKey(slug))
-				.then(builds => {
-					if (_.isEmpty(builds)) {
+	return Promise.map(listFolders(IMAGE_STORAGE_PREFIX), slug => {
+		return listFolders(getImageKey(slug))
+			.then(builds => {
+				if (_.isEmpty(builds)) {
+					return;
+				}
+
+				const sortedBuilds = sortBuildIds(builds);
+				return getFirstValidBuild(slug, sortedBuilds).then(latestBuildInfo => {
+					if (!latestBuildInfo) {
 						return;
 					}
 
-					const sortedBuilds = sortBuildIds(builds);
-					return getFirstValidBuild(slug, sortedBuilds).then(
-						latestBuildInfo => {
-							if (!latestBuildInfo) {
-								return;
-							}
+					result[slug] = {
+						versions: builds,
+						latest: latestBuildInfo,
+					};
 
-							result[slug] = {
-								versions: builds,
-								latest: latestBuildInfo,
-							};
-
-							_.forEach(
-								(latestBuildInfo.deviceType as DeviceTypeWithAliases).aliases,
-								alias => {
-									result[alias] = result[slug];
-								},
-							);
+					_.forEach(
+						(latestBuildInfo.deviceType as DeviceTypeWithAliases).aliases,
+						alias => {
+							result[alias] = result[slug];
 						},
 					);
-				})
-				.catch(err => {
-					captureException(
-						err,
-						`Failed to find a valid build for device type ${slug}`,
-					);
-				})
-				.return(slug);
-		})
+				});
+			})
+			.catch(err => {
+				captureException(
+					err,
+					`Failed to find a valid build for device type ${slug}`,
+				);
+			})
+			.then(() => slug);
+	})
 		.then(slugs => {
 			if (_.isEmpty(result) && !_.isEmpty(slugs)) {
 				throw new InternalRequestError('Could not retrieve any device type');
