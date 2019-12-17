@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 import * as jsonwebtoken from 'jsonwebtoken';
 import * as randomstring from 'randomstring';
 import * as passport from 'passport';
@@ -79,58 +79,55 @@ export const strategy = new JwtStrategy(
 		jwtFromRequest,
 	},
 	(jwtUser: JwtUser, done) =>
-		Promise.try((): Creds | Promise<Creds> => {
-			if (jwtUser == null) {
-				throw new InvalidJwtSecretError();
-			}
-			if ('service' in jwtUser && jwtUser.service) {
-				const { service, apikey } = jwtUser;
-				return sbvrUtils.getApiKeyPermissions(apikey).then(permissions => {
+		Bluebird.try(
+			async (): Promise<Creds> => {
+				if (jwtUser == null) {
+					throw new InvalidJwtSecretError();
+				}
+				if ('service' in jwtUser && jwtUser.service) {
+					const { service, apikey } = jwtUser;
+					const permissions = await sbvrUtils.getApiKeyPermissions(apikey);
 					return { service, apikey, permissions };
-				});
-			} else if (
-				'access' in jwtUser &&
-				jwtUser.access != null &&
-				jwtUser.access.actor &&
-				jwtUser.access != null &&
-				jwtUser.access.permissions
-			) {
-				return jwtUser.access;
-			} else if ('id' in jwtUser) {
-				return api.resin
-					.get({
+				} else if (
+					'access' in jwtUser &&
+					jwtUser.access != null &&
+					jwtUser.access.actor &&
+					jwtUser.access != null &&
+					jwtUser.access.permissions
+				) {
+					return jwtUser.access;
+				} else if ('id' in jwtUser) {
+					const user = (await api.resin.get({
 						resource: 'user',
 						id: jwtUser.id,
 						passthrough: { req: root },
 						options: {
 							$select: ['actor', 'jwt_secret'],
 						},
-					})
-					.then((user: Pick<DbUser, 'actor' | 'jwt_secret'>) => {
-						if (user == null) {
-							throw new InvalidJwtSecretError();
-						}
+					})) as Pick<DbUser, 'actor' | 'jwt_secret'>;
+					if (user == null) {
+						throw new InvalidJwtSecretError();
+					}
 
-						// Default both to null so that we don't hit issues with null !== undefined
-						const userSecret = user.jwt_secret != null ? user.jwt_secret : null;
-						const jwtSecret =
-							jwtUser.jwt_secret != null ? jwtUser.jwt_secret : null;
+					// Default both to null so that we don't hit issues with null !== undefined
+					const userSecret = user.jwt_secret != null ? user.jwt_secret : null;
+					const jwtSecret =
+						jwtUser.jwt_secret != null ? jwtUser.jwt_secret : null;
 
-						if (userSecret !== jwtSecret) {
-							throw new InvalidJwtSecretError();
-						}
+					if (userSecret !== jwtSecret) {
+						throw new InvalidJwtSecretError();
+					}
 
-						jwtUser.actor = user.actor;
-						return sbvrUtils.getUserPermissions(jwtUser.id);
-					})
-					.then(permissions => {
-						jwtUser.permissions = permissions;
-						return jwtUser;
-					});
-			} else {
-				throw new Error('Invalid JWT');
-			}
-		}).nodeify(done),
+					jwtUser.actor = user.actor;
+					const permissions = await sbvrUtils.getUserPermissions(jwtUser.id);
+
+					jwtUser.permissions = permissions;
+					return jwtUser;
+				} else {
+					throw new Error('Invalid JWT');
+				}
+			},
+		).nodeify(done),
 );
 
 export const createJwt = (
