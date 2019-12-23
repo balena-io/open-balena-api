@@ -81,11 +81,11 @@ export async function hostOSAccess(
 			return;
 		}
 
-		// Users are not allowed to access hostOS for devices with resinOS < HOSTOS_ACCESS_MIN_RESINOS_VER
+		// Users are not allowed to access hostOS for devices with balenaOS < HOSTOS_ACCESS_MIN_OS_VER
 		res.sendStatus(401);
 	} catch (err) {
 		if (err instanceof UnauthorizedError) {
-			// Users are not allowed to access hostOS for devices with resinOS < HOSTOS_ACCESS_MIN_RESINOS_VER
+			// Users are not allowed to access hostOS for devices with balenaOS < HOSTOS_ACCESS_MIN_OS_VER
 			res.sendStatus(401);
 			return;
 		}

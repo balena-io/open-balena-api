@@ -45,5 +45,3 @@ config/env
 /.fast-boot.json
 /.coffee
 /.pinejs-cache.json
-/.resin.sbvr
-/.resin-init.sql
