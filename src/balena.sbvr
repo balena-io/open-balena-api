@@ -71,7 +71,7 @@ Fact type: api key has description
 	Necessity: Each api key has at most one description.
 
 
-Vocabulary: resin
+Vocabulary: balena
 
 -- Resource fields (in AZ order)
 

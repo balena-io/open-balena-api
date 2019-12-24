@@ -1,8 +1,8 @@
 import { Config } from '@resin/pinejs/out/config-loader/config-loader';
-import * as resinModel from './src/resin';
+import * as balenaModel from './src/balena';
 
 export = {
-	models: [resinModel],
+	models: [balenaModel],
 	users: [
 		{
 			username: 'guest',
