@@ -1,4 +1,14 @@
 - commits:
+    - subject: Rename more parts to balena
+      hash: 1dc9217fa16ed9fa19e231a659a41b4bd3b00a1c
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.47.0
+  date: 2019-12-24T17:10:04.540Z
+- commits:
     - subject: Update open-balena-base to 9.0.3
       hash: da91d48f05bec2265e68011af491fba164798224
       body: |
