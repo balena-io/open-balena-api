@@ -1,4 +1,50 @@
 - commits:
+    - subject: Update open-balena-base to 9.0.3
+      hash: da91d48f05bec2265e68011af491fba164798224
+      body: |
+        Update open-balena-base from 9.0.0 to 9.0.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 12.14.0 and npm to 6.13.4
+              hash: 8fad0b4262e0991b52dbe217c2df80fe533b628a
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-9.0.3
+          date: 2019-12-24T13:25:53.531Z
+        - commits:
+            - subject: Don't use UID used in node archive when unpacking as root
+              hash: fa41cbe4adbb1355705f30d934fa4f8885d86d88
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Federico Fissore <federico@balena.io>
+                signed-off-by: Federico Fissore <federico@balena.io>
+              author: Federico Fissore
+          version: open-balena-base-9.0.2
+          date: 2019-12-20T12:45:38.781Z
+        - commits:
+            - subject: Update node to 12 in no systemd variant
+              hash: 3de89559505f2a10d94e4f0cc955c02651bdb8a3
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Roman Mazur <roman@balena.io>
+                signed-off-by: Roman Mazur <roman@balena.io>
+              author: Roman Mazur
+          version: open-balena-base-9.0.1
+          date: 2019-11-15T16:14:23.953Z
+  version: 0.46.6
+  date: 2019-12-24T14:10:32.719Z
+- commits:
     - subject: Fix migration numbering
       hash: 14982aaba24450b5d9457af945fdf95ec0b4aa24
       body: ''
