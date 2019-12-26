@@ -1,4 +1,14 @@
 - commits:
+    - subject: Remove database terminology from sbvr comments
+      hash: e619b3615aeb136ef6c8af27bc7958f12d4ed718
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.47.1
+  date: 2019-12-26T17:32:32.716Z
+- commits:
     - subject: Rename more parts to balena
       hash: 1dc9217fa16ed9fa19e231a659a41b4bd3b00a1c
       body: ''
