@@ -1,4 +1,63 @@
 - commits:
+    - subject: Convert platform/auth to async/await
+      hash: 306687c8be308f8dd62f908e2bf5158f79a216c0
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert platform/permissions to async/await
+      hash: 66cd76505d14ae0d0877a3702c5d40ecf3a3d5a2
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert lib/device-types/storage/s3 to async/await
+      hash: 780df8bac873712edc2486db9779fdcf3409e9d6
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert platform/jwt to async/await
+      hash: a587f0b0dedff5db685b12105578d138837387fa
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert lib/rate-limiting to async/await
+      hash: 59fb46bb03134c2c6032fd7bcb93d3ae2bb25a36
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert lib/device-types/build-info-facade to async/await
+      hash: d301514efac28d4796b9b605ebe6c74437aa561d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert lib/application-types to async/await
+      hash: da014ee1c5aa4173961d4b723741d503a4516b7f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert hooks/common to async/await
+      hash: 459019a2b0af44893e65cfc3494fbc497fd06bc2
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.47.2
+  date: 2019-12-26T18:19:09.585Z
+- commits:
     - subject: Remove database terminology from sbvr comments
       hash: e619b3615aeb136ef6c8af27bc7958f12d4ed718
       body: ''
