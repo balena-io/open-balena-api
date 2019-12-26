@@ -73,7 +73,7 @@ Fact type: api key has description
 
 Vocabulary: balena
 
--- Resource fields (in AZ order)
+-- Primitive terms (in AZ order)
 
 Term: api heartbeat state
 	Concept Type: Short Text (Type)
@@ -246,7 +246,7 @@ Term: VPN port
 	Necessity: each VPN port is greater than or equal to 1.
 
 
--- Top-level resources (equivalent to database tables)
+-- Complex terms
 
 Term: application type
 Term: config
