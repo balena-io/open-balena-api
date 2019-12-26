@@ -135,10 +135,12 @@ const $createRateLimitMiddleware = (
 	if (field != null) {
 		let keyFn: _express.Handler;
 		if (_.isFunction(field)) {
-			keyFn = (req, res, next) => {
-				field(req, res)
-					.catch(_.noop)
-					.then(next);
+			keyFn = async (req, res, next) => {
+				try {
+					next(await field(req, res));
+				} catch {
+					next();
+				}
 			};
 		} else {
 			const path = _.toPath(field);

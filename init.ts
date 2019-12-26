@@ -69,22 +69,25 @@ async function createSuperuser() {
 	};
 
 	return sbvrUtils.db
-		.transaction(tx =>
-			registerUser(data, tx)
-				.then(() => {
-					console.log('Superuser created successfully!');
-				})
-				.catch(ConflictError, () => {
+		.transaction(async tx => {
+			try {
+				await registerUser(data, tx);
+				console.log('Superuser created successfully!');
+			} catch (err) {
+				if (err instanceof ConflictError) {
 					console.log('Superuser already exists!');
-					return updatePasswordIfNeeded(data.username, SUPERUSER_PASSWORD).then(
-						updated => {
-							if (updated) {
-								console.log('Superuser password changed.');
-							}
-						},
+					const updated = await updatePasswordIfNeeded(
+						data.username,
+						SUPERUSER_PASSWORD,
 					);
-				}),
-		)
+					if (updated) {
+						console.log('Superuser password changed.');
+					}
+				} else {
+					throw err;
+				}
+			}
+		})
 		.catch(err => {
 			console.error('Error creating superuser:', err);
 		});

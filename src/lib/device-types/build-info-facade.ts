@@ -1,4 +1,3 @@
-import * as Promise from 'bluebird';
 import * as memoizee from 'memoizee';
 import * as deviceTypesLib from '@resin.io/device-types';
 import { fileExists, getFile, getFolderSize, getImageKey } from './storage';
@@ -16,22 +15,21 @@ export const getIsIgnored = memoizee(
 );
 
 export const getDeviceTypeJson = memoizee(
-	(
+	async (
 		normalizedSlug: string,
 		buildId: string,
 	): Promise<deviceTypesLib.DeviceType | undefined> => {
-		return getFile(
+		const response = await getFile(
 			getImageKey(normalizedSlug, buildId, 'device-type.json'),
-		).then(response => {
-			const deviceType =
-				response && response.Body
-					? (JSON.parse(response.Body.toString()) as DeviceType)
-					: undefined;
-			if (deviceType) {
-				deviceType.buildId = buildId;
-			}
-			return deviceType;
-		});
+		);
+		const deviceType =
+			response && response.Body
+				? (JSON.parse(response.Body.toString()) as DeviceType)
+				: undefined;
+		if (deviceType) {
+			deviceType.buildId = buildId;
+		}
+		return deviceType;
 	},
 	{ promise: true, preFetch: true, maxAge: BUILD_PROPERTY_CACHE_EXPIRATION },
 );
