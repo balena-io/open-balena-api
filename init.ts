@@ -33,13 +33,15 @@ async function onInitHooks() {
 	const permissionNames = _.uniq(
 		_.flatMap(auth.ROLES).concat(_.flatMap(auth.KEYS, 'permissions')),
 	);
-	const { setSyncMap, deviceTypes } = await import('./src/lib/device-types');
+	const { setSyncMap, getAccessibleDeviceTypes } = await import(
+		'./src/lib/device-types'
+	);
 	setSyncMap({
 		name: { name: 'name' },
 	});
 
 	// this will pre-fetch the device types and populate the cache...
-	deviceTypes(sbvrUtils.api.resin);
+	getAccessibleDeviceTypes(sbvrUtils.api.resin);
 
 	await sbvrUtils.db.transaction(tx =>
 		createAll(tx, permissionNames, auth.ROLES, auth.KEYS, {}),

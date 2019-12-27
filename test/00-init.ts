@@ -3,12 +3,12 @@ import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { deviceTypes } from '../src/lib/device-types';
+import { getAccessibleDeviceTypes } from '../src/lib/device-types';
 import { sbvrUtils } from '@resin/pinejs';
 
 before('Pre-Run Things', async () => {
 	// this will wait on the pre-fetch the device types and populate the cache...
-	await deviceTypes(sbvrUtils.api.resin);
+	await getAccessibleDeviceTypes(sbvrUtils.api.resin);
 });
 
 const testFiles = _(process.env.TEST_FILES)
