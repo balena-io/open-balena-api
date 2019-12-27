@@ -57,13 +57,22 @@ type Scope = [Access['type'], Access['name'], Access['actions']];
 
 // Resolves permissions and populates req.user object, in case an api key is used
 // in the password field of a basic authentication header
-export const basicApiKeyAuthenticate: RequestHandler = (req, _res, next) => {
+export const basicApiKeyAuthenticate: RequestHandler = async (
+	req,
+	_res,
+	next,
+) => {
 	const creds = BasicAuth.parse(req.headers['authorization']!);
 	if (creds) {
 		req.params.subject = creds.name;
 		req.params.apikey = creds.pass;
 	}
-	return retrieveAPIKey(req).asCallback(next);
+	try {
+		await retrieveAPIKey(req);
+		next();
+	} catch (err) {
+		next(err);
+	}
 };
 
 const parseScope = (req: Request, scope: string): Scope | undefined => {
