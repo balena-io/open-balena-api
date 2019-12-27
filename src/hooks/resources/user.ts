@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 
 import { assignUserRole } from '../../platform/permissions';
 import { captureException } from '../../platform/errors';
@@ -13,8 +13,8 @@ const { root, api } = sbvrUtils;
 sbvrUtils.addPureHook('POST', 'resin', 'user', {
 	POSTPARSE: createActor,
 
-	POSTRUN: ({ result, tx }) =>
-		api.Auth.get({
+	POSTRUN: async ({ result, tx }) => {
+		const [role] = (await api.Auth.get({
 			resource: 'role',
 			passthrough: {
 				tx,
@@ -26,31 +26,30 @@ sbvrUtils.addPureHook('POST', 'resin', 'user', {
 					name: 'default-user',
 				},
 			},
-		}).then(([role]: AnyObject[]) => {
-			if (role == null) {
-				throw new Error('Unable to find the default user role');
-			}
-			return assignUserRole(result, role.id, tx);
-		}),
+		})) as AnyObject[];
+		if (role == null) {
+			throw new Error('Unable to find the default user role');
+		}
+		return assignUserRole(result, role.id, tx);
+	},
 });
 
 sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
-	POSTPARSE: ({ req, request }) => {
+	POSTPARSE: async ({ req, request }) => {
 		let userId = _.get(request.odataQuery, 'key');
 		if (userId == null) {
 			throw new Error('You must provide user ID');
 		}
 
-		return getUser(req).then(user => {
-			userId = sbvrUtils.resolveOdataBind(request.odataBinds, userId);
+		const user = await getUser(req);
+		userId = sbvrUtils.resolveOdataBind(request.odataBinds, userId);
 
-			if (user.id !== userId) {
-				throw new Error('You can only delete your own account');
-			}
+		if (user.id !== userId) {
+			throw new Error('You can only delete your own account');
+		}
 
-			// Store the user id in the custom request data for later.
-			request.custom.userId = userId;
-		});
+		// Store the user id in the custom request data for later.
+		request.custom.userId = userId;
 	},
 	PRERUN: ({ req, request, tx, api }) => {
 		const { userId } = request.custom;
@@ -62,7 +61,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 			},
 		});
 
-		const authApiDeletes = Promise.map(
+		const authApiDeletes = Bluebird.map(
 			['user__has__role', 'user__has__permission'],
 			resource =>
 				authApiTx
@@ -103,6 +102,6 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 					});
 			});
 
-		return Promise.all([authApiDeletes, apiKeyDelete]);
+		return Bluebird.all([authApiDeletes, apiKeyDelete]);
 	},
 });
