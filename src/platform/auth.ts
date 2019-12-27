@@ -167,7 +167,7 @@ export const userFields = [
 
 export const tokenFields = _.clone(userFields);
 
-interface ExtraParams {
+export interface ExtraParams {
 	existingToken?: Partial<User>;
 	jwtOptions?: SignOptions;
 }
