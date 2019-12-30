@@ -1,4 +1,14 @@
 - commits:
+    - subject: Add a .gitattributes to ensure the correct line endings for scripts
+      hash: 8c4dea1e8ae453714010fa59ab30ca904751b9f6
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.48.2
+  date: 2019-12-30T16:37:53.730Z
+- commits:
     - subject: Update dependencies
       hash: eb3c38bdbcbb0d9ae9efd4c2a0afa19c39ba836a
       body: ''
