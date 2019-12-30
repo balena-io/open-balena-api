@@ -237,14 +237,6 @@ Term: version
 Term: vpn address
 	Concept Type: Short Text (Type)
 
-Term: VPN host
-	Concept Type: Text (Type)
-
-Term: VPN port
-	Concept Type: Integer (Type)
-	Necessity: each VPN port is less than or equal to 65535.
-	Necessity: each VPN port is greater than or equal to 1.
-
 
 -- Complex terms
 
@@ -384,10 +376,6 @@ Fact type: application has slug
 	Necessity: each slug is of exactly one application
 Fact type: application is for device type
 	Necessity: each application is for exactly one device type
-Fact type: application has VPN host
-	Necessity: each application has exactly one VPN host.
-Fact type: application has VPN port
-	Necessity: each application has exactly one VPN port.
 Fact type: application should be running release
 	Synonymous Form: release should be running on application
 	Necessity: each application should be running at most one release.

@@ -14,8 +14,6 @@ import {
 const { BadRequestError, ConflictError, root } = sbvrUtils;
 import { captureException } from '../../platform/errors';
 
-import { VPN_HOST, VPN_PORT } from '../../lib/config';
-
 const checkDependentApplication: sbvrUtils.Hooks['POSTPARSE'] = ({
 	request,
 	api,
@@ -60,8 +58,6 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 			checkDependentApplication(args),
 		])
 			.then(() => {
-				request.values.VPN_host = VPN_HOST;
-				request.values.VPN_port = VPN_PORT;
 				request.values.should_track_latest_release = true;
 				if (request.values.slug == null) {
 					request.values.slug = appName.toLowerCase();
