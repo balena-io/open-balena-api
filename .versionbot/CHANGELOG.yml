@@ -1,4 +1,49 @@
 - commits:
+    - subject: Convert lib/device-types/index to async/await
+      hash: c4327af80ddaf94d347e14154663611ce054dbc4
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+    - subject: Convert platform/index to async/await
+      hash: 195d242035d56bebf3e02dc2f2cb40e85c436dc1
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert index.ts to async/await
+      hash: f3c6df34a49fb1b061c19a9d6a00a68ab71fed0d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert hooks/resources/user to async/await
+      hash: ffde52c759d2f354465e171aa459bb60746c8880
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert platform/api-keys to async/await
+      hash: ac73c4c549062a3080373a9501c83c032e99e5c0
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert routes/device-types to async/await
+      hash: b515c9eea552f1da0cb3ab5079a1b70189d80484
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.48.0
+  date: 2019-12-27T23:45:22.844Z
+- commits:
     - subject: Convert platform/auth to async/await
       hash: 306687c8be308f8dd62f908e2bf5158f79a216c0
       body: ''
