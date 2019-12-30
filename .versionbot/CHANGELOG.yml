@@ -1,4 +1,14 @@
 - commits:
+    - subject: Update dependencies
+      hash: eb3c38bdbcbb0d9ae9efd4c2a0afa19c39ba836a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.48.1
+  date: 2019-12-30T16:28:52.955Z
+- commits:
     - subject: Convert lib/device-types/index to async/await
       hash: c4327af80ddaf94d347e14154663611ce054dbc4
       body: ''
