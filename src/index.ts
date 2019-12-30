@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as _ from 'lodash';
 import * as _express from 'express';
 
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 import * as Raven from 'raven';
 
 import * as bodyParser from 'body-parser';
@@ -53,7 +53,7 @@ export interface SetupOptions {
 	onLogin?: (user: AnyObject) => PromiseLike<void> | void;
 }
 
-export function setup(app: _express.Application, options: SetupOptions) {
+export async function setup(app: _express.Application, options: SetupOptions) {
 	if (DB_POOL_SIZE != null) {
 		pineEnv.db.poolSize = DB_POOL_SIZE;
 	}
@@ -117,36 +117,31 @@ export function setup(app: _express.Application, options: SetupOptions) {
 		res.send('OK');
 	});
 
-	return Promise.try(runSetupFunction(app, options.onInit))
-		.then(() => setupMiddleware(app))
-		.then(runSetupFunction(app, options.onInitMiddleware))
-		.then(() => pine.init(app, options.config))
-		.then(runSetupFunction(app, options.onInitModel))
-		.then(() => import('./hooks'))
-		.then(runSetupFunction(app, options.onInitHooks))
-		.then(() => import('./routes'))
-		.then(routes => routes.setup(app, options.onLogin))
-		.then(runSetupFunction(app, options.onInitRoutes))
-		.then(() => {
-			app.use(Raven.errorHandler());
+	await options.onInit?.(app);
 
-			// start consuming the API heartbeat state queue...
-			deviceOnlineState.getInstance().start();
+	await setupMiddleware(app);
+	await options.onInitMiddleware?.(app);
 
-			return {
-				app,
-				startServer: _.partial(startServer, app),
-				runCommand: _.partial(runCommand, app),
-				runFromCommandLine: _.partial(runFromCommandLine, app),
-			};
-		});
-}
+	await pine.init(app, options.config);
+	await options.onInitModel?.(app);
 
-function runSetupFunction(app: _express.Application, fn?: SetupFunction) {
-	return () => {
-		if (fn != null) {
-			return fn(app);
-		}
+	await import('./hooks');
+	await options.onInitHooks?.(app);
+
+	const routes = await import('./routes');
+	routes.setup(app, options.onLogin);
+	await options.onInitRoutes?.(app);
+
+	app.use(Raven.errorHandler());
+
+	// start consuming the API heartbeat state queue...
+	deviceOnlineState.getInstance().start();
+
+	return {
+		app,
+		startServer: _.partial(startServer, app),
+		runCommand: _.partial(runCommand, app),
+		runFromCommandLine: _.partial(runFromCommandLine, app),
 	};
 }
 
@@ -180,39 +175,40 @@ function setupMiddleware(app: _express.Application) {
 
 	app.use(jwt.middleware);
 
-	app.use((
-		req,
-		res,
-		next, // Only import on demand to avoid issues with import ordering
-	) =>
-		import('./platform/middleware').then(({ prefetchApiKeyMiddleware }) =>
-			prefetchApiKeyMiddleware(req, res, next),
-		),
+	app.use(
+		async (
+			req,
+			res,
+			next, // Only import on demand to avoid issues with import ordering
+		) => {
+			const { prefetchApiKeyMiddleware } = await import(
+				'./platform/middleware'
+			);
+			prefetchApiKeyMiddleware(req, res, next);
+		},
 	);
 }
 
-function startServer(
+async function startServer(
 	app: _express.Application,
 	port: string | number,
 ): Promise<Server> {
 	let server: Server;
-	return Promise.fromCallback(cb => {
+	await Bluebird.fromCallback(cb => {
 		server = app.listen(port, cb as (...args: any[]) => void);
-	}).then(() => {
-		console.log(`Server listening in ${app.get('env')} mode on port ${port}`);
-		return server;
 	});
+	console.log(`Server listening in ${app.get('env')} mode on port ${port}`);
+	return server!;
 }
 
-function runCommand(
+async function runCommand(
 	app: _express.Application,
 	cmd: string,
 	argv: string[],
 ): Promise<void> {
 	const script = require(path.join(__dirname, 'commands', cmd));
-	return script.execute(app, argv).then(() => {
-		process.exit(0);
-	});
+	await script.execute(app, argv);
+	process.exit(0);
 }
 
 function runFromCommandLine(app: _express.Application): Promise<void> {

@@ -1,4 +1,3 @@
-import * as Promise from 'bluebird';
 import * as randomstring from 'randomstring';
 import * as _ from 'lodash';
 import { isJWT } from './jwt';
@@ -20,100 +19,102 @@ interface InternalApiKeyOptions extends ApiKeyOptions {
 	tx: Tx;
 }
 
-const $createApiKey = (
+const $createApiKey = async (
 	actorType: string,
 	roleName: string,
 	req: Request,
 	actorTypeID: number,
 	{ apiKey, tx, name, description }: InternalApiKeyOptions,
-): Promise<string> =>
-	api.resin
-		.get({
-			resource: actorType,
-			id: actorTypeID,
-			passthrough: { req, tx },
-			options: {
-				$select: 'actor',
+): Promise<string> => {
+	const actorable = await api.resin.get({
+		resource: actorType,
+		id: actorTypeID,
+		passthrough: { req, tx },
+		options: {
+			$select: 'actor',
+		},
+	});
+
+	const actorID: number | undefined = _.get(actorable, ['actor']);
+	if (actorID == null) {
+		throw new Error(`No ${actorType} found to associate with the api key`);
+	}
+
+	const res = await api.resin.post({
+		url: `${actorType}(${actorTypeID})/canAccess`,
+		passthrough: { req, tx },
+		body: {
+			action: `create-${roleName}`,
+		},
+	});
+
+	const resId: number | undefined = _.get(res, ['d', 0, 'id']);
+	if (resId !== actorTypeID) {
+		throw new sbvrUtils.ForbiddenError();
+	}
+
+	const authApiTx = api.Auth.clone({
+		passthrough: {
+			tx,
+			req: root,
+		},
+	});
+
+	const [{ id: apiKeyId }, [{ id: roleId }]] = await Promise.all([
+		authApiTx.post({
+			resource: 'api_key',
+			body: {
+				is_of__actor: actorID,
+				key: apiKey,
+				name,
+				description,
 			},
-		})
-		.then(actorable => {
-			const actorID: number | undefined = _.get(actorable, ['actor']);
-			if (actorID == null) {
-				throw new Error(`No ${actorType} found to associate with the api key`);
-			}
+			options: { returnResource: false },
+		}) as Promise<{ id: number }>,
+		authApiTx.get({
+			resource: 'role',
+			options: {
+				$select: 'id',
+				$filter: {
+					name: roleName,
+				},
+			},
+		}) as Promise<Array<{ id: number }>>,
+	]);
 
-			return api.resin
-				.post({
-					url: `${actorType}(${actorTypeID})/canAccess`,
-					passthrough: { req, tx },
-					body: {
-						action: `create-${roleName}`,
-					},
-				})
-				.then(res => {
-					const resId: number | undefined = _.get(res, ['d', 0, 'id']);
-					if (resId !== actorTypeID) {
-						throw new sbvrUtils.ForbiddenError();
-					}
+	await authApiTx.post({
+		resource: 'api_key__has__role',
+		body: {
+			api_key: apiKeyId,
+			role: roleId,
+		},
+		options: { returnResource: false },
+	});
 
-					const authApiTx = api.Auth.clone({
-						passthrough: {
-							tx,
-							req: root,
-						},
-					});
+	return apiKey;
+};
 
-					const apiKeyId = authApiTx
-						.post({
-							resource: 'api_key',
-							body: {
-								is_of__actor: actorID,
-								key: apiKey,
-								name,
-								description,
-							},
-							options: { returnResource: false },
-						})
-						.then((result: AnyObject) => result.id as number);
-
-					const roleId = authApiTx
-						.get({
-							resource: 'role',
-							options: {
-								$select: 'id',
-								$filter: {
-									name: roleName,
-								},
-							},
-						})
-						.then(([result]: AnyObject[]) => result.id);
-
-					return Promise.join(apiKeyId, roleId, (apiKeyId, roleId) =>
-						authApiTx.post({
-							resource: 'api_key__has__role',
-							body: {
-								api_key: apiKeyId,
-								role: roleId,
-							},
-							options: { returnResource: false },
-						}),
-					);
-				});
-		})
-		.return(apiKey);
-
-export const createApiKey = Promise.method(
-	(
-		actorType: string,
-		roleName: string,
-		req: Request,
-		actorTypeID: number,
-		options: ApiKeyOptions = {},
-	) => {
-		if (options.apiKey == null) {
-			options.apiKey = randomstring.generate();
-		}
-		if (options.tx != null) {
+export const createApiKey = (
+	actorType: string,
+	roleName: string,
+	req: Request,
+	actorTypeID: number,
+	options: ApiKeyOptions = {},
+): Promise<string> => {
+	if (options.apiKey == null) {
+		options.apiKey = randomstring.generate();
+	}
+	if (options.tx != null) {
+		return $createApiKey(
+			actorType,
+			roleName,
+			req,
+			actorTypeID,
+			options as InternalApiKeyOptions,
+		);
+	} else {
+		return sbvrUtils.db.transaction(tx => {
+			options.tx = tx;
 			return $createApiKey(
 				actorType,
 				roleName,
@@ -121,20 +122,9 @@ export const createApiKey = Promise.method(
 				actorTypeID,
 				options as InternalApiKeyOptions,
 			);
-		} else {
-			return sbvrUtils.db.transaction(tx => {
-				options.tx = tx;
-				return $createApiKey(
-					actorType,
-					roleName,
-					req,
-					actorTypeID,
-					options as InternalApiKeyOptions,
-				);
-			});
-		}
-	},
-);
+		});
+	}
+};
 
 export interface PartialCreateKey {
 	(req: Request, actorTypeID: number, options?: ApiKeyOptions): Promise<string>;

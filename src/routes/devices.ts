@@ -710,7 +710,7 @@ const upsertGatewayDownload = async (
 	}
 };
 
-const deleteOldGatewayDownloads = (
+const deleteOldGatewayDownloads = async (
 	api: PinejsClient,
 	deviceId: number,
 	imageIds: number[],
@@ -723,15 +723,13 @@ const deleteOldGatewayDownloads = (
 		filter.$not = { image: { $in: imageIds } };
 	}
 
-	return api
-		.patch({
-			resource: 'gateway_download',
-			options: {
-				$filter: filter,
-			},
-			body: { status: 'deleted' },
-		})
-		.return();
+	await api.patch({
+		resource: 'gateway_download',
+		options: {
+			$filter: filter,
+		},
+		body: { status: 'deleted' },
+	});
 };
 
 const validPatchFields = [

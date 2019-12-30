@@ -16,13 +16,15 @@ async function onInitModel() {
 	const insert = _.cloneDeep(appTypes.Default);
 	const filter = { slug: insert.slug };
 	delete insert.slug;
-	await sbvrUtils.db.transaction(tx =>
-		updateOrInsertModel('application_type', filter, insert, tx).then(
-			inserted => {
-				appTypes.Default.id = inserted.id;
-			},
-		),
-	);
+	await sbvrUtils.db.transaction(async tx => {
+		const inserted = await updateOrInsertModel(
+			'application_type',
+			filter,
+			insert,
+			tx,
+		);
+		appTypes.Default.id = inserted.id;
+	});
 }
 
 async function onInitHooks() {
@@ -31,19 +33,19 @@ async function onInitHooks() {
 	const permissionNames = _.uniq(
 		_.flatMap(auth.ROLES).concat(_.flatMap(auth.KEYS, 'permissions')),
 	);
-	const { setSyncMap, deviceTypes } = await import('./src/lib/device-types');
+	const { setSyncMap, getAccessibleDeviceTypes } = await import(
+		'./src/lib/device-types'
+	);
 	setSyncMap({
 		name: { name: 'name' },
 	});
 
 	// this will pre-fetch the device types and populate the cache...
-	deviceTypes(sbvrUtils.api.resin);
+	getAccessibleDeviceTypes(sbvrUtils.api.resin);
 
-	return sbvrUtils.db
-		.transaction(tx =>
-			createAll(tx, permissionNames, auth.ROLES, auth.KEYS, {}),
-		)
-		.return();
+	await sbvrUtils.db.transaction(tx =>
+		createAll(tx, permissionNames, auth.ROLES, auth.KEYS, {}),
+	);
 }
 
 async function createSuperuser() {
@@ -68,8 +70,8 @@ async function createSuperuser() {
 		password: SUPERUSER_PASSWORD,
 	};
 
-	return sbvrUtils.db
-		.transaction(async tx => {
+	try {
+		await sbvrUtils.db.transaction(async tx => {
 			try {
 				await registerUser(data, tx);
 				console.log('Superuser created successfully!');
@@ -87,10 +89,10 @@ async function createSuperuser() {
 					throw err;
 				}
 			}
-		})
-		.catch(err => {
-			console.error('Error creating superuser:', err);
 		});
+	} catch (err) {
+		console.error('Error creating superuser:', err);
+	}
 }
 
 export const app = express();
@@ -111,12 +113,12 @@ setup(app, {
 	onInitModel,
 	onInitHooks,
 })
-	.tap(createSuperuser)
-	.then(({ startServer }) => startServer(process.env.PORT || 1337).return())
-	.then(() => {
+	.then(async ({ startServer }) => {
+		await createSuperuser();
+		await startServer(process.env.PORT || 1337);
 		if (doRunTests) {
 			console.log('Running tests...');
-			require('./test/00-init');
+			await import('./test/00-init');
 		}
 	})
 	.catch(err => {
