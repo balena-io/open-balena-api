@@ -1,115 +1,104 @@
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 import { sbvrUtils } from '@resin/pinejs';
 import { addDeleteHookForDependents } from '../../platform';
 
-const updateLatestRelease = (
+const updateLatestRelease = async (
 	id: number,
 	{ request, api }: sbvrUtils.HookArgs,
 ) => {
 	// We only track builds that are successful
-	if (request.values.status === 'success') {
-		return api
-			.get({
-				resource: 'release',
-				id,
-				options: {
-					$select: 'id',
+	if (request.values.status !== 'success') {
+		return;
+	}
+	const release = (await api.get({
+		resource: 'release',
+		id,
+		options: {
+			$select: 'id',
+			$expand: {
+				belongs_to__application: {
+					$select: ['id'],
 					$expand: {
-						belongs_to__application: {
+						owns__device: {
 							$select: ['id'],
-							$expand: {
-								owns__device: {
-									$select: ['id'],
-								},
-							},
 						},
-						contains__image: {
+					},
+				},
+				contains__image: {
+					$select: ['id'],
+					$expand: {
+						image: {
 							$select: ['id'],
 							$expand: {
-								image: {
+								is_a_build_of__service: {
 									$select: ['id'],
-									$expand: {
-										is_a_build_of__service: {
-											$select: ['id'],
-										},
-									},
 								},
 							},
 						},
 					},
 				},
-			})
-			.then((release: AnyObject) => {
-				if (release == null) {
-					return;
-				}
-				return api
-					.patch({
-						resource: 'application',
-						id: release.belongs_to__application[0].id,
-						options: {
-							$filter: {
-								should_track_latest_release: true,
-							},
-						},
-						body: {
-							should_be_running__release: release.id,
-						},
-					})
-					.then(() => {
-						const deviceIds: number[] = _.map(
-							release.belongs_to__application[0].owns__device,
-							device => device.id,
-						);
-						const serviceIds: number[] = _.map(
-							release.contains__image,
-							ipr => ipr.image[0].is_a_build_of__service[0].id,
-						);
-						if (deviceIds.length === 0 || serviceIds.length === 0) {
-							return;
-						}
-						return api
-							.get({
-								resource: 'service_install',
-								options: {
-									$select: ['device', 'installs__service'],
-									$filter: {
-										device: { $in: deviceIds },
-										installs__service: { $in: serviceIds },
-									},
-								},
-							})
-							.then((serviceInstalls: AnyObject[]) => {
-								const serviceInstallsByDevice = _.groupBy(
-									serviceInstalls,
-									si => si.device.__id as number,
-								);
-								return Promise.map(deviceIds, deviceId => {
-									const existingServiceIds: number[] = _.map(
-										serviceInstallsByDevice[deviceId],
-										si => si.installs__service.__id,
-									);
-									const deviceServiceIds = _.difference(
-										serviceIds,
-										existingServiceIds,
-									);
-									return Promise.map(deviceServiceIds, serviceId =>
-										api.post({
-											resource: 'service_install',
-											body: {
-												device: deviceId,
-												installs__service: serviceId,
-											},
-											options: { returnResource: false },
-										}),
-									);
-								});
-							})
-							.return();
-					});
-			});
+			},
+		},
+	})) as AnyObject;
+	if (release == null) {
+		return;
 	}
+	await api.patch({
+		resource: 'application',
+		id: release.belongs_to__application[0].id,
+		options: {
+			$filter: {
+				should_track_latest_release: true,
+			},
+		},
+		body: {
+			should_be_running__release: release.id,
+		},
+	});
+
+	const deviceIds: number[] = _.map(
+		release.belongs_to__application[0].owns__device,
+		device => device.id,
+	);
+	const serviceIds: number[] = _.map(
+		release.contains__image,
+		ipr => ipr.image[0].is_a_build_of__service[0].id,
+	);
+	if (deviceIds.length === 0 || serviceIds.length === 0) {
+		return;
+	}
+	const serviceInstalls = (await api.get({
+		resource: 'service_install',
+		options: {
+			$select: ['device', 'installs__service'],
+			$filter: {
+				device: { $in: deviceIds },
+				installs__service: { $in: serviceIds },
+			},
+		},
+	})) as AnyObject[];
+	const serviceInstallsByDevice = _.groupBy(
+		serviceInstalls,
+		si => si.device.__id as number,
+	);
+	return Bluebird.map(deviceIds, deviceId => {
+		const existingServiceIds: number[] = _.map(
+			serviceInstallsByDevice[deviceId],
+			si => si.installs__service.__id,
+		);
+		const deviceServiceIds = _.difference(serviceIds, existingServiceIds);
+		return Bluebird.map(deviceServiceIds, serviceId =>
+			api.post({
+				resource: 'service_install',
+				body: {
+					device: deviceId,
+					installs__service: serviceId,
+				},
+				options: { returnResource: false },
+			}),
+		);
+	});
 };
 
 sbvrUtils.addPureHook('PATCH', 'resin', 'release', {

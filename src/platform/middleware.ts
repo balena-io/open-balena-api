@@ -11,35 +11,35 @@ import * as _ from 'lodash';
 import * as DeviceOnlineState from '../lib/device-online-state';
 import { captureException } from './errors';
 
-export const authenticated: RequestHandler = (req, res, next) =>
-	getUser(req, false)
-		.then(() => {
-			if (req.creds) {
-				next();
-				return null;
-			} else {
-				res.sendStatus(401);
-			}
-		})
-		.catch(() => {
-			res.sendStatus(401);
-		});
-
-export const authorized: RequestHandler = (req, res, next) =>
-	getUser(req)
-		.then(() => {
+export const authenticated: RequestHandler = async (req, res, next) => {
+	try {
+		await getUser(req, false);
+		if (req.creds) {
 			next();
 			return null;
-		})
-		.catch(() => {
+		} else {
 			res.sendStatus(401);
-		});
+		}
+	} catch {
+		res.sendStatus(401);
+	}
+};
 
-export const identify: RequestHandler = (req, _res, next) =>
-	getUser(req, false).then(() => {
+export const authorized: RequestHandler = async (req, res, next) => {
+	try {
+		await getUser(req);
 		next();
 		return null;
-	});
+	} catch {
+		res.sendStatus(401);
+	}
+};
+
+export const identify: RequestHandler = async (req, _res, next) => {
+	await getUser(req, false);
+	next();
+	return null;
+};
 
 export const prefetchApiKeyMiddleware: RequestHandler = async (
 	req,
@@ -96,7 +96,7 @@ const checkDeviceExistsQuery = api.resin.prepare<{ uuid: string }>({
 		},
 	},
 });
-export const gracefullyDenyDeletedDevices: RequestHandler = (
+export const gracefullyDenyDeletedDevices: RequestHandler = async (
 	req,
 	res,
 	next,
@@ -105,14 +105,13 @@ export const gracefullyDenyDeletedDevices: RequestHandler = (
 
 	const returnCode = req.method === 'GET' ? 304 : 200;
 
-	return checkDeviceExistsQuery({ uuid }).then((devices: number) => {
-		if (devices === 0) {
-			res.sendStatus(returnCode);
-			return;
-		}
+	const devices = (await checkDeviceExistsQuery({ uuid })) as number;
+	if (devices === 0) {
+		res.sendStatus(returnCode);
+		return;
+	}
 
-		next();
-	});
+	next();
 };
 
 export const registerDeviceStateEvent = (

@@ -1,4 +1,3 @@
-import * as Promise from 'bluebird';
 import * as crypto from 'crypto';
 import { sbvrUtils } from '@resin/pinejs';
 import { addDeleteHookForDependents } from '../../platform';
@@ -7,8 +6,9 @@ import { REGISTRY2_HOST } from '../../lib/config';
 const { root } = sbvrUtils;
 
 sbvrUtils.addPureHook('POST', 'resin', 'image', {
-	POSTPARSE: ({ request, api, tx }) => {
-		const generateUniqueLocation = (maxAttempts: number): Promise<string> => {
+	POSTPARSE: async ({ request, api, tx }) => {
+		const maxAttempts = 5;
+		for (let i = 0; i < maxAttempts; i++) {
 			const candidate =
 				REGISTRY2_HOST +
 				'/v2/' +
@@ -17,33 +17,25 @@ sbvrUtils.addPureHook('POST', 'resin', 'image', {
 					.toString('hex')
 					.toLowerCase();
 
-			return api
-				.get({
-					resource: 'image/$count',
-					passthrough: {
-						tx,
-						req: root,
+			const count = await api.get({
+				resource: 'image/$count',
+				passthrough: {
+					tx,
+					req: root,
+				},
+				options: {
+					$filter: {
+						is_stored_at__image_location: candidate,
 					},
-					options: {
-						$filter: {
-							is_stored_at__image_location: candidate,
-						},
-					},
-				})
-				.then(count => {
-					if (count === 0) {
-						return candidate;
-					}
-					if (maxAttempts === 0) {
-						throw new Error('Could not generate unique image location');
-					}
-					return generateUniqueLocation(maxAttempts - 1);
-				});
-		};
+				},
+			});
+			if (count === 0) {
+				request.values.is_stored_at__image_location = candidate;
+				return;
+			}
+		}
 
-		return generateUniqueLocation(5).then(imageUrl => {
-			request.values.is_stored_at__image_location = imageUrl;
-		});
+		throw new Error('Could not generate unique image location');
 	},
 });
 

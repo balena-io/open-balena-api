@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 import * as crypto from 'crypto';
 
 import {
@@ -33,7 +33,7 @@ const createReleaseServiceInstalls = (
 	api: PinejsClient,
 	deviceId: number,
 	releaseFilter: PinejsClientCoreFactory.Filter,
-): Promise<void> =>
+): Bluebird<void> =>
 	(api.get({
 		resource: 'service',
 		options: {
@@ -72,7 +72,7 @@ const createReleaseServiceInstalls = (
 				},
 			},
 		},
-	}) as Promise<AnyObject[]>)
+	}) as Bluebird<AnyObject[]>)
 		.map(service => {
 			// Filter out any services which do have a service install attached
 			if (service.service_install > 0) {
@@ -97,8 +97,8 @@ const createAppServiceInstalls = (
 	api: PinejsClient,
 	appId: number,
 	deviceIds: number[],
-): Promise<void> =>
-	Promise.map(deviceIds, deviceId =>
+): Bluebird<void> =>
+	Bluebird.map(deviceIds, deviceId =>
 		createReleaseServiceInstalls(api, deviceId, {
 			should_be_running_on__application: {
 				$any: {
@@ -226,37 +226,32 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 					.catch(() => {
 						throw new InaccessibleAppError();
 					})
-					.then(app => {
+					.then(async app => {
 						if (app == null) {
 							throw new InaccessibleAppError();
 						}
 
-						return getCurrentRequestAffectedIds(args).then(deviceIds => {
-							if (deviceIds.length === 0) {
-								return;
-							}
-							// and get the devices being affected and store them for the POSTRUN...
-							return args.api
-								.get({
-									resource: 'device',
-									options: {
-										$select: 'id',
-										$filter: {
-											id: {
-												$in: deviceIds,
-											},
-											belongs_to__application: {
-												$ne: args.request.values.belongs_to__application,
-											},
-										},
+						const deviceIds = await getCurrentRequestAffectedIds(args);
+						if (deviceIds.length === 0) {
+							return;
+						}
+						// and get the devices being affected and store them for the POSTRUN...
+						const devices = (await args.api.get({
+							resource: 'device',
+							options: {
+								$select: 'id',
+								$filter: {
+									id: {
+										$in: deviceIds,
 									},
-								})
-								.then((devices: Array<{ id: number }>) => {
-									request.custom.movedDevices = devices.map(
-										device => device.id,
-									);
-								});
-						});
+									belongs_to__application: {
+										$ne: args.request.values.belongs_to__application,
+									},
+								},
+							},
+						})) as Array<{ id: number }>;
+
+						request.custom.movedDevices = devices.map(device => device.id);
 					}),
 			);
 		}
@@ -264,30 +259,28 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		// check the release is valid for the devices affected...
 		if (request.values.should_be_running__release != null) {
 			waitPromises.push(
-				getCurrentRequestAffectedIds(args).then(deviceIds => {
+				getCurrentRequestAffectedIds(args).then(async deviceIds => {
 					if (deviceIds.length === 0) {
 						return;
 					}
-					return args.api
-						.get({
-							resource: 'release',
-							id: request.values.should_be_running__release,
-							options: {
-								$select: ['id'],
-								$filter: {
-									status: 'success',
-									belongs_to__application: {
-										$any: {
-											$alias: 'a',
-											$expr: {
-												a: {
-													owns__device: {
-														$any: {
-															$alias: 'd',
-															$expr: {
-																d: {
-																	id: { $in: deviceIds },
-																},
+					const release = await args.api.get({
+						resource: 'release',
+						id: request.values.should_be_running__release,
+						options: {
+							$select: ['id'],
+							$filter: {
+								status: 'success',
+								belongs_to__application: {
+									$any: {
+										$alias: 'a',
+										$expr: {
+											a: {
+												owns__device: {
+													$any: {
+														$alias: 'd',
+														$expr: {
+															d: {
+																id: { $in: deviceIds },
 															},
 														},
 													},
@@ -297,14 +290,12 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 									},
 								},
 							},
-						})
-						.then(release => {
-							if (release == null) {
-								throw new BadRequestError(
-									'Release is not valid for this device',
-								);
-							}
-						});
+						},
+					});
+
+					if (release == null) {
+						throw new BadRequestError('Release is not valid for this device');
+					}
 				}),
 			);
 		}
@@ -334,7 +325,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			);
 		}
 
-		return Promise.all(waitPromises);
+		return Bluebird.all(waitPromises);
 	},
 	POSTRUN: args => {
 		const waitPromises: Array<PromiseLike<any>> = [];
@@ -398,26 +389,23 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		// create new ones for the new application (if the device is moving application)
 		if (args.request.values.belongs_to__application != null) {
 			waitPromises.push(
-				affectedIds.tap(deviceIds => {
+				affectedIds.then(async deviceIds => {
 					if (deviceIds.length === 0) {
 						return;
 					}
-					return args.api
-						.delete({
-							resource: 'service_install',
-							options: {
-								$filter: {
-									device: { $in: deviceIds },
-								},
+					await args.api.delete({
+						resource: 'service_install',
+						options: {
+							$filter: {
+								device: { $in: deviceIds },
 							},
-						})
-						.then(() =>
-							createAppServiceInstalls(
-								args.api,
-								args.request.values.belongs_to__application,
-								deviceIds,
-							),
-						);
+						},
+					});
+					await createAppServiceInstalls(
+						args.api,
+						args.request.values.belongs_to__application,
+						deviceIds,
+					);
 				}),
 			);
 
@@ -454,27 +442,24 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 				);
 			} else {
 				waitPromises.push(
-					affectedIds.map(id =>
-						args.api
-							.get({
-								id,
-								resource: 'device',
-								options: {
-									$expand: {
-										belongs_to__application: {
-											$select: 'id',
-										},
+					affectedIds.map(async id => {
+						const device = (await args.api.get({
+							id,
+							resource: 'device',
+							options: {
+								$expand: {
+									belongs_to__application: {
+										$select: 'id',
 									},
 								},
-							})
-							.then((device: any) =>
-								createAppServiceInstalls(
-									args.api,
-									device.belongs_to__application[0].id,
-									[id],
-								),
-							),
-					),
+							},
+						})) as AnyObject;
+						await createAppServiceInstalls(
+							args.api,
+							device.belongs_to__application[0].id,
+							[id],
+						);
+					}),
 				);
 			}
 
@@ -496,7 +481,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			);
 		}
 
-		return Promise.all(waitPromises).return();
+		return Bluebird.all(waitPromises).return();
 	},
 });
 

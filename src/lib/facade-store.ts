@@ -1,5 +1,5 @@
 import * as ExpressBrute from 'express-brute';
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 import ExpressBruteRedis = require('express-brute-redis');
 import * as _ from 'lodash';
 import { captureException } from '../platform/errors';
@@ -9,7 +9,7 @@ export interface PromisifiedExpressBruteStore extends ExpressBrute.MemoryStore {
 	 * @summary Gets key value.
 	 * @param {string}      key     The key name.
 	 */
-	getAsync(key: string): Promise<Object>;
+	getAsync(key: string): Bluebird<Object>;
 
 	/**
 	 * @summary Sets the key value.
@@ -17,13 +17,13 @@ export interface PromisifiedExpressBruteStore extends ExpressBrute.MemoryStore {
 	 * @param {string}      value    The value.
 	 * @param {number}      lifetime The lifetime.
 	 */
-	setAsync(key: string, value: string, lifetime: number): Promise<void>;
+	setAsync(key: string, value: string, lifetime: number): Bluebird<void>;
 
 	/**
 	 * @summary Deletes the key.
 	 * @param {string}      key      The name.
 	 */
-	resetAsync(key: string): Promise<void>;
+	resetAsync(key: string): Bluebird<void>;
 }
 
 // This store implementation tries to talk to redis, in case this fails
@@ -34,10 +34,10 @@ export class FacadeStore extends ExpressBrute.MemoryStore {
 
 	constructor(redisStore: ExpressBruteRedis) {
 		super();
-		this.redisStore = Promise.promisifyAll(
+		this.redisStore = Bluebird.promisifyAll(
 			redisStore,
 		) as PromisifiedExpressBruteStore;
-		this.inMemStore = Promise.promisifyAll(
+		this.inMemStore = Bluebird.promisifyAll(
 			new ExpressBrute.MemoryStore(),
 		) as PromisifiedExpressBruteStore;
 	}
@@ -58,7 +58,7 @@ export class FacadeStore extends ExpressBrute.MemoryStore {
 				captureException(err, 'Redis communication failed!');
 			});
 
-		Promise.all([inMemoryPromise, redisPromise]).asCallback(callback);
+		Bluebird.all([inMemoryPromise, redisPromise]).asCallback(callback);
 	}
 
 	get(key: string, callback: (err: Error, data: Object) => void): void {
@@ -80,6 +80,6 @@ export class FacadeStore extends ExpressBrute.MemoryStore {
 				captureException(err, 'Redis communication failed!');
 			});
 
-		Promise.all([inMemoryPromise, redisPromise]).asCallback(callback);
+		Bluebird.all([inMemoryPromise, redisPromise]).asCallback(callback);
 	}
 }

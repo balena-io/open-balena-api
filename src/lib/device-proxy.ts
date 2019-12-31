@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 
 import { NoDevicesFoundError } from '../lib/errors';
 import {
@@ -84,9 +84,9 @@ const validateSupervisorResponse = (
 const multiResponse = (responses: RequestResponse[]) =>
 	responses.map(([response]) => _.pick(response, 'statusCode', 'body'));
 
-export const proxy = (req: Request, res: Response) => {
+export const proxy = async (req: Request, res: Response) => {
 	const filter: PinejsClientCoreFactory.Filter = {};
-	return Promise.try(() => {
+	try {
 		const url = req.params[0];
 		if (url == null) {
 			throw new BadRequestError('Supervisor API url must be specified');
@@ -123,23 +123,20 @@ export const proxy = (req: Request, res: Response) => {
 			throw new BadRequestError('At least one filter must be specified');
 		}
 
-		return requestDevices({ url, req, filter, data, method });
-	})
-		.then(responses => {
-			if (responses.length === 1) {
-				return validateSupervisorResponse(responses[0], req, res, filter);
-			}
-			res.status(207).json(multiResponse(responses));
-		})
-		.catch(err => {
-			if (handleHttpErrors(req, res, err)) {
-				return;
-			}
-			if (err != null && err.body != null) {
-				err = err.body;
-			}
-			res.status(502).send(translateError(err));
-		});
+		const responses = await requestDevices({ url, req, filter, data, method });
+		if (responses.length === 1) {
+			return validateSupervisorResponse(responses[0], req, res, filter);
+		}
+		res.status(207).json(multiResponse(responses));
+	} catch (err) {
+		if (handleHttpErrors(req, res, err)) {
+			return;
+		}
+		if (err != null && err.body != null) {
+			err = err.body;
+		}
+		res.status(502).send(translateError(err));
+	}
 };
 
 interface FixedMethodRequestDevicesOpts {
@@ -158,22 +155,22 @@ interface RequestDevicesOpts extends FixedMethodRequestDevicesOpts {
 // the request will be used to get devices,
 // if it is not passed then("guest" permissions will be used to get the devices.
 // - method is the HTTP method for the request, defaults to 'POST'
-export function requestDevices(
+export async function requestDevices(
 	opts: RequestDevicesOpts & {
 		wait?: true;
 	},
 ): Promise<RequestResponse[]>;
-export function requestDevices(
+export async function requestDevices(
 	opts: RequestDevicesOpts & {
 		wait: false;
 	},
 ): Promise<void>;
 // This override is identical to the main form in order for `postDevices` to be able
 // to call it with the generic form
-export function requestDevices(
+export async function requestDevices(
 	opts: RequestDevicesOpts,
 ): Promise<void | RequestResponse[]>;
-export function requestDevices({
+export async function requestDevices({
 	url,
 	filter,
 	data,
@@ -182,98 +179,91 @@ export function requestDevices({
 	method = 'POST',
 }: RequestDevicesOpts): Promise<void | RequestResponse[]> {
 	if (url == null) {
-		return Promise.reject(
-			new BadRequestError('You must specify a url to request!'),
-		);
+		throw new BadRequestError('You must specify a url to request!');
 	}
 	method = method.toUpperCase();
 	if (!['PUT', 'PATCH', 'POST', 'HEAD', 'DELETE', 'GET'].includes(method)) {
-		return Promise.reject(new BadRequestError(`Invalid method '${method}'`));
+		throw new BadRequestError(`Invalid method '${method}'`);
 	}
-	return api.resin
-		.get({
-			resource: 'device',
-			options: {
-				$select: 'id',
-				$filter: {
-					$and: [
-						{
-							is_connected_to_vpn: true,
-							vpn_address: { $ne: null },
-						},
-						filter,
-					],
+	const deviceIds = (await api.resin.get({
+		resource: 'device',
+		options: {
+			$select: 'id',
+			$filter: {
+				$and: [
+					{
+						is_connected_to_vpn: true,
+						vpn_address: { $ne: null },
+					},
+					filter,
+				],
+			},
+		},
+		passthrough: { req },
+	})) as AnyObject[];
+	if (deviceIds.length === 0) {
+		if (!wait) {
+			// Don't throw an error if it's a fire/forget
+			return;
+		}
+		throw new NoDevicesFoundError('No online device(s) found');
+	}
+	// And now fetch device data with full privs
+	const devices = (await api.resin.get({
+		resource: 'device',
+		passthrough: { req: root },
+		options: {
+			$select: ['api_port', 'api_secret', 'uuid'],
+			$expand: {
+				is_managed_by__service_instance: { $select: 'ip_address' },
+			},
+			$filter: {
+				id: { $in: deviceIds.map(({ id }) => id) },
+				is_managed_by__service_instance: {
+					$any: {
+						$alias: 'si',
+						$expr: { si: { ip_address: { $ne: null } } },
+					},
 				},
 			},
-			passthrough: { req },
-		})
-		.then((devices: AnyObject[]) => {
-			if (devices.length === 0) {
-				if (!wait) {
-					// Don't throw an error if it's a fire/forget
-					return;
-				}
-				throw new NoDevicesFoundError('No online device(s) found');
-			}
-			// And now fetch device data with full privs
-			return api.resin
-				.get({
-					resource: 'device',
-					passthrough: { req: root },
-					options: {
-						$select: ['api_port', 'api_secret', 'uuid'],
-						$expand: {
-							is_managed_by__service_instance: { $select: 'ip_address' },
-						},
-						$filter: {
-							id: { $in: devices.map(({ id }) => id) },
-							is_managed_by__service_instance: {
-								$any: {
-									$alias: 'si',
-									$expr: { si: { ip_address: { $ne: null } } },
-								},
-							},
-						},
-					},
-				})
-				.then<void | RequestResponse[]>((devices: AnyObject[]) => {
-					const promises: Array<ReturnType<typeof requestAsync>> = [];
-					const waitPromise = Promise.each(devices, device => {
-						const vpnIp = device.is_managed_by__service_instance[0].ip_address;
-						const deviceUrl = `http://${device.uuid}.balena:${device.api_port ||
-							80}${url}?apikey=${device.api_secret}`;
-						let p = requestAsync({
-							uri: deviceUrl,
-							json: data,
-							proxy: `http://resin_api:${API_VPN_SERVICE_API_KEY}@${vpnIp}:3128`,
-							tunnel: true,
-							method,
-							timeout: DEVICE_REQUEST_TIMEOUT,
-						});
-						if (!wait) {
-							// this force-cast is super ugly but harmless because clearly noone
-							// cares about the return value of the promise (since wait == false)
-							// so we just need to satisfy the compiler
-							p = p.catchReturn((undefined as any) as RequestResponse);
-						}
-						promises.push(p);
-						// We add a delay between each notification so that we do not in essence
-						// trigger a DDOS from resin devices against us, but we do not wait for
-						// completion of individual requests because doing so could cause a
-						// terrible UX if we have a device time out, as that would block all the
-						// subsequent notifications
-						return Promise.delay(DELAY_BETWEEN_DEVICE_REQUEST);
-					}).then(() => Promise.all(promises));
+		},
+	})) as AnyObject[];
 
-					if (!wait) {
-						// We return null if not waiting in order to stop bluebird warnings,
-						// and we cast as void to keep the void typing (ie that the result
-						// should not be used for this case)
-						return (null as any) as void;
-					}
-					return waitPromise;
-				});
+	const promises: Array<ReturnType<typeof requestAsync>> = [];
+	const waitPromise = Bluebird.each(devices, device => {
+		const vpnIp = device.is_managed_by__service_instance[0].ip_address;
+		const deviceUrl = `http://${device.uuid}.balena:${device.api_port ||
+			80}${url}?apikey=${device.api_secret}`;
+		let p = requestAsync({
+			uri: deviceUrl,
+			json: data,
+			proxy: `http://resin_api:${API_VPN_SERVICE_API_KEY}@${vpnIp}:3128`,
+			tunnel: true,
+			method,
+			timeout: DEVICE_REQUEST_TIMEOUT,
 		});
+		if (!wait) {
+			// this force-cast is super ugly but harmless because clearly noone
+			// cares about the return value of the promise (since wait == false)
+			// so we just need to satisfy the compiler
+			p = p.catchReturn((undefined as any) as RequestResponse);
+		}
+		promises.push(p);
+		// We add a delay between each notification so that we do not in essence
+		// trigger a DDOS from resin devices against us, but we do not wait for
+		// completion of individual requests because doing so could cause a
+		// terrible UX if we have a device time out, as that would block all the
+		// subsequent notifications
+		return Bluebird.delay(DELAY_BETWEEN_DEVICE_REQUEST);
+	}).then(() => Bluebird.all(promises));
+
+	if (!wait) {
+		// We return null if not waiting in order to stop bluebird warnings,
+		// and we cast as void to keep the void typing (ie that the result
+		// should not be used for this case)
+		return (null as any) as void;
+	}
+	return waitPromise;
 }
 
 export function postDevices(
