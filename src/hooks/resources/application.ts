@@ -14,25 +14,22 @@ import {
 const { BadRequestError, ConflictError, root } = sbvrUtils;
 import { captureException } from '../../platform/errors';
 
-const checkDependentApplication: sbvrUtils.Hooks['POSTPARSE'] = ({
+const checkDependentApplication: sbvrUtils.Hooks['POSTPARSE'] = async ({
 	request,
 	api,
 }) => {
 	const dependsOnApplicationId = request.values.belongs_to__application;
 	if (dependsOnApplicationId != null) {
-		api
-			.get({
-				resource: 'application',
-				id: dependsOnApplicationId,
-				options: {
-					$select: ['id'],
-				},
-			})
-			.then(dependsOnApplication => {
-				if (dependsOnApplication == null) {
-					throw new Error('Invalid application to depend upon');
-				}
-			});
+		const dependsOnApplication = await api.get({
+			resource: 'application',
+			id: dependsOnApplicationId,
+			options: {
+				$select: ['id'],
+			},
+		});
+		if (dependsOnApplication == null) {
+			throw new Error('Invalid application to depend upon');
+		}
 	}
 };
 
@@ -41,7 +38,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 });
 
 sbvrUtils.addPureHook('POST', 'resin', 'application', {
-	POSTPARSE: args => {
+	POSTPARSE: async args => {
 		const { req, request, api } = args;
 		const appName = request.values.app_name;
 
@@ -53,21 +50,21 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 			throw new Error('App name may only contain [a-zA-Z0-9_-].');
 		}
 
-		return Promise.all([
-			resolveDeviceType(api, request, 'is_for__device_type'),
-			checkDependentApplication(args),
-		])
-			.then(() => {
-				request.values.should_track_latest_release = true;
-				if (request.values.slug == null) {
-					request.values.slug = appName.toLowerCase();
-				}
-			})
-			.tapCatch(err => {
-				if (!(err instanceof ConflictError)) {
-					captureException(err, 'Error in application postparse hook', { req });
-				}
-			});
+		try {
+			await Promise.all([
+				resolveDeviceType(api, request, 'is_for__device_type'),
+				checkDependentApplication(args),
+			]);
+			request.values.should_track_latest_release = true;
+			if (request.values.slug == null) {
+				request.values.slug = appName.toLowerCase();
+			}
+		} catch (err) {
+			if (!(err instanceof ConflictError)) {
+				captureException(err, 'Error in application postparse hook', { req });
+			}
+			throw err;
+		}
 	},
 });
 
@@ -109,111 +106,100 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 
 		return Promise.all(waitPromises);
 	},
-	POSTRUN: ({ request }) => {
+	POSTRUN: async ({ request }) => {
 		if (request.values.should_be_running__release != null) {
 			// Only update apps if they have had their release changed.
-			return request.custom.affectedIds.then((ids: number[]) => {
-				if (ids.length === 0) {
-					return;
-				}
-				return postDevices({
-					url: '/v1/update',
-					req: root,
-					filter: {
-						belongs_to__application: { $in: ids },
-						is_running__release: {
-							$ne: request.values.should_be_running__release,
-						},
-						should_be_running__release: null,
+			const ids = (await request.custom.affectedIds) as number[];
+			if (ids.length === 0) {
+				return;
+			}
+			return postDevices({
+				url: '/v1/update',
+				req: root,
+				filter: {
+					belongs_to__application: { $in: ids },
+					is_running__release: {
+						$ne: request.values.should_be_running__release,
 					},
-					// Don't wait for the posts to complete, as they may take a long time and we've already sent the prompt to update.
-					wait: false,
-				});
+					should_be_running__release: null,
+				},
+				// Don't wait for the posts to complete, as they may take a long time and we've already sent the prompt to update.
+				wait: false,
 			});
 		}
 	},
 });
 
 sbvrUtils.addPureHook('DELETE', 'resin', 'application', {
-	PRERUN: args =>
-		getCurrentRequestAffectedIds(args).then(appIds => {
-			if (appIds.length === 0) {
-				const { odataQuery } = args.request;
-				if (odataQuery != null && odataQuery.key != null) {
-					// If there's a specific app targeted we make sure we give a 404 for backwards compatibility
-					throw new Error('Application(s) not found.');
-				}
+	PRERUN: async args => {
+		const appIds = await getCurrentRequestAffectedIds(args);
+		if (appIds.length === 0) {
+			const { odataQuery } = args.request;
+			if (odataQuery != null && odataQuery.key != null) {
+				// If there's a specific app targeted we make sure we give a 404 for backwards compatibility
+				throw new Error('Application(s) not found.');
 			}
-			if (appIds.length > 0) {
-				// find devices which are
-				// not part of any of the applications that are about to be deleted
-				// but run a release that belongs to any of the applications that
-				// is about to be deleted
-				return args.api
-					.get({
-						resource: 'device',
-						passthrough: {
-							req: root,
+			return;
+		}
+		// find devices which are
+		// not part of any of the applications that are about to be deleted
+		// but run a release that belongs to any of the applications that
+		// is about to be deleted
+		const devices = (await args.api.get({
+			resource: 'device',
+			passthrough: {
+				req: root,
+			},
+			options: {
+				$select: ['uuid'],
+				$filter: {
+					$not: {
+						belongs_to__application: {
+							$in: appIds,
 						},
-						options: {
-							$select: ['uuid'],
-							$filter: {
-								$not: {
+					},
+					is_running__release: {
+						$any: {
+							$alias: 'r',
+							$expr: {
+								r: {
 									belongs_to__application: {
 										$in: appIds,
 									},
 								},
-								is_running__release: {
-									$any: {
-										$alias: 'r',
-										$expr: {
-											r: {
-												belongs_to__application: {
-													$in: appIds,
-												},
-											},
-										},
-									},
-								},
 							},
 						},
-					})
-					.then((devices: AnyObject[]) => {
-						if (devices.length === 0) {
-							return;
-						}
-
-						const uuids = devices.map(({ uuid }) => uuid);
-						throw new BadRequestError('updateRequired', {
-							error: 'updateRequired',
-							message: `Can't delete application(s) ${_.join(
-								appIds,
-								', ',
-							)} because following devices are still running releases that belong to these application(s): ${_.join(
-								uuids,
-								', ',
-							)}`,
-							appids: appIds,
-							uuids,
-						});
-					})
-					.then(() => {
-						// We need to null `should_be_running__release` or otherwise we have a circular dependency and cannot delete either
-						return args.api
-							.patch({
-								resource: 'application',
-								options: {
-									$filter: {
-										id: { $in: appIds },
-										should_be_running__release: { $ne: null },
-									},
-								},
-								body: { should_be_running__release: null },
-							})
-							.return();
-					});
-			}
-		}),
+					},
+				},
+			},
+		})) as AnyObject[];
+		if (devices.length !== 0) {
+			const uuids = devices.map(({ uuid }) => uuid);
+			throw new BadRequestError('updateRequired', {
+				error: 'updateRequired',
+				message: `Can't delete application(s) ${_.join(
+					appIds,
+					', ',
+				)} because following devices are still running releases that belong to these application(s): ${_.join(
+					uuids,
+					', ',
+				)}`,
+				appids: appIds,
+				uuids,
+			});
+		}
+		// We need to null `should_be_running__release` or otherwise we have a circular dependency and cannot delete either
+		await args.api.patch({
+			resource: 'application',
+			options: {
+				$filter: {
+					id: { $in: appIds },
+					should_be_running__release: { $ne: null },
+				},
+			},
+			body: { should_be_running__release: null },
+		});
+	},
 });
 
 addDeleteHookForDependents('application', [
