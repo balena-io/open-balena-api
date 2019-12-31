@@ -1,4 +1,84 @@
 - commits:
+    - subject: Convert commands/dummy to async/await
+      hash: e9dc232d2a94ead01c467dc248838ae6d0b190dc
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert lib/device-proxy to async/await
+      hash: 4e1eeda03d4e90ff181c43ffcb5165a13008fdca
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert hooks/resources/api_key to async/await
+      hash: 953181bc49e836a2bf5f676714f48e738f350304
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert hooks/resources/release to async/await
+      hash: fda31c1cf8c811dec07c9f9b557fd29a159308dd
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert hooks/resources/image to async/await
+      hash: c615024c17163ad906fabbb49d85a5d27270a68f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert hooks/resources/application to async/await
+      hash: bb32f7a7b159950a6bce46770291dd38512c349e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert hooks/resources/image__is_part_of__release to async/await
+      hash: 45c49248574053a87a71dc381e9870a1f924d26b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert routes/api-keys to async/await
+      hash: b9ab8a7719575f27a73f3fee3c400eb419c969a4
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert platform/middleware to async/await
+      hash: 0087169f61e0deb882dfc0e55c6445fdb02f177c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert hooks/resources/envvars to async/await
+      hash: ec27f49ea32f95d5216abe8812c4559392daf69d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Convert hooks/resources/device to async/await
+      hash: 962c205952b247df3c2a960b0f1c762e89ec3828
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.49.3
+  date: 2019-12-31T16:19:39.202Z
+- commits:
     - subject: Remove unnecessary @types/eventemitter3
       hash: 5cb642f696011cf5c12deaad48a75effd5d90c65
       body: ''
