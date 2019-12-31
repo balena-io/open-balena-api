@@ -1,5 +1,5 @@
 import * as AWS from 'aws-sdk';
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 import * as mockery from 'mockery';
 import { assert } from 'chai';
@@ -47,9 +47,9 @@ const toReturnType = <T extends (...args: any[]) => any>(result: {
 				const error = new Error();
 				Object.assign(error, result.Error);
 
-				return Promise.reject(error);
+				return Bluebird.reject(error);
 			}
-			return Promise.resolve(result);
+			return Bluebird.resolve(result);
 		},
 	} as unknown) as ReturnType<T>;
 };
@@ -96,7 +96,7 @@ class S3Mock {
 		// treat not found IGNORE file mocks as 404
 		if (_.endsWith(params.Key, '/IGNORE')) {
 			return toReturnType<AWS.S3['headObject']>(
-				Promise.reject(new NotFoundError()),
+				Bluebird.reject(new NotFoundError()),
 			);
 		}
 

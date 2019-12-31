@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 
 import { resolveDeviceType } from '../common';
 import { postDevices } from '../../lib/device-proxy';
@@ -51,7 +51,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 		}
 
 		try {
-			await Promise.all([
+			await Bluebird.all([
 				resolveDeviceType(api, request, 'is_for__device_type'),
 				checkDependentApplication(args),
 			]);
@@ -104,7 +104,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 			waitPromises.push(getCurrentRequestAffectedIds(args));
 		}
 
-		return Promise.all(waitPromises);
+		return Bluebird.all(waitPromises);
 	},
 	POSTRUN: async ({ request }) => {
 		if (request.values.should_be_running__release != null) {

@@ -1,7 +1,7 @@
 import * as _express from 'express';
 import * as redis from 'redis';
 import ExpressBruteRedis = require('express-brute-redis');
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 
 import * as ExpressBrute from 'express-brute';
 import * as _ from 'lodash';
@@ -69,7 +69,7 @@ const redisErrorHandler = (options: StoreErrorOptions) => {
 	options.next();
 };
 
-export const getUserIDFromCreds = Promise.method(
+export const getUserIDFromCreds = Bluebird.method(
 	(req: _express.Request): string => {
 		if (req.creds != null && 'id' in req.creds) {
 			return `userID:${req.creds.id}`;
@@ -78,8 +78,8 @@ export const getUserIDFromCreds = Promise.method(
 	},
 );
 
-export const resetCounter = (req: _express.Request): Promise<void> => {
-	return Promise.fromCallback<void>(cb => {
+export const resetCounter = (req: _express.Request): Bluebird<void> => {
+	return Bluebird.fromCallback<void>(cb => {
 		if (req.brute != null) {
 			req.brute.reset(cb);
 		} else {
@@ -93,7 +93,7 @@ export const resetCounter = (req: _express.Request): Promise<void> => {
 export type PartialRateLimitMiddleware = (
 	field?:
 		| string
-		| ((req: _express.Request, res: _express.Response) => Promise<string>),
+		| ((req: _express.Request, res: _express.Response) => Bluebird<string>),
 ) => _express.RequestHandler;
 
 export const createRateLimitMiddleware = (
@@ -124,7 +124,7 @@ const $createRateLimitMiddleware = (
 	expressBruteMiddleware: ExpressBrute.Middleware,
 	field?:
 		| string
-		| ((req: _express.Request, res: _express.Response) => Promise<string>),
+		| ((req: _express.Request, res: _express.Response) => Bluebird<string>),
 ): _express.RequestHandler => {
 	if (expressBrute == null) {
 		throw new Error(

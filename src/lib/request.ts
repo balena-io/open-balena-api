@@ -1,5 +1,5 @@
 import * as request from 'request';
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 import { EXTERNAL_HTTP_TIMEOUT_MS } from './config';
 
 type Request = typeof request;
@@ -11,43 +11,43 @@ interface PromisifiedRequest extends Request {
 		options:
 			| (request.UriOptions & request.CoreOptions)
 			| (request.UrlOptions & request.CoreOptions),
-	): Promise<RequestResponse>;
+	): Bluebird<RequestResponse>;
 	getAsync(
 		uri: string,
 		options?: request.CoreOptions,
-	): Promise<RequestResponse>;
+	): Bluebird<RequestResponse>;
 
 	postAsync: (
 		arg1:
 			| (request.UriOptions & request.CoreOptions)
 			| (request.UrlOptions & request.CoreOptions),
-	) => Promise<RequestResponse>;
+	) => Bluebird<RequestResponse>;
 	putAsync: (
 		arg1:
 			| (request.UriOptions & request.CoreOptions)
 			| (request.UrlOptions & request.CoreOptions),
-	) => Promise<RequestResponse>;
+	) => Bluebird<RequestResponse>;
 	delAsync: (
 		arg1:
 			| (request.UriOptions & request.CoreOptions)
 			| (request.UrlOptions & request.CoreOptions),
-	) => Promise<RequestResponse>;
+	) => Bluebird<RequestResponse>;
 }
 
 export const defaultRequest = request.defaults({
 	timeout: EXTERNAL_HTTP_TIMEOUT_MS,
 });
 
-const promisifiedRequest = (Promise.promisifyAll(defaultRequest, {
+const promisifiedRequest = (Bluebird.promisifyAll(defaultRequest, {
 	multiArgs: true,
 }) as any) as PromisifiedRequest;
 
-export const requestAsync = (Promise.promisify(promisifiedRequest, {
+export const requestAsync = (Bluebird.promisify(promisifiedRequest, {
 	multiArgs: true,
 }) as any) as (
 	arg1:
 		| (request.UriOptions & request.CoreOptions)
 		| (request.UrlOptions & request.CoreOptions),
-) => Promise<RequestResponse>;
+) => Bluebird<RequestResponse>;
 
 export default promisifiedRequest;

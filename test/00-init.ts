@@ -1,4 +1,4 @@
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -29,7 +29,7 @@ const testFiles = _(process.env.TEST_FILES)
 
 const prefixes: Dictionary<true> = {};
 
-Promise.resolve(fs.promises.readdir(__dirname))
+Bluebird.resolve(fs.promises.readdir(__dirname))
 	.call('sort')
 	.each(fileName => {
 		const ext = path.extname(fileName);
