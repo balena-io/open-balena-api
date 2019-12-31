@@ -1,4 +1,14 @@
 - commits:
+    - subject: Remove unnecessary @types/eventemitter3
+      hash: 5cb642f696011cf5c12deaad48a75effd5d90c65
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.49.2
+  date: 2019-12-31T16:07:13.201Z
+- commits:
     - subject: Fix migrations/00022-drop-vpn-host-port.sql
       hash: c4167816ea26d349250c52df8cf7dcf1ed38701c
       body: ''
