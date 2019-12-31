@@ -45,35 +45,38 @@ const addReleaseToApp = async (
 	auth: string,
 	release: MockReleaseParams,
 ): Promise<MockRelease> =>
-	await supertest(app, auth)
-		.post(`/resin/release`)
-		.send(release)
-		.expect(201)
-		.then(({ body }) => body);
+	(
+		await supertest(app, auth)
+			.post(`/resin/release`)
+			.send(release)
+			.expect(201)
+	).body;
 
 const addImageToService = async (
 	auth: string,
 	image: MockImageParams,
 ): Promise<MockImage> =>
-	await supertest(app, auth)
-		.post(`/resin/image`)
-		.send(image)
-		.expect(201)
-		.then(({ body }) => body);
+	(
+		await supertest(app, auth)
+			.post(`/resin/image`)
+			.send(image)
+			.expect(201)
+	).body;
 
 const addServiceToApp = async (
 	auth: string,
 	serviceName: string,
 	application: number,
 ): Promise<MockService> =>
-	await supertest(app, auth)
-		.post(`/resin/service`)
-		.send({
-			application,
-			service_name: serviceName,
-		})
-		.expect(201)
-		.then(({ body }) => body);
+	(
+		await supertest(app, auth)
+			.post(`/resin/service`)
+			.send({
+				application,
+				service_name: serviceName,
+			})
+			.expect(201)
+	).body;
 
 const addImageToRelease = async (
 	auth: string,
