@@ -309,13 +309,15 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 					// raise and event for the state change...
 					switch (nextState) {
 						case DeviceOnlineStates.Timeout:
-							this.scheduleChangeOfStateForDevice(
-								uuid,
-								DeviceOnlineStates.Timeout,
-								DeviceOnlineStates.Offline,
-								API_HEARTBEAT_STATE_TIMEOUT_SECONDS, // put the device into a timeout state if it misses it's scheduled heartbeat window... then mark as offline
-							);
-							await this.updateDeviceModel(uuid, DeviceOnlineStates.Timeout);
+							await Promise.all([
+								this.scheduleChangeOfStateForDevice(
+									uuid,
+									DeviceOnlineStates.Timeout,
+									DeviceOnlineStates.Offline,
+									API_HEARTBEAT_STATE_TIMEOUT_SECONDS, // put the device into a timeout state if it misses it's scheduled heartbeat window... then mark as offline
+								),
+								this.updateDeviceModel(uuid, DeviceOnlineStates.Timeout),
+							]);
 							break;
 						case DeviceOnlineStates.Offline:
 							await this.updateDeviceModel(uuid, DeviceOnlineStates.Offline);
