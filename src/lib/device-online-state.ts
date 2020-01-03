@@ -1,6 +1,5 @@
 import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
-import { noop } from 'lodash';
 import { sbvrUtils } from '@resin/pinejs';
 import { captureException } from '../platform/errors';
 import {
@@ -93,28 +92,28 @@ export const getPollInterval = async (uuid: string) => {
 		},
 	});
 
-	return (
-		getPollIntervalForDevice({ uuid })
-			.then((pollIntervals: Array<{ value: string }>) => {
-				if (pollIntervals.length >= 1) {
-					return pollIntervals;
-				}
+	let pollIntervals = (await getPollIntervalForDevice({ uuid })) as Array<{
+		value: string;
+	}>;
 
-				return getPollIntervalForParentApplication({ uuid });
-			})
-			.then((pollIntervals: Array<{ value: string }>) => {
-				if (pollIntervals.length === 0) {
-					return DEFAULT_SUPERVISOR_POLL_INTERVAL;
-				}
+	if (pollIntervals.length === 0) {
+		pollIntervals = (await getPollIntervalForParentApplication({
+			uuid,
+		})) as Array<{ value: string }>;
+	}
 
-				return Math.max(
-					parseInt(pollIntervals[0].value, 10) || 0,
-					DEFAULT_SUPERVISOR_POLL_INTERVAL,
-				);
-			})
-			// adjust the value for the jitter in the Supervisor...
-			.then(pollInterval => pollInterval * POLL_JITTER_FACTOR)
-	);
+	let pollInterval;
+	if (pollIntervals.length === 0) {
+		pollInterval = DEFAULT_SUPERVISOR_POLL_INTERVAL;
+	} else {
+		pollInterval = Math.max(
+			parseInt(pollIntervals[0].value, 10) || 0,
+			DEFAULT_SUPERVISOR_POLL_INTERVAL,
+		);
+	}
+
+	// adjust the value for the jitter in the Supervisor...
+	return pollInterval * POLL_JITTER_FACTOR;
 };
 
 // the maximum time the supervisor will wait between polls...
@@ -294,49 +293,50 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 				qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
 				vt: DeviceOnlineStateManager.RSMQ_READ_TIMEOUT, // prevent other consumers seeing the same message (if any) preventing multiple API agents from processing it...
 			})
-			.then(msg => {
-				if ('id' in msg) {
-					const { id, message } = msg;
+			.then(async msg => {
+				if (!('id' in msg)) {
+					// no messages to consume, wait a second...
+					return Bluebird.delay(1000);
+				}
 
-					return Bluebird.try(() => {
-						const { uuid, nextState } = JSON.parse(message) as {
-							uuid: string;
-							nextState: DeviceOnlineStates;
-						};
+				const { id, message } = msg;
+				try {
+					const { uuid, nextState } = JSON.parse(message) as {
+						uuid: string;
+						nextState: DeviceOnlineStates;
+					};
 
-						// raise and event for the state change...
-						switch (nextState) {
-							case DeviceOnlineStates.Timeout:
+					// raise and event for the state change...
+					switch (nextState) {
+						case DeviceOnlineStates.Timeout:
+							await Promise.all([
 								this.scheduleChangeOfStateForDevice(
 									uuid,
 									DeviceOnlineStates.Timeout,
 									DeviceOnlineStates.Offline,
 									API_HEARTBEAT_STATE_TIMEOUT_SECONDS, // put the device into a timeout state if it misses it's scheduled heartbeat window... then mark as offline
-								);
-								return this.updateDeviceModel(uuid, DeviceOnlineStates.Timeout);
-							case DeviceOnlineStates.Offline:
-								return this.updateDeviceModel(uuid, DeviceOnlineStates.Offline);
-							default:
-								throw new Error(
-									`An unexpected value was encountered for the target device state: ${nextState}`,
-								);
-						}
-					})
-						.then(() =>
-							this.rsmq.deleteMessageAsync({
-								qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-								id,
-							}),
-						)
-						.catch((err: Error) =>
-							captureException(
-								err,
-								'An error occurred trying to process an API heartbeat event.',
-							),
-						);
-				} else {
-					// no messages to consume, wait a second...
-					return Bluebird.delay(1000);
+								),
+								this.updateDeviceModel(uuid, DeviceOnlineStates.Timeout),
+							]);
+							break;
+						case DeviceOnlineStates.Offline:
+							await this.updateDeviceModel(uuid, DeviceOnlineStates.Offline);
+							break;
+						default:
+							throw new Error(
+								`An unexpected value was encountered for the target device state: ${nextState}`,
+							);
+					}
+
+					await this.rsmq.deleteMessageAsync({
+						qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
+						id,
+					});
+				} catch (err) {
+					captureException(
+						err,
+						'An error occurred trying to process an API heartbeat event.',
+					);
 				}
 			})
 			.catch((err: Error) =>
@@ -350,52 +350,50 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		return null;
 	}
 
-	private scheduleChangeOfStateForDevice(
+	private async scheduleChangeOfStateForDevice(
 		uuid: string,
 		currentState: DeviceOnlineStates,
 		nextState: DeviceOnlineStates,
 		delay: number, // in seconds
 	) {
 		// remove the old queued state...
-		return this.redis
-			.getAsync(`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`)
-			.then(value => {
-				if (value == null) {
-					return;
-				}
+		const value = await this.redis.getAsync(
+			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
+		);
 
-				const { id } = JSON.parse(value) as { id: string };
+		if (value != null) {
+			const { id } = JSON.parse(value) as { id: string };
 
-				if (id) {
-					return this.rsmq
-						.deleteMessageAsync({
-							qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-							id,
-						})
-						.catch(noop); // ignore errors when deleting the old queued state, it may have already expired...
-				}
-			})
-			.then(() =>
-				this.rsmq.sendMessageAsync({
-					qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-					message: JSON.stringify({
-						uuid,
-						nextState,
-					}),
-					delay,
-				}),
-			)
-			.then(id =>
-				this.redis.setAsync(
-					`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
-					JSON.stringify({
+			if (id) {
+				try {
+					await this.rsmq.deleteMessageAsync({
+						qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
 						id,
-						currentState,
-					}),
-					'EX',
-					delay + 5,
-				),
-			);
+					});
+				} catch {
+					// ignore errors when deleting the old queued state, it may have already expired...
+				}
+			}
+		}
+
+		const newId = await this.rsmq.sendMessageAsync({
+			qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
+			message: JSON.stringify({
+				uuid,
+				nextState,
+			}),
+			delay,
+		});
+
+		return this.redis.setAsync(
+			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
+			JSON.stringify({
+				id: newId,
+				currentState,
+			}),
+			'EX',
+			delay + 5,
+		);
 	}
 
 	public start() {
@@ -407,48 +405,38 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		return this.consume();
 	}
 
-	public captureEventFor(uuid: string, timeoutSeconds: number) {
+	public async captureEventFor(uuid: string, timeoutSeconds: number) {
 		if (!this.featureIsEnabled) {
-			return Promise.resolve();
+			return;
 		}
 
-		// see if we already have a queued state for this device...
-		return (
-			this.redis
-				.getAsync(`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`)
-				.then(value => {
-					if (value == null) {
-						return true;
-					}
+		let setDeviceOnline = true;
+		try {
+			// see if we already have a queued state for this device...
+			const value = await this.redis.getAsync(
+				`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
+			);
 
-					const { id, currentState } = JSON.parse(value);
+			if (value != null) {
+				const { id, currentState } = JSON.parse(value);
 
-					if (!id || currentState !== DeviceOnlineStates.Online) {
-						return true;
-					}
+				if (id && currentState === DeviceOnlineStates.Online) {
+					setDeviceOnline = false;
+				}
+			}
+		} catch {
+			// no queued state was found, so it must have just come online...
+		}
 
-					return false;
-				})
-				.catch(() => {
-					// no queued state was found, so it must have just come online...
-					return true;
-				})
-				.then(setDeviceOnline => {
-					if (setDeviceOnline) {
-						return this.updateDeviceModel(uuid, DeviceOnlineStates.Online);
-					}
-
-					return false;
-				})
-				// record the activity...
-				.then(() => {
-					return this.scheduleChangeOfStateForDevice(
-						uuid,
-						DeviceOnlineStates.Online,
-						DeviceOnlineStates.Timeout,
-						Math.ceil(timeoutSeconds), // always make this a whole number of seconds, and round up to make sure we dont expire too soon...
-					);
-				})
+		if (setDeviceOnline) {
+			await this.updateDeviceModel(uuid, DeviceOnlineStates.Online);
+		}
+		// record the activity...
+		await this.scheduleChangeOfStateForDevice(
+			uuid,
+			DeviceOnlineStates.Online,
+			DeviceOnlineStates.Timeout,
+			Math.ceil(timeoutSeconds), // always make this a whole number of seconds, and round up to make sure we dont expire too soon...
 		);
 	}
 }

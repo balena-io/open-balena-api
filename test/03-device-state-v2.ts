@@ -14,8 +14,8 @@ import stateMock = require('../src/lib/device-online-state');
 import configMock = require('../src/lib/config');
 import sinon = require('sinon');
 
-const POLL_MSEC = 1000,
-	TIMEOUT_MSEC = 1000;
+const POLL_MSEC = 2000;
+const TIMEOUT_SEC = 1;
 
 class StateTracker {
 	public states: Dictionary<stateMock.DeviceOnlineStates> = {};
@@ -34,9 +34,7 @@ const tracker = new StateTracker();
 (configMock as AnyObject)['DEFAULT_SUPERVISOR_POLL_INTERVAL'] = POLL_MSEC;
 
 // mock the value for the timeout grace period...
-(configMock as AnyObject)['API_HEARTBEAT_STATE_TIMEOUT_SECONDS'] = Math.floor(
-	TIMEOUT_MSEC / 1000,
-);
+(configMock as AnyObject)['API_HEARTBEAT_STATE_TIMEOUT_SECONDS'] = TIMEOUT_SEC;
 
 const updateDeviceModel = stateMock.getInstance()['updateDeviceModel'];
 stateMock.getInstance()['updateDeviceModel'] = function(
@@ -287,12 +285,11 @@ describe('Device State v2', () => {
 				);
 			});
 
-			it(`Should see state become "offline" following a delay of ${(devicePollInterval +
-				TIMEOUT_MSEC) /
-				1000} seconds`, async () => {
+			it(`Should see state become "offline" following a delay of ${TIMEOUT_SEC +
+				devicePollInterval / 1000} seconds`, async () => {
 				stateChangeEventSpy.resetHistory();
 
-				await Bluebird.delay(devicePollInterval + TIMEOUT_MSEC);
+				await Bluebird.delay(devicePollInterval + TIMEOUT_SEC * 1000);
 
 				// it will be called for TIMEOUT and OFFLINE...
 				await waitFor(() => stateChangeEventSpy.calledTwice);
