@@ -114,7 +114,7 @@ export const HOST_CONFIG_VAR_PROPERTIES: {
 } = {
 	RESIN_HOST_CONFIG_disable_splash: {
 		enum: ['0', '1'],
-		description: 'Enable / Disable the balena splash screen',
+		description: 'Enable / Disable the rainbow splash screen',
 		default: '1',
 	},
 	RESIN_HOST_CONFIG_dtparam: {
