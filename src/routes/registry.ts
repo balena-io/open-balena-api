@@ -290,7 +290,7 @@ export const token: RequestHandler = async (req, res) => {
 		} else if (_.isArray(scope)) {
 			scopes = scope;
 		} else if (_.isObject(scope)) {
-			scopes = _.values(scope);
+			scopes = Object.values(scope);
 		} else {
 			scopes = [];
 		}

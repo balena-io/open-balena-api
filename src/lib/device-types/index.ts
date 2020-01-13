@@ -240,7 +240,7 @@ function syncDataModel(
 	types: Dictionary<DeviceTypeInfo>,
 	propertyMap: typeof syncSettings['map'],
 ) {
-	if (_.isEmpty(_.keys(propertyMap))) {
+	if (_.isEmpty(propertyMap)) {
 		captureException(
 			new Error('No properties to sync into the device type model'),
 		);

@@ -202,7 +202,7 @@ export function createAll(
 			if (permissionNames.length === 0) {
 				return role;
 			}
-			const permissions = _.values(
+			const permissions = Object.values(
 				_.pick(await permissionsCache, permissionNames),
 			);
 			const addPermissionsPromise = apiTx
@@ -299,7 +299,7 @@ export function createAll(
 										},
 									},
 								},
-								{ id: { $in: _.values(permissions) } },
+								{ id: { $in: Object.values(permissions) } },
 							],
 						},
 					},
