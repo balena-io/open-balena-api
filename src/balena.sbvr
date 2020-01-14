@@ -249,9 +249,7 @@ Term: device type
 Term: application
 	Concept Type: actor (Auth)
 
-	-- This must appear before `Term: release` otherwise Pine will
-	-- think it's a relation to `release` when all we want is a bool.
-	Fact type: application should track latest release
+	Fact type: application [should track latest release]
 
 	Fact type: application has env var name
 		Term Form: application environment variable
