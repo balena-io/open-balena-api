@@ -1,4 +1,14 @@
 - commits:
+    - subject: Clarify the effect of the RESIN_HOST_CONFIG_disable_splash setting
+      hash: 11d11986ded499db075db2e5e02f69cb040072c1
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+  version: 0.50.1
+  date: 2020-01-14T16:15:03.708Z
+- commits:
     - subject: Make use of new sbvr features
       hash: b4b87bdd780093027f973ce52555cc7d4a3f2b1a
       body: ''
