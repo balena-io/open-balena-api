@@ -178,17 +178,15 @@ async function updateDTModel(
 		propertyMap,
 		source => (deviceType as AnyObject)[source.name] || source.default,
 	);
-	const updateFilter: AnyObject[] = _.reduce(
+	const updateFilter = _.map(
 		propertyMap,
-		(result, value, key) => {
-			const filter: AnyObject = {};
-			filter[key] = {
-				$ne: (deviceType as AnyObject)[value.name] || value.default,
+		(value, key): PinejsClientCoreFactory.Filter => {
+			return {
+				[key]: {
+					$ne: (deviceType as AnyObject)[value.name] || value.default,
+				},
 			};
-			result.push(filter);
-			return result;
 		},
-		[] as AnyObject[],
 	);
 	const results = (await apiTx.get({
 		resource: 'device_type',
