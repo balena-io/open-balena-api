@@ -43,7 +43,7 @@ Bluebird.resolve(fs.promises.readdir(__dirname))
 		) {
 			return;
 		}
-		const prefix = fileName.split('_')[0];
+		const prefix = fileName.split('_', 1)[0];
 		if (prefixes[prefix]) {
 			throw new Error(`Prefix ${prefix} has already been used`);
 		}
