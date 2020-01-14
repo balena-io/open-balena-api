@@ -177,11 +177,9 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'application', {
 			const uuids = devices.map(({ uuid }) => uuid);
 			throw new BadRequestError('updateRequired', {
 				error: 'updateRequired',
-				message: `Can't delete application(s) ${_.join(
-					appIds,
+				message: `Can't delete application(s) ${appIds.join(
 					', ',
-				)} because following devices are still running releases that belong to these application(s): ${_.join(
-					uuids,
+				)} because following devices are still running releases that belong to these application(s): ${uuids.join(
 					', ',
 				)}`,
 				appids: appIds,

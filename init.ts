@@ -30,8 +30,9 @@ async function onInitModel() {
 async function onInitHooks() {
 	const { createAll } = await import('./src/platform/permissions');
 	const auth = await import('./src/lib/auth');
-	const permissionNames = _.uniq(
-		_.flatMap(auth.ROLES).concat(_.flatMap(auth.KEYS, 'permissions')),
+	const permissionNames = _.union(
+		_.flatMap(auth.ROLES),
+		_.flatMap(auth.KEYS, 'permissions'),
 	);
 	const { setSyncMap, getAccessibleDeviceTypes } = await import(
 		'./src/lib/device-types'

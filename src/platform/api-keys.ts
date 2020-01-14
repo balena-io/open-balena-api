@@ -26,16 +26,16 @@ const $createApiKey = async (
 	actorTypeID: number,
 	{ apiKey, tx, name, description }: InternalApiKeyOptions,
 ): Promise<string> => {
-	const actorable = await api.resin.get({
+	const actorable = (await api.resin.get({
 		resource: actorType,
 		id: actorTypeID,
 		passthrough: { req, tx },
 		options: {
 			$select: 'actor',
 		},
-	});
+	})) as AnyObject;
 
-	const actorID: number | undefined = _.get(actorable, ['actor']);
+	const actorID: number | undefined = actorable?.actor;
 	if (actorID == null) {
 		throw new Error(`No ${actorType} found to associate with the api key`);
 	}

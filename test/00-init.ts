@@ -39,7 +39,7 @@ Bluebird.resolve(fs.promises.readdir(__dirname))
 		fileName = path.basename(fileName, ext);
 		if (
 			testFiles.length > 0 &&
-			!_.some(testFiles, testFile => testFile(fileName))
+			!testFiles.some(testFile => testFile(fileName))
 		) {
 			return;
 		}
@@ -62,7 +62,7 @@ Bluebird.resolve(fs.promises.readdir(__dirname))
 
 		if (
 			testFiles.length > 0 &&
-			!_.some(testFiles, testFile => testFile(filename))
+			!testFiles.some(testFile => testFile(filename))
 		) {
 			return;
 		}

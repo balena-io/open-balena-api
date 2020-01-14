@@ -148,7 +148,7 @@ export const RESIN_HOST_CONFIG_CAPABLE_DEVICE_TYPES = [
 ];
 
 const startsWithAny = (ns: string[], name: string) => {
-	return _.some(ns, n => name.startsWith(n));
+	return ns.some(n => name.startsWith(n));
 };
 
 const checkVarName = (type: string, name: string) => {

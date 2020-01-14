@@ -36,7 +36,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'user', {
 
 sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 	POSTPARSE: async ({ req, request }) => {
-		let userId = _.get(request.odataQuery, 'key');
+		let userId = request.odataQuery?.key;
 		if (userId == null) {
 			throw new Error('You must provide user ID');
 		}
