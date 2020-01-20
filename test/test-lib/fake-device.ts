@@ -1,6 +1,6 @@
 import 'mocha';
 import { expect } from 'chai';
-import * as uuid from 'node-uuid';
+import * as uuid from 'uuid';
 import * as randomstring from 'randomstring';
 
 import { app } from '../../init';

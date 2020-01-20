@@ -2,7 +2,7 @@
 // Reference: https://docs.docker.com/registry/spec/auth/jwt/
 
 import * as _ from 'lodash';
-import * as uuid from 'node-uuid';
+import * as uuid from 'uuid';
 import * as BasicAuth from 'basic-auth';
 import * as jsonwebtoken from 'jsonwebtoken';
 import { sbvrUtils } from '@resin/pinejs';
