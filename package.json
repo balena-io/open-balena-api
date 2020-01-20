@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@resin.io/device-types": "^10.5.0",
-    "@resin/pinejs": "^10.25.0",
+    "@resin/pinejs": "^11.0.1",
     "@types/basic-auth": "^1.1.2",
     "@types/bluebird": "^3.5.29",
     "@types/cookie-session": "^2.0.37",
