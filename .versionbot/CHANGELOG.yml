@@ -1,4 +1,14 @@
 - commits:
+    - subject: Switch from the deprecated node-uuid module to uuid
+      hash: a98ea1c927a6bb85b04fbb18e016c8a0728ff446
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.50.2
+  date: 2020-01-20T13:02:39.051Z
+- commits:
     - subject: Clarify the effect of the RESIN_HOST_CONFIG_disable_splash setting
       hash: 11d11986ded499db075db2e5e02f69cb040072c1
       body: ''
