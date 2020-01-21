@@ -1,4 +1,14 @@
 - commits:
+    - subject: Avoid allocations when clearing the device logs buffer
+      hash: d5b4201019f3e0cf1f1bab4ce5f16327d68fc8ba
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.51.1
+  date: 2020-01-21T16:32:49.972Z
+- commits:
     - subject: Update to pinejs 11
       hash: e0b3b72b5467a5370eac5eac0b0d25d1c1ac82df
       body: |
