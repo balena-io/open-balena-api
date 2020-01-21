@@ -260,7 +260,7 @@ function handleStreamingWrite(ctx: LogWriteContext, res: Response): void {
 		);
 	}
 
-	let buffer: DeviceLog[] = [];
+	const buffer: DeviceLog[] = [];
 	const parser = ndjson.parse();
 
 	function close(err?: Error | null) {
@@ -310,7 +310,8 @@ function handleStreamingWrite(ctx: LogWriteContext, res: Response): void {
 			if (buffer.length && backend.available) {
 				// Even if the connection was closed, still flush the buffer
 				const promise = backend.publish(ctx, buffer);
-				buffer = [];
+				// Clear the buffer
+				buffer.length = 0;
 				// Resume in case it was paused due to buffering
 				if (req.isPaused()) {
 					req.resume();
