@@ -72,10 +72,11 @@ export class RedisBackend implements DeviceLogsBackend {
 		if (!this.connected) {
 			throw new ServiceUnavailableError();
 		}
+		// Immediately map the logs as they are synchronously cleared
+		const redisLogs = logs.map(this.toRedisLog, this);
 
 		const limit = ctx.retention_limit || 0;
 		const key = this.getKey(ctx);
-		const redisLogs = logs.map(this.toRedisLog, this);
 		// Create a Redis transaction
 		const tx = this.cmds.multi();
 		// Add the logs to the List structure
