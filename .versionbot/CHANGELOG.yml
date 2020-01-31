@@ -1,4 +1,14 @@
 - commits:
+    - subject: Always use asynchronous `crypto.pseudoRandomBytes`
+      hash: 6b0ffe46fb4e5afce42069d336dec3f23fb47524
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.51.3
+  date: 2020-01-30T17:42:53.038Z
+- commits:
     - subject: Update open-balena-base to 9.0.5
       hash: fbb5d8ac5612d717e70f741ca55d9adfaf257fa1
       body: |
