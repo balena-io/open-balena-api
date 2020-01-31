@@ -1,6 +1,10 @@
 import * as _ from 'lodash';
 import * as ipaddr from 'ipaddr.js';
 import { Request } from 'express';
+import { promisify } from 'util';
+import { pseudoRandomBytes } from 'crypto';
+
+export const pseudoRandomBytesAsync = promisify(pseudoRandomBytes);
 
 export const isValidInteger = (num: any): num is number => {
 	const n = checkInt(num);

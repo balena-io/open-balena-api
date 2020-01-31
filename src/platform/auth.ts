@@ -4,13 +4,10 @@ import { createJwt, SignOptions, User } from './jwt';
 import { retrieveAPIKey } from './api-keys';
 import { sbvrUtils } from '@resin/pinejs';
 import { Tx } from './index';
-import * as Bluebird from 'bluebird';
-import * as crypto from 'crypto';
 import * as base32 from 'thirty-two';
 
 import { RequestHandler, Response, Request } from 'express';
-
-const pseudoRandomBytesAsync = Bluebird.promisify(crypto.pseudoRandomBytes);
+import { pseudoRandomBytesAsync } from '../lib/utils';
 
 const {
 	BadRequestError,

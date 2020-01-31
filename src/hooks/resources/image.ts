@@ -1,7 +1,7 @@
-import * as crypto from 'crypto';
 import { sbvrUtils } from '@resin/pinejs';
 import { addDeleteHookForDependents } from '../../platform';
 import { REGISTRY2_HOST } from '../../lib/config';
+import { pseudoRandomBytesAsync } from '../../lib/utils';
 
 const { root } = sbvrUtils;
 
@@ -12,10 +12,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'image', {
 			const candidate =
 				REGISTRY2_HOST +
 				'/v2/' +
-				crypto
-					.pseudoRandomBytes(16)
-					.toString('hex')
-					.toLowerCase();
+				(await pseudoRandomBytesAsync(16)).toString('hex').toLowerCase();
 
 			const count = await api.get({
 				resource: 'image/$count',

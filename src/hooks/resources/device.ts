@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import * as Bluebird from 'bluebird';
-import * as crypto from 'crypto';
 
 import {
 	checkDevicesCanHaveDeviceURL,
@@ -22,6 +21,7 @@ import { InaccessibleAppError } from '../../lib/errors';
 import { resolveDeviceType } from '../common';
 
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
+import { pseudoRandomBytesAsync } from '../../lib/utils';
 
 const INVALID_NEWLINE_REGEX = /\r|\n/;
 
@@ -114,7 +114,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'device', {
 });
 
 sbvrUtils.addPureHook('POST', 'resin', 'device', {
-	POSTPARSE: args => {
+	POSTPARSE: async args => {
 		const { request, api } = args;
 
 		// Check for extra whitespace characters
@@ -132,7 +132,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'device', {
 		request.values.device_name =
 			request.values.device_name || haikuName.generate();
 		request.values.uuid =
-			request.values.uuid || crypto.pseudoRandomBytes(31).toString('hex');
+			request.values.uuid || (await pseudoRandomBytesAsync(31)).toString('hex');
 
 		if (!/^[a-f0-9]{32}([a-f0-9]{30})?$/.test(request.values.uuid)) {
 			throw new BadRequestError(
