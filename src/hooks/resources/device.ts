@@ -114,9 +114,12 @@ sbvrUtils.addPureHook('POST', 'resin', 'device', {
 });
 
 sbvrUtils.addPureHook('POST', 'resin', 'device', {
-	POSTPARSE: async args => {
-		const { request, api } = args;
+	POSTPARSE: ({ api, request }) =>
+		resolveDeviceType(api, request, 'is_of__device_type'),
+});
 
+sbvrUtils.addPureHook('POST', 'resin', 'device', {
+	POSTPARSE: async ({ request }) => {
 		// Check for extra whitespace characters
 		if (
 			request.values.device_name != null &&
@@ -139,8 +142,6 @@ sbvrUtils.addPureHook('POST', 'resin', 'device', {
 				'Device UUID must be a 32 or 62 character long lower case hex string.',
 			);
 		}
-
-		return resolveDeviceType(api, request, 'is_of__device_type');
 	},
 	POSTRUN: ({ request, api, tx, result: deviceId }) => {
 		// Don't try to add service installs if the device wasn't created
