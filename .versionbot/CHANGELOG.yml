@@ -1,4 +1,14 @@
 - commits:
+    - subject: Throw specific http errors rather than generic errors
+      hash: 6680a83527c443cba197efbaddd41f3712498c48
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.52.0
+  date: 2020-01-31T16:14:03.639Z
+- commits:
     - subject: Update dependencies
       hash: 26b3e1037f7e71a138863969488a36407bb6ca05
       body: |
