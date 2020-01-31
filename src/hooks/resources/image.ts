@@ -3,7 +3,7 @@ import { addDeleteHookForDependents } from '../../platform';
 import { REGISTRY2_HOST } from '../../lib/config';
 import { pseudoRandomBytesAsync } from '../../lib/utils';
 
-const { root } = sbvrUtils;
+const { InternalRequestError, root } = sbvrUtils;
 
 sbvrUtils.addPureHook('POST', 'resin', 'image', {
 	POSTPARSE: async ({ request, api, tx }) => {
@@ -32,7 +32,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'image', {
 			}
 		}
 
-		throw new Error('Could not generate unique image location');
+		throw new InternalRequestError('Could not generate unique image location');
 	},
 });
 

@@ -1,17 +1,20 @@
 import * as _ from 'lodash';
+import { sbvrUtils } from '@resin/pinejs';
 
 const RESERVED_NAMESPACES = ['io.resin.', 'io.balena.'];
 
 export const checkTagKeyValidity = (key: string) => {
 	if (_.isEmpty(key)) {
-		throw new Error('Tag key cannot be empty.');
+		throw new sbvrUtils.BadRequestError('Tag key cannot be empty.');
 	}
 	if (/\s/.test(key)) {
-		throw new Error('Tag keys cannot contain whitespace.');
+		throw new sbvrUtils.BadRequestError('Tag keys cannot contain whitespace.');
 	}
 	RESERVED_NAMESPACES.forEach(ns => {
 		if (key.startsWith(ns)) {
-			throw new Error(`Tag keys beginning with ${ns} are reserved.`);
+			throw new sbvrUtils.BadRequestError(
+				`Tag keys beginning with ${ns} are reserved.`,
+			);
 		}
 	});
 };
