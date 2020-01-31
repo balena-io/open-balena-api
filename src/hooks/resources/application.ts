@@ -11,7 +11,7 @@ import {
 	getCurrentRequestAffectedIds,
 	addDeleteHookForDependents,
 } from '../../platform';
-const { BadRequestError, ConflictError, root } = sbvrUtils;
+const { BadRequestError, ConflictError, NotFoundError, root } = sbvrUtils;
 import { captureException } from '../../platform/errors';
 
 const checkDependentApplication: sbvrUtils.Hooks['POSTPARSE'] = async ({
@@ -28,7 +28,7 @@ const checkDependentApplication: sbvrUtils.Hooks['POSTPARSE'] = async ({
 			},
 		});
 		if (dependsOnApplication == null) {
-			throw new Error('Invalid application to depend upon');
+			throw new BadRequestError('Invalid application to depend upon');
 		}
 	}
 };
@@ -47,7 +47,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 		}
 
 		if (!/^[a-zA-Z0-9_-]+$/.test(appName)) {
-			throw new Error('App name may only contain [a-zA-Z0-9_-].');
+			throw new BadRequestError('App name may only contain [a-zA-Z0-9_-].');
 		}
 
 		try {
@@ -137,7 +137,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'application', {
 			const { odataQuery } = args.request;
 			if (odataQuery != null && odataQuery.key != null) {
 				// If there's a specific app targeted we make sure we give a 404 for backwards compatibility
-				throw new Error('Application(s) not found.');
+				throw new NotFoundError('Application(s) not found.');
 			}
 			return;
 		}

@@ -8,7 +8,7 @@ import { sbvrUtils } from '@resin/pinejs';
 import { createActor } from '../../platform';
 import { getUser } from '../../platform/auth';
 
-const { root, api } = sbvrUtils;
+const { root, api, BadRequestError, InternalRequestError } = sbvrUtils;
 
 sbvrUtils.addPureHook('POST', 'resin', 'user', {
 	POSTPARSE: createActor,
@@ -28,7 +28,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'user', {
 			},
 		})) as AnyObject[];
 		if (role == null) {
-			throw new Error('Unable to find the default user role');
+			throw new InternalRequestError('Unable to find the default user role');
 		}
 		return assignUserRole(result, role.id, tx);
 	},
@@ -38,14 +38,14 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 	POSTPARSE: async ({ req, request }) => {
 		let userId = request.odataQuery?.key;
 		if (userId == null) {
-			throw new Error('You must provide user ID');
+			throw new BadRequestError('You must provide user ID');
 		}
 
 		const user = await getUser(req);
 		userId = sbvrUtils.resolveOdataBind(request.odataBinds, userId);
 
 		if (user.id !== userId) {
-			throw new Error('You can only delete your own account');
+			throw new BadRequestError('You can only delete your own account');
 		}
 
 		// Store the user id in the custom request data for later.

@@ -50,10 +50,10 @@ export const comparePassword = (password: string, hash: string | null) =>
 
 export const validatePassword = (password?: string) => {
 	if (!password) {
-		throw new Error('Password required.');
+		throw new BadRequestError('Password required.');
 	}
 	if (password.length < 8) {
-		throw new Error('Password must be at least 8 characters.');
+		throw new BadRequestError('Password must be at least 8 characters.');
 	}
 };
 
