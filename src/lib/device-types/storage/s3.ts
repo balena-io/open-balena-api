@@ -1,11 +1,11 @@
 import * as AWS from 'aws-sdk';
-import * as path from 'path';
 import * as _ from 'lodash';
+import * as path from 'path';
 import {
+	IMAGE_STORAGE_ACCESS_KEY,
 	IMAGE_STORAGE_BUCKET as S3_BUCKET,
 	IMAGE_STORAGE_ENDPOINT,
 	IMAGE_STORAGE_FORCE_PATH_STYLE,
-	IMAGE_STORAGE_ACCESS_KEY,
 	IMAGE_STORAGE_SECRET_KEY,
 } from '../../config';
 
@@ -14,19 +14,19 @@ export const getKey = (...parts: string[]): string => parts.join('/');
 class UnauthenticatedS3Facade {
 	constructor(private s3Client: AWS.S3) {}
 
-	headObject(
+	public headObject(
 		params: AWS.S3.Types.HeadObjectRequest,
 	): ReturnType<AWS.S3['headObject']> {
 		return this.s3Client.makeUnauthenticatedRequest('headObject', params);
 	}
 
-	getObject(
+	public getObject(
 		params: AWS.S3.Types.GetObjectRequest,
 	): ReturnType<AWS.S3['getObject']> {
 		return this.s3Client.makeUnauthenticatedRequest('getObject', params);
 	}
 
-	listObjectsV2(
+	public listObjectsV2(
 		params: AWS.S3.Types.ListObjectsV2Request,
 	): ReturnType<AWS.S3['listObjectsV2']> {
 		return this.s3Client.makeUnauthenticatedRequest('listObjectsV2', params);
@@ -54,18 +54,18 @@ function createS3Client() {
 
 const s3Client = createS3Client();
 
-function getFileInfo(path: string) {
+function getFileInfo(s3Path: string) {
 	const req = s3Client.headObject({
 		Bucket: S3_BUCKET,
-		Key: path,
+		Key: s3Path,
 	});
 	return req.promise();
 }
 
-export function getFile(path: string) {
+export function getFile(s3Path: string) {
 	const req = s3Client.getObject({
 		Bucket: S3_BUCKET,
-		Key: path,
+		Key: s3Path,
 	});
 	return req.promise();
 }
@@ -120,9 +120,9 @@ export async function listFolders(
 	return objects;
 }
 
-export async function fileExists(path: string): Promise<boolean> {
+export async function fileExists(s3Path: string): Promise<boolean> {
 	try {
-		await getFileInfo(path);
+		await getFileInfo(s3Path);
 		return true;
 	} catch (err) {
 		if (err.statusCode === 404) {

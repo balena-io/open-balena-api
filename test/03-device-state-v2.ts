@@ -10,9 +10,9 @@ import supertest = require('./test-lib/supertest');
 
 import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from '../src/lib/config';
 
-import stateMock = require('../src/lib/device-online-state');
-import configMock = require('../src/lib/config');
 import sinon = require('sinon');
+import configMock = require('../src/lib/config');
+import stateMock = require('../src/lib/device-online-state');
 
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
@@ -70,7 +70,7 @@ describe('Device State v2', () => {
 
 	before(async () => {
 		// login as the superuser...
-		let { text: token } = await supertest(app)
+		const { text: token } = await supertest(app)
 			.post('/login_')
 			.send({
 				username: SUPERUSER_EMAIL,
@@ -188,7 +188,7 @@ describe('Device State v2', () => {
 
 			const stateChangeEventSpy = sinon.spy();
 			stateMock.getInstance().on('change', args => {
-				if (args.uuid != device.uuid) {
+				if (args.uuid !== device.uuid) {
 					return;
 				}
 

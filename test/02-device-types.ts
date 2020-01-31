@@ -1,6 +1,6 @@
+import * as _ from 'lodash';
 import 'mocha';
 import { app } from '../init';
-import * as _ from 'lodash';
 import { expect } from './test-lib/chai';
 
 import supertest = require('./test-lib/supertest');
@@ -17,7 +17,7 @@ describe('device type endpoints', () => {
 				expect(deviceType)
 					.to.have.property('slug')
 					.that.is.a('string');
-				if (deviceType.slug != 'edge') {
+				if (deviceType.slug !== 'edge') {
 					expect(deviceType)
 						.to.have.property('version')
 						.that.is.a('number');
@@ -49,7 +49,7 @@ describe('device type endpoints', () => {
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
-				deviceType => deviceType.slug == 'dt-with-ignored-release',
+				({ slug }) => slug === 'dt-with-ignored-release',
 			);
 			expect(deviceType).to.be.an('object');
 			expect(deviceType).to.have.property('buildId', '2.0.1+rev1.prod');
@@ -62,7 +62,7 @@ describe('device type endpoints', () => {
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
-				deviceType => deviceType.slug == 'dt-with-403-ignore-file-release',
+				({ slug }) => slug === 'dt-with-403-ignore-file-release',
 			);
 			expect(deviceType).to.be.an('object');
 			expect(deviceType).to.have.property('buildId', '2.0.1+rev1.prod');
@@ -75,8 +75,7 @@ describe('device type endpoints', () => {
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
-				deviceType =>
-					deviceType.slug == 'dt-with-empty-device-type-json-release',
+				({ slug }) => slug === 'dt-with-empty-device-type-json-release',
 			);
 			expect(deviceType).to.be.an('object');
 			expect(deviceType).to.have.property('buildId', '2.0.1+rev1.prod');
@@ -89,7 +88,7 @@ describe('device type endpoints', () => {
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
-				deviceType => deviceType.slug == 'dt-with-404-device-type-json-release',
+				({ slug }) => slug === 'dt-with-404-device-type-json-release',
 			);
 			expect(deviceType).to.be.an('object');
 			expect(deviceType).to.have.property('buildId', '2.0.1+rev1.prod');
@@ -102,7 +101,7 @@ describe('device type endpoints', () => {
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
-				deviceType => deviceType.slug == 'dt-with-500-ignore-file-release',
+				({ slug }) => slug === 'dt-with-500-ignore-file-release',
 			);
 			expect(deviceType).to.be.an('object');
 			expect(deviceType).to.have.property('buildId', '2.0.1+rev1.prod');
@@ -115,7 +114,7 @@ describe('device type endpoints', () => {
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
-				deviceType => deviceType.slug == 'dt-with-500-device-type-json-release',
+				({ slug }) => slug === 'dt-with-500-device-type-json-release',
 			);
 			expect(deviceType).to.be.an('object');
 			expect(deviceType).to.have.property('buildId', '2.0.1+rev1.prod');
@@ -128,7 +127,7 @@ describe('device type endpoints', () => {
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
-				deviceType => deviceType.slug == 'dt-with-500-device-type-json-release',
+				({ slug }) => slug === 'dt-with-500-device-type-json-release',
 			);
 			expect(deviceType).to.be.an('object');
 			expect(deviceType).to.have.property('buildId', '2.0.1+rev1.prod');
@@ -141,7 +140,7 @@ describe('device type endpoints', () => {
 			expect(res.body).to.be.an('array');
 			const emptyDeviceType = _.find(
 				res.body,
-				deviceType => deviceType.slug == 'dt-with-no-valid-releases',
+				({ slug }) => slug === 'dt-with-no-valid-releases',
 			);
 			expect(emptyDeviceType).to.be.undefined;
 		});
@@ -153,7 +152,7 @@ describe('device type endpoints', () => {
 			expect(res.body).to.be.an('array');
 			const emptyDeviceType = _.find(
 				res.body,
-				deviceType => deviceType.slug == 'dt-with-failing-listing',
+				({ slug }) => slug === 'dt-with-failing-listing',
 			);
 			expect(emptyDeviceType).to.be.undefined;
 		});

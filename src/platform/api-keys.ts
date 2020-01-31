@@ -1,9 +1,9 @@
-import * as randomstring from 'randomstring';
-import * as _ from 'lodash';
-import { isJWT } from './jwt';
 import { sbvrUtils } from '@resin/pinejs';
-import { Tx } from './index';
 import { Request } from 'express';
+import * as _ from 'lodash';
+import * as randomstring from 'randomstring';
+import { Tx } from './index';
+import { isJWT } from './jwt';
 
 const { root, api } = sbvrUtils;
 
@@ -126,9 +126,11 @@ export const createApiKey = (
 	}
 };
 
-export interface PartialCreateKey {
-	(req: Request, actorTypeID: number, options?: ApiKeyOptions): Promise<string>;
-}
+export type PartialCreateKey = (
+	req: Request,
+	actorTypeID: number,
+	options?: ApiKeyOptions,
+) => Promise<string>;
 
 const isRequest = (req: sbvrUtils.HookReq | Request): req is Request =>
 	'get' in req;

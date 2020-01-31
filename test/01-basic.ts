@@ -1,6 +1,6 @@
+import { expect } from 'chai';
 import 'mocha';
 import { app } from '../init';
-import { expect } from 'chai';
 
 import supertest = require('./test-lib/supertest');
 

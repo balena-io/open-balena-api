@@ -1,9 +1,9 @@
-import * as _ from 'lodash';
+import { sbvrUtils } from '@resin/pinejs';
 import * as express from 'express';
-import { setup } from './src';
+import * as _ from 'lodash';
 import config = require('./config');
 import { version } from './package.json';
-import { sbvrUtils } from '@resin/pinejs';
+import { setup } from './src';
 
 async function onInitMiddleware(app: express.Application) {
 	const { forwardRequests } = await import('./src/platform/versions');

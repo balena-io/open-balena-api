@@ -1,8 +1,8 @@
 import * as AWS from 'aws-sdk';
 import * as Bluebird from 'bluebird';
+import { assert } from 'chai';
 import * as _ from 'lodash';
 import * as mockery from 'mockery';
-import { assert } from 'chai';
 
 import $getObjectMocks = require('../fixtures/s3/getObject.json');
 import listObjectsV2Mocks = require('../fixtures/s3/listObjectsV2.json');
@@ -31,7 +31,7 @@ const getObjectMocks: Dictionary<AWS.S3.Types.GetObjectOutput> = _.mapValues(
 );
 
 class NotFoundError extends Error {
-	statusCode = 404;
+	public statusCode = 404;
 
 	constructor() {
 		super('NotFound');
@@ -54,21 +54,23 @@ const toReturnType = <T extends (...args: any[]) => any>(result: {
 	} as unknown) as ReturnType<T>;
 };
 
-type UnauthenticatedRequestParams = { [key: string]: any };
+interface UnauthenticatedRequestParams {
+	[key: string]: any;
+}
 
 class S3Mock {
 	constructor(params: AWS.S3.Types.ClientConfiguration) {
 		assert(
-			params.accessKeyId == process.env.IMAGE_STORAGE_ACCESS_KEY,
+			params.accessKeyId === process.env.IMAGE_STORAGE_ACCESS_KEY,
 			'S3 access key not matching',
 		);
 		assert(
-			params.secretAccessKey == process.env.IMAGE_STORAGE_SECRET_KEY,
+			params.secretAccessKey === process.env.IMAGE_STORAGE_SECRET_KEY,
 			'S3 secret key not matching',
 		);
 	}
 
-	makeUnauthenticatedRequest(
+	public makeUnauthenticatedRequest(
 		operation: string,
 		params?: UnauthenticatedRequestParams,
 	): AWS.Request<any, AWS.AWSError> {
@@ -84,7 +86,7 @@ class S3Mock {
 		throw new Error(`AWS Mock: Operation ${operation} isn't implemented`);
 	}
 
-	headObject(
+	public headObject(
 		params: AWS.S3.Types.HeadObjectRequest,
 	): ReturnType<AWS.S3['headObject']> {
 		const mock = getObjectMocks[params.Key as keyof typeof getObjectMocks];
@@ -105,7 +107,7 @@ class S3Mock {
 		);
 	}
 
-	getObject(
+	public getObject(
 		params: AWS.S3.Types.GetObjectRequest,
 	): ReturnType<AWS.S3['getObject']> {
 		const mock = getObjectMocks[params.Key as keyof typeof getObjectMocks];
@@ -117,7 +119,7 @@ class S3Mock {
 		return toReturnType<AWS.S3['getObject']>(mock);
 	}
 
-	listObjectsV2(
+	public listObjectsV2(
 		params: AWS.S3.Types.ListObjectsV2Request,
 	): ReturnType<AWS.S3['listObjectsV2']> {
 		const mock =

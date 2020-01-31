@@ -1,18 +1,16 @@
-import * as _ from 'lodash';
 import { sbvrUtils } from '@resin/pinejs';
-import { Tx, getCurrentRequestAffectedIds } from '../../platform';
+import * as _ from 'lodash';
+import { PinejsClientCoreFactory } from 'pinejs-client-core';
+import { postDevices } from '../../lib/device-proxy';
 import {
-	checkEnvVarNameValidity,
 	checkConfigVarNameValidity,
+	checkEnvVarNameValidity,
 	checkEnvVarValueValidity,
 } from '../../lib/env-vars';
-import { postDevices } from '../../lib/device-proxy';
-import { PinejsClientCoreFactory } from 'pinejs-client-core';
+import { getCurrentRequestAffectedIds, Tx } from '../../platform';
 import { captureException } from '../../platform/errors';
 
-interface ValidateFn {
-	(varName?: string, varValue?: string): void;
-}
+type ValidateFn = (varName?: string, varValue?: string) => void;
 
 const triggerDevices = (
 	filter: PinejsClientCoreFactory.Filter | undefined,

@@ -1,8 +1,11 @@
-import * as Bluebird from 'bluebird';
+import { sbvrUtils } from '@resin/pinejs';
 import * as avro from 'avsc';
+import * as Bluebird from 'bluebird';
 import { EventEmitter } from 'events';
 import * as _ from 'lodash';
 import * as redis from 'redis';
+import { captureException } from '../../../platform/errors';
+import { DAYS, MINUTES, REDIS_HOST, REDIS_PORT } from '../../config';
 import {
 	DeviceLog,
 	DeviceLogsBackend,
@@ -10,9 +13,6 @@ import {
 	LogWriteContext,
 	Subscription,
 } from '../struct';
-import { captureException } from '../../../platform/errors';
-import { sbvrUtils } from '@resin/pinejs';
-import { REDIS_HOST, REDIS_PORT, DAYS, MINUTES } from '../../config';
 
 const { ServiceUnavailableError, BadRequestError } = sbvrUtils;
 

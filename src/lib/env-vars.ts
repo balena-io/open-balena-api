@@ -1,6 +1,6 @@
-import * as _ from 'lodash';
-import { JSONSchema6Definition } from 'json-schema';
 import { sbvrUtils } from '@resin/pinejs';
+import { JSONSchema6Definition } from 'json-schema';
+import * as _ from 'lodash';
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './config';
 
 const { BadRequestError } = sbvrUtils;

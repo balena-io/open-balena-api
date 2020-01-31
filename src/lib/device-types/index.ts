@@ -1,9 +1,10 @@
+import * as deviceTypesLib from '@resin.io/device-types';
+import { sbvrUtils } from '@resin/pinejs';
 import * as arraySort from 'array-sort';
 import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
-import * as deviceTypesLib from '@resin.io/device-types';
+import { PinejsClientCoreFactory } from 'pinejs-client-core';
 import * as semver from 'resin-semver';
-import { sbvrUtils } from '@resin/pinejs';
 import { PinejsClient, Tx } from '../../platform';
 import { captureException } from '../../platform/errors';
 import {
@@ -12,7 +13,6 @@ import {
 	getIsIgnored,
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
-import { PinejsClientCoreFactory } from 'pinejs-client-core';
 
 const { InternalRequestError, root, api } = sbvrUtils;
 export const { BadRequestError, NotFoundError } = sbvrUtils;
@@ -334,7 +334,7 @@ export const findDeviceTypeInfoBySlug = async (
 	const [accessibleSlug] = await getAccessibleSlugs(api, [
 		deviceTypeInfo.latest.deviceType.slug,
 	]);
-	if (accessibleSlug != deviceTypeInfo.latest.deviceType.slug) {
+	if (accessibleSlug !== deviceTypeInfo.latest.deviceType.slug) {
 		// We cannot access the device type
 		throw new UnknownDeviceTypeError(slug);
 	}

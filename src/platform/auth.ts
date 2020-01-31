@@ -1,12 +1,12 @@
-import * as _ from 'lodash';
-import { User as DbUser } from '../models';
-import { createJwt, SignOptions, User } from './jwt';
-import { retrieveAPIKey } from './api-keys';
 import { sbvrUtils } from '@resin/pinejs';
-import { Tx } from './index';
+import * as _ from 'lodash';
 import * as base32 from 'thirty-two';
+import { User as DbUser } from '../models';
+import { retrieveAPIKey } from './api-keys';
+import { Tx } from './index';
+import { createJwt, SignOptions, User } from './jwt';
 
-import { RequestHandler, Response, Request } from 'express';
+import { Request, RequestHandler, Response } from 'express';
 import { pseudoRandomBytesAsync } from '../lib/utils';
 
 const {
@@ -172,9 +172,10 @@ interface ExtraParams {
 	jwtOptions?: SignOptions;
 }
 
-export interface GetUserTokenDataFn {
-	(userId: number, existingToken?: Partial<User>): PromiseLike<AnyObject>;
-}
+export type GetUserTokenDataFn = (
+	userId: number,
+	existingToken?: Partial<User>,
+) => PromiseLike<AnyObject>;
 
 export function setUserTokenDataCallback(fn: GetUserTokenDataFn) {
 	$getUserTokenDataCallback = fn;

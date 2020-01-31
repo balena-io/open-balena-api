@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as Raven from 'raven';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 
 const { InternalRequestError, HttpError } = sbvrUtils;
 

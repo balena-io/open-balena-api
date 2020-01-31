@@ -1,6 +1,6 @@
+import { sbvrUtils } from '@resin/pinejs';
 import { Request, Response } from 'express';
 import { captureException, handleHttpErrors } from '../platform/errors';
-import { sbvrUtils } from '@resin/pinejs';
 
 const { api } = sbvrUtils;
 

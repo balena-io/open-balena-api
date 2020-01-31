@@ -1,11 +1,11 @@
-import * as _ from 'lodash';
 import { sbvrUtils } from '@resin/pinejs';
+import * as _ from 'lodash';
 import {
+	AnySupervisorLog,
 	DeviceLog,
 	LogWriteContext,
-	SupervisorLog,
-	AnySupervisorLog,
 	OldSupervisorLog,
+	SupervisorLog,
 } from './struct';
 
 const MAX_LOGS_PER_BATCH = 10;

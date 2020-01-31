@@ -1,18 +1,18 @@
-import * as _express from 'express';
-import * as redis from 'redis';
-import ExpressBruteRedis = require('express-brute-redis');
 import * as Bluebird from 'bluebird';
+import * as _express from 'express';
+import ExpressBruteRedis = require('express-brute-redis');
+import * as redis from 'redis';
 
 import * as ExpressBrute from 'express-brute';
 import * as _ from 'lodash';
-import { FacadeStore } from './facade-store';
 import { captureException } from '../platform/errors';
 import {
+	RATE_LIMIT_FACTOR,
 	RATE_LIMIT_MEMORY_BACKEND,
 	REDIS_HOST,
 	REDIS_PORT,
-	RATE_LIMIT_FACTOR,
 } from './config';
+import { FacadeStore } from './facade-store';
 
 const logRedisError = (err: Error) => {
 	// do not log these errors, because this would flood our logs

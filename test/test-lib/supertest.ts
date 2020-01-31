@@ -1,6 +1,6 @@
+import * as express from 'express';
 import * as _ from 'lodash';
 import * as supertest from 'supertest';
-import * as express from 'express';
 import { User } from '../../src/platform/jwt';
 
 type UserObjectParam = Partial<User & { token: string }>;

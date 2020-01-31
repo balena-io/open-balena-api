@@ -1,20 +1,20 @@
-import * as _ from 'lodash';
-import * as Bluebird from 'bluebird';
-import * as jsonwebtoken from 'jsonwebtoken';
-import * as randomstring from 'randomstring';
-import * as passport from 'passport';
 import { sbvrUtils } from '@resin/pinejs';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+import * as Bluebird from 'bluebird';
+import { RequestHandler } from 'express';
+import * as jsonwebtoken from 'jsonwebtoken';
+import * as _ from 'lodash';
+import * as passport from 'passport';
+import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
+import * as randomstring from 'randomstring';
 import { TypedError } from 'typed-error';
 import { User as DbUser } from '../models';
 import { captureException } from './errors';
-import { RequestHandler } from 'express';
 
 export { SignOptions } from 'jsonwebtoken';
 
 import {
-	JSON_WEB_TOKEN_SECRET,
 	JSON_WEB_TOKEN_EXPIRY_MINUTES,
+	JSON_WEB_TOKEN_SECRET,
 } from '../lib/config';
 
 const EXPIRY_SECONDS = JSON_WEB_TOKEN_EXPIRY_MINUTES * 60;

@@ -1,26 +1,26 @@
 // Implements the server part of: https://docs.docker.com/registry/spec/auth/token/
 // Reference: https://docs.docker.com/registry/spec/auth/jwt/
 
+import { sbvrUtils } from '@resin/pinejs';
+import * as BasicAuth from 'basic-auth';
+import * as Bluebird from 'bluebird';
+import * as jsonwebtoken from 'jsonwebtoken';
 import * as _ from 'lodash';
 import * as uuid from 'uuid';
-import * as BasicAuth from 'basic-auth';
-import * as jsonwebtoken from 'jsonwebtoken';
-import { sbvrUtils } from '@resin/pinejs';
-import * as Bluebird from 'bluebird';
 
 import { User as DbUser } from '../models';
-import { captureException, handleHttpErrors } from '../platform/errors';
 import { retrieveAPIKey } from '../platform/api-keys';
+import { captureException, handleHttpErrors } from '../platform/errors';
 
+import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
+import { Request, RequestHandler } from 'express';
+import * as memoize from 'memoizee';
 import { registryAuth as CERT } from '../lib/certs';
-import { RequestHandler, Request } from 'express';
 import {
 	AUTH_RESINOS_REGISTRY_CODE,
-	TOKEN_AUTH_BUILDER_TOKEN,
 	REGISTRY2_HOST,
+	TOKEN_AUTH_BUILDER_TOKEN,
 } from '../lib/config';
-import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
-import * as memoize from 'memoizee';
 
 const { UnauthorizedError, root, api } = sbvrUtils;
 
@@ -34,18 +34,18 @@ const SUPERVISOR_REPOSITORIES = /^resin\/(?:[a-zA-Z0-9]+-)+supervisor$/;
 const NEW_REGISTRY_REGEX = /(^(\d+)\/[\d\-]+$|^(v2\/[a-z0-9]+)(-[0-9]+)?)/;
 
 // This regex parses a scope of the form
-//		repository:<image>:<permissions>
-//	where <image> can be
-//		<appname>/<commit>
-//		<appID>/<buildId>
-//		v2/<hash>
-//		resin/resinos (and related "standard" image names)
+// 		repository:<image>:<permissions>
+// 	where <image> can be
+// 		<appname>/<commit>
+// 		<appID>/<buildId>
+// 		v2/<hash>
+// 		resin/resinos (and related "standard" image names)
 //
-//		with an optional tag or content digest on each kind
-//	where <permissions> can be a comma separated list of permissions, e.g.
-//		pull
-//		push
-//		push,pull
+// 		with an optional tag or content digest on each kind
+// 	where <permissions> can be a comma separated list of permissions, e.g.
+// 		pull
+// 		push
+// 		push,pull
 const SCOPE_PARSE_REGEX = /^([a-z]+):([a-z0-9_-]+\/[a-z0-9_-]+|\d+\/[\d\-]+|v2\/[a-z0-9]+-[0-9]+)(?::[a-z0-9]+|@sha256:[a-f0-9]+)?:((?:push|pull|,)+)$/;
 
 export interface Access {
@@ -344,7 +344,9 @@ const $getSubject = memoize(
 				if (device != null && device.id != null) {
 					return subject;
 				}
-			} catch {}
+			} catch {
+				// Ignore errors
+			}
 		}
 		// If resolving as a device api key fails then instead try to resolve to the user api key username
 		const [user] = (await api.resin.get({

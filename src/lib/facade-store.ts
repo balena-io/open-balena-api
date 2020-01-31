@@ -1,5 +1,5 @@
-import * as ExpressBrute from 'express-brute';
 import * as Bluebird from 'bluebird';
+import * as ExpressBrute from 'express-brute';
 import ExpressBruteRedis = require('express-brute-redis');
 import * as _ from 'lodash';
 import { captureException } from '../platform/errors';
@@ -42,7 +42,7 @@ export class FacadeStore extends ExpressBrute.MemoryStore {
 		) as PromisifiedExpressBruteStore;
 	}
 
-	set(
+	public set(
 		key: string,
 		value: string,
 		lifetime: number,
@@ -61,7 +61,7 @@ export class FacadeStore extends ExpressBrute.MemoryStore {
 		Bluebird.all([inMemoryPromise, redisPromise]).asCallback(callback);
 	}
 
-	get(key: string, callback: (err: Error, data: Object) => void): void {
+	public get(key: string, callback: (err: Error, data: Object) => void): void {
 		this.redisStore
 			.getAsync(key)
 			.catch((err: Error) => {
@@ -71,7 +71,7 @@ export class FacadeStore extends ExpressBrute.MemoryStore {
 			.asCallback(callback);
 	}
 
-	reset(key: string, callback: (err: Error) => void): void {
+	public reset(key: string, callback: (err: Error) => void): void {
 		const inMemoryPromise = this.inMemStore.resetAsync(key).catch(_.noop);
 
 		const redisPromise = this.redisStore

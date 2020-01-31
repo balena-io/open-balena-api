@@ -7,24 +7,24 @@ import * as resinSemver from 'resin-semver';
 
 import { DeviceType } from './device-types';
 
-import { captureException } from '../platform/errors';
-import { getUser } from '../platform/auth';
-import { sbvrUtils } from '@resin/pinejs';
-import { createUserApiKey, createProvisioningApiKey } from './api-keys';
-import { Request } from 'express';
 import { Option as DeviceTypeOption } from '@resin.io/device-types';
+import { sbvrUtils } from '@resin/pinejs';
+import { Request } from 'express';
+import { getUser } from '../platform/auth';
+import { captureException } from '../platform/errors';
+import { createProvisioningApiKey, createUserApiKey } from './api-keys';
 
 const { BadRequestError } = sbvrUtils;
 
 // FIXME(refactor): many of the following are resin-specific
 import {
-	REGISTRY2_HOST,
-	NODE_EXTRA_CA_CERTS,
-	MIXPANEL_TOKEN,
-	VPN_HOST,
-	VPN_PORT,
 	API_HOST,
 	DELTA_HOST,
+	MIXPANEL_TOKEN,
+	NODE_EXTRA_CA_CERTS,
+	REGISTRY2_HOST,
+	VPN_HOST,
+	VPN_PORT,
 } from './config';
 
 export const generateConfig = async (

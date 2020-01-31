@@ -1,26 +1,26 @@
-import * as _ from 'lodash';
 import * as Bluebird from 'bluebird';
+import * as _ from 'lodash';
 
 import {
 	captureException,
-	translateError,
 	handleHttpErrors,
+	translateError,
 } from '../platform/errors';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { PinejsClient } from '../platform';
-import { checkInt, isValidInteger, getIP, varListInsert } from '../lib/utils';
-import { createDeviceApiKey } from '../lib/api-keys';
-import * as randomstring from 'randomstring';
 import { RequestHandler } from 'express';
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
+import * as randomstring from 'randomstring';
+import { createDeviceApiKey } from '../lib/api-keys';
 import {
-	setMinPollInterval,
+	filterDeviceConfig,
+	formatImageLocation,
 	getReleaseForDevice,
 	serviceInstallFromImage,
-	formatImageLocation,
-	filterDeviceConfig,
+	setMinPollInterval,
 } from '../lib/device-state';
+import { checkInt, getIP, isValidInteger, varListInsert } from '../lib/utils';
+import { PinejsClient } from '../platform';
 
 export { proxy } from '../lib/device-proxy';
 

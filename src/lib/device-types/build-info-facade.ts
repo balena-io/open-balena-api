@@ -1,5 +1,5 @@
-import * as memoizee from 'memoizee';
 import * as deviceTypesLib from '@resin.io/device-types';
+import * as memoizee from 'memoizee';
 import { fileExists, getFile, getFolderSize, getImageKey } from './storage';
 
 export type DeviceType = deviceTypesLib.DeviceType;

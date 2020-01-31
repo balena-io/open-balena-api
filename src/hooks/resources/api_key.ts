@@ -1,8 +1,8 @@
 import { sbvrUtils } from '@resin/pinejs';
 import { getCurrentRequestAffectedIds } from '../../platform';
 
-import { captureException } from '../../platform/errors';
 import * as Bluebird from 'bluebird';
+import { captureException } from '../../platform/errors';
 
 const { root, api } = sbvrUtils;
 

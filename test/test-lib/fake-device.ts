@@ -1,18 +1,18 @@
-import 'mocha';
 import { expect } from 'chai';
-import * as uuid from 'uuid';
+import 'mocha';
 import * as randomstring from 'randomstring';
+import * as uuid from 'uuid';
 
 import { app } from '../../init';
 
 import supertest = require('./supertest');
 
-export type Device = {
+export interface Device {
 	id: number;
 	uuid: string;
 	token: string;
 	getStateV2: () => Promise<DeviceState>;
-};
+}
 
 interface DeviceStateApp {
 	name: string;

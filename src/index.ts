@@ -1,8 +1,8 @@
 import { Server } from 'http';
 import * as path from 'path';
 
-import * as _ from 'lodash';
 import * as _express from 'express';
+import * as _ from 'lodash';
 
 import * as Bluebird from 'bluebird';
 import * as Raven from 'raven';
@@ -25,19 +25,19 @@ import * as deviceOnlineState from './lib/device-online-state';
 
 import {
 	API_HOST,
-	DB_POOL_SIZE,
-	SENTRY_DSN,
-	NODE_ENV,
 	COOKIE_SESSION_SECRET,
+	DB_POOL_SIZE,
+	NODE_ENV,
+	SENTRY_DSN,
 } from './lib/config';
 
 import * as _applicationRoutes from './routes/applications';
 
 export const AUTH_PATH = '/auth';
 
-export interface SetupFunction {
-	(app: _express.Application): void | PromiseLike<void>;
-}
+export type SetupFunction = (
+	app: _express.Application,
+) => void | PromiseLike<void>;
 
 export interface SetupOptions {
 	config: Parameters<typeof pine.init>[1]; // must be absolute or relative to `process.cwd()`

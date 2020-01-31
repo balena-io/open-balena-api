@@ -1,6 +1,6 @@
+import { sbvrUtils } from '@resin/pinejs';
 import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
-import { sbvrUtils } from '@resin/pinejs';
 import { addDeleteHookForDependents } from '../../platform';
 
 const updateLatestRelease = async (

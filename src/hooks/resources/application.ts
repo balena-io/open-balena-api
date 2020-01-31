@@ -1,15 +1,15 @@
-import * as _ from 'lodash';
 import * as Bluebird from 'bluebird';
+import * as _ from 'lodash';
 
-import { resolveDeviceType } from '../common';
-import { postDevices } from '../../lib/device-proxy';
 import { Default as DefaultApplicationType } from '../../lib/application-types';
+import { postDevices } from '../../lib/device-proxy';
+import { resolveDeviceType } from '../common';
 
 import { sbvrUtils } from '@resin/pinejs';
 import {
+	addDeleteHookForDependents,
 	createActor,
 	getCurrentRequestAffectedIds,
-	addDeleteHookForDependents,
 } from '../../platform';
 const { BadRequestError, ConflictError, NotFoundError, root } = sbvrUtils;
 import { captureException } from '../../platform/errors';
