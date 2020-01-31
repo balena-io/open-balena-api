@@ -1,4 +1,14 @@
 - commits:
+    - subject: Resolve device type concurrently to generating a uuid
+      hash: c1f4841898ce56984d7af3fe1b24b361fab3fc48
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.52.1
+  date: 2020-01-31T20:28:33.765Z
+- commits:
     - subject: Throw specific http errors rather than generic errors
       hash: 6680a83527c443cba197efbaddd41f3712498c48
       body: ''
