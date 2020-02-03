@@ -518,28 +518,28 @@ export const state: RequestHandler = async (req, res) => {
 
 		(parentApp.is_depended_on_by__application as AnyObject[]).forEach(
 			depApp => {
-				const release = _.get(depApp, 'should_be_running__release[0]');
+				const depRelease = _.get(depApp, 'should_be_running__release[0]');
 				depAppCache[depApp.id] = {
-					release,
+					release: depRelease,
 					application_environment_variable:
 						depApp.application_environment_variable,
 				};
 
-				const config: Dictionary<string> = {};
-				varListInsert(depApp.application_config_variable, config);
+				const depConfig: Dictionary<string> = {};
+				varListInsert(depApp.application_config_variable, depConfig);
 
 				dependent.apps[depApp.id] = {
 					name: depApp.app_name,
 					parentApp: parentApp.id,
-					config,
+					config: depConfig,
 				};
 
-				const image = _.get(release, 'contains__image[0].image[0]');
-				if (release != null && image != null) {
+				const image = _.get(depRelease, 'contains__image[0].image[0]');
+				if (depRelease != null && image != null) {
 					const depAppState = dependent.apps[depApp.id];
-					depAppState.releaseId = release.id;
+					depAppState.releaseId = depRelease.id;
 					depAppState.imageId = image.id;
-					depAppState.commit = release.commit;
+					depAppState.commit = depRelease.commit;
 					depAppState.image = formatImageLocation(
 						image.is_stored_at__image_location,
 					);
@@ -549,14 +549,15 @@ export const state: RequestHandler = async (req, res) => {
 
 		(device.manages__device as AnyObject[]).forEach(depDev => {
 			const depAppId: number = depDev.belongs_to__application.__id;
-			const { release, application_environment_variable } = depAppCache[
-				depAppId
-			];
+			const {
+				release: depRelease,
+				application_environment_variable,
+			} = depAppCache[depAppId];
 
-			const config: Dictionary<string> = {};
-			varListInsert(depDev.device_config_variable, config);
+			const depConfig: Dictionary<string> = {};
+			varListInsert(depDev.device_config_variable, depConfig);
 
-			const ipr = _.get(release, 'contains__image[0]');
+			const ipr = _.get(depRelease, 'contains__image[0]');
 			const image = _.get(ipr, 'image[0]');
 			const svcInstall = serviceInstallFromImage(depDev, image);
 
@@ -589,7 +590,7 @@ export const state: RequestHandler = async (req, res) => {
 				name: depDev.device_name,
 				apps: {
 					[depAppId]: {
-						config,
+						config: depConfig,
 						environment,
 					},
 				},
@@ -610,14 +611,14 @@ export const state: RequestHandler = async (req, res) => {
 };
 
 const upsertImageInstall = async (
-	api: PinejsClient,
+	resinApi: PinejsClient,
 	imageId: number,
 	deviceId: number,
 	status: string,
 	releaseId: number,
 	dlProg?: number,
 ): Promise<void> => {
-	const [imgInstall] = (await api.get({
+	const [imgInstall] = (await resinApi.get({
 		resource: 'image_install',
 		options: {
 			$select: 'id',
@@ -630,7 +631,7 @@ const upsertImageInstall = async (
 
 	if (imgInstall == null) {
 		// we need to create it with a POST
-		await api.post({
+		await resinApi.post({
 			resource: 'image_install',
 			body: {
 				device: deviceId,
@@ -651,7 +652,7 @@ const upsertImageInstall = async (
 		if (dlProg !== undefined) {
 			body.download_progress = dlProg;
 		}
-		await api.patch({
+		await resinApi.patch({
 			resource: 'image_install',
 			body,
 			options: {
@@ -666,13 +667,13 @@ const upsertImageInstall = async (
 };
 
 const upsertGatewayDownload = async (
-	api: PinejsClient,
+	resinApi: PinejsClient,
 	deviceId: number,
 	imageId: number,
 	status: string,
 	downloadProgress: number,
 ): Promise<void> => {
-	const [gatewayDownload] = (await api.get({
+	const [gatewayDownload] = (await resinApi.get({
 		resource: 'gateway_download',
 		options: {
 			$select: 'id',
@@ -683,7 +684,7 @@ const upsertGatewayDownload = async (
 		},
 	})) as AnyObject[];
 	if (gatewayDownload == null) {
-		await api.post({
+		await resinApi.post({
 			resource: 'gateway_download',
 			body: {
 				image: imageId,
@@ -694,7 +695,7 @@ const upsertGatewayDownload = async (
 			options: { returnResource: false },
 		});
 	} else {
-		await api.patch({
+		await resinApi.patch({
 			resource: 'gateway_download',
 			body: {
 				status,
@@ -711,7 +712,7 @@ const upsertGatewayDownload = async (
 };
 
 const deleteOldGatewayDownloads = async (
-	api: PinejsClient,
+	resinApi: PinejsClient,
 	deviceId: number,
 	imageIds: number[],
 ): Promise<void> => {
@@ -723,7 +724,7 @@ const deleteOldGatewayDownloads = async (
 		filter.$not = { image: { $in: imageIds } };
 	}
 
-	await api.patch({
+	await resinApi.patch({
 		resource: 'gateway_download',
 		options: {
 			$filter: filter,

@@ -47,8 +47,7 @@ export const generateConfig = async (
 		// Devices running ResinOS >= 2.7.8 can use provisioning keys
 		if (resinSemver.satisfies(osVersion, '<2.7.8')) {
 			// Older ones have to use the old "user api keys"
-			const user = await userPromise;
-			return createUserApiKey(req, user.id);
+			return createUserApiKey(req, (await userPromise).id);
 		}
 		return createProvisioningApiKey(req, app.id);
 	})();

@@ -9,7 +9,7 @@ export interface PromisifiedExpressBruteStore extends ExpressBrute.MemoryStore {
 	 * @summary Gets key value.
 	 * @param {string}      key     The key name.
 	 */
-	getAsync(key: string): Bluebird<Object>;
+	getAsync(key: string): Bluebird<AnyObject>;
 
 	/**
 	 * @summary Sets the key value.
@@ -43,10 +43,9 @@ export class FacadeStore extends ExpressBrute.MemoryStore {
 	}
 
 	public set(
-		key: string,
-		value: string,
-		lifetime: number,
-		callback: (err: Error) => void,
+		...[key, value, lifetime, callback]: Parameters<
+			InstanceType<typeof ExpressBrute.MemoryStore>['set']
+		>
 	): void {
 		const inMemoryPromise = this.inMemStore
 			.setAsync(key, value, lifetime)
@@ -61,7 +60,11 @@ export class FacadeStore extends ExpressBrute.MemoryStore {
 		Bluebird.all([inMemoryPromise, redisPromise]).asCallback(callback);
 	}
 
-	public get(key: string, callback: (err: Error, data: Object) => void): void {
+	public get(
+		...[key, callback]: Parameters<
+			InstanceType<typeof ExpressBrute.MemoryStore>['get']
+		>
+	): void {
 		this.redisStore
 			.getAsync(key)
 			.catch((err: Error) => {
@@ -71,7 +74,11 @@ export class FacadeStore extends ExpressBrute.MemoryStore {
 			.asCallback(callback);
 	}
 
-	public reset(key: string, callback: (err: Error) => void): void {
+	public reset(
+		...[key, callback]: Parameters<
+			InstanceType<typeof ExpressBrute.MemoryStore>['reset']
+		>
+	): void {
 		const inMemoryPromise = this.inMemStore.resetAsync(key).catch(_.noop);
 
 		const redisPromise = this.redisStore

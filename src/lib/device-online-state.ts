@@ -165,7 +165,7 @@ export declare interface DeviceOnlineStateManager {
 			},
 		) => void,
 	): this;
-	on(event: string, listener: Function): this;
+	on(event: string, listener: (args: AnyObject) => void): this;
 }
 
 export class DeviceOnlineStateManager extends events.EventEmitter {

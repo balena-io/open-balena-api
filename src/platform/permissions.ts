@@ -194,16 +194,16 @@ export function createAll(
 		});
 
 	const createRolePermissions = async (
-		permissionNames: string[],
+		rolePermissionNames: string[],
 		roleName: string,
 	): Promise<{ id: number }> => {
 		try {
 			const role = await getOrInsertRoleId(roleName, tx);
-			if (permissionNames.length === 0) {
+			if (rolePermissionNames.length === 0) {
 				return role;
 			}
 			const permissions = Object.values(
-				_.pick(await permissionsCache, permissionNames),
+				_.pick(await permissionsCache, rolePermissionNames),
 			);
 			const addPermissionsPromise = apiTx
 				.get({

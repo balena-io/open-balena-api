@@ -248,8 +248,10 @@ function syncDataModel(
 	}
 	return sbvrUtils.db.transaction(async tx => {
 		for (const key in types) {
-			const { deviceType } = types[key].latest;
-			await updateDTModel(deviceType, propertyMap, tx);
+			if (types.hasOwnProperty(key)) {
+				const { deviceType } = types[key].latest;
+				await updateDTModel(deviceType, propertyMap, tx);
+			}
 		}
 	});
 }
@@ -297,11 +299,11 @@ function getDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 
 /**
  * Performs access controls for slugs against the database
- * @param api The pinejs client
+ * @param resinApi The pinejs client
  * @param slugs The slugs to check, these cannot be aliases.
  */
 const getAccessibleSlugs = async (
-	api: PinejsClient,
+	resinApi: PinejsClient,
 	slugs?: string[],
 ): Promise<string[]> => {
 	const options: PinejsClientCoreFactory.ODataOptions = {
@@ -312,7 +314,7 @@ const getAccessibleSlugs = async (
 			slug: { $in: slugs },
 		};
 	}
-	const accessibleDeviceTypes = (await api.get({
+	const accessibleDeviceTypes = (await resinApi.get({
 		resource: 'device_type',
 		options,
 	})) as Array<{ slug: string }>;
@@ -320,7 +322,7 @@ const getAccessibleSlugs = async (
 };
 
 export const findDeviceTypeInfoBySlug = async (
-	api: PinejsClient,
+	resinApi: PinejsClient,
 	slug: string,
 ): Promise<DeviceTypeInfo> => {
 	const deviceTypeInfos = await getDeviceTypes();
@@ -331,7 +333,7 @@ export const findDeviceTypeInfoBySlug = async (
 		throw new UnknownDeviceTypeError(slug);
 	}
 
-	const [accessibleSlug] = await getAccessibleSlugs(api, [
+	const [accessibleSlug] = await getAccessibleSlugs(resinApi, [
 		deviceTypeInfo.latest.deviceType.slug,
 	]);
 	if (accessibleSlug !== deviceTypeInfo.latest.deviceType.slug) {
@@ -349,11 +351,11 @@ export const validateSlug = (slug?: string) => {
 };
 
 export const getAccessibleDeviceTypes = async (
-	api: PinejsClient,
+	resinApi: PinejsClient,
 ): Promise<DeviceType[]> => {
 	const [deviceTypesInfos, accessibleDeviceTypes] = await Promise.all([
 		getDeviceTypes(),
-		getAccessibleSlugs(api),
+		getAccessibleSlugs(resinApi),
 	]);
 
 	const accessSet = new Set(accessibleDeviceTypes);
@@ -368,10 +370,10 @@ export const getAccessibleDeviceTypes = async (
 };
 
 export const findBySlug = async (
-	api: PinejsClient,
+	resinApi: PinejsClient,
 	slug: string,
 ): Promise<DeviceType> => {
-	const deviceTypes = await getAccessibleDeviceTypes(api);
+	const deviceTypes = await getAccessibleDeviceTypes(resinApi);
 	const deviceType = await deviceTypesLib.findBySlug(deviceTypes, slug);
 	if (deviceType == null) {
 		throw new UnknownDeviceTypeError(slug);
@@ -380,14 +382,14 @@ export const findBySlug = async (
 };
 
 export const normalizeDeviceType = async (
-	api: PinejsClient,
+	resinApi: PinejsClient,
 	slug: string,
 ): Promise<string> => {
 	if (SPECIAL_SLUGS.includes(slug)) {
 		return slug;
 	}
 
-	const deviceTypes = await getAccessibleDeviceTypes(api);
+	const deviceTypes = await getAccessibleDeviceTypes(resinApi);
 	const normalizedSlug = await deviceTypesLib.normalizeDeviceType(
 		deviceTypes,
 		slug,
@@ -399,11 +401,11 @@ export const normalizeDeviceType = async (
 };
 
 export const getImageSize = async (
-	api: PinejsClient,
+	resinApi: PinejsClient,
 	slug: string,
 	buildId: string,
 ): Promise<number> => {
-	const deviceTypeInfo = await findDeviceTypeInfoBySlug(api, slug);
+	const deviceTypeInfo = await findDeviceTypeInfoBySlug(resinApi, slug);
 	const deviceType = deviceTypeInfo.latest.deviceType;
 	const normalizedSlug = deviceType.slug;
 
@@ -441,12 +443,12 @@ export interface ImageVersions {
 }
 
 export const getDeviceTypeIdBySlug = async (
-	api: PinejsClient,
+	resinApi: PinejsClient,
 	slug: string,
 ): Promise<{ id: number; slug: string }> => {
-	const deviceType = await normalizeDeviceType(api, slug);
+	const deviceType = await normalizeDeviceType(resinApi, slug);
 
-	const [dt] = (await api.get({
+	const [dt] = (await resinApi.get({
 		resource: 'device_type',
 		options: {
 			$select: ['id', 'slug'],
@@ -460,10 +462,10 @@ export const getDeviceTypeIdBySlug = async (
 };
 
 export const getImageVersions = async (
-	api: PinejsClient,
+	resinApi: PinejsClient,
 	slug: string,
 ): Promise<ImageVersions> => {
-	const deviceTypeInfo = await findDeviceTypeInfoBySlug(api, slug);
+	const deviceTypeInfo = await findDeviceTypeInfoBySlug(resinApi, slug);
 	const deviceType = deviceTypeInfo.latest.deviceType;
 	const normalizedSlug = deviceType.slug;
 

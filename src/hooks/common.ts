@@ -9,14 +9,14 @@ export const resolveDeviceType = async (
 ): Promise<deviceTypes.DeviceType> => {
 	if (request.values.device_type != null && request.values[fkValue] == null) {
 		// translate device_type to is_for__device_type
-		const dt = await deviceTypes.getDeviceTypeIdBySlug(
+		const dtBySlug = await deviceTypes.getDeviceTypeIdBySlug(
 			api,
 			request.values.device_type,
 		);
-		if (!dt) {
+		if (!dtBySlug) {
 			throw new deviceTypes.UnknownDeviceTypeError(request.values.device_type);
 		}
-		request.values[fkValue] = dt.id;
+		request.values[fkValue] = dtBySlug.id;
 	}
 
 	if (!request.values[fkValue]) {
