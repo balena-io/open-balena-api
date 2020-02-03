@@ -1,16 +1,16 @@
+import { sbvrUtils } from '@resin/pinejs';
+import { RequestHandler } from 'express';
 import * as _ from 'lodash';
+import { SetupOptions } from '..';
+import { resetCounter } from '../lib/rate-limiting';
+import { User as DbUser } from '../models';
 import {
-	loginUserXHR,
+	comparePassword,
 	findUser,
 	getUser,
-	comparePassword,
+	loginUserXHR,
 } from '../platform/auth';
-import { User as DbUser } from '../models';
-import { sbvrUtils } from '@resin/pinejs';
 import { captureException, handleHttpErrors } from '../platform/errors';
-import { resetCounter } from '../lib/rate-limiting';
-import { RequestHandler } from 'express';
-import { SetupOptions } from '..';
 
 const { BadRequestError, NotFoundError, root, api } = sbvrUtils;
 

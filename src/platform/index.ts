@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import * as Bluebird from 'bluebird';
+import * as _ from 'lodash';
 
 import { Tx } from '@resin/pinejs/out/database-layer/db';
 export { Tx } from '@resin/pinejs/out/database-layer/db';

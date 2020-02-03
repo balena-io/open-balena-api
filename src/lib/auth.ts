@@ -99,9 +99,9 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 
 	// we can update the gateway if the image is part of an application which is depended on by the
 	// application that the device belongs to
-	//		OR
-	//	the image belongs to an application which contains a device which is managed by the device
-	//	doing the updating
+	// 		OR
+	// 	the image belongs to an application which contains a device which is managed by the device
+	// 	doing the updating
 	`resin.gateway_download.all?image/any(i:i/is_a_build_of__service/any(s:s/application/any(a:a/depends_on__application/any(da:da/${ownsDevice}) or a/owns__device/any(d:d/is_managed_by__device/any(md:md/${matchesActor})))))`,
 
 	`resin.image.push?image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/${belongsToApplicationOrIsManagedByDevice}))`,

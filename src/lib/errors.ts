@@ -1,5 +1,5 @@
-import { TypedError } from 'typed-error';
 import { sbvrUtils } from '@resin/pinejs';
+import { TypedError } from 'typed-error';
 
 export const { NotFoundError } = sbvrUtils;
 

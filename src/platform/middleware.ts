@@ -1,7 +1,7 @@
-import { reqHasPermission, getUser } from './auth';
-import { retrieveAPIKey } from './api-keys';
 import { RequestHandler } from 'express';
 import { API_HEARTBEAT_STATE_ENABLED } from '../lib/config';
+import { retrieveAPIKey } from './api-keys';
+import { getUser, reqHasPermission } from './auth';
 
 import { sbvrUtils } from '@resin/pinejs';
 

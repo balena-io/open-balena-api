@@ -1,5 +1,5 @@
-import 'mocha';
 import { expect } from 'chai';
+import 'mocha';
 import { app } from '../init';
 import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from '../src/lib/config';
 import { createScopedAccessToken } from '../src/platform/jwt';

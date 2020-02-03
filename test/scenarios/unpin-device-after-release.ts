@@ -96,12 +96,12 @@ describe('Device with missing service installs', () => {
 	let admin: string = '';
 	let applicationId: number = 0;
 	let device: fakeDevice.Device;
-	let releases: _.Dictionary<number> = {};
-	let services: _.Dictionary<number> = {};
+	const releases: _.Dictionary<number> = {};
+	const services: _.Dictionary<number> = {};
 
 	before('Setup the application and initial release', async function() {
 		// login as the superuser...
-		let { text: token } = await supertest(app)
+		const { text: token } = await supertest(app)
 			.post('/login_')
 			.send({
 				username: SUPERUSER_EMAIL,
@@ -213,7 +213,7 @@ describe('Device with missing service installs', () => {
 			applicationId,
 		);
 		services['service-2'] = secondServiceId;
-		let { id: secondImageId } = await addImageToService(admin, {
+		const { id: secondImageId } = await addImageToService(admin, {
 			is_a_build_of__service: secondServiceId,
 			build_log: '',
 			start_timestamp: Date.now(),

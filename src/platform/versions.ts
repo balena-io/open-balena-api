@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import * as _express from 'express';
+import * as _ from 'lodash';
 
 export const forwardRequests = (
 	app: _express.Application,

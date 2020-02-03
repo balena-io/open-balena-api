@@ -1,20 +1,20 @@
-import * as _ from 'lodash';
 import * as Bluebird from 'bluebird';
+import * as _ from 'lodash';
 
 import {
-	checkDevicesCanHaveDeviceURL,
 	checkDevicesCanBeInApplication,
+	checkDevicesCanHaveDeviceURL,
 } from '../../lib/application-types';
 
-import * as haikuName from '../../lib/haiku-name';
 import { postDevices } from '../../lib/device-proxy';
+import * as haikuName from '../../lib/haiku-name';
 
 import { sbvrUtils } from '@resin/pinejs';
 import {
-	PinejsClient,
+	addDeleteHookForDependents,
 	createActor,
 	getCurrentRequestAffectedIds,
-	addDeleteHookForDependents,
+	PinejsClient,
 } from '../../platform';
 const { BadRequestError, root } = sbvrUtils;
 import { InaccessibleAppError } from '../../lib/errors';

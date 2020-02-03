@@ -3,13 +3,13 @@ import * as _ from 'lodash';
 import { generateConfig } from '../lib/device-config';
 import { findBySlug } from '../lib/device-types';
 
+import { sbvrUtils } from '@resin/pinejs';
+import { Request, RequestHandler } from 'express';
 import {
 	captureException,
-	translateError,
 	handleHttpErrors,
+	translateError,
 } from '../platform/errors';
-import { sbvrUtils } from '@resin/pinejs';
-import { RequestHandler, Request } from 'express';
 
 const { UnauthorizedError, api } = sbvrUtils;
 

@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import { sbvrUtils } from '@resin/pinejs';
+import * as _ from 'lodash';
 
 const RESERVED_NAMESPACES = ['io.resin.', 'io.balena.'];
 

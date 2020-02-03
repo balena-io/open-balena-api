@@ -1,10 +1,10 @@
 import { RequestHandler } from 'express';
-import { b64decode } from '../lib/utils';
 import {
 	DEVICE_CONFIG_OPENVPN_CA,
 	DEVICE_CONFIG_OPENVPN_CONFIG,
 	DEVICE_CONFIG_SSH_AUTHORIZED_KEYS,
 } from '../lib/config';
+import { b64decode } from '../lib/utils';
 
 export const getOsConfiguration: RequestHandler = (_req, res) => {
 	res.json({

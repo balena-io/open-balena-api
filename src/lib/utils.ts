@@ -1,8 +1,8 @@
-import * as _ from 'lodash';
-import * as ipaddr from 'ipaddr.js';
-import { Request } from 'express';
-import { promisify } from 'util';
 import { pseudoRandomBytes } from 'crypto';
+import { Request } from 'express';
+import * as ipaddr from 'ipaddr.js';
+import * as _ from 'lodash';
+import { promisify } from 'util';
 
 export const pseudoRandomBytesAsync = promisify(pseudoRandomBytes);
 
@@ -42,7 +42,9 @@ export const getIPv4 = (req: Request): string | undefined => {
 		} else if (ip instanceof ipaddr.IPv6 && ip.isIPv4MappedAddress()) {
 			return ip.toIPv4Address().toString();
 		}
-	} catch {}
+	} catch {
+		// Ignore errors
+	}
 };
 
 export type EnvVarList = Array<{ name: string; value: string }>;

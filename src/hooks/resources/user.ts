@@ -1,8 +1,8 @@
-import * as _ from 'lodash';
 import * as Bluebird from 'bluebird';
+import * as _ from 'lodash';
 
-import { assignUserRole } from '../../platform/permissions';
 import { captureException } from '../../platform/errors';
+import { assignUserRole } from '../../platform/permissions';
 
 import { sbvrUtils } from '@resin/pinejs';
 import { createActor } from '../../platform';

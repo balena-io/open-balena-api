@@ -1,25 +1,25 @@
-import { createGunzip } from 'zlib';
 import * as Bluebird from 'bluebird';
-import { Request, Response, RequestHandler } from 'express';
+import { Request, RequestHandler, Response } from 'express';
 import * as _ from 'lodash';
 import * as ndjson from 'ndjson';
+import { createGunzip } from 'zlib';
 
+import { sbvrUtils } from '@resin/pinejs';
+import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
+import onFinished = require('on-finished');
 import { RedisBackend } from '../lib/device-logs/backends/redis';
 import {
+	AnySupervisorLog,
 	DeviceLog,
 	DeviceLogsBackend,
 	LogContext,
 	LogWriteContext,
-	AnySupervisorLog,
-	SupervisorLog,
 	StreamState,
+	SupervisorLog,
 } from '../lib/device-logs/struct';
 import { Supervisor } from '../lib/device-logs/supervisor';
-import { captureException, handleHttpErrors } from '../platform/errors';
-import { sbvrUtils } from '@resin/pinejs';
 import { PinejsClient, Tx, wrapInTransaction } from '../platform';
-import onFinished = require('on-finished');
-import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
+import { captureException, handleHttpErrors } from '../platform/errors';
 
 const {
 	BadRequestError,

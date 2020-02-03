@@ -1,11 +1,11 @@
-import * as _ from 'lodash';
 import * as Bluebird from 'bluebird';
+import * as _ from 'lodash';
 import * as randomstring from 'randomstring';
 
-import { Tx, getOrInsertId } from './index';
+import { sbvrUtils } from '@resin/pinejs';
 import { findUser } from './auth';
 import { captureException } from './errors';
-import { sbvrUtils } from '@resin/pinejs';
+import { getOrInsertId, Tx } from './index';
 
 const { root, api } = sbvrUtils;
 
@@ -262,7 +262,9 @@ export function createAll(
 							throw new Error(`User ${email} not found.`);
 						}
 						await assignUserRole(user.id, roles[roleName].id, tx);
-					} catch {}
+					} catch {
+						// Ignore errors
+					}
 				}
 			}),
 		);

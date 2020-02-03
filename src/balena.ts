@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import {
-	generateAbstractSqlModel,
 	aliasTable,
+	generateAbstractSqlModel,
 	renameEnvVarName,
 } from './abstract-sql-utils';
 

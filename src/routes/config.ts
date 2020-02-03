@@ -1,17 +1,17 @@
-import * as _ from 'lodash';
 import { RequestHandler } from 'express';
 import { JSONSchema6 } from 'json-schema';
+import * as _ from 'lodash';
 
 import {
+	BLACKLISTED_NAMES,
+	HOST_CONFIG_VAR_PROPERTIES,
+	INVALID_CHARACTER_REGEX,
 	RESERVED_NAMES,
 	RESERVED_NAMESPACES,
-	INVALID_CHARACTER_REGEX,
+	RESIN_HOST_CONFIG_CAPABLE_DEVICE_TYPES,
+	SUPERVISOR_CONFIG_VAR_PROPERTIES,
 	WHITELISTED_NAMES,
 	WHITELISTED_NAMESPACES,
-	BLACKLISTED_NAMES,
-	SUPERVISOR_CONFIG_VAR_PROPERTIES,
-	RESIN_HOST_CONFIG_CAPABLE_DEVICE_TYPES,
-	HOST_CONFIG_VAR_PROPERTIES,
 } from '../lib/env-vars';
 
 // Return config variable constants for use by external components.

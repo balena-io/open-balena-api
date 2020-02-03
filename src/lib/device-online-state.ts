@@ -1,20 +1,20 @@
-import * as Bluebird from 'bluebird';
-import * as _ from 'lodash';
 import { sbvrUtils } from '@resin/pinejs';
+import * as Bluebird from 'bluebird';
+import * as events from 'eventemitter3';
+import * as _ from 'lodash';
+import * as RedisSMQ from 'rsmq';
 import { captureException } from '../platform/errors';
+import {
+	API_HEARTBEAT_STATE_ENABLED,
+	API_HEARTBEAT_STATE_TIMEOUT_SECONDS,
+	DEFAULT_SUPERVISOR_POLL_INTERVAL,
+	REDIS_HOST,
+	REDIS_PORT,
+} from './config';
 import {
 	createPromisifedRedisClient,
 	PromisifedRedisClient,
 } from './redis-promise';
-import * as RedisSMQ from 'rsmq';
-import {
-	REDIS_HOST,
-	REDIS_PORT,
-	API_HEARTBEAT_STATE_ENABLED,
-	API_HEARTBEAT_STATE_TIMEOUT_SECONDS,
-	DEFAULT_SUPERVISOR_POLL_INTERVAL,
-} from './config';
-import * as events from 'eventemitter3';
 
 const { root, api } = sbvrUtils;
 
@@ -176,9 +176,9 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 
 	private readonly featureIsEnabled: boolean;
 
-	isConsuming: boolean = false;
-	rsmq: RedisSMQ;
-	redis: PromisifedRedisClient;
+	private isConsuming: boolean = false;
+	private rsmq: RedisSMQ;
+	private redis: PromisifedRedisClient;
 
 	public constructor() {
 		super();
@@ -282,8 +282,8 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		} finally {
 			eventArgs.endAt = Date.now();
 			this.emit('change', eventArgs);
-			return eventArgs.err !== undefined;
 		}
+		return eventArgs.err !== undefined;
 	}
 
 	private consume() {

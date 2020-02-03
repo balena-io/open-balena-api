@@ -1,12 +1,12 @@
+import { sbvrUtils } from '@resin/pinejs';
 import { RequestHandler } from 'express';
 import * as _ from 'lodash';
 import * as deviceTypesLib from '../lib/device-types';
 import {
 	captureException,
-	translateError,
 	handleHttpErrors,
+	translateError,
 } from '../platform/errors';
-import { sbvrUtils } from '@resin/pinejs';
 
 const { api } = sbvrUtils;
 

@@ -1,17 +1,17 @@
+import { RequestHandler } from 'express';
 import * as _ from 'lodash';
 import {
-	createProvisioningApiKey as $createProvisioningApiKey,
 	createDeviceApiKey as $createDeviceApiKey,
-	createUserApiKey as $createUserApiKey,
 	createNamedUserApiKey as $createNamedUserApiKey,
+	createProvisioningApiKey as $createProvisioningApiKey,
+	createUserApiKey as $createUserApiKey,
 } from '../lib/api-keys';
 import { getUser } from '../platform/auth';
 import {
 	captureException,
-	translateError,
 	handleHttpErrors,
+	translateError,
 } from '../platform/errors';
-import { RequestHandler } from 'express';
 
 export const createDeviceApiKey: RequestHandler = async (req, res) => {
 	const deviceId = _.parseInt(req.params.deviceId, 10);

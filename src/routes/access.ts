@@ -1,8 +1,8 @@
+import { sbvrUtils } from '@resin/pinejs';
 import * as express from 'express';
 import * as _ from 'lodash';
 import * as rSemver from 'resin-semver';
 import { reqHasPermission } from '../platform/auth';
-import { sbvrUtils } from '@resin/pinejs';
 import { captureException } from '../platform/errors';
 
 const { UnauthorizedError, api } = sbvrUtils;
@@ -49,7 +49,7 @@ export async function hostOSAccess(
 				action: 'ssh-host',
 			},
 			url: `device(${device.id})/canAccess`,
-		})) as { d?: Array<AnyObject> };
+		})) as { d?: AnyObject[] };
 
 		if (!_.isArray(allowedDevices.d) || allowedDevices.d.length !== 1) {
 			res.sendStatus(401);

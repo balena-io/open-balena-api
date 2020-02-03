@@ -1,13 +1,13 @@
-import * as _ from 'lodash';
 import { Application } from 'express';
-import { SECONDS_PER_HOUR, HOURS, SECONDS } from '../lib/config';
+import * as _ from 'lodash';
+import { HOURS, SECONDS, SECONDS_PER_HOUR } from '../lib/config';
 
 import {
-	authorized,
 	apiKeyMiddleware,
+	authorized,
+	gracefullyDenyDeletedDevices,
 	identify,
 	permissionRequired,
-	gracefullyDenyDeletedDevices,
 	registerDeviceStateEvent,
 } from '../platform/middleware';
 
@@ -35,19 +35,19 @@ export const deviceLogsRateLimiter = createRateLimitMiddleware(
 	},
 );
 
+import { SetupOptions } from '..';
 import * as access from '../routes/access';
 import * as apiKeys from '../routes/api-keys';
 import * as applications from '../routes/applications';
 import * as auth from '../routes/auth';
 import * as config from '../routes/config';
-import * as deviceTypes from '../routes/device-types';
 import * as deviceLogs from '../routes/device-logs';
+import * as deviceTypes from '../routes/device-types';
 import * as devices from '../routes/devices';
 import * as os from '../routes/os';
+import * as registry from '../routes/registry';
 import * as services from '../routes/services';
 import * as session from '../routes/session';
-import * as registry from '../routes/registry';
-import { SetupOptions } from '..';
 
 export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.get('/config/vars', config.vars);
