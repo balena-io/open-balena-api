@@ -1,4 +1,3 @@
-import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 
 import { Tx } from '@resin/pinejs/out/database-layer/db';
@@ -117,35 +116,6 @@ export const updateOrInsertModel = (
 	tx?: Tx,
 ): Promise<{ id: number }> =>
 	$updateOrInsert(sbvrUtils.api.resin, resource, filter, updateFields, tx);
-
-type TxFn = (tx: Tx, ...args: any[]) => PromiseLike<any>;
-type TxFnArgs<T> = T extends (tx: Tx, ...args: infer U) => any ? U : any[];
-
-// This gives the resolved return type, eg
-// - `Promise<R>` -> `R`
-// - `Bluebird<R>` -> `R`
-// - `R` -> `R`
-type ResolvableReturnType<T extends (...args: any[]) => any> = T extends (
-	...args: any[]
-) => Promise<infer R>
-	? R
-	: T extends (...args: any[]) => Bluebird<infer R>
-	? R
-	: ReturnType<T>;
-
-// wrapInTransaction(someOperation) => fn
-//
-// Wraps a function to run inside a
-// DB transaction, passed as the first argument
-//
-// The transaction will commit or rollback
-// after waiting on any promise the operation returns
-export const wrapInTransaction = <F extends TxFn>(
-	fn: F,
-): ((...args: TxFnArgs<F>) => Bluebird<ResolvableReturnType<F>>) =>
-	function(...args) {
-		return sbvrUtils.db.transaction(tx => fn.apply(this, [tx, ...args]));
-	};
 
 // Hook helpers
 
