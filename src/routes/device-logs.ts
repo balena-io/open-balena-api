@@ -18,7 +18,7 @@ import {
 	SupervisorLog,
 } from '../lib/device-logs/struct';
 import { Supervisor } from '../lib/device-logs/supervisor';
-import { PinejsClient, Tx, wrapInTransaction } from '../platform';
+import { PinejsClient } from '../platform';
 import { captureException, handleHttpErrors } from '../platform/errors';
 
 const {
@@ -202,24 +202,22 @@ function getHistory(
 
 // Writing logs section
 
-export const store: RequestHandler = wrapInTransaction(
-	async (tx: Tx, req: Request, res: Response) => {
-		const resinApi = api.resin.clone({ passthrough: { req, tx } });
-		try {
-			const ctx = await getWriteContext(resinApi, req);
-			await checkWritePermissions(resinApi, ctx);
-			addRetentionLimit(ctx);
-			const body: AnySupervisorLog[] = req.body;
-			const logs: DeviceLog[] = supervisor.convertLogs(ctx, body);
-			if (logs.length) {
-				await getBackend(ctx).publish(ctx, logs);
-			}
-			res.sendStatus(201);
-		} catch (err) {
-			handleStoreErrors(req, res, err);
+export const store: RequestHandler = async (req: Request, res: Response) => {
+	try {
+		const resinApi = api.resin.clone({ passthrough: { req } });
+		const ctx = await getWriteContext(resinApi, req);
+		await checkWritePermissions(resinApi, ctx);
+		addRetentionLimit(ctx);
+		const body: AnySupervisorLog[] = req.body;
+		const logs: DeviceLog[] = supervisor.convertLogs(ctx, body);
+		if (logs.length) {
+			await getBackend(ctx).publish(ctx, logs);
 		}
-	},
-);
+		res.sendStatus(201);
+	} catch (err) {
+		handleStoreErrors(req, res, err);
+	}
+};
 
 export async function storeStream(req: Request, res: Response) {
 	const resinApi = api.resin.clone({ passthrough: { req } });
