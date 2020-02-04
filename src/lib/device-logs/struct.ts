@@ -1,11 +1,8 @@
-import { Request } from 'express';
-
 export interface LogContext {
 	id: number;
 	uuid: string;
 	logs_channel?: string;
 	retention_limit?: number;
-	req: Request;
 }
 
 export interface LogWriteContext extends LogContext {

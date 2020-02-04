@@ -50,9 +50,9 @@ export async function read(req: Request, res: Response) {
 		const ctx = await getReadContext(resinApi, req);
 		if (req.query.stream === '1') {
 			addRetentionLimit(ctx);
-			await handleStreamingRead(ctx, res);
+			await handleStreamingRead(ctx, req, res);
 		} else {
-			const logs = await getHistory(ctx, DEFAULT_HISTORY_LOGS);
+			const logs = await getHistory(ctx, req, DEFAULT_HISTORY_LOGS);
 			res.json(logs);
 		}
 	} catch (err) {
@@ -66,6 +66,7 @@ export async function read(req: Request, res: Response) {
 
 async function handleStreamingRead(
 	ctx: LogContext,
+	req: Request,
 	res: Response,
 ): Promise<void> {
 	let state: StreamState = StreamState.Buffering;
@@ -125,13 +126,13 @@ async function handleStreamingRead(
 		}
 	}
 
-	onFinished(ctx.req, close);
+	onFinished(req, close);
 	onFinished(res, close);
 
 	// Subscribe in parallel so we don't miss logs in between
 	getBackend(ctx).subscribe(ctx, onLog);
 	try {
-		const logs = await getHistory(ctx, DEFAULT_SUBSCRIPTION_LOGS);
+		const logs = await getHistory(ctx, req, DEFAULT_SUBSCRIPTION_LOGS);
 
 		// We need this cast as typescript narrows to `StreamState.Buffering`
 		// because it ignores that during the `await` break it can be changed
@@ -186,9 +187,9 @@ function getCount(
 
 function getHistory(
 	ctx: LogContext,
+	{ query }: Request,
 	defaultCount: number,
 ): Resolvable<DeviceLog[]> {
-	const { query } = ctx.req;
 	const count = getCount(query.count, defaultCount);
 
 	// Optimize the case where the caller doesn't need any history
@@ -225,7 +226,7 @@ export async function storeStream(req: Request, res: Response) {
 		const ctx = await getWriteContext(resinApi, req);
 		await checkWritePermissions(resinApi, ctx);
 		addRetentionLimit(ctx);
-		handleStreamingWrite(ctx, res);
+		handleStreamingWrite(ctx, req, res);
 	} catch (err) {
 		handleStoreErrors(req, res, err);
 	}
@@ -239,7 +240,11 @@ function handleStoreErrors(req: Request, res: Response, err: Error) {
 	res.sendStatus(500);
 }
 
-function handleStreamingWrite(ctx: LogWriteContext, res: Response): void {
+function handleStreamingWrite(
+	ctx: LogWriteContext,
+	req: Request,
+	res: Response,
+): void {
 	if (ctx.logs_channel) {
 		throw new BadRequestError(
 			'The device must clear the `logs_channel` before using this endpoint',
@@ -251,7 +256,6 @@ function handleStreamingWrite(ctx: LogWriteContext, res: Response): void {
 	if (!backend.available) {
 		throw new ServiceUnavailableError('The logs storage is unavailable');
 	}
-	const { req } = ctx;
 	if (req.get('Content-Type') !== NDJSON_CTYPE) {
 		throw new UnsupportedMediaTypeError(
 			`Streaming requests require Content-Type ${NDJSON_CTYPE}`,
@@ -322,7 +326,7 @@ function handleStreamingWrite(ctx: LogWriteContext, res: Response): void {
 				schedule();
 			}
 		} catch (err) {
-			handleStoreErrors(ctx.req, res, err);
+			handleStoreErrors(req, res, err);
 		}
 	}
 	schedule();
@@ -345,7 +349,6 @@ async function getReadContext(
 		throw new NotFoundError('No device with uuid ' + uuid);
 	}
 	ctx.uuid = uuid;
-	ctx.req = req;
 	return ctx;
 }
 
@@ -379,7 +382,6 @@ async function getWriteContext(
 		throw new NotFoundError('No device with uuid ' + uuid);
 	}
 	ctx.uuid = uuid;
-	ctx.req = req;
 	return ctx;
 }
 
