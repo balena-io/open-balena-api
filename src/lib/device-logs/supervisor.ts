@@ -28,7 +28,7 @@ export class Supervisor {
 			.value();
 	}
 
-	public convertAnyLog(
+	private convertAnyLog(
 		ctx: LogWriteContext,
 		log: AnySupervisorLog,
 	): DeviceLog | undefined {
@@ -83,10 +83,9 @@ export class Supervisor {
 		ctx: LogWriteContext,
 		log: OldSupervisorLog,
 	): number | undefined {
-		for (const imageInstall of ctx.image_install) {
-			const img = imageInstall.image[0];
+		for (const img of ctx.images) {
 			if (img.id === log.image_id) {
-				return img.is_a_build_of__service[0].id;
+				return img.serviceId;
 			}
 		}
 	}

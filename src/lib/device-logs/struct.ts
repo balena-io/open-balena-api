@@ -6,14 +6,9 @@ export interface LogContext {
 }
 
 export interface LogWriteContext extends LogContext {
-	image_install: Array<{
+	images: Array<{
 		id: number;
-		image: Array<{
-			id: number;
-			is_a_build_of__service: Array<{
-				id: number;
-			}>;
-		}>;
+		serviceId: number;
 	}>;
 }
 

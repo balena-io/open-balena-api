@@ -357,7 +357,7 @@ async function getWriteContext(
 	req: Request,
 ): Promise<LogWriteContext> {
 	const { uuid } = req.params;
-	const [ctx] = (await resinApi.get({
+	const [device] = (await resinApi.get({
 		resource: 'device',
 		options: {
 			$filter: { uuid },
@@ -377,12 +377,34 @@ async function getWriteContext(
 				},
 			},
 		},
-	})) as LogWriteContext[];
-	if (!ctx) {
+	})) as Array<{
+		id: number;
+		logs_channel?: string;
+		image_install: Array<{
+			id: number;
+			image: Array<{
+				id: number;
+				is_a_build_of__service: Array<{
+					id: number;
+				}>;
+			}>;
+		}>;
+	}>;
+	if (!device) {
 		throw new NotFoundError('No device with uuid ' + uuid);
 	}
-	ctx.uuid = uuid;
-	return ctx;
+	return {
+		id: device.id,
+		logs_channel: device.logs_channel,
+		uuid,
+		images: device.image_install.map(imageInstall => {
+			const img = imageInstall.image[0];
+			return {
+				id: img.id,
+				serviceId: img.is_a_build_of__service[0].id,
+			};
+		}),
+	};
 }
 
 function addRetentionLimit(ctx: LogContext) {
