@@ -49,7 +49,7 @@ stateMock.getInstance()['updateDeviceModel'] = function(
 mockery.registerMock('../src/lib/config', configMock);
 mockery.registerMock('../src/lib/device-online-state', stateMock);
 
-const waitFor = async (fn: Function, timeout: number = 10000) => {
+const waitFor = async (fn: () => boolean, timeout: number = 10000) => {
 	let testLimit = Math.max(timeout, 50) / 50;
 	let result = fn();
 	while (!result && testLimit > 0) {

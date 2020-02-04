@@ -95,8 +95,7 @@
     "lint-staged": "^10.0.7",
     "mocha": "^7.0.1",
     "mockery": "^2.1.0",
-    "prettier": "^1.19.1",
-    "resin-lint": "^2.0.1",
+    "resin-lint": "^3.2.0",
     "rimraf": "^3.0.1",
     "sinon": "^8.1.1",
     "supertest": "^4.0.2"

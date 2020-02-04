@@ -12,7 +12,7 @@ import { captureException } from './errors';
 
 export type PinejsClient = sbvrUtils.PinejsClient;
 
-const { root, api } = sbvrUtils;
+const { root } = sbvrUtils;
 
 if (sbvrUtils.db.readTransaction == null) {
 	throw new Error('`readTransaction` is unsupported');
@@ -94,12 +94,14 @@ export const getOrInsertId = (
 	resource: string,
 	body: AnyObject,
 	tx?: Tx,
-): Promise<{ id: number }> => $getOrInsertId(api.Auth, resource, body, tx);
+): Promise<{ id: number }> =>
+	$getOrInsertId(sbvrUtils.api.Auth, resource, body, tx);
 export const getOrInsertModelId = (
 	resource: string,
 	body: AnyObject,
 	tx?: Tx,
-): Promise<{ id: number }> => $getOrInsertId(api.resin, resource, body, tx);
+): Promise<{ id: number }> =>
+	$getOrInsertId(sbvrUtils.api.resin, resource, body, tx);
 
 export const updateOrInsert = (
 	resource: string,
@@ -107,14 +109,14 @@ export const updateOrInsert = (
 	updateFields: AnyObject,
 	tx?: Tx,
 ): Promise<{ id: number }> =>
-	$updateOrInsert(api.Auth, resource, filter, updateFields, tx);
+	$updateOrInsert(sbvrUtils.api.Auth, resource, filter, updateFields, tx);
 export const updateOrInsertModel = (
 	resource: string,
 	filter: PinejsClientCoreFactory.FilterObj,
 	updateFields: AnyObject,
 	tx?: Tx,
 ): Promise<{ id: number }> =>
-	$updateOrInsert(api.resin, resource, filter, updateFields, tx);
+	$updateOrInsert(sbvrUtils.api.resin, resource, filter, updateFields, tx);
 
 type TxFn = (tx: Tx, ...args: any[]) => PromiseLike<any>;
 type TxFnArgs<T> = T extends (tx: Tx, ...args: infer U) => any ? U : any[];
@@ -159,7 +161,7 @@ export const createActor = async ({
 	request,
 	tx,
 }: sbvrUtils.HookArgs): Promise<void> => {
-	const result = (await api.Auth.post({
+	const result = (await sbvrUtils.api.Auth.post({
 		resource: 'actor',
 		passthrough: {
 			tx,

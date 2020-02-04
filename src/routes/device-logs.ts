@@ -331,11 +331,11 @@ function handleStreamingWrite(ctx: LogWriteContext, res: Response): void {
 }
 
 async function getReadContext(
-	api: PinejsClient,
+	resinApi: PinejsClient,
 	req: Request,
 ): Promise<LogContext> {
 	const { uuid } = req.params;
-	const [ctx] = (await api.get({
+	const [ctx] = (await resinApi.get({
 		resource: 'device',
 		options: {
 			$filter: { uuid },
@@ -348,16 +348,16 @@ async function getReadContext(
 	}
 	ctx.uuid = uuid;
 	ctx.req = req;
-	ctx.resinApi = api;
+	ctx.resinApi = resinApi;
 	return ctx;
 }
 
 async function getWriteContext(
-	api: PinejsClient,
+	resinApi: PinejsClient,
 	req: Request,
 ): Promise<LogWriteContext> {
 	const { uuid } = req.params;
-	const [ctx] = (await api.get({
+	const [ctx] = (await resinApi.get({
 		resource: 'device',
 		options: {
 			$filter: { uuid },
@@ -383,7 +383,7 @@ async function getWriteContext(
 	}
 	ctx.uuid = uuid;
 	ctx.req = req;
-	ctx.resinApi = api;
+	ctx.resinApi = resinApi;
 	return ctx;
 }
 

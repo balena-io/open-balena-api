@@ -51,7 +51,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 		// Store the user id in the custom request data for later.
 		request.custom.userId = userId;
 	},
-	PRERUN: ({ req, request, tx, api }) => {
+	PRERUN: ({ req, request, tx, api: resinApi }) => {
 		const { userId } = request.custom;
 
 		const authApiTx = sbvrUtils.api.Auth.clone({
@@ -78,7 +78,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 					}),
 		);
 
-		const apiKeyDelete = api
+		const apiKeyDelete = resinApi
 			.get({
 				resource: 'user',
 				id: userId,

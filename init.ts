@@ -5,9 +5,9 @@ import config = require('./config');
 import { version } from './package.json';
 import { setup } from './src';
 
-async function onInitMiddleware(app: express.Application) {
+async function onInitMiddleware(initApp: express.Application) {
 	const { forwardRequests } = await import('./src/platform/versions');
-	forwardRequests(app, 'v5', 'resin');
+	forwardRequests(initApp, 'v5', 'resin');
 }
 
 async function onInitModel() {

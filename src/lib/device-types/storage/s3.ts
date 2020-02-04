@@ -12,24 +12,24 @@ import {
 export const getKey = (...parts: string[]): string => parts.join('/');
 
 class UnauthenticatedS3Facade {
-	constructor(private s3Client: AWS.S3) {}
+	constructor(private s3: AWS.S3) {}
 
 	public headObject(
 		params: AWS.S3.Types.HeadObjectRequest,
 	): ReturnType<AWS.S3['headObject']> {
-		return this.s3Client.makeUnauthenticatedRequest('headObject', params);
+		return this.s3.makeUnauthenticatedRequest('headObject', params);
 	}
 
 	public getObject(
 		params: AWS.S3.Types.GetObjectRequest,
 	): ReturnType<AWS.S3['getObject']> {
-		return this.s3Client.makeUnauthenticatedRequest('getObject', params);
+		return this.s3.makeUnauthenticatedRequest('getObject', params);
 	}
 
 	public listObjectsV2(
 		params: AWS.S3.Types.ListObjectsV2Request,
 	): ReturnType<AWS.S3['listObjectsV2']> {
-		return this.s3Client.makeUnauthenticatedRequest('listObjectsV2', params);
+		return this.s3.makeUnauthenticatedRequest('listObjectsV2', params);
 	}
 }
 
