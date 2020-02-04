@@ -1,4 +1,14 @@
 - commits:
+    - subject: Convert multicontainer check from a hook to a rule
+      hash: 16cfa727ffdbfd959ca6b96774009e4b40980856
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.52.3
+  date: 2020-02-04T10:43:29.293Z
+- commits:
     - subject: Linting fixes for resin-lint 3.x
       hash: ff2c3f14300ff83ef82b20810602d5af5562eacb
       body: ''
