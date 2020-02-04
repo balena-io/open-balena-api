@@ -636,3 +636,5 @@ Rule: It is necessary that each release1 that has a status that is equal to "suc
 Rule: It is necessary that each device that should be running a release, should be running a release that belongs to an application that the device belongs to.
 Rule: It is necessary that each application that should be running a release, should be running a release that has a status that is equal to "success" and belongs to the application.
 --Rule: It is necessary that each application that should be running a release1, owns a release that has a status that is equal to "success".
+
+Rule: It is necessary that each release that contains at least 2 images, belongs to an application that has an application type that supports multicontainer.
