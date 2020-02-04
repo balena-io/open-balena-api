@@ -207,7 +207,7 @@ export const store: RequestHandler = wrapInTransaction(
 		const resinApi = api.resin.clone({ passthrough: { req, tx } });
 		try {
 			const ctx = await getWriteContext(resinApi, req);
-			await checkWritePermissions(ctx);
+			await checkWritePermissions(resinApi, ctx);
 			addRetentionLimit(ctx);
 			const body: AnySupervisorLog[] = req.body;
 			const logs: DeviceLog[] = supervisor.convertLogs(ctx, body);
@@ -225,7 +225,7 @@ export async function storeStream(req: Request, res: Response) {
 	const resinApi = api.resin.clone({ passthrough: { req } });
 	try {
 		const ctx = await getWriteContext(resinApi, req);
-		await checkWritePermissions(ctx);
+		await checkWritePermissions(resinApi, ctx);
 		addRetentionLimit(ctx);
 		handleStreamingWrite(ctx, res);
 	} catch (err) {
@@ -348,7 +348,6 @@ async function getReadContext(
 	}
 	ctx.uuid = uuid;
 	ctx.req = req;
-	ctx.resinApi = resinApi;
 	return ctx;
 }
 
@@ -383,7 +382,6 @@ async function getWriteContext(
 	}
 	ctx.uuid = uuid;
 	ctx.req = req;
-	ctx.resinApi = resinApi;
 	return ctx;
 }
 
@@ -391,8 +389,11 @@ function addRetentionLimit(ctx: LogContext) {
 	ctx.retention_limit = DEFAULT_RETENTION_LIMIT;
 }
 
-async function checkWritePermissions(ctx: LogWriteContext): Promise<void> {
-	const allowedDevices = (await ctx.resinApi.post({
+async function checkWritePermissions(
+	resinApi: PinejsClient,
+	ctx: LogWriteContext,
+): Promise<void> {
+	const allowedDevices = (await resinApi.post({
 		resource: 'device',
 		id: ctx.id,
 		body: { action: 'write-log' },
