@@ -1,4 +1,3 @@
-import * as Bluebird from 'bluebird';
 import { Request, RequestHandler, Response } from 'express';
 import * as _ from 'lodash';
 import * as ndjson from 'ndjson';
@@ -302,12 +301,6 @@ function handleStreamingWrite(
 
 	async function schedule() {
 		try {
-			// If the backend goes down temporarily, ease down the polling
-			const delay = backend.available
-				? STREAM_FLUSH_INTERVAL
-				: BACKEND_UNAVAILABLE_FLUSH_INTERVAL;
-			await Bluebird.delay(delay);
-
 			// Don't flush if the backend is reporting as unavailable
 			if (buffer.length && backend.available) {
 				// Even if the connection was closed, still flush the buffer
@@ -323,7 +316,11 @@ function handleStreamingWrite(
 
 			// If headers were sent, it means the connection is ended
 			if (!res.headersSent || buffer.length) {
-				schedule();
+				// If the backend goes down temporarily, ease down the polling
+				const delay = backend.available
+					? STREAM_FLUSH_INTERVAL
+					: BACKEND_UNAVAILABLE_FLUSH_INTERVAL;
+				setTimeout(schedule, delay);
 			}
 		} catch (err) {
 			handleStoreErrors(req, res, err);
