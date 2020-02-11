@@ -1,4 +1,49 @@
 - commits:
+    - subject: Avoid creating an unnecessary promise in the device logs schedule loop
+      hash: 99f9c78a32459414b512127d9ffb96a14c2be446
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Remove unnecessary info about image installs from `LogWriteContext`
+      hash: b778f81ebb9cd5090f2bd36d526248b6991e2785
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Remove `req` from the logs context so it can be freed more easily
+      hash: de8d6a3d7e97a83ea58ec17de23c4ede3c6eb23c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Remove unused `wrapInTransaction`
+      hash: d79baf1c0c418a613445a862c346d871aedc1217
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+    - subject: Remove unnecessary transaction from device logs
+      hash: b768ab0f2f06c174b64cef55a1fb17a8ca8901f0
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Remove resinApi from the logs context so it can be freed more easily
+      hash: 0d068d502aefbfce9d92772a6d788d3787c5ff64
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.53.0
+  date: 2020-02-11T10:40:22.225Z
+- commits:
     - subject: Update open-balena-base to 9.1.0
       hash: 0ef17b4c51887327cb4f749d6cb40f5e073a30c8
       body: |
