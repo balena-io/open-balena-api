@@ -1,4 +1,14 @@
 - commits:
+    - subject: Update dependencies
+      hash: d2216171cade124d1f46ceaccca94fdffd397199
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.53.1
+  date: 2020-02-11T12:18:11.456Z
+- commits:
     - subject: Avoid creating an unnecessary promise in the device logs schedule loop
       hash: 99f9c78a32459414b512127d9ffb96a14c2be446
       body: ''
