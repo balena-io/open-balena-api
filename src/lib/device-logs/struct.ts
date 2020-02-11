@@ -1,24 +1,14 @@
-import { Request } from 'express';
-import { PinejsClient } from '../../platform';
-
 export interface LogContext {
 	id: number;
 	uuid: string;
 	logs_channel?: string;
 	retention_limit?: number;
-	resinApi: PinejsClient;
-	req: Request;
 }
 
 export interface LogWriteContext extends LogContext {
-	image_install: Array<{
+	images: Array<{
 		id: number;
-		image: Array<{
-			id: number;
-			is_a_build_of__service: Array<{
-				id: number;
-			}>;
-		}>;
+		serviceId: number;
 	}>;
 }
 

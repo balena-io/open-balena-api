@@ -1,4 +1,3 @@
-import * as Bluebird from 'bluebird';
 import { Request, RequestHandler, Response } from 'express';
 import * as _ from 'lodash';
 import * as ndjson from 'ndjson';
@@ -18,7 +17,7 @@ import {
 	SupervisorLog,
 } from '../lib/device-logs/struct';
 import { Supervisor } from '../lib/device-logs/supervisor';
-import { PinejsClient, Tx, wrapInTransaction } from '../platform';
+import { PinejsClient } from '../platform';
 import { captureException, handleHttpErrors } from '../platform/errors';
 
 const {
@@ -50,9 +49,9 @@ export async function read(req: Request, res: Response) {
 		const ctx = await getReadContext(resinApi, req);
 		if (req.query.stream === '1') {
 			addRetentionLimit(ctx);
-			await handleStreamingRead(ctx, res);
+			await handleStreamingRead(ctx, req, res);
 		} else {
-			const logs = await getHistory(ctx, DEFAULT_HISTORY_LOGS);
+			const logs = await getHistory(ctx, req, DEFAULT_HISTORY_LOGS);
 			res.json(logs);
 		}
 	} catch (err) {
@@ -66,6 +65,7 @@ export async function read(req: Request, res: Response) {
 
 async function handleStreamingRead(
 	ctx: LogContext,
+	req: Request,
 	res: Response,
 ): Promise<void> {
 	let state: StreamState = StreamState.Buffering;
@@ -125,13 +125,13 @@ async function handleStreamingRead(
 		}
 	}
 
-	onFinished(ctx.req, close);
+	onFinished(req, close);
 	onFinished(res, close);
 
 	// Subscribe in parallel so we don't miss logs in between
 	getBackend(ctx).subscribe(ctx, onLog);
 	try {
-		const logs = await getHistory(ctx, DEFAULT_SUBSCRIPTION_LOGS);
+		const logs = await getHistory(ctx, req, DEFAULT_SUBSCRIPTION_LOGS);
 
 		// We need this cast as typescript narrows to `StreamState.Buffering`
 		// because it ignores that during the `await` break it can be changed
@@ -186,9 +186,9 @@ function getCount(
 
 function getHistory(
 	ctx: LogContext,
+	{ query }: Request,
 	defaultCount: number,
 ): Resolvable<DeviceLog[]> {
-	const { query } = ctx.req;
 	const count = getCount(query.count, defaultCount);
 
 	// Optimize the case where the caller doesn't need any history
@@ -202,32 +202,30 @@ function getHistory(
 
 // Writing logs section
 
-export const store: RequestHandler = wrapInTransaction(
-	async (tx: Tx, req: Request, res: Response) => {
-		const resinApi = api.resin.clone({ passthrough: { req, tx } });
-		try {
-			const ctx = await getWriteContext(resinApi, req);
-			await checkWritePermissions(ctx);
-			addRetentionLimit(ctx);
-			const body: AnySupervisorLog[] = req.body;
-			const logs: DeviceLog[] = supervisor.convertLogs(ctx, body);
-			if (logs.length) {
-				await getBackend(ctx).publish(ctx, logs);
-			}
-			res.sendStatus(201);
-		} catch (err) {
-			handleStoreErrors(req, res, err);
+export const store: RequestHandler = async (req: Request, res: Response) => {
+	try {
+		const resinApi = api.resin.clone({ passthrough: { req } });
+		const ctx = await getWriteContext(resinApi, req);
+		await checkWritePermissions(resinApi, ctx);
+		addRetentionLimit(ctx);
+		const body: AnySupervisorLog[] = req.body;
+		const logs: DeviceLog[] = supervisor.convertLogs(ctx, body);
+		if (logs.length) {
+			await getBackend(ctx).publish(ctx, logs);
 		}
-	},
-);
+		res.sendStatus(201);
+	} catch (err) {
+		handleStoreErrors(req, res, err);
+	}
+};
 
 export async function storeStream(req: Request, res: Response) {
 	const resinApi = api.resin.clone({ passthrough: { req } });
 	try {
 		const ctx = await getWriteContext(resinApi, req);
-		await checkWritePermissions(ctx);
+		await checkWritePermissions(resinApi, ctx);
 		addRetentionLimit(ctx);
-		handleStreamingWrite(ctx, res);
+		handleStreamingWrite(ctx, req, res);
 	} catch (err) {
 		handleStoreErrors(req, res, err);
 	}
@@ -241,7 +239,11 @@ function handleStoreErrors(req: Request, res: Response, err: Error) {
 	res.sendStatus(500);
 }
 
-function handleStreamingWrite(ctx: LogWriteContext, res: Response): void {
+function handleStreamingWrite(
+	ctx: LogWriteContext,
+	req: Request,
+	res: Response,
+): void {
 	if (ctx.logs_channel) {
 		throw new BadRequestError(
 			'The device must clear the `logs_channel` before using this endpoint',
@@ -253,7 +255,6 @@ function handleStreamingWrite(ctx: LogWriteContext, res: Response): void {
 	if (!backend.available) {
 		throw new ServiceUnavailableError('The logs storage is unavailable');
 	}
-	const { req } = ctx;
 	if (req.get('Content-Type') !== NDJSON_CTYPE) {
 		throw new UnsupportedMediaTypeError(
 			`Streaming requests require Content-Type ${NDJSON_CTYPE}`,
@@ -300,12 +301,6 @@ function handleStreamingWrite(ctx: LogWriteContext, res: Response): void {
 
 	async function schedule() {
 		try {
-			// If the backend goes down temporarily, ease down the polling
-			const delay = backend.available
-				? STREAM_FLUSH_INTERVAL
-				: BACKEND_UNAVAILABLE_FLUSH_INTERVAL;
-			await Bluebird.delay(delay);
-
 			// Don't flush if the backend is reporting as unavailable
 			if (buffer.length && backend.available) {
 				// Even if the connection was closed, still flush the buffer
@@ -321,10 +316,14 @@ function handleStreamingWrite(ctx: LogWriteContext, res: Response): void {
 
 			// If headers were sent, it means the connection is ended
 			if (!res.headersSent || buffer.length) {
-				schedule();
+				// If the backend goes down temporarily, ease down the polling
+				const delay = backend.available
+					? STREAM_FLUSH_INTERVAL
+					: BACKEND_UNAVAILABLE_FLUSH_INTERVAL;
+				setTimeout(schedule, delay);
 			}
 		} catch (err) {
-			handleStoreErrors(ctx.req, res, err);
+			handleStoreErrors(req, res, err);
 		}
 	}
 	schedule();
@@ -347,8 +346,6 @@ async function getReadContext(
 		throw new NotFoundError('No device with uuid ' + uuid);
 	}
 	ctx.uuid = uuid;
-	ctx.req = req;
-	ctx.resinApi = resinApi;
 	return ctx;
 }
 
@@ -357,7 +354,7 @@ async function getWriteContext(
 	req: Request,
 ): Promise<LogWriteContext> {
 	const { uuid } = req.params;
-	const [ctx] = (await resinApi.get({
+	const [device] = (await resinApi.get({
 		resource: 'device',
 		options: {
 			$filter: { uuid },
@@ -377,22 +374,45 @@ async function getWriteContext(
 				},
 			},
 		},
-	})) as LogWriteContext[];
-	if (!ctx) {
+	})) as Array<{
+		id: number;
+		logs_channel?: string;
+		image_install: Array<{
+			id: number;
+			image: Array<{
+				id: number;
+				is_a_build_of__service: Array<{
+					id: number;
+				}>;
+			}>;
+		}>;
+	}>;
+	if (!device) {
 		throw new NotFoundError('No device with uuid ' + uuid);
 	}
-	ctx.uuid = uuid;
-	ctx.req = req;
-	ctx.resinApi = resinApi;
-	return ctx;
+	return {
+		id: device.id,
+		logs_channel: device.logs_channel,
+		uuid,
+		images: device.image_install.map(imageInstall => {
+			const img = imageInstall.image[0];
+			return {
+				id: img.id,
+				serviceId: img.is_a_build_of__service[0].id,
+			};
+		}),
+	};
 }
 
 function addRetentionLimit(ctx: LogContext) {
 	ctx.retention_limit = DEFAULT_RETENTION_LIMIT;
 }
 
-async function checkWritePermissions(ctx: LogWriteContext): Promise<void> {
-	const allowedDevices = (await ctx.resinApi.post({
+async function checkWritePermissions(
+	resinApi: PinejsClient,
+	ctx: LogWriteContext,
+): Promise<void> {
+	const allowedDevices = (await resinApi.post({
 		resource: 'device',
 		id: ctx.id,
 		body: { action: 'write-log' },
