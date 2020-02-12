@@ -1,4 +1,14 @@
 - commits:
+    - subject: Grant device API keys read access to release and application tags
+      hash: de6376809d49da73e3a70d43b26d3597f745f3fd
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+  version: 0.53.2
+  date: 2020-02-12T09:34:42.242Z
+- commits:
     - subject: Update dependencies
       hash: d2216171cade124d1f46ceaccca94fdffd397199
       body: ''
