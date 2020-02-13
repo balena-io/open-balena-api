@@ -1,4 +1,14 @@
 - commits:
+    - subject: Gracefully handle cases where we cannot find the service for an image
+      hash: 999f9d1324be1aab4d67891bbfe4751e1be86b15
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.53.4
+  date: 2020-02-13T16:03:22.871Z
+- commits:
     - subject: Update open-balena-base to 9.2.0
       hash: 6581556d1c10c41b92a4e1ccb5d9c03b1d7bdf43
       body: |
