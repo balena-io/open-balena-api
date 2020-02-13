@@ -3,7 +3,11 @@
 //
 
 import { sbvrUtils } from '@resin/pinejs';
-import { API_VPN_SERVICE_API_KEY, VPN_SERVICE_API_KEY } from './config';
+import {
+	API_VPN_SERVICE_API_KEY,
+	VPN_GUEST_API_KEY,
+	VPN_SERVICE_API_KEY,
+} from './config';
 
 const matchesActor = 'actor eq @__ACTOR_ID';
 const matchesUser = `user/any(u:u/${matchesActor})`;
@@ -152,6 +156,13 @@ export const KEYS: {
 		],
 	},
 };
+
+if (VPN_GUEST_API_KEY != null) {
+	KEYS['service.vpn-guest'] = {
+		key: VPN_GUEST_API_KEY,
+		permissions: ['service', 'service.vpn-guest'],
+	};
+}
 
 const SERVICE_PREFIX = 'service.';
 
