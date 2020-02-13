@@ -398,7 +398,7 @@ async function getWriteContext(
 			const img = imageInstall.image[0];
 			return {
 				id: img.id,
-				serviceId: img.is_a_build_of__service[0].id,
+				serviceId: img.is_a_build_of__service[0]?.id,
 			};
 		}),
 	};
