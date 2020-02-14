@@ -11,6 +11,7 @@ import {
 	getCompressedSize,
 	getDeviceTypeJson,
 	getIsIgnored,
+	getLogoUrl,
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
 
@@ -31,10 +32,6 @@ export class UnknownVersionError extends NotFoundError {
 	constructor(slug: string, buildId: string) {
 		super(`Device ${slug} not found for ${buildId} version`);
 	}
-}
-
-interface DeviceTypeWithAliases extends DeviceType {
-	aliases?: string[];
 }
 
 interface BuildInfo {
@@ -113,6 +110,10 @@ const getFirstValidBuild = async (
 		);
 	}
 	if (buildInfo && !buildInfo.ignored && buildInfo.deviceType) {
+		const logoUrl = await getLogoUrl(slug, buildId);
+		if (logoUrl) {
+			buildInfo.deviceType.logoUrl = logoUrl;
+		}
 		return buildInfo;
 	}
 
@@ -143,12 +144,9 @@ async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 					latest: latestBuildInfo,
 				};
 
-				_.forEach(
-					(latestBuildInfo.deviceType as DeviceTypeWithAliases).aliases,
-					alias => {
-						result[alias] = result[slug];
-					},
-				);
+				_.forEach(latestBuildInfo.deviceType.aliases, alias => {
+					result[alias] = result[slug];
+				});
 			} catch (err) {
 				captureException(
 					err,

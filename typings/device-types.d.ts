@@ -2,6 +2,8 @@ declare module '@resin.io/device-types' {
 	interface DeviceType {
 		slug: string;
 		name: string;
+		aliases?: string[];
+		logoUrl?: string;
 
 		arch: string;
 		state?: string;
