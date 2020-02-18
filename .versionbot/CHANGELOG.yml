@@ -1,4 +1,16 @@
 - commits:
+    - subject: 'auth: add `VPN_GUEST_API_KEY` with guest perms and rate limit exemption'
+      hash: 2286029e417aa5dc3a98ca6c36f75543717aed79
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Will Boyce <will@balena.io>
+        signed-off-by: Will Boyce <will@balena.io>
+      author: Will Boyce
+  version: 0.54.0
+  date: 2020-02-13T18:36:03.711Z
+- commits:
     - subject: Gracefully handle cases where we cannot find the service for an image
       hash: 999f9d1324be1aab4d67891bbfe4751e1be86b15
       body: ''
