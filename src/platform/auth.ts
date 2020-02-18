@@ -7,7 +7,7 @@ import { Tx } from './index';
 import { createJwt, SignOptions, User } from './jwt';
 
 import { Request, RequestHandler, Response } from 'express';
-import { pseudoRandomBytesAsync } from '../lib/utils';
+import { getIP, pseudoRandomBytesAsync } from '../lib/utils';
 
 const {
 	BadRequestError,
@@ -379,6 +379,7 @@ export const registerUser = async (
 		password?: string;
 	},
 	tx: Tx,
+	req?: Request,
 ): Promise<AnyObject> => {
 	if (USERNAME_BLACKLIST.includes(userData.username)) {
 		throw new ConflictError('This username is blacklisted');
@@ -395,6 +396,11 @@ export const registerUser = async (
 
 	const encodedKey = await generateNewJwtSecret();
 
+	let clientIP;
+	if (req) {
+		clientIP = getIP(req);
+	}
+
 	// Create the user in the platform
 	const user = (await api.resin.post({
 		resource: 'user',
@@ -405,6 +411,9 @@ export const registerUser = async (
 		passthrough: {
 			tx,
 			req: root,
+			custom: {
+				clientIP,
+			},
 		},
 	})) as AnyObject;
 
