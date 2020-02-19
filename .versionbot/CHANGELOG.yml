@@ -1,4 +1,16 @@
 - commits:
+    - subject: "\U0001F41B: Forward client IP for user registration"
+      hash: c6c4891c2eb6d10fee5a1c1ae7bcd35ab7dcbd20
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Andreas Fitzek <andreas@balena.io>
+        signed-off-by: Andreas Fitzek <andreas@balena.io>
+      author: Andreas Fitzek
+  version: 0.55.0
+  date: 2020-02-18T13:36:10.196Z
+- commits:
     - subject: 'auth: add `VPN_GUEST_API_KEY` with guest perms and rate limit exemption'
       hash: 2286029e417aa5dc3a98ca6c36f75543717aed79
       body: ''
