@@ -68,7 +68,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	`resin.device.read?${matchesActor}`,
 	`resin.device.update?${matchesActor}`,
 	'resin.supervisor_release.read?should_manage__device/canAccess()',
-	'resin.application.read?owns__device/canAccess() or depends_on__application/canAccess()',
+	'resin.application.read?owns__device/canAccess() or depends_on__application/any(a:a/owns__device/canAccess())',
 	'resin.application_tag.read?application/canAccess()',
 	'resin.device_config_variable.read?device/canAccess()',
 	`resin.device_config_variable.set?device/any(d:d/${matchesActor})`,
@@ -85,7 +85,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.application_environment_variable.read?application/canAccess()',
 
 	// Dependent device permissions
-	'resin.device.read?belongs_to__application/any(a:a/depends_on__application/canAccess())',
+	`resin.device.read?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
 	`resin.device.create?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
 	`resin.device.update?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
 
