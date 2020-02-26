@@ -3,11 +3,10 @@ import 'mocha';
 import * as _ from 'lodash';
 
 import { app } from '../../init';
+import { Admin, getAdminUser } from '../test-lib/api-helpers';
 import { expect } from '../test-lib/chai';
 import * as fakeDevice from '../test-lib/fake-device';
-import supertest = require('../test-lib/supertest');
-
-import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from '../../src/lib/config';
+import { default as supertest, SupertestUser } from '../test-lib/supertest';
 
 interface MockReleaseParams {
 	belongs_to__application: number;
@@ -42,7 +41,7 @@ type MockImage = MockImageParams & { id: number };
 type MockService = MockServiceParams & { id: number };
 
 const addReleaseToApp = async (
-	auth: string,
+	auth: SupertestUser,
 	release: MockReleaseParams,
 ): Promise<MockRelease> =>
 	(
@@ -53,7 +52,7 @@ const addReleaseToApp = async (
 	).body;
 
 const addImageToService = async (
-	auth: string,
+	auth: SupertestUser,
 	image: MockImageParams,
 ): Promise<MockImage> =>
 	(
@@ -64,7 +63,7 @@ const addImageToService = async (
 	).body;
 
 const addServiceToApp = async (
-	auth: string,
+	auth: SupertestUser,
 	serviceName: string,
 	application: number,
 ): Promise<MockService> =>
@@ -79,7 +78,7 @@ const addServiceToApp = async (
 	).body;
 
 const addImageToRelease = async (
-	auth: string,
+	auth: SupertestUser,
 	imageId: number,
 	releaseId: number,
 ): Promise<void> => {
@@ -93,7 +92,7 @@ const addImageToRelease = async (
 };
 
 describe('Device with missing service installs', () => {
-	let admin: string = '';
+	let admin: Admin;
 	let applicationId: number = 0;
 	let device: fakeDevice.Device;
 	const releases: _.Dictionary<number> = {};
@@ -101,16 +100,7 @@ describe('Device with missing service installs', () => {
 
 	before('Setup the application and initial release', async function() {
 		// login as the superuser...
-		const { text: token } = await supertest(app)
-			.post('/login_')
-			.send({
-				username: SUPERUSER_EMAIL,
-				password: SUPERUSER_PASSWORD,
-			})
-			.expect(200);
-
-		expect(token).to.be.a('string');
-		admin = token;
+		admin = await getAdminUser();
 
 		// create an application...
 		const { body: application } = await supertest(app, admin)

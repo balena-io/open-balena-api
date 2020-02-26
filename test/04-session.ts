@@ -4,7 +4,7 @@ import { app } from '../init';
 import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from '../src/lib/config';
 import { createScopedAccessToken } from '../src/platform/jwt';
 
-import supertest = require('./test-lib/supertest');
+import supertest from './test-lib/supertest';
 
 describe('session', () => {
 	before(async function() {

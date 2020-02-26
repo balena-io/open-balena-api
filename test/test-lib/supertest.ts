@@ -3,9 +3,9 @@ import * as _ from 'lodash';
 import * as supertest from 'supertest';
 import { User } from '../../src/platform/jwt';
 
-type UserObjectParam = Partial<User & { token: string }>;
+export type SupertestUser = string | Partial<User & { token: string }>;
 
-export = function(app: express.Express, user?: string | UserObjectParam) {
+export default function(app: express.Express, user?: SupertestUser) {
 	// Can be an object with `token`, a JWT string or an API key string
 	let token = user;
 	if (typeof user === 'object' && user.token) {
@@ -20,4 +20,4 @@ export = function(app: express.Express, user?: string | UserObjectParam) {
 		req.set('Authorization', `Bearer ${token}`);
 	}
 	return req as ReturnType<typeof supertest.agent>;
-};
+}

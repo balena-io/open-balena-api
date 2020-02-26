@@ -3,7 +3,7 @@ import 'mocha';
 import { app } from '../init';
 import { expect } from './test-lib/chai';
 
-import supertest = require('./test-lib/supertest');
+import supertest from './test-lib/supertest';
 
 describe('device type endpoints', () => {
 	describe('/device-types/v1', () => {

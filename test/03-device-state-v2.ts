@@ -5,10 +5,9 @@ import { expect } from './test-lib/chai';
 import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 import * as mockery from 'mockery';
+import { Admin, getAdminUser } from './test-lib/api-helpers';
 import * as fakeDevice from './test-lib/fake-device';
-import supertest = require('./test-lib/supertest');
-
-import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from '../src/lib/config';
+import supertest from './test-lib/supertest';
 
 import sinon = require('sinon');
 import configMock = require('../src/lib/config');
@@ -64,22 +63,13 @@ const waitFor = async (fn: () => boolean, timeout: number = 10000) => {
 };
 
 describe('Device State v2', () => {
-	let admin: string;
+	let admin: Admin;
 	let applicationId: number;
 	let device: fakeDevice.Device;
 
 	before(async () => {
 		// login as the superuser...
-		const { text: token } = await supertest(app)
-			.post('/login_')
-			.send({
-				username: SUPERUSER_EMAIL,
-				password: SUPERUSER_PASSWORD,
-			})
-			.expect(200);
-
-		expect(token).to.be.a('string');
-		admin = token;
+		admin = await getAdminUser();
 
 		// create a new test application...
 		const { body: application } = await supertest(app, admin)
