@@ -201,6 +201,21 @@ describe('device type endpoints', () => {
 			expect(res.body).to.have.property('state', 'RELEASED');
 			expect(res.body).to.have.property('buildId', '2.19.0+rev1.prod');
 		});
+
+		it('should include the logoUrl only when an icon is available', async () => {
+			const { body: rpi3Config } = await supertest(app)
+				.get('/device-types/v1/raspberrypi3')
+				.expect(200);
+			expect(rpi3Config).to.have.property(
+				'logoUrl',
+				'https://files_host.com/images/raspberrypi3/2.19.0%2Brev1.prod/logo.svg',
+			);
+
+			const { body: rpiConfig } = await supertest(app)
+				.get('/device-types/v1/raspberry-pi')
+				.expect(200);
+			expect(rpiConfig).to.not.have.property('logoUrl');
+		});
 	});
 
 	describe('/device-types/v1/:deviceType/images', () => {
