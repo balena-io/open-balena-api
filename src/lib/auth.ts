@@ -50,6 +50,7 @@ export const ROLES: {
 		'resin.service_install.all',
 		"resin.service_instance.get?service_type eq 'vpn'",
 		'resin.service_label.all',
+		'resin.supervisor_release.all',
 		'resin.user.read',
 		`resin.user__has__public_key.all?${matchesUser}`,
 	],

@@ -129,6 +129,9 @@ Term: error message
 Term: image location
 	Concept Type: Short Text (Type)
 
+Term: image name
+	Concept Type: Short Text (Type)
+
 Term: image size
 	Concept Type: Big Integer (Type)
 
@@ -245,6 +248,7 @@ Term: config
 Term: image
 Term: service instance
 Term: device type
+Term: supervisor release
 
 Term: application
 	Concept Type: actor (Auth)
@@ -364,6 +368,7 @@ Fact type: application type has description (Auth)
 Fact type: application type has maximum device count
 	Necessity: each application type has at most one maximum device count
 
+
 -- application
 
 Fact type: application has app name
@@ -384,6 +389,7 @@ Fact type: application has application type
 	Necessity: each application has exactly one application type.
 Fact type: application is host
 
+
 -- service instance
 
 Fact type: service instance has service type
@@ -392,6 +398,19 @@ Fact type: service instance has ip address
 	Necessity: each service instance has exactly one ip address.
 Fact type: service instance has last heartbeat
 	Necessity: each service instance has exactly one last heartbeat.
+
+
+-- supervisor release
+
+Fact type: supervisor release has supervisor version
+	Necessity: each supervisor release has exactly one supervisor version.
+Fact type: supervisor release is for device type
+	Necessity: each supervisor release is for exactly one device type.
+Fact type: supervisor release has image name
+	Necessity: each supervisor release has exactly one image name.
+Fact type: supervisor release is public
+Fact type: supervisor release has note
+	Necessity: each supervisor release has at most one note.
 
 
 -- device
@@ -454,6 +473,9 @@ Fact type: device is managed by service instance
 Fact type: device should be running release
 	Synonymous Form: release should be running on device
 	Necessity: each device should be running at most one release
+Fact type: device should be managed by supervisor release
+	Synonymous Form: supervisor release should manage device
+	Necessity: each device should be managed by at most one supervisor release
 Fact type: device1 is managed by device2
 	Synonymous Form: device2 manages device1
 	Necessity: each device1 is managed by at most one device2.
@@ -634,7 +656,6 @@ Rule: It is necessary that each device1 that is managed by a device2, belongs to
 Rule: It is necessary that each image that has a status that is equal to "success", has a push timestamp.
 Rule: It is necessary that each release1 that has a status that is equal to "success" and has a commit1, belongs to an application that owns exactly one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.
 Rule: It is necessary that each device that should be running a release, should be running a release that belongs to an application that the device belongs to.
+Rule: It is necessary that each device that should be managed by a supervisor release, should be managed by a supervisor release that is for a device type that describes the device.
 Rule: It is necessary that each application that should be running a release, should be running a release that has a status that is equal to "success" and belongs to the application.
---Rule: It is necessary that each application that should be running a release1, owns a release that has a status that is equal to "success".
-
 Rule: It is necessary that each release that contains at least 2 images, belongs to an application that has an application type that supports multicontainer.
