@@ -1,4 +1,18 @@
 - commits:
+    - subject: Populate the logoUrl in the device-type endpoint results
+      hash: ce705b7637b6826b17ddff803760513f67fc3a7a
+      body: ''
+      footer:
+        HQ: 'https://github.com/balena-io/balena/issues/1818'
+        hq: 'https://github.com/balena-io/balena/issues/1818'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+  version: 0.56.0
+  date: 2020-02-25T13:07:42.758Z
+- commits:
     - subject: Update dependencies
       hash: d0221cb27883cc9d79092de6fad523355c250521
       body: |
