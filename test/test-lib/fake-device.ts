@@ -5,7 +5,7 @@ import * as uuid from 'uuid';
 
 import { app } from '../../init';
 
-import { default as supertest, SupertestUser } from './supertest';
+import supertest, { SupertestUser } from './supertest';
 
 export interface Device {
 	id: number;

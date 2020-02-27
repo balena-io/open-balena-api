@@ -3,10 +3,10 @@ import 'mocha';
 import * as _ from 'lodash';
 
 import { app } from '../../init';
-import { Admin, getAdminUser } from '../test-lib/api-helpers';
+import { getAdminUser, User } from '../test-lib/api-helpers';
 import { expect } from '../test-lib/chai';
 import * as fakeDevice from '../test-lib/fake-device';
-import { default as supertest, SupertestUser } from '../test-lib/supertest';
+import supertest, { SupertestUser } from '../test-lib/supertest';
 
 interface MockReleaseParams {
 	belongs_to__application: number;
@@ -92,7 +92,7 @@ const addImageToRelease = async (
 };
 
 describe('Device with missing service installs', () => {
-	let admin: Admin;
+	let admin: User;
 	let applicationId: number = 0;
 	let device: fakeDevice.Device;
 	const releases: _.Dictionary<number> = {};

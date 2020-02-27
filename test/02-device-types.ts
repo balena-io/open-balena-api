@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import 'mocha';
 import { app } from '../init';
 import { expect } from './test-lib/chai';
-
 import supertest from './test-lib/supertest';
 
 describe('device type endpoints', () => {

@@ -1,11 +1,11 @@
-import { Admin, getAdminUser } from './test-lib/api-helpers';
+import { getAdminUser, User } from './test-lib/api-helpers';
 import { expect } from './test-lib/chai';
 import supertest from './test-lib/supertest';
 
 import { app } from '../init';
 
 describe('supervisor release', function() {
-	let admin: Admin;
+	let admin: User;
 
 	before(async () => {
 		admin = await getAdminUser();

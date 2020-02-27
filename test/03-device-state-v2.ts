@@ -1,13 +1,13 @@
 import 'mocha';
 import { app } from '../init';
 import { expect } from './test-lib/chai';
+import supertest from './test-lib/supertest';
 
 import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 import * as mockery from 'mockery';
-import { Admin, getAdminUser } from './test-lib/api-helpers';
+import { getAdminUser, User } from './test-lib/api-helpers';
 import * as fakeDevice from './test-lib/fake-device';
-import supertest from './test-lib/supertest';
 
 import sinon = require('sinon');
 import configMock = require('../src/lib/config');
@@ -63,7 +63,7 @@ const waitFor = async (fn: () => boolean, timeout: number = 10000) => {
 };
 
 describe('Device State v2', () => {
-	let admin: Admin;
+	let admin: User;
 	let applicationId: number;
 	let device: fakeDevice.Device;
 

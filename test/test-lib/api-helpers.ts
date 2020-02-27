@@ -4,7 +4,7 @@ import supertest from './supertest';
 import { app } from '../../init';
 import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from '../../src/lib/config';
 import { User } from '../../src/platform/jwt';
-export { User as Admin } from '../../src/platform/jwt';
+export { User } from '../../src/platform/jwt';
 
 export async function getAdminUser(): Promise<User> {
 	const { text: token } = await supertest(app)
