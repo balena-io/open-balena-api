@@ -1,4 +1,14 @@
 - commits:
+    - subject: Avoid updating in `updateOrInsert` if nothing has changed
+      hash: 1f0148be0c2ce3367b47fced52444f62c9ae984b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.56.1
+  date: 2020-02-27T11:14:22.935Z
+- commits:
     - subject: Populate the logoUrl in the device-type endpoint results
       hash: ce705b7637b6826b17ddff803760513f67fc3a7a
       body: ''
