@@ -1,4 +1,14 @@
 - commits:
+    - subject: Add `supervisor release` resource
+      hash: d546930c3730fcbc1e251fe5d8b45cdbdcc380ed
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Akis Kesoglou
+  version: 0.57.0
+  date: 2020-02-27T13:09:22.424Z
+- commits:
     - subject: Avoid updating in `updateOrInsert` if nothing has changed
       hash: 1f0148be0c2ce3367b47fced52444f62c9ae984b
       body: ''
