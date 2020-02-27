@@ -66,6 +66,13 @@ ON "device" ("uuid" text_pattern_ops);
 CREATE INDEX IF NOT EXISTS "device_is_managed_by_service_instance_idx"
 ON "device" ("is managed by-service instance");
 
+-- Optimizes the rule `It is necessary that each device that should be
+-- managed by a supervisor release, should be managed by a supervisor release
+-- that is for a device type that describes the device.`
+-- as it relies heavily on these two columns
+CREATE INDEX IF NOT EXISTS "device_supervisor_release_device_type_idx"
+ON "device" ("should be managed by-supervisor release", "is of-device type");
+
 CREATE INDEX IF NOT EXISTS "ii_ipr_idx"
 ON "image install" ("is provided by-release");
 
