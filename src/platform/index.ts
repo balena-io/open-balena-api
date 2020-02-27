@@ -83,6 +83,9 @@ const $updateOrInsert = async (
 		await apiTx.patch({
 			resource,
 			id: results[0].id,
+			options: {
+				$filter: { $not: updateFields },
+			},
 			body: updateFields,
 		});
 		return results[0];
