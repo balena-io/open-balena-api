@@ -1,3 +1,4 @@
+import * as balenaSemver from 'balena-semver';
 import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 
@@ -326,6 +327,28 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			);
 		}
 
+		if (request.values.should_be_managed_by__supervisor_release) {
+			if (
+				!Number.isInteger(
+					request.values.should_be_managed_by__supervisor_release,
+				)
+			) {
+				throw new BadRequestError('Expected an ID for the supervisor_release');
+			}
+
+			// Ensure that we don't ever downgrade the supervisor
+			// from its current version
+			waitPromises.push(
+				getCurrentRequestAffectedIds(args).then(ids =>
+					checkSupervisorReleaseUpgrades(
+						args.api,
+						ids,
+						request.values.should_be_managed_by__supervisor_release,
+					),
+				),
+			);
+		}
+
 		return Bluebird.all(waitPromises);
 	},
 	POSTRUN: args => {
@@ -494,3 +517,55 @@ addDeleteHookForDependents('device', [
 	['service_install', 'device'],
 	['gateway_download', 'is_downloaded_by__device'],
 ]);
+
+async function checkSupervisorReleaseUpgrades(
+	api: PinejsClient,
+	deviceIds: number[],
+	newSupervisorReleaseId: number,
+) {
+	const newSupervisorRelease = (await api.get({
+		resource: 'supervisor_release',
+		id: newSupervisorReleaseId,
+		options: {
+			$select: 'supervisor_version',
+		},
+	})) as AnyObject;
+
+	if (newSupervisorRelease == null) {
+		throw new BadRequestError(
+			`Could not find a supervisor release with this ID ${newSupervisorReleaseId}`,
+		);
+	}
+
+	const newSupervisorVersion = newSupervisorRelease.supervisor_version;
+
+	const releases = (await api.get({
+		resource: 'supervisor_release',
+		options: {
+			$select: ['supervisor_version'],
+			$filter: {
+				should_manage__device: {
+					$any: {
+						$alias: 'd',
+						$expr: {
+							d: {
+								id: {
+									$in: deviceIds,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	})) as AnyObject[];
+
+	for (const release of releases) {
+		const oldVersion = release.supervisor_version;
+		if (balenaSemver.lt(newSupervisorVersion, oldVersion)) {
+			throw new BadRequestError(
+				`Attempt to downgrade supervisor, which is not allowed`,
+			);
+		}
+	}
+}
