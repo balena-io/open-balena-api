@@ -1,4 +1,16 @@
 - commits:
+    - subject: parameterize VPN_CONNECT_PROXY_PORT
+      hash: 185a53a7ea3486960e6f3ebf958f8eaffdf71755
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: ab77 <anton@balena.io>
+        signed-off-by: ab77 <anton@balena.io>
+      author: ab77
+  version: 0.58.0
+  date: 2020-03-03T18:21:03.847Z
+- commits:
     - subject: Add `supervisor release` resource
       hash: d546930c3730fcbc1e251fe5d8b45cdbdcc380ed
       body: ''
