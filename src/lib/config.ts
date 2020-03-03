@@ -86,6 +86,7 @@ export const API_HEARTBEAT_STATE_TIMEOUT_SECONDS = intVar(
 	15,
 );
 export const API_VPN_SERVICE_API_KEY = requiredVar('API_VPN_SERVICE_API_KEY');
+export const VPN_CONNECT_PROXY_PORT = intVar('VPN_CONNECT_PROXY_PORT', 3128);
 export const AUTH_RESINOS_REGISTRY_CODE = optionalVar(
 	'AUTH_RESINOS_REGISTRY_CODE',
 );

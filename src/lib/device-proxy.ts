@@ -13,7 +13,7 @@ import { Request, Response } from 'express';
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
 import { checkInt } from './utils';
 
-import { API_VPN_SERVICE_API_KEY } from './config';
+import { API_VPN_SERVICE_API_KEY, VPN_CONNECT_PROXY_PORT } from './config';
 import { requestAsync, RequestResponse } from './request';
 
 // Degraded network, slow devices, compressed docker binaries and any combination of these factors
@@ -237,7 +237,7 @@ export async function requestDevices({
 		let p = requestAsync({
 			uri: deviceUrl,
 			json: data,
-			proxy: `http://resin_api:${API_VPN_SERVICE_API_KEY}@${vpnIp}:3128`,
+			proxy: `http://resin_api:${API_VPN_SERVICE_API_KEY}@${vpnIp}:${VPN_CONNECT_PROXY_PORT}`,
 			tunnel: true,
 			method,
 			timeout: DEVICE_REQUEST_TIMEOUT,
