@@ -1,7 +1,7 @@
 import { sbvrUtils } from '@resin/pinejs';
+import * as rSemver from 'balena-semver';
 import * as express from 'express';
 import * as _ from 'lodash';
-import * as rSemver from 'resin-semver';
 import { reqHasPermission } from '../platform/auth';
 import { captureException } from '../platform/errors';
 

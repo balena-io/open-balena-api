@@ -2,8 +2,8 @@ import * as _ from 'lodash';
 
 import * as fs from 'fs';
 
+import * as resinSemver from 'balena-semver';
 import * as deviceConfig from 'resin-device-config';
-import * as resinSemver from 'resin-semver';
 
 import { DeviceType } from './device-types';
 
