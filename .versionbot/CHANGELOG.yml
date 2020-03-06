@@ -1,4 +1,16 @@
 - commits:
+    - subject: add missing VPN_CONNECT_PROXY_PORT to confd env backend
+      hash: 2698b74a53ed19076e8f9f71c45d8f63424d531f
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: ab77 <anton@balena.io>
+        signed-off-by: ab77 <anton@balena.io>
+      author: ab77
+  version: 0.59.0
+  date: 2020-03-06T21:41:48.328Z
+- commits:
     - subject: Update dependencies
       hash: 8121e6189a35927599372673c9e27042638c8073
       body: |
