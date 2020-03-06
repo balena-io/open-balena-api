@@ -1,5 +1,5 @@
+import * as semver from 'balena-semver';
 import * as _ from 'lodash';
-import * as semver from 'resin-semver';
 
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './config';
 

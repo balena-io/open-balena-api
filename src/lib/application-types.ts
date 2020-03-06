@@ -1,5 +1,5 @@
+import * as resinSemver from 'balena-semver';
 import * as _ from 'lodash';
-import * as resinSemver from 'resin-semver';
 
 import { sbvrUtils } from '@resin/pinejs';
 
