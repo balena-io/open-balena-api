@@ -5,9 +5,9 @@ import * as _ from 'lodash';
 import { app } from '../../init';
 import { expect } from '../test-lib/chai';
 import * as fakeDevice from '../test-lib/fake-device';
-import supertest = require('../test-lib/supertest');
+import { supertest, UserObjectParam } from '../test-lib/supertest';
 
-import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from '../../src/lib/config';
+import * as fixtures from '../test-lib/fixtures';
 
 interface MockReleaseParams {
 	belongs_to__application: number;
@@ -42,7 +42,7 @@ type MockImage = MockImageParams & { id: number };
 type MockService = MockServiceParams & { id: number };
 
 const addReleaseToApp = async (
-	auth: string,
+	auth: UserObjectParam,
 	release: MockReleaseParams,
 ): Promise<MockRelease> =>
 	(
@@ -53,7 +53,7 @@ const addReleaseToApp = async (
 	).body;
 
 const addImageToService = async (
-	auth: string,
+	auth: UserObjectParam,
 	image: MockImageParams,
 ): Promise<MockImage> =>
 	(
@@ -64,7 +64,7 @@ const addImageToService = async (
 	).body;
 
 const addServiceToApp = async (
-	auth: string,
+	auth: UserObjectParam,
 	serviceName: string,
 	application: number,
 ): Promise<MockService> =>
@@ -79,7 +79,7 @@ const addServiceToApp = async (
 	).body;
 
 const addImageToRelease = async (
-	auth: string,
+	auth: UserObjectParam,
 	imageId: number,
 	releaseId: number,
 ): Promise<void> => {
@@ -93,24 +93,16 @@ const addImageToRelease = async (
 };
 
 describe('Device with missing service installs', () => {
-	let admin: string = '';
+	let admin: UserObjectParam;
 	let applicationId: number = 0;
 	let device: fakeDevice.Device;
 	const releases: _.Dictionary<number> = {};
 	const services: _.Dictionary<number> = {};
 
 	before('Setup the application and initial release', async function() {
-		// login as the superuser...
-		const { text: token } = await supertest(app)
-			.post('/login_')
-			.send({
-				username: SUPERUSER_EMAIL,
-				password: SUPERUSER_PASSWORD,
-			})
-			.expect(200);
+		const fx = await fixtures.load();
 
-		expect(token).to.be.a('string');
-		admin = token;
+		admin = fx.users.admin;
 
 		// create an application...
 		const { body: application } = await supertest(app, admin)

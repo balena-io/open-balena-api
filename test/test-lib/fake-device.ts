@@ -5,7 +5,7 @@ import * as uuid from 'uuid';
 
 import { app } from '../../init';
 
-import supertest = require('./supertest');
+import { supertest, UserObjectParam } from './supertest';
 
 export interface Device {
 	id: number;
@@ -44,7 +44,7 @@ export interface DeviceState {
 }
 
 export async function provisionDevice(
-	admin: string,
+	admin: UserObjectParam,
 	appId: number,
 ): Promise<Device> {
 	const { body: applications } = await supertest(app, admin)

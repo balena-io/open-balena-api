@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import 'mocha';
 import { app } from '../init';
 
-import supertest = require('./test-lib/supertest');
+import { supertest } from './test-lib/supertest';
 
 describe('Basic', () => {
 	it('check /ping route is OK', async () => {
