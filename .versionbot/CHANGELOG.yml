@@ -1,4 +1,14 @@
 - commits:
+    - subject: Improve device type typings
+      hash: b2415efe733005349e582c691440f4ce61cff9fe
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.59.1
+  date: 2020-03-10T14:57:53.129Z
+- commits:
     - subject: add missing VPN_CONNECT_PROXY_PORT to confd env backend
       hash: 2698b74a53ed19076e8f9f71c45d8f63424d531f
       body: ''
