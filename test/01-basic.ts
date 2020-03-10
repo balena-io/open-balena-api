@@ -2,9 +2,18 @@ import { expect } from 'chai';
 import 'mocha';
 import { app } from '../init';
 
+import fixtures = require('./test-lib/fixtures');
 import supertest = require('./test-lib/supertest');
 
 describe('Basic', () => {
+	let fx: Dictionary<Dictionary<any>> = {};
+
+	before(async () => {
+		fx = await fixtures.load('01-basic');
+	});
+
+	after(() => fixtures.clean(fx));
+
 	it('check /ping route is OK', async () => {
 		const res = await supertest(app)
 			.get('/ping')
@@ -94,5 +103,12 @@ describe('Basic', () => {
 					'RESIN_SUPERVISOR_OVERRIDE_LOCK',
 				]);
 			});
+	});
+
+	it('should have created a new application from the fixtures', () => {
+		expect(fx['applications'].app1).to.be.not.undefined;
+		expect(fx['applications'].app1)
+			.to.have.property('app_name')
+			.equals('basic_app');
 	});
 });
