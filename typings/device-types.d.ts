@@ -12,7 +12,7 @@ declare module '@resin.io/device-types' {
 		instructions?: string[] | DeviceTypeInstructions;
 		gettingStartedLink?: string | DeviceTypeGettingStartedLink;
 		stateInstructions?: { [key: string]: string[] };
-		options?: DeviceTypeOptions[];
+		options?: Array<DeviceTypeOptions | DeviceTypeOptionsGroup>;
 		initialization?: {
 			options?: DeviceInitializationOptions[];
 			operations: Array<{
@@ -47,8 +47,8 @@ declare module '@resin.io/device-types' {
 
 	interface DeviceTypeOptions extends Option {
 		options: DeviceTypeOptionsGroup[];
-		collapsed: boolean;
-		isCollapsible: boolean;
+		collapsed?: boolean;
+		isCollapsible?: boolean;
 		isGroup: boolean;
 	}
 
@@ -57,7 +57,7 @@ declare module '@resin.io/device-types' {
 	}
 
 	interface DeviceTypeOptionsGroup extends Option {
-		default: number | string;
+		default?: number | string;
 		type: string;
 		min?: number;
 		choices?: string[] | number[];

@@ -106,11 +106,13 @@ export const generateConfig = async (
 
 	_(deviceType.options!)
 		.flatMap((opt): DeviceTypeOption[] | DeviceTypeOption => {
-			if (opt.isGroup && ['network', 'advanced'].includes(opt.name)) {
-				// already handled above
-				return [];
-			} else if (opt.isGroup) {
-				return opt.options;
+			if ('isGroup' in opt && opt.isGroup) {
+				if (['network', 'advanced'].includes(opt.name)) {
+					// already handled above
+					return [];
+				} else {
+					return opt.options;
+				}
 			} else {
 				return opt;
 			}
