@@ -1,4 +1,14 @@
 - commits:
+    - subject: 'Tests: guarantee the mocks have initialized before continuing'
+      hash: a8dac8c98f4da45945772f90171c8be61da67c5a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.59.3
+  date: 2020-03-10T17:43:42.411Z
+- commits:
     - subject: Parallelize syncing the device type model
       hash: 44d1a1f0086115d7a1facfc0827c557960bc8ff8
       body: ''
