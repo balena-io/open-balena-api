@@ -1,4 +1,14 @@
 - commits:
+    - subject: Parallelize syncing the device type model
+      hash: 44d1a1f0086115d7a1facfc0827c557960bc8ff8
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.59.2
+  date: 2020-03-10T17:34:53.044Z
+- commits:
     - subject: Improve device type typings
       hash: b2415efe733005349e582c691440f4ce61cff9fe
       body: ''
