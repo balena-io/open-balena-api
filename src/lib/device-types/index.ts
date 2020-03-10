@@ -196,10 +196,10 @@ async function updateDTModel(
 		},
 	})) as AnyObject[];
 	if (results.length === 0) {
-		const body = _.cloneDeep({
+		const body = {
 			slug: deviceType.slug,
-		});
-		_.merge(body, updateFields);
+			...updateFields,
+		};
 		await apiTx.post({
 			resource: 'device_type',
 			body,
@@ -245,12 +245,14 @@ function syncDataModel(
 		return;
 	}
 	return sbvrUtils.db.transaction(async tx => {
-		for (const key in types) {
-			if (types.hasOwnProperty(key)) {
-				const { deviceType } = types[key].latest;
-				await updateDTModel(deviceType, propertyMap, tx);
-			}
-		}
+		await Promise.all(
+			_(types)
+				.map(({ latest }) => latest.deviceType)
+				// This keyBy removes duplicates for the same slug, ie due to aliases
+				.keyBy(({ slug }) => slug)
+				.map(deviceType => updateDTModel(deviceType, propertyMap, tx))
+				.value(),
+		);
 	});
 }
 
