@@ -1,0 +1,7 @@
+{
+	"middle": {
+		"image_name": "SOME_IMAGE",
+		"supervisor_version": "7.0.1",
+		"is_for__device_type": "intel-nuc"
+	}
+}

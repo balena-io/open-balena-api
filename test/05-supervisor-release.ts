@@ -66,6 +66,7 @@ describe('Devices running supervisor releases', () => {
 		const fx = await fixtures.load('05-supervisor-release');
 		admin = fx.users.admin;
 		applicationId = fx.applications.app1.id;
+		middle = fx['supervisor-releases'].middle.id;
 
 		device = await fakeDevice.provisionDevice(admin, applicationId);
 
@@ -77,17 +78,6 @@ describe('Devices running supervisor releases', () => {
 		expect(res.body)
 			.to.have.nested.property('d[0].id')
 			.that.is.a('number');
-
-		middle = (
-			await supertest(app, admin)
-				.post(`/resin/supervisor_release`)
-				.send({
-					image_name: 'SOME_IMAGE',
-					supervisor_version: '7.0.1',
-					is_for__device_type: res.body.d[0].id,
-				})
-				.expect(201)
-		).body.id;
 
 		large = (
 			await supertest(app, admin)
