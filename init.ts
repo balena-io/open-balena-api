@@ -100,29 +100,29 @@ export const app = express();
 app.enable('trust proxy');
 
 const doRunTests = (process.env.RUN_TESTS || '').trim() === '1';
-
-// we have to load some mocks before the app starts...
-if (doRunTests) {
-	console.log('Loading mocks...');
-	import('./test/test-lib/init_mocks');
-}
-
-setup(app, {
-	config,
-	version,
-	onInitMiddleware,
-	onInitModel,
-	onInitHooks,
-})
-	.then(async ({ startServer }) => {
+const init = async () => {
+	try {
+		// we have to load some mocks before the app starts...
+		if (doRunTests) {
+			console.log('Loading mocks...');
+			await import('./test/test-lib/init_mocks');
+		}
+		const { startServer } = await setup(app, {
+			config,
+			version,
+			onInitMiddleware,
+			onInitModel,
+			onInitHooks,
+		});
 		await createSuperuser();
 		await startServer(process.env.PORT || 1337);
 		if (doRunTests) {
 			console.log('Running tests...');
 			await import('./test/00-init');
 		}
-	})
-	.catch(err => {
+	} catch (err) {
 		console.error('Failed to initialize:', err);
 		process.exit(1);
-	});
+	}
+};
+init();
