@@ -1,27 +1,23 @@
 import { expect } from 'chai';
 import 'mocha';
 import { app } from '../init';
-import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from '../src/lib/config';
+import { SUPERUSER_EMAIL } from '../src/lib/config';
 import { createScopedAccessToken } from '../src/platform/jwt';
 
-import { supertest } from './test-lib/supertest';
+import * as fixtures from './test-lib/fixtures';
+import { supertest, UserObjectParam } from './test-lib/supertest';
 
 describe('session', () => {
+	let admin: UserObjectParam;
+
 	before(async function() {
-		this.token = (
-			await supertest(app)
-				.post('/login_')
-				.send({
-					username: SUPERUSER_EMAIL,
-					password: SUPERUSER_PASSWORD,
-				})
-				.expect(200)
-		).text;
+		const fx = await fixtures.load();
+		admin = fx.users.admin;
 	});
 
 	it('/user/v1/whoami returns a user', async function() {
 		const user = (
-			await supertest(app, this.token)
+			await supertest(app, admin)
 				.get('/user/v1/whoami')
 				.expect(200)
 		).body;
@@ -35,7 +31,7 @@ describe('session', () => {
 
 	it('/user/v1/whoami returns a user when using a correctly scoped access token', async function() {
 		const record = (
-			await supertest(app, this.token)
+			await supertest(app, admin)
 				.get("/v5/user?$filter=username eq 'admin'")
 				.expect(200)
 		).body.d[0];
@@ -62,7 +58,7 @@ describe('session', () => {
 
 	it('/user/v1/whoami returns a 401 error when using a scoped access token that does not have user permissions', async function() {
 		const record = (
-			await supertest(app, this.token)
+			await supertest(app, admin)
 				.get("/v5/user?$filter=username eq 'admin'")
 				.expect(200)
 		).body.d[0];
