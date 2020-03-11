@@ -1,16 +1,15 @@
-import { getAdminUser } from './test-lib/api-helpers';
 import { expect } from './test-lib/chai';
-import supertest = require('./test-lib/supertest');
-
-import { User } from '../src/platform/jwt';
+import * as fixtures from './test-lib/fixtures';
+import { supertest, UserObjectParam } from './test-lib/supertest';
 
 import { app } from '../init';
 
 describe('supervisor release', function() {
-	let admin: User;
+	let admin: UserObjectParam;
 
 	before(async () => {
-		admin = await getAdminUser();
+		const fx = await fixtures.load();
+		admin = fx.users.admin;
 	});
 
 	it('should allow admins to create supervisor releases', async () => {

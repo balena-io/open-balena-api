@@ -99,13 +99,17 @@ async function createSuperuser() {
 export const app = express();
 app.enable('trust proxy');
 
-const doRunTests = (process.env.RUN_TESTS || '').trim() === '1';
 const init = async () => {
 	try {
+		const doRunTests =
+			(process.env.RUN_TESTS || '').trim() === '1'
+				? await import('./test/test-lib/init-tests')
+				: undefined;
+
 		// we have to load some mocks before the app starts...
 		if (doRunTests) {
 			console.log('Loading mocks...');
-			await import('./test/test-lib/init_mocks');
+			await doRunTests.preInit();
 		}
 		const { startServer } = await setup(app, {
 			config,
@@ -118,7 +122,7 @@ const init = async () => {
 		await startServer(process.env.PORT || 1337);
 		if (doRunTests) {
 			console.log('Running tests...');
-			await import('./test/00-init');
+			await doRunTests.postInit();
 		}
 	} catch (err) {
 		console.error('Failed to initialize:', err);

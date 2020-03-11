@@ -6,13 +6,12 @@ import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 import * as mockery from 'mockery';
 import * as fakeDevice from './test-lib/fake-device';
-import supertest = require('./test-lib/supertest');
-
-import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from '../src/lib/config';
+import { supertest, UserObjectParam } from './test-lib/supertest';
 
 import sinon = require('sinon');
 import configMock = require('../src/lib/config');
 import stateMock = require('../src/lib/device-online-state');
+import * as fixtures from './test-lib/fixtures';
 
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
@@ -64,22 +63,13 @@ const waitFor = async (fn: () => boolean, timeout: number = 10000) => {
 };
 
 describe('Device State v2', () => {
-	let admin: string;
+	let admin: UserObjectParam;
 	let applicationId: number;
 	let device: fakeDevice.Device;
 
 	before(async () => {
-		// login as the superuser...
-		const { text: token } = await supertest(app)
-			.post('/login_')
-			.send({
-				username: SUPERUSER_EMAIL,
-				password: SUPERUSER_PASSWORD,
-			})
-			.expect(200);
-
-		expect(token).to.be.a('string');
-		admin = token;
+		const fx = await fixtures.load();
+		admin = fx.users.admin;
 
 		// create a new test application...
 		const { body: application } = await supertest(app, admin)
