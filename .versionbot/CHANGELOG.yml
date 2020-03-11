@@ -1,4 +1,21 @@
 - commits:
+    - subject: 'Tests: use fixtures mechanism for applications'
+      hash: 6175b5772414709506bd837605befe8400e18309
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: 'Tests: use fixtures for 04-session'
+      hash: bb73c6b00db7785520ff807521b06d10ffc5077e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.59.5
+  date: 2020-03-11T19:12:33.406Z
+- commits:
     - subject: 'Tests: add initial fixtures mechanism and use it for the admin user'
       hash: b18bc34855f476dd5c865c9ff84d7bbb8b472af9
       body: ''
