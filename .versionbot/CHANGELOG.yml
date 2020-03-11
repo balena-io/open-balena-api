@@ -1,4 +1,21 @@
 - commits:
+    - subject: 'Tests: add initial fixtures mechanism and use it for the admin user'
+      hash: b18bc34855f476dd5c865c9ff84d7bbb8b472af9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: 'Tests: remove unnecessary call to `getAccessibleDeviceTypes`'
+      hash: f9644cea0bda5db552940b5579b61cee518e4da4
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.59.4
+  date: 2020-03-10T18:16:22.853Z
+- commits:
     - subject: 'Tests: guarantee the mocks have initialized before continuing'
       hash: a8dac8c98f4da45945772f90171c8be61da67c5a
       body: ''
