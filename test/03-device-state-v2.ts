@@ -63,34 +63,23 @@ const waitFor = async (fn: () => boolean, timeout: number = 10000) => {
 };
 
 describe('Device State v2', () => {
+	let fx: fixtures.Fixtures;
 	let admin: UserObjectParam;
 	let applicationId: number;
 	let device: fakeDevice.Device;
 
 	before(async () => {
-		const fx = await fixtures.load();
+		fx = await fixtures.load('03-device-state-v2');
+
 		admin = fx.users.admin;
-
-		// create a new test application...
-		const { body: application } = await supertest(app, admin)
-			.post('/resin/application')
-			.send({
-				device_type: 'intel-nuc',
-				app_name: 'test-app-1',
-			})
-			.expect(201);
-
-		applicationId = application.id;
+		applicationId = fx.applications.app1.id;
 
 		// create a new device in this test application...
 		device = await fakeDevice.provisionDevice(admin, applicationId);
 	});
 
 	after(async () => {
-		await supertest(app, admin)
-			.delete(`/resin/application(${applicationId})`)
-			.expect(200);
-
+		await fixtures.clean(fx);
 		mockery.deregisterMock('../src/lib/env-vars');
 		mockery.deregisterMock('../src/lib/config');
 		mockery.deregisterMock('../src/lib/device-online-state');

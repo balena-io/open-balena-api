@@ -93,27 +93,18 @@ const addImageToRelease = async (
 };
 
 describe('Device with missing service installs', () => {
+	let fx: fixtures.Fixtures;
 	let admin: UserObjectParam;
-	let applicationId: number = 0;
+	let applicationId: number;
 	let device: fakeDevice.Device;
 	const releases: _.Dictionary<number> = {};
 	const services: _.Dictionary<number> = {};
 
 	before('Setup the application and initial release', async function() {
-		const fx = await fixtures.load();
+		fx = await fixtures.load('unpin-device-after-release');
 
 		admin = fx.users.admin;
-
-		// create an application...
-		const { body: application } = await supertest(app, admin)
-			.post('/resin/application')
-			.send({
-				device_type: 'intel-nuc',
-				app_name: 'test-app-1',
-			})
-			.expect(201);
-
-		applicationId = application.id;
+		applicationId = fx.applications.app1.id;
 
 		// add a release to the application...
 		const { id: releaseId } = await addReleaseToApp(admin, {
@@ -145,6 +136,10 @@ describe('Device with missing service installs', () => {
 			status: 'success',
 		});
 		await addImageToRelease(admin, imageId, releaseId);
+	});
+
+	after(async () => {
+		await fixtures.clean(fx);
 	});
 
 	it('should add a new device', async function() {
@@ -240,11 +235,5 @@ describe('Device with missing service installs', () => {
 			'abcd0001',
 			"The device isn't running the default application release",
 		);
-	});
-
-	after(async () => {
-		await supertest(app, admin)
-			.delete(`/resin/application(${applicationId})`)
-			.expect(200);
 	});
 });
