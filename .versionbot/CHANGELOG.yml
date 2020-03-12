@@ -1,4 +1,14 @@
 - commits:
+    - subject: 'Tests: make device types available via fixtures'
+      hash: 516a8af03db42071b686d904c74d67a57850c1a1
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.59.6
+  date: 2020-03-12T11:18:02.735Z
+- commits:
     - subject: 'Tests: use fixtures mechanism for applications'
       hash: 6175b5772414709506bd837605befe8400e18309
       body: ''
