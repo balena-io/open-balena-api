@@ -5,6 +5,7 @@ import { supertest, UserObjectParam } from './supertest';
 
 export const preInit = async () => {
 	await import('./aws-mock');
+	await import('./device-type');
 
 	// override the interval used to emit the queue stats event...
 	const { DeviceOnlineStateManager } = await import(
