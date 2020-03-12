@@ -16,8 +16,8 @@
     "fasttest-cleanup": "IMAGE_NAME=test-open-balena-api-fast ./automation/fasttest.sh --teardown",
     "build": "npm run clean && tsc --project ./tsconfig.build.json && copyup \"src/**/*.sbvr\" \"src/**/*.sql\" dist/",
     "clean": "rimraf dist/",
-    "lint": "resin-lint --typescript src/ test/ init.ts && tsc --noEmit --project .",
-    "prettify": "prettier --config ./node_modules/resin-lint/config/.prettierrc --write index.js init.ts \"src/**/*.ts\" \"typings/**/*.ts\" \"test/**/*.ts\"",
+    "lint": "resin-lint --typescript src/ test/ init.ts index.js && tsc --noEmit --project .",
+    "prettify": "resin-lint --typescript --fix src/ test/ init.ts index.js",
     "prepare": "npm run build",
     "test": "IMAGE_NAME=test-open-balena-api ./automation/test.sh",
     "posttest": "docker rmi test-open-balena-api"
