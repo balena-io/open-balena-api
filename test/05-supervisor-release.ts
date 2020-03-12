@@ -4,6 +4,8 @@ import { supertest, UserObjectParam } from './test-lib/supertest';
 
 import { app } from '../init';
 
+import * as fakeDevice from './test-lib/fake-device';
+
 describe('supervisor release', function() {
 	let admin: UserObjectParam;
 
@@ -50,5 +52,82 @@ describe('supervisor release', function() {
 		await supertest(app, admin)
 			.delete(`/resin/supervisor_release(${supervisorReleaseId})`)
 			.expect(200);
+	});
+
+	describe('Devices running supervisor releases', () => {
+		let applicationId: number;
+		let device: fakeDevice.Device;
+		let fx: fixtures.Fixtures;
+		let supervisorReleases: Dictionary<{ id: number }>;
+
+		before(async () => {
+			fx = await fixtures.load('05-supervisor-release');
+			admin = fx.users.admin;
+			applicationId = fx.applications.app1.id;
+
+			device = await fakeDevice.provisionDevice(admin, applicationId);
+			supervisorReleases = fx['supervisor-release'];
+		});
+
+		after(async () => {
+			await fixtures.clean(fx);
+		});
+
+		it('should allow setting a device to a supervisor release', async () => {
+			await supertest(app, admin)
+				.patch(`/resin/device(${device.id})`)
+				.send({
+					should_be_managed_by__supervisor_release:
+						supervisorReleases['5.0.1'].id,
+				})
+				.expect(200);
+		});
+
+		it('should allow upgrading to a logstream version', async () => {
+			await supertest(app, admin)
+				.patch(`/resin/device(${device.id})`)
+				.send({
+					should_be_managed_by__supervisor_release:
+						supervisorReleases['6.0.1_logstream'].id,
+				})
+				.expect(200);
+		});
+
+		it('should allow updrading a devices supervisor release', async () => {
+			await supertest(app, admin)
+				.patch(`/resin/device(${device.id})`)
+				.send({
+					should_be_managed_by__supervisor_release:
+						supervisorReleases['7.0.1'].id,
+				})
+				.expect(200);
+			await supertest(app, admin)
+				.patch(`/resin/device(${device.id})`)
+				.send({
+					should_be_managed_by__supervisor_release:
+						supervisorReleases['8.0.1'].id,
+				})
+				.expect(200);
+		});
+
+		it('should not allow downgrading a supervisor version', async () => {
+			await supertest(app, admin)
+				.patch(`/resin/device(${device.id})`)
+				.send({
+					should_be_managed_by__supervisor_release:
+						supervisorReleases['7.0.1'].id,
+				})
+				.expect(400);
+		});
+
+		it('should correctly determine logstream values', async () => {
+			await supertest(app, admin)
+				.patch(`/resin/device(${device.id})`)
+				.send({
+					should_be_managed_by__supervisor_release:
+						supervisorReleases['6.0.1_logstream'].id,
+				})
+				.expect(400);
+		});
 	});
 });

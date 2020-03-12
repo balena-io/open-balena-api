@@ -46,7 +46,7 @@
     "array-sort": "^1.0.0",
     "avsc": "^5.4.18",
     "aws-sdk": "^2.631.0",
-    "balena-semver": "^2.2.0",
+    "balena-semver": "^2.3.0",
     "basic-auth": "^2.0.1",
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",

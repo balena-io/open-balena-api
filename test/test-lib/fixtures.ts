@@ -90,6 +90,27 @@ const loaders: Dictionary<LoaderFunc> = {
 			user,
 		});
 	},
+	'supervisor-release': async (jsonData, fixtures) => {
+		const user = await fixtures.users['admin'];
+
+		const deviceType = await fixtures.deviceTypes[jsonData.is_for__device_type];
+		if (deviceType == null) {
+			logErrorAndThrow(
+				'Could not find device type: ',
+				jsonData.is_for__device_type,
+			);
+		}
+
+		return createResource({
+			resource: 'supervisor_release',
+			body: {
+				image_name: jsonData.image_name,
+				supervisor_version: jsonData.supervisor_version,
+				is_for__device_type: deviceType.id,
+			},
+			user,
+		});
+	},
 };
 
 const deleteResource = (resource: string) => async (obj: { id: number }) => {
