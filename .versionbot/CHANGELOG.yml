@@ -1,4 +1,16 @@
 - commits:
+    - subject: Don't allow downgrading a supervisor release for a device
+      hash: 68120045cf898cb068d361256ad65a30372658a6
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Cameron Diver <cameron@balena.io>
+        signed-off-by: Cameron Diver <cameron@balena.io>
+      author: Cameron Diver
+  version: 0.59.8
+  date: 2020-03-12T14:59:02.700Z
+- commits:
     - subject: Use resin-lint for automatic lint fixes
       hash: e2282cf388cffe73c2c84f0be89a5c04909388f4
       body: ''
