@@ -136,6 +136,10 @@ describe('Basic', () => {
 					'RESIN_HOST_CONFIG_gpu_mem',
 				],
 			},
+			{
+				deviceType: 'up-board',
+				extraConfigVarSchemaProperties: ['RESIN_HOST_CONFIGFS_ssdt'],
+			},
 		].forEach(({ deviceType, extraConfigVarSchemaProperties }) => {
 			it(`should be correct when device type ${deviceType} is specified`, async () => {
 				const { body: vars } = await supertest(app)
