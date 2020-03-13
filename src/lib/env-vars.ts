@@ -135,6 +135,11 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 				description: 'Define DT parameters',
 				default: '"i2c_arm=on","spi=on","audio=on"',
 			},
+			RESIN_HOST_CONFIG_dtoverlay: {
+				type: 'string',
+				description: 'Define DT overlays',
+				examples: ['"i2c-rtc,ds1307","lirc-rpi"'],
+			},
 			RESIN_HOST_CONFIG_enable_uart: {
 				enum: ['0', '1'],
 				description: 'Enable / Disable UART',
