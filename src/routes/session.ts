@@ -2,7 +2,6 @@ import { sbvrUtils } from '@resin/pinejs';
 import { RequestHandler } from 'express';
 import * as _ from 'lodash';
 import { SetupOptions } from '..';
-import { resetCounter } from '../lib/rate-limiting';
 import { User as DbUser } from '../models';
 import {
 	comparePassword,
@@ -95,7 +94,7 @@ export const login = (
 		if (onLogin) {
 			await onLogin(user);
 		}
-		await resetCounter(req);
+		await req.resetRatelimit?.();
 		await loginUserXHR(res, user.id);
 	} catch (err) {
 		if (err instanceof BadRequestError || err instanceof NotFoundError) {

@@ -1,9 +1,15 @@
-import * as Bluebird from 'bluebird';
 import * as _express from 'express';
-import ExpressBruteRedis = require('express-brute-redis');
+import {
+	IRateLimiterOptions,
+	RateLimiterAbstract,
+	RateLimiterCluster,
+	RateLimiterMemory,
+	RateLimiterRedis,
+} from 'rate-limiter-flexible';
 import * as redis from 'redis';
 
-import * as ExpressBrute from 'express-brute';
+import { isMaster } from 'cluster';
+
 import * as _ from 'lodash';
 import { captureException } from '../platform/errors';
 import {
@@ -12,7 +18,6 @@ import {
 	REDIS_HOST,
 	REDIS_PORT,
 } from './config';
-import { FacadeStore } from './facade-store';
 
 const logRedisError = (err: Error) => {
 	// do not log these errors, because this would flood our logs
@@ -21,16 +26,6 @@ const logRedisError = (err: Error) => {
 	captureException(err, 'Error: Redis service communication failed ');
 };
 
-interface StoreErrorOptions {
-	message: string;
-	parent: any;
-	next: _express.NextFunction;
-}
-
-interface ExpressBruteRedisOpts extends redis.ClientOpts {
-	client?: redis.RedisClient;
-}
-
 /*
  Retry to connect to the redis server every 200 ms. To allow recovering
  in case the redis server goes offline and comes online again.
@@ -38,9 +33,23 @@ interface ExpressBruteRedisOpts extends redis.ClientOpts {
 const redisRetryStrategy: redis.RetryStrategy = _.constant(200);
 
 // Use redis as a store.
-const getStore = _.once(() => {
+const getStore = (opts: IRateLimiterOptions) => {
+	let insuranceLimiter;
+	if (isMaster) {
+		insuranceLimiter = new RateLimiterMemory({
+			...opts,
+			keyPrefix: 'api:ratelimiting:memory',
+		});
+	} else {
+		insuranceLimiter = new RateLimiterCluster({
+			...opts,
+			keyPrefix: 'api:ratelimiting:cluster',
+			timeoutMs: 3000, // Promise is rejected, if master doesn't answer for 3 secs
+		});
+	}
+
 	if (RATE_LIMIT_MEMORY_BACKEND != null) {
-		return new ExpressBrute.MemoryStore();
+		return insuranceLimiter;
 	}
 
 	const client = redis.createClient({
@@ -54,64 +63,40 @@ const getStore = _.once(() => {
 	// the whole process
 	client.on('error', _.throttle(logRedisError, 300000));
 
-	const opts: ExpressBruteRedisOpts = {
-		client,
-		prefix: 'api:ratelimiting:',
-	};
-
-	const redisStore = new ExpressBruteRedis(opts);
-	return new FacadeStore(redisStore);
-});
-
-// If redis system is not working, we bypass the rate limiting, to not
-// block the functionality of the API.
-const redisErrorHandler = (options: StoreErrorOptions) => {
-	options.next();
-};
-
-export const getUserIDFromCreds = Bluebird.method(
-	(req: _express.Request): string => {
-		if (req.creds != null && 'id' in req.creds) {
-			return `userID:${req.creds.id}`;
-		}
-		return `nouserID`;
-	},
-);
-
-export const resetCounter = (req: _express.Request): Bluebird<void> => {
-	return Bluebird.fromCallback<void>(cb => {
-		if (req.brute != null) {
-			req.brute.reset(cb);
-		} else {
-			cb(null);
-		}
-	}).catch((err: Error) => {
-		captureException(err, 'Error failed to reset rate limit counter', { req });
+	return new RateLimiterRedis({
+		...opts,
+		keyPrefix: 'api:ratelimiting:redis:',
+		storeClient: client,
+		insuranceLimiter,
 	});
 };
 
+export const SECONDS = 1000;
+export const SECONDS_PER_HOUR = 60 * 60;
+export const MINUTES = 60 * SECONDS;
+export const HOURS = 60 * MINUTES;
+
+export const getUserIDFromCreds = (req: _express.Request): string => {
+	if (req.creds != null && 'id' in req.creds) {
+		return `userID:${req.creds.id}`;
+	}
+	return `nouserID`;
+};
+
 export type PartialRateLimitMiddleware = (
-	field?:
-		| string
-		| ((req: _express.Request, res: _express.Response) => Bluebird<string>),
+	field?: string | ((req: _express.Request, res: _express.Response) => string),
 ) => _express.RequestHandler;
 
 export const createRateLimitMiddleware = (
-	expressBruteOpts: ExpressBrute.Options,
-	expressBruteMiddleware: Partial<ExpressBrute.Middleware> = {},
+	opts: IRateLimiterOptions,
+	keyOpts: Parameters<typeof $createRateLimitMiddleware>[1] = {},
 ): PartialRateLimitMiddleware => {
-	expressBruteOpts.handleStoreError = redisErrorHandler;
-	expressBruteOpts.failCallback = ExpressBrute.FailTooManyRequests;
-	if (expressBruteOpts.freeRetries !== undefined) {
-		expressBruteOpts.freeRetries *= RATE_LIMIT_FACTOR;
+	if (opts.points != null) {
+		opts.points *= RATE_LIMIT_FACTOR;
 	}
-	const expressBrute = new ExpressBrute(getStore(), expressBruteOpts);
+	const store = getStore(opts);
 
-	return _.partial(
-		$createRateLimitMiddleware,
-		expressBrute,
-		expressBruteMiddleware,
-	);
+	return _.partial($createRateLimitMiddleware, store, keyOpts);
 };
 
 // If 'field' is set, the middleware will apply the rate limit to requests
@@ -120,37 +105,52 @@ export const createRateLimitMiddleware = (
 // If 'field' is not set, the rate limit will be applied to *all* requests
 // originating from a particular IP.
 const $createRateLimitMiddleware = (
-	expressBrute: ExpressBrute,
-	expressBruteMiddleware: ExpressBrute.Middleware,
-	field?:
-		| string
-		| ((req: _express.Request, res: _express.Response) => Bluebird<string>),
+	rateLimiter: RateLimiterAbstract,
+	{
+		ignoreIP = false,
+		allowReset = true,
+	}: { ignoreIP?: boolean; allowReset?: boolean } = {},
+	field?: string | ((req: _express.Request, res: _express.Response) => string),
 ): _express.RequestHandler => {
-	if (expressBrute == null) {
-		throw new Error(
-			'expressBrute object is required to create rate limit middleware',
-		);
-	}
-
+	let fieldFn: (req: _express.Request, res: _express.Response) => string;
 	if (field != null) {
-		let keyFn: _express.Handler;
 		if (_.isFunction(field)) {
-			keyFn = async (req, res, next) => {
-				try {
-					next(await field(req, res));
-				} catch {
-					next();
-				}
-			};
+			fieldFn = field;
 		} else {
 			const path = _.toPath(field);
-			keyFn = (req, _res, next) => {
-				next(_.get(req, path));
-			};
+			fieldFn = req => _.get(req, path);
 		}
-		expressBruteMiddleware.key = keyFn;
-		return expressBrute.getMiddleware(expressBruteMiddleware);
 	} else {
-		return expressBrute.prevent;
+		fieldFn = () => '';
 	}
+	let keyFn: (req: _express.Request, res: _express.Response) => string;
+	if (ignoreIP) {
+		keyFn = fieldFn;
+	} else {
+		keyFn = (req, res) => req.ip + '$' + fieldFn(req, res);
+	}
+	const addReset = !allowReset
+		? _.noop
+		: (req: _express.Request, key: string) => {
+				const resetRatelimit = req.resetRatelimit;
+				req.resetRatelimit = async () => {
+					try {
+						await Promise.all([rateLimiter.delete(key), resetRatelimit?.()]);
+					} catch (err) {
+						captureException(err, 'Error failed to reset rate limit counter', {
+							req,
+						});
+					}
+				};
+		  };
+	return async (req, res, next) => {
+		try {
+			const key = keyFn(req, res);
+			await rateLimiter.consume(key);
+			addReset(req, key);
+			next();
+		} catch {
+			res.status(429).send('Too Many Requests');
+		}
+	};
 };
