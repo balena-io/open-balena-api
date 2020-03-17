@@ -1,4 +1,14 @@
 - commits:
+    - subject: Switch to rate-limit-flexible for rate limiting
+      hash: 56d574f7affcb0a5961264f17cd2aae19fbe76be
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.60.0
+  date: 2020-03-17T12:15:32.913Z
+- commits:
     - subject: Don't allow downgrading a supervisor release for a device
       hash: 68120045cf898cb068d361256ad65a30372658a6
       body: ''
