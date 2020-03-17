@@ -1,9 +1,6 @@
-// Augment express.js with resin-specific attributes via declaration merging.
+// Augment express.js with balena-specific attributes via declaration merging.
 
-declare interface BruteReset {
-	reset(cb?: (err?: Error) => void): void;
-}
-
+// tslint:disable-next-line:no-namespace
 declare namespace Express {
 	export interface Request {
 		prefetchApiKey?: ApiKey;
@@ -21,10 +18,10 @@ declare namespace Express {
 
 		untranslatedUrl?: string;
 
-		brute?: BruteReset;
-
 		error?: any;
 		subject?: string;
 		custom?: AnyObject;
+
+		resetRatelimit?: () => Promise<void>;
 	}
 }
