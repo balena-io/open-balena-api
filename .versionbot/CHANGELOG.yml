@@ -1,4 +1,25 @@
 - commits:
+    - subject: Refactor how device type specific config vars are synthesized
+      hash: a3d237f14b4c542f6d3d7decdb8f197e17fc9022
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+    - subject: Refactor the /config/vars endpoint tests & test the fincm3 results
+      hash: 8fdbc836d167de65efcf2bfb94c0870e7faff76b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+  version: 0.61.2
+  date: 2020-03-18T16:11:52.829Z
+- commits:
     - subject: Add a retry-after header back to the rate limiting
       hash: 36e79c0325eb79c13802f809a7e05a69f1bda363
       body: ''
