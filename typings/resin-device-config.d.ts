@@ -32,7 +32,7 @@ declare module 'resin-device-config' {
 
 	export interface GenerateParams {
 		appUpdatePollInterval?: number;
-		network?: Array<>;
+		network?: any[];
 		ip?: string;
 		gateway?: string;
 		netmask?: string;
