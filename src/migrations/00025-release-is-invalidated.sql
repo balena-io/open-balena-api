@@ -1,0 +1,1 @@
+ALTER TABLE "release" ADD COLUMN "is invalidated" INTEGER DEFAULT 0 NOT NULL;

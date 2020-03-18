@@ -516,6 +516,7 @@ Fact type: release has source
 	Necessity: each release has exactly one source.
 Fact type: release has build log
 	Necessity: each release has at most one build log.
+Fact type: release is invalidated
 Fact type: release has start timestamp
 	Necessity: each release has exactly one start timestamp.
 Fact type: release has end timestamp
