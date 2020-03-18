@@ -1,4 +1,21 @@
 - commits:
+    - subject: Add a retry-after header back to the rate limiting
+      hash: 36e79c0325eb79c13802f809a7e05a69f1bda363
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Fix units for `blockDuration`
+      hash: 17dde17802008f34a5401998329191653479cebf
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.61.1
+  date: 2020-03-18T14:27:42.134Z
+- commits:
     - subject: Apply linting to typings files
       hash: 5eb4182c3ae5771de48eabd8a07dc30880d5ec49
       body: ''
