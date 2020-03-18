@@ -5,6 +5,7 @@ import {
 	RateLimiterCluster,
 	RateLimiterMemory,
 	RateLimiterRedis,
+	RateLimiterRes,
 } from 'rate-limiter-flexible';
 import * as redis from 'redis';
 
@@ -70,11 +71,6 @@ const getStore = (opts: IRateLimiterOptions) => {
 		insuranceLimiter,
 	});
 };
-
-export const SECONDS = 1000;
-export const SECONDS_PER_HOUR = 60 * 60;
-export const MINUTES = 60 * SECONDS;
-export const HOURS = 60 * MINUTES;
 
 export const getUserIDFromCreds = (req: _express.Request): string => {
 	if (req.creds != null && 'id' in req.creds) {
@@ -149,8 +145,16 @@ const $createRateLimitMiddleware = (
 			await rateLimiter.consume(key);
 			addReset(req, key);
 			next();
-		} catch {
-			res.status(429).send('Too Many Requests');
+		} catch (e) {
+			if (e instanceof RateLimiterRes) {
+				if (e.msBeforeNext) {
+					res.set('Retry-After', `${Math.round(e.msBeforeNext / 1000)}`);
+				}
+				res.status(429).send('Too Many Requests');
+			} else {
+				captureException(e, 'Error during rate limiting', { req });
+				res.sendStatus(500);
+			}
 		}
 	};
 };

@@ -1,6 +1,6 @@
 import { Application } from 'express';
 import * as _ from 'lodash';
-import { HOURS, SECONDS, SECONDS_PER_HOUR } from '../lib/config';
+import { SECONDS_PER_HOUR } from '../lib/config';
 
 import {
 	apiKeyMiddleware,
@@ -16,7 +16,7 @@ import { createRateLimitMiddleware } from '../lib/rate-limiting';
 // Rate limit for unauthenticated access
 export const loginRateLimiter = createRateLimitMiddleware({
 	points: 10, // 10 tries
-	blockDuration: 1 * HOURS, // wait 1 hour after 10 tries (in ms)
+	blockDuration: 1 * SECONDS_PER_HOUR, // wait 1 hour after 10 tries (in seconds)
 	duration: 2 * SECONDS_PER_HOUR, // reset counter after 2 hours (in seconds)
 });
 
@@ -24,7 +24,7 @@ export const loginRateLimiter = createRateLimitMiddleware({
 export const deviceLogsRateLimiter = createRateLimitMiddleware(
 	{
 		points: 14, // allow 15 device log batches (1+14 "retries") per window
-		blockDuration: 10 * SECONDS,
+		blockDuration: 10, // seconds
 		duration: 10, // reset counter after 10 seconds (from the first batch of the window)
 	},
 	{
