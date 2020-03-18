@@ -4,11 +4,10 @@ import * as _ from 'lodash';
 
 import {
 	BLACKLISTED_NAMES,
-	HOST_CONFIG_VAR_PROPERTIES,
+	DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES,
 	INVALID_CHARACTER_REGEX,
 	RESERVED_NAMES,
 	RESERVED_NAMESPACES,
-	RESIN_HOST_CONFIG_CAPABLE_DEVICE_TYPES,
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
 	WHITELISTED_NAMES,
 	WHITELISTED_NAMESPACES,
@@ -21,13 +20,13 @@ export const vars: RequestHandler = (req, res) => {
 	const schema: JSONSchema6 = {
 		type: 'object',
 		$schema: 'http://json-schema.org/draft-06/schema#',
-		properties: {
-			...SUPERVISOR_CONFIG_VAR_PROPERTIES,
-
-			...(RESIN_HOST_CONFIG_CAPABLE_DEVICE_TYPES.includes(req.query.deviceType)
-				? HOST_CONFIG_VAR_PROPERTIES
-				: {}),
-		},
+		properties: Object.assign(
+			{},
+			SUPERVISOR_CONFIG_VAR_PROPERTIES,
+			...DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES.filter(config =>
+				config.capableDeviceTypes.includes(req.query.deviceType),
+			).map(config => config.properties),
+		),
 	};
 
 	const varsConfig = {
