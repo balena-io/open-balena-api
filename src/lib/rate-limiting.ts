@@ -145,8 +145,16 @@ const $createRateLimitMiddleware = (
 			await rateLimiter.consume(key);
 			addReset(req, key);
 			next();
-		} catch {
-			res.status(429).send('Too Many Requests');
+		} catch (e) {
+			if (e instanceof RateLimiterRes) {
+				if (e.msBeforeNext) {
+					res.set('Retry-After', `${Math.round(e.msBeforeNext / 1000)}`);
+				}
+				res.status(429).send('Too Many Requests');
+			} else {
+				captureException(e, 'Error during rate limiting', { req });
+				res.sendStatus(500);
+			}
 		}
 	};
 };
