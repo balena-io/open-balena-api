@@ -109,42 +109,44 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 	},
 };
 
-export const HOST_CONFIG_VAR_PROPERTIES: {
-	[k: string]: JSONSchema6Definition;
-} = {
-	RESIN_HOST_CONFIG_disable_splash: {
-		enum: ['0', '1'],
-		description: 'Enable / Disable the rainbow splash screen',
-		default: '1',
+export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
+	capableDeviceTypes: string[];
+	properties: Dictionary<JSONSchema6Definition>;
+}> = [
+	{
+		capableDeviceTypes: [
+			'raspberry-pi',
+			'raspberry-pi2',
+			'raspberrypi3-64',
+			'raspberrypi3',
+			'raspberrypi4-64',
+			'fincm3',
+			'revpi-core-3',
+			'npe-x500-m3',
+		],
+		properties: {
+			RESIN_HOST_CONFIG_disable_splash: {
+				enum: ['0', '1'],
+				description: 'Enable / Disable the rainbow splash screen',
+				default: '1',
+			},
+			RESIN_HOST_CONFIG_dtparam: {
+				type: 'string',
+				description: 'Define DT parameters',
+				default: '"i2c_arm=on","spi=on","audio=on"',
+			},
+			RESIN_HOST_CONFIG_enable_uart: {
+				enum: ['0', '1'],
+				description: 'Enable / Disable UART',
+				default: '1',
+			},
+			RESIN_HOST_CONFIG_gpu_mem: {
+				type: 'integer',
+				description: 'Define device GPU memory in megabytes.',
+				default: 16,
+			},
+		},
 	},
-	RESIN_HOST_CONFIG_dtparam: {
-		type: 'string',
-		description: 'Define DT parameters',
-		default: '"i2c_arm=on","spi=on","audio=on"',
-	},
-	RESIN_HOST_CONFIG_enable_uart: {
-		enum: ['0', '1'],
-		description: 'Enable / Disable UART',
-		default: '1',
-	},
-	RESIN_HOST_CONFIG_gpu_mem: {
-		type: 'integer',
-		description: 'Define device GPU memory in megabytes.',
-		default: 16,
-	},
-};
-
-// the namespace RESIN_HOST_CONFIG_ is only applicable for raspberrypis
-// as it supports the config.txt file
-export const RESIN_HOST_CONFIG_CAPABLE_DEVICE_TYPES = [
-	'raspberry-pi',
-	'raspberry-pi2',
-	'raspberrypi3-64',
-	'raspberrypi3',
-	'raspberrypi4-64',
-	'fincm3',
-	'revpi-core-3',
-	'npe-x500-m3',
 ];
 
 const startsWithAny = (ns: string[], name: string) => {
