@@ -152,6 +152,17 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			},
 		},
 	},
+	{
+		capableDeviceTypes: ['up-board'],
+		properties: {
+			RESIN_HOST_CONFIGFS_ssdt: {
+				type: 'string',
+				description:
+					'Define SSDT overlays. Only supported by supervisor versions >= v10.9.2.',
+				examples: ['"spidev1.0","spidev1.1"'],
+			},
+		},
+	},
 ];
 
 const startsWithAny = (ns: string[], name: string) => {
