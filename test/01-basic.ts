@@ -131,6 +131,7 @@ describe('Basic', () => {
 				extraConfigVarSchemaProperties: [
 					'RESIN_HOST_CONFIG_disable_splash',
 					'RESIN_HOST_CONFIG_dtparam',
+					'RESIN_HOST_CONFIG_dtoverlay',
 					'RESIN_HOST_CONFIG_enable_uart',
 					'RESIN_HOST_CONFIG_gpu_mem',
 				],
