@@ -1,4 +1,20 @@
 - commits:
+    - subject: 'env-vars: Add SSDT overlays host configfs variable for the up-board'
+      hash: 98261df179c84d17e67c177c9166d1606c181068
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://www.flowdock.com/app/rulemotion/r-supervisor/threads/tBuZeGU8N3aqK2IOidtHiOQIdBf
+        see: >-
+          https://www.flowdock.com/app/rulemotion/r-supervisor/threads/tBuZeGU8N3aqK2IOidtHiOQIdBf
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+  version: 0.63.0
+  date: 2020-03-20T18:45:13.182Z
+- commits:
     - subject: 'env-vars: Add dtoverlay host config variable'
       hash: acbedf67dc041b12865dd771ed1fea190ed0f6c7
       body: |
