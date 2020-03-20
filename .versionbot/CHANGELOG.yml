@@ -1,4 +1,22 @@
 - commits:
+    - subject: 'env-vars: Add dtoverlay host config variable'
+      hash: acbedf67dc041b12865dd771ed1fea190ed0f6c7
+      body: |
+        Looks like we have forgotten to add it in here, even
+        though our docs do mention it along with dtparams.
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://www.flowdock.com/app/rulemotion/r-supervisor/threads/F-ibcGI_Y4EhkBJbuS5UIqMYi5t
+        see: >-
+          https://www.flowdock.com/app/rulemotion/r-supervisor/threads/F-ibcGI_Y4EhkBJbuS5UIqMYi5t
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+  version: 0.62.0
+  date: 2020-03-19T15:28:02.574Z
+- commits:
     - subject: Refactor how device type specific config vars are synthesized
       hash: a3d237f14b4c542f6d3d7decdb8f197e17fc9022
       body: ''
