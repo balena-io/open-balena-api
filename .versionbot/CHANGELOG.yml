@@ -1,4 +1,16 @@
 - commits:
+    - subject: Allow string ids for supervisor_release resources
+      hash: 1ddd00bb906c6b83053bcfe8f8ae1c1eeb9c7c5e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Cameron Diver <cameron@balena.io>
+        signed-off-by: Cameron Diver <cameron@balena.io>
+      author: Cameron Diver
+  version: 0.63.1
+  date: 2020-03-23T17:28:02.865Z
+- commits:
     - subject: 'env-vars: Add SSDT overlays host configfs variable for the up-board'
       hash: 98261df179c84d17e67c177c9166d1606c181068
       body: ''
