@@ -328,6 +328,15 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		}
 
 		if (request.values.should_be_managed_by__supervisor_release) {
+			// First try to coerce the value to an integer for
+			// moving forward
+			request.values.should_be_managed_by__supervisor_release = parseInt(
+				request.values.should_be_managed_by__supervisor_release,
+				10,
+			);
+
+			// But let's check we actually got a value
+			// representing an integer
 			if (
 				!Number.isInteger(
 					request.values.should_be_managed_by__supervisor_release,
