@@ -61,10 +61,7 @@ const validateSupervisorResponse = (
 			res.status(statusCode).json(jsonBody);
 		} else if (/^text\/(plain|html)/.test(contentType)) {
 			if (/^([A-Za-z0-9\s:'\.\?!,\/-])*$/g.test(body)) {
-				res
-					.status(statusCode)
-					.set('Content-Type', 'text/plain')
-					.send(body);
+				res.status(statusCode).set('Content-Type', 'text/plain').send(body);
 			} else {
 				badSupervisorResponse(req, res, filter, 'Invalid TEXT data');
 			}
@@ -230,10 +227,11 @@ export async function requestDevices({
 	})) as AnyObject[];
 
 	const promises: Array<ReturnType<typeof requestAsync>> = [];
-	const waitPromise = Bluebird.each(devices, device => {
+	const waitPromise = Bluebird.each(devices, (device) => {
 		const vpnIp = device.is_managed_by__service_instance[0].ip_address;
-		const deviceUrl = `http://${device.uuid}.balena:${device.api_port ||
-			80}${url}?apikey=${device.api_secret}`;
+		const deviceUrl = `http://${device.uuid}.balena:${
+			device.api_port || 80
+		}${url}?apikey=${device.api_secret}`;
 		let p = requestAsync({
 			uri: deviceUrl,
 			json: data,

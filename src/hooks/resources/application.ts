@@ -38,7 +38,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 });
 
 sbvrUtils.addPureHook('POST', 'resin', 'application', {
-	POSTPARSE: async args => {
+	POSTPARSE: async (args) => {
 		const { req, request, api } = args;
 		const appName = request.values.app_name;
 
@@ -73,7 +73,7 @@ sbvrUtils.addPureHook('PUT', 'resin', 'application', {
 });
 
 sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
-	PRERUN: args => {
+	PRERUN: (args) => {
 		const waitPromises = [checkDependentApplication(args)];
 		const { request } = args;
 		const appName = request.values.app_name;
@@ -86,7 +86,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 				request.values.slug = appName.toLowerCase();
 			}
 			waitPromises.push(
-				getCurrentRequestAffectedIds(args).then(ids => {
+				getCurrentRequestAffectedIds(args).then((ids) => {
 					if (ids.length === 0) {
 						return;
 					}
@@ -131,7 +131,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 });
 
 sbvrUtils.addPureHook('DELETE', 'resin', 'application', {
-	PRERUN: async args => {
+	PRERUN: async (args) => {
 		const appIds = await getCurrentRequestAffectedIds(args);
 		if (appIds.length === 0) {
 			const { odataQuery } = args.request;

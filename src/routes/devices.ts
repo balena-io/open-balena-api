@@ -64,7 +64,7 @@ export const register: RequestHandler = async (req, res) => {
 			req.apiKey.permissions.push('resin.device.create-device-api-key');
 		}
 
-		const response = await sbvrUtils.db.transaction(async tx => {
+		const response = await sbvrUtils.db.transaction(async (tx) => {
 			const device = (await api.resin.post({
 				resource: 'device',
 				passthrough: { req, tx },
@@ -158,7 +158,7 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 			throw new BadRequestError('expiry_date not found or invalid');
 		}
 
-		await sbvrUtils.db.transaction(async tx => {
+		await sbvrUtils.db.transaction(async (tx) => {
 			const resinApiTx = api.resin.clone({ passthrough: { tx, req } });
 
 			// Get all existing dependent devices, these are used figure out
@@ -177,7 +177,7 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 				online_dependent_devices,
 				devices.map(({ local_id }) => local_id),
 			);
-			await Bluebird.map(toBeProvisioned, localId =>
+			await Bluebird.map(toBeProvisioned, (localId) =>
 				// Provision new dependent devices
 				resinApiTx.post({
 					resource: 'device',
@@ -386,7 +386,7 @@ export const state: RequestHandler = async (req, res) => {
 	}
 
 	try {
-		const [device] = (await sbvrUtils.db.readTransaction!(tx =>
+		const [device] = (await sbvrUtils.db.readTransaction!((tx) =>
 			stateQuery({ uuid }, undefined, { req, tx }),
 		)) as AnyObject[];
 
@@ -418,7 +418,7 @@ export const state: RequestHandler = async (req, res) => {
 				}
 			}
 
-			(release.contains__image as AnyObject[]).forEach(ipr => {
+			(release.contains__image as AnyObject[]).forEach((ipr) => {
 				// extract the per-image information
 				const image = ipr.image[0];
 
@@ -517,7 +517,7 @@ export const state: RequestHandler = async (req, res) => {
 		}> = {};
 
 		(parentApp.is_depended_on_by__application as AnyObject[]).forEach(
-			depApp => {
+			(depApp) => {
 				const depRelease = _.get(depApp, 'should_be_running__release[0]');
 				depAppCache[depApp.id] = {
 					release: depRelease,
@@ -547,7 +547,7 @@ export const state: RequestHandler = async (req, res) => {
 			},
 		);
 
-		(device.manages__device as AnyObject[]).forEach(depDev => {
+		(device.manages__device as AnyObject[]).forEach((depDev) => {
 			const depAppId: number = depDev.belongs_to__application.__id;
 			const {
 				release: depRelease,
@@ -786,7 +786,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 	}
 
 	try {
-		await sbvrUtils.db.transaction(async tx => {
+		await sbvrUtils.db.transaction(async (tx) => {
 			const resinApiTx = api.resin.clone({ passthrough: { req, custom, tx } });
 
 			const [device] = (await resinApiTx.get({
@@ -856,7 +856,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 			if (apps != null) {
 				const imageIds: number[] = [];
 
-				_.each(apps, app => {
+				_.each(apps, (app) => {
 					_.each(app.services, (svc, imageIdStr) => {
 						const imageId = _.parseInt(imageIdStr, 10);
 						imageIds.push(imageId);

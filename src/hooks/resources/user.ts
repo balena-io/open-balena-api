@@ -63,7 +63,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 
 		const authApiDeletes = Bluebird.map(
 			['user__has__role', 'user__has__permission'],
-			resource =>
+			(resource) =>
 				authApiTx
 					.delete({
 						resource,
@@ -73,7 +73,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 							},
 						},
 					})
-					.tapCatch(err => {
+					.tapCatch((err) => {
 						captureException(err, `Error deleting user ${resource}`, { req });
 					}),
 		);
@@ -97,7 +97,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 							},
 						},
 					})
-					.tapCatch(err => {
+					.tapCatch((err) => {
 						captureException(err, 'Error deleting user api_key', { req });
 					});
 			});

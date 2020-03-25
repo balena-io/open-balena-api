@@ -5,7 +5,7 @@ import { User } from '../../src/platform/jwt';
 
 export type UserObjectParam = Partial<User & { token: string }>;
 
-export const supertest = function(
+export const supertest = function (
 	app: express.Express,
 	user?: string | UserObjectParam,
 ) {

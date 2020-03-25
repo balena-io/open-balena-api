@@ -113,7 +113,7 @@ export const createApiKey = (
 			options as InternalApiKeyOptions,
 		);
 	} else {
-		return sbvrUtils.db.transaction(tx => {
+		return sbvrUtils.db.transaction((tx) => {
 			options.tx = tx;
 			return $createApiKey(
 				actorType,

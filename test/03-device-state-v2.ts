@@ -36,7 +36,7 @@ const tracker = new StateTracker();
 (configMock as AnyObject)['API_HEARTBEAT_STATE_TIMEOUT_SECONDS'] = TIMEOUT_SEC;
 
 const updateDeviceModel = stateMock.getInstance()['updateDeviceModel'];
-stateMock.getInstance()['updateDeviceModel'] = function(
+stateMock.getInstance()['updateDeviceModel'] = function (
 	uuid: string,
 	newState: stateMock.DeviceOnlineStates,
 ) {
@@ -166,7 +166,7 @@ describe('Device State v2', () => {
 				Math.ceil((POLL_MSEC * stateMock.POLL_JITTER_FACTOR) / 1000) * 1000;
 
 			const stateChangeEventSpy = sinon.spy();
-			stateMock.getInstance().on('change', args => {
+			stateMock.getInstance().on('change', (args) => {
 				if (args.uuid !== device.uuid) {
 					return;
 				}
@@ -218,8 +218,9 @@ describe('Device State v2', () => {
 				);
 			});
 
-			it(`Should see state become "timeout" following a delay of ${devicePollInterval /
-				1000} seconds`, async () => {
+			it(`Should see state become "timeout" following a delay of ${
+				devicePollInterval / 1000
+			} seconds`, async () => {
 				stateChangeEventSpy.resetHistory();
 				await Bluebird.delay(devicePollInterval);
 
@@ -264,8 +265,9 @@ describe('Device State v2', () => {
 				);
 			});
 
-			it(`Should see state become "offline" following a delay of ${TIMEOUT_SEC +
-				devicePollInterval / 1000} seconds`, async () => {
+			it(`Should see state become "offline" following a delay of ${
+				TIMEOUT_SEC + devicePollInterval / 1000
+			} seconds`, async () => {
 				stateChangeEventSpy.resetHistory();
 
 				await Bluebird.delay(devicePollInterval + TIMEOUT_SEC * 1000);

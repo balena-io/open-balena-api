@@ -45,23 +45,15 @@ const addReleaseToApp = async (
 	auth: UserObjectParam,
 	release: MockReleaseParams,
 ): Promise<MockRelease> =>
-	(
-		await supertest(app, auth)
-			.post(`/resin/release`)
-			.send(release)
-			.expect(201)
-	).body;
+	(await supertest(app, auth).post(`/resin/release`).send(release).expect(201))
+		.body;
 
 const addImageToService = async (
 	auth: UserObjectParam,
 	image: MockImageParams,
 ): Promise<MockImage> =>
-	(
-		await supertest(app, auth)
-			.post(`/resin/image`)
-			.send(image)
-			.expect(201)
-	).body;
+	(await supertest(app, auth).post(`/resin/image`).send(image).expect(201))
+		.body;
 
 const addServiceToApp = async (
 	auth: UserObjectParam,
@@ -100,7 +92,7 @@ describe('Device with missing service installs', () => {
 	const releases: _.Dictionary<number> = {};
 	const services: _.Dictionary<number> = {};
 
-	before('Setup the application and initial release', async function() {
+	before('Setup the application and initial release', async function () {
 		fx = await fixtures.load('unpin-device-after-release');
 
 		admin = fx.users.admin;
@@ -142,7 +134,7 @@ describe('Device with missing service installs', () => {
 		await fixtures.clean(fx);
 	});
 
-	it('should add a new device', async function() {
+	it('should add a new device', async function () {
 		device = await fakeDevice.provisionDevice(admin, applicationId);
 
 		const state = await device.getStateV2();
@@ -153,7 +145,7 @@ describe('Device with missing service installs', () => {
 		);
 	});
 
-	it('should pin the device to the first release', async function() {
+	it('should pin the device to the first release', async function () {
 		await supertest(app, admin)
 			.patch(`/resin/device(${device.id})`)
 			.send({
@@ -169,7 +161,7 @@ describe('Device with missing service installs', () => {
 		);
 	});
 
-	it('should add a new release to the application', async function() {
+	it('should add a new release to the application', async function () {
 		// add a release to the application...
 		const { id: releaseId } = await addReleaseToApp(admin, {
 			belongs_to__application: applicationId,
@@ -219,7 +211,7 @@ describe('Device with missing service installs', () => {
 		);
 	});
 
-	it('should un-pin the device', async function() {
+	it('should un-pin the device', async function () {
 		await supertest(app, admin)
 			.patch(`/resin/device(${device.id})`)
 			.send({
@@ -228,7 +220,7 @@ describe('Device with missing service installs', () => {
 			.expect(200);
 	});
 
-	it('should pull the intended state', async function() {
+	it('should pull the intended state', async function () {
 		const state = await device.getStateV2();
 		expect(state.local.apps[applicationId]).to.have.property(
 			'commit',

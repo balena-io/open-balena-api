@@ -11,11 +11,11 @@ const testFiles = _(process.env.TEST_FILES)
 		const compareFilename = rest.join('');
 		switch (op) {
 			case '<':
-				return f => f < compareFilename;
+				return (f) => f < compareFilename;
 			case '>':
-				return f => f > compareFilename;
+				return (f) => f > compareFilename;
 			default:
-				return f => f.startsWith(fileName);
+				return (f) => f.startsWith(fileName);
 		}
 	});
 
@@ -23,7 +23,7 @@ const prefixes: Dictionary<true> = {};
 
 Bluebird.resolve(fs.promises.readdir(__dirname))
 	.call('sort')
-	.each(fileName => {
+	.each((fileName) => {
 		const ext = path.extname(fileName);
 		if (ext !== '.ts') {
 			return;
@@ -31,7 +31,7 @@ Bluebird.resolve(fs.promises.readdir(__dirname))
 		fileName = path.basename(fileName, ext);
 		if (
 			testFiles.length > 0 &&
-			!testFiles.some(testFile => testFile(fileName))
+			!testFiles.some((testFile) => testFile(fileName))
 		) {
 			return;
 		}
@@ -45,7 +45,7 @@ Bluebird.resolve(fs.promises.readdir(__dirname))
 		});
 	})
 	.then(() => fs.promises.readdir(path.join(__dirname, 'scenarios')))
-	.each(filename => {
+	.each((filename) => {
 		const ext = path.extname(filename);
 		if (ext !== '.ts') {
 			return;
@@ -54,7 +54,7 @@ Bluebird.resolve(fs.promises.readdir(__dirname))
 
 		if (
 			testFiles.length > 0 &&
-			!testFiles.some(testFile => testFile(filename))
+			!testFiles.some((testFile) => testFile(filename))
 		) {
 			return;
 		}

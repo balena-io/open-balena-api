@@ -204,7 +204,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		// create the RedisMQ queue and start consuming messages...
 		this.rsmq
 			.createQueueAsync({ qname: DeviceOnlineStateManager.EXPIRED_QUEUE })
-			.catch(err => {
+			.catch((err) => {
 				if (err.name !== 'queueExists') {
 					throw err;
 				}
@@ -293,7 +293,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 				qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
 				vt: DeviceOnlineStateManager.RSMQ_READ_TIMEOUT, // prevent other consumers seeing the same message (if any) preventing multiple API agents from processing it...
 			})
-			.then(async msg => {
+			.then(async (msg) => {
 				if (!('id' in msg)) {
 					// no messages to consume, wait a second...
 					return Bluebird.delay(1000);

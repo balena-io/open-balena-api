@@ -159,7 +159,7 @@ function setupMiddleware(app: _express.Application) {
 	app.use(AUTH_PATH, cookieParser());
 
 	const JSON_REGEXP = /^application\/(([\w!//\$%&\*`\-\.\^~]*\+)?json|csp-report)/i;
-	const isJson: bodyParser.Options['type'] = req => {
+	const isJson: bodyParser.Options['type'] = (req) => {
 		const contentType = req.headers['content-type'];
 		if (contentType == null) {
 			return false;
@@ -194,7 +194,7 @@ async function startServer(
 	port: string | number,
 ): Promise<Server> {
 	let server: Server;
-	await Bluebird.fromCallback(cb => {
+	await Bluebird.fromCallback((cb) => {
 		server = app.listen(port, cb as (...args: any[]) => void);
 	});
 	console.log(`Server listening in ${app.get('env')} mode on port ${port}`);

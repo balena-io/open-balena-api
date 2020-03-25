@@ -1,4 +1,3 @@
-// tslint:disable:no-console
 const numWorkers = process.env.NUM_WORKERS || require('os').cpus().length;
 if (numWorkers > 1) {
 	const cluster = require('cluster');
@@ -14,7 +13,7 @@ if (numWorkers > 1) {
 			cluster.fork(process.env);
 		}
 
-		cluster.on('exit', worker => {
+		cluster.on('exit', (worker) => {
 			console.log('Worker ' + worker.id + ' died, replacing it');
 			cluster.fork(process.env);
 		});

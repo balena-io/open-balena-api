@@ -38,13 +38,13 @@ export const renameField = (
 	from: string,
 	to: string,
 ) => {
-	abstractSqlModel.tables[resourceName].fields.forEach(field => {
+	abstractSqlModel.tables[resourceName].fields.forEach((field) => {
 		if (field.fieldName === from) {
 			field.fieldName = to;
 		}
 	});
-	abstractSqlModel.tables[resourceName].indexes.forEach(index => {
-		index.fields = index.fields.map(field => {
+	abstractSqlModel.tables[resourceName].indexes.forEach((index) => {
+		index.fields = index.fields.map((field) => {
 			if (field === from) {
 				return to;
 			}

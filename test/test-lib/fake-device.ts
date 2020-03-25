@@ -51,9 +51,7 @@ export async function provisionDevice(
 		.get(`/resin/application(${appId})?$expand=is_for__device_type`)
 		.expect(200);
 
-	expect(applications)
-		.to.have.property('d')
-		.that.is.an('array');
+	expect(applications).to.have.property('d').that.is.an('array');
 	expect(applications.d).to.have.lengthOf(
 		1,
 		`Incorrect number of applications found for ID ${appId}`,
@@ -70,10 +68,7 @@ export async function provisionDevice(
 		.post('/resin/device')
 		.send({
 			belongs_to__application: appId,
-			uuid: uuid
-				.v4()
-				.replace(/\-/g, '')
-				.toLowerCase(),
+			uuid: uuid.v4().replace(/\-/g, '').toLowerCase(),
 			device_type: deviceType,
 			os_version: '2.38.0+rev1',
 			supervisor_version: 'v10.0.0',

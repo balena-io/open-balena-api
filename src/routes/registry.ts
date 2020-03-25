@@ -99,7 +99,7 @@ const parseScope = (req: Request, scope: string): Scope | undefined => {
 };
 
 const grantAllToBuilder = (parsedScopes: Scope[]): Access[] =>
-	parsedScopes.map(scope => {
+	parsedScopes.map((scope) => {
 		const [type, name, requestedActions] = scope;
 		let allowedActions = ['pull', 'push'];
 		if (name === RESINOS_REPOSITORY) {
@@ -205,7 +205,7 @@ const authorizeRequest = (
 	scopes: string[],
 ): Access[] | PromiseLike<Access[]> => {
 	const parsedScopes: Scope[] = _(scopes)
-		.map(scope => parseScope(req, scope))
+		.map((scope) => parseScope(req, scope))
 		.compact()
 		.value();
 

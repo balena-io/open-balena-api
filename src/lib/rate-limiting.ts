@@ -114,7 +114,7 @@ const $createRateLimitMiddleware = (
 			fieldFn = field;
 		} else {
 			const path = _.toPath(field);
-			fieldFn = req => _.get(req, path);
+			fieldFn = (req) => _.get(req, path);
 		}
 	} else {
 		fieldFn = () => '';

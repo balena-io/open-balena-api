@@ -41,7 +41,7 @@ export const serviceInstallFromImage = (
 		id = image.is_a_build_of__service;
 	}
 
-	return _.find(device.service_install, si => si.service[0].id === id);
+	return _.find(device.service_install, (si) => si.service[0].id === id);
 };
 
 export const formatImageLocation = (imageLocation: string) =>
@@ -71,7 +71,7 @@ function runHook<Key extends keyof HookRegistry>(
 	name: Key,
 	args: Parameters<typeof STATE_ENDPOINT_HOOKS[Key][number]>,
 ) {
-	STATE_ENDPOINT_HOOKS[name].forEach(hook =>
+	STATE_ENDPOINT_HOOKS[name].forEach((hook) =>
 		hook(...(args as Parameters<typeof hook>)),
 	);
 }

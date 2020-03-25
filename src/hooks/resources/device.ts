@@ -74,7 +74,7 @@ const createReleaseServiceInstalls = (
 			},
 		},
 	}) as Bluebird<AnyObject[]>)
-		.map(service => {
+		.map((service) => {
 			// Filter out any services which do have a service install attached
 			if (service.service_install > 0) {
 				return;
@@ -99,7 +99,7 @@ const createAppServiceInstalls = (
 	appId: number,
 	deviceIds: number[],
 ): Bluebird<void> =>
-	Bluebird.map(deviceIds, deviceId =>
+	Bluebird.map(deviceIds, (deviceId) =>
 		createReleaseServiceInstalls(api, deviceId, {
 			should_be_running_on__application: {
 				$any: {
@@ -157,7 +157,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'device', {
 });
 
 sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
-	POSTPARSE: args => {
+	POSTPARSE: (args) => {
 		const { request } = args;
 
 		// Check for extra whitespace characters
@@ -200,7 +200,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			request.values.last_connectivity_event = new Date();
 		}
 	},
-	PRERUN: args => {
+	PRERUN: (args) => {
 		const { api, request } = args;
 		const waitPromises: Array<PromiseLike<any>> = [];
 
@@ -228,7 +228,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 					.catch(() => {
 						throw new InaccessibleAppError();
 					})
-					.then(async app => {
+					.then(async (app) => {
 						if (app == null) {
 							throw new InaccessibleAppError();
 						}
@@ -253,7 +253,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 							},
 						})) as Array<{ id: number }>;
 
-						request.custom.movedDevices = devices.map(device => device.id);
+						request.custom.movedDevices = devices.map((device) => device.id);
 					}),
 			);
 		}
@@ -261,7 +261,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		// check the release is valid for the devices affected...
 		if (request.values.should_be_running__release != null) {
 			waitPromises.push(
-				getCurrentRequestAffectedIds(args).then(async deviceIds => {
+				getCurrentRequestAffectedIds(args).then(async (deviceIds) => {
 					if (deviceIds.length === 0) {
 						return;
 					}
@@ -309,7 +309,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 				},
 			});
 			waitPromises.push(
-				getCurrentRequestAffectedIds(args).then(deviceIds =>
+				getCurrentRequestAffectedIds(args).then((deviceIds) =>
 					checkDevicesCanHaveDeviceURL(rootApi, deviceIds),
 				),
 			);
@@ -317,7 +317,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 
 		if (request.values.belongs_to__application != null) {
 			waitPromises.push(
-				getCurrentRequestAffectedIds(args).then(deviceIds =>
+				getCurrentRequestAffectedIds(args).then((deviceIds) =>
 					checkDevicesCanBeInApplication(
 						api,
 						request.values.belongs_to__application,
@@ -348,7 +348,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			// Ensure that we don't ever downgrade the supervisor
 			// from its current version
 			waitPromises.push(
-				getCurrentRequestAffectedIds(args).then(ids =>
+				getCurrentRequestAffectedIds(args).then((ids) =>
 					checkSupervisorReleaseUpgrades(
 						args.api,
 						ids,
@@ -360,7 +360,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 
 		return Bluebird.all(waitPromises);
 	},
-	POSTRUN: args => {
+	POSTRUN: (args) => {
 		const waitPromises: Array<PromiseLike<any>> = [];
 		const affectedIds = args.request.custom.affectedIds as ReturnType<
 			typeof getCurrentRequestAffectedIds
@@ -374,7 +374,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			args.request.values.device_name != null
 		) {
 			waitPromises.push(
-				affectedIds.then(deviceIds => {
+				affectedIds.then((deviceIds) => {
 					if (deviceIds.length === 0) {
 						return;
 					}
@@ -396,7 +396,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		const isOnline = args.request.values.is_online;
 		if ([false, 0].includes(isOnline)) {
 			waitPromises.push(
-				affectedIds.then(deviceIds => {
+				affectedIds.then((deviceIds) => {
 					if (deviceIds.length === 0) {
 						return;
 					}
@@ -422,7 +422,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		// create new ones for the new application (if the device is moving application)
 		if (args.request.values.belongs_to__application != null) {
 			waitPromises.push(
-				affectedIds.then(async deviceIds => {
+				affectedIds.then(async (deviceIds) => {
 					if (deviceIds.length === 0) {
 						return;
 					}
@@ -467,7 +467,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			// for this device+release combination. We need to create these
 			if (args.request.values.should_be_running__release != null) {
 				waitPromises.push(
-					affectedIds.map(dId =>
+					affectedIds.map((dId) =>
 						createReleaseServiceInstalls(args.api, dId, {
 							id: args.request.values.should_be_running__release,
 						}),
@@ -475,7 +475,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 				);
 			} else {
 				waitPromises.push(
-					affectedIds.map(async id => {
+					affectedIds.map(async (id) => {
 						const device = (await args.api.get({
 							id,
 							resource: 'device',
@@ -498,7 +498,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 
 			// If the device has been pinned/un-pinned then we should alert the supervisor
 			waitPromises.push(
-				affectedIds.then(deviceIds => {
+				affectedIds.then((deviceIds) => {
 					if (deviceIds.length === 0) {
 						return;
 					}

@@ -50,12 +50,10 @@ export const getIPv4 = (req: Request): string | undefined => {
 export type EnvVarList = Array<{ name: string; value: string }>;
 
 export const varListInsert = (varList: EnvVarList, obj: Dictionary<string>) => {
-	varList.forEach(evar => {
+	varList.forEach((evar) => {
 		obj[evar.name] = evar.value;
 	});
 };
 
 export const b64decode = (str: string): string =>
-	Buffer.from(str, 'base64')
-		.toString()
-		.trim();
+	Buffer.from(str, 'base64').toString().trim();

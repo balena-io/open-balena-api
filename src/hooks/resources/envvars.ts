@@ -45,7 +45,7 @@ const addEnvHooks = (
 	const postParseHook: sbvrUtils.Hooks['POSTPARSE'] = ({ request }) => {
 		return validateFn(request.values.name, request.values.value);
 	};
-	const preRunHook: sbvrUtils.Hooks['PRERUN'] = async args => {
+	const preRunHook: sbvrUtils.Hooks['PRERUN'] = async (args) => {
 		try {
 			const filter = await buildFilter(args);
 			if (filter == null) {

@@ -130,13 +130,13 @@ export const registerDeviceStateEvent = (
 		const uuid = _.get(req, pathToUuid, '');
 		if (uuid !== '') {
 			DeviceOnlineState.getPollInterval(uuid)
-				.then(pollInterval =>
+				.then((pollInterval) =>
 					DeviceOnlineState.getInstance().captureEventFor(
 						uuid,
 						pollInterval / 1000,
 					),
 				)
-				.catch(err => {
+				.catch((err) => {
 					captureException(
 						err,
 						`Unable to capture the API heartbeat event for device: ${uuid}`,

@@ -6,7 +6,7 @@ import { app } from '../init';
 
 import * as fakeDevice from './test-lib/fake-device';
 
-describe('supervisor release', function() {
+describe('supervisor release', function () {
 	let admin: UserObjectParam;
 
 	before(async () => {
@@ -19,9 +19,7 @@ describe('supervisor release', function() {
 			.get(`/resin/device_type?$select=id&$filter=slug eq 'raspberry-pi'`)
 			.expect(200);
 
-		expect(res.body)
-			.to.have.nested.property('d[0].id')
-			.that.is.a('number');
+		expect(res.body).to.have.nested.property('d[0].id').that.is.a('number');
 
 		await supertest(app, admin)
 			.post(`/resin/supervisor_release`)
