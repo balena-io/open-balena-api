@@ -1,4 +1,21 @@
 - commits:
+    - subject: Add is_invalidated boolean term to the release resource
+      hash: 45d42be2ed8cc107f28662134918c1b5fe774c92
+      body: |
+        We currently need the flag to mark host OS releases as invalid
+        so they can be filtered out from the list of available releases.
+        The future plan is for the supervisor to automatically rollback
+        invalidated releases, but there are no dedicated resources to
+        work on that just yet.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+  version: 0.65.0
+  date: 2020-03-25T17:18:33.276Z
+- commits:
     - subject: Stop re-exporting PineJS types
       hash: c79e0d03bcfc413b972e90c528dc5d75d9a402d0
       body: >
