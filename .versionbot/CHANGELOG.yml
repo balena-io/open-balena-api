@@ -1,4 +1,14 @@
 - commits:
+    - subject: Mark type-only imports
+      hash: e11e3755df84c4e36c0699670dd09537dd8e9dee
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+  version: 0.65.1
+  date: 2020-03-25T17:43:42.442Z
+- commits:
     - subject: Add is_invalidated boolean term to the release resource
       hash: 45d42be2ed8cc107f28662134918c1b5fe774c92
       body: |
