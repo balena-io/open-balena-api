@@ -1,4 +1,20 @@
 - commits:
+    - subject: Update dependencies
+      hash: 6b01c13ca410eca0d202b6e787b1fb08863e3b5c
+      body: |
+        Update pinejs from 10.3.0 to 10.3.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - version: pinejs-10.3.1
+          date: 2019-01-23T00:00:00.000Z
+          commits:
+            - subject: 'Convert odata-metadata-generator to typescript [Pagan Gazzard]'
+  version: 0.63.2
+  date: 2020-03-25T16:37:23.594Z
+- commits:
     - subject: Allow string ids for supervisor_release resources
       hash: 1ddd00bb906c6b83053bcfe8f8ae1c1eeb9c7c5e
       body: ''
