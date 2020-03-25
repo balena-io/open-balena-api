@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs';
 import * as _ from 'lodash';
 
-import { AbstractSqlModel } from '@resin/abstract-sql-compiler';
-import { Definition } from '@resin/odata-to-abstract-sql';
+import type { AbstractSqlModel } from '@resin/abstract-sql-compiler';
+import type { Definition } from '@resin/odata-to-abstract-sql';
 import { sbvrUtils } from '@resin/pinejs';
 
 export const generateAbstractSqlModel = (

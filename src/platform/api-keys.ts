@@ -1,9 +1,9 @@
-import { Request } from 'express';
+import type { Request } from 'express';
 import * as _ from 'lodash';
 import * as randomstring from 'randomstring';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { Tx } from '@resin/pinejs/out/database-layer/db';
+import type { Tx } from '@resin/pinejs/out/database-layer/db';
 
 import { isJWT } from './jwt';
 

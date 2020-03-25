@@ -3,14 +3,14 @@
 
 import * as BasicAuth from 'basic-auth';
 import * as Bluebird from 'bluebird';
-import { Request, RequestHandler } from 'express';
+import type { Request, RequestHandler } from 'express';
 import * as jsonwebtoken from 'jsonwebtoken';
 import * as _ from 'lodash';
 import * as memoize from 'memoizee';
 import * as uuid from 'uuid';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
+import type { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
 
 import { retrieveAPIKey } from '../platform/api-keys';
 import { captureException, handleHttpErrors } from '../platform/errors';
@@ -21,7 +21,7 @@ import {
 	REGISTRY2_HOST,
 	TOKEN_AUTH_BUILDER_TOKEN,
 } from '../lib/config';
-import { User as DbUser } from '../models';
+import type { User as DbUser } from '../models';
 
 const { UnauthorizedError, root, api } = sbvrUtils;
 

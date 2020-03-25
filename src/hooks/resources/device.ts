@@ -1,8 +1,8 @@
-import * as semver from 'balena-semver';
 import * as Bluebird from 'bluebird';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { PinejsClientCoreFactory } from 'pinejs-client-core';
+import type { PinejsClientCoreFactory } from 'pinejs-client-core';
+import * as semver from 'balena-semver';
 
 import {
 	addDeleteHookForDependents,

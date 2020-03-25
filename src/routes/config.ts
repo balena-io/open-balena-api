@@ -1,5 +1,5 @@
-import { RequestHandler } from 'express';
-import { JSONSchema6 } from 'json-schema';
+import type { RequestHandler } from 'express';
+import type { JSONSchema6 } from 'json-schema';
 
 import {
 	BLACKLISTED_NAMES,

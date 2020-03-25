@@ -1,4 +1,4 @@
-import { RequestHandler } from 'express';
+import type { RequestHandler } from 'express';
 import * as _ from 'lodash';
 
 import { getUser } from '../platform/auth';

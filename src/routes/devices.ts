@@ -1,10 +1,10 @@
 import * as Bluebird from 'bluebird';
-import { RequestHandler } from 'express';
+import type { RequestHandler } from 'express';
 import * as _ from 'lodash';
 import * as randomstring from 'randomstring';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { PinejsClientCoreFactory } from 'pinejs-client-core';
+import type { PinejsClientCoreFactory } from 'pinejs-client-core';
 
 import {
 	captureException,

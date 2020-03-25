@@ -1,4 +1,4 @@
-import * as express from 'express';
+import type { Request, Response } from 'express';
 import * as _ from 'lodash';
 
 import { sbvrUtils } from '@resin/pinejs';
@@ -11,10 +11,7 @@ const { UnauthorizedError, api } = sbvrUtils;
 
 const HOSTOS_ACCESS_MIN_OS_VER = '2.0.0';
 
-export async function hostOSAccess(
-	req: express.Request,
-	res: express.Response,
-): Promise<void> {
+export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 	const devices = await api.resin.get({
 		resource: 'device',
 		options: {

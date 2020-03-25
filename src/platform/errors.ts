@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import * as _ from 'lodash';
 import * as Raven from 'raven';
 

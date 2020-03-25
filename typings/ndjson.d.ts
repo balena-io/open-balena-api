@@ -1,5 +1,5 @@
 declare module 'ndjson' {
-	import { Transform } from 'stream';
+	import type { Transform } from 'stream';
 
 	interface Opts {
 		strict: boolean = true;

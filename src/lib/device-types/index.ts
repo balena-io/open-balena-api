@@ -4,9 +4,9 @@ import * as _ from 'lodash';
 
 import * as deviceTypesLib from '@resin.io/device-types';
 import { sbvrUtils } from '@resin/pinejs';
-import { Tx } from '@resin/pinejs/out/database-layer/db';
+import type { Tx } from '@resin/pinejs/out/database-layer/db';
 import * as semver from 'balena-semver';
-import { PinejsClientCoreFactory } from 'pinejs-client-core';
+import type { PinejsClientCoreFactory } from 'pinejs-client-core';
 
 import { captureException } from '../../platform/errors';
 
