@@ -1,28 +1,26 @@
-import * as balenaSemver from 'balena-semver';
+import * as semver from 'balena-semver';
 import * as Bluebird from 'bluebird';
-import * as _ from 'lodash';
+
+import { sbvrUtils } from '@resin/pinejs';
+import { PinejsClientCoreFactory } from 'pinejs-client-core';
+
+import {
+	addDeleteHookForDependents,
+	createActor,
+	getCurrentRequestAffectedIds,
+} from '../../platform';
 
 import {
 	checkDevicesCanBeInApplication,
 	checkDevicesCanHaveDeviceURL,
 } from '../../lib/application-types';
-
 import { postDevices } from '../../lib/device-proxy';
-import * as haikuName from '../../lib/haiku-name';
-
-import { sbvrUtils } from '@resin/pinejs';
-import {
-	addDeleteHookForDependents,
-	createActor,
-	getCurrentRequestAffectedIds,
-	PinejsClient,
-} from '../../platform';
-const { BadRequestError, root } = sbvrUtils;
 import { InaccessibleAppError } from '../../lib/errors';
+import * as haikuName from '../../lib/haiku-name';
+import { pseudoRandomBytesAsync } from '../../lib/utils';
 import { resolveDeviceType } from '../common';
 
-import { PinejsClientCoreFactory } from 'pinejs-client-core';
-import { pseudoRandomBytesAsync } from '../../lib/utils';
+const { BadRequestError, root } = sbvrUtils;
 
 const INVALID_NEWLINE_REGEX = /\r|\n/;
 
@@ -31,7 +29,7 @@ export const isDeviceNameValid = (name: string) => {
 };
 
 const createReleaseServiceInstalls = (
-	api: PinejsClient,
+	api: sbvrUtils.PinejsClient,
 	deviceId: number,
 	releaseFilter: PinejsClientCoreFactory.Filter,
 ): Bluebird<void> =>
@@ -95,7 +93,7 @@ const createReleaseServiceInstalls = (
 		.return();
 
 const createAppServiceInstalls = (
-	api: PinejsClient,
+	api: sbvrUtils.PinejsClient,
 	appId: number,
 	deviceIds: number[],
 ): Bluebird<void> =>
@@ -528,7 +526,7 @@ addDeleteHookForDependents('device', [
 ]);
 
 async function checkSupervisorReleaseUpgrades(
-	api: PinejsClient,
+	api: sbvrUtils.PinejsClient,
 	deviceIds: number[],
 	newSupervisorReleaseId: number,
 ) {
@@ -571,7 +569,7 @@ async function checkSupervisorReleaseUpgrades(
 
 	for (const release of releases) {
 		const oldVersion = release.supervisor_version;
-		if (balenaSemver.lt(newSupervisorVersion, oldVersion)) {
+		if (semver.lt(newSupervisorVersion, oldVersion)) {
 			throw new BadRequestError(
 				`Attempt to downgrade supervisor, which is not allowed`,
 			);

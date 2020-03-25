@@ -1,19 +1,15 @@
-import { Server } from 'http';
-import * as path from 'path';
-
-import * as _express from 'express';
-import * as _ from 'lodash';
-
 import * as Bluebird from 'bluebird';
-import * as Raven from 'raven';
-
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
+import cookieSession = require('cookie-session');
+import * as express from 'express';
+import { Server } from 'http';
+import * as _ from 'lodash';
 import * as methodOverride from 'method-override';
 import * as passport from 'passport';
-
-import cookieSession = require('cookie-session');
+import * as path from 'path';
+import * as Raven from 'raven';
 
 import * as pine from '@resin/pinejs';
 import * as pineEnv from '@resin/pinejs/out/config-loader/env';
@@ -36,7 +32,7 @@ import * as _applicationRoutes from './routes/applications';
 export const AUTH_PATH = '/auth';
 
 export type SetupFunction = (
-	app: _express.Application,
+	app: express.Application,
 ) => void | PromiseLike<void>;
 
 export interface SetupOptions {
@@ -53,7 +49,7 @@ export interface SetupOptions {
 	onLogin?: (user: AnyObject) => PromiseLike<void> | void;
 }
 
-export async function setup(app: _express.Application, options: SetupOptions) {
+export async function setup(app: express.Application, options: SetupOptions) {
 	if (DB_POOL_SIZE != null) {
 		pineEnv.db.poolSize = DB_POOL_SIZE;
 	}
@@ -145,7 +141,7 @@ export async function setup(app: _express.Application, options: SetupOptions) {
 	};
 }
 
-function fixProtocolMiddleware(skipUrls: string[] = []): _express.Handler {
+function fixProtocolMiddleware(skipUrls: string[] = []): express.Handler {
 	return (req, res, next) => {
 		if (req.protocol === 'https' || skipUrls.includes(req.url)) {
 			return next();
@@ -154,7 +150,7 @@ function fixProtocolMiddleware(skipUrls: string[] = []): _express.Handler {
 	};
 }
 
-function setupMiddleware(app: _express.Application) {
+function setupMiddleware(app: express.Application) {
 	app.use(compression());
 	app.use(AUTH_PATH, cookieParser());
 
@@ -190,7 +186,7 @@ function setupMiddleware(app: _express.Application) {
 }
 
 async function startServer(
-	app: _express.Application,
+	app: express.Application,
 	port: string | number,
 ): Promise<Server> {
 	let server: Server;
@@ -202,7 +198,7 @@ async function startServer(
 }
 
 async function runCommand(
-	app: _express.Application,
+	app: express.Application,
 	cmd: string,
 	argv: string[],
 ): Promise<void> {
@@ -211,7 +207,7 @@ async function runCommand(
 	process.exit(0);
 }
 
-function runFromCommandLine(app: _express.Application): Promise<void> {
+function runFromCommandLine(app: express.Application): Promise<void> {
 	const cmd = process.argv[2];
 	const args = process.argv.slice(3);
 	return runCommand(app, cmd, args);

@@ -1,6 +1,7 @@
 import * as AWS from 'aws-sdk';
 import * as _ from 'lodash';
 import * as path from 'path';
+
 import {
 	IMAGE_STORAGE_ACCESS_KEY,
 	IMAGE_STORAGE_BUCKET as S3_BUCKET,

@@ -1,14 +1,16 @@
 import { sbvrUtils } from '@resin/pinejs';
-import * as _ from 'lodash';
+import { Tx } from '@resin/pinejs/out/database-layer/db';
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
+
+import { getCurrentRequestAffectedIds } from '../../platform';
+import { captureException } from '../../platform/errors';
+
 import { postDevices } from '../../lib/device-proxy';
 import {
 	checkConfigVarNameValidity,
 	checkEnvVarNameValidity,
 	checkEnvVarValueValidity,
 } from '../../lib/env-vars';
-import { getCurrentRequestAffectedIds, Tx } from '../../platform';
-import { captureException } from '../../platform/errors';
 
 type ValidateFn = (varName?: string, varValue?: string) => void;
 

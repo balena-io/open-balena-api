@@ -1,6 +1,5 @@
 import { RequestHandler } from 'express';
 import { JSONSchema6 } from 'json-schema';
-import * as _ from 'lodash';
 
 import {
 	BLACKLISTED_NAMES,

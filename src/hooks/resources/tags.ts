@@ -1,5 +1,5 @@
 import { sbvrUtils } from '@resin/pinejs';
-import * as _ from 'lodash';
+
 import { checkTagKeyValidity } from '../../lib/tags';
 
 // Tag hooks

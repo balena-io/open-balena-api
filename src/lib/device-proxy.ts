@@ -1,20 +1,20 @@
 import * as Bluebird from 'bluebird';
+import { Request, Response } from 'express';
 import * as _ from 'lodash';
 
-import { NoDevicesFoundError } from '../lib/errors';
+import { sbvrUtils } from '@resin/pinejs';
+import { PinejsClientCoreFactory } from 'pinejs-client-core';
+
 import {
 	captureException,
 	handleHttpErrors,
 	translateError,
 } from '../platform/errors';
 
-import { sbvrUtils } from '@resin/pinejs';
-import { Request, Response } from 'express';
-import { PinejsClientCoreFactory } from 'pinejs-client-core';
-import { checkInt } from './utils';
-
+import { NoDevicesFoundError } from '../lib/errors';
 import { API_VPN_SERVICE_API_KEY, VPN_CONNECT_PROXY_PORT } from './config';
 import { requestAsync, RequestResponse } from './request';
+import { checkInt } from './utils';
 
 // Degraded network, slow devices, compressed docker binaries and any combination of these factors
 // can cause proxied device requests to surpass the default timeout.

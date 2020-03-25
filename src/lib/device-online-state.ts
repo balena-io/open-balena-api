@@ -1,9 +1,12 @@
-import { sbvrUtils } from '@resin/pinejs';
 import * as Bluebird from 'bluebird';
 import * as events from 'eventemitter3';
 import * as _ from 'lodash';
 import * as RedisSMQ from 'rsmq';
+
+import { sbvrUtils } from '@resin/pinejs';
+
 import { captureException } from '../platform/errors';
+
 import {
 	API_HEARTBEAT_STATE_ENABLED,
 	API_HEARTBEAT_STATE_TIMEOUT_SECONDS,

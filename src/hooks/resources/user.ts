@@ -1,12 +1,11 @@
 import * as Bluebird from 'bluebird';
-import * as _ from 'lodash';
-
-import { captureException } from '../../platform/errors';
-import { assignUserRole } from '../../platform/permissions';
 
 import { sbvrUtils } from '@resin/pinejs';
+
 import { createActor } from '../../platform';
 import { getUser } from '../../platform/auth';
+import { captureException } from '../../platform/errors';
+import { assignUserRole } from '../../platform/permissions';
 
 const { root, api, BadRequestError, InternalRequestError } = sbvrUtils;
 

@@ -1,11 +1,14 @@
 import { Request, RequestHandler, Response } from 'express';
 import * as _ from 'lodash';
 import * as ndjson from 'ndjson';
+import onFinished = require('on-finished');
 import { createGunzip } from 'zlib';
 
 import { sbvrUtils } from '@resin/pinejs';
 import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
-import onFinished = require('on-finished');
+
+import { captureException, handleHttpErrors } from '../platform/errors';
+
 import { RedisBackend } from '../lib/device-logs/backends/redis';
 import {
 	AnySupervisorLog,
@@ -17,8 +20,6 @@ import {
 	SupervisorLog,
 } from '../lib/device-logs/struct';
 import { Supervisor } from '../lib/device-logs/supervisor';
-import { PinejsClient } from '../platform';
-import { captureException, handleHttpErrors } from '../platform/errors';
 
 const {
 	BadRequestError,
@@ -327,7 +328,7 @@ function handleStreamingWrite(
 }
 
 async function getReadContext(
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	req: Request,
 ): Promise<LogContext> {
 	const { uuid } = req.params;
@@ -347,7 +348,7 @@ async function getReadContext(
 }
 
 async function getWriteContext(
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	req: Request,
 ): Promise<LogWriteContext> {
 	const { uuid } = req.params;
@@ -406,7 +407,7 @@ function addRetentionLimit(ctx: LogContext) {
 }
 
 async function checkWritePermissions(
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	ctx: LogWriteContext,
 ): Promise<void> {
 	const allowedDevices = (await resinApi.post({

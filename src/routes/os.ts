@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express';
+
 import {
 	DEVICE_CONFIG_OPENVPN_CA,
 	DEVICE_CONFIG_OPENVPN_CONFIG,

@@ -1,7 +1,9 @@
 import { sbvrUtils } from '@resin/pinejs';
+
+import { addDeleteHookForDependents } from '../../platform';
+
 import { REGISTRY2_HOST } from '../../lib/config';
 import { pseudoRandomBytesAsync } from '../../lib/utils';
-import { addDeleteHookForDependents } from '../../platform';
 
 const { InternalRequestError, root } = sbvrUtils;
 

@@ -3,7 +3,6 @@ import { app } from '../init';
 import { expect } from './test-lib/chai';
 
 import * as Bluebird from 'bluebird';
-import * as _ from 'lodash';
 import * as mockery from 'mockery';
 import * as fakeDevice from './test-lib/fake-device';
 import { supertest, UserObjectParam } from './test-lib/supertest';

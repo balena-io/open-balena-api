@@ -1,15 +1,10 @@
 import * as _ from 'lodash';
 
-import { Tx } from '@resin/pinejs/out/database-layer/db';
-export { Tx } from '@resin/pinejs/out/database-layer/db';
-
 import { sbvrUtils } from '@resin/pinejs';
-
+import { Tx } from '@resin/pinejs/out/database-layer/db';
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
 
 import { captureException } from './errors';
-
-export type PinejsClient = sbvrUtils.PinejsClient;
 
 const { root } = sbvrUtils;
 
@@ -49,7 +44,7 @@ const $getOrInsertId = async (
 // update it to the values specified in updateFields, otherwise
 // insert it with a combination of the filter and updateFields value
 const $updateOrInsert = async (
-	api: PinejsClient,
+	api: sbvrUtils.PinejsClient,
 	resource: string,
 	filter: PinejsClientCoreFactory.FilterObj,
 	updateFields: AnyObject,

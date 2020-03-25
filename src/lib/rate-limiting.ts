@@ -1,4 +1,6 @@
-import * as _express from 'express';
+import { isMaster } from 'cluster';
+import * as express from 'express';
+import * as _ from 'lodash';
 import {
 	IRateLimiterOptions,
 	RateLimiterAbstract,
@@ -9,10 +11,8 @@ import {
 } from 'rate-limiter-flexible';
 import * as redis from 'redis';
 
-import { isMaster } from 'cluster';
-
-import * as _ from 'lodash';
 import { captureException } from '../platform/errors';
+
 import {
 	RATE_LIMIT_FACTOR,
 	RATE_LIMIT_MEMORY_BACKEND,
@@ -72,7 +72,7 @@ const getStore = (opts: IRateLimiterOptions) => {
 	});
 };
 
-export const getUserIDFromCreds = (req: _express.Request): string => {
+export const getUserIDFromCreds = (req: express.Request): string => {
 	if (req.creds != null && 'id' in req.creds) {
 		return `userID:${req.creds.id}`;
 	}
@@ -80,8 +80,8 @@ export const getUserIDFromCreds = (req: _express.Request): string => {
 };
 
 export type PartialRateLimitMiddleware = (
-	field?: string | ((req: _express.Request, res: _express.Response) => string),
-) => _express.RequestHandler;
+	field?: string | ((req: express.Request, res: express.Response) => string),
+) => express.RequestHandler;
 
 export const createRateLimitMiddleware = (
 	opts: IRateLimiterOptions,
@@ -106,9 +106,9 @@ const $createRateLimitMiddleware = (
 		ignoreIP = false,
 		allowReset = true,
 	}: { ignoreIP?: boolean; allowReset?: boolean } = {},
-	field?: string | ((req: _express.Request, res: _express.Response) => string),
-): _express.RequestHandler => {
-	let fieldFn: (req: _express.Request, res: _express.Response) => string;
+	field?: string | ((req: express.Request, res: express.Response) => string),
+): express.RequestHandler => {
+	let fieldFn: (req: express.Request, res: express.Response) => string;
 	if (field != null) {
 		if (_.isFunction(field)) {
 			fieldFn = field;
@@ -119,7 +119,7 @@ const $createRateLimitMiddleware = (
 	} else {
 		fieldFn = () => '';
 	}
-	let keyFn: (req: _express.Request, res: _express.Response) => string;
+	let keyFn: (req: express.Request, res: express.Response) => string;
 	if (ignoreIP) {
 		keyFn = fieldFn;
 	} else {
@@ -127,7 +127,7 @@ const $createRateLimitMiddleware = (
 	}
 	const addReset = !allowReset
 		? _.noop
-		: (req: _express.Request, key: string) => {
+		: (req: express.Request, key: string) => {
 				const resetRatelimit = req.resetRatelimit;
 				req.resetRatelimit = async () => {
 					try {

@@ -1,6 +1,4 @@
 import { Application } from 'express';
-import * as _ from 'lodash';
-import { SECONDS_PER_HOUR } from '../lib/config';
 
 import {
 	apiKeyMiddleware,
@@ -11,6 +9,7 @@ import {
 	registerDeviceStateEvent,
 } from '../platform/middleware';
 
+import { SECONDS_PER_HOUR } from '../lib/config';
 import { createRateLimitMiddleware } from '../lib/rate-limiting';
 
 // Rate limit for unauthenticated access
@@ -32,7 +31,7 @@ export const deviceLogsRateLimiter = createRateLimitMiddleware(
 	},
 );
 
-import { SetupOptions } from '..';
+import { SetupOptions } from '../index';
 import * as access from '../routes/access';
 import * as apiKeys from '../routes/api-keys';
 import * as applications from '../routes/applications';

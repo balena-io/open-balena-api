@@ -1,15 +1,15 @@
-import * as _ from 'lodash';
-
-import { generateConfig } from '../lib/device-config';
-import { findBySlug } from '../lib/device-types';
+import { Request, RequestHandler } from 'express';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { Request, RequestHandler } from 'express';
+
 import {
 	captureException,
 	handleHttpErrors,
 	translateError,
 } from '../platform/errors';
+
+import { generateConfig } from '../lib/device-config';
+import { findBySlug } from '../lib/device-types';
 
 const { UnauthorizedError, api } = sbvrUtils;
 

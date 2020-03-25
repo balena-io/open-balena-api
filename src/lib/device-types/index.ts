@@ -1,12 +1,15 @@
-import * as deviceTypesLib from '@resin.io/device-types';
-import { sbvrUtils } from '@resin/pinejs';
 import * as arraySort from 'array-sort';
-import * as semver from 'balena-semver';
 import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
+
+import * as deviceTypesLib from '@resin.io/device-types';
+import { sbvrUtils } from '@resin/pinejs';
+import { Tx } from '@resin/pinejs/out/database-layer/db';
+import * as semver from 'balena-semver';
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
-import { PinejsClient, Tx } from '../../platform';
+
 import { captureException } from '../../platform/errors';
+
 import {
 	getCompressedSize,
 	getDeviceTypeJson,
@@ -303,7 +306,7 @@ function getDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
  * @param slugs The slugs to check, these cannot be aliases.
  */
 const getAccessibleSlugs = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	slugs?: string[],
 ): Promise<string[]> => {
 	const options: PinejsClientCoreFactory.ODataOptions = {
@@ -322,7 +325,7 @@ const getAccessibleSlugs = async (
 };
 
 export const findDeviceTypeInfoBySlug = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
 ): Promise<DeviceTypeInfo> => {
 	const deviceTypeInfos = await getDeviceTypes();
@@ -351,7 +354,7 @@ export const validateSlug = (slug?: string) => {
 };
 
 export const getAccessibleDeviceTypes = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 ): Promise<DeviceType[]> => {
 	const [deviceTypesInfos, accessibleDeviceTypes] = await Promise.all([
 		getDeviceTypes(),
@@ -370,7 +373,7 @@ export const getAccessibleDeviceTypes = async (
 };
 
 export const findBySlug = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
 ): Promise<DeviceType> => {
 	const deviceTypes = await getAccessibleDeviceTypes(resinApi);
@@ -382,7 +385,7 @@ export const findBySlug = async (
 };
 
 export const normalizeDeviceType = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
 ): Promise<string> => {
 	if (SPECIAL_SLUGS.includes(slug)) {
@@ -401,7 +404,7 @@ export const normalizeDeviceType = async (
 };
 
 export const getImageSize = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
 	buildId: string,
 ): Promise<number> => {
@@ -443,7 +446,7 @@ export interface ImageVersions {
 }
 
 export const getDeviceTypeIdBySlug = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
 ): Promise<{ id: number; slug: string }> => {
 	const deviceType = await normalizeDeviceType(resinApi, slug);
@@ -462,7 +465,7 @@ export const getDeviceTypeIdBySlug = async (
 };
 
 export const getImageVersions = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
 ): Promise<ImageVersions> => {
 	const deviceTypeInfo = await findDeviceTypeInfoBySlug(resinApi, slug);

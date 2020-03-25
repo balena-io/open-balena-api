@@ -1,5 +1,10 @@
 import * as Bluebird from 'bluebird';
+import { RequestHandler } from 'express';
 import * as _ from 'lodash';
+import * as randomstring from 'randomstring';
+
+import { sbvrUtils } from '@resin/pinejs';
+import { PinejsClientCoreFactory } from 'pinejs-client-core';
 
 import {
 	captureException,
@@ -7,10 +12,6 @@ import {
 	translateError,
 } from '../platform/errors';
 
-import { sbvrUtils } from '@resin/pinejs';
-import { RequestHandler } from 'express';
-import { PinejsClientCoreFactory } from 'pinejs-client-core';
-import * as randomstring from 'randomstring';
 import { createDeviceApiKey } from '../lib/api-keys';
 import {
 	filterDeviceConfig,
@@ -20,8 +21,6 @@ import {
 	setMinPollInterval,
 } from '../lib/device-state';
 import { checkInt, getIP, isValidInteger, varListInsert } from '../lib/utils';
-import { PinejsClient } from '../platform';
-
 export { proxy } from '../lib/device-proxy';
 
 const { BadRequestError, UnauthorizedError, root, api } = sbvrUtils;
@@ -611,7 +610,7 @@ export const state: RequestHandler = async (req, res) => {
 };
 
 const upsertImageInstall = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	imageId: number,
 	deviceId: number,
 	status: string,
@@ -667,7 +666,7 @@ const upsertImageInstall = async (
 };
 
 const upsertGatewayDownload = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	deviceId: number,
 	imageId: number,
 	status: string,
@@ -712,7 +711,7 @@ const upsertGatewayDownload = async (
 };
 
 const deleteOldGatewayDownloads = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	deviceId: number,
 	imageIds: number[],
 ): Promise<void> => {
