@@ -1,6 +1,8 @@
 import { sbvrUtils } from '@resin/pinejs';
-import * as deviceTypes from '../lib/device-types';
+
 import { PinejsClient } from '../platform';
+
+import * as deviceTypes from '../lib/device-types';
 
 export const resolveDeviceType = async (
 	api: PinejsClient,

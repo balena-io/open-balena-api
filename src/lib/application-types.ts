@@ -1,7 +1,7 @@
-import * as resinSemver from 'balena-semver';
 import * as _ from 'lodash';
 
 import { sbvrUtils } from '@resin/pinejs';
+import * as resinSemver from 'balena-semver';
 
 export interface ApplicationType {
 	id?: number;

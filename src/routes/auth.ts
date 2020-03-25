@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 
 import { sbvrUtils } from '@resin/pinejs';
+
 import { captureException, handleHttpErrors } from '../platform/errors';
 
 export const getUserPublicKeys: RequestHandler = async (req, res) => {

@@ -1,8 +1,8 @@
+import { Request, Response } from 'express';
 import * as _ from 'lodash';
 import * as Raven from 'raven';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { Request, Response } from 'express';
 
 const { InternalRequestError, HttpError } = sbvrUtils;
 

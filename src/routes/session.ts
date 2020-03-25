@@ -1,8 +1,8 @@
-import { sbvrUtils } from '@resin/pinejs';
 import { RequestHandler } from 'express';
 import * as _ from 'lodash';
-import { SetupOptions } from '..';
-import { User as DbUser } from '../models';
+
+import { sbvrUtils } from '@resin/pinejs';
+
 import {
 	comparePassword,
 	findUser,
@@ -10,6 +10,9 @@ import {
 	loginUserXHR,
 } from '../platform/auth';
 import { captureException, handleHttpErrors } from '../platform/errors';
+
+import { SetupOptions } from '../index';
+import { User as DbUser } from '../models';
 
 const { BadRequestError, NotFoundError, root, api } = sbvrUtils;
 

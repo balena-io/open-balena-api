@@ -1,4 +1,6 @@
+import { isMaster } from 'cluster';
 import * as _express from 'express';
+import * as _ from 'lodash';
 import {
 	IRateLimiterOptions,
 	RateLimiterAbstract,
@@ -9,10 +11,8 @@ import {
 } from 'rate-limiter-flexible';
 import * as redis from 'redis';
 
-import { isMaster } from 'cluster';
-
-import * as _ from 'lodash';
 import { captureException } from '../platform/errors';
+
 import {
 	RATE_LIMIT_FACTOR,
 	RATE_LIMIT_MEMORY_BACKEND,

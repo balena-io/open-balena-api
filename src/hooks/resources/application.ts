@@ -1,18 +1,20 @@
 import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 
-import { Default as DefaultApplicationType } from '../../lib/application-types';
-import { postDevices } from '../../lib/device-proxy';
-import { resolveDeviceType } from '../common';
-
 import { sbvrUtils } from '@resin/pinejs';
+
 import {
 	addDeleteHookForDependents,
 	createActor,
 	getCurrentRequestAffectedIds,
 } from '../../platform';
-const { BadRequestError, ConflictError, NotFoundError, root } = sbvrUtils;
 import { captureException } from '../../platform/errors';
+
+import { Default as DefaultApplicationType } from '../../lib/application-types';
+import { postDevices } from '../../lib/device-proxy';
+import { resolveDeviceType } from '../common';
+
+const { BadRequestError, ConflictError, NotFoundError, root } = sbvrUtils;
 
 const checkDependentApplication: sbvrUtils.Hooks['POSTPARSE'] = async ({
 	request,

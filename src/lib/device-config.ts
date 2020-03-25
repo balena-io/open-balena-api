@@ -1,18 +1,17 @@
-import * as _ from 'lodash';
-
+import { Request } from 'express';
 import * as fs from 'fs';
-
-import * as resinSemver from 'balena-semver';
-import * as deviceConfig from 'resin-device-config';
-
-import { DeviceType } from './device-types';
+import * as _ from 'lodash';
 
 import { Option as DeviceTypeOption } from '@resin.io/device-types';
 import { sbvrUtils } from '@resin/pinejs';
-import { Request } from 'express';
+import * as resinSemver from 'balena-semver';
+import * as deviceConfig from 'resin-device-config';
+
 import { getUser } from '../platform/auth';
 import { captureException } from '../platform/errors';
+
 import { createProvisioningApiKey, createUserApiKey } from './api-keys';
+import { DeviceType } from './device-types';
 
 const { BadRequestError } = sbvrUtils;
 

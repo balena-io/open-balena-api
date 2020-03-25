@@ -1,12 +1,15 @@
-import * as deviceTypesLib from '@resin.io/device-types';
-import { sbvrUtils } from '@resin/pinejs';
 import * as arraySort from 'array-sort';
-import * as semver from 'balena-semver';
 import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
+
+import * as deviceTypesLib from '@resin.io/device-types';
+import { sbvrUtils } from '@resin/pinejs';
+import * as semver from 'balena-semver';
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
+
 import { PinejsClient, Tx } from '../../platform';
 import { captureException } from '../../platform/errors';
+
 import {
 	getCompressedSize,
 	getDeviceTypeJson,

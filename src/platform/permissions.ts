@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import * as randomstring from 'randomstring';
 
 import { sbvrUtils } from '@resin/pinejs';
+
 import { findUser } from './auth';
 import { captureException } from './errors';
 import { getOrInsertId, Tx } from './index';

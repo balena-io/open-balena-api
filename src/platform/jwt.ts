@@ -1,4 +1,3 @@
-import { sbvrUtils } from '@resin/pinejs';
 import * as Bluebird from 'bluebird';
 import { RequestHandler } from 'express';
 import * as jsonwebtoken from 'jsonwebtoken';
@@ -7,15 +6,18 @@ import * as passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import * as randomstring from 'randomstring';
 import { TypedError } from 'typed-error';
-import { User as DbUser } from '../models';
-import { captureException } from './errors';
 
-export { SignOptions } from 'jsonwebtoken';
+import { sbvrUtils } from '@resin/pinejs';
 
 import {
 	JSON_WEB_TOKEN_EXPIRY_MINUTES,
 	JSON_WEB_TOKEN_SECRET,
 } from '../lib/config';
+import { User as DbUser } from '../models';
+
+import { captureException } from './errors';
+
+export { SignOptions } from 'jsonwebtoken';
 
 const EXPIRY_SECONDS = JSON_WEB_TOKEN_EXPIRY_MINUTES * 60;
 

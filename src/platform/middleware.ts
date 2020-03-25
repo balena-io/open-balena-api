@@ -1,15 +1,16 @@
 import { RequestHandler } from 'express';
-import { API_HEARTBEAT_STATE_ENABLED } from '../lib/config';
-import { retrieveAPIKey } from './api-keys';
-import { getUser, reqHasPermission } from './auth';
+import * as _ from 'lodash';
 
 import { sbvrUtils } from '@resin/pinejs';
 
-const { root, api } = sbvrUtils;
-
-import * as _ from 'lodash';
-import * as DeviceOnlineState from '../lib/device-online-state';
+import { retrieveAPIKey } from './api-keys';
+import { getUser, reqHasPermission } from './auth';
 import { captureException } from './errors';
+
+import { API_HEARTBEAT_STATE_ENABLED } from '../lib/config';
+import * as DeviceOnlineState from '../lib/device-online-state';
+
+const { root, api } = sbvrUtils;
 
 export const authenticated: RequestHandler = async (req, res, next) => {
 	try {

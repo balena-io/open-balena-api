@@ -2,27 +2,27 @@ import * as balenaSemver from 'balena-semver';
 import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 
-import {
-	checkDevicesCanBeInApplication,
-	checkDevicesCanHaveDeviceURL,
-} from '../../lib/application-types';
-
-import { postDevices } from '../../lib/device-proxy';
-import * as haikuName from '../../lib/haiku-name';
-
 import { sbvrUtils } from '@resin/pinejs';
+import { PinejsClientCoreFactory } from 'pinejs-client-core';
+
 import {
 	addDeleteHookForDependents,
 	createActor,
 	getCurrentRequestAffectedIds,
 	PinejsClient,
 } from '../../platform';
-const { BadRequestError, root } = sbvrUtils;
+
+import {
+	checkDevicesCanBeInApplication,
+	checkDevicesCanHaveDeviceURL,
+} from '../../lib/application-types';
+import { postDevices } from '../../lib/device-proxy';
 import { InaccessibleAppError } from '../../lib/errors';
+import * as haikuName from '../../lib/haiku-name';
+import { pseudoRandomBytesAsync } from '../../lib/utils';
 import { resolveDeviceType } from '../common';
 
-import { PinejsClientCoreFactory } from 'pinejs-client-core';
-import { pseudoRandomBytesAsync } from '../../lib/utils';
+const { BadRequestError, root } = sbvrUtils;
 
 const INVALID_NEWLINE_REGEX = /\r|\n/;
 

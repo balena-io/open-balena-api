@@ -1,19 +1,15 @@
-import { Server } from 'http';
-import * as path from 'path';
-
-import * as _express from 'express';
-import * as _ from 'lodash';
-
 import * as Bluebird from 'bluebird';
-import * as Raven from 'raven';
-
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
+import cookieSession = require('cookie-session');
+import * as _express from 'express';
+import { Server } from 'http';
+import * as _ from 'lodash';
 import * as methodOverride from 'method-override';
 import * as passport from 'passport';
-
-import cookieSession = require('cookie-session');
+import * as path from 'path';
+import * as Raven from 'raven';
 
 import * as pine from '@resin/pinejs';
 import * as pineEnv from '@resin/pinejs/out/config-loader/env';

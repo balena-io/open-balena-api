@@ -1,16 +1,18 @@
 import * as Bluebird from 'bluebird';
+import { RequestHandler } from 'express';
 import * as _ from 'lodash';
+import * as randomstring from 'randomstring';
 
+import { sbvrUtils } from '@resin/pinejs';
+import { PinejsClientCoreFactory } from 'pinejs-client-core';
+
+import { PinejsClient } from '../platform';
 import {
 	captureException,
 	handleHttpErrors,
 	translateError,
 } from '../platform/errors';
 
-import { sbvrUtils } from '@resin/pinejs';
-import { RequestHandler } from 'express';
-import { PinejsClientCoreFactory } from 'pinejs-client-core';
-import * as randomstring from 'randomstring';
 import { createDeviceApiKey } from '../lib/api-keys';
 import {
 	filterDeviceConfig,
@@ -20,8 +22,6 @@ import {
 	setMinPollInterval,
 } from '../lib/device-state';
 import { checkInt, getIP, isValidInteger, varListInsert } from '../lib/utils';
-import { PinejsClient } from '../platform';
-
 export { proxy } from '../lib/device-proxy';
 
 const { BadRequestError, UnauthorizedError, root, api } = sbvrUtils;
