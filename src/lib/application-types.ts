@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 
 import { sbvrUtils } from '@resin/pinejs';
-import * as resinSemver from 'balena-semver';
+import * as semver from 'balena-semver';
 
 export interface ApplicationType {
 	id?: number;
@@ -137,7 +137,7 @@ export const checkDevicesCanBeInApplication = async (
 		}
 		if (
 			device.os_version != null &&
-			!resinSemver.satisfies(device.os_version, appType.needs__os_version_range)
+			!semver.satisfies(device.os_version, appType.needs__os_version_range)
 		) {
 			throw new DeviceOSVersionIsTooLow(
 				`Device ${device.device_name} has OS version ${device.os_version} but needs to satisfy version range: ${appType.needs__os_version_range}`,

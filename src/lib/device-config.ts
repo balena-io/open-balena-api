@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 import { Option as DeviceTypeOption } from '@resin.io/device-types';
 import { sbvrUtils } from '@resin/pinejs';
-import * as resinSemver from 'balena-semver';
+import * as semver from 'balena-semver';
 import * as deviceConfig from 'resin-device-config';
 
 import { getUser } from '../platform/auth';
@@ -35,7 +35,7 @@ export const generateConfig = async (
 	const userPromise = getUser(req);
 
 	// Devices running ResinOS >=1.2.1 are capable of using Registry v2, while earlier ones must use v1
-	if (resinSemver.lte(osVersion, '1.2.0')) {
+	if (semver.lte(osVersion, '1.2.0')) {
 		throw new BadRequestError(
 			'balenaOS versions <= 1.2.0 are no longer supported, please update',
 		);
@@ -44,7 +44,7 @@ export const generateConfig = async (
 
 	const apiKeyPromise = (async () => {
 		// Devices running ResinOS >= 2.7.8 can use provisioning keys
-		if (resinSemver.satisfies(osVersion, '<2.7.8')) {
+		if (semver.satisfies(osVersion, '<2.7.8')) {
 			// Older ones have to use the old "user api keys"
 			return createUserApiKey(req, (await userPromise).id);
 		}

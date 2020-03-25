@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as _ from 'lodash';
 
 import { sbvrUtils } from '@resin/pinejs';
-import * as rSemver from 'balena-semver';
+import * as semver from 'balena-semver';
 
 import { reqHasPermission } from '../platform/auth';
 import { captureException } from '../platform/errors';
@@ -77,7 +77,7 @@ export async function hostOSAccess(
 		// Users are allowed to access hostOS for devices with version >= HOSTOS_ACCESS_MIN_OS_VER or if the version is still unknown
 		if (
 			!device.os_version ||
-			rSemver.gte(device.os_version, HOSTOS_ACCESS_MIN_OS_VER)
+			semver.gte(device.os_version, HOSTOS_ACCESS_MIN_OS_VER)
 		) {
 			res.sendStatus(200);
 			return;

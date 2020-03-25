@@ -1,4 +1,4 @@
-import * as balenaSemver from 'balena-semver';
+import * as semver from 'balena-semver';
 import * as Bluebird from 'bluebird';
 
 import { sbvrUtils } from '@resin/pinejs';
@@ -570,7 +570,7 @@ async function checkSupervisorReleaseUpgrades(
 
 	for (const release of releases) {
 		const oldVersion = release.supervisor_version;
-		if (balenaSemver.lt(newSupervisorVersion, oldVersion)) {
+		if (semver.lt(newSupervisorVersion, oldVersion)) {
 			throw new BadRequestError(
 				`Attempt to downgrade supervisor, which is not allowed`,
 			);
