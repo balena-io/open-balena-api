@@ -1,11 +1,9 @@
 import { sbvrUtils } from '@resin/pinejs';
 
-import { PinejsClient } from '../platform';
-
 import * as deviceTypes from '../lib/device-types';
 
 export const resolveDeviceType = async (
-	api: PinejsClient,
+	api: sbvrUtils.PinejsClient,
 	request: sbvrUtils.HookRequest,
 	fkValue: string,
 ): Promise<deviceTypes.DeviceType> => {

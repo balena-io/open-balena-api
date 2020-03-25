@@ -3,8 +3,8 @@ import * as _ from 'lodash';
 import * as randomstring from 'randomstring';
 
 import { sbvrUtils } from '@resin/pinejs';
+import { Tx } from '@resin/pinejs/out/database-layer/db';
 
-import { Tx } from './index';
 import { isJWT } from './jwt';
 
 const { root, api } = sbvrUtils;

@@ -6,7 +6,6 @@ import * as randomstring from 'randomstring';
 import { sbvrUtils } from '@resin/pinejs';
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
 
-import { PinejsClient } from '../platform';
 import {
 	captureException,
 	handleHttpErrors,
@@ -611,7 +610,7 @@ export const state: RequestHandler = async (req, res) => {
 };
 
 const upsertImageInstall = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	imageId: number,
 	deviceId: number,
 	status: string,
@@ -667,7 +666,7 @@ const upsertImageInstall = async (
 };
 
 const upsertGatewayDownload = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	deviceId: number,
 	imageId: number,
 	status: string,
@@ -712,7 +711,7 @@ const upsertGatewayDownload = async (
 };
 
 const deleteOldGatewayDownloads = async (
-	resinApi: PinejsClient,
+	resinApi: sbvrUtils.PinejsClient,
 	deviceId: number,
 	imageIds: number[],
 ): Promise<void> => {

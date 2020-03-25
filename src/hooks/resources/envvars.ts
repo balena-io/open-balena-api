@@ -1,7 +1,8 @@
 import { sbvrUtils } from '@resin/pinejs';
+import { Tx } from '@resin/pinejs/out/database-layer/db';
 import { PinejsClientCoreFactory } from 'pinejs-client-core';
 
-import { getCurrentRequestAffectedIds, Tx } from '../../platform';
+import { getCurrentRequestAffectedIds } from '../../platform';
 import { captureException } from '../../platform/errors';
 
 import { postDevices } from '../../lib/device-proxy';

@@ -8,7 +8,6 @@ import {
 	addDeleteHookForDependents,
 	createActor,
 	getCurrentRequestAffectedIds,
-	PinejsClient,
 } from '../../platform';
 
 import {
@@ -30,7 +29,7 @@ export const isDeviceNameValid = (name: string) => {
 };
 
 const createReleaseServiceInstalls = (
-	api: PinejsClient,
+	api: sbvrUtils.PinejsClient,
 	deviceId: number,
 	releaseFilter: PinejsClientCoreFactory.Filter,
 ): Bluebird<void> =>
@@ -94,7 +93,7 @@ const createReleaseServiceInstalls = (
 		.return();
 
 const createAppServiceInstalls = (
-	api: PinejsClient,
+	api: sbvrUtils.PinejsClient,
 	appId: number,
 	deviceIds: number[],
 ): Bluebird<void> =>
@@ -527,7 +526,7 @@ addDeleteHookForDependents('device', [
 ]);
 
 async function checkSupervisorReleaseUpgrades(
-	api: PinejsClient,
+	api: sbvrUtils.PinejsClient,
 	deviceIds: number[],
 	newSupervisorReleaseId: number,
 ) {
