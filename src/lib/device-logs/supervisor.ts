@@ -21,7 +21,7 @@ export class Supervisor {
 			);
 		}
 		return _(logs)
-			.map(log => {
+			.map((log) => {
 				return this.convertAnyLog(ctx, log);
 			})
 			.compact()

@@ -106,7 +106,7 @@ export async function listFolders(
 	const objects = _(res.CommonPrefixes)
 		.map('Prefix')
 		// only keep the folder paths (which are ending with `/`)
-		.filter(p => p != null && p.endsWith('/'))
+		.filter((p) => p != null && p.endsWith('/'))
 		.map((p: string) =>
 			// get the name of the immediately contained folder
 			path.basename(p),

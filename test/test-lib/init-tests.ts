@@ -43,7 +43,7 @@ const getAdminUser = async () => {
 	adminUser.actor = await supertest(app, adminUser)
 		.get(`/resin/user(${adminUser.id})`)
 		.expect(200)
-		.then(res => res.body.d[0].actor as number);
+		.then((res) => res.body.d[0].actor as number);
 
 	return adminUser;
 };

@@ -9,21 +9,11 @@ const checkBaseVarsResult = (
 	extraConfigVarSchemaProperties: string[] = [],
 ) => {
 	expect(vars).to.be.an('object');
-	expect(vars)
-		.to.have.property('reservedNames')
-		.that.is.an('array');
-	expect(vars)
-		.to.have.property('reservedNamespaces')
-		.that.is.an('array');
-	expect(vars)
-		.to.have.property('whiteListedNames')
-		.that.is.an('array');
-	expect(vars)
-		.to.have.property('whiteListedNamespaces')
-		.that.is.an('array');
-	expect(vars)
-		.to.have.property('blackListedNames')
-		.that.is.an('array');
+	expect(vars).to.have.property('reservedNames').that.is.an('array');
+	expect(vars).to.have.property('reservedNamespaces').that.is.an('array');
+	expect(vars).to.have.property('whiteListedNames').that.is.an('array');
+	expect(vars).to.have.property('whiteListedNamespaces').that.is.an('array');
+	expect(vars).to.have.property('blackListedNames').that.is.an('array');
 
 	expect(vars.reservedNames.sort()).to.deep.equal(['BALENA', 'RESIN', 'USER']);
 
@@ -78,9 +68,7 @@ const checkBaseVarsResult = (
 		'RESIN_SUPERVISOR_OVERRIDE_LOCK',
 	]);
 
-	expect(vars)
-		.to.have.property('configVarSchema')
-		.that.is.an('object');
+	expect(vars).to.have.property('configVarSchema').that.is.an('object');
 
 	const { configVarSchema } = vars;
 
@@ -89,9 +77,7 @@ const checkBaseVarsResult = (
 		'$schema',
 		'http://json-schema.org/draft-06/schema#',
 	);
-	expect(configVarSchema)
-		.to.have.property('properties')
-		.that.is.an('object');
+	expect(configVarSchema).to.have.property('properties').that.is.an('object');
 
 	const configVarSchemaKeys = Object.keys(configVarSchema.properties).sort();
 	expect(configVarSchemaKeys).to.deep.equal(
@@ -109,13 +95,11 @@ const checkBaseVarsResult = (
 
 describe('Basic', () => {
 	it('check /ping route is OK', async () => {
-		const res = await supertest(app)
-			.get('/ping')
-			.expect(200);
+		const res = await supertest(app).get('/ping').expect(200);
 		expect(res.text).to.equal('OK');
 	});
 
-	describe('/config/vars', function() {
+	describe('/config/vars', function () {
 		it('should be correct when no device type is provided', async () => {
 			const { body: vars } = await supertest(app)
 				.get('/config/vars')

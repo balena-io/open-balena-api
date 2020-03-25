@@ -24,7 +24,7 @@ export const assignRolePermission = (
 ) => getOrInsertId('role__has__permission', { role, permission }, tx);
 
 const assignRolePermissions = (roleId: number, permissions: string[], tx: Tx) =>
-	Bluebird.map(permissions, async name => {
+	Bluebird.map(permissions, async (name) => {
 		const permission = await getOrInsertPermissionId(name, tx);
 		await assignRolePermission(roleId, permission.id, tx);
 	});
@@ -222,7 +222,7 @@ export function createAll(
 					);
 					return _.difference(permissions, rolePermissionIds);
 				})
-				.map(permission =>
+				.map((permission) =>
 					apiTx.post({
 						resource: 'role__has__permission',
 						body: {
@@ -251,7 +251,7 @@ export function createAll(
 
 	const rolesPromise = Bluebird.props<Dictionary<{ id: number }>>(
 		_.mapValues(roleMap, createRolePermissions),
-	).tap(async roles => {
+	).tap(async (roles) => {
 		// Assign user roles
 		await Bluebird.all(
 			_.map(userMap, async (userEmails, roleName) => {

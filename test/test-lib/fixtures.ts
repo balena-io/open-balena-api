@@ -145,7 +145,7 @@ const loadFixtureModel = (
 	data: AnyObject,
 	tx: Tx,
 ) => {
-	return _.mapValues(data, async d =>
+	return _.mapValues(data, async (d) =>
 		loader(d, await Bluebird.props(fixtures), tx),
 	);
 };
@@ -167,7 +167,7 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 	const fixtures = { ...defaultFixtures };
 
 	if (fixtureName == null) {
-		return Bluebird.props(_.mapValues(fixtures, fx => Bluebird.props(fx)));
+		return Bluebird.props(_.mapValues(fixtures, (fx) => Bluebird.props(fx)));
 	}
 
 	const files = await fs.promises.readdir(
@@ -176,21 +176,21 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 
 	const models = files
 		.filter(
-			file =>
+			(file) =>
 				file.endsWith('.json') &&
 				loaders.hasOwnProperty(file.slice(0, -'.json'.length)),
 		)
-		.map(file => file.slice(0, -'.json'.length).trim());
+		.map((file) => file.slice(0, -'.json'.length).trim());
 
-	return sbvrUtils.db.transaction(tx => {
-		models.forEach(model => {
+	return sbvrUtils.db.transaction((tx) => {
+		models.forEach((model) => {
 			fixtures[model] = import(
 				path.join('../fixtures', fixtureName, `${model}.json`)
-			).then(fromJson =>
+			).then((fromJson) =>
 				loadFixtureModel(loaders[model], fixtures, fromJson, tx),
 			);
 		});
 
-		return Bluebird.props(_.mapValues(fixtures, fx => Bluebird.props(fx)));
+		return Bluebird.props(_.mapValues(fixtures, (fx) => Bluebird.props(fx)));
 	});
 };

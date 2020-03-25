@@ -7,7 +7,7 @@ import { captureException } from '../../platform/errors';
 const { root, api } = sbvrUtils;
 
 const deleteApiKeyHooks: sbvrUtils.Hooks = {
-	PRERUN: async args => {
+	PRERUN: async (args) => {
 		const keyIds = await getCurrentRequestAffectedIds(args);
 		if (keyIds.length === 0) {
 			return;
@@ -15,7 +15,7 @@ const deleteApiKeyHooks: sbvrUtils.Hooks = {
 
 		await Bluebird.map(
 			['api_key__has__role', 'api_key__has__permission'],
-			resource =>
+			(resource) =>
 				api.Auth.delete({
 					resource,
 					passthrough: {
@@ -25,7 +25,7 @@ const deleteApiKeyHooks: sbvrUtils.Hooks = {
 					options: {
 						$filter: { api_key: { $in: keyIds } },
 					},
-				}).tapCatch(err => {
+				}).tapCatch((err) => {
 					captureException(err, 'Error deleting api key ' + resource, {
 						req: args.req,
 					});

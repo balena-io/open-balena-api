@@ -28,7 +28,7 @@ export const getUserPublicKeys: RequestHandler = async (req, res) => {
 			passthrough: { req },
 		})) as Array<{ public_key: string }>;
 
-		const authorizedKeys = data.map(e => e.public_key).join('\n');
+		const authorizedKeys = data.map((e) => e.public_key).join('\n');
 		res.status(200).send(authorizedKeys);
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {

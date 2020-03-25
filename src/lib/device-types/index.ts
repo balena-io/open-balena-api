@@ -126,7 +126,7 @@ async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	getDeviceTypeJson.clear();
 	try {
 		const slugs = await listFolders(IMAGE_STORAGE_PREFIX);
-		await Bluebird.map(slugs, async slug => {
+		await Bluebird.map(slugs, async (slug) => {
 			try {
 				const builds = await listFolders(getImageKey(slug));
 				if (_.isEmpty(builds)) {
@@ -144,7 +144,7 @@ async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 					latest: latestBuildInfo,
 				};
 
-				_.forEach(latestBuildInfo.deviceType.aliases, alias => {
+				_.forEach(latestBuildInfo.deviceType.aliases, (alias) => {
 					result[alias] = result[slug];
 				});
 			} catch (err) {
@@ -174,7 +174,7 @@ async function updateDTModel(
 	const apiTx = api.resin.clone({ passthrough: { req: root, tx } });
 	const updateFields = _.mapValues(
 		propertyMap,
-		source => (deviceType as AnyObject)[source.name] || source.default,
+		(source) => (deviceType as AnyObject)[source.name] || source.default,
 	);
 	const updateFilter = _.map(
 		propertyMap,
@@ -244,13 +244,13 @@ function syncDataModel(
 		);
 		return;
 	}
-	return sbvrUtils.db.transaction(async tx => {
+	return sbvrUtils.db.transaction(async (tx) => {
 		await Promise.all(
 			_(types)
 				.map(({ latest }) => latest.deviceType)
 				// This keyBy removes duplicates for the same slug, ie due to aliases
 				.keyBy(({ slug }) => slug)
-				.map(deviceType => updateDTModel(deviceType, propertyMap, tx))
+				.map((deviceType) => updateDTModel(deviceType, propertyMap, tx))
 				.value(),
 		);
 	});
@@ -270,7 +270,7 @@ async function fetchDeviceTypesAndReschedule(): Promise<
 	Dictionary<DeviceTypeInfo>
 > {
 	try {
-		const promise = fetchDeviceTypes().then(async deviceTypeInfo => {
+		const promise = fetchDeviceTypes().then(async (deviceTypeInfo) => {
 			await syncDataModel(deviceTypeInfo, syncSettings.map);
 
 			// when the promise gets resolved, cache it
@@ -364,7 +364,7 @@ export const getAccessibleDeviceTypes = async (
 			const dtSlug = deviceTypesInfo.latest.deviceType.slug;
 			return dtSlug === slug && accessSet.has(dtSlug);
 		})
-		.map(deviceTypesInfo => deviceTypesInfo.latest.deviceType)
+		.map((deviceTypesInfo) => deviceTypesInfo.latest.deviceType)
 		.value();
 	return deviceTypes;
 };
@@ -471,7 +471,7 @@ export const getImageVersions = async (
 
 	const versionInfo = await Bluebird.map(
 		deviceTypeInfo.versions,
-		async buildId => {
+		async (buildId) => {
 			try {
 				return await Bluebird.props({
 					buildId,

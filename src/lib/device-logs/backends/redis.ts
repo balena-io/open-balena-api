@@ -54,13 +54,10 @@ export class RedisBackend implements DeviceLogsBackend {
 			throw new ServiceUnavailableError();
 		}
 		const key = this.getKey(ctx);
-		const payloads = await Bluebird.fromCallback<string[]>(callback => {
+		const payloads = await Bluebird.fromCallback<string[]>((callback) => {
 			this.cmds.lrange(key, count === Infinity ? 0 : -count, -1, callback);
 		});
-		return _(payloads)
-			.map(this.fromRedisLog)
-			.compact()
-			.value();
+		return _(payloads).map(this.fromRedisLog).compact().value();
 	}
 
 	public get available(): boolean {
@@ -89,7 +86,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		}
 		// Devices with no new logs eventually expire
 		tx.pexpire(key, KEY_EXPIRATION);
-		return Bluebird.fromCallback(callback => {
+		return Bluebird.fromCallback((callback) => {
 			tx.exec(callback);
 		});
 	}

@@ -16,7 +16,7 @@ async function onInitModel() {
 	const insert = _.cloneDeep(appTypes.Default);
 	const filter = { slug: insert.slug };
 	delete insert.slug;
-	await sbvrUtils.db.transaction(async tx => {
+	await sbvrUtils.db.transaction(async (tx) => {
 		const inserted = await updateOrInsertModel(
 			'application_type',
 			filter,
@@ -44,7 +44,7 @@ async function onInitHooks() {
 	// this will pre-fetch the device types and populate the cache...
 	getAccessibleDeviceTypes(sbvrUtils.api.resin);
 
-	await sbvrUtils.db.transaction(tx =>
+	await sbvrUtils.db.transaction((tx) =>
 		createAll(tx, permissionNames, auth.ROLES, auth.KEYS, {}),
 	);
 }
@@ -72,7 +72,7 @@ async function createSuperuser() {
 	};
 
 	try {
-		await sbvrUtils.db.transaction(async tx => {
+		await sbvrUtils.db.transaction(async (tx) => {
 			try {
 				await registerUser(data, tx);
 				console.log('Superuser created successfully!');

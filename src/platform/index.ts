@@ -122,7 +122,9 @@ export const updateOrInsertModel = (
 
 // Hook helpers
 
-export const getCurrentRequestAffectedIds: typeof sbvrUtils.getAffectedIds = args => {
+export const getCurrentRequestAffectedIds: typeof sbvrUtils.getAffectedIds = (
+	args,
+) => {
 	// We store the affected ids in the custom props so we only have to fetch it once per request
 	if (args.request.custom.affectedIds == null) {
 		args.request.custom.affectedIds = sbvrUtils.getAffectedIds(args);
@@ -150,7 +152,7 @@ export function addDeleteHookForDependents(
 	dependents: Array<[string, string]>,
 ) {
 	sbvrUtils.addPureHook('DELETE', 'resin', resource, {
-		PRERUN: async args => {
+		PRERUN: async (args) => {
 			const { api, req } = args;
 
 			const resourceIds = await getCurrentRequestAffectedIds(args);

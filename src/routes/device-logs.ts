@@ -291,10 +291,7 @@ function handleStreamingWrite(
 
 	// Support optional GZip encoding
 	if (req.get('Content-Encoding') === 'gzip') {
-		req
-			.pipe(createGunzip())
-			.on('error', close)
-			.pipe(parser);
+		req.pipe(createGunzip()).on('error', close).pipe(parser);
 	} else {
 		req.pipe(parser);
 	}
@@ -394,7 +391,7 @@ async function getWriteContext(
 		id: device.id,
 		logs_channel: device.logs_channel,
 		uuid,
-		images: device.image_install.map(imageInstall => {
+		images: device.image_install.map((imageInstall) => {
 			const img = imageInstall.image[0];
 			return {
 				id: img.id,

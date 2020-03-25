@@ -10,7 +10,7 @@ export const checkTagKeyValidity = (key: string) => {
 	if (/\s/.test(key)) {
 		throw new sbvrUtils.BadRequestError('Tag keys cannot contain whitespace.');
 	}
-	RESERVED_NAMESPACES.forEach(ns => {
+	RESERVED_NAMESPACES.forEach((ns) => {
 		if (key.startsWith(ns)) {
 			throw new sbvrUtils.BadRequestError(
 				`Tag keys beginning with ${ns} are reserved.`,

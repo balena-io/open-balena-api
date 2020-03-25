@@ -166,7 +166,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 ];
 
 const startsWithAny = (ns: string[], name: string) => {
-	return ns.some(n => name.startsWith(n));
+	return ns.some((n) => name.startsWith(n));
 };
 
 const checkVarName = (type: string, name: string) => {

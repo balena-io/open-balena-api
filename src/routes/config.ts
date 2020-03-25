@@ -23,9 +23,9 @@ export const vars: RequestHandler = (req, res) => {
 		properties: Object.assign(
 			{},
 			SUPERVISOR_CONFIG_VAR_PROPERTIES,
-			...DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES.filter(config =>
+			...DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES.filter((config) =>
 				config.capableDeviceTypes.includes(req.query.deviceType),
-			).map(config => config.properties),
+			).map((config) => config.properties),
 		),
 	};
 

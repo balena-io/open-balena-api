@@ -10,26 +10,22 @@ import { supertest, UserObjectParam } from './test-lib/supertest';
 describe('session', () => {
 	let admin: UserObjectParam;
 
-	before(async function() {
+	before(async function () {
 		const fx = await fixtures.load();
 		admin = fx.users.admin;
 	});
 
-	it('/user/v1/whoami returns a user', async function() {
+	it('/user/v1/whoami returns a user', async function () {
 		const user = (
-			await supertest(app, admin)
-				.get('/user/v1/whoami')
-				.expect(200)
+			await supertest(app, admin).get('/user/v1/whoami').expect(200)
 		).body;
 
-		expect(user)
-			.to.have.property('id')
-			.that.is.a('number');
+		expect(user).to.have.property('id').that.is.a('number');
 		expect(user.username).to.equal('admin');
 		expect(user.email).to.equal(SUPERUSER_EMAIL);
 	});
 
-	it('/user/v1/whoami returns a user when using a correctly scoped access token', async function() {
+	it('/user/v1/whoami returns a user when using a correctly scoped access token', async function () {
 		const record = (
 			await supertest(app, admin)
 				.get("/v5/user?$filter=username eq 'admin'")
@@ -44,19 +40,15 @@ describe('session', () => {
 		});
 
 		const user = (
-			await supertest(app, accessToken)
-				.get('/user/v1/whoami')
-				.expect(200)
+			await supertest(app, accessToken).get('/user/v1/whoami').expect(200)
 		).body;
 
-		expect(user)
-			.to.have.property('id')
-			.that.is.a('number');
+		expect(user).to.have.property('id').that.is.a('number');
 		expect(user.username).to.equal('admin');
 		expect(user.email).to.equal(SUPERUSER_EMAIL);
 	});
 
-	it('/user/v1/whoami returns a 401 error when using a scoped access token that does not have user permissions', async function() {
+	it('/user/v1/whoami returns a 401 error when using a scoped access token that does not have user permissions', async function () {
 		const record = (
 			await supertest(app, admin)
 				.get("/v5/user?$filter=username eq 'admin'")
@@ -74,8 +66,6 @@ describe('session', () => {
 			expiresIn: 60 * 10,
 		});
 
-		await supertest(app, accessToken)
-			.get('/user/v1/whoami')
-			.expect(401);
+		await supertest(app, accessToken).get('/user/v1/whoami').expect(401);
 	});
 });
