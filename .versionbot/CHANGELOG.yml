@@ -1,4 +1,39 @@
 - commits:
+    - subject: Stop re-exporting PineJS types
+      hash: c79e0d03bcfc413b972e90c528dc5d75d9a402d0
+      body: >
+        Back in the open sourcing days, it was thought that open-balena-api
+        would completely wrap PineJS and expose higher level abstractions for
+        clients, such as the cloud API. For this reason, it re-exported a few
+        common PineJS types.
+
+
+        This is not where we’re going however, so remove those exports, and have
+        clients import them from PineJS.
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Akis Kesoglou
+    - subject: Remove underscored imports
+      hash: c0ccdf25c54c1f9c2883aa04c3cc6959e589da51
+      body: >
+        Underscored imports where used to import only types and guard against
+        using it for other reasons, but this can be enforced with type-only
+        imports now where needed.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+    - subject: Remove unused lodash imports
+      hash: 4b04dd12e6ce4c3c7fa40f2680803dab4048de0d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+  version: 0.64.0
+  date: 2020-03-25T17:00:32.719Z
+- commits:
     - subject: Update dependencies
       hash: 6b01c13ca410eca0d202b6e787b1fb08863e3b5c
       body: |
