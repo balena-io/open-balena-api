@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 import { sbvrUtils } from '@resin/pinejs';
 
 import { checkTagKeyValidity } from '../../lib/tags';

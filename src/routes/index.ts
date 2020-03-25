@@ -1,5 +1,4 @@
 import { Application } from 'express';
-import * as _ from 'lodash';
 
 import {
 	apiKeyMiddleware,

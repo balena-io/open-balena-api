@@ -1,5 +1,4 @@
 import { RequestHandler } from 'express';
-import * as _ from 'lodash';
 
 import { sbvrUtils } from '@resin/pinejs';
 

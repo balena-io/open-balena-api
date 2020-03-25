@@ -1,5 +1,4 @@
 import { JSONSchema6Definition } from 'json-schema';
-import * as _ from 'lodash';
 
 import { sbvrUtils } from '@resin/pinejs';
 
