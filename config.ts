@@ -1,4 +1,4 @@
-import { Config } from '@resin/pinejs/out/config-loader/config-loader';
+import type { Config } from '@resin/pinejs/out/config-loader/config-loader';
 import * as balenaModel from './src/balena';
 
 export = {

@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { Tx } from '@resin/pinejs/out/database-layer/db';
-import { PinejsClientCoreFactory } from 'pinejs-client-core';
+import type { Tx } from '@resin/pinejs/out/database-layer/db';
+import type { PinejsClientCoreFactory } from 'pinejs-client-core';
 
 import { captureException } from './errors';
 

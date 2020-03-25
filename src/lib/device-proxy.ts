@@ -1,9 +1,9 @@
 import * as Bluebird from 'bluebird';
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import * as _ from 'lodash';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { PinejsClientCoreFactory } from 'pinejs-client-core';
+import type { PinejsClientCoreFactory } from 'pinejs-client-core';
 
 import {
 	captureException,

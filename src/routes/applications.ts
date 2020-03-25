@@ -1,4 +1,4 @@
-import { Request, RequestHandler } from 'express';
+import type { Request, RequestHandler } from 'express';
 
 import { sbvrUtils } from '@resin/pinejs';
 

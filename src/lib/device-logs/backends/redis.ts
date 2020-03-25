@@ -9,7 +9,7 @@ import { sbvrUtils } from '@resin/pinejs';
 import { captureException } from '../../../platform/errors';
 
 import { DAYS, MINUTES, REDIS_HOST, REDIS_PORT } from '../../config';
-import {
+import type {
 	DeviceLog,
 	DeviceLogsBackend,
 	LogContext,

@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 
 import { sbvrUtils } from '@resin/pinejs';
 
-import {
+import type {
 	AnySupervisorLog,
 	DeviceLog,
 	LogWriteContext,

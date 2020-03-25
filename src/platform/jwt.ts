@@ -1,5 +1,5 @@
 import * as Bluebird from 'bluebird';
-import { RequestHandler } from 'express';
+import type { RequestHandler } from 'express';
 import * as jsonwebtoken from 'jsonwebtoken';
 import * as _ from 'lodash';
 import * as passport from 'passport';

@@ -1,15 +1,15 @@
-import { Request, RequestHandler, Response } from 'express';
+import type { Request, RequestHandler, Response } from 'express';
 import * as _ from 'lodash';
 import * as base32 from 'thirty-two';
 
 import { sbvrUtils } from '@resin/pinejs';
-import { Tx } from '@resin/pinejs/out/database-layer/db';
+import type { Tx } from '@resin/pinejs/out/database-layer/db';
 
 import { retrieveAPIKey } from './api-keys';
 import { createJwt, SignOptions, User } from './jwt';
 
 import { getIP, pseudoRandomBytesAsync } from '../lib/utils';
-import { User as DbUser } from '../models';
+import type { User as DbUser } from '../models';
 
 const {
 	BadRequestError,

@@ -1,4 +1,4 @@
-import { JSONSchema6Definition } from 'json-schema';
+import type { JSONSchema6Definition } from 'json-schema';
 
 import { sbvrUtils } from '@resin/pinejs';
 

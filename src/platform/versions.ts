@@ -1,8 +1,8 @@
-import * as express from 'express';
+import type { Application } from 'express';
 import * as _ from 'lodash';
 
 export const forwardRequests = (
-	app: express.Application,
+	app: Application,
 	fromVersion: string,
 	toVersion: string,
 ) => {

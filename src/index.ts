@@ -3,8 +3,8 @@ import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import cookieSession = require('cookie-session');
-import * as express from 'express';
-import { Server } from 'http';
+import type { Application, Handler } from 'express';
+import type { Server } from 'http';
 import * as _ from 'lodash';
 import * as methodOverride from 'method-override';
 import * as passport from 'passport';
@@ -31,9 +31,7 @@ import * as _applicationRoutes from './routes/applications';
 
 export const AUTH_PATH = '/auth';
 
-export type SetupFunction = (
-	app: express.Application,
-) => void | PromiseLike<void>;
+export type SetupFunction = (app: Application) => void | PromiseLike<void>;
 
 export interface SetupOptions {
 	config: Parameters<typeof pine.init>[1]; // must be absolute or relative to `process.cwd()`
@@ -49,7 +47,7 @@ export interface SetupOptions {
 	onLogin?: (user: AnyObject) => PromiseLike<void> | void;
 }
 
-export async function setup(app: express.Application, options: SetupOptions) {
+export async function setup(app: Application, options: SetupOptions) {
 	if (DB_POOL_SIZE != null) {
 		pineEnv.db.poolSize = DB_POOL_SIZE;
 	}
@@ -141,7 +139,7 @@ export async function setup(app: express.Application, options: SetupOptions) {
 	};
 }
 
-function fixProtocolMiddleware(skipUrls: string[] = []): express.Handler {
+function fixProtocolMiddleware(skipUrls: string[] = []): Handler {
 	return (req, res, next) => {
 		if (req.protocol === 'https' || skipUrls.includes(req.url)) {
 			return next();
@@ -150,7 +148,7 @@ function fixProtocolMiddleware(skipUrls: string[] = []): express.Handler {
 	};
 }
 
-function setupMiddleware(app: express.Application) {
+function setupMiddleware(app: Application) {
 	app.use(compression());
 	app.use(AUTH_PATH, cookieParser());
 
@@ -186,7 +184,7 @@ function setupMiddleware(app: express.Application) {
 }
 
 async function startServer(
-	app: express.Application,
+	app: Application,
 	port: string | number,
 ): Promise<Server> {
 	let server: Server;
@@ -198,7 +196,7 @@ async function startServer(
 }
 
 async function runCommand(
-	app: express.Application,
+	app: Application,
 	cmd: string,
 	argv: string[],
 ): Promise<void> {
@@ -207,7 +205,7 @@ async function runCommand(
 	process.exit(0);
 }
 
-function runFromCommandLine(app: express.Application): Promise<void> {
+function runFromCommandLine(app: Application): Promise<void> {
 	const cmd = process.argv[2];
 	const args = process.argv.slice(3);
 	return runCommand(app, cmd, args);

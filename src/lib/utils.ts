@@ -1,5 +1,5 @@
 import { pseudoRandomBytes } from 'crypto';
-import { Request } from 'express';
+import type { Request } from 'express';
 import * as ipaddr from 'ipaddr.js';
 import * as _ from 'lodash';
 import { promisify } from 'util';

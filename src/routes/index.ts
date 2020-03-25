@@ -1,4 +1,4 @@
-import { Application } from 'express';
+import type { Application } from 'express';
 
 import {
 	apiKeyMiddleware,
@@ -31,7 +31,7 @@ export const deviceLogsRateLimiter = createRateLimitMiddleware(
 	},
 );
 
-import { SetupOptions } from '../index';
+import type { SetupOptions } from '../index';
 import * as access from '../routes/access';
 import * as apiKeys from '../routes/api-keys';
 import * as applications from '../routes/applications';
