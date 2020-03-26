@@ -52,7 +52,7 @@ export const whoami: RequestHandler = async (req, res) => {
 					},
 				})) as Pick<DbUser, 'id' | 'username' | 'email'>;
 
-				return res.send({
+				return res.json({
 					id,
 					username,
 					email,
@@ -60,7 +60,7 @@ export const whoami: RequestHandler = async (req, res) => {
 			}
 		}
 
-		return res.send({
+		return res.json({
 			id: user.id,
 			username: user.username,
 			email: user.email,

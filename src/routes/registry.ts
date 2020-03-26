@@ -300,7 +300,7 @@ export const token: RequestHandler = async (req, res) => {
 			getSubject(req),
 			authorizeRequest(req, scopes),
 		]);
-		res.send({
+		res.json({
 			token: generateToken(sub, REGISTRY2_HOST, access!),
 		});
 	} catch (err) {

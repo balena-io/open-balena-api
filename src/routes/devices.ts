@@ -381,7 +381,7 @@ const stateQuery = api.resin.prepare<{ uuid: string }>({
 export const state: RequestHandler = async (req, res) => {
 	const uuid = req.param('uuid');
 	if (!uuid) {
-		return res.send(400);
+		return res.status(400).send();
 	}
 
 	try {
@@ -754,7 +754,7 @@ const validPatchFields = [
 export const statePatch: RequestHandler = async (req, res) => {
 	const uuid = req.param('uuid');
 	if (!uuid) {
-		return res.send(400);
+		return res.status(400).send();
 	}
 
 	const custom: AnyObject = {}; // shove custom values here to make them available to the hooks
