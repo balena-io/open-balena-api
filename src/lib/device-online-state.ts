@@ -28,11 +28,6 @@ export const getPollInterval = async (uuid: string) => {
 		options: {
 			$select: ['name', 'value'],
 			$top: 1,
-			$expand: {
-				device: {
-					$filter: { uuid: { '@': 'uuid' } },
-				},
-			},
 			$filter: {
 				device: {
 					uuid: { '@': 'uuid' },
