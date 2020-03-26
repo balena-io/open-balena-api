@@ -1,4 +1,14 @@
 - commits:
+    - subject: Remove unnecessary $expand when getting device poll interval
+      hash: 6d45c44de9048c791dd5996bb4771558585fafc2
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.65.3
+  date: 2020-03-26T13:39:22.289Z
+- commits:
     - subject: Use `canAccess` to simplify device api key permissions
       hash: c7fc1fa181f8b68433f0d011b7ad97b11b4e585f
       body: ''
