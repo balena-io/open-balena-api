@@ -10,6 +10,12 @@ import {
 	VPN_SERVICE_API_KEY,
 } from './config';
 
+export const writePerms = (resource: string, filter: string): string[] => [
+	`${resource}.create?${filter}`,
+	`${resource}.update?${filter}`,
+	`${resource}.delete?${filter}`,
+];
+
 const matchesActor = 'actor eq @__ACTOR_ID';
 const matchesUser = `user/any(u:u/${matchesActor})`;
 const ownsDevice = `owns__device/any(d:d/${matchesActor})`;
@@ -33,7 +39,7 @@ export const ROLES: {
 		'resin.application_tag.all',
 		'resin.application_type.all',
 		'resin.device.all',
-		`resin.device.tunnel-22222`,
+		'resin.device.tunnel-22222',
 		'resin.device_config_variable.all',
 		'resin.device_environment_variable.all',
 		'resin.device_tag.all',
@@ -49,7 +55,7 @@ export const ROLES: {
 		'resin.service.all',
 		'resin.service_environment_variable.all',
 		'resin.service_install.all',
-		"resin.service_instance.get?service_type eq 'vpn'",
+		"resin.service_instance.read?service_type eq 'vpn'",
 		'resin.service_label.all',
 		'resin.supervisor_release.all',
 		'resin.user.read',
@@ -58,58 +64,75 @@ export const ROLES: {
 };
 
 export const DEVICE_API_KEY_PERMISSIONS = [
-	`resin.device_type.get?describes_device/any(d:d/${matchesActor})`,
-	`resin.device.get?${matchesActor}`,
+	'resin.device_type.read?describes_device/canAccess()',
+	`resin.device.read?${matchesActor}`,
 	`resin.device.update?${matchesActor}`,
-	`resin.supervisor_release.get?should_manage__device/any(d:d/${matchesActor})`,
-	`resin.application.read?${ownsDevice} or depends_on__application/any(da:da/${ownsDevice})`,
-	`resin.application_tag.read?application/any(a:a/${ownsDevice} or a/depends_on__application/any(da:da/${ownsDevice}))`,
-	`resin.device_config_variable.get?device/any(d:d/${matchesActor} or d/belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice})))`,
+	'resin.supervisor_release.read?should_manage__device/canAccess()',
+	'resin.application.read?owns__device/canAccess() or depends_on__application/canAccess()',
+	'resin.application_tag.read?application/canAccess()',
+	'resin.device_config_variable.read?device/canAccess()',
 	`resin.device_config_variable.set?device/any(d:d/${matchesActor})`,
-	`resin.device_tag.get?device/any(d:d/${matchesActor})`,
+	'resin.device_tag.read?device/canAccess()',
 	`resin.device_tag.set?device/any(d:d/${matchesActor})`,
-	`resin.application_config_variable.get?${applicationControlsDevice}`,
-	`resin.release.read?should_be_running_on__device/any(d:d/${matchesActor}) or ${belongsToApplicationOrIsManagedByDevice}`,
-	`resin.release_tag.read?release/any(r:r/should_be_running_on__device/any(d:d/${matchesActor}) or r/${belongsToApplicationOrIsManagedByDevice})`,
-	`resin.device_environment_variable.get?device/any(d:d/belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice})))`,
-	`resin.device_environment_variable.all?device/any(d:d/${matchesActor})`,
-	`resin.application_environment_variable.get?${applicationControlsDevice}`,
+	'resin.application_config_variable.read?application/canAccess()',
+	'resin.release.read?should_be_running_on__device/canAccess() or belongs_to__application/canAccess()',
+	'resin.release_tag.read?release/canAccess()',
+	'resin.device_environment_variable.read?device/canAccess()',
+	...writePerms(
+		'resin.device_environment_variable',
+		`device/any(d:d/${matchesActor})`,
+	),
+	'resin.application_environment_variable.read?application/canAccess()',
 
 	// Dependent device permissions
+	'resin.device.read?belongs_to__application/any(a:a/depends_on__application/canAccess())',
 	`resin.device.create?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
-	`resin.device.read?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
 	`resin.device.update?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
 
-	`resin.service.get?${applicationControlsDevice}`,
+	'resin.service.read?application/canAccess()',
 
-	`resin.service_install.all?installs__service/any(s:s/${applicationControlsDevice})`,
+	'resin.service_install.read?installs__service/canAccess()',
+	...writePerms(
+		'resin.service_install',
+		`installs__service/any(s:s/${applicationControlsDevice})`,
+	),
 
-	`resin.service_environment_variable.get?service/any(s:s/${applicationControlsDevice})`,
+	'resin.service_environment_variable.read?service/canAccess()',
 
-	`resin.device_service_environment_variable.get?service_install/any(si:si/installs__service/any(s:s/${applicationControlsDevice}))`,
-	`resin.device_service_environment_variable.all?service_install/any(si:si/device/any(d:d/${matchesActor}))`,
+	'resin.device_service_environment_variable.read?service_install/canAccess()',
+	...writePerms(
+		'resin.device_service_environment_variable',
+		`service_install/any(si:si/device/any(d:d/${matchesActor}))`,
+	),
 
-	`resin.image__is_part_of__release.get?is_part_of__release/any(r:r/${belongsToApplicationOrIsManagedByDevice})`,
+	'resin.image__is_part_of__release.read?is_part_of__release/canAccess()',
 
-	`resin.image.get?image_install/any(ii:ii/device/any(d:d/${matchesActor} or d/is_managed_by__device/any(md:md/${matchesActor})))`,
-	`resin.image.get?image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/${belongsToApplicationOrIsManagedByDevice}))`,
+	'resin.image.read?image_install/canAccess() or image__is_part_of__release/canAccess()',
 
+	'resin.image_install.read?device/canAccess()',
 	`resin.image_install.create?device/any(d:d/${matchesActor} or d/is_managed_by__device/any(md:md/${matchesActor})) and installs__image/any(i:i/image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/belongs_to__application/any(a:a/${ownsDevice}))))`,
-	`resin.image_install.read?device/any(d:d/${matchesActor} or d/is_managed_by__device/any(md:md/${matchesActor}))`,
 	`resin.image_install.update?device/any(d:d/${matchesActor} or d/is_managed_by__device/any(md:md/${matchesActor}))`,
 
-	`resin.image_label.get?release_image/any(ipr:ipr/is_part_of__release/any(r:r/${belongsToApplicationOrIsManagedByDevice}))`,
+	'resin.image_label.read?release_image/canAccess()',
 
-	`resin.service_label.all?service/any(s:s/${applicationControlsDevice})`,
+	'resin.service_label.read?service/canAccess()',
+	...writePerms(
+		'resin.service_label',
+		`service/any(s:s/${applicationControlsDevice})`,
+	),
 
-	`resin.image_environment_variable.get?release_image/any(ipr:ipr/is_part_of__release/any(r:r/belongs_to__application/any(a:a/${ownsDevice})))`,
+	'resin.image_environment_variable.read?release_image/canAccess()',
 
 	// we can update the gateway if the image is part of an application which is depended on by the
 	// application that the device belongs to
 	// 		OR
 	// 	the image belongs to an application which contains a device which is managed by the device
 	// 	doing the updating
-	`resin.gateway_download.all?image/any(i:i/is_a_build_of__service/any(s:s/application/any(a:a/depends_on__application/any(da:da/${ownsDevice}) or a/owns__device/any(d:d/is_managed_by__device/any(md:md/${matchesActor})))))`,
+	'resin.gateway_download.read?image/canAccess()',
+	...writePerms(
+		'resin.gateway_download',
+		`image/any(i:i/is_a_build_of__service/any(s:s/application/any(a:a/depends_on__application/any(da:da/${ownsDevice}) or a/owns__device/any(d:d/is_managed_by__device/any(md:md/${matchesActor})))))`,
+	),
 
 	`resin.image.push?image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/${belongsToApplicationOrIsManagedByDevice}))`,
 
@@ -118,8 +141,8 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 
 ROLES['device-api-key'] = [
 	...DEVICE_API_KEY_PERMISSIONS,
-	`resin.user.get`,
-	`resin.user__has__public_key.get`,
+	'resin.user.read',
+	'resin.user__has__public_key.read',
 ];
 
 export const DEFAULT_USER_EXTRA_PERMISSIONS = [
