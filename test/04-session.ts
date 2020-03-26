@@ -63,9 +63,7 @@ describe('session', () => {
 				.expect(200)
 		).body.d[0];
 
-		const permissions = [
-			'resin.application.get?belongs_to__user/any(u:u/eq @__ACTOR_ID)',
-		];
+		const permissions = ['resin.application.get?actor eq @__ACTOR_ID'];
 
 		// Create a token that only has access to the granting users applications
 		const accessToken = createScopedAccessToken({
