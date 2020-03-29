@@ -72,7 +72,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.application_tag.read?application/canAccess()',
 	'resin.device_config_variable.read?device/canAccess()',
 	`resin.device_config_variable.set?device/any(d:d/${matchesActor})`,
-	'resin.device_tag.read?device/canAccess()',
+	`resin.device_tag.read?device/any(d:d/${matchesActor})`,
 	`resin.device_tag.set?device/any(d:d/${matchesActor})`,
 	'resin.application_config_variable.read?application/canAccess()',
 	'resin.release.read?should_be_running_on__device/canAccess() or belongs_to__application/canAccess()',
