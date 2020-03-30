@@ -1,4 +1,14 @@
 - commits:
+    - subject: Revert granting device_tag access of dependent devices
+      hash: a0ddc5cd32995d0b620871a0458358476f129067
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.67.1
+  date: 2020-03-29T18:54:29.308Z
+- commits:
     - subject: Remove unused `IMAGE_MAKER_URL` config
       hash: 2db8b9f96b4a0f6d7c50987518d37fb02da69c95
       body: ''
