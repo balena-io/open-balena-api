@@ -1,4 +1,14 @@
 - commits:
+    - subject: Avoid using res.send
+      hash: d586660c632a484c695fa7fb7926bc4f3301b7ce
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.67.2
+  date: 2020-03-31T16:17:51.566Z
+- commits:
     - subject: Revert granting device_tag access of dependent devices
       hash: a0ddc5cd32995d0b620871a0458358476f129067
       body: ''
