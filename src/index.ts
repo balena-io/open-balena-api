@@ -108,7 +108,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	});
 
 	app.use('/ping', (_req, res) => {
-		res.send('OK');
+		res.sendStatus(200);
 	});
 
 	await options.onInit?.(app);

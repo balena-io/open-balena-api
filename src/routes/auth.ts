@@ -8,7 +8,7 @@ export const getUserPublicKeys: RequestHandler = async (req, res) => {
 	const { username } = req.params;
 
 	if (username == null) {
-		return res.send(400);
+		return res.sendStatus(400);
 	}
 	try {
 		const data = (await sbvrUtils.api.resin.get({

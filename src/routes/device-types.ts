@@ -68,7 +68,7 @@ export const downloadImageSize: RequestHandler = async (req, res) => {
 		const slug = deviceTypesLib.validateSlug(req.params.deviceType);
 		const buildId: string = req.params.version || 'latest';
 		const size = await deviceTypesLib.getImageSize(resinApi, slug, buildId);
-		res.send({ size });
+		res.json({ size });
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
 			return;
