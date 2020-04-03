@@ -388,6 +388,7 @@ Fact type: application1 depends on application2
 Fact type: application has application type
 	Necessity: each application has exactly one application type.
 Fact type: application is host
+Fact type: application is archived
 
 
 -- service instance

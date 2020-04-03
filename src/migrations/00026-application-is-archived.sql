@@ -1,0 +1,1 @@
+ALTER TABLE "application" ADD COLUMN "is archived" INTEGER DEFAULT 0 NOT NULL;
