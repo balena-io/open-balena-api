@@ -1,4 +1,23 @@
 - commits:
+    - subject: Add is_archived term to the application resource
+      hash: 79edd98c6d1398fca54a6aba18d3cb3cf4769268
+      body: |
+        The original purpose of the flag is to be able to
+        discontinue host applications, but the same concept
+        can be used by users to mark applications that are not
+        supported/developed anymore. This was discussed at a
+        product call and we decided to go with is_archived
+        based on Github's terminology as the meaning of both
+        are close.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+  version: 0.68.0
+  date: 2020-04-02T11:37:42.809Z
+- commits:
     - subject: Avoid using res.send
       hash: d586660c632a484c695fa7fb7926bc4f3301b7ce
       body: ''
