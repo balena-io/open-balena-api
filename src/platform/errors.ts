@@ -10,10 +10,19 @@ export const translateError = (err: Error | number | string): string => {
 	if (err instanceof InternalRequestError) {
 		return 'Server Error';
 	}
-	if (err instanceof Error) {
-		return err.message;
+	let message;
+	if (err instanceof HttpError) {
+		captureException(
+			new Error(),
+			'Translating a HttpError, this should go via handleHttpErrors instead',
+		);
+		message = err.message;
+	} else if (err instanceof Error) {
+		message = err.message;
+	} else {
+		message = `${err}`;
 	}
-	return `${err}`;
+	return message;
 };
 
 interface HookReqCaptureOptions {
