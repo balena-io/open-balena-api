@@ -11,7 +11,7 @@ import {
 import { generateConfig } from '../lib/device-config';
 import { findBySlug } from '../lib/device-types';
 
-const { UnauthorizedError, api, BadRequestError } = sbvrUtils;
+const { UnauthorizedError, api, NotFoundError } = sbvrUtils;
 
 const getApp = async (req: Request): Promise<AnyObject> => {
 	const app = (await api.resin.get({
@@ -64,7 +64,7 @@ export const downloadImageConfig: RequestHandler = async (req, res) => {
 		res.json(config);
 	} catch (err) {
 		if (err instanceof UnauthorizedError) {
-			err = new BadRequestError(err);
+			err = new NotFoundError(err);
 		}
 		if (handleHttpErrors(req, res, err)) {
 			return;
