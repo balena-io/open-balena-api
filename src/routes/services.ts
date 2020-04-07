@@ -2,7 +2,11 @@ import type { Request, Response } from 'express';
 
 import { sbvrUtils } from '@resin/pinejs';
 
-import { captureException, handleHttpErrors } from '../platform/errors';
+import {
+	captureException,
+	handleHttpErrors,
+	translateError,
+} from '../platform/errors';
 
 const { api } = sbvrUtils;
 
@@ -65,7 +69,7 @@ export const vpn = {
 				return;
 			}
 			captureException(err, 'Error authenticating device for VPN', { req });
-			res.status(500).send(err);
+			res.status(500).send(translateError(err));
 		}
 	},
 	clientConnect: async (req: Request, res: Response): Promise<void> => {
@@ -95,7 +99,10 @@ export const vpn = {
 			res.sendStatus(200);
 		} catch (err) {
 			captureException(err, 'Error with vpn client connect', { req });
-			res.status(500).send(err);
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
+			res.status(500).send(translateError(err));
 		}
 	},
 
@@ -119,7 +126,10 @@ export const vpn = {
 			res.sendStatus(200);
 		} catch (err) {
 			captureException(err, 'Error with vpn client disconnect', { req });
-			res.status(500).send(err);
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
+			res.status(500).send(translateError(err));
 		}
 	},
 };

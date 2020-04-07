@@ -7,7 +7,11 @@ import { createGunzip } from 'zlib';
 import { sbvrUtils } from '@resin/pinejs';
 import type { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
 
-import { captureException, handleHttpErrors } from '../platform/errors';
+import {
+	captureException,
+	handleHttpErrors,
+	translateError,
+} from '../platform/errors';
 
 import { RedisBackend } from '../lib/device-logs/backends/redis';
 import {
@@ -269,7 +273,10 @@ function handleStreamingWrite(
 		if (!res.headersSent) {
 			// Handle both errors and normal close here
 			if (err) {
-				res.status(400).send(err.message);
+				if (handleHttpErrors(req, res, err)) {
+					return;
+				}
+				res.status(400).send(translateError(err));
 			} else {
 				res.sendStatus(201);
 			}
