@@ -69,7 +69,13 @@ export const handleHttpErrors = (req: Request, res: Response, err: Error) => {
 				err.body = 'Server error';
 			}
 		}
-		res.status(err.status).send(err.getResponseBody());
+		res.status(err.status);
+		const body = err.getResponseBody();
+		if (typeof body === 'string') {
+			res.send(body);
+		} else {
+			res.json(body);
+		}
 		return true;
 	}
 	return false;
