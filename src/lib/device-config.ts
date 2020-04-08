@@ -26,16 +26,17 @@ import {
 	VPN_PORT,
 } from './config';
 
+// `osVersion == null` means assume "latest"
 export const generateConfig = async (
 	req: Request,
 	app: AnyObject,
 	deviceType: DeviceType,
-	osVersion: string,
+	osVersion?: string,
 ) => {
 	const userPromise = getUser(req);
 
 	// Devices running ResinOS >=1.2.1 are capable of using Registry v2, while earlier ones must use v1
-	if (semver.lte(osVersion, '1.2.0')) {
+	if (osVersion != null && semver.lte(osVersion, '1.2.0')) {
 		throw new BadRequestError(
 			'balenaOS versions <= 1.2.0 are no longer supported, please update',
 		);
@@ -44,7 +45,7 @@ export const generateConfig = async (
 
 	const apiKeyPromise = (async () => {
 		// Devices running ResinOS >= 2.7.8 can use provisioning keys
-		if (semver.satisfies(osVersion, '<2.7.8')) {
+		if (osVersion != null && semver.satisfies(osVersion, '<2.7.8')) {
 			// Older ones have to use the old "user api keys"
 			return createUserApiKey(req, (await userPromise).id);
 		}
