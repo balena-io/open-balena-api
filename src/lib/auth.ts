@@ -116,10 +116,6 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.image_label.read?release_image/canAccess()',
 
 	'resin.service_label.read?service/canAccess()',
-	...writePerms(
-		'resin.service_label',
-		`service/any(s:s/${applicationControlsDevice})`,
-	),
 
 	'resin.image_environment_variable.read?release_image/canAccess()',
 
