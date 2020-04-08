@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import * as _ from 'lodash';
 import * as Raven from 'raven';
+import * as escapeHtml from 'escape-html';
 
 import { sbvrUtils } from '@resin/pinejs';
 
@@ -10,10 +11,19 @@ export const translateError = (err: Error | number | string): string => {
 	if (err instanceof InternalRequestError) {
 		return 'Server Error';
 	}
-	if (err instanceof Error) {
-		return err.message;
+	let message;
+	if (err instanceof HttpError) {
+		captureException(
+			new Error(),
+			'Translating a HttpError, this should go via handleHttpErrors instead',
+		);
+		message = err.message;
+	} else if (err instanceof Error) {
+		message = err.message;
+	} else {
+		message = `${err}`;
 	}
-	return `${err}`;
+	return escapeHtml(message);
 };
 
 interface HookReqCaptureOptions {
@@ -60,7 +70,13 @@ export const handleHttpErrors = (req: Request, res: Response, err: Error) => {
 				err.body = 'Server error';
 			}
 		}
-		res.status(err.status).send(err.getResponseBody());
+		res.status(err.status);
+		const body = err.getResponseBody();
+		if (typeof body === 'string') {
+			res.send(escapeHtml(body));
+		} else {
+			res.json(body);
+		}
 		return true;
 	}
 	return false;
