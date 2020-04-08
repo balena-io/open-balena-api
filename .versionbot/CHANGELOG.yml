@@ -1,4 +1,35 @@
 - commits:
+    - subject: Escape any potential html in error responses
+      hash: 253df002a303766ba33704303f185d7e23c89d67
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+    - subject: Explicitly send non-string `HttpError`s as JSON
+      hash: 05adee21d7e318e73d63ffa3f20d96efbc8b85cc
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+    - subject: Report cases of `HttpError`s going via `translateError`
+      hash: 441c320c66eb39866f17e12d83a919da04805fa8
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Standardize error handling via `handleHttpErrors`/`translateErrors`
+      hash: 11087e9fbb159f62172a148b53a83ee7e0cc7968
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.69.0
+  date: 2020-04-08T13:09:43.172Z
+- commits:
     - subject: Add is_archived term to the application resource
       hash: 79edd98c6d1398fca54a6aba18d3cb3cf4769268
       body: |
