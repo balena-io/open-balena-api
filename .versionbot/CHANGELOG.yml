@@ -1,13 +1,13 @@
 - commits:
-    - subject: Assume “latest” if OS version is unspecified
-      hash: 6559d74cf68c884f7c5db6b1ab4a4dcda101d7db
+    - subject: Remove device access to edit service labels
+      hash: 8c23d15602830348038cfeb4866544784f31191d
       body: ''
       footer:
-        Change-type: patch
-        change-type: patch
-      author: Akis Kesoglou
-  version: 0.69.1
-  date: 2020-04-08T17:21:24.016Z
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.70.0
+  date: 2020-04-08T16:48:14.716Z
 - commits:
     - subject: Escape any potential html in error responses
       hash: 253df002a303766ba33704303f185d7e23c89d67
