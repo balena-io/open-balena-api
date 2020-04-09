@@ -1,4 +1,14 @@
 - commits:
+    - subject: Remove image.push permission from device api key
+      hash: 05ba819f7df2a25f8dc4b30dd6396fe85c8034ec
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.71.0
+  date: 2020-04-09T13:26:14.202Z
+- commits:
     - subject: Remove device access to edit service labels
       hash: 8c23d15602830348038cfeb4866544784f31191d
       body: ''
