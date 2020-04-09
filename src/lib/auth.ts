@@ -19,7 +19,6 @@ export const writePerms = (resource: string, filter: string): string[] => [
 const matchesActor = 'actor eq @__ACTOR_ID';
 const matchesUser = `user/any(u:u/${matchesActor})`;
 const ownsDevice = `owns__device/any(d:d/${matchesActor})`;
-const belongsToApplicationOrIsManagedByDevice = `belongs_to__application/any(a:a/owns__device/any(d:d/${matchesActor} or d/is_managed_by__device/any(md:md/${matchesActor})))`;
 const applicationControlsDevice = `application/any(a:a/${ownsDevice} or a/depends_on__application/any(da:da/${ownsDevice}))`;
 
 export const ROLES: {
@@ -129,8 +128,6 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 		'resin.gateway_download',
 		`image/any(i:i/is_a_build_of__service/any(s:s/application/any(a:a/depends_on__application/any(da:da/${ownsDevice}) or a/owns__device/any(d:d/is_managed_by__device/any(md:md/${matchesActor})))))`,
 	),
-
-	`resin.image.push?image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/${belongsToApplicationOrIsManagedByDevice}))`,
 
 	`resin.device.write-log?${matchesActor}`,
 ];
