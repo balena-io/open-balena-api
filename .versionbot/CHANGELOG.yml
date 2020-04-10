@@ -1,4 +1,14 @@
 - commits:
+    - subject: Remove unnecessary `_.get` usage
+      hash: ba6d23ad47fdcde032a72fe21d8499bb20e19852
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.71.2
+  date: 2020-04-10T14:46:02.819Z
+- commits:
     - subject: Update open-balena-base to 9.2.2
       hash: 9ee57bb4c687f088d9e995c30852b2c8c977f0f9
       body: |
