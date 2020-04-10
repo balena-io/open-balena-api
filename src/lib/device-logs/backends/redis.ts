@@ -77,6 +77,7 @@ export class RedisBackend implements DeviceLogsBackend {
 
 		const limit = ctx.retention_limit || 0;
 		const key = this.getKey(ctx);
+		const bytesWrittenKey = this.getKey(ctx, 'logBytesWritten');
 		// Create a Redis transaction
 		const tx = this.cmds.multi();
 		// Add the logs to the List structure
@@ -84,11 +85,16 @@ export class RedisBackend implements DeviceLogsBackend {
 		// Trim it to the retention limit
 		tx.ltrim(key, -limit, -1);
 		// Publish each log using Redis PubSub
+		let bytesWritten = 0;
 		for (const rLog of redisLogs) {
 			tx.publish(key, rLog);
+			bytesWritten += rLog.length;
 		}
+		// Increment log bytes written total
+		tx.incrby(bytesWrittenKey, bytesWritten);
 		// Devices with no new logs eventually expire
 		tx.pexpire(key, KEY_EXPIRATION);
+		tx.pexpire(bytesWrittenKey, KEY_EXPIRATION);
 		return Bluebird.fromCallback((callback) => {
 			tx.exec(callback);
 		});
@@ -134,8 +140,8 @@ export class RedisBackend implements DeviceLogsBackend {
 		return this.cmds.connected && this.pubSub.connected;
 	}
 
-	private getKey(ctx: LogContext) {
-		return `device:${ctx.id}:logs`;
+	private getKey(ctx: LogContext, suffix = 'logs') {
+		return `device:${ctx.id}:${suffix}`;
 	}
 
 	private handleMessage(key: string, payload: string) {
