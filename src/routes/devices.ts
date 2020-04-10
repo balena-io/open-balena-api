@@ -517,7 +517,7 @@ export const state: RequestHandler = async (req, res) => {
 
 		(parentApp.is_depended_on_by__application as AnyObject[]).forEach(
 			(depApp) => {
-				const depRelease = _.get(depApp, 'should_be_running__release[0]');
+				const depRelease = depApp?.should_be_running__release?.[0];
 				depAppCache[depApp.id] = {
 					release: depRelease,
 					application_environment_variable:
@@ -533,7 +533,7 @@ export const state: RequestHandler = async (req, res) => {
 					config: depConfig,
 				};
 
-				const image = _.get(depRelease, 'contains__image[0].image[0]');
+				const image = depRelease?.contains__image?.[0]?.image?.[0];
 				if (depRelease != null && image != null) {
 					const depAppState = dependent.apps[depApp.id];
 					depAppState.releaseId = depRelease.id;
@@ -556,8 +556,8 @@ export const state: RequestHandler = async (req, res) => {
 			const depConfig: Dictionary<string> = {};
 			varListInsert(depDev.device_config_variable, depConfig);
 
-			const ipr = _.get(depRelease, 'contains__image[0]');
-			const image = _.get(ipr, 'image[0]');
+			const ipr = depRelease?.contains__image?.[0];
+			const image = ipr?.image?.[0];
 			const svcInstall = serviceInstallFromImage(depDev, image);
 
 			const environment: Dictionary<string> = {};
