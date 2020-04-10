@@ -1,4 +1,26 @@
 - commits:
+    - subject: Update open-balena-base to 9.2.2
+      hash: 9ee57bb4c687f088d9e995c30852b2c8c977f0f9
+      body: |
+        Update open-balena-base from 9.2.1 to 9.2.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: 'Update nodejs to 12.16.2, npm to 6.14.4'
+              hash: 116bbb6bf4f9a548a68b959c39d54c8abc2d5bd7
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-9.2.2
+          date: 2020-04-09T12:42:03.658Z
+  version: 0.71.1
+  date: 2020-04-09T15:16:24.179Z
+- commits:
     - subject: Remove image.push permission from device api key
       hash: 05ba819f7df2a25f8dc4b30dd6396fe85c8034ec
       body: ''
