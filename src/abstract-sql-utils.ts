@@ -58,7 +58,7 @@ export const renameField = (
 	orig[to] = orig[from];
 	delete orig[from];
 
-	_.set(relationship, to, _.get(relationship, from));
+	_.set(relationship, to, relationship[from]);
 	delete relationship[from];
 	_.set(relationship, [to, '$'], [to]);
 };
