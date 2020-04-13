@@ -23,9 +23,6 @@ declare module 'resin-device-config' {
 			subscribe_key?: string;
 			publish_key?: string;
 		};
-		mixpanel: {
-			token?: string;
-		};
 		apiKey?: string;
 		version?: string;
 	}
