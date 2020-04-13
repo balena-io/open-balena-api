@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove mixpanel token configuration
+      hash: 61b4821c59fc5982a0eca6fe293a74ea7bb11984
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Roman Mazur <roman@balena.io>
+        signed-off-by: Roman Mazur <roman@balena.io>
+      author: Roman Mazur
+  version: 0.71.3
+  date: 2020-04-13T08:45:25.528Z
+- commits:
     - subject: Remove unnecessary `_.get` usage
       hash: ba6d23ad47fdcde032a72fe21d8499bb20e19852
       body: ''
