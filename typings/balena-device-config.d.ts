@@ -1,15 +1,10 @@
-declare module 'resin-device-config' {
+declare module 'balena-device-config' {
 	export interface GenerateOptions {
 		application: {
-			app_name: string;
 			id: number;
 			deviceType?: string;
 		};
 		deviceType?: string;
-		user: {
-			id: number;
-			username: string;
-		};
 		vpnPort?: string;
 
 		endpoints: {
@@ -19,10 +14,6 @@ declare module 'resin-device-config' {
 			vpn: string;
 		};
 
-		pubnub: {
-			subscribe_key?: string;
-			publish_key?: string;
-		};
 		apiKey?: string;
 		version?: string;
 	}

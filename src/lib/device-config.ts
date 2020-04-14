@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import type { Option as DeviceTypeOption } from '@resin.io/device-types';
 import { sbvrUtils } from '@resin/pinejs';
 import * as semver from 'balena-semver';
-import * as deviceConfig from 'resin-device-config';
+import * as deviceConfig from 'balena-device-config';
 
 import { getUser } from '../platform/auth';
 import { captureException } from '../platform/errors';
@@ -32,8 +32,6 @@ export const generateConfig = async (
 	deviceType: DeviceType,
 	osVersion?: string,
 ) => {
-	const userPromise = getUser(req);
-
 	// Devices running ResinOS >=1.2.1 are capable of using Registry v2, while earlier ones must use v1
 	if (osVersion != null && semver.lte(osVersion, '1.2.0')) {
 		throw new BadRequestError(
@@ -46,7 +44,7 @@ export const generateConfig = async (
 		// Devices running ResinOS >= 2.7.8 can use provisioning keys
 		if (osVersion != null && semver.satisfies(osVersion, '<2.7.8')) {
 			// Older ones have to use the old "user api keys"
-			return createUserApiKey(req, (await userPromise).id);
+			return createUserApiKey(req, (await getUser(req)).id);
 		}
 		return createProvisioningApiKey(req, app.id);
 	})();
@@ -68,7 +66,6 @@ export const generateConfig = async (
 		}
 	})();
 
-	const user = await userPromise;
 	const apiKey = await apiKeyPromise;
 	const rootCA = await selfSignedRootPromise;
 
@@ -76,9 +73,7 @@ export const generateConfig = async (
 		{
 			application: app as deviceConfig.GenerateOptions['application'],
 			deviceType: deviceType.slug,
-			user,
 			apiKey,
-			pubnub: {},
 			vpnPort: VPN_PORT,
 			endpoints: {
 				api: `https://${API_HOST}`,

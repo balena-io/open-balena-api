@@ -19,7 +19,7 @@ const getApp = async (req: Request): Promise<AnyObject> => {
 		id: req.param('appId'),
 		passthrough: { req },
 		options: {
-			$select: ['id', 'app_name'],
+			$select: 'id',
 			$expand: {
 				is_for__device_type: {
 					$select: ['slug'],
