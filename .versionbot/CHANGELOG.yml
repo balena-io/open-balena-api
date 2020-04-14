@@ -1,4 +1,14 @@
 - commits:
+    - subject: Update to balena-device-config 6.x
+      hash: 8d98f4c4e7091a5d14b106d66154c1d3b1bc80b5
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.72.0
+  date: 2020-04-13T11:24:24.085Z
+- commits:
     - subject: Remove mixpanel token configuration
       hash: 61b4821c59fc5982a0eca6fe293a74ea7bb11984
       body: ''
