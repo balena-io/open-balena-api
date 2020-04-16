@@ -14,7 +14,7 @@ declare module 'balena-device-config' {
 			api: string;
 			delta: string;
 			registry: string;
-			vpn: string;
+			vpn?: string;
 		};
 
 		mixpanel?: {
