@@ -1,4 +1,15 @@
 - commits:
+    - subject: Revert "Remove mixpanel token configuration"
+      hash: a5fa3ecd6778966f047d2e32bdc5239163146eee
+      body: |
+        This reverts commit 61b4821c59fc5982a0eca6fe293a74ea7bb11984.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.72.2
+  date: 2020-04-16T13:34:09.862Z
+- commits:
     - subject: Update dependencies
       hash: 25aa179dd75d1ae5ed71d98bd6ac833d7a4125ba
       body: |
