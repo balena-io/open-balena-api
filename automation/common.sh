@@ -59,6 +59,7 @@ runapi () {
 		-e IMAGE_STORAGE_SECRET_KEY=SECRET_KEY \
 		-e JSON_WEB_TOKEN_EXPIRY_MINUTES=10080 \
 		-e JSON_WEB_TOKEN_SECRET=purple \
+		-e MIXPANEL_TOKEN=mixpanel_token \
 		-e NUM_WORKERS=1 \
 		-e PORT=80 \
 		-e REDIS_HOST=$redis_id \

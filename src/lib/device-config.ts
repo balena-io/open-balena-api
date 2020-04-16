@@ -19,6 +19,7 @@ const { BadRequestError } = sbvrUtils;
 import {
 	API_HOST,
 	DELTA_HOST,
+	MIXPANEL_TOKEN,
 	NODE_EXTRA_CA_CERTS,
 	REGISTRY2_HOST,
 	VPN_HOST,
@@ -74,6 +75,9 @@ export const generateConfig = async (
 			application: app as deviceConfig.GenerateOptions['application'],
 			deviceType: deviceType.slug,
 			apiKey,
+			mixpanel: {
+				token: MIXPANEL_TOKEN,
+			},
 			vpnPort: VPN_PORT,
 			endpoints: {
 				api: `https://${API_HOST}`,
