@@ -1,4 +1,14 @@
 - commits:
+    - subject: Make userId optional in /device/register
+      hash: 765c0fc1fd639c93fb84f0d29f7e6ef8c30a62fd
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.72.3
+  date: 2020-04-17T10:32:38.793Z
+- commits:
     - subject: Revert "Remove mixpanel token configuration"
       hash: a5fa3ecd6778966f047d2e32bdc5239163146eee
       body: |
