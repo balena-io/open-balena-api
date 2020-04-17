@@ -5,6 +5,9 @@ declare module 'balena-device-config' {
 			deviceType?: string;
 		};
 		deviceType?: string;
+		user?: {
+			id?: number;
+		};
 		vpnPort?: string;
 
 		endpoints: {
@@ -14,7 +17,7 @@ declare module 'balena-device-config' {
 			vpn: string;
 		};
 
-		mixpanel: {
+		mixpanel?: {
 			token?: string;
 		};
 		apiKey?: string;
