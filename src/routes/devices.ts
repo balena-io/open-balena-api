@@ -27,7 +27,7 @@ const { BadRequestError, UnauthorizedError, root, api } = sbvrUtils;
 
 export const register: RequestHandler = async (req, res) => {
 	try {
-		const userId = checkInt(req.body.user);
+		const userId = req.body.user == null ? null : checkInt(req.body.user);
 		if (userId === false) {
 			throw new BadRequestError('User ID must be a valid integer');
 		}
@@ -51,8 +51,7 @@ export const register: RequestHandler = async (req, res) => {
 			throw new BadRequestError('API key must be used for registering');
 		}
 
-		const deviceApiKey =
-			req.body.api_key != null ? req.body.api_key : randomstring.generate();
+		const deviceApiKey = req.body.api_key ?? randomstring.generate();
 
 		// Temporarily give the ability to fetch the device we create and create an api key for it,
 		// but clone to make sure it isn't propagated elsewhere
@@ -129,7 +128,7 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 			online_dependent_devices,
 			expiry_date,
 		} = req.body;
-		if (!isValidInteger(user)) {
+		if (user != null && !isValidInteger(user)) {
 			throw new BadRequestError('user not found or invalid');
 		}
 		if (!isValidInteger(gateway)) {
