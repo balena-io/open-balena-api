@@ -1,4 +1,14 @@
 - commits:
+    - subject: Update balena-device-config and re-add user id
+      hash: 02101ba5e69d4fe4941a754da1a4b3f571c66bbe
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.72.4
+  date: 2020-04-17T12:49:38.638Z
+- commits:
     - subject: Make userId optional in /device/register
       hash: 765c0fc1fd639c93fb84f0d29f7e6ef8c30a62fd
       body: ''
