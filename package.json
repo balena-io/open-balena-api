@@ -45,7 +45,7 @@
     "array-sort": "^1.0.0",
     "avsc": "^5.4.20",
     "aws-sdk": "^2.656.0",
-    "balena-device-config": "6.0.0",
+    "balena-device-config": "^6.1.1",
     "balena-semver": "^2.3.0",
     "basic-auth": "^2.0.1",
     "bluebird": "^3.7.2",
