@@ -1,4 +1,18 @@
 - commits:
+    - subject: >-
+        track device logs bytes written (information lost when rotating at
+        retention limit)
+      hash: 0f30fb4db907a1f3ae31d98d6be33c937edf1372
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: dt-rush <nickp@balena.io>
+        signed-off-by: dt-rush <nickp@balena.io>
+      author: dt-rush
+  version: 0.73.0
+  date: 2020-04-20T16:43:18.097Z
+- commits:
     - subject: Update dependencies
       hash: bde9765aa39a9108d87a247bc6a3af0d89f1c9b0
       body: |
