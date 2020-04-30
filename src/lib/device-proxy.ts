@@ -45,7 +45,7 @@ const validateSupervisorResponse = (
 	filter: PinejsClientCoreFactory.Filter,
 ) => {
 	const [{ statusCode, headers }, body] = response;
-	const contentType = headers != null ? headers['content-type'] : undefined;
+	const contentType = headers?.['content-type'];
 	if (contentType != null) {
 		if (/^application\/json/i.test(contentType)) {
 			let jsonBody;

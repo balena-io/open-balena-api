@@ -112,9 +112,8 @@ export const strategy = new JwtStrategy(
 					}
 
 					// Default both to null so that we don't hit issues with null !== undefined
-					const userSecret = user.jwt_secret != null ? user.jwt_secret : null;
-					const jwtSecret =
-						jwtUser.jwt_secret != null ? jwtUser.jwt_secret : null;
+					const userSecret = user.jwt_secret ?? null;
+					const jwtSecret = jwtUser.jwt_secret ?? null;
 
 					if (userSecret !== jwtSecret) {
 						throw new InvalidJwtSecretError();

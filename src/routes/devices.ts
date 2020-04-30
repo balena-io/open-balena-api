@@ -483,8 +483,8 @@ export const state: RequestHandler = async (req, res) => {
 			});
 		}
 
-		const volumes = composition != null ? composition.volumes || {} : {};
-		const networks = composition != null ? composition.networks || {} : {};
+		const volumes = composition?.volumes || {};
+		const networks = composition?.networks || {};
 
 		const local = {
 			name: device.device_name,
@@ -492,8 +492,8 @@ export const state: RequestHandler = async (req, res) => {
 			apps: {
 				[parentApp.id]: {
 					name: parentApp.app_name,
-					commit: release == null ? undefined : release.commit,
-					releaseId: release == null ? undefined : release.id,
+					commit: release?.commit,
+					releaseId: release?.id,
 					services,
 					volumes,
 					networks,
