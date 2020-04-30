@@ -1,4 +1,14 @@
 - commits:
+    - subject: Make use of optional chaining/nullish coalescing
+      hash: 4e9ae37b8dca18d6cc73b6a8491137bb4b78c203
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.73.1
+  date: 2020-04-27T11:46:49.365Z
+- commits:
     - subject: >-
         track device logs bytes written (information lost when rotating at
         retention limit)
