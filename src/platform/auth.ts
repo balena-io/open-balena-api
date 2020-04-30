@@ -349,7 +349,7 @@ export const findUser = async (
 	} else {
 		loginField = 'username';
 	}
-	const $select = ['id', 'actor', 'username', 'password'] as const;
+	const $select = ['id', 'actor', 'username', 'password', 'email'] as const;
 	type UserResult = Pick<DbUser, typeof $select[number]>;
 	const [user] = (await api.resin.get({
 		resource: 'user',
