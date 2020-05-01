@@ -1,4 +1,21 @@
 - commits:
+    - subject: 'Prepare the heartbeat interval queries only once, on first use'
+      hash: ba773e89a0ef7fcf8527ae0877e4c54472bdb211
+      body: |
+        It seems that so far these were re-calculated on each
+        request. The queries are now prepared lazily, so the
+        startup time will not be affected, but had to do this
+        anyway since at the point that this loaded api.resin
+        was still undefined :)
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+  version: 0.73.3
+  date: 2020-05-01T15:01:18.288Z
+- commits:
     - subject: Update open-balena-base to 9.2.4
       hash: 562521a9e4e48501ecd1aa98bd0081975e0e497f
       body: |
