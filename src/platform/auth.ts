@@ -335,10 +335,30 @@ export async function getUser(
 	return req.user;
 }
 
-export const findUser = async (
+const defaultFindUser$select = ['id', 'actor', 'username', 'password'] as const;
+
+export async function findUser(
 	loginInfo: string,
 	tx?: Tx,
-): Promise<Pick<DbUser, typeof $select[number]> | undefined> => {
+): Promise<Pick<DbUser, typeof defaultFindUser$select[number]> | undefined>;
+export async function findUser<
+	T extends DbUser,
+	TProps extends ReadonlyArray<keyof T>
+>(
+	loginInfo: string,
+	tx: Tx | undefined,
+	$select: TProps,
+): Promise<Pick<T, typeof $select[number]> | undefined>;
+export async function findUser<
+	T extends DbUser,
+	TProps extends ReadonlyArray<keyof T & string>
+>(
+	loginInfo: string,
+	tx?: Tx,
+	$select: TProps = (defaultFindUser$select as ReadonlyArray<
+		keyof DbUser & string
+	>) as TProps,
+) {
 	if (!loginInfo) {
 		return;
 	}
@@ -349,8 +369,8 @@ export const findUser = async (
 	} else {
 		loginField = 'username';
 	}
-	const $select = ['id', 'actor', 'username', 'password'] as const;
-	type UserResult = Pick<DbUser, typeof $select[number]>;
+
+	type UserResult = Pick<T, typeof $select[number]>;
 	const [user] = (await api.resin.get({
 		resource: 'user',
 		passthrough: {
@@ -372,7 +392,7 @@ export const findUser = async (
 		},
 	})) as [UserResult?];
 	return user;
-};
+}
 
 export const registerUser = async (
 	userData: AnyObject & {
