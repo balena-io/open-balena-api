@@ -406,12 +406,12 @@ export const registerUser = async (
 	if (USERNAME_BLACKLIST.includes(userData.username)) {
 		throw new ConflictError('This username is blacklisted');
 	}
-	let existingUser = await findUser(userData.email, tx);
+	let existingUser = await findUser(userData.email, tx, ['id']);
 	if (existingUser) {
 		throw new ConflictError('This email is already taken');
 	}
 
-	existingUser = await findUser(userData.username, tx);
+	existingUser = await findUser(userData.username, tx, ['id']);
 	if (existingUser) {
 		throw new ConflictError('This username is already taken');
 	}
