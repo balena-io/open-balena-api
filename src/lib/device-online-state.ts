@@ -21,8 +21,8 @@ import {
 
 const { root, api } = sbvrUtils;
 
-export const getPollInterval = async (uuid: string) => {
-	const getPollIntervalForDevice = api.resin.prepare<{ uuid: string }>({
+const getPollIntervalForDevice = _.once(() =>
+	api.resin.prepare<{ uuid: string }>({
 		resource: 'device_config_variable',
 		passthrough: { req: root },
 		options: {
@@ -45,9 +45,11 @@ export const getPollInterval = async (uuid: string) => {
 				name: 'desc',
 			},
 		},
-	});
+	}),
+);
 
-	const getPollIntervalForParentApplication = api.resin.prepare<{
+const getPollIntervalForParentApplication = _.once(() =>
+	api.resin.prepare<{
 		uuid: string;
 	}>({
 		resource: 'application_config_variable',
@@ -88,14 +90,16 @@ export const getPollInterval = async (uuid: string) => {
 				name: 'desc',
 			},
 		},
-	});
+	}),
+);
 
-	let pollIntervals = (await getPollIntervalForDevice({ uuid })) as Array<{
+export const getPollInterval = async (uuid: string) => {
+	let pollIntervals = (await getPollIntervalForDevice()({ uuid })) as Array<{
 		value: string;
 	}>;
 
 	if (pollIntervals.length === 0) {
-		pollIntervals = (await getPollIntervalForParentApplication({
+		pollIntervals = (await getPollIntervalForParentApplication()({
 			uuid,
 		})) as Array<{ value: string }>;
 	}
