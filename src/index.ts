@@ -14,6 +14,8 @@ import * as Raven from 'raven';
 import * as pine from '@resin/pinejs';
 import * as pineEnv from '@resin/pinejs/out/config-loader/env';
 
+import type { User as DbUser } from './models';
+import type { defaultFindUser$select } from './platform/auth';
 import * as jwt from './platform/jwt';
 passport.use(jwt.strategy);
 
@@ -44,7 +46,9 @@ export interface SetupOptions {
 	onInitHooks?: SetupFunction;
 	onInitRoutes?: SetupFunction;
 
-	onLogin?: (user: AnyObject) => PromiseLike<void> | void;
+	onLogin?: (
+		user: Pick<DbUser, typeof defaultFindUser$select[number]>,
+	) => PromiseLike<void> | void;
 }
 
 export async function setup(app: Application, options: SetupOptions) {

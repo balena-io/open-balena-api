@@ -335,7 +335,12 @@ export async function getUser(
 	return req.user;
 }
 
-const defaultFindUser$select = ['id', 'actor', 'username', 'password'] as const;
+export const defaultFindUser$select = [
+	'id',
+	'actor',
+	'username',
+	'password',
+] as const;
 
 export async function findUser(
 	loginInfo: string,
