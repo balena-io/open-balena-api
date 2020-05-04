@@ -1,4 +1,18 @@
 - commits:
+    - subject: Select only the required fields in findUser calls
+      hash: d54da3df925890f262fce65f07fdbd30d10b8e49
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Depends-on: 'https://github.com/balena-io/open-balena-api/pull/346'
+        depends-on: 'https://github.com/balena-io/open-balena-api/pull/346'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+  version: 0.74.1
+  date: 2020-05-04T11:18:05.063Z
+- commits:
     - subject: 'platform/auth/findUser: Add support for an optional $select argument'
       hash: 42c7a418a7e5428f44f9d475bd812a1310b9bea2
       body: ''
