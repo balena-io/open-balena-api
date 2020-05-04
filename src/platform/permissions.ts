@@ -114,8 +114,8 @@ export const setApiKey = async (
 ): Promise<AnyObject> => {
 	const role = await getOrInsertRoleId(roleName, tx);
 	await assignRolePermissions(role.id, permissions, tx);
-	const user = await findUser('guest', tx);
-	if (user == null || user.actor == null) {
+	const user = await findUser('guest', tx, ['actor']);
+	if (user?.actor == null) {
 		throw new Error('Cannot find guest user');
 	}
 	const apiKey = await getOrInsertApiKey(user.actor, role, tx);
@@ -259,8 +259,8 @@ export function createAll(
 			_.map(userMap, async (userEmails, roleName) => {
 				for (const email of userEmails) {
 					try {
-						const user = await findUser(email, tx);
-						if (user == null || user.id == null) {
+						const user = await findUser(email, tx, ['id']);
+						if (user?.id == null) {
 							throw new Error(`User ${email} not found.`);
 						}
 						await assignUserRole(user.id, roles[roleName].id, tx);
@@ -320,8 +320,8 @@ export function createAll(
 		async ([roleName, { permissions, key }]) => {
 			try {
 				const role = await createRolePermissions(permissions, roleName);
-				const user = await findUser('guest', tx);
-				if (user == null || user.actor == null) {
+				const user = await findUser('guest', tx, ['actor']);
+				if (user?.actor == null) {
 					throw new Error('Cannot find guest user');
 				}
 				const apiKey = await getOrInsertApiKey(user.actor, role, tx);
