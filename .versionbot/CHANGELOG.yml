@@ -1,4 +1,14 @@
 - commits:
+    - subject: Allow gateway downloads to have a null download progress
+      hash: 7e53368a0344d67f140307b0551e90573f08320a
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.75.0
+  date: 2020-05-05T13:29:46.350Z
+- commits:
     - subject: Improve the typings of onLogin
       hash: 049173a2db1ab7fa423f81203450478ea1568afd
       body: ''
