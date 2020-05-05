@@ -637,7 +637,7 @@ Fact type: image install is provided by release
 Fact type: gateway download has status
 	Necessity: each gateway download has exactly one status.
 Fact type: gateway download has download progress
-	Necessity: each gateway download has exactly one download progress.
+	Necessity: each gateway download has at most one download progress.
 
 
 -- config

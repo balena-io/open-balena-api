@@ -669,7 +669,7 @@ const upsertGatewayDownload = async (
 	deviceId: number,
 	imageId: number,
 	status: string,
-	downloadProgress: number,
+	downloadProgress: number | null,
 ): Promise<void> => {
 	const [gatewayDownload] = (await resinApi.get({
 		resource: 'gateway_download',
