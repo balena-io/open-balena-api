@@ -1,2 +1,2 @@
 ALTER TABLE "gateway download"
-ALTER COLUMN "download progress" SET NULL;
+ALTER COLUMN "download progress" DROP NOT NULL;
