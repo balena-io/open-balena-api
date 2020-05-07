@@ -1,4 +1,14 @@
 - commits:
+    - subject: Fix gateway download migration
+      hash: 0384b617baa13942c92a2ea8221cf968c29a068a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.75.1
+  date: 2020-05-07T12:53:58.292Z
+- commits:
     - subject: Allow gateway downloads to have a null download progress
       hash: 7e53368a0344d67f140307b0551e90573f08320a
       body: ''
