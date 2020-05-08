@@ -182,7 +182,7 @@ function getCount(
 
 	const parsedCount = _.parseInt(countParam, 10);
 
-	if (!_.isNaN(parsedCount)) {
+	if (!Number.isNaN(parsedCount)) {
 		return parsedCount;
 	} else {
 		return defaultCount;

@@ -16,7 +16,7 @@ export const checkInt = (num?: string): number | false => {
 		return false;
 	}
 	const n = _.parseInt(num, 10);
-	if (_.isNaN(n)) {
+	if (Number.isNaN(n)) {
 		return false;
 	}
 	return n;
