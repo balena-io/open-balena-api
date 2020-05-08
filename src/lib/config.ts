@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 export const SECONDS = 1000;
 export const SECONDS_PER_HOUR = 60 * 60;
 export const MINUTES = 60 * SECONDS;
@@ -70,7 +68,7 @@ export function intVar<R>(varName: string, defaultValue?: R): number | R {
 		return defaultValue!;
 	}
 	const i = parseInt(s, 10);
-	if (!_.isFinite(i)) {
+	if (!Number.isFinite(i)) {
 		throw new Error(`${varName} must be a valid number if set`);
 	}
 	return i;

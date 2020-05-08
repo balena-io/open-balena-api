@@ -209,7 +209,7 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 		permissions: permissionData,
 	} as User;
 
-	if (!_.isFinite(tokenData.authTime)) {
+	if (!Number.isFinite(tokenData.authTime!)) {
 		tokenData.authTime = Date.now();
 	}
 

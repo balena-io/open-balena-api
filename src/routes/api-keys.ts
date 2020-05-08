@@ -17,7 +17,7 @@ import {
 
 export const createDeviceApiKey: RequestHandler = async (req, res) => {
 	const deviceId = _.parseInt(req.params.deviceId, 10);
-	if (!_.isFinite(deviceId)) {
+	if (!Number.isFinite(deviceId)) {
 		res.status(400).send('Device id must be a number');
 		return;
 	}
@@ -38,7 +38,7 @@ export const createDeviceApiKey: RequestHandler = async (req, res) => {
 
 export const createProvisioningApiKey: RequestHandler = async (req, res) => {
 	const appId = _.parseInt(req.params.appId, 10);
-	if (!_.isFinite(appId)) {
+	if (!Number.isFinite(appId)) {
 		res.status(400).send('Application id must be a number');
 		return;
 	}

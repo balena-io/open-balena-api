@@ -861,10 +861,10 @@ export const statePatch: RequestHandler = async (req, res) => {
 						const { status, download_progress } = svc;
 						const releaseId = _.parseInt(svc.releaseId, 10);
 
-						if (!_.isFinite(imageId)) {
+						if (!Number.isFinite(imageId)) {
 							throw new BadRequestError('Invalid image ID value in request');
 						}
-						if (!_.isFinite(releaseId)) {
+						if (!Number.isFinite(releaseId)) {
 							throw new BadRequestError('Invalid release ID value in request');
 						}
 
