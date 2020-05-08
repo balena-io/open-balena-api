@@ -110,7 +110,7 @@ const $createRateLimitMiddleware = (
 ): RequestHandler => {
 	let fieldFn: (req: Request, res: Response) => string;
 	if (field != null) {
-		if (_.isFunction(field)) {
+		if (typeof field === 'function') {
 			fieldFn = field;
 		} else {
 			const path = _.toPath(field);
