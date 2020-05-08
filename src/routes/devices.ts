@@ -140,7 +140,7 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 		if (
 			dependent_device_type == null ||
 			_.isEmpty(dependent_device_type) ||
-			!_.isString(dependent_device_type)
+			typeof dependent_device_type !== 'string'
 		) {
 			throw new BadRequestError('dependent_device_type not found or invalid');
 		}
