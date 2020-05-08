@@ -146,7 +146,7 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 		}
 		if (
 			online_dependent_devices == null ||
-			!_.isArray(online_dependent_devices)
+			!Array.isArray(online_dependent_devices)
 		) {
 			throw new BadRequestError(
 				'online_dependent_devices not found or invalid',
