@@ -1,5 +1,4 @@
 import type { Request, RequestHandler, Response } from 'express';
-import * as _ from 'lodash';
 import * as ndjson from 'ndjson';
 import onFinished = require('on-finished');
 import { createGunzip } from 'zlib';
@@ -180,9 +179,9 @@ function getCount(
 		return Infinity;
 	}
 
-	const parsedCount = _.parseInt(countParam, 10);
+	const parsedCount = parseInt(countParam, 10);
 
-	if (!_.isNaN(parsedCount)) {
+	if (!Number.isNaN(parsedCount)) {
 		return parsedCount;
 	} else {
 		return defaultCount;

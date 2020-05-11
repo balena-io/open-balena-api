@@ -1,5 +1,4 @@
 import type { RequestHandler } from 'express';
-import * as _ from 'lodash';
 
 import { getUser } from '../platform/auth';
 import {
@@ -16,8 +15,8 @@ import {
 } from '../lib/api-keys';
 
 export const createDeviceApiKey: RequestHandler = async (req, res) => {
-	const deviceId = _.parseInt(req.params.deviceId, 10);
-	if (!_.isFinite(deviceId)) {
+	const deviceId = parseInt(req.params.deviceId, 10);
+	if (!Number.isFinite(deviceId)) {
 		res.status(400).send('Device id must be a number');
 		return;
 	}
@@ -37,8 +36,8 @@ export const createDeviceApiKey: RequestHandler = async (req, res) => {
 };
 
 export const createProvisioningApiKey: RequestHandler = async (req, res) => {
-	const appId = _.parseInt(req.params.appId, 10);
-	if (!_.isFinite(appId)) {
+	const appId = parseInt(req.params.appId, 10);
+	if (!Number.isFinite(appId)) {
 		res.status(400).send('Application id must be a number');
 		return;
 	}

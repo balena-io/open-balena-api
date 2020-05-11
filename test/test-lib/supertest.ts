@@ -1,5 +1,4 @@
 import * as express from 'express';
-import * as _ from 'lodash';
 import * as $supertest from 'supertest';
 import { User } from '../../src/platform/jwt';
 
@@ -19,7 +18,7 @@ export const supertest = function (
 	const req: any = $supertest.agent(app);
 	req.set('X-Forwarded-Proto', 'https');
 
-	if (_.isString(token)) {
+	if (typeof token === 'string') {
 		req.set('Authorization', `Bearer ${token}`);
 	}
 	return req as ReturnType<typeof $supertest.agent>;

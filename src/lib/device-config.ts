@@ -93,7 +93,7 @@ export const generateConfig = async (
 		},
 		{
 			appUpdatePollInterval:
-				_.parseInt(req.param('appUpdatePollInterval')) * 60 * 1000,
+				parseInt(req.param('appUpdatePollInterval'), 10) * 60 * 1000,
 			network: req.body.network ?? req.query.network,
 			wifiSsid: req.param('wifiSsid'),
 			wifiKey: req.param('wifiKey'),

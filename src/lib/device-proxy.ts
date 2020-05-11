@@ -109,7 +109,7 @@ export const proxy = async (req: Request, res: Response) => {
 			}
 		}
 		if (uuid != null) {
-			if (!_.isString(uuid)) {
+			if (typeof uuid !== 'string') {
 				throw new BadRequestError('UUID must be a valid string if specified');
 			}
 			filter.uuid = uuid;

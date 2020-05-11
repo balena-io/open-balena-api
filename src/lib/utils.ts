@@ -1,7 +1,6 @@
 import { pseudoRandomBytes } from 'crypto';
 import type { Request } from 'express';
 import * as ipaddr from 'ipaddr.js';
-import * as _ from 'lodash';
 import { promisify } from 'util';
 
 export const pseudoRandomBytesAsync = promisify(pseudoRandomBytes);
@@ -15,8 +14,8 @@ export const checkInt = (num?: string): number | false => {
 	if (num == null) {
 		return false;
 	}
-	const n = _.parseInt(num, 10);
-	if (_.isNaN(n)) {
+	const n = parseInt(num, 10);
+	if (Number.isNaN(n)) {
 		return false;
 	}
 	return n;

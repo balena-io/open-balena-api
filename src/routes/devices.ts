@@ -140,13 +140,13 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 		if (
 			dependent_device_type == null ||
 			_.isEmpty(dependent_device_type) ||
-			!_.isString(dependent_device_type)
+			typeof dependent_device_type !== 'string'
 		) {
 			throw new BadRequestError('dependent_device_type not found or invalid');
 		}
 		if (
 			online_dependent_devices == null ||
-			!_.isArray(online_dependent_devices)
+			!Array.isArray(online_dependent_devices)
 		) {
 			throw new BadRequestError(
 				'online_dependent_devices not found or invalid',
@@ -856,15 +856,15 @@ export const statePatch: RequestHandler = async (req, res) => {
 
 				_.each(apps, (app) => {
 					_.each(app.services, (svc, imageIdStr) => {
-						const imageId = _.parseInt(imageIdStr, 10);
+						const imageId = parseInt(imageIdStr, 10);
 						imageIds.push(imageId);
 						const { status, download_progress } = svc;
-						const releaseId = _.parseInt(svc.releaseId, 10);
+						const releaseId = parseInt(svc.releaseId, 10);
 
-						if (!_.isFinite(imageId)) {
+						if (!Number.isFinite(imageId)) {
 							throw new BadRequestError('Invalid image ID value in request');
 						}
-						if (!_.isFinite(releaseId)) {
+						if (!Number.isFinite(releaseId)) {
 							throw new BadRequestError('Invalid release ID value in request');
 						}
 

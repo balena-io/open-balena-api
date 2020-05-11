@@ -286,9 +286,9 @@ export const token: RequestHandler = async (req, res) => {
 	try {
 		const { scope } = req.query;
 		let scopes: string[];
-		if (_.isString(scope)) {
+		if (typeof scope === 'string') {
 			scopes = [scope];
-		} else if (_.isArray(scope)) {
+		} else if (Array.isArray(scope)) {
 			scopes = scope;
 		} else if (_.isObject(scope)) {
 			scopes = Object.values(scope);

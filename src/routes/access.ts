@@ -1,5 +1,4 @@
 import type { Request, Response } from 'express';
-import * as _ from 'lodash';
 
 import { sbvrUtils } from '@resin/pinejs';
 import * as semver from 'balena-semver';
@@ -25,7 +24,7 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 		},
 	});
 
-	if (!_.isArray(devices)) {
+	if (!Array.isArray(devices)) {
 		res.sendStatus(401);
 		return;
 	}
@@ -50,7 +49,7 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 			url: `device(${device.id})/canAccess`,
 		})) as { d?: AnyObject[] };
 
-		if (!_.isArray(allowedDevices.d) || allowedDevices.d.length !== 1) {
+		if (!Array.isArray(allowedDevices.d) || allowedDevices.d.length !== 1) {
 			res.sendStatus(401);
 			return;
 		}

@@ -1,5 +1,4 @@
 import type { Request } from 'express';
-import * as _ from 'lodash';
 import * as randomstring from 'randomstring';
 
 import { sbvrUtils } from '@resin/pinejs';
