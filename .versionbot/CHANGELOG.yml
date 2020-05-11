@@ -1,4 +1,56 @@
 - commits:
+    - subject: Remove unused import
+      hash: 8d7109214f50f52b6dc1c7e82aa1d6e5a0e1bdc9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Switch to native parseInt
+      hash: b3c25995ac7ce3af124259462382d0a5407f2454
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Switch to native isFinite type checking
+      hash: cd11561c3cceab5d327d55cdd336886ca12c9097
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Switch to native function type checking
+      hash: bf78b6803a2ba706505438d84bc93af207b0102f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Switch to native isNaN type checking
+      hash: f819acf1cf6e093791929654458ba8e6882f00a8
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Switch to native array type checking
+      hash: 3c920d6a21d6ff6e25c69f3287236443748a3f2f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Switch to native string type checking
+      hash: 6badb39c970811ea54809bc06b4c33b8b52aec44
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.75.2
+  date: 2020-05-11T10:28:04.065Z
+- commits:
     - subject: Fix gateway download migration
       hash: 0384b617baa13942c92a2ea8221cf968c29a068a
       body: ''
