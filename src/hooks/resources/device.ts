@@ -28,12 +28,12 @@ export const isDeviceNameValid = (name: string) => {
 	return !INVALID_NEWLINE_REGEX.test(name);
 };
 
-const createReleaseServiceInstalls = (
+const createReleaseServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,
 	deviceId: number,
 	releaseFilter: PinejsClientCoreFactory.Filter,
-): Bluebird<void> =>
-	(api.get({
+): Promise<void> => {
+	await (api.get({
 		resource: 'service',
 		options: {
 			$select: 'id',
@@ -71,33 +71,30 @@ const createReleaseServiceInstalls = (
 				},
 			},
 		},
-	}) as Bluebird<AnyObject[]>)
-		.map((service) => {
-			// Filter out any services which do have a service install attached
-			if (service.service_install > 0) {
-				return;
-			}
+	}) as Bluebird<AnyObject[]>).map(async (service) => {
+		// Filter out any services which do have a service install attached
+		if (service.service_install > 0) {
+			return;
+		}
 
-			// Create a service_install for this pair of service and device
-			return api
-				.post({
-					resource: 'service_install',
-					body: {
-						device: deviceId,
-						installs__service: service.id,
-					},
-					options: { returnResource: false },
-				})
-				.return();
-		})
-		.return();
+		// Create a service_install for this pair of service and device
+		await api.post({
+			resource: 'service_install',
+			body: {
+				device: deviceId,
+				installs__service: service.id,
+			},
+			options: { returnResource: false },
+		});
+	});
+};
 
-const createAppServiceInstalls = (
+const createAppServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,
 	appId: number,
 	deviceIds: number[],
-): Bluebird<void> =>
-	Bluebird.map(deviceIds, (deviceId) =>
+): Promise<void> => {
+	await Bluebird.map(deviceIds, (deviceId) =>
 		createReleaseServiceInstalls(api, deviceId, {
 			should_be_running_on__application: {
 				$any: {
@@ -106,7 +103,8 @@ const createAppServiceInstalls = (
 				},
 			},
 		}),
-	).return();
+	);
+};
 
 sbvrUtils.addPureHook('POST', 'resin', 'device', {
 	POSTPARSE: createActor,
@@ -394,24 +392,22 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		const isOnline = args.request.values.is_online;
 		if ([false, 0].includes(isOnline)) {
 			waitPromises.push(
-				affectedIds.then((deviceIds) => {
+				affectedIds.then(async (deviceIds) => {
 					if (deviceIds.length === 0) {
 						return;
 					}
-					return args.api
-						.patch({
-							resource: 'device',
-							options: {
-								$filter: {
-									is_managed_by__device: { $in: deviceIds },
-									is_online: { $ne: isOnline },
-								},
+					await args.api.patch({
+						resource: 'device',
+						options: {
+							$filter: {
+								is_managed_by__device: { $in: deviceIds },
+								is_online: { $ne: isOnline },
 							},
-							body: {
-								is_online: isOnline,
-							},
-						})
-						.return();
+						},
+						body: {
+							is_online: isOnline,
+						},
+					});
 				}),
 			);
 		}
@@ -512,7 +508,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			);
 		}
 
-		return Bluebird.all(waitPromises).return();
+		return Promise.all(waitPromises);
 	},
 });
 

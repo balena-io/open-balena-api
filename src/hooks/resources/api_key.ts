@@ -16,21 +16,25 @@ const deleteApiKeyHooks: sbvrUtils.Hooks = {
 
 		await Bluebird.map(
 			['api_key__has__role', 'api_key__has__permission'],
-			(resource) =>
-				api.Auth.delete({
-					resource,
-					passthrough: {
-						tx: args.tx,
-						req: root,
-					},
-					options: {
-						$filter: { api_key: { $in: keyIds } },
-					},
-				}).tapCatch((err) => {
+			async (resource) => {
+				try {
+					await api.Auth.delete({
+						resource,
+						passthrough: {
+							tx: args.tx,
+							req: root,
+						},
+						options: {
+							$filter: { api_key: { $in: keyIds } },
+						},
+					});
+				} catch (err) {
 					captureException(err, 'Error deleting api key ' + resource, {
 						req: args.req,
 					});
-				}),
+					throw err;
+				}
+			},
 		);
 	},
 };
