@@ -1,4 +1,14 @@
 - commits:
+    - subject: Make more use of async/await
+      hash: 992e76a11b8bbc05c01f4010200a7ca6f2a15481
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.75.3
+  date: 2020-05-11T19:47:03.934Z
+- commits:
     - subject: Remove unused import
       hash: 8d7109214f50f52b6dc1c7e82aa1d6e5a0e1bdc9
       body: ''
