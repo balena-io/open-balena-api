@@ -46,6 +46,17 @@ export const requiredVar = (varName: string): string => {
 	return s;
 };
 
+export const requiredNonEmptyVar = (varName: string): string => {
+	const s = process.env[varName];
+	if (s == null || s === '') {
+		process.exitCode = 1;
+		throw new Error(
+			`Environment variable "${varName}" is required and should not be empty`,
+		);
+	}
+	return s;
+};
+
 export function optionalVar(varName: string, defaultValue: string): string;
 export function optionalVar(
 	varName: string,
