@@ -177,14 +177,14 @@ async function updateDTModel(
 	const apiTx = api.resin.clone({ passthrough: { req: root, tx } });
 	const updateFields = _.mapValues(
 		propertyMap,
-		(source) => (deviceType as AnyObject)[source.name] || source.default,
+		(source) => (deviceType as AnyObject)[source.name] ?? source.default,
 	);
 	const updateFilter = _.map(
 		propertyMap,
 		(value, key): PinejsClientCoreFactory.Filter => {
 			return {
 				[key]: {
-					$ne: (deviceType as AnyObject)[value.name] || value.default,
+					$ne: (deviceType as AnyObject)[value.name] ?? value.default,
 				},
 			};
 		},
