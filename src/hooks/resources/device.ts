@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import * as Bluebird from 'bluebird';
 
 import { sbvrUtils } from '@resin/pinejs';
@@ -207,7 +208,8 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			request.values.should_be_running__release !== undefined ||
 			[false, 0].includes(request.values.is_online) ||
 			request.values.belongs_to__application != null ||
-			request.values.device_name != null
+			request.values.device_name != null ||
+			request.values.supervisor_version != null
 		) {
 			// Cache affected ids for later
 			waitPromises.push(getCurrentRequestAffectedIds(args));
@@ -353,6 +355,20 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 						request.values.should_be_managed_by__supervisor_release,
 					),
 				),
+			);
+		}
+
+		if (request.values.supervisor_version != null) {
+			// When a device checks in with it's initial supervisor version, set the corresponding supervisor_release
+			// resource using its current version
+			waitPromises.push(
+				getCurrentRequestAffectedIds(args).then(async (ids) => {
+					await setSupervisorReleaseResource(
+						api,
+						ids,
+						request.values.supervisor_version,
+					);
+				}),
 			);
 		}
 
@@ -577,4 +593,86 @@ async function checkSupervisorReleaseUpgrades(
 			);
 		}
 	}
+}
+
+async function setSupervisorReleaseResource(
+	api: sbvrUtils.PinejsClient,
+	deviceIds: number[],
+	supervisorVersion: string,
+) {
+	if (deviceIds.length === 0) {
+		return;
+	}
+	const devices = (await api.get({
+		resource: 'device',
+		options: {
+			// if the device already has a supervisor_version, just bail.
+			$filter: {
+				id: { $in: deviceIds },
+				supervisor_version: null,
+			},
+			$select: ['id', 'is_of__device_type'],
+		},
+	})) as AnyObject;
+
+	if (devices.length === 0) {
+		return;
+	}
+
+	const devicesByDeviceType = _.groupBy(devices, (d) => {
+		return d.is_of__device_type.__id;
+	});
+
+	if (Object.keys(devicesByDeviceType).length === 0) {
+		return;
+	}
+
+	const rootApi = api.clone({
+		passthrough: {
+			req: root,
+		},
+	});
+
+	return Promise.all(
+		_.map(devicesByDeviceType, async (affectedDevices, deviceType) => {
+			const affectedDeviceIds = affectedDevices.map((d) => d.id);
+
+			const supervisorRelease = (await rootApi.get({
+				resource: 'supervisor_release',
+				options: {
+					$select: ['id'],
+					$filter: {
+						supervisor_version: `v${supervisorVersion}`,
+						is_public: true,
+						is_for__device_type: {
+							$any: {
+								$alias: 'dt',
+								$expr: {
+									dt: {
+										id: deviceType,
+									},
+								},
+							},
+						},
+					},
+				},
+			})) as AnyObject[];
+
+			if (supervisorRelease.length === 0) {
+				return;
+			}
+
+			await rootApi.patch({
+				resource: 'device',
+				options: {
+					$filter: {
+						id: { $in: affectedDeviceIds },
+					},
+				},
+				body: {
+					should_be_managed_by__supervisor_release: supervisorRelease[0].id,
+				},
+			});
+		}),
+	);
 }

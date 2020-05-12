@@ -39,7 +39,7 @@ describe('supervisor release', function () {
 				'/resin/supervisor_release?$select=id,image_name,supervisor_version,is_for__device_type',
 			)
 			.expect(200);
-		expect(res.body).to.have.nested.property('d.length', 1);
+		expect(res.body).to.have.nested.property('d.length', 3);
 		expect(res.body.d[0]).to.have.nested.property('image_name');
 		expect(res.body.d[0]).to.have.nested.property('supervisor_version');
 		expect(res.body.d[0]).to.have.nested.property('is_for__device_type');
@@ -55,6 +55,7 @@ describe('supervisor release', function () {
 	describe('Devices running supervisor releases', () => {
 		let applicationId: number;
 		let device: fakeDevice.Device;
+		let device2: fakeDevice.Device;
 		let fx: fixtures.Fixtures;
 		let supervisorReleases: Dictionary<{ id: number }>;
 
@@ -64,6 +65,7 @@ describe('supervisor release', function () {
 			applicationId = fx.applications.app1.id;
 
 			device = await fakeDevice.provisionDevice(admin, applicationId);
+			device2 = await fakeDevice.provisionDevice(admin, applicationId);
 			supervisorReleases = fx['supervisor-release'];
 		});
 
@@ -71,14 +73,51 @@ describe('supervisor release', function () {
 			await fixtures.clean(fx);
 		});
 
-		it('should allow setting a device to a supervisor release', async () => {
+		it('should be provisioned with a non-null supervisor release after device PATCH', async () => {
 			await supertest(app, admin)
 				.patch(`/resin/device(${device.id})`)
 				.send({
-					should_be_managed_by__supervisor_release:
-						supervisorReleases['5.0.1'].id,
+					os_version: '2.38.0+rev1',
+					supervisor_version: '5.0.1',
 				})
 				.expect(200);
+
+			const res = await supertest(app, admin).get(
+				`/resin/device(${device.id})?$expand=should_be_managed_by__supervisor_release`,
+			);
+			expect(res.body)
+				.to.have.nested.property(
+					'd[0].should_be_managed_by__supervisor_release[0].supervisor_version',
+				)
+				.that.equals(`v${res.body.d[0].supervisor_version}`);
+		});
+
+		it('should be set to a non-null supervisor release after state endpoint PATCH', async () => {
+			await device2.patchStateV2({
+				local: {
+					api_port: 48484,
+					api_secret: 'somesecret',
+					os_version: '2.38.0+rev1',
+					os_variant: 'dev',
+					supervisor_version: '5.0.1',
+					provisioning_progress: null,
+					provisioning_state: '',
+					status: 'Idle',
+					logs_channel: null,
+					update_failed: false,
+					update_pending: false,
+					update_downloaded: false,
+				},
+			});
+
+			const res = await supertest(app, admin).get(
+				`/resin/device(${device2.id})?$expand=should_be_managed_by__supervisor_release`,
+			);
+			expect(res.body)
+				.to.have.nested.property(
+					'd[0].should_be_managed_by__supervisor_release[0].supervisor_version',
+				)
+				.that.equals(`v${res.body.d[0].supervisor_version}`);
 		});
 
 		it('should allow upgrading to a logstream version', async () => {
@@ -91,7 +130,7 @@ describe('supervisor release', function () {
 				.expect(200);
 		});
 
-		it('should allow updrading a devices supervisor release', async () => {
+		it("should allow upgrading a device's supervisor release", async () => {
 			await supertest(app, admin)
 				.patch(`/resin/device(${device.id})`)
 				.send({

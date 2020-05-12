@@ -1,0 +1,7 @@
+{
+	"5.0.1": {
+		"image_name": "SOME_IMAGE",
+		"supervisor_version": "v5.0.1",
+		"is_for__device_type": "intel-nuc"
+	}
+}
