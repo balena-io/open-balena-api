@@ -1,4 +1,16 @@
 - commits:
+    - subject: Handle false values correctly when updating the DT model
+      hash: 6a0f1b5bab75044eb9eb5014cbd99ed08afe6c5e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+  version: 0.75.4
+  date: 2020-05-12T11:19:49.199Z
+- commits:
     - subject: Make more use of async/await
       hash: 992e76a11b8bbc05c01f4010200a7ca6f2a15481
       body: ''
