@@ -104,6 +104,6 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 				}
 			});
 
-		return Bluebird.all([authApiDeletes, apiKeyDelete]);
+		return Promise.all([authApiDeletes, apiKeyDelete]);
 	},
 });

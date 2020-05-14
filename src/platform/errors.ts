@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import * as _ from 'lodash';
 import * as Raven from 'raven';
-import * as escapeHtml from 'escape-html';
+import escapeHtml = require('escape-html');
 
 import { sbvrUtils } from '@resin/pinejs';
 
