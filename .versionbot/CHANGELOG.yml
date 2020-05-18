@@ -1,4 +1,18 @@
 - commits:
+    - subject: 'bugfix: Always attempt to patch device model on heartbeat'
+      hash: 92d08d038311f9fea428dbbe1fc09be669d01534
+      body: |
+        To prevent the heartbeat status de-sync from the actual status
+        the device model should be patched if the held value is different.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Rich Bayliss <rich@balena.io>
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      author: Rich Bayliss
+  version: 0.75.5
+  date: 2020-05-18T13:55:52.868Z
+- commits:
     - subject: Handle false values correctly when updating the DT model
       hash: 6a0f1b5bab75044eb9eb5014cbd99ed08afe6c5e
       body: ''
