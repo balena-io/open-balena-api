@@ -412,27 +412,9 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 			return;
 		}
 
-		let setDeviceOnline = true;
-		try {
-			// see if we already have a queued state for this device...
-			const value = await this.redis.getAsync(
-				`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
-			);
+		// update the device model...
+		await this.updateDeviceModel(uuid, DeviceOnlineStates.Online);
 
-			if (value != null) {
-				const { id, currentState } = JSON.parse(value);
-
-				if (id && currentState === DeviceOnlineStates.Online) {
-					setDeviceOnline = false;
-				}
-			}
-		} catch {
-			// no queued state was found, so it must have just come online...
-		}
-
-		if (setDeviceOnline) {
-			await this.updateDeviceModel(uuid, DeviceOnlineStates.Online);
-		}
 		// record the activity...
 		await this.scheduleChangeOfStateForDevice(
 			uuid,
