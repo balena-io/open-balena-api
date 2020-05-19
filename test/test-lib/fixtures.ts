@@ -111,6 +111,47 @@ const loaders: Dictionary<LoaderFunc> = {
 			user,
 		});
 	},
+	devices: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.belongs_to__user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+		const application = await fixtures.applications[
+			jsonData.belongs_to__application
+		];
+		if (application == null) {
+			logErrorAndThrow(
+				`Could not find application: ${jsonData.belongs_to__application}`,
+			);
+		}
+
+		return createResource({
+			resource: 'device',
+			body: {
+				belongs_to__application: application.id,
+				belongs_to__user: user.id,
+				is_of__device_type: (await fixtures.deviceTypes[jsonData.device_type])
+					.id,
+				..._.pick(
+					jsonData,
+					'uuid',
+					'is_managed_by__device',
+					'os_version',
+					'supervisor_version',
+					'logs_channel',
+					'custom_latitude',
+					'custom_longitude',
+					'os_variant',
+					'os_version',
+					'supervisor_version',
+					'is_online',
+					'latitude',
+					'longitude',
+				),
+			},
+			user,
+		});
+	},
 };
 
 const deleteResource = (resource: string) => async (obj: { id: number }) => {

@@ -1,0 +1,16 @@
+{
+	"device1": {
+		"belongs_to__application": "app1",
+		"device_type": "intel-nuc",
+		"belongs_to__user": "admin",
+		"logs_channel": "c47e4dec05f76ee37c4b8e805c35c1eee54335803b3a40458928f8afce618b",
+		"uuid": "c47e4dec05f76ee37c4b8e805c35c1eee54335803b3a40458928f8afce618b"
+	},
+	"device2": {
+		"belongs_to__application": "app2",
+		"device_type": "intel-nuc",
+		"belongs_to__user": "admin",
+		"logs_channel": "5b7f3888c7824fda80ea0d26b3aefb7d778da302ffa9423694a0915b8896d0",
+		"uuid": "5b7f3888c7824fda80ea0d26b3aefb7d778da302ffa9423694a0915b8896d0"
+	}
+}
