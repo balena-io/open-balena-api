@@ -1,4 +1,16 @@
 - commits:
+    - subject: Move device-log tests from balena-api
+      hash: 7620ebcdb0658a7c85f74ddb36963f13d8b2bed6
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thomas Manning <thomasm@balena.io>
+        signed-off-by: Thomas Manning <thomasm@balena.io>
+      author: Thomas Manning
+  version: 0.76.0
+  date: 2020-05-19T12:58:30.684Z
+- commits:
     - subject: Update dependencies
       hash: 455077f9648d9a76550e7f0aabd560404f22eb45
       body: |
