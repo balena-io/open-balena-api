@@ -1,0 +1,12 @@
+{
+	"app1": {
+		"user": "admin",
+		"app_name": "test_create_device_log",
+		"device_type": "raspberry-pi"
+	},
+	"app2": {
+		"user": "admin",
+		"app_name": "test_create_device_log2",
+		"device_type": "raspberry-pi"
+	}
+}
