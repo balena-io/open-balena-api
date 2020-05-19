@@ -1,5 +1,3 @@
-import * as Bluebird from 'bluebird';
-
 import { sbvrUtils } from '@resin/pinejs';
 
 import {
@@ -52,7 +50,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 		}
 
 		try {
-			await Bluebird.all([
+			await Promise.all([
 				resolveDeviceType(api, request, 'is_for__device_type'),
 				checkDependentApplication(args),
 			]);
@@ -105,7 +103,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 			waitPromises.push(getCurrentRequestAffectedIds(args));
 		}
 
-		return Bluebird.all(waitPromises);
+		return Promise.all(waitPromises);
 	},
 	POSTRUN: async ({ request }) => {
 		if (request.values.should_be_running__release != null) {

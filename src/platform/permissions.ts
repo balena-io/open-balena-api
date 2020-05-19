@@ -255,7 +255,7 @@ export function createAll(
 		_.mapValues(roleMap, createRolePermissions),
 	).tap(async (roles) => {
 		// Assign user roles
-		await Bluebird.all(
+		await Promise.all(
 			_.map(userMap, async (userEmails, roleName) => {
 				for (const email of userEmails) {
 					try {

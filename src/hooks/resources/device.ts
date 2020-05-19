@@ -354,7 +354,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			);
 		}
 
-		return Bluebird.all(waitPromises);
+		return Promise.all(waitPromises);
 	},
 	POSTRUN: (args) => {
 		const waitPromises: Array<PromiseLike<any>> = [];

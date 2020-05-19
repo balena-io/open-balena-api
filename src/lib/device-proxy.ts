@@ -253,7 +253,7 @@ export async function requestDevices({
 		// terrible UX if we have a device time out, as that would block all the
 		// subsequent notifications
 		return Bluebird.delay(DELAY_BETWEEN_DEVICE_REQUEST);
-	}).then(() => Bluebird.all(promises));
+	}).then(() => Promise.all(promises));
 
 	if (!wait) {
 		// We return null if not waiting in order to stop bluebird warnings,
