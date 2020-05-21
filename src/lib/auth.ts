@@ -63,11 +63,11 @@ export const ROLES: {
 };
 
 export const DEVICE_API_KEY_PERMISSIONS = [
-	'resin.device_type.read?describes_device/canAccess()',
+	'resin.device_type.read?describes__device/canAccess()',
 	`resin.device.read?${matchesActor}`,
 	`resin.device.update?${matchesActor}`,
 	'resin.supervisor_release.read?should_manage__device/canAccess()',
-	'resin.application.read?owns__device/canAccess() or depends_on__application/any(a:a/owns__device/canAccess())',
+	'resin.application.read?owns__device/canAccess() or depends_on__application/any(a:a/owns__device/canAccess()) or (is_host eq true and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
 	'resin.application_tag.read?application/canAccess()',
 	'resin.device_config_variable.read?device/canAccess()',
 	`resin.device_config_variable.set?device/any(d:d/${matchesActor})`,
