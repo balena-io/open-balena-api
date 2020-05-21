@@ -2,6 +2,7 @@ import { pseudoRandomBytes } from 'crypto';
 import type { Request } from 'express';
 import * as ipaddr from 'ipaddr.js';
 import { promisify } from 'util';
+import { delay } from 'bluebird';
 
 export const pseudoRandomBytesAsync = promisify(pseudoRandomBytes);
 
@@ -56,3 +57,19 @@ export const varListInsert = (varList: EnvVarList, obj: Dictionary<string>) => {
 
 export const b64decode = (str: string): string =>
 	Buffer.from(str, 'base64').toString().trim();
+
+export const throttledForEach = async <T, U>(
+	array: T[],
+	delayMS: number,
+	fn: (item: T) => PromiseLike<U>,
+): Promise<U[]> => {
+	const promises: Array<PromiseLike<U>> = [];
+	for (const item of array) {
+		// We do not wait for each individual fn, we just throttle the calling of them
+		promises.push(fn(item));
+		// Delay by the throttle rate before we continue to the next item
+		await delay(delayMS);
+	}
+	// We return the results of the iterator so the caller can await them as necessary
+	return Promise.all(promises);
+};
