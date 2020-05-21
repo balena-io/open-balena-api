@@ -1,4 +1,14 @@
 - commits:
+    - subject: Abstract out the throttled iteration of requestDevices
+      hash: 189a8a2efeb9a8d8b95e276690a41131035d6e15
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.76.1
+  date: 2020-05-21T16:45:51.043Z
+- commits:
     - subject: Move device-log tests from balena-api
       hash: 7620ebcdb0658a7c85f74ddb36963f13d8b2bed6
       body: ''
