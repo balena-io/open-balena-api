@@ -1,4 +1,14 @@
 - commits:
+    - subject: Check if there are any devices before checking supervisor release
+      hash: 04176c50ae62222d258a88692da464bb30e641c0
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.76.2
+  date: 2020-05-22T14:24:56.456Z
+- commits:
     - subject: Abstract out the throttled iteration of requestDevices
       hash: 189a8a2efeb9a8d8b95e276690a41131035d6e15
       body: ''
