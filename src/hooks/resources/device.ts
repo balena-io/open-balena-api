@@ -526,6 +526,10 @@ async function checkSupervisorReleaseUpgrades(
 	deviceIds: number[],
 	newSupervisorReleaseId: number,
 ) {
+	if (deviceIds.length === 0) {
+		return;
+	}
+
 	const newSupervisorRelease = (await api.get({
 		resource: 'supervisor_release',
 		id: newSupervisorReleaseId,
