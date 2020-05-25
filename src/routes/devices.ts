@@ -21,6 +21,7 @@ import {
 	setMinPollInterval,
 } from '../lib/device-state';
 import { checkInt, getIP, isValidInteger, varListInsert } from '../lib/utils';
+import { ConflictError } from '@resin/pinejs/out/sbvr-api/errors';
 export { proxy } from '../lib/device-proxy';
 
 const { BadRequestError, UnauthorizedError, root, api } = sbvrUtils;
@@ -89,10 +90,17 @@ export const register: RequestHandler = async (req, res) => {
 
 		res.status(201).json(response);
 	} catch (err) {
-		captureException(err, 'Error registering device', { req });
+		if (err instanceof ConflictError && err.message.includes('uuid')) {
+			// WORKAROUND: balena-supervisor >= v4.2.0 < v11.4.14 rely on the specific error message rather than a 409
+			// so we convert the error here to ensure they can continue to work, this should be removed once we drop
+			// support for those supervisor versions
+			res.status(err.status).send('"uuid" must be unique.');
+			return;
+		}
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
+		captureException(err, 'Error registering device', { req });
 		res.status(403).send(translateError(err));
 	}
 };
