@@ -79,48 +79,42 @@ function sortBuildIds(ids: string[]): string[] {
 	);
 }
 
-const getBuildData = (slug: string, buildId: string): Promise<BuildInfo> => {
-	return Bluebird.join(
+const getBuildData = async (
+	slug: string,
+	buildId: string,
+): Promise<Partial<BuildInfo>> => {
+	const [ignored, deviceType] = await Bluebird.all([
 		getIsIgnored(slug, buildId),
 		getDeviceTypeJson(slug, buildId).catch(() => undefined),
-		(ignored, deviceType) => {
-			const buildInfo = {
-				ignored,
-				deviceType,
-			};
-
-			return buildInfo;
-		},
-	);
+	]);
+	return {
+		ignored,
+		deviceType,
+	};
 };
 
 const getFirstValidBuild = async (
 	slug: string,
 	versions: string[],
 ): Promise<BuildInfo | undefined> => {
-	if (_.isEmpty(versions)) {
-		return;
-	}
-
-	const buildId = versions[0];
-	let buildInfo: BuildInfo | undefined;
-	try {
-		buildInfo = await getBuildData(slug, buildId);
-	} catch (err) {
-		captureException(
-			err,
-			`Failed to get device type build data for ${slug}/${buildId}`,
-		);
-	}
-	if (buildInfo && !buildInfo.ignored && buildInfo.deviceType) {
-		const logoUrl = await getLogoUrl(slug, buildId);
-		if (logoUrl) {
-			buildInfo.deviceType.logoUrl = logoUrl;
+	for (const buildId of versions) {
+		let buildInfo: Partial<BuildInfo> | undefined;
+		try {
+			buildInfo = await getBuildData(slug, buildId);
+		} catch (err) {
+			captureException(
+				err,
+				`Failed to get device type build data for ${slug}/${buildId}`,
+			);
 		}
-		return buildInfo;
+		if (buildInfo && !buildInfo.ignored && buildInfo.deviceType) {
+			const logoUrl = await getLogoUrl(slug, buildId);
+			if (logoUrl) {
+				buildInfo.deviceType.logoUrl = logoUrl;
+			}
+			return buildInfo as BuildInfo;
+		}
 	}
-
-	return getFirstValidBuild(slug, _.tail(versions));
 };
 
 async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
