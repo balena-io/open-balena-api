@@ -1,4 +1,14 @@
 - commits:
+    - subject: Restore support for supervisor that string match on register errors
+      hash: 243824fecaf61a78cb23e0221a5aebe67c38d4ff
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.76.3
+  date: 2020-05-25T13:02:50.910Z
+- commits:
     - subject: Check if there are any devices before checking supervisor release
       hash: 04176c50ae62222d258a88692da464bb30e641c0
       body: ''
