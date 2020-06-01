@@ -1,4 +1,33 @@
 - commits:
+    - subject: Simplify valid build fetching for device types
+      hash: 8e892a85725f6bcb0369b7a5dc79d9d79ac4b6cd
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+    - subject: Update open-balena-base to 9.3.0
+      hash: af8b5054b4874298a4a2bd628d73c674ffafcb01
+      body: |
+        Update open-balena-base from 9.2.4 to 9.3.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 12.17.0 and npm to 6.14.5
+              hash: 66675b45ed52a14775a1d0d01bcf6658ee9f0aca
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: open-balena-base-9.3.0
+          date: 2020-05-29T17:40:11.727Z
+  version: 0.76.4
+  date: 2020-06-01T16:39:26.908Z
+- commits:
     - subject: Restore support for supervisor that string match on register errors
       hash: 243824fecaf61a78cb23e0221a5aebe67c38d4ff
       body: ''
