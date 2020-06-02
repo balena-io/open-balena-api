@@ -1,4 +1,18 @@
 - commits:
+    - subject: >-
+        permissions: allow device key to read hostapp if it can access device
+        type
+      hash: 1b1214632279a2724687c4c7050f7de985f1b0f1
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+  version: 0.77.0
+  date: 2020-06-02T14:10:08.268Z
+- commits:
     - subject: Simplify valid build fetching for device types
       hash: 8e892a85725f6bcb0369b7a5dc79d9d79ac4b6cd
       body: ''
