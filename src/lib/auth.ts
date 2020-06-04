@@ -2,7 +2,7 @@
 // Declares permissions assigned to default roles and API keys
 //
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils } from '@balena/pinejs';
 
 import {
 	API_VPN_SERVICE_API_KEY,

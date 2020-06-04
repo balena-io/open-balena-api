@@ -1,5 +1,5 @@
-import { sbvrUtils } from '@resin/pinejs';
-import type { PinejsClientCoreFactory } from 'pinejs-client-core';
+import { sbvrUtils } from '@balena/pinejs';
+import type { Filter } from 'pinejs-client-core';
 
 import { getCurrentRequestAffectedIds } from '../../platform';
 import { captureException } from '../../platform/errors';
@@ -13,10 +13,7 @@ import {
 
 type ValidateFn = (varName?: string, varValue?: string) => void;
 
-const triggerDevices = (
-	filter: PinejsClientCoreFactory.Filter | undefined,
-	req: sbvrUtils.HookReq,
-) => {
+const triggerDevices = (filter: Filter | undefined, req: sbvrUtils.HookReq) => {
 	// If we can't find the matching env var to update then we don't ping the devices.
 	// - This should only happen in the case of deleting an application, where we delete all of the env vars at once.
 	if (filter == null) {
@@ -41,7 +38,7 @@ const addEnvHooks = (
 		args: sbvrUtils.HookArgs & {
 			tx: Tx;
 		},
-	) => Promise<PinejsClientCoreFactory.Filter | undefined>,
+	) => Promise<Filter | undefined>,
 ): void => {
 	const postParseHook: sbvrUtils.Hooks['POSTPARSE'] = ({ request }) => {
 		return validateFn(request.values.name, request.values.value);

@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 
-import { sbvrUtils, permissions } from '@resin/pinejs';
-import type { PinejsClientCoreFactory } from 'pinejs-client-core';
+import { sbvrUtils, permissions } from '@balena/pinejs';
+import type { FilterObj } from 'pinejs-client-core';
 
 import { captureException } from './errors';
 
@@ -43,7 +43,7 @@ const $getOrInsertId = async (
 const $updateOrInsert = async (
 	api: sbvrUtils.PinejsClient,
 	resource: string,
-	filter: PinejsClientCoreFactory.FilterObj,
+	filter: FilterObj,
 	updateFields: AnyObject,
 	tx?: Tx,
 ): Promise<{ id: number }> => {
@@ -99,14 +99,14 @@ export const getOrInsertModelId = (
 
 export const updateOrInsert = (
 	resource: string,
-	filter: PinejsClientCoreFactory.FilterObj,
+	filter: FilterObj,
 	updateFields: AnyObject,
 	tx?: Tx,
 ): Promise<{ id: number }> =>
 	$updateOrInsert(sbvrUtils.api.Auth, resource, filter, updateFields, tx);
 export const updateOrInsertModel = (
 	resource: string,
-	filter: PinejsClientCoreFactory.FilterObj,
+	filter: FilterObj,
 	updateFields: AnyObject,
 	tx?: Tx,
 ): Promise<{ id: number }> =>

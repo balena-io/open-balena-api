@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 
-import { sbvrUtils, errors } from '@resin/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 
 import { reqHasPermission } from '../platform/auth';

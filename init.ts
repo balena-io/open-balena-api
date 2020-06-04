@@ -1,4 +1,4 @@
-import { sbvrUtils, errors } from '@resin/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 import * as express from 'express';
 import * as _ from 'lodash';
 import config = require('./config');

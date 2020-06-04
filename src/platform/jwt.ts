@@ -7,7 +7,7 @@ import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import * as randomstring from 'randomstring';
 import { TypedError } from 'typed-error';
 
-import { sbvrUtils, permissions } from '@resin/pinejs';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 
 import {
 	JSON_WEB_TOKEN_EXPIRY_MINUTES,

@@ -1,6 +1,6 @@
 import { TypedError } from 'typed-error';
 
-import { errors } from '@resin/pinejs';
+import { errors } from '@balena/pinejs';
 
 const { NotFoundError } = errors;
 

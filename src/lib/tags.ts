@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { errors } from '@resin/pinejs';
+import { errors } from '@balena/pinejs';
 
 const RESERVED_NAMESPACES = ['io.resin.', 'io.balena.'];
 

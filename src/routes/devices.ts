@@ -3,8 +3,8 @@ import type { RequestHandler } from 'express';
 import * as _ from 'lodash';
 import * as randomstring from 'randomstring';
 
-import { sbvrUtils, permissions, errors } from '@resin/pinejs';
-import type { PinejsClientCoreFactory } from 'pinejs-client-core';
+import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import type { Filter } from 'pinejs-client-core';
 
 import {
 	captureException,
@@ -722,7 +722,7 @@ const deleteOldGatewayDownloads = async (
 	deviceId: number,
 	imageIds: number[],
 ): Promise<void> => {
-	const filter: PinejsClientCoreFactory.Filter = {
+	const filter: Filter = {
 		is_downloaded_by__device: deviceId,
 	};
 
@@ -897,7 +897,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 				});
 
 				const body = { status: 'deleted' };
-				const filter: PinejsClientCoreFactory.Filter = {
+				const filter: Filter = {
 					device: device.id,
 				};
 				if (imageIds.length !== 0) {

@@ -1,4 +1,4 @@
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils } from '@balena/pinejs';
 
 import { checkTagKeyValidity } from '../../lib/tags';
 

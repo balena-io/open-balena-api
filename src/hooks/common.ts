@@ -1,4 +1,4 @@
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils } from '@balena/pinejs';
 
 import * as deviceTypes from '../lib/device-types';
 

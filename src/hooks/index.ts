@@ -1,4 +1,4 @@
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils } from '@balena/pinejs';
 
 import { retrieveAPIKey } from '../platform/api-keys';
 

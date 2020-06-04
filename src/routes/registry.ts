@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 import * as memoize from 'memoizee';
 import * as uuid from 'uuid';
 
-import { sbvrUtils, permissions, errors } from '@resin/pinejs';
+import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
 import { retrieveAPIKey } from '../platform/api-keys';
 import { captureException, handleHttpErrors } from '../platform/errors';

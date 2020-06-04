@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import * as Bluebird from 'bluebird';
 
-import { sbvrUtils, permissions, errors } from '@resin/pinejs';
-import type { PinejsClientCoreFactory } from 'pinejs-client-core';
+import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import type { Filter } from 'pinejs-client-core';
 import * as semver from 'balena-semver';
 
 import {
@@ -32,7 +32,7 @@ export const isDeviceNameValid = (name: string) => {
 const createReleaseServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,
 	deviceIds: number[],
-	releaseFilter: PinejsClientCoreFactory.Filter,
+	releaseFilter: Filter,
 ): Promise<void> => {
 	await Bluebird.map(deviceIds, async (deviceId) => {
 		const services = (await api.get({

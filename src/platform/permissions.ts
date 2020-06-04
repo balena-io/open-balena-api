@@ -2,7 +2,7 @@ import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 import * as randomstring from 'randomstring';
 
-import { sbvrUtils, permissions } from '@resin/pinejs';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 
 import { findUser } from './auth';
 import { captureException } from './errors';

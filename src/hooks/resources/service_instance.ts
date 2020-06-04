@@ -1,6 +1,6 @@
 import type { Request } from 'express';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils } from '@balena/pinejs';
 
 import { getServiceFromRequest } from '../../lib/auth';
 import { getIP } from '../../lib/utils';

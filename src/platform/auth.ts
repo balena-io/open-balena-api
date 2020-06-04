@@ -2,7 +2,7 @@ import type { Request, RequestHandler, Response } from 'express';
 import * as _ from 'lodash';
 import * as base32 from 'thirty-two';
 
-import { sbvrUtils, permissions, errors } from '@resin/pinejs';
+import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
 import { retrieveAPIKey } from './api-keys';
 import { createJwt, SignOptions, User } from './jwt';

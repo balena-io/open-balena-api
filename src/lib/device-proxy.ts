@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
 import * as _ from 'lodash';
 
-import { sbvrUtils, permissions, errors } from '@resin/pinejs';
-import type { PinejsClientCoreFactory } from 'pinejs-client-core';
+import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import type { Filter } from 'pinejs-client-core';
 
 import {
 	captureException,
@@ -27,7 +27,7 @@ const { api } = sbvrUtils;
 const badSupervisorResponse = (
 	req: Request,
 	res: Response,
-	filter: PinejsClientCoreFactory.Filter,
+	filter: Filter,
 	reason: string,
 ) => {
 	// Log incident!
@@ -42,7 +42,7 @@ const validateSupervisorResponse = (
 	response: RequestResponse,
 	req: Request,
 	res: Response,
-	filter: PinejsClientCoreFactory.Filter,
+	filter: Filter,
 ) => {
 	const [{ statusCode, headers }, body] = response;
 	const contentType = headers?.['content-type'];
@@ -82,7 +82,7 @@ const multiResponse = (responses: RequestResponse[]) =>
 	responses.map(([response]) => _.pick(response, 'statusCode', 'body'));
 
 export const proxy = async (req: Request, res: Response) => {
-	const filter: PinejsClientCoreFactory.Filter = {};
+	const filter: Filter = {};
 	try {
 		const url = req.params[0];
 		if (url == null) {
@@ -138,7 +138,7 @@ export const proxy = async (req: Request, res: Response) => {
 
 interface FixedMethodRequestDevicesOpts {
 	url: string;
-	filter: PinejsClientCoreFactory.Filter;
+	filter: Filter;
 	data?: AnyObject;
 	req?: sbvrUtils.Passthrough['req'];
 	wait?: boolean;
