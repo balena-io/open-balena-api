@@ -207,8 +207,8 @@ export function createAll(
 			const permissions = Object.values(
 				_.pick(await permissionsCache, rolePermissionNames),
 			);
-			const addPermissionsPromise = apiTx
-				.get({
+			const addPermissionsPromise = (async () => {
+				const rolePermissions = (await apiTx.get({
 					resource: 'role__has__permission',
 					options: {
 						$select: 'permission',
@@ -217,23 +217,23 @@ export function createAll(
 							permission: { $in: permissions },
 						},
 					},
-				})
-				.then((rolePermissions: AnyObject[]) => {
-					const rolePermissionIds: number[] = rolePermissions.map(
-						({ permission }) => permission.__id,
-					);
-					return _.difference(permissions, rolePermissionIds);
-				})
-				.map((permission) =>
-					apiTx.post({
-						resource: 'role__has__permission',
-						body: {
-							role: role.id,
-							permission,
-						},
-						options: { returnResource: false },
-					}),
+				})) as AnyObject[];
+				const rolePermissionIds: number[] = rolePermissions.map(
+					({ permission }) => permission.__id,
 				);
+				await Promise.all(
+					_.difference(permissions, rolePermissionIds).map((permission) =>
+						apiTx.post({
+							resource: 'role__has__permission',
+							body: {
+								role: role.id,
+								permission,
+							},
+							options: { returnResource: false },
+						}),
+					),
+				);
+			})();
 			const deletePermissionsPromise = apiTx.delete({
 				resource: 'role__has__permission',
 				options: {
