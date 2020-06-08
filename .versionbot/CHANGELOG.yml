@@ -1,4 +1,29 @@
 - commits:
+    - subject: 'test-lib/fake-device: Extract the fake Device type from the return value'
+      hash: 54b7cbdf310b8af2296661c37aeab20dd71b9565
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+    - subject: Add a mac_address field to devices
+      hash: 35d78e1f77b567234755e19edbee035713e35519
+      body: ''
+      footer:
+        Resolves: '#366'
+        resolves: '#366'
+        HQ: 'https://github.com/balena-io/balena/issues/2195'
+        hq: 'https://github.com/balena-io/balena/issues/2195'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+  version: 0.78.0
+  date: 2020-06-08T11:17:35.990Z
+- commits:
     - subject: >-
         permissions: allow device key to read hostapp if it can access device
         type
