@@ -159,6 +159,9 @@ Term: local id
 Term: logs channel
 	Concept Type: Short Text (Type)
 
+Term: mac address
+	Concept Type: Short Text (Type)
+
 Term: maximum device count
 	Concept Type: Integer (Type)
 
@@ -447,6 +450,8 @@ Fact type: device has vpn address
 	Necessity: each device has at most one vpn address
 Fact type: device has ip address
 	Necessity: each device has at most one ip address
+Fact type: device has mac address
+	Necessity: each device has at most one mac address
 Fact type: device is running release
 	Synonymous Form: release is running on device
 	Necessity: each device is running at most one release.

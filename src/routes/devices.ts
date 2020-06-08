@@ -752,6 +752,7 @@ const validPatchFields = [
 	'provisioning_progress',
 	'provisioning_state',
 	'ip_address',
+	'mac_address',
 	'download_progress',
 	'api_port',
 	'api_secret',

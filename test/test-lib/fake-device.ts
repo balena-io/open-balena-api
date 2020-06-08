@@ -12,6 +12,7 @@ export interface Device {
 	uuid: string;
 	token: string;
 	getStateV2: () => Promise<DeviceState>;
+	patchStateV2: (devicePatchBody: AnyObject) => Promise<void>;
 }
 
 interface DeviceStateApp {
@@ -94,6 +95,13 @@ export async function provisionDevice(
 		expect(state.local).to.have.property('config');
 
 		return state;
+	};
+
+	device.patchStateV2 = async (devicePatchBody: AnyObject): Promise<void> => {
+		await supertest(app, device)
+			.patch(`/device/v2/${device.uuid}/state`)
+			.send(devicePatchBody)
+			.expect(200);
 	};
 
 	return device;
