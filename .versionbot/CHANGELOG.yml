@@ -1,4 +1,14 @@
 - commits:
+    - subject: Convert pinejs-client Bluebird.map calls to native versions
+      hash: 54c4da6e86b64e788321ce8518e624258fff77aa
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.78.1
+  date: 2020-06-08T13:23:26.588Z
+- commits:
     - subject: 'test-lib/fake-device: Extract the fake Device type from the return value'
       hash: 54b7cbdf310b8af2296661c37aeab20dd71b9565
       body: ''
