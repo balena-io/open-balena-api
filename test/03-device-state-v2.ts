@@ -292,3 +292,59 @@ describe('Device State v2', () => {
 		});
 	});
 });
+
+describe('Device State v2 patch', function () {
+	let fx: fixtures.Fixtures;
+	let admin: UserObjectParam;
+	let applicationId: number;
+	let device: fakeDevice.Device;
+
+	before(async () => {
+		fx = await fixtures.load('03-device-state-v2');
+
+		admin = fx.users.admin;
+		applicationId = fx.applications.app1.id;
+
+		// create a new device in this test application...
+		device = await fakeDevice.provisionDevice(admin, applicationId);
+	});
+
+	after(async () => {
+		await fixtures.clean(fx);
+	});
+
+	it('should save the updated device state', async () => {
+		const devicePatchBody = {
+			local: {
+				device_name: 'reported_device_name',
+				status: 'Idle',
+				is_online: true,
+				os_version: 'balenaOS 2.50.1+rev1',
+				os_variant: 'prod',
+				supervisor_version: '11.4.10',
+				provisioning_progress: null,
+				provisioning_state: null,
+				ip_address: '192.168.1.1',
+				mac_address: '00:11:22:33:44:55',
+				download_progress: null,
+				api_port: 48484,
+			},
+		};
+
+		await device.patchStateV2(devicePatchBody);
+
+		const {
+			body: {
+				d: [updatedDevice],
+			},
+		} = await supertest(app, admin)
+			.get(`/resin/device(${device.id})`)
+			.expect(200);
+
+		Object.keys(devicePatchBody.local).forEach(
+			(field: keyof typeof devicePatchBody['local']) => {
+				expect(updatedDevice[field]).to.equal(devicePatchBody.local[field]);
+			},
+		);
+	});
+});

@@ -7,13 +7,6 @@ import { app } from '../../init';
 
 import { supertest, UserObjectParam } from './supertest';
 
-export interface Device {
-	id: number;
-	uuid: string;
-	token: string;
-	getStateV2: () => Promise<DeviceState>;
-}
-
 interface DeviceStateApp {
 	name: string;
 	commit: string;
@@ -43,10 +36,7 @@ export interface DeviceState {
 	};
 }
 
-export async function provisionDevice(
-	admin: UserObjectParam,
-	appId: number,
-): Promise<Device> {
+export async function provisionDevice(admin: UserObjectParam, appId: number) {
 	const { body: applications } = await supertest(app, admin)
 		.get(`/resin/application(${appId})?$expand=is_for__device_type`)
 		.expect(200);
@@ -64,7 +54,7 @@ export async function provisionDevice(
 
 	const deviceType: string = applications.d[0].is_for__device_type[0].slug;
 
-	const { body: device } = await supertest(app, admin)
+	const { body: deviceEntry } = await supertest(app, admin)
 		.post('/resin/device')
 		.send({
 			belongs_to__application: appId,
@@ -75,7 +65,30 @@ export async function provisionDevice(
 		})
 		.expect(201);
 
-	device.token = randomstring.generate(16);
+	const device = {
+		...(deviceEntry as {
+			id: number;
+			uuid: string;
+		}),
+		token: randomstring.generate(16),
+		getStateV2: async (): Promise<DeviceState> => {
+			const { body: state } = await supertest(app, device)
+				.get(`/device/v2/${device.uuid}/state`)
+				.expect(200);
+
+			expect(state).to.have.property('local');
+			expect(state.local).to.have.property('name');
+			expect(state.local).to.have.property('config');
+
+			return state;
+		},
+		patchStateV2: async (devicePatchBody: AnyObject) => {
+			await supertest(app, device)
+				.patch(`/device/v2/${device.uuid}/state`)
+				.send(devicePatchBody)
+				.expect(200);
+		},
+	};
 
 	await supertest(app, admin)
 		.post(`/api-key/device/${device.id}/device-key`)
@@ -84,17 +97,7 @@ export async function provisionDevice(
 		})
 		.expect(200);
 
-	device.getStateV2 = async (): Promise<DeviceState> => {
-		const { body: state } = await supertest(app, device)
-			.get(`/device/v2/${device.uuid}/state`)
-			.expect(200);
-
-		expect(state).to.have.property('local');
-		expect(state.local).to.have.property('name');
-		expect(state.local).to.have.property('config');
-
-		return state;
-	};
-
 	return device;
 }
+
+export type Device = ResolvableReturnType<typeof provisionDevice>;

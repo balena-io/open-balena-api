@@ -1,0 +1,2 @@
+ALTER TABLE "device"
+ADD COLUMN IF NOT EXISTS "mac address" VARCHAR(255) NULL;
