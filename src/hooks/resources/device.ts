@@ -33,7 +33,7 @@ const createReleaseServiceInstalls = async (
 	deviceId: number,
 	releaseFilter: PinejsClientCoreFactory.Filter,
 ): Promise<void> => {
-	await (api.get({
+	const services = (await api.get({
 		resource: 'service',
 		options: {
 			$select: 'id',
@@ -71,22 +71,25 @@ const createReleaseServiceInstalls = async (
 				},
 			},
 		},
-	}) as Bluebird<AnyObject[]>).map(async (service) => {
-		// Filter out any services which do have a service install attached
-		if (service.service_install > 0) {
-			return;
-		}
+	})) as AnyObject[];
+	await Promise.all(
+		services.map(async (service) => {
+			// Filter out any services which do have a service install attached
+			if (service.service_install > 0) {
+				return;
+			}
 
-		// Create a service_install for this pair of service and device
-		await api.post({
-			resource: 'service_install',
-			body: {
-				device: deviceId,
-				installs__service: service.id,
-			},
-			options: { returnResource: false },
-		});
-	});
+			// Create a service_install for this pair of service and device
+			await api.post({
+				resource: 'service_install',
+				body: {
+					device: deviceId,
+					installs__service: service.id,
+				},
+				options: { returnResource: false },
+			});
+		}),
+	);
 };
 
 const createAppServiceInstalls = async (
