@@ -1,4 +1,26 @@
 - commits:
+    - subject: Update open-balena-base to 9.4.0
+      hash: dc8f92788406186e0435cf7598982be2f02b2c4c
+      body: |
+        Update open-balena-base from 9.3.0 to 9.4.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 12.18.0
+              hash: f7bf6f487ea64af6ffce821974ccddc5646bb6d8
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: open-balena-base-9.4.0
+          date: 2020-06-08T11:55:53.921Z
+  version: 0.78.2
+  date: 2020-06-09T13:43:18.061Z
+- commits:
     - subject: Convert pinejs-client Bluebird.map calls to native versions
       hash: 54c4da6e86b64e788321ce8518e624258fff77aa
       body: ''
