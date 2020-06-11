@@ -1,4 +1,14 @@
 - commits:
+    - subject: Handle filtering for existing services in the query rather than locally
+      hash: 056bd481130457fbd474c2987117075db72e6a02
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.78.3
+  date: 2020-06-11T11:43:35.378Z
+- commits:
     - subject: Update open-balena-base to 9.4.0
       hash: dc8f92788406186e0435cf7598982be2f02b2c4c
       body: |
