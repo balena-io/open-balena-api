@@ -62,11 +62,15 @@ const createReleaseServiceInstalls = async (
 						},
 					},
 				},
-			},
-			$expand: {
-				'service_install/$count': {
-					$filter: {
-						device: deviceId,
+				// Filter out any services which do have a service install attached
+				$not: {
+					service_install: {
+						$any: {
+							$alias: 'si',
+							$expr: {
+								si: { device: deviceId },
+							},
+						},
 					},
 				},
 			},
@@ -74,11 +78,6 @@ const createReleaseServiceInstalls = async (
 	})) as AnyObject[];
 	await Promise.all(
 		services.map(async (service) => {
-			// Filter out any services which do have a service install attached
-			if (service.service_install > 0) {
-				return;
-			}
-
 			// Create a service_install for this pair of service and device
 			await api.post({
 				resource: 'service_install',
