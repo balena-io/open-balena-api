@@ -182,7 +182,7 @@ describe('Device State v2', () => {
 				stateMock.getInstance().off('stats', statsEventSpy);
 			});
 
-			it('Should see state initialy as "unknown"', async () => {
+			it('Should see state initially as "unknown"', async () => {
 				const { body } = await supertest(app, admin)
 					.get(`/resin/device(${device.id})`)
 					.expect(200);

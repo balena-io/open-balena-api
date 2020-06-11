@@ -26,7 +26,8 @@ interface DeviceStateApp {
 
 export interface DeviceState {
 	local: {
-		name: string;
+		name?: string;
+		supervisor_version?: string;
 		config: _.Dictionary<string>;
 		apps: _.Dictionary<DeviceStateApp>;
 	};
@@ -60,8 +61,6 @@ export async function provisionDevice(admin: UserObjectParam, appId: number) {
 			belongs_to__application: appId,
 			uuid: uuid.v4().replace(/\-/g, '').toLowerCase(),
 			device_type: deviceType,
-			os_version: '2.38.0+rev1',
-			supervisor_version: 'v10.0.0',
 		})
 		.expect(201);
 

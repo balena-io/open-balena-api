@@ -101,12 +101,15 @@ const loaders: Dictionary<LoaderFunc> = {
 			);
 		}
 
+		const isPublic = jsonData.is_public || false;
+
 		return createResource({
 			resource: 'supervisor_release',
 			body: {
 				image_name: jsonData.image_name,
 				supervisor_version: jsonData.supervisor_version,
 				is_for__device_type: deviceType.id,
+				is_public: isPublic,
 			},
 			user,
 		});
