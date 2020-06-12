@@ -104,10 +104,5 @@
   },
   "engines": {
     "node": ">=10.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   }
 }
