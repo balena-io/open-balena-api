@@ -3,13 +3,15 @@ version: 2
 jobs:
   build:
     docker:
-      - image: library/docker:17
+      - image: library/docker:19-git
     working_directory: /tmp/build
     environment:
       DOCKER_IMAGE: balena/open-balena-api
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
+          version: 19.03.8
       - run:
           name: Build
           command: |
