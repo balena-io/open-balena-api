@@ -1,4 +1,14 @@
 - commits:
+    - subject: 'CI: Specify docker version as 19.03.8'
+      hash: d9a613c161fbf1296166c29dc954f6f53e6a893e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.78.5
+  date: 2020-06-12T14:55:47.275Z
+- commits:
     - subject: 'supervisor release: set corresponding resource if current state is null'
       hash: e560e4e577bdfd615478b8646261b981e1e4bf39
       body: ''
