@@ -109,13 +109,5 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "mocha": {
-    "reporter": "spec",
-    "sort": true,
-    "timeout": 20000,
-    "delay": true,
-    "exit": true,
-    "_": "index.js"
   }
 }

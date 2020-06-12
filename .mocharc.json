@@ -1,0 +1,8 @@
+{
+	"reporter": "spec",
+	"sort": true,
+	"timeout": 20000,
+	"delay": true,
+	"exit": true,
+	"_": "index.js"
+}
