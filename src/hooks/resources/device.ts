@@ -31,28 +31,30 @@ export const isDeviceNameValid = (name: string) => {
 
 const createReleaseServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,
-	deviceId: number,
+	deviceIds: number[],
 	releaseFilter: PinejsClientCoreFactory.Filter,
 ): Promise<void> => {
-	const services = (await api.get({
-		resource: 'service',
-		options: {
-			$select: 'id',
-			$filter: {
-				is_built_by__image: {
-					$any: {
-						$alias: 'i',
-						$expr: {
-							i: {
-								is_part_of__release: {
-									$any: {
-										$alias: 'ipr',
-										$expr: {
-											ipr: {
-												release: {
-													$any: {
-														$alias: 'r',
-														$expr: { r: releaseFilter },
+	await Bluebird.map(deviceIds, async (deviceId) => {
+		const services = (await api.get({
+			resource: 'service',
+			options: {
+				$select: 'id',
+				$filter: {
+					is_built_by__image: {
+						$any: {
+							$alias: 'i',
+							$expr: {
+								i: {
+									is_part_of__release: {
+										$any: {
+											$alias: 'ipr',
+											$expr: {
+												ipr: {
+													release: {
+														$any: {
+															$alias: 'r',
+															$expr: { r: releaseFilter },
+														},
 													},
 												},
 											},
@@ -62,52 +64,49 @@ const createReleaseServiceInstalls = async (
 							},
 						},
 					},
-				},
-				// Filter out any services which do have a service install attached
-				$not: {
-					service_install: {
-						$any: {
-							$alias: 'si',
-							$expr: {
-								si: { device: deviceId },
+					// Filter out any services which do have a service install attached
+					$not: {
+						service_install: {
+							$any: {
+								$alias: 'si',
+								$expr: {
+									si: { device: deviceId },
+								},
 							},
 						},
 					},
 				},
 			},
-		},
-	})) as AnyObject[];
-	await Promise.all(
-		services.map(async (service) => {
-			// Create a service_install for this pair of service and device
-			await api.post({
-				resource: 'service_install',
-				body: {
-					device: deviceId,
-					installs__service: service.id,
-				},
-				options: { returnResource: false },
-			});
-		}),
-	);
+		})) as AnyObject[];
+		await Promise.all(
+			services.map(async (service) => {
+				// Create a service_install for this pair of service and device
+				await api.post({
+					resource: 'service_install',
+					body: {
+						device: deviceId,
+						installs__service: service.id,
+					},
+					options: { returnResource: false },
+				});
+			}),
+		);
+	});
 };
 
 const createAppServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,
 	appId: number,
 	deviceIds: number[],
-): Promise<void> => {
-	await Bluebird.map(deviceIds, (deviceId) =>
-		createReleaseServiceInstalls(api, deviceId, {
-			should_be_running_on__application: {
-				$any: {
-					$alias: 'a',
-					$expr: { a: { id: appId } },
-				},
+): Promise<void> =>
+	createReleaseServiceInstalls(api, deviceIds, {
+		should_be_running_on__application: {
+			$any: {
+				$alias: 'a',
+				$expr: { a: { id: appId } },
 			},
-		}),
-	);
-};
+		},
+	});
 
 sbvrUtils.addPureHook('POST', 'resin', 'device', {
 	POSTPARSE: createActor,
@@ -479,30 +478,45 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			// for this device+release combination. We need to create these
 			if (args.request.values.should_be_running__release != null) {
 				waitPromises.push(
-					affectedIds.map((dId) =>
-						createReleaseServiceInstalls(args.api, dId, {
+					affectedIds.then((ids) => {
+						if (ids.length === 0) {
+							return;
+						}
+						return createReleaseServiceInstalls(args.api, ids, {
 							id: args.request.values.should_be_running__release,
-						}),
-					),
+						});
+					}),
 				);
 			} else {
 				waitPromises.push(
-					affectedIds.map(async (id) => {
-						const device = (await args.api.get({
-							id,
+					affectedIds.then(async (ids) => {
+						if (ids.length === 0) {
+							return;
+						}
+						const devices = (await args.api.get({
 							resource: 'device',
 							options: {
-								$expand: {
-									belongs_to__application: {
-										$select: 'id',
-									},
+								$select: ['id', 'belongs_to__application'],
+								$filter: {
+									id: { $in: ids },
 								},
 							},
-						})) as AnyObject;
-						await createAppServiceInstalls(
-							args.api,
-							device.belongs_to__application[0].id,
-							[id],
+						})) as Array<{
+							id: number;
+							belongs_to__application: { __id: number };
+						}>;
+						const devicesByApp = _.groupBy(
+							devices,
+							(d) => d.belongs_to__application.__id,
+						);
+						await Promise.all(
+							Object.keys(devicesByApp).map((appId) =>
+								createAppServiceInstalls(
+									args.api,
+									devicesByApp[appId][0].belongs_to__application.__id,
+									devicesByApp[appId].map((d) => d.id),
+								),
+							),
 						);
 					}),
 				);
