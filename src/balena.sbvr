@@ -126,6 +126,9 @@ Term: env var name
 Term: error message
 	Concept Type: Text (Type)
 
+Term: handle
+	Concept Type: Short Text (Type)
+
 Term: image location
 	Concept Type: Short Text (Type)
 
@@ -248,9 +251,10 @@ Term: vpn address
 
 Term: application type
 Term: config
-Term: image
-Term: service instance
 Term: device type
+Term: image
+Term: organization
+Term: service instance
 Term: supervisor release
 
 Term: application
@@ -336,6 +340,22 @@ Fact type: image is part of release
 		Term Form: image environment variable
 		Database Table Name: image environment variable
 
+Fact type: user (Auth) is member of organization
+	Synonymous Form: organization includes user (Auth)
+	Database Table Name: organization membership
+	Term Form: organization membership
+
+
+-- organization
+
+Fact type: organization has name (Auth)
+	Necessity: each organization has exactly one name (Auth).
+	Necessity: each name (Auth) of an organization, has a Length (Type) that is greater than 0.
+Fact type: organization has handle
+	Necessity: each organization has exactly one handle.
+	Necessity: each handle is of exactly one organization.
+	Necessity: each handle of an organization, has a Length (Type) that is greater than 0.
+
 
 -- user
 
@@ -374,6 +394,9 @@ Fact type: application type has maximum device count
 
 -- application
 
+Fact type: application has organization
+	Synonymous Form: organization has application
+	Necessity: each application has exactly one organization.
 Fact type: application has app name
 	Necessity: each application has exactly one app name
 	Necessity: each application has an app name that has a Length (Type) that is greater than or equal to 4 and is less than or equal to 30.

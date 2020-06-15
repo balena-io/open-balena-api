@@ -49,6 +49,8 @@ export const ROLES: {
 		'resin.image_environment_variable.all',
 		'resin.image_install.all',
 		'resin.image_label.all',
+		'resin.organization.read',
+		'resin.organization_membership.read',
 		'resin.release.all',
 		'resin.release_tag.all',
 		'resin.service.all',

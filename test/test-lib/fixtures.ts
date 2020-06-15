@@ -63,6 +63,10 @@ const loaders: Dictionary<LoaderFunc> = {
 		if (user == null) {
 			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
 		}
+		const org = await fixtures.organizations['admin'];
+		if (org == null) {
+			logErrorAndThrow('Could not find admin org');
+		}
 
 		if (jsonData.depends_on__application != null) {
 			const gatewayApp = await fixtures.applications[
@@ -76,16 +80,21 @@ const loaders: Dictionary<LoaderFunc> = {
 			jsonData.depends_on__application = gatewayApp.id;
 		}
 
+		const body = _.pick(
+			jsonData,
+			'app_name',
+			'device_type',
+			'depends_on__application',
+			'should_track_latest_release',
+			'application_type',
+		);
+
 		return createResource({
 			resource: 'application',
-			body: _.pick(
-				jsonData,
-				'app_name',
-				'device_type',
-				'depends_on__application',
-				'should_track_latest_release',
-				'application_type',
-			),
+			body: {
+				...body,
+				organization: org.id,
+			},
 			user,
 		});
 	},
