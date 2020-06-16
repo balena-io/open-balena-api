@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update migration to create all indexes normally
+      hash: 6b3c0456031e45bc141a187ddb4a4867b57c24f5
+      body: |
+        This allows them to be run inside a transaction
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.78.7
+  date: 2020-06-16T14:34:46.022Z
+- commits:
     - subject: Add remaining indexes for foreign keys
       hash: 219f51ee9db72f0984509b8c311deadc1278f9b5
       body: |
