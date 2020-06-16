@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add remaining indexes for foreign keys
+      hash: 219f51ee9db72f0984509b8c311deadc1278f9b5
+      body: |
+        Also add explanation for some indexes that are for specific queries
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.78.6
+  date: 2020-06-16T12:25:02.569Z
+- commits:
     - subject: 'CI: Specify docker version as 19.03.8'
       hash: d9a613c161fbf1296166c29dc954f6f53e6a893e
       body: ''
