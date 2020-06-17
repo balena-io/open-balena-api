@@ -12,7 +12,6 @@ import * as path from 'path';
 import * as Raven from 'raven';
 
 import * as pine from '@resin/pinejs';
-import * as pineEnv from '@resin/pinejs/out/config-loader/env';
 
 import type { User as DbUser } from './models';
 import type { defaultFindUser$select } from './platform/auth';
@@ -53,7 +52,7 @@ export interface SetupOptions {
 
 export async function setup(app: Application, options: SetupOptions) {
 	if (DB_POOL_SIZE != null) {
-		pineEnv.db.poolSize = DB_POOL_SIZE;
+		pine.env.db.poolSize = DB_POOL_SIZE;
 	}
 
 	app.disable('x-powered-by');

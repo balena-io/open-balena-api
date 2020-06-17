@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, errors } from '@resin/pinejs';
 import * as semver from 'balena-semver';
 
 export interface ApplicationType {
@@ -32,7 +32,7 @@ export const Default: ApplicationType = {
 		'Default application type, allowing multiple containers and gateway mode.',
 };
 
-export class DeviceOSVersionIsTooLow extends sbvrUtils.ForbiddenError {
+export class DeviceOSVersionIsTooLow extends errors.ForbiddenError {
 	constructor(
 		message = 'Device OS version is too low for the application type.',
 	) {
@@ -40,7 +40,7 @@ export class DeviceOSVersionIsTooLow extends sbvrUtils.ForbiddenError {
 	}
 }
 
-export class WebUrlNotSupportedError extends sbvrUtils.ForbiddenError {
+export class WebUrlNotSupportedError extends errors.ForbiddenError {
 	constructor(message = 'The application type does not support web url.') {
 		super(message);
 	}

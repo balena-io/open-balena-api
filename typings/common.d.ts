@@ -1,8 +1,9 @@
-import { sbvrUtils } from '@resin/pinejs';
-import { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
+import type { dbModule, types } from '@resin/pinejs';
 
 declare global {
-	type AnyObject = sbvrUtils.AnyObject;
+	type AnyObject = types.AnyObject;
+	type Resolvable<R> = types.Resolvable<R>;
+	type Tx = dbModule.Tx;
 
 	interface Dictionary<T> {
 		[key: string]: T;

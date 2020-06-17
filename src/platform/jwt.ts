@@ -7,7 +7,7 @@ import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import * as randomstring from 'randomstring';
 import { TypedError } from 'typed-error';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, permissions } from '@resin/pinejs';
 
 import {
 	JSON_WEB_TOKEN_EXPIRY_MINUTES,
@@ -21,7 +21,7 @@ export { SignOptions } from 'jsonwebtoken';
 
 const EXPIRY_SECONDS = JSON_WEB_TOKEN_EXPIRY_MINUTES * 60;
 
-const { root, api } = sbvrUtils;
+const { api } = sbvrUtils;
 
 class InvalidJwtSecretError extends TypedError {}
 
@@ -88,8 +88,10 @@ export const strategy = new JwtStrategy(
 				}
 				if ('service' in jwtUser && jwtUser.service) {
 					const { service, apikey } = jwtUser;
-					const permissions = await sbvrUtils.getApiKeyPermissions(apikey);
-					return { service, apikey, permissions };
+					const apiKeyPermissions = await permissions.getApiKeyPermissions(
+						apikey,
+					);
+					return { service, apikey, permissions: apiKeyPermissions };
 				} else if (
 					'access' in jwtUser &&
 					jwtUser.access != null &&
@@ -102,7 +104,7 @@ export const strategy = new JwtStrategy(
 					const user = (await api.resin.get({
 						resource: 'user',
 						id: jwtUser.id,
-						passthrough: { req: root },
+						passthrough: { req: permissions.root },
 						options: {
 							$select: ['actor', 'jwt_secret'],
 						},
@@ -120,9 +122,11 @@ export const strategy = new JwtStrategy(
 					}
 
 					jwtUser.actor = user.actor;
-					const permissions = await sbvrUtils.getUserPermissions(jwtUser.id);
+					const userPermissions = await permissions.getUserPermissions(
+						jwtUser.id,
+					);
 
-					jwtUser.permissions = permissions;
+					jwtUser.permissions = userPermissions;
 					return jwtUser;
 				} else {
 					throw new Error('Invalid JWT');

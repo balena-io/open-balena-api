@@ -1,4 +1,4 @@
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, errors } from '@resin/pinejs';
 import * as express from 'express';
 import * as _ from 'lodash';
 import config = require('./config');
@@ -63,7 +63,7 @@ async function createSuperuser() {
 	const { registerUser, updatePasswordIfNeeded } = await import(
 		'./src/platform/auth'
 	);
-	const { ConflictError } = sbvrUtils;
+	const { ConflictError } = errors;
 
 	const data = {
 		username: 'admin',

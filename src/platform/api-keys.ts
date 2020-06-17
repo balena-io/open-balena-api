@@ -1,12 +1,11 @@
 import type { Request } from 'express';
 import * as randomstring from 'randomstring';
 
-import { sbvrUtils } from '@resin/pinejs';
-import type { Tx } from '@resin/pinejs/out/database-layer/db';
+import { sbvrUtils, permissions, errors } from '@resin/pinejs';
 
 import { isJWT } from './jwt';
 
-const { root, api } = sbvrUtils;
+const { api } = sbvrUtils;
 
 interface ApiKeyOptions {
 	apiKey?: string;
@@ -51,13 +50,13 @@ const $createApiKey = async (
 
 	const resId: number | undefined = res?.d?.[0]?.id;
 	if (resId !== actorTypeID) {
-		throw new sbvrUtils.ForbiddenError();
+		throw new errors.ForbiddenError();
 	}
 
 	const authApiTx = api.Auth.clone({
 		passthrough: {
 			tx,
-			req: root,
+			req: permissions.root,
 		},
 	});
 
@@ -141,7 +140,7 @@ export const retrieveAPIKey = async (
 ): Promise<void> => {
 	// We should be able to skip this if req.user but doing so breaks the SDK
 	// because it sends both a JWT and an API Key in requests like /devices/register
-	await sbvrUtils.apiKeyMiddleware(req);
+	await permissions.apiKeyMiddleware(req);
 
 	// Skip for Pine's request objects that don't support headers
 	if (!isRequest(req)) {
@@ -152,6 +151,6 @@ export const retrieveAPIKey = async (
 	const token = (req.get('Authorization') || '').split(' ', 2)[1];
 	if (token && !isJWT(token)) {
 		// Add support for API keys on Authorization header if a JWT wasn't provided
-		return sbvrUtils.authorizationMiddleware(req);
+		return permissions.authorizationMiddleware(req);
 	}
 };

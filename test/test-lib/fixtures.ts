@@ -1,15 +1,14 @@
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, permissions } from '@resin/pinejs';
 import * as Bluebird from 'bluebird';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import * as path from 'path';
 
-import { Tx } from '@resin/pinejs/out/database-layer/db';
 import { Headers } from 'request';
 import { API_HOST } from '../../src/lib/config';
 import { requestAsync } from '../../src/lib/request';
 
-const { api, root } = sbvrUtils;
+const { api } = sbvrUtils;
 
 type PendingFixtures = Dictionary<PromiseLike<Dictionary<PromiseLike<any>>>>;
 type PartiallyAppliedFixtures = Dictionary<Dictionary<PromiseLike<any>>>;
@@ -161,7 +160,7 @@ const deleteResource = (resource: string) => async (obj: { id: number }) => {
 	await api.resin.delete({
 		resource,
 		id: obj.id,
-		passthrough: { req: root },
+		passthrough: { req: permissions.root },
 	});
 };
 

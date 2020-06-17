@@ -3,8 +3,7 @@ import * as ndjson from 'ndjson';
 import onFinished = require('on-finished');
 import { createGunzip } from 'zlib';
 
-import { sbvrUtils } from '@resin/pinejs';
-import type { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
+import { sbvrUtils, errors } from '@resin/pinejs';
 
 import {
 	captureException,
@@ -30,8 +29,8 @@ const {
 	UnauthorizedError,
 	ServiceUnavailableError,
 	UnsupportedMediaTypeError,
-	api,
-} = sbvrUtils;
+} = errors;
+const { api } = sbvrUtils;
 
 const HEARTBEAT_INTERVAL = 58e3;
 const STREAM_FLUSH_INTERVAL = 500;

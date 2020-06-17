@@ -3,7 +3,7 @@ import type { RequestHandler } from 'express';
 import * as _ from 'lodash';
 import * as randomstring from 'randomstring';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, permissions, errors } from '@resin/pinejs';
 import type { PinejsClientCoreFactory } from 'pinejs-client-core';
 
 import {
@@ -21,10 +21,10 @@ import {
 	setMinPollInterval,
 } from '../lib/device-state';
 import { checkInt, getIP, isValidInteger, varListInsert } from '../lib/utils';
-import { ConflictError } from '@resin/pinejs/out/sbvr-api/errors';
 export { proxy } from '../lib/device-proxy';
 
-const { BadRequestError, UnauthorizedError, root, api } = sbvrUtils;
+const { BadRequestError, ConflictError, UnauthorizedError } = errors;
+const { api } = sbvrUtils;
 
 export const register: RequestHandler = async (req, res) => {
 	try {
@@ -892,7 +892,9 @@ export const statePatch: RequestHandler = async (req, res) => {
 
 				// Get access to a root api, as images shouldn't be allowed to change
 				// the service_install values
-				const rootApi = resinApiTx.clone({ passthrough: { req: root } });
+				const rootApi = resinApiTx.clone({
+					passthrough: { req: permissions.root },
+				});
 
 				const body = { status: 'deleted' };
 				const filter: PinejsClientCoreFactory.Filter = {

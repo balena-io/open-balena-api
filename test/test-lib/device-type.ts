@@ -1,7 +1,7 @@
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, permissions } from '@resin/pinejs';
 import { setDefaultFixtures } from './fixtures';
 
-const { api, root } = sbvrUtils;
+const { api } = sbvrUtils;
 
 interface DeviceType {
 	id: number;
@@ -21,7 +21,7 @@ setDefaultFixtures(
 				const deviceTypes = (await api.resin.get({
 					resource: 'device_type',
 					passthrough: {
-						req: root,
+						req: permissions.root,
 					},
 					options: {
 						$select: ['id', 'slug', 'name'],

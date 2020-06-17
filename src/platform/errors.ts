@@ -3,9 +3,9 @@ import * as _ from 'lodash';
 import * as Raven from 'raven';
 import escapeHtml = require('escape-html');
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, errors } from '@resin/pinejs';
 
-const { InternalRequestError, HttpError } = sbvrUtils;
+const { InternalRequestError, HttpError } = errors;
 
 export const translateError = (err: Error | number | string): string => {
 	if (err instanceof InternalRequestError) {

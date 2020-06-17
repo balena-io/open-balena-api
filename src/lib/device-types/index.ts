@@ -3,8 +3,7 @@ import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 
 import * as deviceTypesLib from '@resin.io/device-types';
-import { sbvrUtils } from '@resin/pinejs';
-import type { Tx } from '@resin/pinejs/out/database-layer/db';
+import { sbvrUtils, permissions, errors } from '@resin/pinejs';
 import * as semver from 'balena-semver';
 import type { PinejsClientCoreFactory } from 'pinejs-client-core';
 
@@ -18,8 +17,9 @@ import {
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
 
-const { InternalRequestError, root, api } = sbvrUtils;
-export const { BadRequestError, NotFoundError } = sbvrUtils;
+const { api } = sbvrUtils;
+const { BadRequestError, InternalRequestError, NotFoundError } = errors;
+export type { BadRequestError, NotFoundError };
 
 export type DeviceType = deviceTypesLib.DeviceType;
 
@@ -168,7 +168,7 @@ async function updateDTModel(
 	propertyMap: typeof syncSettings['map'],
 	tx: Tx,
 ): Promise<void> {
-	const apiTx = api.resin.clone({ passthrough: { req: root, tx } });
+	const apiTx = api.resin.clone({ passthrough: { req: permissions.root, tx } });
 	const updateFields = _.mapValues(
 		propertyMap,
 		(source) => (deviceType as AnyObject)[source.name] ?? source.default,

@@ -1,10 +1,10 @@
 import type { JSONSchema6Definition } from 'json-schema';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { errors } from '@resin/pinejs';
 
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './config';
 
-const { BadRequestError } = sbvrUtils;
+const { BadRequestError } = errors;
 
 export const RESERVED_NAMES = ['RESIN', 'BALENA', 'USER'];
 

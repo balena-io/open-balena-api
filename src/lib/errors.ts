@@ -1,8 +1,10 @@
 import { TypedError } from 'typed-error';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { errors } from '@resin/pinejs';
 
-export const { NotFoundError } = sbvrUtils;
+const { NotFoundError } = errors;
+
+export type { NotFoundError };
 
 export class NoDevicesFoundError extends NotFoundError {}
 

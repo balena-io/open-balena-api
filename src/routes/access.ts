@@ -1,12 +1,13 @@
 import type { Request, Response } from 'express';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, errors } from '@resin/pinejs';
 import * as semver from 'balena-semver';
 
 import { reqHasPermission } from '../platform/auth';
 import { captureException } from '../platform/errors';
 
-const { UnauthorizedError, api } = sbvrUtils;
+const { UnauthorizedError } = errors;
+const { api } = sbvrUtils;
 
 const HOSTOS_ACCESS_MIN_OS_VER = '2.0.0';
 

@@ -4,7 +4,7 @@ import { EventEmitter } from 'events';
 import * as _ from 'lodash';
 import * as redis from 'redis';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { errors } from '@resin/pinejs';
 
 import { captureException } from '../../../platform/errors';
 
@@ -17,7 +17,7 @@ import type {
 	Subscription,
 } from '../struct';
 
-const { ServiceUnavailableError, BadRequestError } = sbvrUtils;
+const { ServiceUnavailableError, BadRequestError } = errors;
 
 // Expire after 30 days of inactivity
 const KEY_EXPIRATION = 30 * DAYS;
