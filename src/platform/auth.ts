@@ -2,8 +2,7 @@ import type { Request, RequestHandler, Response } from 'express';
 import * as _ from 'lodash';
 import * as base32 from 'thirty-two';
 
-import { sbvrUtils } from '@resin/pinejs';
-import type { Tx } from '@resin/pinejs/out/database-layer/db';
+import { sbvrUtils, permissions, errors } from '@resin/pinejs';
 
 import { retrieveAPIKey } from './api-keys';
 import { createJwt, SignOptions, User } from './jwt';
@@ -17,9 +16,8 @@ const {
 	UnauthorizedError,
 	NotFoundError,
 	InternalRequestError,
-	root,
-	api,
-} = sbvrUtils;
+} = errors;
+const { api } = sbvrUtils;
 
 const SUDO_TOKEN_VALIDITY = 20 * 60 * 1000;
 
@@ -73,7 +71,7 @@ export const setPassword = async (
 		resource: 'user',
 		id: user.id,
 		passthrough: {
-			req: root,
+			req: permissions.root,
 			tx,
 		},
 		body: {
@@ -119,7 +117,7 @@ export const checkUserPassword = async (
 		resource: 'user',
 		id: userId,
 		passthrough: {
-			req: root,
+			req: permissions.root,
 		},
 		options: {
 			$select: ['password', 'id'],
@@ -191,12 +189,12 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 		api.resin.get({
 			resource: 'user',
 			id: userId,
-			passthrough: { req: root },
+			passthrough: { req: permissions.root },
 			options: {
 				$select: tokenFields,
 			},
 		}) as Promise<AnyObject>,
-		sbvrUtils.getUserPermissions(userId),
+		permissions.getUserPermissions(userId),
 	]);
 	if (!userData || !permissionData) {
 		throw new Error('No data found?!');
@@ -259,7 +257,7 @@ export const reqHasPermission = (req: Request, permission: string): boolean =>
 
 const getUserQuery = api.resin.prepare<{ key: string }>({
 	resource: 'user',
-	passthrough: { req: root },
+	passthrough: { req: permissions.root },
 	options: {
 		$select: userFields,
 		$filter: {
@@ -379,7 +377,7 @@ export async function findUser<
 	const [user] = (await api.resin.get({
 		resource: 'user',
 		passthrough: {
-			req: root,
+			req: permissions.root,
 			tx,
 		},
 		options: {
@@ -437,7 +435,7 @@ export const registerUser = async (
 		},
 		passthrough: {
 			tx,
-			req: root,
+			req: permissions.root,
 			custom: {
 				clientIP,
 			},

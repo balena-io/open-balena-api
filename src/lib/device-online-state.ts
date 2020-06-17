@@ -3,7 +3,7 @@ import * as events from 'eventemitter3';
 import * as _ from 'lodash';
 import * as RedisSMQ from 'rsmq';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, permissions } from '@resin/pinejs';
 
 import { captureException } from '../platform/errors';
 
@@ -19,12 +19,12 @@ import {
 	PromisifedRedisClient,
 } from './redis-promise';
 
-const { root, api } = sbvrUtils;
+const { api } = sbvrUtils;
 
 const getPollIntervalForDevice = _.once(() =>
 	api.resin.prepare<{ uuid: string }>({
 		resource: 'device_config_variable',
-		passthrough: { req: root },
+		passthrough: { req: permissions.root },
 		options: {
 			$select: ['name', 'value'],
 			$top: 1,
@@ -53,7 +53,7 @@ const getPollIntervalForParentApplication = _.once(() =>
 		uuid: string;
 	}>({
 		resource: 'application_config_variable',
-		passthrough: { req: root },
+		passthrough: { req: permissions.root },
 		options: {
 			$select: ['name', 'value'],
 			$top: 1,
@@ -266,7 +266,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		try {
 			await api.resin.patch({
 				resource: 'device',
-				passthrough: { req: root },
+				passthrough: { req: permissions.root },
 				options: {
 					$filter: {
 						uuid,

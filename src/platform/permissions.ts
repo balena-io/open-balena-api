@@ -2,14 +2,13 @@ import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 import * as randomstring from 'randomstring';
 
-import { sbvrUtils } from '@resin/pinejs';
-import type { Tx } from '@resin/pinejs/out/database-layer/db';
+import { sbvrUtils, permissions } from '@resin/pinejs';
 
 import { findUser } from './auth';
 import { captureException } from './errors';
 import { getOrInsertId } from './index';
 
-const { root, api } = sbvrUtils;
+const { api } = sbvrUtils;
 
 // role and permission helpers
 
@@ -25,8 +24,12 @@ export const assignRolePermission = (
 	tx: Tx,
 ) => getOrInsertId('role__has__permission', { role, permission }, tx);
 
-const assignRolePermissions = (roleId: number, permissions: string[], tx: Tx) =>
-	Bluebird.map(permissions, async (name) => {
+const assignRolePermissions = (
+	roleId: number,
+	rolePermissions: string[],
+	tx: Tx,
+) =>
+	Bluebird.map(rolePermissions, async (name) => {
 		const permission = await getOrInsertPermissionId(name, tx);
 		await assignRolePermission(roleId, permission.id, tx);
 	});
@@ -50,12 +53,12 @@ const getOrInsertApiKey = async (
 	const authApiTx = api.Auth.clone({
 		passthrough: {
 			tx,
-			req: root,
+			req: permissions.root,
 		},
 	});
 	const apiKeys = (await authApiTx.get({
 		resource: 'api_key',
-		passthrough: { req: root },
+		passthrough: { req: permissions.root },
 		options: {
 			$select: ['id', 'key'],
 			$filter: {
@@ -82,13 +85,13 @@ const getOrInsertApiKey = async (
 
 		const idObj = (await authApiTx.post({
 			resource: 'api_key',
-			passthrough: { req: root },
+			passthrough: { req: permissions.root },
 			body,
 		})) as { id: number };
 		const apiKey = { ...idObj, ...body };
 		await authApiTx.post({
 			resource: 'api_key__has__role',
-			passthrough: { req: root },
+			passthrough: { req: permissions.root },
 			body: {
 				api_key: apiKey.id,
 				role: role.id,
@@ -108,12 +111,12 @@ const getOrInsertApiKey = async (
 
 export const setApiKey = async (
 	roleName: string,
-	permissions: string[],
+	apiKeyPermissions: string[],
 	key: string,
 	tx: Tx,
 ): Promise<AnyObject> => {
 	const role = await getOrInsertRoleId(roleName, tx);
-	await assignRolePermissions(role.id, permissions, tx);
+	await assignRolePermissions(role.id, apiKeyPermissions, tx);
 	const user = await findUser('guest', tx, ['actor']);
 	if (user?.actor == null) {
 		throw new Error('Cannot find guest user');
@@ -126,7 +129,7 @@ export const setApiKey = async (
 			resource: 'api_key',
 			id: apiKey.id,
 			passthrough: {
-				req: root,
+				req: permissions.root,
 				tx,
 			},
 			body: {
@@ -163,7 +166,7 @@ export function createAll(
 	apiKeyMap: ApiKeyPermissionsMap,
 	userMap: UserRoleMap,
 ) {
-	const apiTx = api.Auth.clone({ passthrough: { req: root, tx } });
+	const apiTx = api.Auth.clone({ passthrough: { req: permissions.root, tx } });
 
 	const permissionsCache = apiTx
 		.get({
@@ -173,11 +176,8 @@ export function createAll(
 				$filter: { name: { $in: permissionNames } },
 			},
 		})
-		.then((permissions: AnyObject[]) => {
-			const permissionsMap = _(permissions)
-				.keyBy('name')
-				.mapValues('id')
-				.value();
+		.then((perms: AnyObject[]) => {
+			const permissionsMap = _(perms).keyBy('name').mapValues('id').value();
 			const result: Dictionary<number | Promise<number>> = {};
 			for (const permissionName of permissionNames) {
 				if (permissionsMap[permissionName] != null) {
@@ -204,7 +204,7 @@ export function createAll(
 			if (rolePermissionNames.length === 0) {
 				return role;
 			}
-			const permissions = Object.values(
+			const perms = Object.values(
 				_.pick(await permissionsCache, rolePermissionNames),
 			);
 			const addPermissionsPromise = (async () => {
@@ -214,7 +214,7 @@ export function createAll(
 						$select: 'permission',
 						$filter: {
 							role: role.id,
-							permission: { $in: permissions },
+							permission: { $in: perms },
 						},
 					},
 				})) as AnyObject[];
@@ -222,7 +222,7 @@ export function createAll(
 					({ permission }) => permission.__id,
 				);
 				await Promise.all(
-					_.difference(permissions, rolePermissionIds).map((permission) =>
+					_.difference(perms, rolePermissionIds).map((permission) =>
 						apiTx.post({
 							resource: 'role__has__permission',
 							body: {
@@ -239,7 +239,7 @@ export function createAll(
 				options: {
 					$filter: {
 						role: role.id,
-						$not: { permission: { $in: permissions } },
+						$not: { permission: { $in: perms } },
 					},
 				},
 			});
@@ -271,7 +271,7 @@ export function createAll(
 			}),
 		);
 		// Remove stale permissions, preserving unassigned ones.
-		const permissions = await permissionsCache;
+		const perms = await permissionsCache;
 		try {
 			await apiTx.delete({
 				resource: 'permission',
@@ -303,7 +303,7 @@ export function createAll(
 										},
 									},
 								},
-								{ id: { $in: Object.values(permissions) } },
+								{ id: { $in: Object.values(perms) } },
 							],
 						},
 					},
@@ -317,9 +317,9 @@ export function createAll(
 
 	const apiKeysPromise = Bluebird.map(
 		_.toPairs(apiKeyMap),
-		async ([roleName, { permissions, key }]) => {
+		async ([roleName, { permissions: apiKeyPermissions, key }]) => {
 			try {
-				const role = await createRolePermissions(permissions, roleName);
+				const role = await createRolePermissions(apiKeyPermissions, roleName);
 				const user = await findUser('guest', tx, ['actor']);
 				if (user?.actor == null) {
 					throw new Error('Cannot find guest user');
@@ -333,7 +333,7 @@ export function createAll(
 					resource: 'api_key',
 					id: apiKey.id,
 					passthrough: {
-						req: root,
+						req: permissions.root,
 						tx,
 					},
 					body: {

@@ -1,13 +1,14 @@
 import * as Bluebird from 'bluebird';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, permissions, errors } from '@resin/pinejs';
 
 import { createActor } from '../../platform';
 import { getUser } from '../../platform/auth';
 import { captureException } from '../../platform/errors';
 import { assignUserRole } from '../../platform/permissions';
 
-const { root, api, BadRequestError, InternalRequestError } = sbvrUtils;
+const { BadRequestError, InternalRequestError } = errors;
+const { api } = sbvrUtils;
 
 sbvrUtils.addPureHook('POST', 'resin', 'user', {
 	POSTPARSE: createActor,
@@ -17,7 +18,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'user', {
 			resource: 'role',
 			passthrough: {
 				tx,
-				req: root,
+				req: permissions.root,
 			},
 			options: {
 				$select: 'id',
@@ -56,7 +57,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 		const authApiTx = sbvrUtils.api.Auth.clone({
 			passthrough: {
 				tx,
-				req: root,
+				req: permissions.root,
 			},
 		});
 

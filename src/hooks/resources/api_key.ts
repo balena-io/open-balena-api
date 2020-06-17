@@ -1,11 +1,11 @@
 import * as Bluebird from 'bluebird';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, permissions } from '@resin/pinejs';
 
 import { getCurrentRequestAffectedIds } from '../../platform';
 import { captureException } from '../../platform/errors';
 
-const { root, api } = sbvrUtils;
+const { api } = sbvrUtils;
 
 const deleteApiKeyHooks: sbvrUtils.Hooks = {
 	PRERUN: async (args) => {
@@ -22,7 +22,7 @@ const deleteApiKeyHooks: sbvrUtils.Hooks = {
 						resource,
 						passthrough: {
 							tx: args.tx,
-							req: root,
+							req: permissions.root,
 						},
 						options: {
 							$filter: { api_key: { $in: keyIds } },

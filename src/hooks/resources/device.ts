@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as Bluebird from 'bluebird';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, permissions, errors } from '@resin/pinejs';
 import type { PinejsClientCoreFactory } from 'pinejs-client-core';
 import * as semver from 'balena-semver';
 
@@ -21,7 +21,7 @@ import * as haikuName from '../../lib/haiku-name';
 import { pseudoRandomBytesAsync } from '../../lib/utils';
 import { resolveDeviceType } from '../common';
 
-const { BadRequestError, root } = sbvrUtils;
+const { BadRequestError } = errors;
 
 const INVALID_NEWLINE_REGEX = /\r|\n/;
 
@@ -149,7 +149,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'device', {
 			return;
 		}
 
-		const rootApi = api.clone({ passthrough: { tx, req: root } });
+		const rootApi = api.clone({ passthrough: { tx, req: permissions.root } });
 
 		return createAppServiceInstalls(rootApi, request.custom.appId, [deviceId]);
 	},
@@ -305,7 +305,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		if (request.values.is_web_accessible) {
 			const rootApi = api.clone({
 				passthrough: {
-					req: root,
+					req: permissions.root,
 				},
 			});
 			waitPromises.push(
@@ -395,7 +395,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 
 					return postDevices({
 						url: '/v1/update',
-						req: root,
+						req: permissions.root,
 						filter: { id: { $in: deviceIds } },
 						// Don't wait for the posts to complete, as they may take a long time
 						wait: false,
@@ -517,7 +517,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 
 					return postDevices({
 						url: '/v1/update',
-						req: root,
+						req: permissions.root,
 						filter: { id: { $in: deviceIds } },
 						// Don't wait for the posts to complete, as they may take a long time
 						wait: false,
@@ -629,7 +629,7 @@ async function setSupervisorReleaseResource(
 
 	const rootApi = api.clone({
 		passthrough: {
-			req: root,
+			req: permissions.root,
 		},
 	});
 

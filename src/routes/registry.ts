@@ -9,8 +9,7 @@ import * as _ from 'lodash';
 import * as memoize from 'memoizee';
 import * as uuid from 'uuid';
 
-import { sbvrUtils } from '@resin/pinejs';
-import type { Resolvable } from '@resin/pinejs/out/sbvr-api/common-types';
+import { sbvrUtils, permissions, errors } from '@resin/pinejs';
 
 import { retrieveAPIKey } from '../platform/api-keys';
 import { captureException, handleHttpErrors } from '../platform/errors';
@@ -23,7 +22,8 @@ import {
 } from '../lib/config';
 import type { User as DbUser } from '../models';
 
-const { UnauthorizedError, root, api } = sbvrUtils;
+const { UnauthorizedError } = errors;
+const { api } = sbvrUtils;
 
 // Set a large expiry so that huge pulls/pushes go through
 // without needing to re-authenticate mid-process.
@@ -318,7 +318,7 @@ const $getSubject = memoize(
 				// Try to resolve as a device api key first, using the passed in subject
 				const [device] = (await api.resin.get({
 					resource: 'device',
-					passthrough: { req: root },
+					passthrough: { req: permissions.root },
 					options: {
 						$select: ['id'],
 						$filter: {
@@ -352,7 +352,7 @@ const $getSubject = memoize(
 		// If resolving as a device api key fails then instead try to resolve to the user api key username
 		const [user] = (await api.resin.get({
 			resource: 'user',
-			passthrough: { req: root },
+			passthrough: { req: permissions.root },
 			options: {
 				$select: 'username',
 				$filter: {

@@ -1,6 +1,6 @@
 import type { Request, RequestHandler } from 'express';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, errors } from '@resin/pinejs';
 
 import {
 	captureException,
@@ -11,7 +11,8 @@ import {
 import { generateConfig } from '../lib/device-config';
 import { findBySlug } from '../lib/device-types';
 
-const { UnauthorizedError, api, NotFoundError } = sbvrUtils;
+const { UnauthorizedError, NotFoundError } = errors;
+const { api } = sbvrUtils;
 
 const getApp = async (req: Request): Promise<AnyObject> => {
 	const app = (await api.resin.get({

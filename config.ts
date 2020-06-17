@@ -1,4 +1,4 @@
-import type { Config } from '@resin/pinejs/out/config-loader/config-loader';
+import type { ConfigLoader } from '@resin/pinejs';
 import * as balenaModel from './src/balena';
 
 export = {
@@ -10,4 +10,4 @@ export = {
 			permissions: ['resin.device_type.get'],
 		},
 	],
-} as Config;
+} as ConfigLoader.Config;

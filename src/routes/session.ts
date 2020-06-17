@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, permissions, errors } from '@resin/pinejs';
 
 import {
 	comparePassword,
@@ -13,7 +13,8 @@ import { captureException, handleHttpErrors } from '../platform/errors';
 import type { SetupOptions } from '../index';
 import type { User as DbUser } from '../models';
 
-const { BadRequestError, NotFoundError, root, api } = sbvrUtils;
+const { BadRequestError, NotFoundError } = errors;
+const { api } = sbvrUtils;
 
 export const whoami: RequestHandler = async (req, res) => {
 	try {
@@ -45,7 +46,7 @@ export const whoami: RequestHandler = async (req, res) => {
 				// retrieve the user document in full
 				const { id, username, email } = (await api.resin.get({
 					resource: 'user',
-					passthrough: { req: root },
+					passthrough: { req: permissions.root },
 					id: userWithId.id,
 					options: {
 						$select: ['id', 'username', 'email'],

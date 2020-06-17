@@ -1,12 +1,9 @@
 import * as _ from 'lodash';
 
-import { sbvrUtils } from '@resin/pinejs';
-import type { Tx } from '@resin/pinejs/out/database-layer/db';
+import { sbvrUtils, permissions } from '@resin/pinejs';
 import type { PinejsClientCoreFactory } from 'pinejs-client-core';
 
 import { captureException } from './errors';
-
-const { root } = sbvrUtils;
 
 if (sbvrUtils.db.readTransaction == null) {
 	throw new Error('`readTransaction` is unsupported');
@@ -20,7 +17,7 @@ const $getOrInsertId = async (
 	body: AnyObject,
 	tx?: Tx,
 ): Promise<{ id: number }> => {
-	const apiTx = api.clone({ passthrough: { req: root, tx } });
+	const apiTx = api.clone({ passthrough: { req: permissions.root, tx } });
 	const results = (await apiTx.get({
 		resource,
 		options: {
@@ -50,7 +47,7 @@ const $updateOrInsert = async (
 	updateFields: AnyObject,
 	tx?: Tx,
 ): Promise<{ id: number }> => {
-	const apiTx = api.clone({ passthrough: { req: root, tx } });
+	const apiTx = api.clone({ passthrough: { req: permissions.root, tx } });
 	const results = (await apiTx.get({
 		resource,
 		options: {
@@ -135,7 +132,7 @@ export const createActor = async ({
 		resource: 'actor',
 		passthrough: {
 			tx,
-			req: root,
+			req: permissions.root,
 		},
 		options: { returnResource: false },
 	})) as AnyObject;

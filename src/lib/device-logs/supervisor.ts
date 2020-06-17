@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { errors } from '@resin/pinejs';
 
 import type {
 	AnySupervisorLog,
@@ -18,7 +18,7 @@ export class Supervisor {
 		logs: AnySupervisorLog[],
 	): DeviceLog[] {
 		if (logs.length > MAX_LOGS_PER_BATCH) {
-			throw new sbvrUtils.BadRequestError(
+			throw new errors.BadRequestError(
 				`Batches cannot include more than ${MAX_LOGS_PER_BATCH} logs`,
 			);
 		}

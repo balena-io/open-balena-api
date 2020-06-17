@@ -1,11 +1,11 @@
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, permissions, errors } from '@resin/pinejs';
 
 import { addDeleteHookForDependents } from '../../platform';
 
 import { REGISTRY2_HOST } from '../../lib/config';
 import { pseudoRandomBytesAsync } from '../../lib/utils';
 
-const { InternalRequestError, root } = sbvrUtils;
+const { InternalRequestError } = errors;
 
 sbvrUtils.addPureHook('POST', 'resin', 'image', {
 	POSTPARSE: async ({ request, api, tx }) => {
@@ -20,7 +20,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'image', {
 				resource: 'image/$count',
 				passthrough: {
 					tx,
-					req: root,
+					req: permissions.root,
 				},
 				options: {
 					$filter: {

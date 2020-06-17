@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express';
 import * as _ from 'lodash';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, permissions } from '@resin/pinejs';
 
 import { retrieveAPIKey } from './api-keys';
 import { getUser, reqHasPermission } from './auth';
@@ -10,7 +10,7 @@ import { captureException } from './errors';
 import { API_HEARTBEAT_STATE_ENABLED } from '../lib/config';
 import * as DeviceOnlineState from '../lib/device-online-state';
 
-const { root, api } = sbvrUtils;
+const { api } = sbvrUtils;
 
 export const authenticated: RequestHandler = async (req, res, next) => {
 	try {
@@ -90,7 +90,7 @@ export const permissionRequired = (permission: string): RequestHandler => (
 
 const checkDeviceExistsQuery = api.resin.prepare<{ uuid: string }>({
 	resource: 'device/$count',
-	passthrough: { req: root },
+	passthrough: { req: permissions.root },
 	options: {
 		$filter: {
 			uuid: { '@': 'uuid' },

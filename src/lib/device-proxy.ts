@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import * as _ from 'lodash';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, permissions, errors } from '@resin/pinejs';
 import type { PinejsClientCoreFactory } from 'pinejs-client-core';
 
 import {
@@ -21,7 +21,8 @@ const DEVICE_REQUEST_TIMEOUT = 50000;
 
 const DELAY_BETWEEN_DEVICE_REQUEST = 50;
 
-const { BadRequestError, root, api } = sbvrUtils;
+const { BadRequestError } = errors;
+const { api } = sbvrUtils;
 
 const badSupervisorResponse = (
 	req: Request,
@@ -207,7 +208,7 @@ export async function requestDevices({
 	// And now fetch device data with full privs
 	const devices = (await api.resin.get({
 		resource: 'device',
-		passthrough: { req: root },
+		passthrough: { req: permissions.root },
 		options: {
 			$select: ['api_port', 'api_secret', 'uuid'],
 			$expand: {

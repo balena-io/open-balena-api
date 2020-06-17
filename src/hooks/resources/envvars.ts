@@ -1,5 +1,4 @@
 import { sbvrUtils } from '@resin/pinejs';
-import type { Tx } from '@resin/pinejs/out/database-layer/db';
 import type { PinejsClientCoreFactory } from 'pinejs-client-core';
 
 import { getCurrentRequestAffectedIds } from '../../platform';

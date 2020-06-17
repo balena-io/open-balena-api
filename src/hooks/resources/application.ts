@@ -1,4 +1,4 @@
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils, permissions, errors } from '@resin/pinejs';
 
 import {
 	addDeleteHookForDependents,
@@ -11,7 +11,7 @@ import { Default as DefaultApplicationType } from '../../lib/application-types';
 import { postDevices } from '../../lib/device-proxy';
 import { resolveDeviceType } from '../common';
 
-const { BadRequestError, ConflictError, NotFoundError, root } = sbvrUtils;
+const { BadRequestError, ConflictError, NotFoundError } = errors;
 
 const checkDependentApplication: sbvrUtils.Hooks['POSTPARSE'] = async ({
 	request,
@@ -114,7 +114,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 			}
 			return postDevices({
 				url: '/v1/update',
-				req: root,
+				req: permissions.root,
 				filter: {
 					belongs_to__application: { $in: ids },
 					is_running__release: {
@@ -147,7 +147,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'application', {
 		const devices = (await args.api.get({
 			resource: 'device',
 			passthrough: {
-				req: root,
+				req: permissions.root,
 			},
 			options: {
 				$select: ['uuid'],

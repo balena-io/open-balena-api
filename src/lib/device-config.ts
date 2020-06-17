@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as _ from 'lodash';
 
 import type { Option as DeviceTypeOption } from '@resin.io/device-types';
-import { sbvrUtils } from '@resin/pinejs';
+import { errors } from '@resin/pinejs';
 import * as semver from 'balena-semver';
 import * as deviceConfig from 'balena-device-config';
 
@@ -13,7 +13,7 @@ import { captureException } from '../platform/errors';
 import { createProvisioningApiKey, createUserApiKey } from './api-keys';
 import type { DeviceType } from './device-types';
 
-const { BadRequestError } = sbvrUtils;
+const { BadRequestError } = errors;
 
 // FIXME(refactor): many of the following are resin-specific
 import {
