@@ -402,7 +402,7 @@ export async function findUser<
 export const registerUser = async (
 	userData: AnyObject & {
 		username: string;
-		email: string;
+		email: string | null;
 		password?: string;
 	},
 	tx: Tx,
@@ -411,9 +411,13 @@ export const registerUser = async (
 	if (USERNAME_BLACKLIST.includes(userData.username)) {
 		throw new ConflictError('This username is blacklisted');
 	}
-	let existingUser = await findUser(userData.email, tx, ['id']);
-	if (existingUser) {
-		throw new ConflictError('This email is already taken');
+
+	let existingUser: Pick<DbUser, 'id'> | undefined;
+	if (userData.email != null) {
+		existingUser = await findUser(userData.email, tx, ['id']);
+		if (existingUser) {
+			throw new ConflictError('This email is already taken');
+		}
 	}
 
 	existingUser = await findUser(userData.username, tx, ['id']);
