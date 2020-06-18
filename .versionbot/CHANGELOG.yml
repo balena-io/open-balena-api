@@ -1,4 +1,15 @@
 - commits:
+    - subject: Move iterating of devices to create service installs to a lower level
+      hash: ab0999072c6f023cda1d7ccb6d95d7b15fdb0637
+      body: |
+        This makes it easier to optimize away the additional requests in future
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.79.1
+  date: 2020-06-18T14:01:46.181Z
+- commits:
     - subject: Add “organization” resource
       hash: d0b738203b2b11b686f69c97f3e8382b5ef9fbb9
       body: >
