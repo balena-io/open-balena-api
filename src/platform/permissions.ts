@@ -58,7 +58,6 @@ const getOrInsertApiKey = async (
 	});
 	const apiKeys = (await authApiTx.get({
 		resource: 'api_key',
-		passthrough: { req: permissions.root },
 		options: {
 			$select: ['id', 'key'],
 			$filter: {
@@ -85,13 +84,11 @@ const getOrInsertApiKey = async (
 
 		const idObj = (await authApiTx.post({
 			resource: 'api_key',
-			passthrough: { req: permissions.root },
 			body,
 		})) as { id: number };
 		const apiKey = { ...idObj, ...body };
 		await authApiTx.post({
 			resource: 'api_key__has__role',
-			passthrough: { req: permissions.root },
 			body: {
 				api_key: apiKey.id,
 				role: role.id,
@@ -332,10 +329,6 @@ export function createAll(
 				await apiTx.patch({
 					resource: 'api_key',
 					id: apiKey.id,
-					passthrough: {
-						req: permissions.root,
-						tx,
-					},
 					body: {
 						key,
 					},
