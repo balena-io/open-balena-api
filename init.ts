@@ -60,7 +60,9 @@ async function createSuperuser() {
 
 	console.log('Creating superuser account...');
 
-	const { registerUser, updatePasswordIfNeeded } = await import(
+	const { getOrInsertModelId } = await import('./src/platform');
+
+	const { findUser, registerUser, updatePasswordIfNeeded } = await import(
 		'./src/platform/auth'
 	);
 	const { ConflictError } = errors;
@@ -90,6 +92,24 @@ async function createSuperuser() {
 					throw err;
 				}
 			}
+
+			const user = await findUser(data.username, tx);
+			if (user == null) {
+				// can't happen, but need to satisfy the compiler
+				return;
+			}
+
+			// Create the "superorg" and assign the superuser as the sole member
+			const organization = await getOrInsertModelId(
+				'organization',
+				{ name: user.username, handle: user.username },
+				tx,
+			);
+			await getOrInsertModelId(
+				'organization_membership',
+				{ user: user.id, is_member_of__organization: organization.id },
+				tx,
+			);
 		});
 	} catch (err) {
 		console.error('Error creating superuser:', err);

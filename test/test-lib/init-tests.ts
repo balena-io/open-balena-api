@@ -14,7 +14,7 @@ export const preInit = async () => {
 	(DeviceOnlineStateManager as any)['QUEUE_STATS_INTERVAL_MSEC'] = 1000;
 };
 
-const getAdminUser = async () => {
+const loadAdminUserAndOrganization = async () => {
 	// any user we try to create will be the superuser...
 	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } = await import(
 		'../../src/lib/config'
@@ -37,19 +37,26 @@ const getAdminUser = async () => {
 			.expect(200)
 	).text;
 
-	const adminUser = (await balenaToken.parse(token)) as UserObjectParam;
-	adminUser.token = token;
+	const user = (await balenaToken.parse(token)) as UserObjectParam;
+	user.token = token;
+	user.actor = (
+		await supertest(app, user).get(`/resin/user(${user.id})`).expect(200)
+	).body.d[0].actor as number;
 
-	adminUser.actor = await supertest(app, adminUser)
-		.get(`/resin/user(${adminUser.id})`)
-		.expect(200)
-		.then((res) => res.body.d[0].actor as number);
+	const org = (
+		await supertest(app, user)
+			.get(
+				`/resin/organization?$select=id,name,handle&$filter=handle eq 'admin'`,
+			)
+			.expect(200)
+	).body.d[0];
 
-	return adminUser;
+	return { user, org };
 };
 
 export const postInit = async () => {
-	fixtures.setDefaultFixtures('users', { admin: getAdminUser() });
-
+	const { user, org } = await loadAdminUserAndOrganization();
+	fixtures.setDefaultFixtures('users', { admin: Promise.resolve(user) });
+	fixtures.setDefaultFixtures('organizations', { admin: Promise.resolve(org) });
 	await import('../00-init');
 };

@@ -24,6 +24,8 @@ CREATE INDEX IF NOT EXISTS "application_depends_on_application_idx"
 ON "application" ("depends on-application");
 CREATE INDEX IF NOT EXISTS "application_device_type_idx"
 ON "application" ("is for-device type");
+CREATE INDEX IF NOT EXISTS "application_organization_idx"
+ON "application" ("organization");
 CREATE INDEX IF NOT EXISTS "application_release_idx"
 ON "application" ("should be running-release");
 CREATE INDEX IF NOT EXISTS "application_application_type_idx"
@@ -88,6 +90,10 @@ CREATE INDEX IF NOT EXISTS "ipr_ipr_image_idx"
 ON "image-is part of-release" ("is part of-release", "image");
 
 -- "image label"."release image" is the first part of an automated unique index
+
+-- "organization membership"."user" is the first part of an automated unique index
+CREATE INDEX IF NOT EXISTS "organization_membership_is_member_of_organization_idx"
+ON "organization membership" ("is member of-organization");
 
 -- TODO: Check what the extra columns are optimizing for
 CREATE INDEX IF NOT EXISTS "release_application_commit_status_idx"
