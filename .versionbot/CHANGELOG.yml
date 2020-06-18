@@ -1,4 +1,49 @@
 - commits:
+    - subject: Add “organization” resource
+      hash: d0b738203b2b11b686f69c97f3e8382b5ef9fbb9
+      body: >
+        Organizations sit one level higher than applications and users, and
+        scope access to resources. Applications belong to organizations and
+        users are members of organizations, which grants users access to those
+        applications.
+
+
+        Because the core API is single-user, organizations offer nothing new
+        (the admin user has full access to every resource unconditionally) but
+        allow the core and cloud APIs to expose a uniform interface to clients,
+        which is the motivation of this change.
+
+
+        People familiar with the cloud model will observe that I’ve included the
+        bare minimum of resources that would let clients:
+
+
+        - query which organizations exist
+
+        - query which users are members of an organization
+
+        - query which organizations a user is a member of
+
+
+        You’ll also observe that I’ve not updated user authorization to go
+        through org membership. We’d still have to grant all permissions
+        unconditionally and it would make things explicit, but the permissions
+        would become much more complicated adding both maintenance and
+        performance ovehead and we’d still not be able to reuse the permissions
+        on the cloud API. I don’t think the tradeoff is worth it and we can
+        easily change that in the future if there’s a solid need.
+
+
+        I’ve also omitted DELETE hooks — the single org and org mebership are
+        not expected to (and should not) be deleted on instances of the core
+        API.
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Akis Kesoglou
+  version: 0.79.0
+  date: 2020-06-18T12:24:35.195Z
+- commits:
     - subject: Update pinejs and use updated imports
       hash: d46f3b931a924a7ceef7f5d8a69686409c238bab
       body: |
