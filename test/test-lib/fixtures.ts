@@ -98,6 +98,37 @@ const loaders: Dictionary<LoaderFunc> = {
 			user,
 		});
 	},
+	releases: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const application = await fixtures.applications[jsonData.application];
+		if (application == null) {
+			logErrorAndThrow(`Could not find application: ${jsonData.application}`);
+		}
+
+		return createResource({
+			resource: 'release',
+			body: {
+				belongs_to__application: application.id,
+				belongs_to__user: user.id,
+				start_timestamp: Date.now(),
+				end_timestamp: Date.now(),
+				..._.pick(
+					jsonData,
+					'app_name',
+					'commit',
+					'status',
+					'composition',
+					'source',
+					'release_version',
+				),
+			},
+			user,
+		});
+	},
 	'supervisor-release': async (jsonData, fixtures) => {
 		const user = await fixtures.users['admin'];
 
