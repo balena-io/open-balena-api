@@ -1,6 +1,6 @@
 import type { Request, RequestHandler } from 'express';
 
-import { sbvrUtils, errors } from '@resin/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 
 import {
 	captureException,

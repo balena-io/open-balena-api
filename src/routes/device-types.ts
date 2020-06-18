@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express';
 import * as _ from 'lodash';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils } from '@balena/pinejs';
 
 import {
 	captureException,

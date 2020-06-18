@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express';
 import * as _ from 'lodash';
 
-import { sbvrUtils, permissions } from '@resin/pinejs';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 
 import { retrieveAPIKey } from './api-keys';
 import { getUser, reqHasPermission } from './auth';

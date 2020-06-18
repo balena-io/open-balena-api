@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import * as Raven from 'raven';
 import escapeHtml = require('escape-html');
 
-import { sbvrUtils, errors } from '@resin/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 
 const { InternalRequestError, HttpError } = errors;
 

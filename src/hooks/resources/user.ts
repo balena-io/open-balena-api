@@ -1,6 +1,6 @@
 import * as Bluebird from 'bluebird';
 
-import { sbvrUtils, permissions, errors } from '@resin/pinejs';
+import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
 import { createActor } from '../../platform';
 import { getUser } from '../../platform/auth';

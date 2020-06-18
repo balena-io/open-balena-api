@@ -3,7 +3,7 @@ import * as events from 'eventemitter3';
 import * as _ from 'lodash';
 import * as RedisSMQ from 'rsmq';
 
-import { sbvrUtils, permissions } from '@resin/pinejs';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 
 import { captureException } from '../platform/errors';
 

@@ -4,7 +4,7 @@ import { EventEmitter } from 'events';
 import * as _ from 'lodash';
 import * as redis from 'redis';
 
-import { errors } from '@resin/pinejs';
+import { errors } from '@balena/pinejs';
 
 import { captureException } from '../../../platform/errors';
 

@@ -3,9 +3,9 @@ import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 
 import * as deviceTypesLib from '@resin.io/device-types';
-import { sbvrUtils, permissions, errors } from '@resin/pinejs';
+import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
-import type { PinejsClientCoreFactory } from 'pinejs-client-core';
+import type { Filter, ODataOptions } from 'pinejs-client-core';
 
 import { captureException } from '../../platform/errors';
 
@@ -175,7 +175,7 @@ async function updateDTModel(
 	);
 	const updateFilter = _.map(
 		propertyMap,
-		(value, key): PinejsClientCoreFactory.Filter => {
+		(value, key): Filter => {
 			return {
 				[key]: {
 					$ne: (deviceType as AnyObject)[value.name] ?? value.default,
@@ -303,7 +303,7 @@ const getAccessibleSlugs = async (
 	resinApi: sbvrUtils.PinejsClient,
 	slugs?: string[],
 ): Promise<string[]> => {
-	const options: PinejsClientCoreFactory.ODataOptions = {
+	const options: ODataOptions = {
 		$select: ['slug'],
 	};
 	if (slugs) {

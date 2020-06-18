@@ -1,4 +1,4 @@
-import { sbvrUtils, permissions } from '@resin/pinejs';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 import * as Bluebird from 'bluebird';
 import * as fs from 'fs';
 import * as _ from 'lodash';

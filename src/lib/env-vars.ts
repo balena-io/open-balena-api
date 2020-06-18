@@ -1,6 +1,6 @@
 import type { JSONSchema6Definition } from 'json-schema';
 
-import { errors } from '@resin/pinejs';
+import { errors } from '@balena/pinejs';
 
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from './config';
 

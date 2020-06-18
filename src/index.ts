@@ -11,7 +11,7 @@ import * as passport from 'passport';
 import * as path from 'path';
 import * as Raven from 'raven';
 
-import * as pine from '@resin/pinejs';
+import * as pine from '@balena/pinejs';
 
 import type { User as DbUser } from './models';
 import type { defaultFindUser$select } from './platform/auth';

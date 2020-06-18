@@ -1,7 +1,7 @@
 import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 
-import { sbvrUtils } from '@resin/pinejs';
+import { sbvrUtils } from '@balena/pinejs';
 
 import { addDeleteHookForDependents } from '../../platform';
 

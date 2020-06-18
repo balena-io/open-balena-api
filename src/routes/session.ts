@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express';
 
-import { sbvrUtils, permissions, errors } from '@resin/pinejs';
+import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
 import {
 	comparePassword,

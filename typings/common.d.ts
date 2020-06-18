@@ -1,4 +1,4 @@
-import type { dbModule, types } from '@resin/pinejs';
+import type { dbModule, types } from '@balena/pinejs';
 
 declare global {
 	type AnyObject = types.AnyObject;

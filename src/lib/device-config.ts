@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as _ from 'lodash';
 
 import type { Option as DeviceTypeOption } from '@resin.io/device-types';
-import { errors } from '@resin/pinejs';
+import { errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 import * as deviceConfig from 'balena-device-config';
 

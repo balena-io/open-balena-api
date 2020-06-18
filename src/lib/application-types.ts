@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { sbvrUtils, errors } from '@resin/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 
 export interface ApplicationType {

@@ -3,7 +3,7 @@ import * as ndjson from 'ndjson';
 import onFinished = require('on-finished');
 import { createGunzip } from 'zlib';
 
-import { sbvrUtils, errors } from '@resin/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 
 import {
 	captureException,
