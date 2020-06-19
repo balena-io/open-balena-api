@@ -12,6 +12,7 @@
 		"removeComments": true,
 		"sourceMap": true,
 		"strictNullChecks": true,
+		"strictBindCallApply": true,
 		"skipLibCheck": true,
 		"resolveJsonModule": true
 	},

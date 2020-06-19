@@ -2,6 +2,7 @@ import * as Bluebird from 'bluebird';
 import * as events from 'eventemitter3';
 import * as _ from 'lodash';
 import * as RedisSMQ from 'rsmq';
+import { RedisClient } from 'redis';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
@@ -14,10 +15,7 @@ import {
 	REDIS_HOST,
 	REDIS_PORT,
 } from './config';
-import {
-	createPromisifedRedisClient,
-	PromisifedRedisClient,
-} from './redis-promise';
+import { promisify } from 'util';
 
 const { api } = sbvrUtils;
 
@@ -170,6 +168,25 @@ export declare interface DeviceOnlineStateManager {
 	on(event: string, listener: (args: AnyObject) => void): this;
 }
 
+// We promisify only the specific functions we care about since as of right now there
+// are 445 methods on redis for promisifyAll to promisify, along with far more to check
+// and it imposes a fairly significant cost, ~350ms for promisified instance in my tests
+const promisifiedRedis = (
+	redis: RedisClient,
+): {
+	get(key: string): Promise<string>;
+	set(key: string, value: string): Promise<unknown>;
+	set(
+		key: string,
+		value: string,
+		expires: 'EX',
+		expiresInSec: number,
+	): Promise<unknown>;
+} => ({
+	get: promisify(redis.get).bind(redis),
+	set: promisify(redis.set).bind(redis),
+});
+
 export class DeviceOnlineStateManager extends events.EventEmitter {
 	private static readonly REDIS_NAMESPACE = 'device-online-state';
 	private static readonly EXPIRED_QUEUE = 'expired';
@@ -180,7 +197,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 
 	private isConsuming: boolean = false;
 	private rsmq: RedisSMQ;
-	private redis: PromisifedRedisClient;
+	private redis: ReturnType<typeof promisifiedRedis>;
 
 	public constructor() {
 		super();
@@ -192,14 +209,16 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		}
 
 		// create a new Redis client...
-		this.redis = createPromisifedRedisClient({
+		const redis = new RedisClient({
 			host: REDIS_HOST,
 			port: REDIS_PORT,
 		});
 
+		this.redis = promisifiedRedis(redis);
+
 		// initialise the RedisSMQ object using our Redis client...
 		this.rsmq = new RedisSMQ({
-			client: this.redis,
+			client: redis,
 			ns: DeviceOnlineStateManager.REDIS_NAMESPACE,
 		});
 
@@ -359,7 +378,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		delay: number, // in seconds
 	) {
 		// remove the old queued state...
-		const value = await this.redis.getAsync(
+		const value = await this.redis.get(
 			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
 		);
 
@@ -387,7 +406,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 			delay,
 		});
 
-		return this.redis.setAsync(
+		return this.redis.set(
 			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
 			JSON.stringify({
 				id: newId,
