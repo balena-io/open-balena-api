@@ -1,4 +1,14 @@
 - commits:
+    - subject: Avoid promisifyAll for redis due to performance
+      hash: 562cd4f3cdc4da8342648a80d5763334485be9a2
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+  version: 0.80.3
+  date: 2020-06-22T13:25:23.832Z
+- commits:
     - subject: Remove unnecessary passthrough args
       hash: 4cd80fa83c78379137a16002d5a4a01850f77bc3
       body: ''
