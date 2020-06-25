@@ -1,4 +1,20 @@
 - commits:
+    - subject: 'releases: add `release version` property'
+      hash: ef62d57a5582f0d4ed1b6f2341d09c91176ec3f7
+      body: ''
+      footer:
+        Connects-to: 'https://github.com/balena-io/open-balena-api/issues/378'
+        connects-to: 'https://github.com/balena-io/open-balena-api/issues/378'
+        HQ: 'https://github.com/balena-io/balena-io/issues/2219'
+        hq: 'https://github.com/balena-io/balena-io/issues/2219'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+  version: 0.81.0
+  date: 2020-06-25T20:55:35.397Z
+- commits:
     - subject: 'tests: sort & deduplicate device field list'
       hash: 19f9083b5bc1ee44f11680ddb81ea899d962a066
       body: ''
