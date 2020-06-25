@@ -1,4 +1,16 @@
 - commits:
+    - subject: 'tests: sort & deduplicate device field list'
+      hash: 19f9083b5bc1ee44f11680ddb81ea899d962a066
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+  version: 0.80.4
+  date: 2020-06-23T19:48:03.542Z
+- commits:
     - subject: Avoid promisifyAll for redis due to performance
       hash: 562cd4f3cdc4da8342648a80d5763334485be9a2
       body: ''
@@ -3828,8 +3840,8 @@
       footer:
         Connects-to: 'https://github.com/balena-io/open-balena-api/issues/321'
         connects-to: 'https://github.com/balena-io/open-balena-api/issues/321'
-        HQ: 'balena-io/balena#2177'
-        hq: 'balena-io/balena#2177'
+        HQ: balena-io/balena#2177
+        hq: balena-io/balena#2177
         Change-type: patch
         change-type: patch
         Signed-off-by: Matthew McGinn <matthew@balena.io>
