@@ -1,0 +1,8 @@
+{
+	"app1": {
+		"user": "admin",
+		"app_name": "test_release",
+		"device_type": "raspberry-pi",
+		"commit": "deadbeef"
+	}
+}

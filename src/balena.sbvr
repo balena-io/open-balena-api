@@ -201,6 +201,9 @@ Term: public key
 Term: push timestamp
 	Concept Type: Date Time (Type)
 
+Term: release version
+	Concept Type: Short Text (Type)
+
 Term: scope
 	Concept Type: Short Text (Type)
 
@@ -552,6 +555,8 @@ Fact type: release has end timestamp
 	Necessity: each release has at most one end timestamp.
 Fact type: release has update timestamp
 	Necessity: each release has exactly one update timestamp.
+Fact type: release has release version
+	Necessity: each release has at most one release version
 
 
 -- service environment variable
@@ -683,6 +688,7 @@ Fact type: config has description (Auth)
 -- Rules
 
 Rule: It is necessary that each device1 that is managed by a device2, belongs to an application1 that depends on an application2 that owns the device2.
+Rule: It is necessary that each release that has a release version1 and has a status that is equal to "success" and is not invalidated, belongs to an application that owns exactly one release that has a release version2 that is equal to the release version1 and has a status that is equal to "success" and is not invalidated.
 Rule: It is necessary that each image that has a status that is equal to "success", has a push timestamp.
 Rule: It is necessary that each release1 that has a status that is equal to "success" and has a commit1, belongs to an application that owns exactly one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.
 Rule: It is necessary that each device that should be running a release, should be running a release that belongs to an application that the device belongs to.

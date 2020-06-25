@@ -1,0 +1,36 @@
+{
+	"release1": {
+		"user": "admin",
+		"application": "app1",
+		"commit": "deadc0de",
+		"status": "success",
+		"release_version": "v1.0.0",
+		"composition": {},
+		"source": "cloud"
+	},
+	"release2": {
+		"user": "admin",
+		"application": "app1",
+		"commit": "deadc0d3",
+		"status": "success",
+		"release_version": "v2.0.0",
+		"composition": {},
+		"source": "cloud"
+	},
+	"release3": {
+		"user": "admin",
+		"application": "app1",
+		"commit": "d3adc0de",
+		"status": "success",
+		"composition": {},
+		"source": "cloud"
+	},
+	"release4": {
+		"user": "admin",
+		"application": "app1",
+		"commit": "d3adc0d3",
+		"status": "success",
+		"composition": {},
+		"source": "cloud"
+	}
+}

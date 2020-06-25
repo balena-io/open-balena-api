@@ -1,0 +1,2 @@
+ALTER TABLE "release"
+ADD COLUMN IF NOT EXISTS "release version" VARCHAR(255) NULL;
