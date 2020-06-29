@@ -1,4 +1,14 @@
 - commits:
+    - subject: Use @balena/es-version to set the desired es version for modules
+      hash: 2ef23d26e3b4a41610cc91e37f56f7902a3b814c
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+  version: 0.82.0
+  date: 2020-06-29T17:19:36.346Z
+- commits:
     - subject: 'releases: add `release version` property'
       hash: ef62d57a5582f0d4ed1b6f2341d09c91176ec3f7
       body: ''
