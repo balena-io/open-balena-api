@@ -26,6 +26,9 @@ require('fast-boot2').start({
 	cacheFile: '.fast-boot.json',
 });
 
+// Set the desired es version for downstream modules that support it
+require('@balena/es-version').set('es2019');
+
 // Support `require()` of *.ts files
 process.env.TS_NODE_CACHE_DIRECTORY = '.ts-node';
 require('ts-node/register/transpile-only');

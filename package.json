@@ -23,6 +23,7 @@
     "posttest": "docker rmi test-open-balena-api"
   },
   "dependencies": {
+    "@balena/es-version": "^1.0.0",
     "@balena/pinejs": "^13.0.0",
     "@resin.io/device-types": "^10.5.0",
     "@types/basic-auth": "^1.1.3",
