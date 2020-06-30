@@ -1,4 +1,26 @@
 - commits:
+    - subject: Update open-balena-base to 9.4.2
+      hash: 7f67feb8be2c49cdc998b1307ec15aec8656b0b7
+      body: |
+        Update open-balena-base from 9.4.1 to 9.4.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 12.18.2
+              hash: 7ca9da66bd3de13616642235a342f5b45feae96e
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-9.4.2
+          date: 2020-06-30T15:32:36.381Z
+  version: 0.82.1
+  date: 2020-06-30T19:25:16.808Z
+- commits:
     - subject: Use @balena/es-version to set the desired es version for modules
       hash: 2ef23d26e3b4a41610cc91e37f56f7902a3b814c
       body: ''
