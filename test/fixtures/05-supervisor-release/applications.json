@@ -1,7 +1,0 @@
-{
-	"app1": {
-		"user": "admin",
-		"device_type": "intel-nuc",
-		"app_name": "supervisor_release_test_app"
-	}
-}

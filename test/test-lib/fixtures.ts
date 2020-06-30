@@ -129,30 +129,6 @@ const loaders: Dictionary<LoaderFunc> = {
 			user,
 		});
 	},
-	'supervisor-release': async (jsonData, fixtures) => {
-		const user = await fixtures.users['admin'];
-
-		const deviceType = await fixtures.deviceTypes[jsonData.is_for__device_type];
-		if (deviceType == null) {
-			logErrorAndThrow(
-				'Could not find device type: ',
-				jsonData.is_for__device_type,
-			);
-		}
-
-		const isPublic = jsonData.is_public || false;
-
-		return await createResource({
-			resource: 'supervisor_release',
-			body: {
-				image_name: jsonData.image_name,
-				supervisor_version: jsonData.supervisor_version,
-				is_for__device_type: deviceType.id,
-				is_public: isPublic,
-			},
-			user,
-		});
-	},
 	devices: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.belongs_to__user];
 		if (user == null) {
