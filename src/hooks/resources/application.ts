@@ -1,10 +1,6 @@
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
-import {
-	addDeleteHookForDependents,
-	createActor,
-	getCurrentRequestAffectedIds,
-} from '../../platform';
+import { addDeleteHookForDependents, createActor } from '../../platform';
 import { captureException } from '../../platform/errors';
 
 import { Default as DefaultApplicationType } from '../../lib/application-types';
@@ -85,7 +81,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 				request.values.slug = appName.toLowerCase();
 			}
 			waitPromises.push(
-				getCurrentRequestAffectedIds(args).then((ids) => {
+				sbvrUtils.getAffectedIds(args).then((ids) => {
 					if (ids.length === 0) {
 						return;
 					}
@@ -98,25 +94,20 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 			);
 		}
 
-		if (request.values.should_be_running__release != null) {
-			// Used to make sure we've fetched the affected ids for the POSTRUN hook
-			waitPromises.push(getCurrentRequestAffectedIds(args));
-		}
-
 		return Promise.all(waitPromises);
 	},
 	POSTRUN: async ({ request }) => {
-		if (request.values.should_be_running__release != null) {
+		const affectedIds = request.affectedIds!;
+		if (
+			request.values.should_be_running__release != null &&
+			affectedIds.length !== 0
+		) {
 			// Only update apps if they have had their release changed.
-			const ids = (await request.custom.affectedIds) as number[];
-			if (ids.length === 0) {
-				return;
-			}
 			return postDevices({
 				url: '/v1/update',
 				req: permissions.root,
 				filter: {
-					belongs_to__application: { $in: ids },
+					belongs_to__application: { $in: affectedIds },
 					is_running__release: {
 						$ne: request.values.should_be_running__release,
 					},
@@ -131,7 +122,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 
 sbvrUtils.addPureHook('DELETE', 'resin', 'application', {
 	PRERUN: async (args) => {
-		const appIds = await getCurrentRequestAffectedIds(args);
+		const appIds = await sbvrUtils.getAffectedIds(args);
 		if (appIds.length === 0) {
 			const { odataQuery } = args.request;
 			if (odataQuery != null && odataQuery.key != null) {

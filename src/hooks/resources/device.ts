@@ -5,11 +5,7 @@ import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
 import * as semver from 'balena-semver';
 
-import {
-	addDeleteHookForDependents,
-	createActor,
-	getCurrentRequestAffectedIds,
-} from '../../platform';
+import { addDeleteHookForDependents, createActor } from '../../platform';
 
 import {
 	checkDevicesCanBeInApplication,
@@ -202,18 +198,6 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		const { api, request } = args;
 		const waitPromises: Array<PromiseLike<any>> = [];
 
-		if (
-			request.values.is_connected_to_vpn != null ||
-			request.values.should_be_running__release !== undefined ||
-			[false, 0].includes(request.values.is_online) ||
-			request.values.belongs_to__application != null ||
-			request.values.device_name != null ||
-			request.values.supervisor_version != null
-		) {
-			// Cache affected ids for later
-			waitPromises.push(getCurrentRequestAffectedIds(args));
-		}
-
 		if (request.values.belongs_to__application != null) {
 			waitPromises.push(
 				api
@@ -232,7 +216,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 							throw new InaccessibleAppError();
 						}
 
-						const deviceIds = await getCurrentRequestAffectedIds(args);
+						const deviceIds = await sbvrUtils.getAffectedIds(args);
 						if (deviceIds.length === 0) {
 							return;
 						}
@@ -260,7 +244,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		// check the release is valid for the devices affected...
 		if (request.values.should_be_running__release != null) {
 			waitPromises.push(
-				getCurrentRequestAffectedIds(args).then(async (deviceIds) => {
+				sbvrUtils.getAffectedIds(args).then(async (deviceIds) => {
 					if (deviceIds.length === 0) {
 						return;
 					}
@@ -308,21 +292,25 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 				},
 			});
 			waitPromises.push(
-				getCurrentRequestAffectedIds(args).then((deviceIds) =>
-					checkDevicesCanHaveDeviceURL(rootApi, deviceIds),
-				),
+				sbvrUtils
+					.getAffectedIds(args)
+					.then((deviceIds) =>
+						checkDevicesCanHaveDeviceURL(rootApi, deviceIds),
+					),
 			);
 		}
 
 		if (request.values.belongs_to__application != null) {
 			waitPromises.push(
-				getCurrentRequestAffectedIds(args).then((deviceIds) =>
-					checkDevicesCanBeInApplication(
-						api,
-						request.values.belongs_to__application,
-						deviceIds,
+				sbvrUtils
+					.getAffectedIds(args)
+					.then((deviceIds) =>
+						checkDevicesCanBeInApplication(
+							api,
+							request.values.belongs_to__application,
+							deviceIds,
+						),
 					),
-				),
 			);
 		}
 
@@ -347,13 +335,15 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			// Ensure that we don't ever downgrade the supervisor
 			// from its current version
 			waitPromises.push(
-				getCurrentRequestAffectedIds(args).then((ids) =>
-					checkSupervisorReleaseUpgrades(
-						args.api,
-						ids,
-						request.values.should_be_managed_by__supervisor_release,
+				sbvrUtils
+					.getAffectedIds(args)
+					.then((ids) =>
+						checkSupervisorReleaseUpgrades(
+							args.api,
+							ids,
+							request.values.should_be_managed_by__supervisor_release,
+						),
 					),
-				),
 			);
 		}
 
@@ -361,7 +351,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			// When a device checks in with it's initial supervisor version, set the corresponding supervisor_release
 			// resource using its current version
 			waitPromises.push(
-				getCurrentRequestAffectedIds(args).then(async (ids) => {
+				sbvrUtils.getAffectedIds(args).then(async (ids) => {
 					await setSupervisorReleaseResource(
 						api,
 						ids,
@@ -375,30 +365,23 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 	},
 	POSTRUN: (args) => {
 		const waitPromises: Array<PromiseLike<any>> = [];
-		const affectedIds = args.request.custom.affectedIds as ReturnType<
-			typeof getCurrentRequestAffectedIds
-		>;
+		const affectedIds = args.request.affectedIds!;
 
 		// Only update devices if they have had their app changed, or the device
 		// name has changed - so a user can restart their service and it will
 		// pick up the change
 		if (
-			args.request.values.belongs_to__application != null ||
-			args.request.values.device_name != null
+			(args.request.values.belongs_to__application != null ||
+				args.request.values.device_name != null) &&
+			affectedIds.length !== 0
 		) {
 			waitPromises.push(
-				affectedIds.then((deviceIds) => {
-					if (deviceIds.length === 0) {
-						return;
-					}
-
-					return postDevices({
-						url: '/v1/update',
-						req: permissions.root,
-						filter: { id: { $in: deviceIds } },
-						// Don't wait for the posts to complete, as they may take a long time
-						wait: false,
-					});
+				postDevices({
+					url: '/v1/update',
+					req: permissions.root,
+					filter: { id: { $in: affectedIds } },
+					// Don't wait for the posts to complete, as they may take a long time
+					wait: false,
 				}),
 			);
 		}
@@ -407,24 +390,19 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		// offline, when the gateway comes back it's its job to set the dependent
 		// device back to online as need be.
 		const isOnline = args.request.values.is_online;
-		if ([false, 0].includes(isOnline)) {
+		if ([false, 0].includes(isOnline) && affectedIds.length !== 0) {
 			waitPromises.push(
-				affectedIds.then(async (deviceIds) => {
-					if (deviceIds.length === 0) {
-						return;
-					}
-					await args.api.patch({
-						resource: 'device',
-						options: {
-							$filter: {
-								is_managed_by__device: { $in: deviceIds },
-								is_online: { $ne: isOnline },
-							},
+				args.api.patch({
+					resource: 'device',
+					options: {
+						$filter: {
+							is_managed_by__device: { $in: affectedIds },
+							is_online: { $ne: isOnline },
 						},
-						body: {
-							is_online: isOnline,
-						},
-					});
+					},
+					body: {
+						is_online: isOnline,
+					},
 				}),
 			);
 		}
@@ -432,26 +410,26 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 		// We need to delete all service_install resources for the current device and
 		// create new ones for the new application (if the device is moving application)
 		if (args.request.values.belongs_to__application != null) {
-			waitPromises.push(
-				affectedIds.then(async (deviceIds) => {
-					if (deviceIds.length === 0) {
-						return;
-					}
-					await args.api.delete({
-						resource: 'service_install',
-						options: {
-							$filter: {
-								device: { $in: deviceIds },
+			if (affectedIds.length !== 0) {
+				waitPromises.push(
+					args.api
+						.delete({
+							resource: 'service_install',
+							options: {
+								$filter: {
+									device: { $in: affectedIds },
+								},
 							},
-						},
-					});
-					await createAppServiceInstalls(
-						args.api,
-						args.request.values.belongs_to__application,
-						deviceIds,
-					);
-				}),
-			);
+						})
+						.then(() =>
+							createAppServiceInstalls(
+								args.api,
+								args.request.values.belongs_to__application,
+								affectedIds,
+							),
+						),
+				);
+			}
 
 			// Also mark all image installs of moved devices as deleted because
 			// they're for the previous application.
@@ -473,32 +451,27 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			}
 		}
 
-		if (args.request.values.should_be_running__release !== undefined) {
+		if (
+			args.request.values.should_be_running__release !== undefined &&
+			affectedIds.length !== 0
+		) {
 			// If the device was preloaded, and then pinned, service_installs do not exist
 			// for this device+release combination. We need to create these
 			if (args.request.values.should_be_running__release != null) {
 				waitPromises.push(
-					affectedIds.then((ids) => {
-						if (ids.length === 0) {
-							return;
-						}
-						return createReleaseServiceInstalls(args.api, ids, {
-							id: args.request.values.should_be_running__release,
-						});
+					createReleaseServiceInstalls(args.api, affectedIds, {
+						id: args.request.values.should_be_running__release,
 					}),
 				);
 			} else {
 				waitPromises.push(
-					affectedIds.then(async (ids) => {
-						if (ids.length === 0) {
-							return;
-						}
+					(async () => {
 						const devices = (await args.api.get({
 							resource: 'device',
 							options: {
 								$select: ['id', 'belongs_to__application'],
 								$filter: {
-									id: { $in: ids },
+									id: { $in: affectedIds },
 								},
 							},
 						})) as Array<{
@@ -518,26 +491,22 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 								),
 							),
 						);
-					}),
+					})(),
 				);
 			}
 
 			// If the device has been pinned/un-pinned then we should alert the supervisor
-			waitPromises.push(
-				affectedIds.then((deviceIds) => {
-					if (deviceIds.length === 0) {
-						return;
-					}
-
-					return postDevices({
+			if (affectedIds.length !== 0) {
+				waitPromises.push(
+					postDevices({
 						url: '/v1/update',
 						req: permissions.root,
-						filter: { id: { $in: deviceIds } },
+						filter: { id: { $in: affectedIds } },
 						// Don't wait for the posts to complete, as they may take a long time
 						wait: false,
-					});
-				}),
-			);
+					}),
+				);
+			}
 		}
 
 		return Promise.all(waitPromises);
