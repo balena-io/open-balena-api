@@ -1,4 +1,99 @@
 - commits:
+    - subject: Update pinejs to 13.1.0 and make use of automatic affected ids
+      hash: c70796806a9cc944e0ff40356aa34055fc51be97
+      body: |
+        Update pinejs from 13.0.0 to 13.2.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Fetch affected ids only once per request
+              hash: 47f1b5e261c9956c6a37cca5cfb22ba4e5915120
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+                See: >-
+                  https://www.flowdock.com/app/rulemotion/resin-tech/threads/CJ0OxldLkgX3R0raiP-Zht4yk-a
+                see: >-
+                  https://www.flowdock.com/app/rulemotion/resin-tech/threads/CJ0OxldLkgX3R0raiP-Zht4yk-a
+                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+              author: Thodoris Greasidis
+          version: pinejs-13.2.0
+          date: 2020-07-01T19:13:36.771Z
+        - commits:
+            - subject: Automatically fetch affected ids when possible (postgres only)
+              hash: c70cf7a69da785738734a0ad360b358d2499bfa4
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: pinejs-13.1.0
+          date: 2020-06-30T15:24:23.223Z
+        - commits:
+            - subject: Use the `resourceURI` for generating the deferred uri
+              hash: 63c0c16763c2c6196797f61321cbe2ef678c6064
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+            - subject: Handle fetch processing and adding of metadata in a single pass
+              hash: adf3e79d5c6768f0eea6f8d66dcd797b99b57d76
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+            - subject: >-
+                Check for processed/expandable fields before adding the metadata
+                field
+              hash: 86c688b870df38513de31a1acbe2ba885d4c44bc
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+            - subject: >-
+                Avoid unnecessary array creation via `map` in odata-response
+                processing
+              hash: d91aebf6b0c52ef0c9b07b45d6b2e0bec89d5418
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-13.0.2
+          date: 2020-06-29T11:38:21.735Z
+        - commits:
+            - subject: Optimize rewriting relationships for the canAccess optimization
+              hash: 549f90871c1fc7c5d349266207a258f6efa1a4f2
+              body: |
+                Update odata-to-abstract-sql from 5.0.0 to 5.1.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Allow specifying valid methods for a specific match call
+                      hash: 64a9a4e6b9e287196b02682b08cb1a7c6fc169ef
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                  version: odata-to-abstract-sql-5.1.0
+                  date: 2020-06-19T17:09:05.803Z
+          version: pinejs-13.0.1
+          date: 2020-06-22T13:09:07.272Z
+  version: 0.83.0
+  date: 2020-07-02T12:11:31.733Z
+- commits:
     - subject: Update open-balena-base to 9.4.2
       hash: 7f67feb8be2c49cdc998b1307ec15aec8656b0b7
       body: |
