@@ -1,4 +1,16 @@
 - commits:
+    - subject: allow service instances to specify IP on registration
+      hash: 2dfd24260e986a5a40a9e87906dd612dfe411f8e
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Will Boyce <will@balena.io>
+        signed-off-by: Will Boyce <will@balena.io>
+      author: Will Boyce
+  version: 0.84.0
+  date: 2020-07-09T14:06:12.215Z
+- commits:
     - subject: Update pinejs to 13.1.0 and make use of automatic affected ids
       hash: c70796806a9cc944e0ff40356aa34055fc51be97
       body: |
