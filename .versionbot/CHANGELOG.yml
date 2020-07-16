@@ -1,4 +1,26 @@
 - commits:
+    - subject: Update dependencies
+      hash: 85af923732baa3016944430d52d9231ab7de2d08
+      body: |
+        Update pinejs from 13.2.0 to 13.2.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Clean up sbvr-server
+              hash: b43cfd611f1dadc1a0ee0ebcd563a7ad4d1e1d5e
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-13.2.1
+          date: 2020-07-06T23:12:26.996Z
+  version: 0.84.3
+  date: 2020-07-16T15:10:56.987Z
+- commits:
     - subject: Bump lodash from 4.17.15 to 4.17.19
       hash: 8f5be76c8395fa7e27a8a02bb806804b574bdcba
       body: >
