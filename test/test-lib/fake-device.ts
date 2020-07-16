@@ -37,7 +37,11 @@ export interface DeviceState {
 	};
 }
 
-export async function provisionDevice(admin: UserObjectParam, appId: number) {
+export async function provisionDevice(
+	admin: UserObjectParam,
+	appId: number,
+	supervisorVersion: string | null = null,
+) {
 	const { body: applications } = await supertest(app, admin)
 		.get(`/resin/application(${appId})?$expand=is_for__device_type`)
 		.expect(200);
@@ -55,14 +59,23 @@ export async function provisionDevice(admin: UserObjectParam, appId: number) {
 
 	const deviceType: string = applications.d[0].is_for__device_type[0].slug;
 
+	const deviceUuid = uuid.v4().replace(/\-/g, '').toLowerCase();
 	const { body: deviceEntry } = await supertest(app, admin)
 		.post('/resin/device')
 		.send({
 			belongs_to__application: appId,
-			uuid: uuid.v4().replace(/\-/g, '').toLowerCase(),
+			uuid: deviceUuid,
 			device_type: deviceType,
+			supervisor_version: supervisorVersion,
 		})
 		.expect(201);
+
+	const { body: provisionedDevice } = await supertest(app, admin)
+		.get(
+			`/resin/device?$filter=uuid eq '${deviceUuid}'&$select=supervisor_version`,
+		)
+		.expect(200);
+	expect(provisionedDevice.d[0].supervisor_version).to.equal(supervisorVersion);
 
 	const device = {
 		...(deviceEntry as {
