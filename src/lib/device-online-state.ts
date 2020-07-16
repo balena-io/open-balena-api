@@ -174,7 +174,7 @@ export declare interface DeviceOnlineStateManager {
 const promisifiedRedis = (
 	redis: RedisClient,
 ): {
-	get(key: string): Promise<string>;
+	get(key: string): Promise<string | null>;
 	set(key: string, value: string): Promise<unknown>;
 	set(
 		key: string,

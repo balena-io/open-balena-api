@@ -36,13 +36,13 @@ sbvrUtils.addPureHook('POST', 'resin', 'user', {
 
 sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 	POSTPARSE: async ({ req, request }) => {
-		let userId = request.odataQuery?.key;
-		if (userId == null) {
+		const userIdBind = request.odataQuery?.key;
+		if (userIdBind == null) {
 			throw new BadRequestError('You must provide user ID');
 		}
 
 		const user = await getUser(req);
-		userId = sbvrUtils.resolveOdataBind(request.odataBinds, userId);
+		const userId = sbvrUtils.resolveOdataBind(request.odataBinds, userIdBind);
 
 		if (user.id !== userId) {
 			throw new BadRequestError('You can only delete your own account');
