@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add api key tests
+      hash: 54a03c0794295ef1b00f3e65aa69257ee6c1bd8b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.84.4
+  date: 2020-07-17T11:29:26.183Z
+- commits:
     - subject: Update dependencies
       hash: 85af923732baa3016944430d52d9231ab7de2d08
       body: |
