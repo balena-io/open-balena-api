@@ -18,19 +18,19 @@ setDefaultFixtures(
 					// Something is checking if we're a thenable
 					return;
 				}
-				const deviceTypes = (await api.resin.get({
+				const deviceType = (await api.resin.get({
 					resource: 'device_type',
 					passthrough: {
 						req: permissions.root,
 					},
+					id: {
+						slug,
+					},
 					options: {
 						$select: ['id', 'slug', 'name'],
-						$filter: {
-							slug,
-						},
 					},
-				})) as DeviceType[];
-				obj[slug] = deviceTypes[0];
+				})) as DeviceType;
+				obj[slug] = deviceType;
 			}
 			return obj[slug as any];
 		},

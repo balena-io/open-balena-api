@@ -316,14 +316,16 @@ const $getSubject = memoize(
 		if (subject) {
 			try {
 				// Try to resolve as a device api key first, using the passed in subject
-				const [device] = (await api.resin.get({
+				const device = (await api.resin.get({
 					resource: 'device',
 					passthrough: { req: permissions.root },
+					id: {
+						// uuids are passed as `d_${uuid}`
+						uuid: subject.replace(/^d_/, ''),
+					},
 					options: {
 						$select: ['id'],
 						$filter: {
-							// uuids are passed as `d_${uuid}`
-							uuid: subject.replace(/^d_/, ''),
 							actor: {
 								$any: {
 									$alias: 'a',
@@ -341,8 +343,8 @@ const $getSubject = memoize(
 							},
 						},
 					},
-				})) as AnyObject[];
-				if (device != null && device.id != null) {
+				})) as AnyObject;
+				if (device != null) {
 					return subject;
 				}
 			} catch {

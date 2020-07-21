@@ -337,13 +337,13 @@ async function getReadContext(
 	req: Request,
 ): Promise<LogContext> {
 	const { uuid } = req.params;
-	const [ctx] = (await resinApi.get({
+	const ctx = (await resinApi.get({
 		resource: 'device',
+		id: { uuid },
 		options: {
-			$filter: { uuid },
 			$select: ['id', 'logs_channel'],
 		},
-	})) as LogContext[];
+	})) as LogContext;
 
 	if (!ctx) {
 		throw new NotFoundError('No device with uuid ' + uuid);
@@ -357,10 +357,10 @@ async function getWriteContext(
 	req: Request,
 ): Promise<LogWriteContext> {
 	const { uuid } = req.params;
-	const [device] = (await resinApi.get({
+	const device = (await resinApi.get({
 		resource: 'device',
+		id: { uuid },
 		options: {
-			$filter: { uuid },
 			$select: ['id', 'logs_channel'],
 			$expand: {
 				image_install: {
@@ -377,7 +377,7 @@ async function getWriteContext(
 				},
 			},
 		},
-	})) as Array<{
+	})) as {
 		id: number;
 		logs_channel?: string;
 		image_install: Array<{
@@ -389,7 +389,7 @@ async function getWriteContext(
 				}>;
 			}>;
 		}>;
-	}>;
+	};
 	if (!device) {
 		throw new NotFoundError('No device with uuid ' + uuid);
 	}

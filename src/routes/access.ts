@@ -12,30 +12,23 @@ const { api } = sbvrUtils;
 const HOSTOS_ACCESS_MIN_OS_VER = '2.0.0';
 
 export async function hostOSAccess(req: Request, res: Response): Promise<void> {
-	const devices = await api.resin.get({
+	const device = (await api.resin.get({
 		resource: 'device',
+		id: {
+			uuid: req.params['device_uuid'],
+		},
 		options: {
 			$select: ['id', 'os_version'],
-			$filter: {
-				uuid: req.params['device_uuid'],
-			},
 		},
 		passthrough: {
 			req,
 		},
-	});
+	})) as { id: number; os_version: string } | undefined;
 
-	if (!Array.isArray(devices)) {
+	if (device == null) {
 		res.sendStatus(401);
 		return;
 	}
-
-	if (devices.length !== 1) {
-		res.sendStatus(401);
-		return;
-	}
-
-	const [device] = devices;
 
 	try {
 		const allowedDevices = (await api.resin.post({

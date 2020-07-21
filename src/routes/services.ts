@@ -12,20 +12,18 @@ const { api } = sbvrUtils;
 
 const authQuery = api.resin.prepare<{ uuid: string }>({
 	resource: 'device',
+	id: {
+		uuid: { '@': 'uuid' },
+	},
 	options: {
 		$select: 'id',
-		$filter: {
-			uuid: { '@': 'uuid' },
-		},
 	},
 });
 const clientConnectQuery = api.resin.prepare<{ uuid: string }>({
 	method: 'PATCH',
 	resource: 'device',
-	options: {
-		$filter: {
-			uuid: { '@': 'uuid' },
-		},
+	id: {
+		uuid: { '@': 'uuid' },
 	},
 	body: {
 		is_connected_to_vpn: true,
@@ -37,9 +35,11 @@ const clientDisconnectQuery = api.resin.prepare<{
 }>({
 	method: 'PATCH',
 	resource: 'device',
+	id: {
+		uuid: { '@': 'uuid' },
+	},
 	options: {
 		$filter: {
-			uuid: { '@': 'uuid' },
 			// Only disconnect if still managed by this vpn
 			is_managed_by__service_instance: { '@': 'serviceId' },
 		},
@@ -52,11 +52,11 @@ const clientDisconnectQuery = api.resin.prepare<{
 export const vpn = {
 	authDevice: async (req: Request, res: Response): Promise<void> => {
 		try {
-			const [device] = (await authQuery(
+			const device = (await authQuery(
 				{ uuid: req.param('device_uuid') },
 				undefined,
 				{ req },
-			)) as AnyObject[];
+			)) as AnyObject;
 			// for now, if the api key is able to read the device,
 			// it has vpn access
 			if (device) {

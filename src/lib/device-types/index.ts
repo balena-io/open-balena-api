@@ -183,16 +183,16 @@ async function updateDTModel(
 			};
 		},
 	);
-	const results = (await apiTx.get({
+	const result = (await apiTx.get({
 		resource: 'device_type',
+		id: {
+			slug: deviceType.slug,
+		},
 		options: {
-			$filter: {
-				slug: deviceType.slug,
-			},
 			$select: ['id'],
 		},
-	})) as AnyObject[];
-	if (results.length === 0) {
+	})) as AnyObject;
+	if (result == null) {
 		const body = {
 			slug: deviceType.slug,
 			...updateFields,
@@ -203,15 +203,9 @@ async function updateDTModel(
 			options: { returnResource: false },
 		});
 		return;
-	} else if (results.length > 1) {
-		throw new Error(
-			`updateOrInsert filter not unique for 'device_type': '${JSON.stringify({
-				slug: deviceType.slug,
-			})}'`,
-		);
 	} else {
 		let filter: AnyObject = {
-			id: results[0].id,
+			id: result.id,
 		};
 		if (updateFilter.length > 1) {
 			filter['$or'] = updateFilter;
@@ -221,7 +215,7 @@ async function updateDTModel(
 		// do a patch with the id
 		await apiTx.patch({
 			resource: 'device_type',
-			id: results[0].id,
+			id: result.id,
 			body: updateFields,
 			options: {
 				$filter: filter,
@@ -445,15 +439,15 @@ export const getDeviceTypeIdBySlug = async (
 ): Promise<{ id: number; slug: string }> => {
 	const deviceType = await normalizeDeviceType(resinApi, slug);
 
-	const [dt] = (await resinApi.get({
+	const dt = (await resinApi.get({
 		resource: 'device_type',
+		id: {
+			slug: deviceType,
+		},
 		options: {
 			$select: ['id', 'slug'],
-			$filter: {
-				slug: deviceType,
-			},
 		},
-	})) as Array<{ id: number; slug: string }>;
+	})) as { id: number; slug: string };
 
 	return dt;
 };

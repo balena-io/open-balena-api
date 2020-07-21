@@ -60,7 +60,7 @@ const $createApiKey = async (
 		},
 	});
 
-	const [{ id: apiKeyId }, [{ id: roleId }]] = await Promise.all([
+	const [{ id: apiKeyId }, { id: roleId }] = await Promise.all([
 		authApiTx.post({
 			resource: 'api_key',
 			body: {
@@ -73,13 +73,13 @@ const $createApiKey = async (
 		}) as Promise<{ id: number }>,
 		authApiTx.get({
 			resource: 'role',
+			id: {
+				name: roleName,
+			},
 			options: {
 				$select: 'id',
-				$filter: {
-					name: roleName,
-				},
 			},
-		}) as Promise<Array<{ id: number }>>,
+		}) as Promise<{ id: number }>,
 	]);
 
 	await authApiTx.post({

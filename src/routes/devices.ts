@@ -292,9 +292,9 @@ const releaseExpand = {
 };
 const stateQuery = api.resin.prepare<{ uuid: string }>({
 	resource: 'device',
+	id: { uuid: { '@': 'uuid' } },
 	options: {
 		$select: ['device_name', 'os_version'],
-		$filter: { uuid: { '@': 'uuid' } },
 		$expand: {
 			device_config_variable: {
 				$select: ['name', 'value'],
@@ -394,9 +394,9 @@ export const state: RequestHandler = async (req, res) => {
 	}
 
 	try {
-		const [device] = (await sbvrUtils.db.readTransaction!((tx) =>
+		const device = (await sbvrUtils.db.readTransaction!((tx) =>
 			stateQuery({ uuid }, undefined, { req, tx }),
-		)) as AnyObject[];
+		)) as AnyObject;
 
 		if (!device) {
 			throw new UnauthorizedError();
@@ -626,16 +626,16 @@ const upsertImageInstall = async (
 	releaseId: number,
 	dlProg?: number,
 ): Promise<void> => {
-	const [imgInstall] = (await resinApi.get({
+	const imgInstall = (await resinApi.get({
 		resource: 'image_install',
+		id: {
+			installs__image: imageId,
+			device: deviceId,
+		},
 		options: {
 			$select: 'id',
-			$filter: {
-				installs__image: imageId,
-				device: deviceId,
-			},
 		},
-	})) as AnyObject[];
+	})) as AnyObject;
 
 	if (imgInstall == null) {
 		// we need to create it with a POST
@@ -662,11 +662,13 @@ const upsertImageInstall = async (
 		}
 		await resinApi.patch({
 			resource: 'image_install',
+			id: {
+				device: deviceId,
+				installs__image: imageId,
+			},
 			body,
 			options: {
 				$filter: {
-					installs__image: imageId,
-					device: deviceId,
 					$not: body,
 				},
 			},
@@ -681,16 +683,16 @@ const upsertGatewayDownload = async (
 	status: string,
 	downloadProgress: number | null,
 ): Promise<void> => {
-	const [gatewayDownload] = (await resinApi.get({
+	const gatewayDownload = (await resinApi.get({
 		resource: 'gateway_download',
+		id: {
+			image: imageId,
+			is_downloaded_by__device: deviceId,
+		},
 		options: {
 			$select: 'id',
-			$filter: {
-				image: imageId,
-				is_downloaded_by__device: deviceId,
-			},
 		},
-	})) as AnyObject[];
+	})) as AnyObject;
 	if (gatewayDownload == null) {
 		await resinApi.post({
 			resource: 'gateway_download',
@@ -705,15 +707,13 @@ const upsertGatewayDownload = async (
 	} else {
 		await resinApi.patch({
 			resource: 'gateway_download',
+			id: {
+				image: imageId,
+				is_downloaded_by__device: deviceId,
+			},
 			body: {
 				status,
 				download_progress: downloadProgress,
-			},
-			options: {
-				$filter: {
-					is_downloaded_by__device: deviceId,
-					image: imageId,
-				},
 			},
 		});
 	}
@@ -798,13 +798,13 @@ export const statePatch: RequestHandler = async (req, res) => {
 		await sbvrUtils.db.transaction(async (tx) => {
 			const resinApiTx = api.resin.clone({ passthrough: { req, custom, tx } });
 
-			const [device] = (await resinApiTx.get({
+			const device = (await resinApiTx.get({
 				resource: 'device',
+				id: { uuid },
 				options: {
 					$select: 'id',
-					$filter: { uuid },
 				},
-			})) as AnyObject[];
+			})) as AnyObject;
 
 			if (device == null) {
 				throw new UnauthorizedError();
