@@ -40,9 +40,12 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 		if (userIdBind == null) {
 			throw new BadRequestError('You must provide user ID');
 		}
+		if (!('bind' in userIdBind)) {
+			throw new BadRequestError('You cannot use a named key for user deletion');
+		}
 
-		const user = await getUser(req);
 		const userId = sbvrUtils.resolveOdataBind(request.odataBinds, userIdBind);
+		const user = await getUser(req);
 
 		if (user.id !== userId) {
 			throw new BadRequestError('You can only delete your own account');
