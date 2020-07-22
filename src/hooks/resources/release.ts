@@ -109,7 +109,8 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'release', {
 		// If we're updating a build by id and setting it successful then we update the application to this build
 		if (request.odataQuery != null) {
 			const keyBind = request.odataQuery.key;
-			if (keyBind != null) {
+			// TODO: Support named keys
+			if (keyBind != null && 'bind' in keyBind) {
 				const id = sbvrUtils.resolveOdataBind(request.odataBinds, keyBind);
 				return updateLatestRelease(id, args);
 			}

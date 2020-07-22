@@ -71,9 +71,7 @@ export async function provisionDevice(
 		.expect(201);
 
 	const { body: provisionedDevice } = await supertest(app, admin)
-		.get(
-			`/resin/device?$filter=uuid eq '${deviceUuid}'&$select=supervisor_version`,
-		)
+		.get(`/resin/device(uuid='${deviceUuid}')?$select=supervisor_version`)
 		.expect(200);
 	expect(provisionedDevice.d[0].supervisor_version).to.equal(supervisorVersion);
 
