@@ -286,9 +286,11 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 			await api.resin.patch({
 				resource: 'device',
 				passthrough: { req: permissions.root },
+				id: {
+					uuid,
+				},
 				options: {
 					$filter: {
-						uuid,
 						$not: body,
 					},
 				},

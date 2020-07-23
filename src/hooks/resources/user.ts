@@ -14,19 +14,19 @@ sbvrUtils.addPureHook('POST', 'resin', 'user', {
 	POSTPARSE: createActor,
 
 	POSTRUN: async ({ result, tx }) => {
-		const [role] = (await api.Auth.get({
+		const role = (await api.Auth.get({
 			resource: 'role',
 			passthrough: {
 				tx,
 				req: permissions.root,
 			},
+			id: {
+				name: 'default-user',
+			},
 			options: {
 				$select: 'id',
-				$filter: {
-					name: 'default-user',
-				},
 			},
-		})) as AnyObject[];
+		})) as AnyObject;
 		if (role == null) {
 			throw new InternalRequestError('Unable to find the default user role');
 		}
