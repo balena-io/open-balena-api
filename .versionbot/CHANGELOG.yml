@@ -1,4 +1,54 @@
 - commits:
+    - subject: Update pinejs and make use of named keys
+      hash: 069eec24e713766e1a326b58d3683d9c74118280
+      body: |
+        Update pinejs from 13.3.0 to 13.4.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update pinejs-client-core and use named keys when querying
+              hash: 55b67d3ce0295f08728784277825e6e20bbe0472
+              body: |
+                Update pinejs-client-core from 6.0.0 to 6.1.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Add support for using named ids
+                      hash: f6035bf5240e8aea1b92997d976cebd9a1857a61
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                  version: pinejs-client-js-6.1.0
+                  date: 2020-07-21T10:31:09.457Z
+                - commits:
+                    - subject: Drop unnecessary async from request()
+                      hash: dfd4c8c39327fe2e1706a8180e3c3f56d4229b77
+                      body: |
+                        This allows consumers like pinejs-client-supertest
+                        to have all the methods returning different Promise
+                        types based solely on the implementation of the
+                        request() method.
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                      author: Thodoris Greasidis
+                  version: pinejs-client-js-6.0.1
+                  date: 2020-06-19T16:55:46.305Z
+          version: pinejs-13.4.0
+          date: 2020-07-22T11:10:10.665Z
+  version: 0.85.0
+  date: 2020-07-23T11:35:32.005Z
+- commits:
     - subject: 'Update pinejs, adding support for named keys'
       hash: d3adc523624c60af90afaa864df64ca4694e3d35
       body: |
