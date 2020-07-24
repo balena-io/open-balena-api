@@ -140,11 +140,14 @@ export const generateNewJwtSecret = async (): Promise<string> => {
 	return base32.encode(key).toString();
 };
 
+export const checkSudoValidity = async (user: User): Promise<boolean> => {
+	const notAuthBefore = Date.now() - SUDO_TOKEN_VALIDITY;
+	return user.authTime != null && user.authTime > notAuthBefore;
+};
 export const sudoMiddleware: RequestHandler = async (req, res, next) => {
 	try {
 		const user = await getUser(req, false);
-		const notAuthBefore = Date.now() - SUDO_TOKEN_VALIDITY;
-		if (user && user.authTime && user.authTime > notAuthBefore) {
+		if (user != null && (await checkSudoValidity(user))) {
 			next();
 			return;
 		} else {
