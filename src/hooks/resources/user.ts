@@ -3,9 +3,10 @@ import * as Bluebird from 'bluebird';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
 import { createActor } from '../../platform';
-import { getUser } from '../../platform/auth';
+import { getUser, checkSudoValidity } from '../../platform/auth';
 import { captureException } from '../../platform/errors';
 import { assignUserRole } from '../../platform/permissions';
+import { UnauthorizedError } from '@balena/pinejs/out/sbvr-api/errors';
 
 const { BadRequestError, InternalRequestError } = errors;
 const { api } = sbvrUtils;
@@ -49,6 +50,10 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 
 		if (user.id !== userId) {
 			throw new BadRequestError('You can only delete your own account');
+		}
+
+		if (!(await checkSudoValidity(user))) {
+			throw new UnauthorizedError('Fresh authentication token required');
 		}
 
 		// Store the user id in the custom request data for later.
