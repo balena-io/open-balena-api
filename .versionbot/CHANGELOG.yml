@@ -1,4 +1,15 @@
 - commits:
+    - subject: Require a fresh token for user account deletion
+      hash: 453b1fef2203238cce9e4a0f8439eed44a498bfb
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.86.0
+  date: 2020-07-24T15:49:20.407Z
+- commits:
     - subject: Update pinejs and make use of named keys
       hash: 069eec24e713766e1a326b58d3683d9c74118280
       body: |
