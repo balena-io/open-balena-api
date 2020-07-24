@@ -172,7 +172,7 @@ async function fetchDeviceTypesAndReschedule(): Promise<
 		if (!deviceTypesCache) {
 			deviceTypesCache = promise;
 		}
-		return promise;
+		return await promise;
 	} finally {
 		// schedule a re-run to update the local cache - do not wait for it
 		scheduleFetchDeviceTypes();
