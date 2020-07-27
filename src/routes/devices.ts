@@ -814,26 +814,28 @@ export const statePatch: RequestHandler = async (req, res) => {
 				throw new UnauthorizedError();
 			}
 
-			if (local.is_on__commit === null) {
-				deviceBody!.is_running__release = null;
-			} else if (local.is_on__commit !== undefined) {
-				const [release] = (await resinApiTx.get({
-					resource: 'release',
-					options: {
-						$select: 'id',
-						$filter: {
-							commit: local.is_on__commit,
-							status: 'success',
-							belongs_to__application: {
-								$any: {
-									$alias: 'a',
-									$expr: {
-										a: {
-											owns__device: {
-												$any: {
-													$alias: 'd',
-													$expr: {
-														d: { uuid },
+			if (local != null) {
+				if (local.is_on__commit === null) {
+					deviceBody!.is_running__release = null;
+				} else if (local.is_on__commit !== undefined) {
+					const [release] = (await resinApiTx.get({
+						resource: 'release',
+						options: {
+							$select: 'id',
+							$filter: {
+								commit: local.is_on__commit,
+								status: 'success',
+								belongs_to__application: {
+									$any: {
+										$alias: 'a',
+										$expr: {
+											a: {
+												owns__device: {
+													$any: {
+														$alias: 'd',
+														$expr: {
+															d: { uuid },
+														},
 													},
 												},
 											},
@@ -842,12 +844,12 @@ export const statePatch: RequestHandler = async (req, res) => {
 								},
 							},
 						},
-					},
-				})) as AnyObject[];
+					})) as AnyObject[];
 
-				if (release != null) {
-					// Only set the running release if it's valid, otherwise just silently ignore it
-					deviceBody!.is_running__release = release.id;
+					if (release != null) {
+						// Only set the running release if it's valid, otherwise just silently ignore it
+						deviceBody!.is_running__release = release.id;
+					}
 				}
 			}
 
