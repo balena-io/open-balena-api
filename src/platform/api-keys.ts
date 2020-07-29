@@ -94,7 +94,7 @@ const $createApiKey = async (
 	return apiKey;
 };
 
-export const createApiKey = (
+export const createApiKey = async (
 	actorType: string,
 	roleName: string,
 	req: Request,
@@ -105,7 +105,7 @@ export const createApiKey = (
 		options.apiKey = randomstring.generate();
 	}
 	if (options.tx != null) {
-		return $createApiKey(
+		return await $createApiKey(
 			actorType,
 			roleName,
 			req,
@@ -113,9 +113,9 @@ export const createApiKey = (
 			options as InternalApiKeyOptions,
 		);
 	} else {
-		return sbvrUtils.db.transaction((tx) => {
+		return await sbvrUtils.db.transaction(async (tx) => {
 			options.tx = tx;
-			return $createApiKey(
+			return await $createApiKey(
 				actorType,
 				roleName,
 				req,
@@ -151,6 +151,6 @@ export const retrieveAPIKey = async (
 	const token = (req.get('Authorization') || '').split(' ', 2)[1];
 	if (token && !isJWT(token)) {
 		// Add support for API keys on Authorization header if a JWT wasn't provided
-		return permissions.authorizationMiddleware(req);
+		await permissions.authorizationMiddleware(req);
 	}
 };

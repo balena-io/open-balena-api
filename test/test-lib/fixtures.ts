@@ -89,7 +89,7 @@ const loaders: Dictionary<LoaderFunc> = {
 			'application_type',
 		);
 
-		return createResource({
+		return await createResource({
 			resource: 'application',
 			body: {
 				...body,
@@ -109,7 +109,7 @@ const loaders: Dictionary<LoaderFunc> = {
 			logErrorAndThrow(`Could not find application: ${jsonData.application}`);
 		}
 
-		return createResource({
+		return await createResource({
 			resource: 'release',
 			body: {
 				belongs_to__application: application.id,
@@ -142,7 +142,7 @@ const loaders: Dictionary<LoaderFunc> = {
 
 		const isPublic = jsonData.is_public || false;
 
-		return createResource({
+		return await createResource({
 			resource: 'supervisor_release',
 			body: {
 				image_name: jsonData.image_name,
@@ -167,7 +167,7 @@ const loaders: Dictionary<LoaderFunc> = {
 			);
 		}
 
-		return createResource({
+		return await createResource({
 			resource: 'device',
 			body: {
 				belongs_to__application: application.id,
@@ -248,7 +248,9 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 	const fixtures = { ...defaultFixtures };
 
 	if (fixtureName == null) {
-		return Bluebird.props(_.mapValues(fixtures, (fx) => Bluebird.props(fx)));
+		return await Bluebird.props(
+			_.mapValues(fixtures, (fx) => Bluebird.props(fx)),
+		);
 	}
 
 	const files = await fs.promises.readdir(
@@ -263,7 +265,7 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 		)
 		.map((file) => file.slice(0, -'.json'.length).trim());
 
-	return sbvrUtils.db.transaction((tx) => {
+	return await sbvrUtils.db.transaction(async (tx) => {
 		models.forEach((model) => {
 			fixtures[model] = import(
 				path.join('../fixtures', fixtureName, `${model}.json`)
@@ -272,6 +274,8 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 			);
 		});
 
-		return Bluebird.props(_.mapValues(fixtures, (fx) => Bluebird.props(fx)));
+		return await Bluebird.props(
+			_.mapValues(fixtures, (fx) => Bluebird.props(fx)),
+		);
 	});
 };

@@ -68,7 +68,7 @@ sbvrUtils.addPureHook('PUT', 'resin', 'application', {
 });
 
 sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
-	PRERUN: (args) => {
+	PRERUN: async (args) => {
 		const waitPromises = [checkDependentApplication(args)];
 		const { request } = args;
 		const appName = request.values.app_name;
@@ -94,7 +94,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 			);
 		}
 
-		return Promise.all(waitPromises);
+		await Promise.all(waitPromises);
 	},
 	POSTRUN: async ({ request }) => {
 		const affectedIds = request.affectedIds!;
@@ -103,7 +103,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 			affectedIds.length !== 0
 		) {
 			// Only update apps if they have had their release changed.
-			return postDevices({
+			await postDevices({
 				url: '/v1/update',
 				req: permissions.root,
 				filter: {

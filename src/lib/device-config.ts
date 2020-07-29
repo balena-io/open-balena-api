@@ -47,9 +47,9 @@ export const generateConfig = async (
 		// Devices running ResinOS >= 2.7.8 can use provisioning keys
 		if (osVersion != null && semver.satisfies(osVersion, '<2.7.8')) {
 			// Older ones have to use the old "user api keys"
-			return createUserApiKey(req, (await userPromise).id);
+			return await createUserApiKey(req, (await userPromise).id);
 		}
-		return createProvisioningApiKey(req, app.id);
+		return await createProvisioningApiKey(req, app.id);
 	})();
 
 	// There may be multiple CAs, this doesn't matter as all will be passed in the config

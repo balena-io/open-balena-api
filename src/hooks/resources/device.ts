@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import * as Bluebird from 'bluebird';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
@@ -30,26 +29,28 @@ const createReleaseServiceInstalls = async (
 	deviceIds: number[],
 	releaseFilter: Filter,
 ): Promise<void> => {
-	await Bluebird.map(deviceIds, async (deviceId) => {
-		const services = (await api.get({
-			resource: 'service',
-			options: {
-				$select: 'id',
-				$filter: {
-					is_built_by__image: {
-						$any: {
-							$alias: 'i',
-							$expr: {
-								i: {
-									is_part_of__release: {
-										$any: {
-											$alias: 'ipr',
-											$expr: {
-												ipr: {
-													release: {
-														$any: {
-															$alias: 'r',
-															$expr: { r: releaseFilter },
+	await Promise.all(
+		deviceIds.map(async (deviceId) => {
+			const services = (await api.get({
+				resource: 'service',
+				options: {
+					$select: 'id',
+					$filter: {
+						is_built_by__image: {
+							$any: {
+								$alias: 'i',
+								$expr: {
+									i: {
+										is_part_of__release: {
+											$any: {
+												$alias: 'ipr',
+												$expr: {
+													ipr: {
+														release: {
+															$any: {
+																$alias: 'r',
+																$expr: { r: releaseFilter },
+															},
 														},
 													},
 												},
@@ -59,35 +60,35 @@ const createReleaseServiceInstalls = async (
 								},
 							},
 						},
-					},
-					// Filter out any services which do have a service install attached
-					$not: {
-						service_install: {
-							$any: {
-								$alias: 'si',
-								$expr: {
-									si: { device: deviceId },
+						// Filter out any services which do have a service install attached
+						$not: {
+							service_install: {
+								$any: {
+									$alias: 'si',
+									$expr: {
+										si: { device: deviceId },
+									},
 								},
 							},
 						},
 					},
 				},
-			},
-		})) as AnyObject[];
-		await Promise.all(
-			services.map(async (service) => {
-				// Create a service_install for this pair of service and device
-				await api.post({
-					resource: 'service_install',
-					body: {
-						device: deviceId,
-						installs__service: service.id,
-					},
-					options: { returnResource: false },
-				});
-			}),
-		);
-	});
+			})) as AnyObject[];
+			await Promise.all(
+				services.map(async (service) => {
+					// Create a service_install for this pair of service and device
+					await api.post({
+						resource: 'service_install',
+						body: {
+							device: deviceId,
+							installs__service: service.id,
+						},
+						options: { returnResource: false },
+					});
+				}),
+			);
+		}),
+	);
 };
 
 const createAppServiceInstalls = async (
@@ -138,7 +139,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'device', {
 			);
 		}
 	},
-	POSTRUN: ({ request, api, tx, result: deviceId }) => {
+	POSTRUN: async ({ request, api, tx, result: deviceId }) => {
 		// Don't try to add service installs if the device wasn't created
 		if (deviceId == null) {
 			return;
@@ -146,7 +147,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'device', {
 
 		const rootApi = api.clone({ passthrough: { tx, req: permissions.root } });
 
-		return createAppServiceInstalls(rootApi, request.custom.appId, [deviceId]);
+		await createAppServiceInstalls(rootApi, request.custom.appId, [deviceId]);
 	},
 });
 
@@ -194,7 +195,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			request.values.last_connectivity_event = new Date();
 		}
 	},
-	PRERUN: (args) => {
+	PRERUN: async (args) => {
 		const { api, request } = args;
 		const waitPromises: Array<PromiseLike<any>> = [];
 
@@ -361,9 +362,9 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			);
 		}
 
-		return Promise.all(waitPromises);
+		await Promise.all(waitPromises);
 	},
-	POSTRUN: (args) => {
+	POSTRUN: async (args) => {
 		const waitPromises: Array<PromiseLike<any>> = [];
 		const affectedIds = args.request.affectedIds!;
 
@@ -509,7 +510,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 			}
 		}
 
-		return Promise.all(waitPromises);
+		await Promise.all(waitPromises);
 	},
 });
 
@@ -616,7 +617,7 @@ async function setSupervisorReleaseResource(
 		},
 	});
 
-	return Promise.all(
+	await Promise.all(
 		_.map(devicesByDeviceType, async (affectedDevices, deviceType) => {
 			const affectedDeviceIds = affectedDevices.map((d) => d.id);
 

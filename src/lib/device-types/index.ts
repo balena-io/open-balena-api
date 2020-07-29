@@ -83,7 +83,7 @@ const getBuildData = async (
 	slug: string,
 	buildId: string,
 ): Promise<Partial<BuildInfo>> => {
-	const [ignored, deviceType] = await Bluebird.all([
+	const [ignored, deviceType] = await Promise.all([
 		getIsIgnored(slug, buildId),
 		getDeviceTypeJson(slug, buildId).catch(() => undefined),
 	]);
@@ -123,34 +123,36 @@ async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	getDeviceTypeJson.clear();
 	try {
 		const slugs = await listFolders(IMAGE_STORAGE_PREFIX);
-		await Bluebird.map(slugs, async (slug) => {
-			try {
-				const builds = await listFolders(getImageKey(slug));
-				if (_.isEmpty(builds)) {
-					return;
+		await Promise.all(
+			slugs.map(async (slug) => {
+				try {
+					const builds = await listFolders(getImageKey(slug));
+					if (_.isEmpty(builds)) {
+						return;
+					}
+
+					const sortedBuilds = sortBuildIds(builds);
+					const latestBuildInfo = await getFirstValidBuild(slug, sortedBuilds);
+					if (!latestBuildInfo) {
+						return;
+					}
+
+					result[slug] = {
+						versions: builds,
+						latest: latestBuildInfo,
+					};
+
+					_.forEach(latestBuildInfo.deviceType.aliases, (alias) => {
+						result[alias] = result[slug];
+					});
+				} catch (err) {
+					captureException(
+						err,
+						`Failed to find a valid build for device type ${slug}`,
+					);
 				}
-
-				const sortedBuilds = sortBuildIds(builds);
-				const latestBuildInfo = await getFirstValidBuild(slug, sortedBuilds);
-				if (!latestBuildInfo) {
-					return;
-				}
-
-				result[slug] = {
-					versions: builds,
-					latest: latestBuildInfo,
-				};
-
-				_.forEach(latestBuildInfo.deviceType.aliases, (alias) => {
-					result[alias] = result[slug];
-				});
-			} catch (err) {
-				captureException(
-					err,
-					`Failed to find a valid build for device type ${slug}`,
-				);
-			}
-		});
+			}),
+		);
 
 		if (_.isEmpty(result) && !_.isEmpty(slugs)) {
 			throw new InternalRequestError('Could not retrieve any device type');
@@ -159,7 +161,7 @@ async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	} catch (err) {
 		captureException(err, 'Failed to get device types');
 		await Bluebird.delay(RETRY_DELAY);
-		return fetchDeviceTypes();
+		return await fetchDeviceTypes();
 	}
 }
 
@@ -225,7 +227,7 @@ async function updateDTModel(
 	}
 }
 
-function syncDataModel(
+async function syncDataModel(
 	types: Dictionary<DeviceTypeInfo>,
 	propertyMap: typeof syncSettings['map'],
 ) {
@@ -235,7 +237,7 @@ function syncDataModel(
 		);
 		return;
 	}
-	return sbvrUtils.db.transaction(async (tx) => {
+	await sbvrUtils.db.transaction(async (tx) => {
 		await Promise.all(
 			_(types)
 				.map(({ latest }) => latest.deviceType)
@@ -283,9 +285,9 @@ async function fetchDeviceTypesAndReschedule(): Promise<
 	}
 }
 
-function getDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
+async function getDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	// Always return the local cache if populated
-	return deviceTypesCache ?? fetchDeviceTypesAndReschedule();
+	return await (deviceTypesCache ?? fetchDeviceTypesAndReschedule());
 }
 
 /**
@@ -460,9 +462,8 @@ export const getImageVersions = async (
 	const deviceType = deviceTypeInfo.latest.deviceType;
 	const normalizedSlug = deviceType.slug;
 
-	const versionInfo = await Bluebird.map(
-		deviceTypeInfo.versions,
-		async (buildId) => {
+	const versionInfo = await Promise.all(
+		deviceTypeInfo.versions.map(async (buildId) => {
 			try {
 				return await Bluebird.props({
 					buildId,
@@ -472,7 +473,7 @@ export const getImageVersions = async (
 			} catch {
 				return;
 			}
-		},
+		}),
 	);
 	const filteredInfo = versionInfo.filter(
 		(buildInfo): buildInfo is NonNullable<typeof buildInfo> =>

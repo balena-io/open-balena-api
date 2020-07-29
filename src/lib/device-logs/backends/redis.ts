@@ -95,7 +95,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		// Devices with no new logs eventually expire
 		tx.pexpire(key, KEY_EXPIRATION);
 		tx.pexpire(bytesWrittenKey, KEY_EXPIRATION);
-		return Bluebird.fromCallback((callback) => {
+		return await Bluebird.fromCallback((callback) => {
 			tx.exec(callback);
 		});
 	}

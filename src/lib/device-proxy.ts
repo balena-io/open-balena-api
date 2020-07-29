@@ -262,21 +262,21 @@ export async function requestDevices({
 		return;
 	}
 	// We cast away the undefined because that can only happen if wait == false which we handle above
-	return waitPromise as Promise<RequestResponse[]>;
+	return (await waitPromise) as RequestResponse[];
 }
 
-export function postDevices(
+export async function postDevices(
 	opts: FixedMethodRequestDevicesOpts & {
 		wait?: true;
 	},
 ): Promise<RequestResponse[]>;
-export function postDevices(
+export async function postDevices(
 	opts: FixedMethodRequestDevicesOpts & {
 		wait: false;
 	},
 ): Promise<void>;
-export function postDevices(
+export async function postDevices(
 	opts: FixedMethodRequestDevicesOpts,
 ): Promise<void | RequestResponse[]> {
-	return requestDevices({ ...opts, method: 'POST' });
+	return await requestDevices({ ...opts, method: 'POST' });
 }
