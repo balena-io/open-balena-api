@@ -156,7 +156,7 @@ export interface UserRoleMap {
 	[roleName: string]: EmailSet;
 }
 
-export function createAll(
+export async function createAll(
 	tx: Tx,
 	permissionNames: PermissionSet,
 	roleMap: RolePermissionsMap,
@@ -173,7 +173,7 @@ export function createAll(
 				$filter: { name: { $in: permissionNames } },
 			},
 		})
-		.then((perms: AnyObject[]) => {
+		.then(async (perms: AnyObject[]) => {
 			const permissionsMap = _(perms).keyBy('name').mapValues('id').value();
 			const result: Dictionary<number | Promise<number>> = {};
 			for (const permissionName of permissionNames) {
@@ -189,7 +189,7 @@ export function createAll(
 						.then(({ id }: AnyObject) => id);
 				}
 			}
-			return Bluebird.props<Dictionary<number>>(result);
+			return await Bluebird.props<Dictionary<number>>(result);
 		});
 
 	const createRolePermissions = async (
@@ -342,7 +342,7 @@ export function createAll(
 		},
 	);
 
-	return Bluebird.props({
+	return await Bluebird.props({
 		roles: rolesPromise,
 		apiKeys: apiKeysPromise,
 	});

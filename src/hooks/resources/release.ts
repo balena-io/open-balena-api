@@ -1,4 +1,3 @@
-import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 
 import { sbvrUtils } from '@balena/pinejs';
@@ -84,27 +83,31 @@ const updateLatestRelease = async (
 		serviceInstalls,
 		(si) => si.device.__id as number,
 	);
-	return Bluebird.map(deviceIds, (deviceId) => {
-		const existingServiceIds: number[] = _.map(
-			serviceInstallsByDevice[deviceId],
-			(si) => si.installs__service.__id,
-		);
-		const deviceServiceIds = _.difference(serviceIds, existingServiceIds);
-		return Bluebird.map(deviceServiceIds, (serviceId) =>
-			api.post({
-				resource: 'service_install',
-				body: {
-					device: deviceId,
-					installs__service: serviceId,
-				},
-				options: { returnResource: false },
-			}),
-		);
-	});
+	await Promise.all(
+		deviceIds.map(async (deviceId) => {
+			const existingServiceIds: number[] = _.map(
+				serviceInstallsByDevice[deviceId],
+				(si) => si.installs__service.__id,
+			);
+			const deviceServiceIds = _.difference(serviceIds, existingServiceIds);
+			await Promise.all(
+				deviceServiceIds.map(async (serviceId) => {
+					await api.post({
+						resource: 'service_install',
+						body: {
+							device: deviceId,
+							installs__service: serviceId,
+						},
+						options: { returnResource: false },
+					});
+				}),
+			);
+		}),
+	);
 };
 
 sbvrUtils.addPureHook('PATCH', 'resin', 'release', {
-	POSTRUN: (args) => {
+	POSTRUN: async (args) => {
 		const { request } = args;
 		// If we're updating a build by id and setting it successful then we update the application to this build
 		if (request.odataQuery != null) {
@@ -112,18 +115,18 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'release', {
 			// TODO: Support named keys
 			if (keyBind != null && 'bind' in keyBind) {
 				const id = sbvrUtils.resolveOdataBind(request.odataBinds, keyBind);
-				return updateLatestRelease(id, args);
+				await updateLatestRelease(id, args);
 			}
 		}
 	},
 });
 
 sbvrUtils.addPureHook('POST', 'resin', 'release', {
-	POSTRUN: (args) => {
+	POSTRUN: async (args) => {
 		// If we're creating a build then check if the latest release needs to be updated
 		const id = args.result;
 		if (id != null) {
-			return updateLatestRelease(id, args);
+			await updateLatestRelease(id, args);
 		}
 	},
 });

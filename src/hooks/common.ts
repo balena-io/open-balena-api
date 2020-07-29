@@ -36,5 +36,5 @@ export const resolveDeviceType = async (
 	}
 	// set device_type_slug in case the FK column was used.
 	request.values.device_type = dt.slug;
-	return deviceTypes.findBySlug(api, dt.slug);
+	return await deviceTypes.findBySlug(api, dt.slug);
 };

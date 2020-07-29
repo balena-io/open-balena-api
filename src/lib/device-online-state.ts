@@ -238,7 +238,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 	}
 
 	private async setupQueueStatsEmitter(interval: number) {
-		return setTimeout(async () => {
+		setTimeout(async () => {
 			try {
 				const startAt = Date.now();
 				const queueAttributes = await this.rsmq.getQueueAttributesAsync({
@@ -408,7 +408,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 			delay,
 		});
 
-		return this.redis.set(
+		await this.redis.set(
 			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
 			JSON.stringify({
 				id: newId,
@@ -425,7 +425,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		}
 
 		this.isConsuming = true;
-		return this.consume();
+		this.consume();
 	}
 
 	public async captureEventFor(uuid: string, timeoutSeconds: number) {

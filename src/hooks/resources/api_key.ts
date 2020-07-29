@@ -1,5 +1,3 @@
-import * as Bluebird from 'bluebird';
-
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
 import { captureException } from '../../platform/errors';
@@ -13,27 +11,28 @@ const deleteApiKeyHooks: sbvrUtils.Hooks = {
 			return;
 		}
 
-		await Bluebird.map(
-			['api_key__has__role', 'api_key__has__permission'],
-			async (resource) => {
-				try {
-					await api.Auth.delete({
-						resource,
-						passthrough: {
-							tx: args.tx,
-							req: permissions.root,
-						},
-						options: {
-							$filter: { api_key: { $in: keyIds } },
-						},
-					});
-				} catch (err) {
-					captureException(err, 'Error deleting api key ' + resource, {
-						req: args.req,
-					});
-					throw err;
-				}
-			},
+		await Promise.all(
+			['api_key__has__role', 'api_key__has__permission'].map(
+				async (resource) => {
+					try {
+						await api.Auth.delete({
+							resource,
+							passthrough: {
+								tx: args.tx,
+								req: permissions.root,
+							},
+							options: {
+								$filter: { api_key: { $in: keyIds } },
+							},
+						});
+					} catch (err) {
+						captureException(err, 'Error deleting api key ' + resource, {
+							req: args.req,
+						});
+						throw err;
+					}
+				},
+			),
 		);
 	},
 };

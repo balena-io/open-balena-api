@@ -11,8 +11,8 @@ const BUILD_PROPERTY_CACHE_EXPIRATION = 10 * 60 * 1000; // 10 mins
 const BUILD_COMPRESSED_SIZE_CACHE_EXPIRATION = 20 * 60 * 1000; // 20 mins
 
 export const getIsIgnored = memoizee(
-	(normalizedSlug: string, buildId: string): Promise<boolean> => {
-		return fileExists(getImageKey(normalizedSlug, buildId, 'IGNORE'));
+	async (normalizedSlug: string, buildId: string): Promise<boolean> => {
+		return await fileExists(getImageKey(normalizedSlug, buildId, 'IGNORE'));
 	},
 	{ promise: true, preFetch: true, maxAge: BUILD_PROPERTY_CACHE_EXPIRATION },
 );
@@ -66,8 +66,10 @@ export const getDeviceTypeJson = memoizee(
 );
 
 export const getCompressedSize = memoizee(
-	(normalizedSlug: string, buildId: string): Promise<number> => {
-		return getFolderSize(getImageKey(normalizedSlug, buildId, 'compressed'));
+	async (normalizedSlug: string, buildId: string): Promise<number> => {
+		return await getFolderSize(
+			getImageKey(normalizedSlug, buildId, 'compressed'),
+		);
 	},
 	{
 		promise: true,

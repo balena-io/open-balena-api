@@ -31,7 +31,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'user', {
 		if (role == null) {
 			throw new InternalRequestError('Unable to find the default user role');
 		}
-		return assignUserRole(result, role.id, tx);
+		await assignUserRole(result, role.id, tx);
 	},
 });
 
@@ -59,7 +59,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 		// Store the user id in the custom request data for later.
 		request.custom.userId = userId;
 	},
-	PRERUN: ({ req, request, tx, api: resinApi }) => {
+	PRERUN: async ({ req, request, tx, api: resinApi }) => {
 		const { userId } = request.custom;
 
 		const authApiTx = sbvrUtils.api.Auth.clone({
@@ -113,6 +113,6 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
 				}
 			});
 
-		return Promise.all([authApiDeletes, apiKeyDelete]);
+		await Promise.all([authApiDeletes, apiKeyDelete]);
 	},
 });

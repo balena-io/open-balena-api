@@ -12,14 +12,17 @@ import {
 
 type ValidateFn = (varName?: string, varValue?: string) => void;
 
-const triggerDevices = (filter: Filter | undefined, req: sbvrUtils.HookReq) => {
+const triggerDevices = async (
+	filter: Filter | undefined,
+	req: sbvrUtils.HookReq,
+) => {
 	// If we can't find the matching env var to update then we don't ping the devices.
 	// - This should only happen in the case of deleting an application, where we delete all of the env vars at once.
 	if (filter == null) {
 		return;
 	}
 
-	return postDevices({
+	await postDevices({
 		url: '/v1/update',
 		req,
 		filter,
@@ -39,8 +42,8 @@ const addEnvHooks = (
 		},
 	) => Promise<Filter | undefined>,
 ): void => {
-	const postParseHook: sbvrUtils.Hooks['POSTPARSE'] = ({ request }) => {
-		return validateFn(request.values.name, request.values.value);
+	const postParseHook: sbvrUtils.Hooks['POSTPARSE'] = async ({ request }) => {
+		await validateFn(request.values.name, request.values.value);
 	};
 	const preRunHook: sbvrUtils.Hooks['PRERUN'] = async (args) => {
 		try {
@@ -67,14 +70,14 @@ const addEnvHooks = (
 	const envVarHook: sbvrUtils.Hooks = {
 		POSTPARSE: postParseHook,
 		PRERUN: preRunHook,
-		POSTRUN: ({ req, request }) => {
+		POSTRUN: async ({ req, request }) => {
 			const { devices } = request.custom;
 			if (!devices || devices.length === 0) {
 				// If we have no devices affected then no point triggering an update.
 				return;
 			}
 			const filter = { id: { $in: devices } };
-			return triggerDevices(filter, req);
+			await triggerDevices(filter, req);
 		},
 	};
 

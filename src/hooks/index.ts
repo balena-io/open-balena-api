@@ -3,10 +3,10 @@ import { sbvrUtils } from '@balena/pinejs';
 import { retrieveAPIKey } from '../platform/api-keys';
 
 sbvrUtils.addPureHook('all', 'all', 'all', {
-	PREPARSE: ({ req }) => {
+	PREPARSE: async ({ req }) => {
 		// Extend Pine's default behavior of calling apiKeyMiddleware()
 		// support api keys on the Authorization header with Bearer scheme
-		return retrieveAPIKey(req);
+		await retrieveAPIKey(req);
 	},
 });
 

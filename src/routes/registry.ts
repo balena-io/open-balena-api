@@ -2,7 +2,6 @@
 // Reference: https://docs.docker.com/registry/spec/auth/jwt/
 
 import * as BasicAuth from 'basic-auth';
-import * as Bluebird from 'bluebird';
 import type { Request, RequestHandler } from 'express';
 import * as jsonwebtoken from 'jsonwebtoken';
 import * as _ from 'lodash';
@@ -201,10 +200,10 @@ const resolveAccess = async (
 	};
 };
 
-const authorizeRequest = (
+const authorizeRequest = async (
 	req: Request,
 	scopes: string[],
-): Access[] | PromiseLike<Access[]> => {
+): Promise<Access[]> => {
 	const parsedScopes: Scope[] = _(scopes)
 		.map((scope) => parseScope(req, scope))
 		.compact()
@@ -214,49 +213,59 @@ const authorizeRequest = (
 		return grantAllToBuilder(parsedScopes);
 	}
 
-	return Bluebird.map(parsedScopes, ([type, name, requestedActions]) => {
-		if (name === RESINOS_REPOSITORY) {
-			let allowedActions = ['pull'];
-			if (
-				AUTH_RESINOS_REGISTRY_CODE != null &&
-				req.params['apikey'] === AUTH_RESINOS_REGISTRY_CODE
-			) {
-				allowedActions = ['pull', 'push'];
-			}
-			return {
-				type,
-				name,
-				actions: _.intersection(requestedActions, allowedActions),
-			};
-		} else if (SUPERVISOR_REPOSITORIES.test(name)) {
-			let allowedActions = ['pull'];
-			if (
-				AUTH_RESINOS_REGISTRY_CODE != null &&
-				req.params['apikey'] === AUTH_RESINOS_REGISTRY_CODE
-			) {
-				allowedActions = ['pull', 'push'];
-			}
-			return {
-				type,
-				name,
-				actions: _.intersection(requestedActions, allowedActions),
-			};
-		} else {
-			const match = name.match(NEW_REGISTRY_REGEX);
-			if (match != null) {
-				// request for new-style, authenticated v2/randomhash image
-				let effectiveName = name;
-				if (match[4] != null) {
-					// This is a multistage image, use the root image name
-					effectiveName = match[3];
+	return await Promise.all(
+		parsedScopes.map(async ([type, name, requestedActions]) => {
+			if (name === RESINOS_REPOSITORY) {
+				let allowedActions = ['pull'];
+				if (
+					AUTH_RESINOS_REGISTRY_CODE != null &&
+					req.params['apikey'] === AUTH_RESINOS_REGISTRY_CODE
+				) {
+					allowedActions = ['pull', 'push'];
 				}
-				return resolveAccess(req, type, name, effectiveName, requestedActions);
+				return {
+					type,
+					name,
+					actions: _.intersection(requestedActions, allowedActions),
+				};
+			} else if (SUPERVISOR_REPOSITORIES.test(name)) {
+				let allowedActions = ['pull'];
+				if (
+					AUTH_RESINOS_REGISTRY_CODE != null &&
+					req.params['apikey'] === AUTH_RESINOS_REGISTRY_CODE
+				) {
+					allowedActions = ['pull', 'push'];
+				}
+				return {
+					type,
+					name,
+					actions: _.intersection(requestedActions, allowedActions),
+				};
 			} else {
-				// request for legacy public-read appName/commit image
-				return resolveAccess(req, type, name, name, requestedActions, ['pull']);
+				const match = name.match(NEW_REGISTRY_REGEX);
+				if (match != null) {
+					// request for new-style, authenticated v2/randomhash image
+					let effectiveName = name;
+					if (match[4] != null) {
+						// This is a multistage image, use the root image name
+						effectiveName = match[3];
+					}
+					return await resolveAccess(
+						req,
+						type,
+						name,
+						effectiveName,
+						requestedActions,
+					);
+				} else {
+					// request for legacy public-read appName/commit image
+					return await resolveAccess(req, type, name, name, requestedActions, [
+						'pull',
+					]);
+				}
 			}
-		}
-	});
+		}),
+	);
 };
 
 const generateToken = (
@@ -389,9 +398,9 @@ const $getSubject = memoize(
 		primitive: true,
 	},
 );
-const getSubject = (req: Request): Resolvable<undefined | string> => {
+const getSubject = async (req: Request): Promise<undefined | string> => {
 	if (req.apiKey != null && !_.isEmpty(req.apiKey.permissions)) {
-		return $getSubject(req.apiKey.key, req.params.subject);
+		return await $getSubject(req.apiKey.key, req.params.subject);
 	} else if (req.user) {
 		// If there's no api key then try to use the username from the JWT
 		return req.user.username;

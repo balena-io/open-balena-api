@@ -1,4 +1,3 @@
-import * as Bluebird from 'bluebird';
 import type { RequestHandler } from 'express';
 import * as _ from 'lodash';
 import * as randomstring from 'randomstring';
@@ -185,19 +184,24 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 				online_dependent_devices,
 				devices.map(({ local_id }) => local_id),
 			);
-			await Bluebird.map(toBeProvisioned, (localId) =>
-				// Provision new dependent devices
-				resinApiTx.post({
-					resource: 'device',
-					body: {
-						uuid: randomstring.generate({ length: 62, charset: 'hex' }),
-						belongs_to__user: user,
-						belongs_to__application: dependent_app,
-						device_type: dependent_device_type,
-						local_id: localId,
-						logs_channel: randomstring.generate({ length: 62, charset: 'hex' }),
-					},
-					options: { returnResource: false },
+			await Promise.all(
+				toBeProvisioned.map(async (localId) => {
+					// Provision new dependent devices
+					await resinApiTx.post({
+						resource: 'device',
+						body: {
+							uuid: randomstring.generate({ length: 62, charset: 'hex' }),
+							belongs_to__user: user,
+							belongs_to__application: dependent_app,
+							device_type: dependent_device_type,
+							local_id: localId,
+							logs_channel: randomstring.generate({
+								length: 62,
+								charset: 'hex',
+							}),
+						},
+						options: { returnResource: false },
+					});
 				}),
 			);
 			// Set all dependent devices currently being managed by

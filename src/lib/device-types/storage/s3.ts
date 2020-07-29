@@ -55,20 +55,20 @@ function createS3Client() {
 
 const s3Client = createS3Client();
 
-function getFileInfo(s3Path: string) {
+async function getFileInfo(s3Path: string) {
 	const req = s3Client.headObject({
 		Bucket: S3_BUCKET,
 		Key: s3Path,
 	});
-	return req.promise();
+	return await req.promise();
 }
 
-export function getFile(s3Path: string) {
+export async function getFile(s3Path: string) {
 	const req = s3Client.getObject({
 		Bucket: S3_BUCKET,
 		Key: s3Path,
 	});
-	return req.promise();
+	return await req.promise();
 }
 
 export async function getFolderSize(

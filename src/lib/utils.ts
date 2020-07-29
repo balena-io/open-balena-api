@@ -71,5 +71,5 @@ export const throttledForEach = async <T, U>(
 		await delay(delayMS);
 	}
 	// We return the results of the iterator so the caller can await them as necessary
-	return Promise.all(promises);
+	return await Promise.all(promises);
 };
