@@ -1,4 +1,15 @@
 - commits:
+    - subject: Avoid error in device state patching when local state is null
+      hash: 1802e6580497c25a1c30cfe729f9118ee862b76e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.86.3
+  date: 2020-07-30T12:44:42.763Z
+- commits:
     - subject: Improve compatibility with async/await stack traces
       hash: 4c7e317772a19beb77e2aed5b790e03e1a3f55df
       body: |
