@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add more info when failing to find a service install
+      hash: 44961bd6d9173d4ddaddc9e13419b03a42a25873
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.86.4
+  date: 2020-07-30T15:55:21.036Z
+- commits:
     - subject: Avoid error in device state patching when local state is null
       hash: 1802e6580497c25a1c30cfe729f9118ee862b76e
       body: ''
