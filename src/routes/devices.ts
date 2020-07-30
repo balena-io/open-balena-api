@@ -436,7 +436,9 @@ export const state: RequestHandler = async (req, res) => {
 
 				const si = serviceInstallFromImage(device, image);
 				if (si == null) {
-					throw new Error('Could not find service install');
+					throw new Error(
+						`Could not find service install for device: '${uuid}', image: '${image?.id}', service: '${image?.is_a_build_of__service}', service installs: '${device.service_install}'`,
+					);
 				}
 				const svc = si.service[0];
 
