@@ -1,7 +1,7 @@
 import { VPN_SERVICE_API_KEY } from '../src/lib/config';
 import { expect } from './test-lib/chai';
 import * as fixtures from './test-lib/fixtures';
-import { supertest } from './test-lib/supertest';
+import { supertest, UserObjectParam } from './test-lib/supertest';
 import { app } from '../init';
 
 describe('create provisioning apikey', function () {
@@ -17,31 +17,68 @@ describe('create provisioning apikey', function () {
 		await fixtures.clean(this.loadedFixtures);
 	});
 
-	it('should be able to create a provisioning key', async function () {
-		const { body: provisioningKey } = await supertest(app, this.user)
-			.post(`/api-key/application/${this.application.id}/provisioning`)
-			.expect(200);
+	[
+		{
+			title: `using /api-key/application/:appId/provisioning endpoint`,
+			fn(user: UserObjectParam | undefined, applicationId: number) {
+				return supertest(app, user).post(
+					`/api-key/application/${applicationId}/provisioning`,
+				);
+			},
+		},
+		{
+			title: 'using the /api-key/v1/ endpoint',
+			fn(user: UserObjectParam | undefined, applicationId: number) {
+				return supertest(app, user)
+					.post(`/api-key/v1/`)
+					.send({
+						actorType: 'application',
+						actorTypeId: applicationId,
+						roles: ['provisioning-api-key'],
+					});
+			},
+		},
+	].forEach(({ title, fn }) => {
+		describe(title, function () {
+			const uuid =
+				'f716a3e020bd444b885cb394453917520c3cf82e69654f84be0d33e31a0e15';
 
-		expect(provisioningKey).to.be.a('string');
-		this.provisioningKey = provisioningKey;
-	});
+			after(async function () {
+				await supertest(app, this.user)
+					.delete(`/resin/device?$filter=uuid eq '${uuid}'`)
+					.expect(200);
+			});
 
-	it('then register a device using the provisioning key', async function () {
-		const uuid =
-			'f716a3e020bd444b885cb394453917520c3cf82e69654f84be0d33e31a0e15';
-		const { body: device } = await supertest(app)
-			.post(`/device/register?apikey=${this.provisioningKey}`)
-			.send({
-				user: this.user.id,
-				application: this.application.id,
-				device_type: 'raspberry-pi',
-				uuid,
-			})
-			.expect(201);
+			it('should not allow unauthorized requests', async function () {
+				await fn(undefined, this.application.id).expect(401);
+			});
 
-		expect(device).to.have.property('id').that.is.a('number');
-		expect(device).to.have.property('uuid', uuid);
-		expect(device).to.have.property('api_key').that.is.a('string');
+			it('should be able to create a provisioning key', async function () {
+				const { body: provisioningKey } = await fn(
+					this.user,
+					this.application.id,
+				).expect(200);
+
+				expect(provisioningKey).to.be.a('string');
+				this.provisioningKey = provisioningKey;
+			});
+
+			it('then register a device using the provisioning key', async function () {
+				const { body: device } = await supertest(app)
+					.post(`/device/register?apikey=${this.provisioningKey}`)
+					.send({
+						user: this.user.id,
+						application: this.application.id,
+						device_type: 'raspberry-pi',
+						uuid,
+					})
+					.expect(201);
+
+				expect(device).to.have.property('id').that.is.a('number');
+				expect(device).to.have.property('uuid', uuid);
+				expect(device).to.have.property('api_key').that.is.a('string');
+			});
+		});
 	});
 });
 
@@ -59,81 +96,131 @@ describe('create device apikey', function () {
 		await fixtures.clean(this.loadedFixtures);
 	});
 
-	it('should create an apikey when none is passed', async function () {
-		const { body: apiKey } = await supertest(app, this.user)
-			.post(`/api-key/device/${this.device.id}/device-key`)
-			.send({})
-			.expect(200);
+	[
+		{
+			title: 'using the /api-key/device/deviceId/device-key endpoint',
+			fn(
+				user: UserObjectParam | undefined,
+				deviceId: number,
+				body?: AnyObject,
+			) {
+				return supertest(app, user)
+					.post(`/api-key/device/${deviceId}/device-key`)
+					.send(body);
+			},
+		},
+		{
+			title: 'using the /api-key/v1/ endpoint',
+			fn(
+				user: UserObjectParam | undefined,
+				deviceId: number,
+				body?: AnyObject,
+			) {
+				return supertest(app, user)
+					.post(`/api-key/v1/`)
+					.send({
+						actorType: 'device',
+						actorTypeId: deviceId,
+						roles: ['device-api-key'],
+						...body,
+					});
+			},
+		},
+	].forEach(({ title, fn }, i) => {
+		describe(title, function () {
+			it('should create an apikey when none is passed', async function () {
+				const { body: apiKey } = await fn(this.user, this.device.id, {}).expect(
+					200,
+				);
 
-		expect(apiKey).to.be.a('string');
-		expect(apiKey).to.not.be.empty;
-	});
+				expect(apiKey).to.be.a('string');
+				expect(apiKey).to.not.be.empty;
+			});
 
-	it('should create an apikey with the value passed in the body', async function () {
-		const apiKey = 'bananas';
-		const { body: deviceApiKey } = await supertest(app, this.user)
-			.post(`/api-key/device/${this.device.id}/device-key`)
-			.send({ apiKey })
-			.expect(200);
+			it('should create an apikey with the value passed in the body', async function () {
+				const apiKey = `bananas${i}`;
+				const { body: deviceApiKey } = await fn(this.user, this.device.id, {
+					apiKey,
+				}).expect(200);
 
-		expect(deviceApiKey).to.be.a('string');
-		expect(deviceApiKey).to.equal(apiKey);
-	});
+				expect(deviceApiKey).to.be.a('string');
+				expect(deviceApiKey).to.equal(apiKey);
+			});
 
-	it('should not allow unauthorized requests', async function () {
-		await supertest(app)
-			.post(`/api-key/device/${this.device.id}/device-key`)
-			.expect(401);
+			it('should not allow unauthorized requests', async function () {
+				await fn(undefined, this.device.id).expect(401);
+			});
+		});
 	});
 });
 
 describe('create named user apikey', function () {
+	let userIdForUnauthorizedRequest = 0;
+
 	before(async function () {
 		const fx = await fixtures.load();
 		this.loadedFixtures = fx;
 		this.user = fx.users.admin;
+		userIdForUnauthorizedRequest = this.user.id;
 	});
 	after(async function () {
 		await supertest(app, this.user).delete(`/resin/api_key`).expect(200);
 		await fixtures.clean(this.loadedFixtures);
 	});
 
-	it('should not allow unauthorized requests', async () => {
-		await supertest(app).post('/api-key/user/full').expect(401);
-	});
+	[
+		{
+			title: 'using the /api-key/user/full endpoint',
+			fn(user: UserObjectParam | undefined, body?: AnyObject) {
+				return supertest(app, user).post(`/api-key/user/full`).send(body);
+			},
+		},
+		{
+			title: 'using the /api-key/v1/ endpoint',
+			fn(user: UserObjectParam | undefined, body?: AnyObject) {
+				return supertest(app, user)
+					.post(`/api-key/v1/`)
+					.send({
+						actorType: 'user',
+						actorTypeId: user?.id ?? userIdForUnauthorizedRequest,
+						roles: ['named-user-api-key'],
+						...body,
+					});
+			},
+		},
+	].forEach(({ title, fn }) => {
+		describe(title, function () {
+			it('should not allow unauthorized requests', async () => {
+				await fn(undefined, undefined).expect(401);
+			});
 
-	it('should not allow requests without name', async function () {
-		await supertest(app, this.user)
-			.post('/api-key/user/full')
-			.send({})
-			.expect(400);
-	});
+			it('should not allow requests without name', async function () {
+				await fn(this.user, {}).expect(400);
+			});
 
-	it('should not allow requests with an empty name', async function () {
-		await supertest(app, this.user)
-			.post('/api-key/user/full')
-			.send({ name: '' })
-			.expect(400);
-	});
+			it('should not allow requests with an empty name', async function () {
+				await fn(this.user, { name: '' }).expect(400);
+			});
 
-	it('should allow api keys without description', async function () {
-		const { body: apiKey } = await supertest(app, this.user)
-			.post('/api-key/user/full')
-			.send({ name: 'some-name' })
-			.expect(200);
+			it('should allow api keys without description', async function () {
+				const { body: apiKey } = await fn(this.user, {
+					name: 'some-name',
+				}).expect(200);
 
-		expect(apiKey).to.be.a('string');
-		expect(apiKey).to.not.be.empty;
-	});
+				expect(apiKey).to.be.a('string');
+				expect(apiKey).to.not.be.empty;
+			});
 
-	it('should allow api keys with description', async function () {
-		const { body: apiKey } = await supertest(app, this.user)
-			.post('/api-key/user/full')
-			.send({ name: 'other-name', description: 'a description' })
-			.expect(200);
+			it('should allow api keys with description', async function () {
+				const { body: apiKey } = await fn(this.user, {
+					name: 'other-name',
+					description: 'a description',
+				}).expect(200);
 
-		expect(apiKey).to.be.a('string');
-		expect(apiKey).to.not.be.empty;
+				expect(apiKey).to.be.a('string');
+				expect(apiKey).to.not.be.empty;
+			});
+		});
 	});
 });
 
@@ -142,14 +229,6 @@ describe('use api key instead of jwt', function () {
 		const fx = await fixtures.load();
 		this.loadedFixtures = fx;
 		this.user = fx.users.admin;
-
-		const { body: namedApiKey } = await supertest(app, this.user)
-			.post('/api-key/user/full')
-			.send({ name: 'named' })
-			.expect(200);
-
-		expect(namedApiKey).to.be.a('string');
-		this.namedApiKey = namedApiKey;
 	});
 
 	after(async function () {
@@ -165,29 +244,6 @@ describe('use api key instead of jwt', function () {
 		expect(status).to.not.equal(401);
 	});
 
-	it('should be able to access an allowed standard endpoint with a named user-level api key', async function () {
-		await supertest(app)
-			.get(`/resin/user(${this.user.id})?$select=username`)
-			.query({ apikey: this.namedApiKey })
-			.expect(200);
-	});
-
-	it('should accept api keys on the Authorization header on standard endpoints', async function () {
-		await supertest(app, this.namedApiKey)
-			.get(`/resin/user(${this.user.id})?$select=username`)
-			.expect(200);
-	});
-
-	it('should return user info', async function () {
-		const { body } = await supertest(app, this.namedApiKey)
-			.get('/user/v1/whoami')
-			.expect(200);
-
-		expect(body).to.have.property('id');
-		expect(body).to.have.property('username');
-		expect(body).to.have.property('email');
-	});
-
 	const RESTRICTED_ENDPOINTS: Array<{
 		method: 'get' | 'post';
 		path: string;
@@ -197,14 +253,72 @@ describe('use api key instead of jwt', function () {
 		{ method: 'post', path: '/api-key/user/full', body: { name: 'aname' } },
 	];
 
-	describe('should correctly control access to named user-level api keys', function () {
-		RESTRICTED_ENDPOINTS.forEach(({ method, path, body }) => {
-			it(`${method} ${path}`, async function () {
+	[
+		{
+			title: 'when generated using the /api-key/user/full endpoint',
+			async beforeFn() {
+				const { body: namedApiKey } = await supertest(app, this.user)
+					.post('/api-key/user/full')
+					.send({ name: 'named' })
+					.expect(200);
+
+				expect(namedApiKey).to.be.a('string');
+				this.namedApiKey = namedApiKey;
+			},
+		},
+		{
+			title: 'when generated using the /api-key/v1/ endpoint',
+			async beforeFn() {
+				const { body: namedApiKey } = await supertest(app, this.user)
+					.post(`/api-key/v1/`)
+					.send({
+						actorType: 'user',
+						actorTypeId: this.user.id,
+						roles: ['named-user-api-key'],
+						name: 'named',
+					});
+
+				expect(namedApiKey).to.be.a('string');
+				this.namedApiKey = namedApiKey;
+			},
+		},
+	].forEach(({ title, beforeFn }) => {
+		describe(title, function () {
+			before(beforeFn);
+
+			it('should be able to access an allowed standard endpoint with a named user-level api key', async function () {
 				await supertest(app)
-					[method](path)
+					.get(`/resin/user(${this.user.id})?$select=username`)
 					.query({ apikey: this.namedApiKey })
-					.send(body)
-					.expect(401);
+					.expect(200);
+			});
+
+			it('should accept api keys on the Authorization header on standard endpoints', async function () {
+				await supertest(app, this.namedApiKey)
+					.get(`/resin/user(${this.user.id})?$select=username`)
+					.expect(200);
+			});
+
+			it('should return user info', async function () {
+				const { body } = await supertest(app, this.namedApiKey)
+					.get('/user/v1/whoami')
+					.expect(200);
+
+				expect(body).to.have.property('id');
+				expect(body).to.have.property('username');
+				expect(body).to.have.property('email');
+			});
+
+			describe('should correctly control access to named user-level api keys', function () {
+				RESTRICTED_ENDPOINTS.forEach(({ method, path, body }) => {
+					it(`${method} ${path}`, async function () {
+						await supertest(app)
+							[method](path)
+							.query({ apikey: this.namedApiKey })
+							.send(body)
+							.expect(401);
+					});
+				});
 			});
 		});
 	});
@@ -304,5 +418,154 @@ describe('standard api key endpoints', async function () {
 			.expect(200);
 
 		expect(body).to.have.property('d').that.has.length(0);
+	});
+});
+
+describe('generic-api-key-endpoint', function () {
+	before(async function () {
+		const fx = await fixtures.load();
+		this.loadedFixtures = fx;
+		this.user = fx.users.admin;
+	});
+
+	after(async function () {
+		await supertest(app, this.user).delete(`/resin/api_key`).expect(200);
+		await fixtures.clean(this.loadedFixtures);
+	});
+
+	describe('parameter checks', function () {
+		it('should reject unauthorized requests', async function () {
+			await supertest(app)
+				.post(`/api-key/v1`)
+				.send({
+					actorType: 'user',
+					actorTypeId: this.user.id,
+					roles: ['named-user-api-key'],
+					name: 'a-different-name',
+				})
+				.expect(401);
+		});
+
+		it('should reject requests for an unsupported actor type', async function () {
+			await supertest(app, this.user)
+				.post(`/api-key/v1`)
+				.send({
+					actorType: 'organization',
+					actorTypeId: this.user.id,
+					roles: ['named-user-api-key'],
+					name: 'a-different-name',
+				})
+				.expect(400, 'Unsupported actor type');
+		});
+
+		it('should reject requests when the actor type id is missing', async function () {
+			await supertest(app, this.user)
+				.post(`/api-key/v1`)
+				.send({
+					actorType: 'user',
+					roles: ['named-user-api-key'],
+					name: 'a-different-name',
+				})
+				.expect(400, 'Actor type id must be a number');
+		});
+
+		it('should reject requests when no roles are provided', async function () {
+			await supertest(app, this.user)
+				.post(`/api-key/v1`)
+				.send({
+					actorType: 'user',
+					actorTypeId: this.user.id,
+					roles: [],
+					name: 'a-different-name',
+				})
+				.expect(400);
+		});
+
+		it('should reject requests when the roles are not an array', async function () {
+			await supertest(app, this.user)
+				.post(`/api-key/v1`)
+				.send({
+					actorType: 'user',
+					actorTypeId: this.user.id,
+					roles: 'named-user-api-key',
+					name: 'a-different-name',
+				})
+				.expect(400, 'Roles should be an array of role names');
+		});
+
+		it('should reject requests when the role is not a non-empty string', async function () {
+			await supertest(app, this.user)
+				.post(`/api-key/v1`)
+				.send({
+					actorType: 'user',
+					actorTypeId: this.user.id,
+					roles: [''],
+					name: 'a-different-name',
+				})
+				.expect(400, 'Roles should be an array of role names');
+
+			await supertest(app, this.user)
+				.post(`/api-key/v1`)
+				.send({
+					actorType: 'user',
+					actorTypeId: this.user.id,
+					roles: [5],
+					name: 'a-different-name',
+				})
+				.expect(400, 'Roles should be an array of role names');
+		});
+
+		it('should reject requests when more than one roles are provided', async function () {
+			await supertest(app, this.user)
+				.post(`/api-key/v1`)
+				.send({
+					actorType: 'user',
+					actorTypeId: this.user.id,
+					roles: ['named-user-api-key', 'provisioning-api-key'],
+					name: 'a-different-name',
+				})
+				.expect(400, 'API Keys currently only support a single role');
+		});
+
+		it('should reject requests for named api keys without a name', async function () {
+			await supertest(app, this.user)
+				.post(`/api-key/v1`)
+				.send({
+					actorType: 'user',
+					actorTypeId: this.user.id,
+					roles: ['named-user-api-key'],
+				})
+				.expect(
+					400,
+					`API keys with the &#39;named-user-api-key&#39; role require a name`,
+				);
+		});
+
+		it('should reject requests for named api keys with an empty name', async function () {
+			await supertest(app, this.user)
+				.post(`/api-key/v1`)
+				.send({
+					actorType: 'user',
+					actorTypeId: this.user.id,
+					roles: ['named-user-api-key'],
+					name: '',
+				})
+				.expect(
+					400,
+					`API keys with the &#39;named-user-api-key&#39; role require a name`,
+				);
+		});
+
+		it('should be able to create a named api key', async function () {
+			await supertest(app, this.user)
+				.post(`/api-key/v1`)
+				.send({
+					actorType: 'user',
+					actorTypeId: this.user.id,
+					roles: ['named-user-api-key'],
+					name: 'a-different-name',
+				})
+				.expect(200);
+		});
 	});
 });

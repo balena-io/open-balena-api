@@ -8,11 +8,28 @@ import {
 } from '../platform/errors';
 
 import {
+	ApiKeyParameters,
+	createGenericApiKey as $createGenericApiKey,
 	createDeviceApiKey as $createDeviceApiKey,
 	createNamedUserApiKey as $createNamedUserApiKey,
 	createProvisioningApiKey as $createProvisioningApiKey,
 	createUserApiKey as $createUserApiKey,
 } from '../lib/api-keys';
+
+export const createGenericApiKey: RequestHandler = async (req, res) => {
+	const body = req.body as ApiKeyParameters;
+
+	try {
+		const apiKey = await $createGenericApiKey(req, body);
+		res.json(apiKey);
+	} catch (err) {
+		if (handleHttpErrors(req, res, err)) {
+			return;
+		}
+		captureException(err, 'Error generating API key', { req });
+		res.status(500).send(translateError(err));
+	}
+};
 
 export const createDeviceApiKey: RequestHandler = async (req, res) => {
 	const deviceId = parseInt(req.params.deviceId, 10);

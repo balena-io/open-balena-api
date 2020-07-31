@@ -7,7 +7,7 @@ import { isJWT } from './jwt';
 
 const { api } = sbvrUtils;
 
-interface ApiKeyOptions {
+export interface ApiKeyOptions {
 	apiKey?: string;
 	name?: string;
 	description?: string;
