@@ -1,4 +1,25 @@
 - commits:
+    - subject: Add a generic endpoint to generate ApiKeys scoped on specific roles
+      hash: 1c93e63b903f22ab51e1d198e0ae918cda74b20d
+      body: ''
+      footer:
+        Connects-to: '#393'
+        connects-to: '#393'
+        Change-type: minor
+        change-type: minor
+        HQ: 'https://github.com/balena-io/balena-io/pull/2226'
+        hq: 'https://github.com/balena-io/balena-io/pull/2226'
+        See: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/bFduRFrd1wEUZmDxFc5FHlGNcxl
+        see: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/bFduRFrd1wEUZmDxFc5FHlGNcxl
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.87.0
+  date: 2020-07-31T13:57:17.979Z
+- commits:
     - subject: Add more info when failing to find a service install
       hash: 44961bd6d9173d4ddaddc9e13419b03a42a25873
       body: ''
