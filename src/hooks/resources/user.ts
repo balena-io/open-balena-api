@@ -3,7 +3,11 @@ import * as Bluebird from 'bluebird';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
 import { createActor } from '../../platform';
-import { getUser, checkSudoValidity } from '../../platform/auth';
+import {
+	getUser,
+	checkSudoValidity,
+	generateNewJwtSecret,
+} from '../../platform/auth';
 import { captureException } from '../../platform/errors';
 import { assignUserRole } from '../../platform/permissions';
 import { UnauthorizedError } from '@balena/pinejs/out/sbvr-api/errors';
@@ -32,6 +36,26 @@ sbvrUtils.addPureHook('POST', 'resin', 'user', {
 			throw new InternalRequestError('Unable to find the default user role');
 		}
 		await assignUserRole(result, role.id, tx);
+	},
+});
+
+sbvrUtils.addPureHook('POST', 'resin', 'user', {
+	/**
+	 * Default the jwt secret on signup
+	 */
+	async POSTPARSE({ request }) {
+		request.values.jwt_secret = await generateNewJwtSecret();
+	},
+});
+
+sbvrUtils.addPureHook('PATCH', 'resin', 'user', {
+	/**
+	 * Logout existing sessions on field changes
+	 */
+	async POSTPARSE({ request }) {
+		if (request.values.password || request.values.username) {
+			request.values.jwt_secret = await generateNewJwtSecret();
+		}
 	},
 });
 

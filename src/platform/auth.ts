@@ -58,15 +58,14 @@ export const validatePassword = (password?: string) => {
 };
 
 // Think twice before using this function as it *unconditionally* sets the
-// password for the given user to the given string. This function will also
-// generate a new token secret, effectively invalidating all current login
-// sessions.
+// password for the given user to the given string. Changing a user password
+// will also generate a new token secret, effectively invalidating all current
+// login sessions.
 export const setPassword = async (
 	user: AnyObject,
 	newPassword: string,
 	tx?: Tx,
 ) => {
-	const newJwtSecret = await generateNewJwtSecret();
 	await api.resin.patch({
 		resource: 'user',
 		id: user.id,
@@ -76,10 +75,6 @@ export const setPassword = async (
 		},
 		body: {
 			password: newPassword,
-			jwt_secret: newJwtSecret,
-			// erase password_reset_code once we have user-provided password
-			password_reset_code: null,
-			can_reset_password_until__expiry_date: null,
 		},
 	});
 };
@@ -422,8 +417,6 @@ export const registerUser = async (
 		throw new ConflictError('This username is already taken');
 	}
 
-	const encodedKey = await generateNewJwtSecret();
-
 	let clientIP;
 	if (req) {
 		clientIP = getIP(req);
@@ -434,7 +427,6 @@ export const registerUser = async (
 		resource: 'user',
 		body: {
 			...userData,
-			jwt_secret: encodedKey,
 		},
 		passthrough: {
 			tx,
