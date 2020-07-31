@@ -115,6 +115,8 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 		apiKeys.createDeviceApiKey,
 	);
 
+	app.post('/api-key/v1', authorized, apiKeys.createGenericApiKey);
+
 	app.get(
 		'/services/vpn/auth/:device_uuid',
 		apiKeyMiddleware,
