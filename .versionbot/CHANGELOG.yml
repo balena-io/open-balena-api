@@ -1,4 +1,20 @@
 - commits:
+    - subject: 'supervisor-release: drop entire resource & references'
+      hash: a80d4b8a3c25ad97ce869c1442323ce6a3fd1974
+      body: |
+        we will move away from a dedicated resource in favor of native releases
+      footer:
+        HQ: 'https://github.com/balena-io/balena-io/pull/2177'
+        hq: 'https://github.com/balena-io/balena-io/pull/2177'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.88.0
+  date: 2020-08-03T13:39:13.722Z
+- commits:
     - subject: Add a generic endpoint to generate ApiKeys scoped on specific roles
       hash: 1c93e63b903f22ab51e1d198e0ae918cda74b20d
       body: ''
