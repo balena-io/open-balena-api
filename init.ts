@@ -3,7 +3,6 @@ import * as express from 'express';
 import * as _ from 'lodash';
 import config = require('./config');
 import { version } from './package.json';
-import { setup } from './src';
 
 async function onInitMiddleware(initApp: express.Application) {
 	const { forwardRequests } = await import('./src/platform/versions');
@@ -13,7 +12,7 @@ async function onInitMiddleware(initApp: express.Application) {
 async function onInitModel() {
 	const { updateOrInsertModel } = await import('./src/platform');
 	const appTypes = await import('./src/lib/application-types');
-	const insert = _.cloneDeep(appTypes.Default);
+	const insert = _.cloneDeep(appTypes.DefaultApplicationType);
 	const filter = { slug: insert.slug };
 	delete insert.slug;
 	await sbvrUtils.db.transaction(async (tx) => {
@@ -23,12 +22,14 @@ async function onInitModel() {
 			insert,
 			tx,
 		);
-		appTypes.Default.id = inserted.id;
+		appTypes.DefaultApplicationType.id = inserted.id;
 	});
 }
 
 async function onInitHooks() {
-	const { createAll } = await import('./src/platform/permissions');
+	const { createAllPermissions: createAll } = await import(
+		'./src/platform/permissions'
+	);
 	const auth = await import('./src/lib/auth');
 	const permissionNames = _.union(
 		_.flatMap(auth.ROLES),
@@ -131,6 +132,7 @@ const init = async () => {
 			console.log('Loading mocks...');
 			await doRunTests.preInit();
 		}
+		const { setup } = await import('./src');
 		const { startServer } = await setup(app, {
 			config,
 			version,

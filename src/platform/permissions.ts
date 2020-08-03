@@ -156,7 +156,7 @@ export interface UserRoleMap {
 	[roleName: string]: EmailSet;
 }
 
-export async function createAll(
+export async function createAllPermissions(
 	tx: Tx,
 	permissionNames: PermissionSet,
 	roleMap: RolePermissionsMap,

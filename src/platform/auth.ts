@@ -165,7 +165,7 @@ export const userFields = [
 
 export const tokenFields = _.clone(userFields);
 
-interface ExtraParams {
+export interface ExtraParams {
 	existingToken?: Partial<User>;
 	jwtOptions?: SignOptions;
 }
@@ -253,22 +253,24 @@ export const updateUserXHR = async (
 export const reqHasPermission = (req: Request, permission: string): boolean =>
 	userHasPermission(req.apiKey || req.user, permission);
 
-const getUserQuery = api.resin.prepare<{ key: string }>({
-	resource: 'user',
-	passthrough: { req: permissions.root },
-	options: {
-		$select: userFields,
-		$filter: {
-			actor: {
-				$any: {
-					$alias: 'a',
-					$expr: {
-						a: {
-							api_key: {
-								$any: {
-									$alias: 'k',
-									$expr: {
-										k: { key: { '@': 'key' } },
+const getUserQuery = _.once(() =>
+	api.resin.prepare<{ key: string }>({
+		resource: 'user',
+		passthrough: { req: permissions.root },
+		options: {
+			$select: userFields,
+			$filter: {
+				actor: {
+					$any: {
+						$alias: 'a',
+						$expr: {
+							a: {
+								api_key: {
+									$any: {
+										$alias: 'k',
+										$expr: {
+											k: { key: { '@': 'key' } },
+										},
 									},
 								},
 							},
@@ -276,10 +278,10 @@ const getUserQuery = api.resin.prepare<{ key: string }>({
 					},
 				},
 			},
+			$top: 1,
 		},
-		$top: 1,
-	},
-});
+	}),
+);
 export function getUser(
 	req: Request | sbvrUtils.HookReq,
 	required?: true,
@@ -321,7 +323,7 @@ export async function getUser(
 		return;
 	}
 
-	const [user] = (await getUserQuery({ key })) as AnyObject[];
+	const [user] = (await getUserQuery()({ key })) as AnyObject[];
 	if (user) {
 		// Store it in `req` to be compatible with JWTs and for caching
 		req.user = req.creds = _.pick(user, userFields) as User;

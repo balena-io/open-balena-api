@@ -13,7 +13,7 @@ export const RESERVED_NAMESPACES = ['RESIN_', 'BALENA_'];
 // Config variables that are allowed to be set externally
 // Note that this list will be mutated by the cloud API to add
 // extra variables as for cloud-only features.
-export const WHITELISTED_NAMES = [
+export const ALLOWED_NAMES = [
 	'RESIN_APP_RESTART_POLICY',
 	'RESIN_APP_RESTART_RETRIES',
 	'RESIN_DEPENDENT_DEVICES_HOOK_ADDRESS',
@@ -41,17 +41,17 @@ export const WHITELISTED_NAMES = [
 ];
 
 // Config variable namespaces that are allowed to be set by frontend components
-export const WHITELISTED_NAMESPACES = [
+export const ALLOWED_NAMESPACES = [
 	'RESIN_HOST_',
 	'RESIN_UI_',
 	'BALENA_HOST_',
 	'BALENA_UI_',
 ];
 
-// These env vars are whitelisted in the API but are set by other means
+// These env vars are allowed in the API but are set by other means
 // (i.e. not directly as env vars from a frontend componenent).
 // users must be blocked from setting them and they should be filtered out on display.
-export const BLACKLISTED_NAMES = [
+export const BLOCKED_NAMES = [
 	'RESIN_RESTART',
 	'RESIN_DEVICE_RESTART',
 	'RESIN_OVERRIDE_LOCK',

@@ -18,7 +18,7 @@ export interface ApplicationType {
 	description: string;
 }
 
-export const Default: ApplicationType = {
+export const DefaultApplicationType: ApplicationType = {
 	name: 'Default',
 	slug: 'default',
 	supports_web_url: false,

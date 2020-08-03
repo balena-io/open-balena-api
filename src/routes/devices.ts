@@ -294,102 +294,104 @@ const releaseExpand = {
 		},
 	},
 };
-const stateQuery = api.resin.prepare<{ uuid: string }>({
-	resource: 'device',
-	id: { uuid: { '@': 'uuid' } },
-	options: {
-		$select: ['device_name', 'os_version'],
-		$expand: {
-			device_config_variable: {
-				$select: ['name', 'value'],
-				$orderby: {
-					name: 'asc',
-				},
-			},
-			device_environment_variable: {
-				$select: ['name', 'value'],
-			},
-			should_be_running__release: releaseExpand,
-			service_install: {
-				$select: ['id'],
-				$expand: {
-					service: {
-						$select: ['id', 'service_name'],
-						$expand: {
-							service_environment_variable: {
-								$select: ['name', 'value'],
-							},
-							service_label: {
-								$select: ['label_name', 'value'],
-							},
-						},
-					},
-					device_service_environment_variable: {
-						$select: ['name', 'value'],
+const stateQuery = _.once(() =>
+	api.resin.prepare<{ uuid: string }>({
+		resource: 'device',
+		id: { uuid: { '@': 'uuid' } },
+		options: {
+			$select: ['device_name', 'os_version'],
+			$expand: {
+				device_config_variable: {
+					$select: ['name', 'value'],
+					$orderby: {
+						name: 'asc',
 					},
 				},
-			},
-			belongs_to__application: {
-				$select: ['id', 'app_name'],
-				$expand: {
-					application_config_variable: {
-						$select: ['name', 'value'],
-						$orderby: {
-							name: 'asc',
-						},
-					},
-					application_environment_variable: {
-						$select: ['name', 'value'],
-					},
-					is_depended_on_by__application: {
-						$select: ['id', 'app_name'],
-						$expand: {
-							application_config_variable: {
-								$select: ['name', 'value'],
-								$orderby: {
-									name: 'asc',
+				device_environment_variable: {
+					$select: ['name', 'value'],
+				},
+				should_be_running__release: releaseExpand,
+				service_install: {
+					$select: ['id'],
+					$expand: {
+						service: {
+							$select: ['id', 'service_name'],
+							$expand: {
+								service_environment_variable: {
+									$select: ['name', 'value'],
+								},
+								service_label: {
+									$select: ['label_name', 'value'],
 								},
 							},
-							application_environment_variable: {
-								$select: ['name', 'value'],
-							},
-							should_be_running__release: releaseExpand,
+						},
+						device_service_environment_variable: {
+							$select: ['name', 'value'],
 						},
 					},
-					should_be_running__release: releaseExpand,
 				},
-			},
-			manages__device: {
-				$select: ['uuid', 'device_name', 'belongs_to__application'],
-				$expand: {
-					service_install: {
-						$select: ['id'],
-						$top: 1,
-						$expand: {
-							device_service_environment_variable: {
-								$select: ['name', 'value'],
+				belongs_to__application: {
+					$select: ['id', 'app_name'],
+					$expand: {
+						application_config_variable: {
+							$select: ['name', 'value'],
+							$orderby: {
+								name: 'asc',
 							},
-							service: {
-								$select: ['id'],
-								$expand: {
-									service_environment_variable: {
-										$select: ['name', 'value'],
+						},
+						application_environment_variable: {
+							$select: ['name', 'value'],
+						},
+						is_depended_on_by__application: {
+							$select: ['id', 'app_name'],
+							$expand: {
+								application_config_variable: {
+									$select: ['name', 'value'],
+									$orderby: {
+										name: 'asc',
+									},
+								},
+								application_environment_variable: {
+									$select: ['name', 'value'],
+								},
+								should_be_running__release: releaseExpand,
+							},
+						},
+						should_be_running__release: releaseExpand,
+					},
+				},
+				manages__device: {
+					$select: ['uuid', 'device_name', 'belongs_to__application'],
+					$expand: {
+						service_install: {
+							$select: ['id'],
+							$top: 1,
+							$expand: {
+								device_service_environment_variable: {
+									$select: ['name', 'value'],
+								},
+								service: {
+									$select: ['id'],
+									$expand: {
+										service_environment_variable: {
+											$select: ['name', 'value'],
+										},
 									},
 								},
 							},
 						},
-					},
-					device_config_variable: {
-						$select: ['name', 'value'],
-					},
-					device_environment_variable: {
-						$select: ['name', 'value'],
+						device_config_variable: {
+							$select: ['name', 'value'],
+						},
+						device_environment_variable: {
+							$select: ['name', 'value'],
+						},
 					},
 				},
 			},
 		},
-	},
-});
+	}),
+);
 
 export const state: RequestHandler = async (req, res) => {
 	const uuid = req.param('uuid');
@@ -399,7 +401,7 @@ export const state: RequestHandler = async (req, res) => {
 
 	try {
 		const device = (await sbvrUtils.db.readTransaction!((tx) =>
-			stateQuery({ uuid }, undefined, { req, tx }),
+			stateQuery()({ uuid }, undefined, { req, tx }),
 		)) as AnyObject;
 
 		if (!device) {

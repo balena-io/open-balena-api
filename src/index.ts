@@ -30,6 +30,181 @@ import {
 
 import * as _applicationRoutes from './routes/applications';
 
+import {
+	captureException,
+	handleHttpErrors,
+	translateError,
+} from './platform/errors';
+import {
+	findUser,
+	getUser,
+	reqHasPermission,
+	setUserTokenDataCallback,
+	tokenFields,
+	userFields,
+	userHasPermission,
+	comparePassword,
+	generateNewJwtSecret,
+	loginUserXHR,
+	registerUser,
+	setPassword,
+	updateUserXHR,
+	validatePassword,
+	sudoMiddleware,
+	checkUserPassword,
+	createSessionToken,
+} from './platform/auth';
+import {
+	createAllPermissions,
+	setApiKey,
+	getOrInsertPermissionId,
+	assignRolePermission,
+	getOrInsertRoleId,
+	assignUserPermission,
+	assignUserRole,
+} from './platform/permissions';
+import { createScopedAccessToken, createJwt } from './platform/jwt';
+import {
+	authenticated,
+	authorized,
+	apiKeyMiddleware,
+	gracefullyDenyDeletedDevices,
+	identify,
+	permissionRequired,
+	registerDeviceStateEvent,
+} from './platform/middleware';
+import {
+	addDeleteHookForDependents,
+	updateOrInsertModel,
+	getOrInsertModelId,
+} from './platform';
+import { loginRateLimiter } from './routes';
+import {
+	getIP,
+	getIPv4,
+	isValidInteger,
+	varListInsert,
+	throttledForEach,
+} from './lib/utils';
+import {
+	createRateLimitMiddleware,
+	getUserIDFromCreds,
+} from './lib/rate-limiting';
+import {
+	getAccessibleDeviceTypes,
+	findBySlug,
+	setSyncMap,
+	getDeviceTypeIdBySlug,
+} from './lib/device-types';
+import { proxy as supervisorProxy } from './lib/device-proxy';
+import { generateConfig } from './lib/device-config';
+import {
+	filterDeviceConfig,
+	formatImageLocation,
+	getReleaseForDevice,
+	serviceInstallFromImage,
+	setMinPollInterval,
+} from './lib/device-state';
+import {
+	getPollInterval,
+	getInstance as getDeviceOnlineStateManager,
+} from './lib/device-online-state';
+import { registryAuth } from './lib/certs';
+import {
+	ALLOWED_NAMES,
+	BLOCKED_NAMES,
+	SUPERVISOR_CONFIG_VAR_PROPERTIES,
+} from './lib/env-vars';
+import * as baseAuth from './lib/auth';
+
+export type { Creds, User } from './platform/jwt';
+export type { Access } from './routes/registry';
+export type { ApplicationType } from './lib/application-types';
+export type { DeviceType } from './lib/device-types';
+
+export { DefaultApplicationType } from './lib/application-types';
+export * as request from './lib/request';
+export * as config from './lib/config';
+export * as abstractSql from './abstract-sql-utils';
+
+export const errors = { captureException, handleHttpErrors, translateError };
+export const auth = {
+	...baseAuth,
+	findUser,
+	getUser,
+	reqHasPermission,
+	setUserTokenDataCallback,
+	tokenFields,
+	userFields,
+	userHasPermission,
+	comparePassword,
+	generateNewJwtSecret,
+	loginUserXHR,
+	registerUser,
+	setPassword,
+	updateUserXHR,
+	validatePassword,
+	checkUserPassword,
+	createSessionToken,
+	createScopedAccessToken,
+	createJwt,
+	createAllPermissions,
+	setApiKey,
+	getOrInsertPermissionId,
+	assignRolePermission,
+	getOrInsertRoleId,
+	assignUserPermission,
+	assignUserRole,
+	getUserIDFromCreds,
+	registryAuth,
+};
+export const middleware = {
+	sudoMiddleware,
+	authenticated,
+	authorized,
+	apiKeyMiddleware,
+	gracefullyDenyDeletedDevices,
+	identify,
+	permissionRequired,
+	registerDeviceStateEvent,
+	loginRateLimiter,
+	createRateLimitMiddleware,
+};
+export const hooks = {
+	addDeleteHookForDependents,
+};
+export const utils = {
+	updateOrInsertModel,
+	getOrInsertModelId,
+	getIP,
+	getIPv4,
+	isValidInteger,
+	varListInsert,
+	throttledForEach,
+};
+export const device = {
+	supervisorProxy,
+	generateConfig,
+	filterDeviceConfig,
+	formatImageLocation,
+	getReleaseForDevice,
+	serviceInstallFromImage,
+	setMinPollInterval,
+	getPollInterval,
+};
+export const deviceTypes = {
+	getAccessibleDeviceTypes,
+	findBySlug,
+	setSyncMap,
+	getDeviceTypeIdBySlug,
+	getDeviceOnlineStateManager,
+};
+export const envVarsConfig = {
+	ALLOWED_NAMES,
+	BLOCKED_NAMES,
+	SUPERVISOR_CONFIG_VAR_PROPERTIES,
+};
+
 export const AUTH_PATH = '/auth';
 
 export type SetupFunction = (app: Application) => void | PromiseLike<void>;

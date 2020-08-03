@@ -3,7 +3,7 @@ import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import { addDeleteHookForDependents, createActor } from '../../platform';
 import { captureException } from '../../platform/errors';
 
-import { Default as DefaultApplicationType } from '../../lib/application-types';
+import { DefaultApplicationType } from '../../lib/application-types';
 import { postDevices } from '../../lib/device-proxy';
 import { resolveDeviceType } from '../common';
 

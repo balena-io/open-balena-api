@@ -2,14 +2,14 @@ import type { RequestHandler } from 'express';
 import type { JSONSchema6 } from 'json-schema';
 
 import {
-	BLACKLISTED_NAMES,
+	BLOCKED_NAMES,
 	DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES,
 	INVALID_CHARACTER_REGEX,
 	RESERVED_NAMES,
 	RESERVED_NAMESPACES,
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
-	WHITELISTED_NAMES,
-	WHITELISTED_NAMESPACES,
+	ALLOWED_NAMES,
+	ALLOWED_NAMESPACES,
 } from '../lib/env-vars';
 
 // Return config variable constants for use by external components.
@@ -32,9 +32,9 @@ export const vars: RequestHandler = (req, res) => {
 		reservedNames: RESERVED_NAMES,
 		reservedNamespaces: RESERVED_NAMESPACES,
 		invalidRegex: INVALID_CHARACTER_REGEX.toString(),
-		whiteListedNames: WHITELISTED_NAMES,
-		whiteListedNamespaces: WHITELISTED_NAMESPACES,
-		blackListedNames: BLACKLISTED_NAMES,
+		whiteListedNames: ALLOWED_NAMES,
+		whiteListedNamespaces: ALLOWED_NAMESPACES,
+		blackListedNames: BLOCKED_NAMES,
 		configVarSchema: schema,
 	};
 
