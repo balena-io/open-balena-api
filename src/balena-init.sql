@@ -51,12 +51,6 @@ CREATE INDEX IF NOT EXISTS "device_is_running_release_idx"
 ON "device" ("is running-release");
 CREATE INDEX IF NOT EXISTS "device_should_be_running_release_idx"
 ON "device" ("should be running-release");
--- Also optimizes the rule `It is necessary that each device that should be
--- managed by a supervisor release, should be managed by a supervisor release
--- that is for a device type that describes the device.`
--- as it relies heavily on these two columns
-CREATE INDEX IF NOT EXISTS "device_supervisor_release_device_type_idx"
-ON "device" ("should be managed by-supervisor release", "is of-device type");
 
 -- "device config variable"."device" is the first part of an automated unique index
 
@@ -110,9 +104,6 @@ ON "release" ("belongs to-application", "commit", "status");
 -- "service install"."device" is the first part of an automated unique index
 CREATE INDEX IF NOT EXISTS "service_install_service_idx"
 ON "service install" ("installs-service");
-
-CREATE INDEX IF NOT EXISTS "supervisor_release_device_type_idx"
-ON "supervisor release" ("is for-device type");
 
 CREATE INDEX IF NOT EXISTS "user_actor_idx"
 ON "user" ("actor");
