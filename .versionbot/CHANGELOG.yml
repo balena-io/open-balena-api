@@ -1,4 +1,17 @@
 - commits:
+    - subject: Remove unused return value when resolving device type
+      hash: a6f070b696cdda5558243fda013553487342efc5
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.89.0
+  date: 2020-08-04T10:52:38.300Z
+- commits:
     - subject: Fix accidentally removed await
       hash: ec4ce5dd0d4e6478c0e4b6b897955a26415a2665
       body: ''
