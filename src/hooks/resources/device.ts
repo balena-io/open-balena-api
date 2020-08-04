@@ -313,6 +313,8 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
 					),
 			);
 		}
+
+		await Promise.all(waitPromises);
 	},
 	POSTRUN: async (args) => {
 		const waitPromises: Array<PromiseLike<any>> = [];
