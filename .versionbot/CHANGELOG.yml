@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix accidentally removed await
+      hash: ec4ce5dd0d4e6478c0e4b6b897955a26415a2665
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.88.1
+  date: 2020-08-04T09:38:20.406Z
+- commits:
     - subject: 'supervisor-release: drop entire resource & references'
       hash: a80d4b8a3c25ad97ce869c1442323ce6a3fd1974
       body: |
