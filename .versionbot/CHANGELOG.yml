@@ -1,4 +1,15 @@
 - commits:
+    - subject: Ensure user modification side-effects via a hook
+      hash: a1c2e6c550ba74d10c898806e0a9161c31d023da
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.90.0
+  date: 2020-08-04T15:40:09.106Z
+- commits:
     - subject: Remove unused return value when resolving device type
       hash: a6f070b696cdda5558243fda013553487342efc5
       body: ''
