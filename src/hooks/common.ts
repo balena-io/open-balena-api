@@ -6,7 +6,7 @@ export const resolveDeviceType = async (
 	api: sbvrUtils.PinejsClient,
 	request: sbvrUtils.HookRequest,
 	fkValue: string,
-): Promise<deviceTypes.DeviceType> => {
+): Promise<void> => {
 	if (request.values.device_type != null && request.values[fkValue] == null) {
 		// translate device_type to is_for__device_type
 		const dtBySlug = await deviceTypes.getDeviceTypeIdBySlug(
@@ -36,5 +36,4 @@ export const resolveDeviceType = async (
 	}
 	// set device_type_slug in case the FK column was used.
 	request.values.device_type = dt.slug;
-	return await deviceTypes.findBySlug(api, dt.slug);
 };
