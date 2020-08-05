@@ -53,7 +53,10 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'user', {
 	 * Logout existing sessions on field changes
 	 */
 	async POSTPARSE({ request }) {
-		if (request.values.password || request.values.username) {
+		if (
+			request.values.password !== undefined ||
+			request.values.username !== undefined
+		) {
 			request.values.jwt_secret = await generateNewJwtSecret();
 		}
 	},
