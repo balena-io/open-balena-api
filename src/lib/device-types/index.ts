@@ -6,6 +6,7 @@ import * as deviceTypesLib from '@resin.io/device-types';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 import type { Filter, ODataOptions } from 'pinejs-client-core';
+const { InternalRequestError } = errors;
 
 import { captureException } from '../../platform/errors';
 
@@ -16,26 +17,15 @@ import {
 	getLogoUrl,
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
+import {
+	UnknownDeviceTypeError,
+	InvalidDeviceTypeError,
+	UnknownVersionError,
+} from '../errors';
 
 const { api } = sbvrUtils;
-const { BadRequestError, InternalRequestError, NotFoundError } = errors;
-export type { BadRequestError, NotFoundError };
 
 export type DeviceType = deviceTypesLib.DeviceType;
-
-export class InvalidDeviceTypeError extends BadRequestError {}
-
-export class UnknownDeviceTypeError extends NotFoundError {
-	constructor(slug: string) {
-		super(`Unknown device type ${slug}`);
-	}
-}
-
-export class UnknownVersionError extends NotFoundError {
-	constructor(slug: string, buildId: string) {
-		super(`Device ${slug} not found for ${buildId} version`);
-	}
-}
 
 interface BuildInfo {
 	ignored: boolean;
