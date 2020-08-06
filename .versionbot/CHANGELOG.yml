@@ -1,4 +1,15 @@
 - commits:
+    - subject: Move `getDeviceOnlineStateManager` to devices export
+      hash: 343377ebc3e775b91e5465836988b36e3706b287
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.92.0
+  date: 2020-08-06T13:21:47.546Z
+- commits:
     - subject: Export useful functions so that they are directly accessible on import
       hash: 8ab8bd7d74ec5bcad2310bf30c2ca9e8c8f96c34
       body: ''
