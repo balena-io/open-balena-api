@@ -191,13 +191,13 @@ export const device = {
 	serviceInstallFromImage,
 	setMinPollInterval,
 	getPollInterval,
+	getDeviceOnlineStateManager,
 };
 export const deviceTypes = {
 	getAccessibleDeviceTypes,
 	findBySlug,
 	setSyncMap,
 	getDeviceTypeIdBySlug,
-	getDeviceOnlineStateManager,
 };
 export const envVarsConfig = {
 	ALLOWED_NAMES,
