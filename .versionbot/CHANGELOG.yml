@@ -1,4 +1,15 @@
 - commits:
+    - subject: Export useful functions so that they are directly accessible on import
+      hash: 8ab8bd7d74ec5bcad2310bf30c2ca9e8c8f96c34
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.91.0
+  date: 2020-08-06T11:48:19.740Z
+- commits:
     - subject: Improve checks for if a user field is being modified
       hash: 88ee5ce76eed08e8c67f9cd07e80d9c6ce28f69c
       body: ''
