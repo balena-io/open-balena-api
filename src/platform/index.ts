@@ -5,10 +5,6 @@ import type { FilterObj } from 'pinejs-client-core';
 
 import { captureException } from './errors';
 
-if (sbvrUtils.db.readTransaction == null) {
-	throw new Error('`readTransaction` is unsupported');
-}
-
 // TODO: Potential races here. They are unlikely but not impossible. Will fix
 // in subsequent PR.
 const $getOrInsertId = async (

@@ -7,52 +7,59 @@ import {
 	handleHttpErrors,
 	translateError,
 } from '../platform/errors';
+import { once } from 'lodash';
 
 const { api } = sbvrUtils;
 
-const authQuery = api.resin.prepare<{ uuid: string }>({
-	resource: 'device',
-	id: {
-		uuid: { '@': 'uuid' },
-	},
-	options: {
-		$select: 'id',
-	},
-});
-const clientConnectQuery = api.resin.prepare<{ uuid: string }>({
-	method: 'PATCH',
-	resource: 'device',
-	id: {
-		uuid: { '@': 'uuid' },
-	},
-	body: {
-		is_connected_to_vpn: true,
-	},
-});
-const clientDisconnectQuery = api.resin.prepare<{
-	uuid: string;
-	serviceId: number;
-}>({
-	method: 'PATCH',
-	resource: 'device',
-	id: {
-		uuid: { '@': 'uuid' },
-	},
-	options: {
-		$filter: {
-			// Only disconnect if still managed by this vpn
-			is_managed_by__service_instance: { '@': 'serviceId' },
+const authQuery = once(() =>
+	api.resin.prepare<{ uuid: string }>({
+		resource: 'device',
+		id: {
+			uuid: { '@': 'uuid' },
 		},
-	},
-	body: {
-		is_connected_to_vpn: false,
-		vpn_address: null,
-	},
-});
+		options: {
+			$select: 'id',
+		},
+	}),
+);
+const clientConnectQuery = once(() =>
+	api.resin.prepare<{ uuid: string }>({
+		method: 'PATCH',
+		resource: 'device',
+		id: {
+			uuid: { '@': 'uuid' },
+		},
+		body: {
+			is_connected_to_vpn: true,
+		},
+	}),
+);
+const clientDisconnectQuery = once(() =>
+	api.resin.prepare<{
+		uuid: string;
+		serviceId: number;
+	}>({
+		method: 'PATCH',
+		resource: 'device',
+		id: {
+			uuid: { '@': 'uuid' },
+		},
+		options: {
+			$filter: {
+				// Only disconnect if still managed by this vpn
+				is_managed_by__service_instance: { '@': 'serviceId' },
+			},
+		},
+		body: {
+			is_connected_to_vpn: false,
+			vpn_address: null,
+		},
+	}),
+);
 export const vpn = {
 	authDevice: async (req: Request, res: Response): Promise<void> => {
 		try {
-			const device = (await authQuery(
+			const device = (await authQuery()(
 				{ uuid: req.param('device_uuid') },
 				undefined,
 				{ req },
@@ -88,7 +95,7 @@ export const vpn = {
 		}
 
 		try {
-			await clientConnectQuery(
+			await clientConnectQuery()(
 				{ uuid: body.common_name },
 				{
 					vpn_address: body.virtual_address,
@@ -118,7 +125,7 @@ export const vpn = {
 		}
 
 		try {
-			await clientDisconnectQuery(
+			await clientDisconnectQuery()(
 				{ uuid: body.common_name, serviceId: body.service_id },
 				undefined,
 				{ req },
