@@ -235,7 +235,10 @@ export async function requestDevices({
 		devices,
 		DELAY_BETWEEN_DEVICE_REQUEST,
 		async (device) => {
-			const vpnIp = device.is_managed_by__service_instance[0].ip_address;
+			let vpnIp = device.is_managed_by__service_instance[0].ip_address;
+			if (vpnIp.includes(':')) {
+				vpnIp = `[${vpnIp}]`;
+			}
 			const deviceUrl = `http://${device.uuid}.balena:${
 				device.api_port || 80
 			}${url}?apikey=${device.api_secret}`;
