@@ -1,4 +1,15 @@
 - commits:
+    - subject: Skip trying to provision online dependent devices if there are none
+      hash: 4131b67e8661ac3afe76d88562e360f784cc6785
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.92.4
+  date: 2020-08-07T11:27:30.071Z
+- commits:
     - subject: Validate service instance ip address
       hash: eebdeae81a9f7b51e827e4009649645f324849db
       body: ''
