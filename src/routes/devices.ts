@@ -169,43 +169,45 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 		await sbvrUtils.db.transaction(async (tx) => {
 			const resinApiTx = api.resin.clone({ passthrough: { tx, req } });
 
-			// Get all dependent devices matching those we're receiving,
-			// so we can figure out which need to be provisioned
-			const devices = (await resinApiTx.get({
-				resource: 'device',
-				options: {
-					$select: 'local_id',
-					$filter: {
-						belongs_to__application: dependent_app,
-						local_id: { $in: online_dependent_devices },
-					},
-				},
-			})) as Array<{ local_id: string }>;
-			// Get the local_id for each dependent device that needs to be provisioned
-			const toBeProvisioned = _.difference(
-				online_dependent_devices,
-				devices.map(({ local_id }) => local_id),
-			);
-			await Promise.all(
-				toBeProvisioned.map(async (localId) => {
-					// Provision new dependent devices
-					await resinApiTx.post({
-						resource: 'device',
-						body: {
-							uuid: randomstring.generate({ length: 62, charset: 'hex' }),
-							belongs_to__user: user,
+			if (online_dependent_devices.length > 0) {
+				// Get all dependent devices matching those we're receiving,
+				// so we can figure out which need to be provisioned
+				const devices = (await resinApiTx.get({
+					resource: 'device',
+					options: {
+						$select: 'local_id',
+						$filter: {
 							belongs_to__application: dependent_app,
-							device_type: dependent_device_type,
-							local_id: localId,
-							logs_channel: randomstring.generate({
-								length: 62,
-								charset: 'hex',
-							}),
+							local_id: { $in: online_dependent_devices },
 						},
-						options: { returnResource: false },
-					});
-				}),
-			);
+					},
+				})) as Array<{ local_id: string }>;
+				// Get the local_id for each dependent device that needs to be provisioned
+				const toBeProvisioned = _.difference(
+					online_dependent_devices,
+					devices.map(({ local_id }) => local_id),
+				);
+				await Promise.all(
+					toBeProvisioned.map(async (localId) => {
+						// Provision new dependent devices
+						await resinApiTx.post({
+							resource: 'device',
+							body: {
+								uuid: randomstring.generate({ length: 62, charset: 'hex' }),
+								belongs_to__user: user,
+								belongs_to__application: dependent_app,
+								device_type: dependent_device_type,
+								local_id: localId,
+								logs_channel: randomstring.generate({
+									length: 62,
+									charset: 'hex',
+								}),
+							},
+							options: { returnResource: false },
+						});
+					}),
+				);
+			}
 			// Set all dependent devices currently being managed by
 			// this gateway to unmanaged
 			await resinApiTx.patch({
@@ -223,7 +225,7 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 				},
 			});
 
-			if (!_.isEmpty(online_dependent_devices)) {
+			if (online_dependent_devices.length > 0) {
 				// Set all dependent devices that are in online_dependent_devices
 				// and unmanaged to managed
 				await resinApiTx.patch({
