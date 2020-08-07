@@ -1,4 +1,15 @@
 - commits:
+    - subject: Avoid fetching unnecessary device info in /dependent/v1/scan
+      hash: a267a72e8c2a8d2d665a038aa593526fbb7229a8
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.92.1
+  date: 2020-08-07T09:11:49.851Z
+- commits:
     - subject: Move `getDeviceOnlineStateManager` to devices export
       hash: 343377ebc3e775b91e5465836988b36e3706b287
       body: ''
