@@ -155,7 +155,8 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 		}
 		if (
 			online_dependent_devices == null ||
-			!Array.isArray(online_dependent_devices)
+			!Array.isArray(online_dependent_devices) ||
+			online_dependent_devices.some((localId) => typeof localId !== 'string')
 		) {
 			throw new BadRequestError(
 				'online_dependent_devices not found or invalid',
@@ -168,17 +169,18 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 		await sbvrUtils.db.transaction(async (tx) => {
 			const resinApiTx = api.resin.clone({ passthrough: { tx, req } });
 
-			// Get all existing dependent devices, these are used figure out
-			// which of the online_dependent_devices needs to be provisioned
+			// Get all dependent devices matching those we're receiving,
+			// so we can figure out which need to be provisioned
 			const devices = (await resinApiTx.get({
 				resource: 'device',
 				options: {
 					$select: 'local_id',
 					$filter: {
 						belongs_to__application: dependent_app,
+						local_id: { $in: online_dependent_devices },
 					},
 				},
-			})) as AnyObject[];
+			})) as Array<{ local_id: string }>;
 			// Get the local_id for each dependent device that needs to be provisioned
 			const toBeProvisioned = _.difference(
 				online_dependent_devices,
