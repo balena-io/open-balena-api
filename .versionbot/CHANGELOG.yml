@@ -1,4 +1,15 @@
 - commits:
+    - subject: Validate service instance ip address
+      hash: eebdeae81a9f7b51e827e4009649645f324849db
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.92.3
+  date: 2020-08-07T10:19:30.354Z
+- commits:
     - subject: Add support for ipv6 vpn addresses
       hash: 3a9e033e63316742dfb03d780c539138254e166b
       body: ''
