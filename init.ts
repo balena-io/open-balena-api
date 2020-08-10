@@ -38,9 +38,8 @@ async function onInitHooks() {
 		_.flatMap(auth.ROLES),
 		_.flatMap(auth.KEYS, 'permissions'),
 	);
-	const { setSyncMap, getAccessibleDeviceTypes } = await import(
-		'./src/lib/device-types'
-	);
+	const { setSyncMap } = await import('./src/lib/device-types/sync');
+	const { getAccessibleDeviceTypes } = await import('./src/lib/device-types');
 	setSyncMap({
 		name: { name: 'name' },
 	});

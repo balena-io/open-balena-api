@@ -93,9 +93,12 @@ import {
 import {
 	getAccessibleDeviceTypes,
 	findBySlug,
-	setSyncMap,
 	getDeviceTypeIdBySlug,
 } from './lib/device-types';
+import {
+	setSyncMap,
+	startDeviceTypeSynchronization,
+} from './lib/device-types/sync';
 import { proxy as supervisorProxy } from './lib/device-proxy';
 import { generateConfig } from './lib/device-config';
 import {
@@ -308,6 +311,8 @@ export async function setup(app: Application, options: SetupOptions) {
 
 	// start consuming the API heartbeat state queue...
 	deviceOnlineState.getInstance().start();
+
+	startDeviceTypeSynchronization();
 
 	return {
 		app,
