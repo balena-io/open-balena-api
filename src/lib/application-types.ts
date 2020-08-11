@@ -53,23 +53,25 @@ export const checkDevicesCanHaveDeviceURL = async (
 	if (deviceIDs.length === 0) {
 		return;
 	}
-	const violators = (await api.get({
-		resource: 'application_type/$count',
+	const violators = await api.get({
+		resource: 'application_type',
 		options: {
-			$top: 1,
-			$select: 'supports_web_url',
-			$filter: {
-				is_of__application: {
-					$any: {
-						$alias: 'a',
-						$expr: {
-							a: {
-								owns__device: {
-									$any: {
-										$alias: 'd',
-										$expr: {
-											d: {
-												id: { $in: deviceIDs },
+			$count: {
+				$top: 1,
+				$select: 'supports_web_url',
+				$filter: {
+					is_of__application: {
+						$any: {
+							$alias: 'a',
+							$expr: {
+								a: {
+									owns__device: {
+										$any: {
+											$alias: 'd',
+											$expr: {
+												d: {
+													id: { $in: deviceIDs },
+												},
 											},
 										},
 									},
@@ -77,11 +79,11 @@ export const checkDevicesCanHaveDeviceURL = async (
 							},
 						},
 					},
+					supports_web_url: false,
 				},
-				supports_web_url: false,
 			},
 		},
-	})) as number;
+	});
 
 	if (violators > 0) {
 		throw new WebUrlNotSupportedError();

@@ -17,14 +17,16 @@ sbvrUtils.addPureHook('POST', 'resin', 'image', {
 				(await pseudoRandomBytesAsync(16)).toString('hex').toLowerCase();
 
 			const count = await api.get({
-				resource: 'image/$count',
+				resource: 'image',
 				passthrough: {
 					tx,
 					req: permissions.root,
 				},
 				options: {
-					$filter: {
-						is_stored_at__image_location: candidate,
+					$count: {
+						$filter: {
+							is_stored_at__image_location: candidate,
+						},
 					},
 				},
 			});
