@@ -59,11 +59,11 @@ const clientDisconnectQuery = once(() =>
 export const vpn = {
 	authDevice: async (req: Request, res: Response): Promise<void> => {
 		try {
-			const device = (await authQuery()(
+			const device = await authQuery()(
 				{ uuid: req.param('device_uuid') },
 				undefined,
 				{ req },
-			)) as AnyObject;
+			);
 			// for now, if the api key is able to read the device,
 			// it has vpn access
 			if (device) {

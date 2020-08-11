@@ -56,7 +56,7 @@ const getOrInsertApiKey = async (
 			req: permissions.root,
 		},
 	});
-	const apiKeys = (await authApiTx.get({
+	const apiKeys = await authApiTx.get({
 		resource: 'api_key',
 		options: {
 			$select: ['id', 'key'],
@@ -72,7 +72,7 @@ const getOrInsertApiKey = async (
 				},
 			},
 		},
-	})) as AnyObject[];
+	});
 	const len = apiKeys.length;
 
 	if (len === 0) {
@@ -205,7 +205,7 @@ export async function createAllPermissions(
 				_.pick(await permissionsCache, rolePermissionNames),
 			);
 			const addPermissionsPromise = (async () => {
-				const rolePermissions = (await apiTx.get({
+				const rolePermissions = await apiTx.get({
 					resource: 'role__has__permission',
 					options: {
 						$select: 'permission',
@@ -214,7 +214,7 @@ export async function createAllPermissions(
 							permission: { $in: perms },
 						},
 					},
-				})) as AnyObject[];
+				});
 				const rolePermissionIds: number[] = rolePermissions.map(
 					({ permission }) => permission.__id,
 				);

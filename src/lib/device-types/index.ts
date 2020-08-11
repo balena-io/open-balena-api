@@ -185,7 +185,7 @@ async function updateDTModel(
 			};
 		},
 	);
-	const result = (await apiTx.get({
+	const result = await apiTx.get({
 		resource: 'device_type',
 		id: {
 			slug: deviceType.slug,
@@ -193,7 +193,7 @@ async function updateDTModel(
 		options: {
 			$select: ['id'],
 		},
-	})) as AnyObject;
+	});
 	if (result == null) {
 		const body = {
 			slug: deviceType.slug,

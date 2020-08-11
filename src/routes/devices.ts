@@ -404,9 +404,9 @@ export const state: RequestHandler = async (req, res) => {
 	}
 
 	try {
-		const device = (await sbvrUtils.db.readTransaction!((tx) =>
+		const device = await sbvrUtils.db.readTransaction!((tx) =>
 			stateQuery()({ uuid }, undefined, { req, tx }),
-		)) as AnyObject;
+		);
 
 		if (!device) {
 			throw new UnauthorizedError();
@@ -638,7 +638,7 @@ const upsertImageInstall = async (
 	releaseId: number,
 	dlProg?: number,
 ): Promise<void> => {
-	const imgInstall = (await resinApi.get({
+	const imgInstall = await resinApi.get({
 		resource: 'image_install',
 		id: {
 			installs__image: imageId,
@@ -647,7 +647,7 @@ const upsertImageInstall = async (
 		options: {
 			$select: 'id',
 		},
-	})) as AnyObject;
+	});
 
 	if (imgInstall == null) {
 		// we need to create it with a POST
@@ -695,7 +695,7 @@ const upsertGatewayDownload = async (
 	status: string,
 	downloadProgress: number | null,
 ): Promise<void> => {
-	const gatewayDownload = (await resinApi.get({
+	const gatewayDownload = await resinApi.get({
 		resource: 'gateway_download',
 		id: {
 			image: imageId,
@@ -704,7 +704,7 @@ const upsertGatewayDownload = async (
 		options: {
 			$select: 'id',
 		},
-	})) as AnyObject;
+	});
 	if (gatewayDownload == null) {
 		await resinApi.post({
 			resource: 'gateway_download',
@@ -810,13 +810,13 @@ export const statePatch: RequestHandler = async (req, res) => {
 		await sbvrUtils.db.transaction(async (tx) => {
 			const resinApiTx = api.resin.clone({ passthrough: { req, custom, tx } });
 
-			const device = (await resinApiTx.get({
+			const device = await resinApiTx.get({
 				resource: 'device',
 				id: { uuid },
 				options: {
 					$select: 'id',
 				},
-			})) as AnyObject;
+			});
 
 			if (device == null) {
 				throw new UnauthorizedError();
@@ -826,7 +826,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 				if (local.is_on__commit === null) {
 					deviceBody!.is_running__release = null;
 				} else if (local.is_on__commit !== undefined) {
-					const [release] = (await resinApiTx.get({
+					const [release] = await resinApiTx.get({
 						resource: 'release',
 						options: {
 							$select: 'id',
@@ -852,7 +852,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 								},
 							},
 						},
-					})) as AnyObject[];
+					});
 
 					if (release != null) {
 						// Only set the running release if it's valid, otherwise just silently ignore it

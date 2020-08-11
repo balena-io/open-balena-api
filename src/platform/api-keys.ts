@@ -26,14 +26,14 @@ const $createApiKey = async (
 	actorTypeID: number,
 	{ apiKey, tx, name, description }: InternalApiKeyOptions,
 ): Promise<string> => {
-	const actorable = (await api.resin.get({
+	const actorable = await api.resin.get({
 		resource: actorType,
 		id: actorTypeID,
 		passthrough: { req, tx },
 		options: {
 			$select: 'actor',
 		},
-	})) as AnyObject;
+	});
 
 	const actorID: number | undefined = actorable?.actor;
 	if (actorID == null) {

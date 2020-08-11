@@ -323,7 +323,7 @@ export async function getUser(
 		return;
 	}
 
-	const [user] = (await getUserQuery()({ key })) as AnyObject[];
+	const [user] = await getUserQuery()({ key });
 	if (user) {
 		// Store it in `req` to be compatible with JWTs and for caching
 		req.user = req.creds = _.pick(user, userFields) as User;

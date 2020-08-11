@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@balena/es-version": "^1.0.0",
-    "@balena/pinejs": "^13.5.0",
+    "@balena/pinejs": "^13.6.0",
     "@resin.io/device-types": "^10.5.0",
     "@types/basic-auth": "^1.1.3",
     "@types/bluebird": "^3.5.32",

@@ -30,7 +30,7 @@ const createReleaseServiceInstalls = async (
 ): Promise<void> => {
 	await Promise.all(
 		deviceIds.map(async (deviceId) => {
-			const services = (await api.get({
+			const services = await api.get({
 				resource: 'service',
 				options: {
 					$select: 'id',
@@ -72,7 +72,7 @@ const createReleaseServiceInstalls = async (
 						},
 					},
 				},
-			})) as AnyObject[];
+			});
 			await Promise.all(
 				services.map(async (service) => {
 					// Create a service_install for this pair of service and device
