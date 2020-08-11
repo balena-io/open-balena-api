@@ -90,11 +90,13 @@ export const permissionRequired = (permission: string): RequestHandler => (
 
 const checkDeviceExistsQuery = _.once(() =>
 	api.resin.prepare<{ uuid: string }>({
-		resource: 'device/$count',
+		resource: 'device',
 		passthrough: { req: permissions.root },
 		options: {
-			$filter: {
-				uuid: { '@': 'uuid' },
+			$count: {
+				$filter: {
+					uuid: { '@': 'uuid' },
+				},
 			},
 		},
 	}),
@@ -108,7 +110,7 @@ export const gracefullyDenyDeletedDevices: RequestHandler = async (
 
 	const returnCode = req.method === 'GET' ? 304 : 200;
 
-	const devices = (await checkDeviceExistsQuery()({ uuid })) as number;
+	const devices = await checkDeviceExistsQuery()({ uuid });
 	if (devices === 0) {
 		res.sendStatus(returnCode);
 		return;
