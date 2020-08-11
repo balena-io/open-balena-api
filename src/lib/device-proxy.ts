@@ -182,7 +182,7 @@ export async function requestDevices({
 	if (!['PUT', 'PATCH', 'POST', 'HEAD', 'DELETE', 'GET'].includes(method)) {
 		throw new BadRequestError(`Invalid method '${method}'`);
 	}
-	const deviceIds = (await api.resin.get({
+	const deviceIds = await api.resin.get({
 		resource: 'device',
 		options: {
 			$select: 'id',
@@ -197,7 +197,7 @@ export async function requestDevices({
 			},
 		},
 		passthrough: { req },
-	})) as AnyObject[];
+	});
 	if (deviceIds.length === 0) {
 		if (!wait) {
 			// Don't throw an error if it's a fire/forget
@@ -206,7 +206,7 @@ export async function requestDevices({
 		throw new NoDevicesFoundError('No online device(s) found');
 	}
 	// And now fetch device data with full privs
-	const devices = (await api.resin.get({
+	const devices = await api.resin.get({
 		resource: 'device',
 		passthrough: { req: permissions.root },
 		options: {
@@ -224,7 +224,7 @@ export async function requestDevices({
 				},
 			},
 		},
-	})) as AnyObject[];
+	});
 
 	// We add a delay between each notification so that we do not in essence
 	// trigger a DDOS from balena devices against us, but we do not wait for

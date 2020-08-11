@@ -15,7 +15,7 @@ const { UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
 
 const getApp = async (req: Request): Promise<AnyObject> => {
-	const app = (await api.resin.get({
+	const app = await api.resin.get({
 		resource: 'application',
 		id: req.param('appId'),
 		passthrough: { req },
@@ -27,7 +27,7 @@ const getApp = async (req: Request): Promise<AnyObject> => {
 				},
 			},
 		},
-	})) as AnyObject;
+	});
 
 	// Check that the current user has access to this application.
 	if (app == null) {

@@ -160,7 +160,7 @@ const resolveAccess = async (
 		allowedActions = defaultActions;
 	} else {
 		try {
-			const [image] = (await api.resin.get({
+			const [image] = await api.resin.get({
 				resource: 'image',
 				passthrough: { req },
 				options: {
@@ -171,7 +171,7 @@ const resolveAccess = async (
 						},
 					},
 				},
-			})) as AnyObject[];
+			});
 
 			const hasReadAccess = needsPull && resolveReadAccess(req, image);
 			const hasWriteAccess =
@@ -325,7 +325,7 @@ const $getSubject = memoize(
 		if (subject) {
 			try {
 				// Try to resolve as a device api key first, using the passed in subject
-				const device = (await api.resin.get({
+				const device = await api.resin.get({
 					resource: 'device',
 					passthrough: { req: permissions.root },
 					id: {
@@ -352,7 +352,7 @@ const $getSubject = memoize(
 							},
 						},
 					},
-				})) as AnyObject;
+				});
 				if (device != null) {
 					return subject;
 				}

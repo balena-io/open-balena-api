@@ -51,13 +51,13 @@ const addEnvHooks = (
 			if (filter == null) {
 				return;
 			}
-			const devices = (await args.api.get({
+			const devices = await args.api.get({
 				resource: 'device',
 				options: {
 					$select: 'id',
 					$filter: filter,
 				},
-			})) as AnyObject[];
+			});
 			args.request.custom.devices = devices.map(({ id }) => id);
 		} catch (err) {
 			captureException(err, `Error building the ${resource} filter`, {

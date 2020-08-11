@@ -135,7 +135,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'application', {
 		// not part of any of the applications that are about to be deleted
 		// but run a release that belongs to any of the applications that
 		// is about to be deleted
-		const devices = (await args.api.get({
+		const devices = await args.api.get({
 			resource: 'device',
 			passthrough: {
 				req: permissions.root,
@@ -162,7 +162,7 @@ sbvrUtils.addPureHook('DELETE', 'resin', 'application', {
 					},
 				},
 			},
-		})) as AnyObject[];
+		});
 		if (devices.length !== 0) {
 			const uuids = devices.map(({ uuid }) => uuid);
 			throw new BadRequestError('updateRequired', {

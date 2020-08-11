@@ -95,7 +95,7 @@ export const checkDevicesCanBeInApplication = async (
 	appId: number,
 	deviceIds: number[],
 ): Promise<void> => {
-	const [appType] = (await api.get({
+	const [appType] = await api.get({
 		resource: 'application_type',
 		options: {
 			$select: ['needs__os_version_range'],
@@ -112,12 +112,12 @@ export const checkDevicesCanBeInApplication = async (
 				},
 			},
 		},
-	})) as AnyObject[];
+	});
 	if (_.isEmpty(appType) || _.isEmpty(appType.needs__os_version_range)) {
 		return;
 	}
 
-	const devices = (await api.get({
+	const devices = await api.get({
 		resource: 'device',
 		options: {
 			$select: ['os_version', 'supervisor_version', 'device_name'],
@@ -129,7 +129,7 @@ export const checkDevicesCanBeInApplication = async (
 				},
 			},
 		},
-	})) as AnyObject[];
+	});
 
 	for (const device of devices) {
 		if (device.os_version == null && device.supervisor_version != null) {

@@ -12,7 +12,7 @@ const updateLatestRelease = async (
 	if (request.values.status !== 'success') {
 		return;
 	}
-	const release = (await api.get({
+	const release = await api.get({
 		resource: 'release',
 		id,
 		options: {
@@ -41,7 +41,7 @@ const updateLatestRelease = async (
 				},
 			},
 		},
-	})) as AnyObject;
+	});
 	if (release == null) {
 		return;
 	}
@@ -69,7 +69,7 @@ const updateLatestRelease = async (
 	if (deviceIds.length === 0 || serviceIds.length === 0) {
 		return;
 	}
-	const serviceInstalls = (await api.get({
+	const serviceInstalls = await api.get({
 		resource: 'service_install',
 		options: {
 			$select: ['device', 'installs__service'],
@@ -78,7 +78,7 @@ const updateLatestRelease = async (
 				installs__service: { $in: serviceIds },
 			},
 		},
-	})) as AnyObject[];
+	});
 	const serviceInstallsByDevice = _.groupBy(
 		serviceInstalls,
 		(si) => si.device.__id as number,
