@@ -377,19 +377,21 @@ async function getWriteContext(
 				},
 			},
 		},
-	})) as {
-		id: number;
-		logs_channel?: string;
-		image_install: Array<{
-			id: number;
-			image: Array<{
+	})) as
+		| {
 				id: number;
-				is_a_build_of__service: Array<{
+				logs_channel?: string;
+				image_install: Array<{
 					id: number;
+					image: Array<{
+						id: number;
+						is_a_build_of__service: Array<{
+							id: number;
+						}>;
+					}>;
 				}>;
-			}>;
-		}>;
-	};
+		  }
+		| undefined;
 	if (!device) {
 		throw new NotFoundError('No device with uuid ' + uuid);
 	}

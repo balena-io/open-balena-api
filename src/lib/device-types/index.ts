@@ -438,7 +438,7 @@ export interface ImageVersions {
 export const getDeviceTypeIdBySlug = async (
 	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
-): Promise<{ id: number; slug: string }> => {
+): Promise<{ id: number; slug: string } | undefined> => {
 	const deviceType = await normalizeDeviceType(resinApi, slug);
 
 	const dt = (await resinApi.get({
@@ -449,7 +449,7 @@ export const getDeviceTypeIdBySlug = async (
 		options: {
 			$select: ['id', 'slug'],
 		},
-	})) as { id: number; slug: string };
+	})) as { id: number; slug: string } | undefined;
 
 	return dt;
 };

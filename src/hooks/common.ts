@@ -29,7 +29,7 @@ export const resolveDeviceType = async (
 		options: {
 			$select: ['slug'],
 		},
-	})) as { slug: string };
+	})) as { slug: string } | undefined;
 
 	if (!dt) {
 		throw new deviceTypes.InvalidDeviceTypeError();
