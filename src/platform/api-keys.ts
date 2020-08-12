@@ -40,13 +40,13 @@ const $createApiKey = async (
 		throw new Error(`No ${actorType} found to associate with the api key`);
 	}
 
-	const res = (await api.resin.post({
+	const res = await api.resin.post({
 		url: `${actorType}(${actorTypeID})/canAccess`,
 		passthrough: { req, tx },
 		body: {
 			action: `create-${roleName}`,
 		},
-	})) as AnyObject;
+	});
 
 	const resId: number | undefined = res?.d?.[0]?.id;
 	if (resId !== actorTypeID) {

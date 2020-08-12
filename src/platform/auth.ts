@@ -425,7 +425,7 @@ export const registerUser = async (
 	}
 
 	// Create the user in the platform
-	const user = (await api.resin.post({
+	const user = await api.resin.post({
 		resource: 'user',
 		body: {
 			...userData,
@@ -437,7 +437,7 @@ export const registerUser = async (
 				clientIP,
 			},
 		},
-	})) as AnyObject;
+	});
 
 	if (user.id == null) {
 		throw new Error('Error creating user in the platform');

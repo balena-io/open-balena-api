@@ -126,11 +126,11 @@ const resolveWriteAccess = async (
 		return false;
 	}
 	try {
-		const res = (await api.resin.post({
+		const res = await api.resin.post({
 			url: `image(${image.id})/canAccess`,
 			passthrough: { req },
 			body: { action: 'push' },
-		})) as AnyObject;
+		});
 		return res.d != null && res.d[0] != null && res.d[0].id === image.id;
 	} catch (err) {
 		if (!(err instanceof UnauthorizedError)) {

@@ -114,14 +114,14 @@ export const createActor = async ({
 	request,
 	tx,
 }: sbvrUtils.HookArgs): Promise<void> => {
-	const result = (await sbvrUtils.api.Auth.post({
+	const result = await sbvrUtils.api.Auth.post({
 		resource: 'actor',
 		passthrough: {
 			tx,
 			req: permissions.root,
 		},
 		options: { returnResource: false },
-	})) as AnyObject;
+	});
 	request.values.actor = result.id;
 };
 
