@@ -64,7 +64,7 @@ export const register: RequestHandler = async (req, res) => {
 		}
 
 		const response = await sbvrUtils.db.transaction(async (tx) => {
-			const device = (await api.resin.post({
+			const device = await api.resin.post({
 				resource: 'device',
 				passthrough: { req, tx },
 				body: {
@@ -74,7 +74,7 @@ export const register: RequestHandler = async (req, res) => {
 					supervisor_version: supervisorVersion,
 					uuid,
 				},
-			})) as AnyObject;
+			});
 			if (device == null) {
 				throw new Error('Failed to create device');
 			}
