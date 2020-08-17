@@ -1,4 +1,47 @@
 - commits:
+    - subject: Update dependencies
+      hash: 9644013eff33136b391c9d173b5591f1e9964f57
+      body: |
+        Update pinejs from 13.7.0 to 13.8.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Separate running the odata request from the expressjs handler
+              hash: 0be16531a0d2898cf70b48a088c7106ce071e434
+              body: >
+                This simplifies the implementation of internal api calls via
+                `runURI`
+
+                and will allow async stack traces across internal calls with a
+                future
+
+                major bump
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.8.1
+          date: 2020-08-17T11:35:48.526Z
+        - commits:
+            - subject: >-
+                Add a specific error type for transaction closed errors and
+                handle them
+              hash: fe90510321af0d18e45b61b73e0f78bde4bda79b
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.8.0
+          date: 2020-08-17T09:44:38.524Z
+  version: 0.92.9
+  date: 2020-08-17T16:08:47.942Z
+- commits:
     - subject: Update pinejs to 13.7.0
       hash: ad96df6ccd3b4d781948c432a5a5c132b3c60eb2
       body: |
