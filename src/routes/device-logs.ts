@@ -192,7 +192,7 @@ function getHistory(
 	{ query }: Request,
 	defaultCount: number,
 ): Resolvable<DeviceLog[]> {
-	const count = getCount(query.count, defaultCount);
+	const count = getCount(query.count as string | undefined, defaultCount);
 
 	// Optimize the case where the caller doesn't need any history
 	if (!count) {
