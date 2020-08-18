@@ -1,4 +1,15 @@
 - commits:
+    - subject: Improve info when failing to find a service install
+      hash: ea9424af991130a75857eea29c50124f98a8ab0b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.92.10
+  date: 2020-08-18T11:57:00.093Z
+- commits:
     - subject: Update dependencies
       hash: 9644013eff33136b391c9d173b5591f1e9964f57
       body: |
