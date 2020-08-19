@@ -1,4 +1,19 @@
 - commits:
+    - subject: Vastly increase permitted app name length
+      hash: 9406a87189efd4b9a58d2cdcba9ebe1a94f47931
+      body: >
+        Application name was used as part of the image name deployed to devices,
+        which meant it had to be compatible with Docker’s name requirements.
+        We’ve long moved away from that naming scheme so the limit is now
+        superfluous and this patch effectively removes it.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+      nested: []
+  version: 0.92.11
+  date: 2020-08-19T12:56:40.094Z
+- commits:
     - subject: Improve info when failing to find a service install
       hash: ea9424af991130a75857eea29c50124f98a8ab0b
       body: ''
