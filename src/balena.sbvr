@@ -398,7 +398,7 @@ Fact type: application has organization
 	Necessity: each application has exactly one organization.
 Fact type: application has app name
 	Necessity: each application has exactly one app name
-	Necessity: each application has an app name that has a Length (Type) that is greater than or equal to 4 and is less than or equal to 30.
+	Necessity: each application has an app name that has a Length (Type) that is greater than or equal to 4 and is less than or equal to 100.
 Fact type: application has slug
 	Necessity: each application has exactly one slug
 	Necessity: each slug is of exactly one application
