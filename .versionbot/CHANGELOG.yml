@@ -1,4 +1,215 @@
 - commits:
+    - subject: Update pinejs to 13.13.2
+      hash: 87787b84595aa1893f88c6e03525e10955f67bb8
+      body: |
+        Update pinejs from 13.8.1 to 13.13.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Mark permissions hook as read-only
+              hash: 543071f31c20c2384157fef8366373f3e6c59d23
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.13.2
+          date: 2020-08-20T11:55:35.132Z
+        - commits:
+            - subject: Add the ability to set sideEffects/readOnlyTx for a set of hooks
+              hash: 9cced04f9646b6d08237dd166e56996d3ebd8593
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.13.1
+          date: 2020-08-20T11:09:08.980Z
+        - commits:
+            - subject: Add support for marking hooks as read-only
+              hash: 8e96ec54e7e5927d519fe4a1436155f7ee314849
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.13.0
+          date: 2020-08-19T16:57:10.490Z
+        - commits:
+            - subject: Share automatic transaction closing between transaction clones
+              hash: 47dea57b40e5060d8a4e99d71469bf7023b694b9
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.12.2
+          date: 2020-08-19T16:47:50.125Z
+        - commits:
+            - subject: >-
+                Fix certain internal transaction calls triggering read-only
+                violations
+              hash: ff306971300737ccbad0b78c8a6d863942b1833e
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.12.1
+          date: 2020-08-19T16:37:03.469Z
+        - commits:
+            - subject: Add the ability to mark an existing tx as read-only
+              hash: 436d544d13429b2f3a5255124d342d4de033557f
+              body: |
+                This is only handled locally by requiring any statements to be
+                read-only but it's useful for websql and also as a level of
+                protection against accidental writes
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.12.0
+          date: 2020-08-19T14:25:17.444Z
+        - commits:
+            - subject: Fix `TransactionClosedError` extends type
+              hash: bf9491f7923e2f0f9533cf315c8e1f0bdfd031d1
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.11.3
+          date: 2020-08-19T14:15:40.318Z
+        - commits:
+            - subject: >-
+                Separate the web sql wrapper for async support from the WebSqlTx
+                class
+              hash: d186ae1c40e09409da7bfe2377b6af8d82023c53
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.11.2
+          date: 2020-08-19T13:30:10.368Z
+        - commits:
+            - subject: Move runHooks into the hooks module
+              hash: f1028509e95f97d9e301ee3c586d397827dc7828
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: Improve hooks typings
+              hash: c63c1738ad09b1dc808a90b2739e25a2e7a8ce48
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.11.1
+          date: 2020-08-19T12:42:37.176Z
+        - commits:
+            - subject: Export hooks at the top level
+              hash: 80386fcd9e98c041e6509dcff289ea0596eb4cf7
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+            - subject: Separate more hooks code from sbvr-utils into hooks
+              hash: 7804df10961428cf597f66cc638fca6a815d476d
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.11.0
+          date: 2020-08-19T09:56:35.839Z
+        - commits:
+            - subject: Convert some bluebird usage to native promises
+              hash: 98c2f944c1d48691bd6056e06c4b74cadb5ca939
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.10.1
+          date: 2020-08-19T09:21:20.016Z
+        - commits:
+            - subject: Add the ability to omit metadata from the response
+              hash: 8c230a0c642658eba4300e98f96f2e58c31e36bc
+              body: |
+                Update odata-parser from 2.1.0 to 2.2.0
+                Update pinejs-client-core from 6.7.0 to 6.7.1
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Add support for metadata argument in $format
+                      hash: eecb0df57610d3f13bfc6b168790690dc0dce038
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                  version: odata-parser-2.2.0
+                  date: 2020-08-18T16:23:49.447Z
+                - commits:
+                    - subject: Fix prepare $count typings
+                      hash: fe63b2ba648b0ef545afe9fd18d433faca4af6a2
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: pinejs-client-js-6.7.1
+                  date: 2020-08-12T14:30:20.061Z
+          version: pinejs-13.10.0
+          date: 2020-08-18T17:00:50.709Z
+        - commits:
+            - subject: Improve typing of getAffectedIds
+              hash: 8a202a43a25d6955d60676d75057eba5efb1f874
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.9.1
+          date: 2020-08-18T14:52:08.680Z
+        - commits:
+            - subject: Improve typing of hook args
+              hash: 241b1e1d4dac023ff616737eef746bd9bf0f6a44
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.9.0
+          date: 2020-08-18T14:09:15.588Z
+  version: 0.92.12
+  date: 2020-08-20T12:08:31.243Z
+- commits:
     - subject: Vastly increase permitted app name length
       hash: 9406a87189efd4b9a58d2cdcba9ebe1a94f47931
       body: >
