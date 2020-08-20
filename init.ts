@@ -1,4 +1,5 @@
-import { sbvrUtils, errors } from '@balena/pinejs';
+import type { ApplicationType } from './src';
+import { sbvrUtils, errors, types } from '@balena/pinejs';
 import * as express from 'express';
 import * as _ from 'lodash';
 import config = require('./config');
@@ -12,7 +13,9 @@ async function onInitMiddleware(initApp: express.Application) {
 async function onInitModel() {
 	const { updateOrInsertModel } = await import('./src/platform');
 	const appTypes = await import('./src/lib/application-types');
-	const insert = _.cloneDeep(appTypes.DefaultApplicationType);
+	const insert: types.OptionalField<ApplicationType, 'slug'> = _.cloneDeep(
+		appTypes.DefaultApplicationType,
+	);
 	const filter = { slug: insert.slug };
 	delete insert.slug;
 	await sbvrUtils.db.transaction(async (tx) => {
