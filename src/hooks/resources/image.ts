@@ -1,4 +1,4 @@
-import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import { hooks, permissions, errors } from '@balena/pinejs';
 
 import { addDeleteHookForDependents } from '../../platform';
 
@@ -7,7 +7,7 @@ import { pseudoRandomBytesAsync } from '../../lib/utils';
 
 const { InternalRequestError } = errors;
 
-sbvrUtils.addPureHook('POST', 'resin', 'image', {
+hooks.addPureHook('POST', 'resin', 'image', {
 	POSTPARSE: async ({ request, api, tx }) => {
 		const maxAttempts = 5;
 		for (let i = 0; i < maxAttempts; i++) {

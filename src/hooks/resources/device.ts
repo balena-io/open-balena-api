@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
 
 import { addDeleteHookForDependents, createActor } from '../../platform';
@@ -104,16 +104,16 @@ const createAppServiceInstalls = async (
 		},
 	});
 
-sbvrUtils.addPureHook('POST', 'resin', 'device', {
+hooks.addPureHook('POST', 'resin', 'device', {
 	POSTPARSE: createActor,
 });
 
-sbvrUtils.addPureHook('POST', 'resin', 'device', {
+hooks.addPureHook('POST', 'resin', 'device', {
 	POSTPARSE: ({ api, request }) =>
 		resolveDeviceType(api, request, 'is_of__device_type'),
 });
 
-sbvrUtils.addPureHook('POST', 'resin', 'device', {
+hooks.addPureHook('POST', 'resin', 'device', {
 	POSTPARSE: async ({ request }) => {
 		// Check for extra whitespace characters
 		if (
@@ -150,7 +150,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'device', {
 	},
 });
 
-sbvrUtils.addPureHook('PATCH', 'resin', 'device', {
+hooks.addPureHook('PATCH', 'resin', 'device', {
 	POSTPARSE: (args) => {
 		const { request } = args;
 

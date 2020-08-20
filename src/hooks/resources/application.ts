@@ -1,4 +1,4 @@
-import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
 import { addDeleteHookForDependents, createActor } from '../../platform';
 import { captureException } from '../../platform/errors';
@@ -9,7 +9,7 @@ import { resolveDeviceType } from '../common';
 
 const { BadRequestError, ConflictError, NotFoundError } = errors;
 
-const checkDependentApplication: sbvrUtils.Hooks['POSTPARSE'] = async ({
+const checkDependentApplication: hooks.Hooks['POSTPARSE'] = async ({
 	request,
 	api,
 }) => {
@@ -28,11 +28,11 @@ const checkDependentApplication: sbvrUtils.Hooks['POSTPARSE'] = async ({
 	}
 };
 
-sbvrUtils.addPureHook('POST', 'resin', 'application', {
+hooks.addPureHook('POST', 'resin', 'application', {
 	POSTPARSE: createActor,
 });
 
-sbvrUtils.addPureHook('POST', 'resin', 'application', {
+hooks.addPureHook('POST', 'resin', 'application', {
 	POSTPARSE: async (args) => {
 		const { req, request, api } = args;
 		const appName = request.values.app_name;
@@ -63,11 +63,11 @@ sbvrUtils.addPureHook('POST', 'resin', 'application', {
 	},
 });
 
-sbvrUtils.addPureHook('PUT', 'resin', 'application', {
+hooks.addPureHook('PUT', 'resin', 'application', {
 	POSTPARSE: checkDependentApplication,
 });
 
-sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
+hooks.addPureHook('PATCH', 'resin', 'application', {
 	PRERUN: async (args) => {
 		const waitPromises = [checkDependentApplication(args)];
 		const { request } = args;
@@ -120,7 +120,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'application', {
 	},
 });
 
-sbvrUtils.addPureHook('DELETE', 'resin', 'application', {
+hooks.addPureHook('DELETE', 'resin', 'application', {
 	PRERUN: async (args) => {
 		const appIds = await sbvrUtils.getAffectedIds(args);
 		if (appIds.length === 0) {

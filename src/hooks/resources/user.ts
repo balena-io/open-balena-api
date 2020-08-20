@@ -1,6 +1,6 @@
 import * as Bluebird from 'bluebird';
 
-import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
 import { createActor } from '../../platform';
 import {
@@ -15,7 +15,7 @@ import { UnauthorizedError } from '@balena/pinejs/out/sbvr-api/errors';
 const { BadRequestError, InternalRequestError } = errors;
 const { api } = sbvrUtils;
 
-sbvrUtils.addPureHook('POST', 'resin', 'user', {
+hooks.addPureHook('POST', 'resin', 'user', {
 	POSTPARSE: createActor,
 
 	POSTRUN: async ({ result, tx }) => {
@@ -39,7 +39,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'user', {
 	},
 });
 
-sbvrUtils.addPureHook('POST', 'resin', 'user', {
+hooks.addPureHook('POST', 'resin', 'user', {
 	/**
 	 * Default the jwt secret on signup
 	 */
@@ -48,7 +48,7 @@ sbvrUtils.addPureHook('POST', 'resin', 'user', {
 	},
 });
 
-sbvrUtils.addPureHook('PATCH', 'resin', 'user', {
+hooks.addPureHook('PATCH', 'resin', 'user', {
 	/**
 	 * Logout existing sessions on field changes
 	 */
@@ -62,7 +62,7 @@ sbvrUtils.addPureHook('PATCH', 'resin', 'user', {
 	},
 });
 
-sbvrUtils.addPureHook('DELETE', 'resin', 'user', {
+hooks.addPureHook('DELETE', 'resin', 'user', {
 	POSTPARSE: async ({ req, request }) => {
 		const userIdBind = request.odataQuery?.key;
 		if (userIdBind == null) {

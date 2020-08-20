@@ -1,4 +1,4 @@
-import { sbvrUtils } from '@balena/pinejs';
+import { sbvrUtils, hooks } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
 
 import { captureException } from '../../platform/errors';
@@ -14,7 +14,7 @@ type ValidateFn = (varName?: string, varValue?: string) => void;
 
 const triggerDevices = async (
 	filter: Filter | undefined,
-	req: sbvrUtils.HookReq,
+	req: hooks.HookReq,
 ) => {
 	// If we can't find the matching env var to update then we don't ping the devices.
 	// - This should only happen in the case of deleting an application, where we delete all of the env vars at once.
@@ -37,15 +37,15 @@ const addEnvHooks = (
 	resource: string,
 	validateFn: ValidateFn,
 	buildFilter: (
-		args: sbvrUtils.HookArgs & {
+		args: hooks.HookArgs & {
 			tx: Tx;
 		},
 	) => Promise<Filter | undefined>,
 ): void => {
-	const postParseHook: sbvrUtils.Hooks['POSTPARSE'] = async ({ request }) => {
+	const postParseHook: hooks.Hooks['POSTPARSE'] = async ({ request }) => {
 		await validateFn(request.values.name, request.values.value);
 	};
-	const preRunHook: sbvrUtils.Hooks['PRERUN'] = async (args) => {
+	const preRunHook: hooks.Hooks['PRERUN'] = async (args) => {
 		try {
 			const filter = await buildFilter(args);
 			if (filter == null) {
@@ -67,7 +67,7 @@ const addEnvHooks = (
 		}
 	};
 
-	const envVarHook: sbvrUtils.Hooks = {
+	const envVarHook: hooks.Hooks = {
 		POSTPARSE: postParseHook,
 		PRERUN: preRunHook,
 		POSTRUN: async ({ req, request }) => {
@@ -81,10 +81,10 @@ const addEnvHooks = (
 		},
 	};
 
-	sbvrUtils.addPureHook('POST', 'resin', resource, envVarHook);
-	sbvrUtils.addPureHook('PATCH', 'resin', resource, envVarHook);
-	sbvrUtils.addPureHook('PUT', 'resin', resource, envVarHook);
-	sbvrUtils.addPureHook('DELETE', 'resin', resource, envVarHook);
+	hooks.addPureHook('POST', 'resin', resource, envVarHook);
+	hooks.addPureHook('PATCH', 'resin', resource, envVarHook);
+	hooks.addPureHook('PUT', 'resin', resource, envVarHook);
+	hooks.addPureHook('DELETE', 'resin', resource, envVarHook);
 };
 
 const checkConfigVarValidity: ValidateFn = (varName, varValue) => {
@@ -109,7 +109,7 @@ addEnvHooks(
 	'application_config_variable',
 	checkConfigVarValidity,
 	async (
-		args: sbvrUtils.HookArgs & {
+		args: hooks.HookArgs & {
 			tx: Tx;
 		},
 	) => {
@@ -152,7 +152,7 @@ addEnvHooks(
 	'application_environment_variable',
 	checkEnvVarValidity,
 	async (
-		args: sbvrUtils.HookArgs & {
+		args: hooks.HookArgs & {
 			tx: Tx;
 		},
 	) => {
@@ -191,7 +191,7 @@ addEnvHooks(
 	'device_config_variable',
 	checkConfigVarValidity,
 	async (
-		args: sbvrUtils.HookArgs & {
+		args: hooks.HookArgs & {
 			tx: Tx;
 		},
 	) => {
@@ -221,7 +221,7 @@ addEnvHooks(
 	'device_environment_variable',
 	checkEnvVarValidity,
 	async (
-		args: sbvrUtils.HookArgs & {
+		args: hooks.HookArgs & {
 			tx: Tx;
 		},
 	) => {
@@ -251,7 +251,7 @@ addEnvHooks(
 	'service_environment_variable',
 	checkEnvVarValidity,
 	async (
-		args: sbvrUtils.HookArgs & {
+		args: hooks.HookArgs & {
 			tx: Tx;
 		},
 	) => {
@@ -314,7 +314,7 @@ addEnvHooks(
 	'device_service_environment_variable',
 	checkEnvVarValidity,
 	async (
-		args: sbvrUtils.HookArgs & {
+		args: hooks.HookArgs & {
 			tx: Tx;
 		},
 	) => {

@@ -1,7 +1,7 @@
 import type { Request } from 'express';
 import * as randomstring from 'randomstring';
 
-import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
 import { isJWT } from './jwt';
 
@@ -132,11 +132,11 @@ export type PartialCreateKey = (
 	options?: ApiKeyOptions,
 ) => Promise<string>;
 
-const isRequest = (req: sbvrUtils.HookReq | Request): req is Request =>
+const isRequest = (req: hooks.HookReq | Request): req is Request =>
 	'get' in req;
 
 export const retrieveAPIKey = async (
-	req: sbvrUtils.HookReq | Request,
+	req: hooks.HookReq | Request,
 ): Promise<void> => {
 	// We should be able to skip this if req.user but doing so breaks the SDK
 	// because it sends both a JWT and an API Key in requests like /devices/register
