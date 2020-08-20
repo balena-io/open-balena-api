@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import * as Raven from 'raven';
 import escapeHtml = require('escape-html');
 
-import { sbvrUtils, errors } from '@balena/pinejs';
+import { hooks, errors } from '@balena/pinejs';
 
 const { InternalRequestError, HttpError } = errors;
 
@@ -27,7 +27,7 @@ export const translateError = (err: Error | number | string): string => {
 };
 
 interface HookReqCaptureOptions {
-	req?: sbvrUtils.HookReq | Raven.CaptureOptions['req'];
+	req?: hooks.HookReq | Raven.CaptureOptions['req'];
 }
 
 type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { sbvrUtils, permissions } from '@balena/pinejs';
+import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import type { FilterObj } from 'pinejs-client-core';
 
 import { captureException } from './errors';
@@ -113,7 +113,7 @@ export const updateOrInsertModel = (
 export const createActor = async ({
 	request,
 	tx,
-}: sbvrUtils.HookArgs): Promise<void> => {
+}: hooks.HookArgs): Promise<void> => {
 	const result = await sbvrUtils.api.Auth.post({
 		resource: 'actor',
 		passthrough: {
@@ -129,7 +129,7 @@ export function addDeleteHookForDependents(
 	resource: string,
 	dependents: Array<[string, string]>,
 ) {
-	sbvrUtils.addPureHook('DELETE', 'resin', resource, {
+	hooks.addPureHook('DELETE', 'resin', resource, {
 		PRERUN: async (args) => {
 			const { api, req } = args;
 

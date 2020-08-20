@@ -1,12 +1,12 @@
-import { sbvrUtils, permissions } from '@balena/pinejs';
+import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 
 import { captureException } from '../../platform/errors';
 
-const { api } = sbvrUtils;
+const { api, getAffectedIds } = sbvrUtils;
 
-const deleteApiKeyHooks: sbvrUtils.Hooks = {
+const deleteApiKeyHooks: hooks.Hooks = {
 	PRERUN: async (args) => {
-		const keyIds = await sbvrUtils.getAffectedIds(args);
+		const keyIds = await getAffectedIds(args);
 		if (keyIds.length === 0) {
 			return;
 		}
@@ -37,5 +37,5 @@ const deleteApiKeyHooks: sbvrUtils.Hooks = {
 	},
 };
 
-sbvrUtils.addPureHook('DELETE', 'Auth', 'api_key', deleteApiKeyHooks);
-sbvrUtils.addPureHook('DELETE', 'resin', 'api_key', deleteApiKeyHooks);
+hooks.addPureHook('DELETE', 'Auth', 'api_key', deleteApiKeyHooks);
+hooks.addPureHook('DELETE', 'resin', 'api_key', deleteApiKeyHooks);

@@ -2,7 +2,7 @@ import type { Request, RequestHandler, Response } from 'express';
 import * as _ from 'lodash';
 import * as base32 from 'thirty-two';
 
-import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
 import { retrieveAPIKey } from './api-keys';
 import { createJwt, SignOptions, User } from './jwt';
@@ -283,15 +283,15 @@ const getUserQuery = _.once(() =>
 	}),
 );
 export function getUser(
-	req: Request | sbvrUtils.HookReq,
+	req: Request | hooks.HookReq,
 	required?: true,
 ): Promise<User>;
 export function getUser(
-	req: Request | sbvrUtils.HookReq,
+	req: Request | hooks.HookReq,
 	required: false,
 ): Promise<User | undefined>;
 export async function getUser(
-	req: sbvrUtils.HookReq & {
+	req: hooks.HookReq & {
 		user?: User;
 		creds?: User;
 	},
