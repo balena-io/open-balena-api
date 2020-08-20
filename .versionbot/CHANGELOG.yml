@@ -1,4 +1,27 @@
 - commits:
+    - subject: Update typescript
+      hash: 22c0c45347502444579806990805caec3e49630f
+      body: |
+        Update pinejs from 13.13.2 to 13.13.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update typescript to 4.x
+              hash: 0a128151be56a13ab246e43646287d1f88dc24c0
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.13.3
+          date: 2020-08-20T16:39:50.575Z
+  version: 0.92.13
+  date: 2020-08-20T17:16:50.706Z
+- commits:
     - subject: Update pinejs to 13.13.2
       hash: 87787b84595aa1893f88c6e03525e10955f67bb8
       body: |
