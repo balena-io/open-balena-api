@@ -15,7 +15,7 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../../platform/errors';
+} from '../../../platform/errors';
 import {
 	addRetentionLimit,
 	BACKEND_UNAVAILABLE_FLUSH_INTERVAL,

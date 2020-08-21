@@ -31,7 +31,7 @@ import * as os from '../routes/os';
 import * as registry from '../routes/registry';
 import * as services from '../routes/services';
 import * as session from '../routes/session';
-import * as deviceLogs from '../device-logs';
+import * as deviceLogs from '../features/device-logs';
 
 export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.get('/config/vars', config.vars);

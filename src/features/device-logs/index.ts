@@ -1,7 +1,7 @@
 import type { Application } from 'express';
 
-import { createRateLimitMiddleware } from '../lib/rate-limiting';
-import { apiKeyMiddleware, authorized } from '../platform/middleware';
+import { createRateLimitMiddleware } from '../../lib/rate-limiting';
+import { apiKeyMiddleware, authorized } from '../../platform/middleware';
 import { read } from './lib/read';
 import { store, storeStream } from './lib/store';
 
