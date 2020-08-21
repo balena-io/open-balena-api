@@ -1,4 +1,31 @@
 - commits:
+    - subject: Separate auth middleware to infra/auth
+      hash: 8d7cc64719d941e015eb48724c83549ea053c5ff
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move error-handling under infra
+      hash: 9301d07241e812e86aacd90f80a220d7c007ae80
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move rate-limiting under infra
+      hash: e72f0ce86d2c0dc43074840d786d3b2dd8a9bc9b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.93.3
+  date: 2020-08-21T16:16:50.139Z
+- commits:
     - subject: Separate some auth related code to features/auth
       hash: 8b388b27bfa0f34ac8d9c26896cf2b908093cf3d
       body: ''
