@@ -9,39 +9,23 @@ import {
 	registerDeviceStateEvent,
 } from '../platform/middleware';
 
-import { SECONDS_PER_HOUR } from '../lib/config';
-import { createRateLimitMiddleware } from '../lib/rate-limiting';
-
-// Rate limit for unauthenticated access
-export const loginRateLimiter = createRateLimitMiddleware({
-	points: 10, // 10 tries
-	blockDuration: 1 * SECONDS_PER_HOUR, // wait 1 hour after 10 tries (in seconds)
-	duration: 2 * SECONDS_PER_HOUR, // reset counter after 2 hours (in seconds)
-});
-
 import type { SetupOptions } from '../index';
 import * as access from '../routes/access';
 import * as apiKeys from '../routes/api-keys';
 import * as applications from '../routes/applications';
-import * as auth from '../routes/auth';
 import * as config from '../routes/config';
 import * as deviceTypes from '../routes/device-types';
 import * as devices from '../routes/devices';
 import * as os from '../routes/os';
 import * as registry from '../routes/registry';
 import * as services from '../routes/services';
-import * as session from '../routes/session';
+import * as auth from '../features/auth';
 import * as deviceLogs from '../features/device-logs';
 
 export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.get('/config/vars', config.vars);
 
-	app.post(
-		'/login_',
-		loginRateLimiter('body.username'),
-		session.login(onLogin),
-	);
-	app.get('/user/v1/whoami', authorized, session.whoami);
+	auth.setup(app, onLogin);
 
 	app.post('/device/register', apiKeyMiddleware, devices.register);
 	app.get(
@@ -113,12 +97,6 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	);
 
 	app.get('/auth/v1/token', registry.basicApiKeyAuthenticate, registry.token);
-
-	app.get(
-		'/auth/v1/public-keys/:username',
-		apiKeyMiddleware,
-		auth.getUserPublicKeys,
-	);
 
 	app.get('/access/v1/hostos/:device_uuid', authorized, access.hostOSAccess);
 
