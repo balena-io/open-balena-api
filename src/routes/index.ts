@@ -1,10 +1,5 @@
 import type { Application } from 'express';
 
-import {
-	gracefullyDenyDeletedDevices,
-	registerDeviceStateEvent,
-} from '../platform/middleware';
-
 import type { SetupOptions } from '../index';
 import * as access from '../routes/access';
 import * as apiKeys from '../routes/api-keys';
@@ -17,6 +12,7 @@ import * as registry from '../routes/registry';
 import * as services from '../routes/services';
 import * as auth from '../features/auth';
 import * as deviceLogs from '../features/device-logs';
+import * as deviceState from '../features/device-state';
 
 import {
 	apiKeyMiddleware,
@@ -31,19 +27,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	auth.setup(app, onLogin);
 
 	app.post('/device/register', apiKeyMiddleware, devices.register);
-	app.get(
-		'/device/v2/:uuid/state',
-		gracefullyDenyDeletedDevices,
-		apiKeyMiddleware,
-		registerDeviceStateEvent('params.uuid'),
-		devices.state,
-	);
-	app.patch(
-		'/device/v2/:uuid/state',
-		gracefullyDenyDeletedDevices,
-		apiKeyMiddleware,
-		devices.statePatch,
-	);
+	deviceState.setup(app);
 	deviceLogs.setup(app);
 	app.post(
 		'/dependent/v1/scan',

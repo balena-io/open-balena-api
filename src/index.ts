@@ -67,7 +67,7 @@ import { createScopedAccessToken, createJwt } from './platform/jwt';
 import {
 	gracefullyDenyDeletedDevices,
 	registerDeviceStateEvent,
-} from './platform/middleware';
+} from './features/device-state/middleware';
 import {
 	authenticatedMiddleware,
 	authorizedMiddleware,
@@ -82,13 +82,7 @@ import {
 	getOrInsertModelId,
 } from './platform';
 import { loginRateLimiter } from './features/auth';
-import {
-	getIP,
-	getIPv4,
-	isValidInteger,
-	varListInsert,
-	throttledForEach,
-} from './lib/utils';
+import { getIP, getIPv4, isValidInteger, throttledForEach } from './lib/utils';
 import {
 	createRateLimitMiddleware,
 	getUserIDFromCreds,
@@ -110,7 +104,7 @@ import {
 	getReleaseForDevice,
 	serviceInstallFromImage,
 	setMinPollInterval,
-} from './lib/device-state';
+} from './features/device-state/utils';
 import {
 	getPollInterval,
 	getInstance as getDeviceOnlineStateManager,
@@ -122,6 +116,8 @@ import {
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
 } from './lib/env-vars';
 import * as baseAuth from './lib/auth';
+// TODO: This should not be exported
+import { varListInsert } from './features/device-state/routes/state';
 
 export type { Creds, User } from './platform/jwt';
 export type { Access } from './routes/registry';
