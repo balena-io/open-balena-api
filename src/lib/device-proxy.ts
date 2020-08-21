@@ -8,7 +8,7 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../platform/errors';
+} from '../infra/error-handling';
 
 import { NoDevicesFoundError } from '../lib/errors';
 import { API_VPN_SERVICE_API_KEY, VPN_CONNECT_PROXY_PORT } from './config';

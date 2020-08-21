@@ -5,7 +5,7 @@ import * as randomstring from 'randomstring';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
 import { findUser } from './auth';
-import { captureException } from './errors';
+import { captureException } from '../infra/error-handling';
 import { getOrInsertId } from './index';
 
 const { api } = sbvrUtils;

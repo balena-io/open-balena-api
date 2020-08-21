@@ -3,7 +3,7 @@ import type { RequestHandler } from 'express';
 import { errors } from '@balena/pinejs';
 
 import { comparePassword, findUser, loginUserXHR } from '../../platform/auth';
-import { captureException } from '../../platform/errors';
+import { captureException } from '../../infra/error-handling';
 
 import type { SetupOptions } from '../../index';
 

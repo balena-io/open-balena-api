@@ -1,7 +1,7 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
 import { addDeleteHookForDependents, createActor } from '../../platform';
-import { captureException } from '../../platform/errors';
+import { captureException } from '../../infra/error-handling';
 
 import { DefaultApplicationType } from '../../lib/application-types';
 import { postDevices } from '../../lib/device-proxy';

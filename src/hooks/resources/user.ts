@@ -8,7 +8,7 @@ import {
 	checkSudoValidity,
 	generateNewJwtSecret,
 } from '../../platform/auth';
-import { captureException } from '../../platform/errors';
+import { captureException } from '../../infra/error-handling';
 import { assignUserRole } from '../../platform/permissions';
 import { UnauthorizedError } from '@balena/pinejs/out/sbvr-api/errors';
 

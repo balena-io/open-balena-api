@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import type { FilterObj } from 'pinejs-client-core';
 
-import { captureException } from './errors';
+import { captureException } from '../infra/error-handling';
 
 // TODO: Potential races here. They are unlikely but not impossible. Will fix
 // in subsequent PR.

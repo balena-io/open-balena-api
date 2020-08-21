@@ -1,11 +1,7 @@
 import type { Application } from 'express';
 
 import {
-	apiKeyMiddleware,
-	authorized,
 	gracefullyDenyDeletedDevices,
-	identify,
-	permissionRequired,
 	registerDeviceStateEvent,
 } from '../platform/middleware';
 
@@ -21,6 +17,13 @@ import * as registry from '../routes/registry';
 import * as services from '../routes/services';
 import * as auth from '../features/auth';
 import * as deviceLogs from '../features/device-logs';
+
+import {
+	apiKeyMiddleware,
+	authorizedMiddleware,
+	identifyMiddleware,
+	permissionRequiredMiddleware,
+} from '../infra/auth';
 
 export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.get('/config/vars', config.vars);
@@ -49,25 +52,33 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	);
 	app.post(/^\/supervisor(\/.+)$/, apiKeyMiddleware, devices.proxy);
 
-	app.get('/download-config', authorized, applications.downloadImageConfig);
-	app.post('/download-config', authorized, applications.downloadImageConfig);
+	app.get(
+		'/download-config',
+		authorizedMiddleware,
+		applications.downloadImageConfig,
+	);
+	app.post(
+		'/download-config',
+		authorizedMiddleware,
+		applications.downloadImageConfig,
+	);
 
 	// FIXME(refactor): this is legacy; move it out of here
 	// this is deprecated and should be phased out - it's a user api key as well - the appId is irrelevant
 	app.post(
 		'/application/:appId/generate-api-key',
-		authorized,
+		authorizedMiddleware,
 		apiKeys.createUserApiKey,
 	);
 	app.post(
 		'/api-key/user/full',
-		authorized,
-		permissionRequired('auth.create_token'),
+		authorizedMiddleware,
+		permissionRequiredMiddleware('auth.create_token'),
 		apiKeys.createNamedUserApiKey,
 	);
 	app.post(
 		'/api-key/application/:appId/provisioning',
-		authorized,
+		authorizedMiddleware,
 		apiKeys.createProvisioningApiKey,
 	);
 	app.post(
@@ -76,7 +87,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 		apiKeys.createDeviceApiKey,
 	);
 
-	app.post('/api-key/v1', authorized, apiKeys.createGenericApiKey);
+	app.post('/api-key/v1', authorizedMiddleware, apiKeys.createGenericApiKey);
 
 	app.get(
 		'/services/vpn/auth/:device_uuid',
@@ -86,30 +97,38 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.post(
 		'/services/vpn/client-connect',
 		apiKeyMiddleware,
-		permissionRequired('service.vpn'),
+		permissionRequiredMiddleware('service.vpn'),
 		services.vpn.clientConnect,
 	);
 	app.post(
 		'/services/vpn/client-disconnect',
 		apiKeyMiddleware,
-		permissionRequired('service.vpn'),
+		permissionRequiredMiddleware('service.vpn'),
 		services.vpn.clientDisconnect,
 	);
 
 	app.get('/auth/v1/token', registry.basicApiKeyAuthenticate, registry.token);
 
-	app.get('/access/v1/hostos/:device_uuid', authorized, access.hostOSAccess);
+	app.get(
+		'/access/v1/hostos/:device_uuid',
+		authorizedMiddleware,
+		access.hostOSAccess,
+	);
 
-	app.get('/device-types/v1', identify, deviceTypes.getDeviceTypes);
-	app.get('/device-types/v1/:deviceType', identify, deviceTypes.getDeviceType);
+	app.get('/device-types/v1', identifyMiddleware, deviceTypes.getDeviceTypes);
+	app.get(
+		'/device-types/v1/:deviceType',
+		identifyMiddleware,
+		deviceTypes.getDeviceType,
+	);
 	app.get(
 		'/device-types/v1/:deviceType/images',
-		identify,
+		identifyMiddleware,
 		deviceTypes.listAvailableImageVersions,
 	);
 	app.get(
 		'/device-types/v1/:deviceType/images/:version/download-size',
-		identify,
+		identifyMiddleware,
 		deviceTypes.downloadImageSize,
 	);
 

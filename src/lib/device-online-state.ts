@@ -6,7 +6,7 @@ import { RedisClient } from 'redis';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
-import { captureException } from '../platform/errors';
+import { captureException } from '../infra/error-handling';
 
 import {
 	API_HEARTBEAT_STATE_ENABLED,

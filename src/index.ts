@@ -34,7 +34,7 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from './platform/errors';
+} from './infra/error-handling';
 import {
 	findUser,
 	getUser,
@@ -65,14 +65,17 @@ import {
 } from './platform/permissions';
 import { createScopedAccessToken, createJwt } from './platform/jwt';
 import {
-	authenticated,
-	authorized,
-	apiKeyMiddleware,
 	gracefullyDenyDeletedDevices,
-	identify,
-	permissionRequired,
 	registerDeviceStateEvent,
 } from './platform/middleware';
+import {
+	authenticatedMiddleware,
+	authorizedMiddleware,
+	apiKeyMiddleware,
+	identifyMiddleware,
+	permissionRequiredMiddleware,
+	prefetchApiKeyMiddleware,
+} from './infra/auth';
 import {
 	addDeleteHookForDependents,
 	updateOrInsertModel,
@@ -89,7 +92,7 @@ import {
 import {
 	createRateLimitMiddleware,
 	getUserIDFromCreds,
-} from './lib/rate-limiting';
+} from './infra/rate-limiting';
 import {
 	getAccessibleDeviceTypes,
 	findBySlug,
@@ -163,12 +166,12 @@ export const auth = {
 };
 export const middleware = {
 	sudoMiddleware,
-	authenticated,
-	authorized,
+	authenticated: authenticatedMiddleware,
+	authorized: authorizedMiddleware,
 	apiKeyMiddleware,
 	gracefullyDenyDeletedDevices,
-	identify,
-	permissionRequired,
+	identify: identifyMiddleware,
+	permissionRequired: permissionRequiredMiddleware,
 	registerDeviceStateEvent,
 	loginRateLimiter,
 	createRateLimitMiddleware,
@@ -352,18 +355,7 @@ function setupMiddleware(app: Application) {
 
 	app.use(jwt.middleware);
 
-	app.use(
-		async (
-			req,
-			res,
-			next, // Only import on demand to avoid issues with import ordering
-		) => {
-			const { prefetchApiKeyMiddleware } = await import(
-				'./platform/middleware'
-			);
-			prefetchApiKeyMiddleware(req, res, next);
-		},
-	);
+	app.use(prefetchApiKeyMiddleware);
 }
 
 async function startServer(

@@ -2,8 +2,8 @@ import type { Application } from 'express';
 import type { SetupOptions } from '../..';
 
 import { SECONDS_PER_HOUR } from '../../lib/config';
-import { createRateLimitMiddleware } from '../../lib/rate-limiting';
-import { apiKeyMiddleware, authorized } from '../../platform/middleware';
+import { createRateLimitMiddleware } from '../../infra/rate-limiting';
+import { apiKeyMiddleware, authorizedMiddleware } from '../../infra/auth';
 import { login } from './login';
 import { getUserPublicKeys } from './public-keys';
 import { whoami } from './whoami';
@@ -18,7 +18,7 @@ export const loginRateLimiter = createRateLimitMiddleware({
 export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.post('/login_', loginRateLimiter('body.username'), login(onLogin));
 
-	app.get('/user/v1/whoami', authorized, whoami);
+	app.get('/user/v1/whoami', authorizedMiddleware, whoami);
 
 	app.get(
 		'/auth/v1/public-keys/:username',

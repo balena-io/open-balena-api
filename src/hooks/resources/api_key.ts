@@ -1,6 +1,6 @@
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 
-import { captureException } from '../../platform/errors';
+import { captureException } from '../../infra/error-handling';
 
 const { api, getAffectedIds } = sbvrUtils;
 

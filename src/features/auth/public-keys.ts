@@ -2,7 +2,7 @@ import type { RequestHandler } from 'express';
 
 import { sbvrUtils } from '@balena/pinejs';
 
-import { captureException, handleHttpErrors } from '../../platform/errors';
+import { captureException, handleHttpErrors } from '../../infra/error-handling';
 
 export const getUserPublicKeys: RequestHandler = async (req, res) => {
 	const { username } = req.params;

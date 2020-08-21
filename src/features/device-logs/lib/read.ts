@@ -3,7 +3,10 @@ import onFinished = require('on-finished');
 
 import { sbvrUtils, errors } from '@balena/pinejs';
 
-import { captureException, handleHttpErrors } from '../../../platform/errors';
+import {
+	captureException,
+	handleHttpErrors,
+} from '../../../infra/error-handling';
 
 import { DeviceLog, LogContext, StreamState } from './struct';
 import {
