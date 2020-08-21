@@ -1,4 +1,27 @@
 - commits:
+    - subject: Separate device type fetching from synchronizing it to the DB
+      hash: a007aa1c39edb3cbc79f7d4ef6779e6a7df367f0
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+    - subject: 'refactor: Move device type errors to the common errors file'
+      hash: 892df86f4e685e67f05ba0ab90e092b381e98d86
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.93.0
+  date: 2020-08-21T13:32:59.117Z
+- commits:
     - subject: Update typescript
       hash: 22c0c45347502444579806990805caec3e49630f
       body: |
