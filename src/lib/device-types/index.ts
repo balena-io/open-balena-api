@@ -8,7 +8,7 @@ import * as semver from 'balena-semver';
 import type { ODataOptions } from 'pinejs-client-core';
 const { InternalRequestError } = errors;
 
-import { captureException } from '../../platform/errors';
+import { captureException } from '../../infra/error-handling';
 
 import {
 	getCompressedSize,

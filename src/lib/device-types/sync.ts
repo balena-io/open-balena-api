@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import Bluebird = require('bluebird');
-import { captureException } from '../../platform/errors';
+import { captureException } from '../../infra/error-handling';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import { getAllDeviceTypes } from '.';
 import { DeviceType } from './build-info-facade';

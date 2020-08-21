@@ -1,7 +1,7 @@
 import { sbvrUtils, hooks } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
 
-import { captureException } from '../../platform/errors';
+import { captureException } from '../../infra/error-handling';
 
 import { postDevices } from '../../lib/device-proxy';
 import {

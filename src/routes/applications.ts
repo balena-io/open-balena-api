@@ -6,7 +6,7 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../platform/errors';
+} from '../infra/error-handling';
 
 import { generateConfig } from '../lib/device-config';
 import { findBySlug } from '../lib/device-types';

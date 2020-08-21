@@ -15,7 +15,7 @@ import {
 } from '../lib/config';
 import { User as DbUser } from '../models';
 
-import { captureException } from './errors';
+import { captureException } from '../infra/error-handling';
 
 export { SignOptions } from 'jsonwebtoken';
 

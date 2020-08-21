@@ -34,7 +34,7 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from './platform/errors';
+} from './infra/error-handling';
 import {
 	findUser,
 	getUser,

@@ -11,7 +11,7 @@ import {
 } from 'rate-limiter-flexible';
 import * as redis from 'redis';
 
-import { captureException } from '../../platform/errors';
+import { captureException } from '../error-handling';
 
 import {
 	RATE_LIMIT_FACTOR,

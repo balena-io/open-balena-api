@@ -8,7 +8,7 @@ import * as semver from 'balena-semver';
 import * as deviceConfig from 'balena-device-config';
 
 import { getUser } from '../platform/auth';
-import { captureException } from '../platform/errors';
+import { captureException } from '../infra/error-handling';
 
 import { createProvisioningApiKey, createUserApiKey } from './api-keys';
 import type { DeviceType } from './device-types';

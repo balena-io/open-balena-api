@@ -9,7 +9,7 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../platform/errors';
+} from '../infra/error-handling';
 
 import { createDeviceApiKey } from '../lib/api-keys';
 import {

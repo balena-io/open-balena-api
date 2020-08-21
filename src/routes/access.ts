@@ -4,7 +4,7 @@ import { sbvrUtils, errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 
 import { reqHasPermission } from '../platform/auth';
-import { captureException } from '../platform/errors';
+import { captureException } from '../infra/error-handling';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;

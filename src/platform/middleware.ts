@@ -5,7 +5,7 @@ import { sbvrUtils, permissions } from '@balena/pinejs';
 
 import { retrieveAPIKey } from './api-keys';
 import { getUser, reqHasPermission } from './auth';
-import { captureException } from './errors';
+import { captureException } from '../infra/error-handling';
 
 import { API_HEARTBEAT_STATE_ENABLED } from '../lib/config';
 import * as DeviceOnlineState from '../lib/device-online-state';
