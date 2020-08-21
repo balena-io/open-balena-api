@@ -1,4 +1,15 @@
 - commits:
+    - subject: Separate some auth related code to features/auth
+      hash: 8b388b27bfa0f34ac8d9c26896cf2b908093cf3d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.93.2
+  date: 2020-08-21T15:50:15.305Z
+- commits:
     - subject: Reorganize device-logs subfolder to separate reading and storing
       hash: ec6eee4be2f4ac09174c2c2bafa85705d1304302
       body: ''
