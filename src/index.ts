@@ -89,7 +89,7 @@ import {
 import {
 	createRateLimitMiddleware,
 	getUserIDFromCreds,
-} from './lib/rate-limiting';
+} from './infra/rate-limiting';
 import {
 	getAccessibleDeviceTypes,
 	findBySlug,

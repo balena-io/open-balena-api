@@ -2,7 +2,7 @@ import type { Application } from 'express';
 import type { SetupOptions } from '../..';
 
 import { SECONDS_PER_HOUR } from '../../lib/config';
-import { createRateLimitMiddleware } from '../../lib/rate-limiting';
+import { createRateLimitMiddleware } from '../../infra/rate-limiting';
 import { apiKeyMiddleware, authorized } from '../../platform/middleware';
 import { login } from './login';
 import { getUserPublicKeys } from './public-keys';

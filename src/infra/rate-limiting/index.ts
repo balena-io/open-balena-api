@@ -11,14 +11,14 @@ import {
 } from 'rate-limiter-flexible';
 import * as redis from 'redis';
 
-import { captureException } from '../platform/errors';
+import { captureException } from '../../platform/errors';
 
 import {
 	RATE_LIMIT_FACTOR,
 	RATE_LIMIT_MEMORY_BACKEND,
 	REDIS_HOST,
 	REDIS_PORT,
-} from './config';
+} from '../../lib/config';
 
 const logRedisError = (err: Error) => {
 	// do not log these errors, because this would flood our logs
