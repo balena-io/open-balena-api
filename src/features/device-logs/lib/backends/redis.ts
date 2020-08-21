@@ -6,9 +6,9 @@ import * as redis from 'redis';
 
 import { errors } from '@balena/pinejs';
 
-import { captureException } from '../../../platform/errors';
+import { captureException } from '../../../../platform/errors';
 
-import { DAYS, MINUTES, REDIS_HOST, REDIS_PORT } from '../../config';
+import { DAYS, MINUTES, REDIS_HOST, REDIS_PORT } from '../../../../lib/config';
 import type {
 	DeviceLog,
 	DeviceLogsBackend,
