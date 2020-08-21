@@ -1,4 +1,23 @@
 - commits:
+    - subject: Reorganize device-logs subfolder to separate reading and storing
+      hash: ec6eee4be2f4ac09174c2c2bafa85705d1304302
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Separate device-logs into a single sub-directory
+      hash: cf611d86de86d9aac6b6838d83180e452814c1d2
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.93.1
+  date: 2020-08-21T15:41:20.307Z
+- commits:
     - subject: Separate device type fetching from synchronizing it to the DB
       hash: a007aa1c39edb3cbc79f7d4ef6779e6a7df367f0
       body: ''
