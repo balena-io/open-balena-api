@@ -31,7 +31,7 @@ import * as os from '../routes/os';
 import * as registry from '../routes/registry';
 import * as services from '../routes/services';
 import * as session from '../routes/session';
-import * as deviceLogRoutes from '../device-logs/routes';
+import * as deviceLogs from '../device-logs';
 
 export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.get('/config/vars', config.vars);
@@ -57,7 +57,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 		apiKeyMiddleware,
 		devices.statePatch,
 	);
-	deviceLogRoutes.setup(app);
+	deviceLogs.setup(app);
 	app.post(
 		'/dependent/v1/scan',
 		apiKeyMiddleware,

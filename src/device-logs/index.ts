@@ -2,7 +2,8 @@ import type { Application } from 'express';
 
 import { createRateLimitMiddleware } from '../lib/rate-limiting';
 import { apiKeyMiddleware, authorized } from '../platform/middleware';
-import * as deviceLogs from './device-logs';
+import { read } from './lib/read';
+import { store, storeStream } from './lib/store';
 
 // Rate limit for device log creation, a maximum of 15 batches every 10 second window
 const deviceLogsRateLimiter = createRateLimitMiddleware(
@@ -17,16 +18,12 @@ const deviceLogsRateLimiter = createRateLimitMiddleware(
 );
 
 export const setup = (app: Application) => {
-	app.get('/device/v2/:uuid/logs', authorized, deviceLogs.read);
+	app.get('/device/v2/:uuid/logs', authorized, read);
 	app.post(
 		'/device/v2/:uuid/logs',
 		deviceLogsRateLimiter('params.uuid'),
 		apiKeyMiddleware,
-		deviceLogs.store,
+		store,
 	);
-	app.post(
-		'/device/v2/:uuid/log-stream',
-		apiKeyMiddleware,
-		deviceLogs.storeStream,
-	);
+	app.post('/device/v2/:uuid/log-stream', apiKeyMiddleware, storeStream);
 };
