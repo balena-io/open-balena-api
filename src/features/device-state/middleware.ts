@@ -3,10 +3,10 @@ import * as _ from 'lodash';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
-import { captureException } from '../infra/error-handling';
+import { captureException } from '../../infra/error-handling';
 
-import { API_HEARTBEAT_STATE_ENABLED } from '../lib/config';
-import * as DeviceOnlineState from '../lib/device-online-state';
+import { API_HEARTBEAT_STATE_ENABLED } from '../../lib/config';
+import * as DeviceOnlineState from '../../lib/device-online-state';
 
 const { api } = sbvrUtils;
 
