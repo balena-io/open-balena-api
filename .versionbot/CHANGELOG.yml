@@ -1,4 +1,15 @@
 - commits:
+    - subject: Separate device state into a feature
+      hash: 60e81dd20380514daaaeab7eda8afb53b54529ec
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.93.4
+  date: 2020-08-21T16:30:49.565Z
+- commits:
     - subject: Separate auth middleware to infra/auth
       hash: 8d7cc64719d941e015eb48724c83549ea053c5ff
       body: ''
