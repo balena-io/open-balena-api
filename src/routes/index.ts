@@ -19,31 +19,19 @@ export const loginRateLimiter = createRateLimitMiddleware({
 	duration: 2 * SECONDS_PER_HOUR, // reset counter after 2 hours (in seconds)
 });
 
-// Rate limit for device log creation, a maximum of 15 batches every 10 second window
-export const deviceLogsRateLimiter = createRateLimitMiddleware(
-	{
-		points: 14, // allow 15 device log batches (1+14 "retries") per window
-		blockDuration: 10, // seconds
-		duration: 10, // reset counter after 10 seconds (from the first batch of the window)
-	},
-	{
-		ignoreIP: true,
-	},
-);
-
 import type { SetupOptions } from '../index';
 import * as access from '../routes/access';
 import * as apiKeys from '../routes/api-keys';
 import * as applications from '../routes/applications';
 import * as auth from '../routes/auth';
 import * as config from '../routes/config';
-import * as deviceLogs from '../routes/device-logs';
 import * as deviceTypes from '../routes/device-types';
 import * as devices from '../routes/devices';
 import * as os from '../routes/os';
 import * as registry from '../routes/registry';
 import * as services from '../routes/services';
 import * as session from '../routes/session';
+import * as deviceLogRoutes from '../device-logs/routes';
 
 export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.get('/config/vars', config.vars);
@@ -69,18 +57,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 		apiKeyMiddleware,
 		devices.statePatch,
 	);
-	app.get('/device/v2/:uuid/logs', authorized, deviceLogs.read);
-	app.post(
-		'/device/v2/:uuid/logs',
-		deviceLogsRateLimiter('params.uuid'),
-		apiKeyMiddleware,
-		deviceLogs.store,
-	);
-	app.post(
-		'/device/v2/:uuid/log-stream',
-		apiKeyMiddleware,
-		deviceLogs.storeStream,
-	);
+	deviceLogRoutes.setup(app);
 	app.post(
 		'/dependent/v1/scan',
 		apiKeyMiddleware,

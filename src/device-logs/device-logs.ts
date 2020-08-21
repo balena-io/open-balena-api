@@ -11,7 +11,7 @@ import {
 	translateError,
 } from '../platform/errors';
 
-import { RedisBackend } from '../lib/device-logs/backends/redis';
+import { RedisBackend } from './lib/backends/redis';
 import {
 	AnySupervisorLog,
 	DeviceLog,
@@ -20,8 +20,8 @@ import {
 	LogWriteContext,
 	StreamState,
 	SupervisorLog,
-} from '../lib/device-logs/struct';
-import { Supervisor } from '../lib/device-logs/supervisor';
+} from './lib/struct';
+import { Supervisor } from './lib/supervisor';
 
 const {
 	BadRequestError,
