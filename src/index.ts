@@ -78,7 +78,7 @@ import {
 	updateOrInsertModel,
 	getOrInsertModelId,
 } from './platform';
-import { loginRateLimiter } from './routes';
+import { loginRateLimiter } from './features/auth';
 import {
 	getIP,
 	getIPv4,

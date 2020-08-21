@@ -1,19 +1,12 @@
 import type { RequestHandler } from 'express';
 
-import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 
-import {
-	comparePassword,
-	findUser,
-	getUser,
-	loginUserXHR,
-} from '../platform/auth';
-import { captureException, handleHttpErrors } from '../platform/errors';
+import { getUser } from '../../platform/auth';
+import { captureException, handleHttpErrors } from '../../platform/errors';
 
-import type { SetupOptions } from '../index';
-import type { User as DbUser } from '../models';
+import type { User as DbUser } from '../../models';
 
-const { BadRequestError, NotFoundError } = errors;
 const { api } = sbvrUtils;
 
 export const whoami: RequestHandler = async (req, res) => {
@@ -72,39 +65,5 @@ export const whoami: RequestHandler = async (req, res) => {
 		}
 		captureException(err, 'Error while getting user info', { req });
 		res.sendStatus(500);
-	}
-};
-
-export const login = (
-	onLogin: SetupOptions['onLogin'],
-): RequestHandler => async (req, res) => {
-	const { username, password } = req.body;
-
-	if (!(username && password)) {
-		return res.sendStatus(401);
-	}
-
-	try {
-		const user = await findUser(username);
-		if (!user) {
-			throw new NotFoundError('User not found.');
-		}
-
-		const matches = await comparePassword(password, user.password);
-		if (!matches) {
-			throw new BadRequestError('Current password incorrect.');
-		}
-		if (onLogin) {
-			await onLogin(user);
-		}
-		await req.resetRatelimit?.();
-		await loginUserXHR(res, user.id);
-	} catch (err) {
-		if (err instanceof BadRequestError || err instanceof NotFoundError) {
-			res.sendStatus(401);
-			return;
-		}
-		captureException(err, 'Error logging in', { req });
-		res.sendStatus(401);
 	}
 };
