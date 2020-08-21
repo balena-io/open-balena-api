@@ -1,7 +1,7 @@
 import type { Application } from 'express';
 
 import { createRateLimitMiddleware } from '../../infra/rate-limiting';
-import { apiKeyMiddleware, authorized } from '../../platform/middleware';
+import { apiKeyMiddleware, authorizedMiddleware } from '../../infra/auth';
 import { read } from './lib/read';
 import { store, storeStream } from './lib/store';
 
@@ -18,7 +18,7 @@ const deviceLogsRateLimiter = createRateLimitMiddleware(
 );
 
 export const setup = (app: Application) => {
-	app.get('/device/v2/:uuid/logs', authorized, read);
+	app.get('/device/v2/:uuid/logs', authorizedMiddleware, read);
 	app.post(
 		'/device/v2/:uuid/logs',
 		deviceLogsRateLimiter('params.uuid'),
