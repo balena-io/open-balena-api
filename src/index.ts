@@ -18,8 +18,6 @@ import type { defaultFindUser$select } from './platform/auth';
 import * as jwt from './platform/jwt';
 passport.use(jwt.strategy);
 
-import * as deviceOnlineState from './lib/device-online-state';
-
 import {
 	API_HOST,
 	COOKIE_SESSION_SECRET,
@@ -64,10 +62,7 @@ import {
 	assignUserRole,
 } from './platform/permissions';
 import { createScopedAccessToken, createJwt } from './platform/jwt';
-import {
-	gracefullyDenyDeletedDevices,
-	registerDeviceStateEvent,
-} from './features/device-state/middleware';
+import { gracefullyDenyDeletedDevices } from './features/device-state/middleware';
 import {
 	authenticatedMiddleware,
 	authorizedMiddleware,
@@ -108,7 +103,7 @@ import {
 import {
 	getPollInterval,
 	getInstance as getDeviceOnlineStateManager,
-} from './lib/device-online-state';
+} from './features/device-heartbeat';
 import { registryAuth } from './lib/certs';
 import {
 	ALLOWED_NAMES,
@@ -129,6 +124,7 @@ export * as request from './lib/request';
 export * as config from './lib/config';
 export * as abstractSql from './abstract-sql-utils';
 
+export * as deviceState from './features/device-state';
 export const errors = { captureException, handleHttpErrors, translateError };
 export const auth = {
 	...baseAuth,
@@ -168,7 +164,6 @@ export const middleware = {
 	gracefullyDenyDeletedDevices,
 	identify: identifyMiddleware,
 	permissionRequired: permissionRequiredMiddleware,
-	registerDeviceStateEvent,
 	loginRateLimiter,
 	createRateLimitMiddleware,
 };
@@ -309,7 +304,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	app.use(Raven.errorHandler());
 
 	// start consuming the API heartbeat state queue...
-	deviceOnlineState.getInstance().start();
+	getDeviceOnlineStateManager().start();
 
 	startDeviceTypeSynchronization();
 

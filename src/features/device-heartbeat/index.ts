@@ -6,7 +6,9 @@ import { RedisClient } from 'redis';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
-import { captureException } from '../infra/error-handling';
+import { captureException } from '../../infra/error-handling';
+
+import { events as deviceStateEvents } from '../device-state';
 
 import {
 	API_HEARTBEAT_STATE_ENABLED,
@@ -14,7 +16,7 @@ import {
 	DEFAULT_SUPERVISOR_POLL_INTERVAL,
 	REDIS_HOST,
 	REDIS_PORT,
-} from './config';
+} from '../../lib/config';
 import { promisify } from 'util';
 
 const { api } = sbvrUtils;
@@ -426,6 +428,19 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 
 		this.isConsuming = true;
 		this.consume();
+
+		deviceStateEvents.on('get-state', async (uuid) => {
+			try {
+				const pollInterval = await getPollInterval(uuid);
+
+				this.captureEventFor(uuid, pollInterval / 1000);
+			} catch (err) {
+				captureException(
+					err,
+					`Unable to capture the API heartbeat event for device: ${uuid}`,
+				);
+			}
+		});
 	}
 
 	public async captureEventFor(uuid: string, timeoutSeconds: number) {
