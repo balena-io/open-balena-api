@@ -6,11 +6,25 @@ import { expect } from './test-lib/chai';
 import { supertest } from './test-lib/supertest';
 
 describe('device type endpoints', () => {
+	describe('device type resource', () => {
+		it('should succeed to return a result', async () => {
+			const res = await supertest(app).get('/resin/device_type').expect(200);
+			expect(res.body.d).to.be.an('array');
+			res.body.d.forEach((deviceType: any) => {
+				expect(deviceType).to.be.an('object');
+				expect(deviceType).to.have.property('slug').that.is.a('string');
+				expect(deviceType).to.have.property('name').that.is.a('string');
+			});
+
+			expect(res.body.d).to.have.property('length', 57);
+		});
+	});
+
 	describe('/device-types/v1', () => {
 		it('should succeed to return a result', async () => {
 			const res = await supertest(app).get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
-			_.forEach(res.body, (deviceType) => {
+			res.body.forEach((deviceType: any) => {
 				expect(deviceType).to.be.an('object');
 				expect(deviceType).to.have.property('slug').that.is.a('string');
 				if (deviceType.slug !== 'edge') {

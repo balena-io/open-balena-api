@@ -3,9 +3,10 @@ import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 
 import * as deviceTypesLib from '@resin.io/device-types';
-import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
-import type { Filter, ODataOptions } from 'pinejs-client-core';
+import type { ODataOptions } from 'pinejs-client-core';
+const { InternalRequestError } = errors;
 
 import { captureException } from '../../platform/errors';
 
@@ -16,26 +17,13 @@ import {
 	getLogoUrl,
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
-
-const { api } = sbvrUtils;
-const { BadRequestError, InternalRequestError, NotFoundError } = errors;
-export type { BadRequestError, NotFoundError };
+import {
+	UnknownDeviceTypeError,
+	InvalidDeviceTypeError,
+	UnknownVersionError,
+} from '../errors';
 
 export type DeviceType = deviceTypesLib.DeviceType;
-
-export class InvalidDeviceTypeError extends BadRequestError {}
-
-export class UnknownDeviceTypeError extends NotFoundError {
-	constructor(slug: string) {
-		super(`Unknown device type ${slug}`);
-	}
-}
-
-export class UnknownVersionError extends NotFoundError {
-	constructor(slug: string, buildId: string) {
-		super(`Device ${slug} not found for ${buildId} version`);
-	}
-}
 
 interface BuildInfo {
 	ignored: boolean;
@@ -50,24 +38,6 @@ interface DeviceTypeInfo {
 const SPECIAL_SLUGS = ['edge'];
 const RETRY_DELAY = 2000; // ms
 const DEVICE_TYPES_CACHE_EXPIRATION = 5 * 60 * 1000; // 5 mins
-
-/**
- * This map will hold information on which device type fields
- * imported from the device type registry will be synced to which db fields.
- * the key of dictionary is the field in the database.
- * the name of a dictionary entry is the field in the dt json
- * the default of a dictionary entry is a default value if the field in dt json does not exist
- */
-const syncSettings = {
-	map: {} as Dictionary<{
-		name: string;
-		default?: any;
-	}>,
-};
-
-export function setSyncMap(map: typeof syncSettings['map']) {
-	syncSettings.map = map;
-}
 
 function sortBuildIds(ids: string[]): string[] {
 	return arraySort(
@@ -165,90 +135,6 @@ async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	}
 }
 
-async function updateDTModel(
-	deviceType: deviceTypesLib.DeviceType,
-	propertyMap: typeof syncSettings['map'],
-	tx: Tx,
-): Promise<void> {
-	const apiTx = api.resin.clone({ passthrough: { req: permissions.root, tx } });
-	const updateFields = _.mapValues(
-		propertyMap,
-		(source) => (deviceType as AnyObject)[source.name] ?? source.default,
-	);
-	const updateFilter = _.map(
-		propertyMap,
-		(value, key): Filter => {
-			return {
-				[key]: {
-					$ne: (deviceType as AnyObject)[value.name] ?? value.default,
-				},
-			};
-		},
-	);
-	const result = await apiTx.get({
-		resource: 'device_type',
-		id: {
-			slug: deviceType.slug,
-		},
-		options: {
-			$select: ['id'],
-		},
-	});
-	if (result == null) {
-		const body = {
-			slug: deviceType.slug,
-			...updateFields,
-		};
-		await apiTx.post({
-			resource: 'device_type',
-			body,
-			options: { returnResource: false },
-		});
-		return;
-	} else {
-		let filter: AnyObject = {
-			id: result.id,
-		};
-		if (updateFilter.length > 1) {
-			filter['$or'] = updateFilter;
-		} else if (updateFilter.length === 1) {
-			filter = _.merge(filter, updateFilter[0]);
-		}
-		// do a patch with the id
-		await apiTx.patch({
-			resource: 'device_type',
-			id: result.id,
-			body: updateFields,
-			options: {
-				$filter: filter,
-			},
-		});
-		return;
-	}
-}
-
-async function syncDataModel(
-	types: Dictionary<DeviceTypeInfo>,
-	propertyMap: typeof syncSettings['map'],
-) {
-	if (_.isEmpty(propertyMap)) {
-		captureException(
-			new Error('No properties to sync into the device type model'),
-		);
-		return;
-	}
-	await sbvrUtils.db.transaction(async (tx) => {
-		await Promise.all(
-			_(types)
-				.map(({ latest }) => latest.deviceType)
-				// This keyBy removes duplicates for the same slug, ie due to aliases
-				.keyBy(({ slug }) => slug)
-				.map((deviceType) => updateDTModel(deviceType, propertyMap, tx))
-				.value(),
-		);
-	});
-}
-
 let deviceTypesCache: Promise<Dictionary<DeviceTypeInfo>> | undefined;
 
 async function scheduleFetchDeviceTypes() {
@@ -259,16 +145,14 @@ async function scheduleFetchDeviceTypes() {
 		captureException(err, 'Failed to re-fetch device types');
 	}
 }
+
 async function fetchDeviceTypesAndReschedule(): Promise<
 	Dictionary<DeviceTypeInfo>
 > {
 	try {
 		const promise = fetchDeviceTypes().then(async (deviceTypeInfo) => {
-			await syncDataModel(deviceTypeInfo, syncSettings.map);
-
 			// when the promise gets resolved, cache it
 			deviceTypesCache = promise;
-
 			return deviceTypeInfo;
 		});
 
@@ -343,23 +227,26 @@ export const validateSlug = (slug?: string) => {
 	return slug;
 };
 
+export const getAllDeviceTypes = async () => {
+	const dtInfo = await getDeviceTypes();
+	return _.uniqBy(
+		Object.values(dtInfo).map((dtEntry) => dtEntry.latest.deviceType),
+		(dt) => dt.slug,
+	);
+};
+
 export const getAccessibleDeviceTypes = async (
 	resinApi: sbvrUtils.PinejsClient,
 ): Promise<DeviceType[]> => {
-	const [deviceTypesInfos, accessibleDeviceTypes] = await Promise.all([
-		getDeviceTypes(),
+	const [deviceTypes, accessibleDeviceTypes] = await Promise.all([
+		getAllDeviceTypes(),
 		getAccessibleSlugs(resinApi),
 	]);
 
 	const accessSet = new Set(accessibleDeviceTypes);
-	const deviceTypes = _(deviceTypesInfos)
-		.filter((deviceTypesInfo: DeviceTypeInfo, slug: string) => {
-			const dtSlug = deviceTypesInfo.latest.deviceType.slug;
-			return dtSlug === slug && accessSet.has(dtSlug);
-		})
-		.map((deviceTypesInfo) => deviceTypesInfo.latest.deviceType)
-		.value();
-	return deviceTypes;
+	return deviceTypes.filter((deviceType) => {
+		return accessSet.has(deviceType.slug);
+	});
 };
 
 export const findBySlug = async (
