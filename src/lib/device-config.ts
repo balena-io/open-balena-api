@@ -10,7 +10,10 @@ import * as deviceConfig from 'balena-device-config';
 import { getUser } from '../infra/auth/auth';
 import { captureException } from '../infra/error-handling';
 
-import { createProvisioningApiKey, createUserApiKey } from './api-keys';
+import {
+	createProvisioningApiKey,
+	createUserApiKey,
+} from '../infra/auth/api-keys';
 import type { DeviceType } from './device-types';
 
 const { BadRequestError } = errors;

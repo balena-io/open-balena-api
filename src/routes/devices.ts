@@ -10,7 +10,7 @@ import {
 	translateError,
 } from '../infra/error-handling';
 
-import { createDeviceApiKey } from '../lib/api-keys';
+import { createDeviceApiKey } from '../infra/auth/api-keys';
 import { checkInt, isValidInteger } from '../lib/utils';
 export { proxy } from '../lib/device-proxy';
 

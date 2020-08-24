@@ -2,7 +2,7 @@ import type { RequestHandler } from 'express';
 import { checkSudoValidity } from './jwt';
 
 import * as _ from 'lodash';
-import { retrieveAPIKey } from '../../platform/api-keys';
+import { retrieveAPIKey } from './api-keys';
 import { getUser, reqHasPermission } from './auth';
 
 export const authenticatedMiddleware: RequestHandler = async (

@@ -14,7 +14,7 @@ import {
 	createNamedUserApiKey as $createNamedUserApiKey,
 	createProvisioningApiKey as $createProvisioningApiKey,
 	createUserApiKey as $createUserApiKey,
-} from '../lib/api-keys';
+} from '../infra/auth/api-keys';
 
 export const createGenericApiKey: RequestHandler = async (req, res) => {
 	const body = req.body as ApiKeyParameters;

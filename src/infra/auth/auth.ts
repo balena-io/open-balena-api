@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
-import { retrieveAPIKey } from '../../platform/api-keys';
+import { retrieveAPIKey } from './api-keys';
 import { User } from './jwt-passport';
 
 import { getIP } from '../../lib/utils';

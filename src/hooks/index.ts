@@ -1,6 +1,6 @@
 import { hooks } from '@balena/pinejs';
 
-import { retrieveAPIKey } from '../platform/api-keys';
+import { retrieveAPIKey } from '../infra/auth/api-keys';
 
 hooks.addHook('all', 'all', 'all', {
 	sideEffects: false,
