@@ -1,4 +1,15 @@
 - commits:
+    - subject: Separate os-config into a feature
+      hash: 6269ccc03a1cf1a844922ea23d7e2e060256de2a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.11
+  date: 2020-08-24T15:00:30.717Z
+- commits:
     - subject: Move balena specific api key code to the api key feature
       hash: 883cc44d91301fd0aa1d5d6e41b90da04fb872cd
       body: ''
