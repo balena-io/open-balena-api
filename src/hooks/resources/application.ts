@@ -4,7 +4,7 @@ import { addDeleteHookForDependents, createActor } from '../../platform';
 import { captureException } from '../../infra/error-handling';
 
 import { DefaultApplicationType } from '../../lib/application-types';
-import { postDevices } from '../../lib/device-proxy';
+import { postDevices } from '../../features/device-proxy/device-proxy';
 import { resolveDeviceType } from '../common';
 
 const { BadRequestError, ConflictError, NotFoundError } = errors;

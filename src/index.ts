@@ -93,7 +93,7 @@ import {
 	setSyncMap,
 	startDeviceTypeSynchronization,
 } from './features/device-types/sync';
-import { proxy as supervisorProxy } from './lib/device-proxy';
+import { proxy as supervisorProxy } from './features/device-proxy/device-proxy';
 import { generateConfig } from './lib/device-config';
 import {
 	filterDeviceConfig,
