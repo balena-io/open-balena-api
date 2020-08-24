@@ -5,7 +5,7 @@ import { sbvrUtils, permissions } from '@balena/pinejs';
 import { getAllDeviceTypes } from '.';
 import { DeviceType } from './build-info-facade';
 
-const DEVICE_TYPES_SYNC_INTERVAL = 5 * 1000; // 5 mins
+const DEVICE_TYPES_SYNC_INTERVAL = 5 * 60 * 1000; // 5 mins
 
 type DeviceTypeResourceKeys = 'slug' | 'name' | 'is_private';
 
