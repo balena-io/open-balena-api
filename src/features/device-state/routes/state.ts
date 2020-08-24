@@ -13,6 +13,7 @@ import {
 	setMinPollInterval,
 } from '../utils';
 import { sbvrUtils, errors } from '@balena/pinejs';
+import { events } from '..';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -157,10 +158,11 @@ const stateQuery = _.once(() =>
 );
 
 export const state: RequestHandler = async (req, res) => {
-	const uuid = req.param('uuid');
+	const { uuid } = req.params;
 	if (!uuid) {
 		return res.status(400).end();
 	}
+	events.emit('get-state', uuid);
 
 	try {
 		const device = await sbvrUtils.db.readTransaction!((tx) =>

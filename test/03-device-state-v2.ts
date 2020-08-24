@@ -9,7 +9,7 @@ import { supertest, UserObjectParam } from './test-lib/supertest';
 
 import sinon = require('sinon');
 import configMock = require('../src/lib/config');
-import stateMock = require('../src/lib/device-online-state');
+import stateMock = require('../src/features/device-heartbeat');
 import * as fixtures from './test-lib/fixtures';
 
 const POLL_MSEC = 2000;

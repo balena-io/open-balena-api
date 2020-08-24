@@ -9,7 +9,7 @@ export const preInit = async () => {
 
 	// override the interval used to emit the queue stats event...
 	const { DeviceOnlineStateManager } = await import(
-		'../../src/lib/device-online-state'
+		'../../src/features/device-heartbeat'
 	);
 	(DeviceOnlineStateManager as any)['QUEUE_STATS_INTERVAL_MSEC'] = 1000;
 };
