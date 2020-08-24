@@ -31,7 +31,7 @@ async function onInitModel() {
 
 async function onInitHooks() {
 	const { createAllPermissions: createAll } = await import(
-		'./src/platform/permissions'
+		'./src/infra/auth/permissions'
 	);
 	const auth = await import('./src/lib/auth');
 	const permissionNames = _.union(

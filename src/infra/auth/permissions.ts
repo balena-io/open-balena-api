@@ -4,9 +4,9 @@ import * as randomstring from 'randomstring';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
-import { findUser } from '../infra/auth/auth';
-import { captureException } from '../infra/error-handling';
-import { getOrInsertId } from './index';
+import { findUser } from './auth';
+import { captureException } from '../error-handling';
+import { getOrInsertId } from '../../platform/index';
 
 const { api } = sbvrUtils;
 

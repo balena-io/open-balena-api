@@ -6,7 +6,7 @@ import { createActor } from '../../platform';
 import { getUser } from '../../infra/auth/auth';
 import { checkSudoValidity, generateNewJwtSecret } from '../../infra/auth/jwt';
 import { captureException } from '../../infra/error-handling';
-import { assignUserRole } from '../../platform/permissions';
+import { assignUserRole } from '../../infra/auth/permissions';
 import { UnauthorizedError } from '@balena/pinejs/out/sbvr-api/errors';
 
 const { BadRequestError, InternalRequestError } = errors;

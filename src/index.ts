@@ -61,7 +61,7 @@ import {
 	getOrInsertRoleId,
 	assignUserPermission,
 	assignUserRole,
-} from './platform/permissions';
+} from './infra/auth/permissions';
 import { createScopedAccessToken, createJwt } from './infra/auth/jwt';
 import { gracefullyDenyDeletedDevices } from './features/device-state/middleware';
 import {
