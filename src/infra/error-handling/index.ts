@@ -66,9 +66,7 @@ export const handleHttpErrors = (req: Request, res: Response, err: Error) => {
 	if (err instanceof HttpError) {
 		if (err instanceof InternalRequestError) {
 			captureException(err, 'Internal server error', { req });
-			if (err.body == null) {
-				err.body = 'Server error';
-			}
+			err.body ??= 'Server error';
 		}
 		res.status(err.status);
 		const body = err.getResponseBody();
