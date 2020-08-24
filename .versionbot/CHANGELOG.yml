@@ -1,4 +1,15 @@
 - commits:
+    - subject: Move vpn integration into a feature
+      hash: 28abf4dbbc50e5e871bb0f4ae914607b192fc117
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.12
+  date: 2020-08-24T15:23:50.329Z
+- commits:
     - subject: Separate os-config into a feature
       hash: 6269ccc03a1cf1a844922ea23d7e2e060256de2a
       body: ''
