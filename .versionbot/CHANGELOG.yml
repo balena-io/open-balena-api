@@ -1,4 +1,55 @@
 - commits:
+    - subject: Remove routes directory as it no longer serves a purpose
+      hash: 400ed0fea3be97c3683ffbb5d430076c0f41c1e1
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Separate host os access to a feature
+      hash: f98589d5a679e7d6ecb3dec0a49a7307aa766c9c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Separate vars schema to a feature
+      hash: 189a6e0cb16e37d901fac594d048d8dbe15a0b6b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Separate dependent devices to a feature
+      hash: de1e1439a68cd52136efd769d26b1ed3cbeb8558
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Separate device provisioning to a feature
+      hash: 9e44fd49c58cb22c435c3a9d7339b6daf424b4c3
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Separate device config generation to a feature
+      hash: cb529d71d0be59847f8f5542ccc0ad365a6f1876
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.14
+  date: 2020-08-24T17:50:20.224Z
+- commits:
     - subject: Make use of jsdoc @deprecated
       hash: 5846947023938f45f193e4d07ef2aa24883a30d9
       body: ''
