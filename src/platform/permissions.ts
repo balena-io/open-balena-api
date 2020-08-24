@@ -4,7 +4,7 @@ import * as randomstring from 'randomstring';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
-import { findUser } from './auth';
+import { findUser } from '../infra/auth/auth';
 import { captureException } from '../infra/error-handling';
 import { getOrInsertId } from './index';
 

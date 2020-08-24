@@ -2,7 +2,7 @@ import type { RequestHandler } from 'express';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
-import { getUser } from '../../platform/auth';
+import { getUser } from '../../infra/auth/auth';
 import { captureException, handleHttpErrors } from '../../infra/error-handling';
 
 import type { User as DbUser } from '../../models';

@@ -1,25 +1,21 @@
-import type { Request, RequestHandler, Response } from 'express';
+import type { Request } from 'express';
 import * as _ from 'lodash';
-import * as base32 from 'thirty-two';
 
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
-import { retrieveAPIKey } from './api-keys';
-import { createJwt, SignOptions, User } from './jwt';
+import { retrieveAPIKey } from '../../platform/api-keys';
+import { User } from '../../platform/jwt';
 
-import { getIP, pseudoRandomBytesAsync } from '../lib/utils';
-import type { User as DbUser } from '../models';
+import { getIP } from '../../lib/utils';
+import type { User as DbUser } from '../../models';
 
 const {
 	BadRequestError,
 	ConflictError,
 	UnauthorizedError,
 	NotFoundError,
-	InternalRequestError,
 } = errors;
 const { api } = sbvrUtils;
-
-const SUDO_TOKEN_VALIDITY = 20 * 60 * 1000;
 
 const USERNAME_BLACKLIST = ['root'];
 
@@ -128,30 +124,8 @@ export const checkUserPassword = async (
 	}
 };
 
-export const generateNewJwtSecret = async (): Promise<string> => {
-	// Generate a new secret and save it, to invalidate sessions using the old secret.
-	// Length is a multiple of 20 to encode without padding.
-	const key = await pseudoRandomBytesAsync(20);
-	return base32.encode(key).toString();
-};
-
-export const checkSudoValidity = async (user: User): Promise<boolean> => {
-	const notAuthBefore = Date.now() - SUDO_TOKEN_VALIDITY;
-	return user.authTime != null && user.authTime > notAuthBefore;
-};
-export const sudoMiddleware: RequestHandler = async (req, res, next) => {
-	try {
-		const user = await getUser(req, false);
-		if (user != null && (await checkSudoValidity(user))) {
-			next();
-			return;
-		} else {
-			res.status(401).json({ error: 'Fresh authentication token required' });
-		}
-	} catch (err) {
-		res.status(500).json({ error: err.message });
-	}
-};
+export const reqHasPermission = (req: Request, permission: string): boolean =>
+	userHasPermission(req.apiKey || req.user, permission);
 
 // If adding/removing fields, please also update `User`
 // in "typings/common.d.ts".
@@ -162,96 +136,6 @@ export const userFields = [
 	'created_at',
 	'jwt_secret',
 ];
-
-export const tokenFields = _.clone(userFields);
-
-export interface ExtraParams {
-	existingToken?: Partial<User>;
-	jwtOptions?: SignOptions;
-}
-
-export type GetUserTokenDataFn = (
-	userId: number,
-	existingToken?: Partial<User>,
-) => PromiseLike<AnyObject>;
-
-export function setUserTokenDataCallback(fn: GetUserTokenDataFn) {
-	$getUserTokenDataCallback = fn;
-}
-
-let $getUserTokenDataCallback: GetUserTokenDataFn = async (
-	userId,
-	existingToken,
-): Promise<User> => {
-	const [userData, permissionData] = await Promise.all([
-		api.resin.get({
-			resource: 'user',
-			id: userId,
-			passthrough: { req: permissions.root },
-			options: {
-				$select: tokenFields,
-			},
-		}) as Promise<AnyObject>,
-		permissions.getUserPermissions(userId),
-	]);
-	if (!userData || !permissionData) {
-		throw new Error('No data found?!');
-	}
-	const newTokenData: Partial<User> = _.pick(userData, tokenFields);
-
-	const tokenData = {
-		...existingToken,
-		...newTokenData,
-		permissions: permissionData,
-	} as User;
-
-	if (!Number.isFinite(tokenData.authTime!)) {
-		tokenData.authTime = Date.now();
-	}
-
-	// skip nullish attributes
-	return _.omitBy(tokenData, _.isNil) as User;
-};
-
-export const createSessionToken = async (
-	userId: number,
-	{ existingToken, jwtOptions }: ExtraParams = {},
-): Promise<string> => {
-	const tokenData = await $getUserTokenDataCallback(userId, existingToken);
-	return createJwt(tokenData, jwtOptions);
-};
-
-const sendXHRToken = (res: Response, token: string, statusCode = 200): void => {
-	res.header('content-type', 'text/plain');
-	res.status(statusCode).send(token);
-};
-
-export const loginUserXHR = async (
-	res: Response,
-	userId: number,
-	statusCode?: number,
-	extraParams?: ExtraParams,
-): Promise<void> => {
-	const token = await createSessionToken(userId, extraParams);
-	sendXHRToken(res, token, statusCode);
-};
-
-export const updateUserXHR = async (
-	res: Response,
-	req: Request,
-): Promise<void> => {
-	await getUser(req, false);
-	if (req.creds == null || !('id' in req.creds) || req.creds.id == null) {
-		throw new InternalRequestError('No user present');
-	}
-	const token = await createSessionToken(req.creds.id, {
-		existingToken: req.creds,
-	});
-	sendXHRToken(res, token);
-};
-
-export const reqHasPermission = (req: Request, permission: string): boolean =>
-	userHasPermission(req.apiKey || req.user, permission);
 
 const getUserQuery = _.once(() =>
 	api.resin.prepare<{ key: string }>({

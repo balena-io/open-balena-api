@@ -1,7 +1,9 @@
 import type { RequestHandler } from 'express';
+import { checkSudoValidity } from './jwt';
+
 import * as _ from 'lodash';
 import { retrieveAPIKey } from '../../platform/api-keys';
-import { getUser, reqHasPermission } from '../../platform/auth';
+import { getUser, reqHasPermission } from './auth';
 
 export const authenticatedMiddleware: RequestHandler = async (
 	req,
@@ -78,5 +80,19 @@ export const permissionRequiredMiddleware = (
 		return null;
 	} else {
 		res.sendStatus(401);
+	}
+};
+
+export const sudoMiddleware: RequestHandler = async (req, res, next) => {
+	try {
+		const user = await getUser(req, false);
+		if (user != null && (await checkSudoValidity(user))) {
+			next();
+			return;
+		} else {
+			res.status(401).json({ error: 'Fresh authentication token required' });
+		}
+	} catch (err) {
+		res.status(500).json({ error: err.message });
 	}
 };

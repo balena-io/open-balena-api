@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express';
 
-import { getUser } from '../platform/auth';
+import { getUser } from '../infra/auth/auth';
 import {
 	captureException,
 	handleHttpErrors,

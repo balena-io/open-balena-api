@@ -3,11 +3,8 @@ import * as Bluebird from 'bluebird';
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
 import { createActor } from '../../platform';
-import {
-	getUser,
-	checkSudoValidity,
-	generateNewJwtSecret,
-} from '../../platform/auth';
+import { getUser } from '../../infra/auth/auth';
+import { checkSudoValidity, generateNewJwtSecret } from '../../infra/auth/jwt';
 import { captureException } from '../../infra/error-handling';
 import { assignUserRole } from '../../platform/permissions';
 import { UnauthorizedError } from '@balena/pinejs/out/sbvr-api/errors';
