@@ -1,4 +1,15 @@
 - commits:
+    - subject: Make use of jsdoc @deprecated
+      hash: 5846947023938f45f193e4d07ef2aa24883a30d9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.13
+  date: 2020-08-24T15:44:29.402Z
+- commits:
     - subject: Move vpn integration into a feature
       hash: 28abf4dbbc50e5e871bb0f4ae914607b192fc117
       body: ''
