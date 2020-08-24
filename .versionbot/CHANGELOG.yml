@@ -1,4 +1,15 @@
 - commits:
+    - subject: Separate registry integration into a feature
+      hash: ab0c01a7be0f9a9b11ec047b5d986cfce2e5c14b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.9
+  date: 2020-08-24T14:31:40.110Z
+- commits:
     - subject: Extract device-proxy to a feature
       hash: 57d064a9fc781f88cbe914782e357beb0cb7cf44
       body: ''
