@@ -5,7 +5,7 @@ import * as access from '../routes/access';
 import * as apiKeys from '../routes/api-keys';
 import * as applications from '../routes/applications';
 import * as config from '../routes/config';
-import * as deviceTypes from '../routes/device-types';
+import * as deviceTypes from '../features/device-types';
 import * as devices from '../routes/devices';
 import * as os from '../routes/os';
 import * as registry from '../routes/registry';
@@ -17,7 +17,6 @@ import * as deviceState from '../features/device-state';
 import {
 	apiKeyMiddleware,
 	authorizedMiddleware,
-	identifyMiddleware,
 	permissionRequiredMiddleware,
 } from '../infra/auth';
 
@@ -99,22 +98,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 		access.hostOSAccess,
 	);
 
-	app.get('/device-types/v1', identifyMiddleware, deviceTypes.getDeviceTypes);
-	app.get(
-		'/device-types/v1/:deviceType',
-		identifyMiddleware,
-		deviceTypes.getDeviceType,
-	);
-	app.get(
-		'/device-types/v1/:deviceType/images',
-		identifyMiddleware,
-		deviceTypes.listAvailableImageVersions,
-	);
-	app.get(
-		'/device-types/v1/:deviceType/images/:version/download-size',
-		identifyMiddleware,
-		deviceTypes.downloadImageSize,
-	);
+	deviceTypes.setup(app);
 
 	app.get('/os/v1/config/', os.getOsConfiguration);
 };
