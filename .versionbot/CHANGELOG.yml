@@ -1,4 +1,15 @@
 - commits:
+    - subject: Extract device-proxy to a feature
+      hash: 57d064a9fc781f88cbe914782e357beb0cb7cf44
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.8
+  date: 2020-08-24T14:16:48.928Z
+- commits:
     - subject: Move routes/device-types into features/device-types
       hash: 78611effc878ad2221ab1c7057a6e3225b05e862
       body: ''
