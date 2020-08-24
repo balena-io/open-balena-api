@@ -1,4 +1,15 @@
 - commits:
+    - subject: Move platform/auth into infra/auth
+      hash: 22745dd58bf37b4fa220ec76769027650d0a5959
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.2
+  date: 2020-08-24T11:54:01.694Z
+- commits:
     - subject: Run device type sync in a separate transaction per device type
       hash: 1a0a6ad3a86f9bef8442b157317bc1c8175774e5
       body: ''
