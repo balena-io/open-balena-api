@@ -9,7 +9,7 @@ import {
 	checkDevicesCanBeInApplication,
 	checkDevicesCanHaveDeviceURL,
 } from '../../lib/application-types';
-import { postDevices } from '../../lib/device-proxy';
+import { postDevices } from '../../features/device-proxy/device-proxy';
 import { InaccessibleAppError } from '../../lib/errors';
 import * as haikuName from '../../lib/haiku-name';
 import { pseudoRandomBytesAsync } from '../../lib/utils';

@@ -13,6 +13,7 @@ import * as services from '../routes/services';
 import * as auth from '../features/auth';
 import * as deviceLogs from '../features/device-logs';
 import * as deviceState from '../features/device-state';
+import * as deviceProxy from '../features/device-proxy';
 
 import {
 	apiKeyMiddleware,
@@ -33,7 +34,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 		apiKeyMiddleware,
 		devices.receiveOnlineDependentDevices,
 	);
-	app.post(/^\/supervisor(\/.+)$/, apiKeyMiddleware, devices.proxy);
+	deviceProxy.setup(app);
 
 	app.get(
 		'/download-config',

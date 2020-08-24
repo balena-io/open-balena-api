@@ -3,7 +3,7 @@ import type { Filter } from 'pinejs-client-core';
 
 import { captureException } from '../../infra/error-handling';
 
-import { postDevices } from '../../lib/device-proxy';
+import { postDevices } from '../../features/device-proxy/device-proxy';
 import {
 	checkConfigVarNameValidity,
 	checkEnvVarNameValidity,

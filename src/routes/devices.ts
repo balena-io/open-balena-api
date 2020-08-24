@@ -12,7 +12,6 @@ import {
 
 import { createDeviceApiKey } from '../infra/auth/api-keys';
 import { checkInt, isValidInteger } from '../lib/utils';
-export { proxy } from '../lib/device-proxy';
 
 const { BadRequestError, ConflictError } = errors;
 const { api } = sbvrUtils;

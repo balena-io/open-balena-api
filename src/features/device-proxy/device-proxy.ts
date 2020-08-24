@@ -8,12 +8,15 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../infra/error-handling';
+} from '../../infra/error-handling';
 
-import { NoDevicesFoundError } from '../lib/errors';
-import { API_VPN_SERVICE_API_KEY, VPN_CONNECT_PROXY_PORT } from './config';
-import { requestAsync, RequestResponse } from './request';
-import { checkInt, throttledForEach } from './utils';
+import { NoDevicesFoundError } from '../../lib/errors';
+import {
+	API_VPN_SERVICE_API_KEY,
+	VPN_CONNECT_PROXY_PORT,
+} from '../../lib/config';
+import { requestAsync, RequestResponse } from '../../lib/request';
+import { checkInt, throttledForEach } from '../../lib/utils';
 
 // Degraded network, slow devices, compressed docker binaries and any combination of these factors
 // can cause proxied device requests to surpass the default timeout.
