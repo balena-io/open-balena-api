@@ -9,7 +9,7 @@ import {
 } from '../infra/error-handling';
 
 import { generateConfig } from '../lib/device-config';
-import { findBySlug } from '../lib/device-types';
+import { findBySlug } from '../features/device-types/device-types';
 
 const { UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;

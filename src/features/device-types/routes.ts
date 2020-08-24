@@ -7,9 +7,9 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../infra/error-handling';
+} from '../../infra/error-handling';
 
-import * as deviceTypesLib from '../lib/device-types';
+import * as deviceTypesLib from './device-types';
 
 const { api } = sbvrUtils;
 

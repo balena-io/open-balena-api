@@ -8,7 +8,7 @@ import {
 	IMAGE_STORAGE_ENDPOINT,
 	IMAGE_STORAGE_FORCE_PATH_STYLE,
 	IMAGE_STORAGE_SECRET_KEY,
-} from '../../config';
+} from '../../../lib/config';
 
 export const getKey = (...parts: string[]): string => parts.join('/');
 
