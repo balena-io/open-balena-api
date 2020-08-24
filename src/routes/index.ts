@@ -2,7 +2,7 @@ import type { Application } from 'express';
 
 import type { SetupOptions } from '../index';
 import * as access from '../routes/access';
-import * as apiKeys from '../routes/api-keys';
+import * as apiKeys from '../features/api-keys';
 import * as applications from '../routes/applications';
 import * as config from '../routes/config';
 import * as deviceTypes from '../features/device-types';
@@ -47,31 +47,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 		applications.downloadImageConfig,
 	);
 
-	// FIXME(refactor): this is legacy; move it out of here
-	// this is deprecated and should be phased out - it's a user api key as well - the appId is irrelevant
-	app.post(
-		'/application/:appId/generate-api-key',
-		authorizedMiddleware,
-		apiKeys.createUserApiKey,
-	);
-	app.post(
-		'/api-key/user/full',
-		authorizedMiddleware,
-		permissionRequiredMiddleware('auth.create_token'),
-		apiKeys.createNamedUserApiKey,
-	);
-	app.post(
-		'/api-key/application/:appId/provisioning',
-		authorizedMiddleware,
-		apiKeys.createProvisioningApiKey,
-	);
-	app.post(
-		'/api-key/device/:deviceId/device-key',
-		apiKeyMiddleware,
-		apiKeys.createDeviceApiKey,
-	);
-
-	app.post('/api-key/v1', authorizedMiddleware, apiKeys.createGenericApiKey);
+	apiKeys.setup(app);
 
 	app.get(
 		'/services/vpn/auth/:device_uuid',
