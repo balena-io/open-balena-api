@@ -6,10 +6,10 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../infra/error-handling';
+} from '../../infra/error-handling';
 
-import { generateConfig } from '../lib/device-config';
-import { findBySlug } from '../features/device-types/device-types';
+import { generateConfig } from './device-config';
+import { findBySlug } from '../device-types/device-types';
 
 const { UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;

@@ -3,7 +3,7 @@ import type { Application } from 'express';
 import type { SetupOptions } from '../index';
 import * as access from '../routes/access';
 import * as apiKeys from '../features/api-keys';
-import * as applications from '../routes/applications';
+import * as deviceConfig from '../features/device-config';
 import * as config from '../routes/config';
 import * as deviceTypes from '../features/device-types';
 import * as devices from '../routes/devices';
@@ -32,16 +32,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	);
 	deviceProxy.setup(app);
 
-	app.get(
-		'/download-config',
-		authorizedMiddleware,
-		applications.downloadImageConfig,
-	);
-	app.post(
-		'/download-config',
-		authorizedMiddleware,
-		applications.downloadImageConfig,
-	);
+	deviceConfig.setup(app);
 
 	apiKeys.setup(app);
 

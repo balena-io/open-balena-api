@@ -7,14 +7,11 @@ import { errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 import * as deviceConfig from 'balena-device-config';
 
-import { getUser } from '../infra/auth/auth';
-import { captureException } from '../infra/error-handling';
+import { getUser } from '../../infra/auth/auth';
+import { captureException } from '../../infra/error-handling';
 
-import {
-	createProvisioningApiKey,
-	createUserApiKey,
-} from '../features/api-keys/lib';
-import type { DeviceType } from '../features/device-types/device-types';
+import { createProvisioningApiKey, createUserApiKey } from '../api-keys/lib';
+import type { DeviceType } from '../device-types/device-types';
 
 const { BadRequestError } = errors;
 
@@ -27,7 +24,7 @@ import {
 	REGISTRY2_HOST,
 	VPN_HOST,
 	VPN_PORT,
-} from './config';
+} from '../../lib/config';
 
 // `osVersion == null` means assume "latest"
 export const generateConfig = async (

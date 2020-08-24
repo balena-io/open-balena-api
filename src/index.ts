@@ -26,8 +26,6 @@ import {
 	SENTRY_DSN,
 } from './lib/config';
 
-import * as _applicationRoutes from './routes/applications';
-
 import {
 	captureException,
 	handleHttpErrors,
@@ -94,7 +92,7 @@ import {
 	startDeviceTypeSynchronization,
 } from './features/device-types/sync';
 import { proxy as supervisorProxy } from './features/device-proxy/device-proxy';
-import { generateConfig } from './lib/device-config';
+import { generateConfig } from './features/device-config/device-config';
 import {
 	filterDeviceConfig,
 	formatImageLocation,
