@@ -10,7 +10,7 @@ import * as uuid from 'uuid';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
-import { retrieveAPIKey } from '../platform/api-keys';
+import { retrieveAPIKey } from '../infra/auth/api-keys';
 import { captureException, handleHttpErrors } from '../infra/error-handling';
 
 import { registryAuth as CERT } from '../lib/certs';
