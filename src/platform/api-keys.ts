@@ -3,7 +3,7 @@ import * as randomstring from 'randomstring';
 
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
-import { isJWT } from './jwt';
+import { isJWT } from '../infra/auth/jwt-passport';
 
 const { api } = sbvrUtils;
 

@@ -4,48 +4,25 @@ import * as jsonwebtoken from 'jsonwebtoken';
 import * as _ from 'lodash';
 import * as passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
-import * as randomstring from 'randomstring';
 import { TypedError } from 'typed-error';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
-import {
-	JSON_WEB_TOKEN_EXPIRY_MINUTES,
-	JSON_WEB_TOKEN_SECRET,
-} from '../lib/config';
-import { User as DbUser } from '../models';
+import { JSON_WEB_TOKEN_SECRET } from '../../lib/config';
+import { User as DbUser } from '../../models';
 
-import { captureException } from '../infra/error-handling';
+import { captureException } from '../error-handling';
+import { ScopedAccessToken, ScopedToken } from './jwt';
 
 export { SignOptions } from 'jsonwebtoken';
-
-const EXPIRY_SECONDS = JSON_WEB_TOKEN_EXPIRY_MINUTES * 60;
 
 const { api } = sbvrUtils;
 
 class InvalidJwtSecretError extends TypedError {}
 
-export interface ScopedAccessToken {
-	access: ScopedToken;
-}
-
-export interface ScopedAccessTokenOptions {
-	// The actor of the resulting token
-	actor: number;
-	// A list of permissions
-	permissions: string[];
-	// expires in x seconds
-	expiresIn: number;
-}
-
 export interface ServiceToken extends sbvrUtils.Actor {
 	service: string;
 	apikey: string;
-	permissions: string[];
-}
-
-export interface ScopedToken extends sbvrUtils.Actor {
-	actor: number;
 	permissions: string[];
 }
 
@@ -135,16 +112,6 @@ export const strategy = new JwtStrategy(
 		).nodeify(done),
 );
 
-export const createJwt = (
-	payload: AnyObject,
-	jwtOptions: jsonwebtoken.SignOptions = {},
-): string => {
-	_.defaults(jwtOptions, { expiresIn: EXPIRY_SECONDS });
-	delete payload.iat;
-	delete payload.exp;
-	return jsonwebtoken.sign(payload, JSON_WEB_TOKEN_SECRET, jwtOptions);
-};
-
 export const middleware: RequestHandler = (req, res, next) => {
 	const jwtString = jwtFromRequest(req);
 	if (!jwtString || typeof jwtString !== 'string' || !jwtString.includes('.')) {
@@ -200,21 +167,3 @@ export const middleware: RequestHandler = (req, res, next) => {
 };
 
 export const isJWT = (token: string): boolean => !!jsonwebtoken.decode(token);
-
-export function createScopedAccessToken(
-	options: ScopedAccessTokenOptions,
-): string {
-	const payload: ScopedAccessToken = {
-		access: {
-			actor: options.actor,
-			permissions: options.permissions,
-		},
-	};
-
-	const signOptions: jsonwebtoken.SignOptions = {
-		expiresIn: options.expiresIn,
-		jwtid: randomstring.generate(),
-	};
-
-	return createJwt(payload, signOptions);
-}

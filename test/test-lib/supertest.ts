@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as $supertest from 'supertest';
-import { User } from '../../src/platform/jwt';
+import { User } from '../../src/infra/auth/jwt-passport';
 
 export type UserObjectParam = Partial<User & { token: string }>;
 

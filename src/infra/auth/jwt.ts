@@ -1,13 +1,20 @@
 import type { Request, Response } from 'express';
+
 import * as _ from 'lodash';
 import * as base32 from 'thirty-two';
+import * as randomstring from 'randomstring';
+import * as jsonwebtoken from 'jsonwebtoken';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
-import { createJwt, SignOptions, User } from '../../platform/jwt';
+import { SignOptions, User } from './jwt-passport';
 
 import { pseudoRandomBytesAsync } from '../../lib/utils';
 import { getUser, userFields } from './auth';
+import {
+	JSON_WEB_TOKEN_EXPIRY_MINUTES,
+	JSON_WEB_TOKEN_SECRET,
+} from '../../lib/config';
 
 const { InternalRequestError } = errors;
 const { api } = sbvrUtils;
@@ -111,4 +118,51 @@ export const updateUserXHR = async (
 		existingToken: req.creds,
 	});
 	sendXHRToken(res, token);
+};
+
+export interface ScopedAccessToken {
+	access: ScopedToken;
+}
+
+export interface ScopedAccessTokenOptions {
+	// The actor of the resulting token
+	actor: number;
+	// A list of permissions
+	permissions: string[];
+	// expires in x seconds
+	expiresIn: number;
+}
+
+export interface ScopedToken extends sbvrUtils.Actor {
+	actor: number;
+	permissions: string[];
+}
+
+export function createScopedAccessToken(
+	options: ScopedAccessTokenOptions,
+): string {
+	const payload: ScopedAccessToken = {
+		access: {
+			actor: options.actor,
+			permissions: options.permissions,
+		},
+	};
+
+	const signOptions: jsonwebtoken.SignOptions = {
+		expiresIn: options.expiresIn,
+		jwtid: randomstring.generate(),
+	};
+
+	return createJwt(payload, signOptions);
+}
+
+const EXPIRY_SECONDS = JSON_WEB_TOKEN_EXPIRY_MINUTES * 60;
+export const createJwt = (
+	payload: AnyObject,
+	jwtOptions: jsonwebtoken.SignOptions = {},
+): string => {
+	_.defaults(jwtOptions, { expiresIn: EXPIRY_SECONDS });
+	delete payload.iat;
+	delete payload.exp;
+	return jsonwebtoken.sign(payload, JSON_WEB_TOKEN_SECRET, jwtOptions);
 };
