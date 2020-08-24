@@ -5,8 +5,7 @@ import { sbvrUtils, permissions } from '@balena/pinejs';
 import { getAllDeviceTypes } from '.';
 import { DeviceType } from './build-info-facade';
 
-const DEVICE_TYPES_CACHE_EXPIRATION = 5 * 1000; // 5 mins
-const RETRY_WAIT_TIME = 10 * 1000;
+const DEVICE_TYPES_SYNC_INTERVAL = 5 * 1000; // 5 mins
 
 type DeviceTypeResourceKeys = 'slug' | 'name' | 'is_private';
 
@@ -41,22 +40,23 @@ const syncDeviceTypes = async () => {
 		mapModel(deviceType, syncSettings.map),
 	);
 
-	await sbvrUtils.db.transaction(async (tx) => {
-		const rootApi = sbvrUtils.api.resin.clone({
-			passthrough: { req: permissions.root, tx },
-		});
+	const rootApi = sbvrUtils.api.resin.clone({
+		passthrough: { req: permissions.root },
+	});
 
-		const existingDeviceTypes = (await rootApi.get({
-			resource: 'device_type',
-			options: { $select: ['slug'] },
-		})) as Array<{ slug: string }>;
+	const existingDeviceTypes = (await rootApi.get({
+		resource: 'device_type',
+		options: { $select: ['slug'] },
+	})) as Array<{ slug: string }>;
 
-		const existingSlugs = new Set(
-			existingDeviceTypes.map((deviceType) => deviceType.slug),
-		);
+	const existingSlugs = new Set(
+		existingDeviceTypes.map((deviceType) => deviceType.slug),
+	);
 
-		await Promise.all(
-			mappedDeviceTypes.map(async (deviceType) => {
+	await Bluebird.map(
+		mappedDeviceTypes,
+		async (deviceType) => {
+			try {
 				if (existingSlugs.has(deviceType.slug)) {
 					return await rootApi.patch({
 						resource: 'device_type',
@@ -73,19 +73,25 @@ const syncDeviceTypes = async () => {
 					body: deviceType,
 					options: { returnResource: false },
 				});
-			}),
-		);
-	});
+			} catch (err) {
+				console.error(
+					`Failed to synchronize ${deviceType.slug}, skipping...`,
+					err.message,
+				);
+			}
+		},
+		{ concurrency: 10 },
+	);
 };
 
 export const startDeviceTypeSynchronization = async () => {
 	while (true) {
 		try {
 			await syncDeviceTypes();
-			await Bluebird.delay(DEVICE_TYPES_CACHE_EXPIRATION);
 		} catch (err) {
 			captureException(err, 'Failed to synchronize device types');
-			await Bluebird.delay(RETRY_WAIT_TIME);
 		}
+
+		await Bluebird.delay(DEVICE_TYPES_SYNC_INTERVAL);
 	}
 };
