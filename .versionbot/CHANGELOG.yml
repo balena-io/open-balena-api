@@ -1,4 +1,23 @@
 - commits:
+    - subject: Move balena specific api key code to the api key feature
+      hash: 883cc44d91301fd0aa1d5d6e41b90da04fb872cd
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Separate api key routes to an api key feature
+      hash: ca57ef075108524f346a95a65d9cfbc4a476cc8d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.10
+  date: 2020-08-24T14:46:58.248Z
+- commits:
     - subject: Separate registry integration into a feature
       hash: ab0c01a7be0f9a9b11ec047b5d986cfce2e5c14b
       body: ''
