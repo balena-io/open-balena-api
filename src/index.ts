@@ -106,7 +106,7 @@ import {
 	getPollInterval,
 	getInstance as getDeviceOnlineStateManager,
 } from './features/device-heartbeat';
-import { registryAuth } from './lib/certs';
+import { registryAuth } from './features/registry/certs';
 import {
 	ALLOWED_NAMES,
 	BLOCKED_NAMES,
@@ -117,7 +117,7 @@ import * as baseAuth from './lib/auth';
 import { varListInsert } from './features/device-state/routes/state';
 
 export type { Creds, User } from './infra/auth/jwt-passport';
-export type { Access } from './routes/registry';
+export type { Access } from './features/registry/registry';
 export type { ApplicationType } from './lib/application-types';
 export type { DeviceType } from './features/device-types/device-types';
 
