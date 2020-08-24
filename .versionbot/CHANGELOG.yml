@@ -1,4 +1,15 @@
 - commits:
+    - subject: Separate device heartbeat into a feature
+      hash: 793c8f8e7ab1588617dd92856099c88aa7896fa0
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.0
+  date: 2020-08-21T16:51:27.718Z
+- commits:
     - subject: Separate device state into a feature
       hash: 60e81dd20380514daaaeab7eda8afb53b54529ec
       body: ''
