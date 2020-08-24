@@ -1,4 +1,31 @@
 - commits:
+    - subject: Move platform/permissions to infra/auth
+      hash: 3159628ff13e669aea24c905aa4a52c2b89f4627
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move platform/versions to infra/versions
+      hash: a779aee8c145ec69a4aae7294c0f9570401fa97d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move lib/api-keys and platform/api-keys into infra/auth
+      hash: 6c089845c9a236fa2343f678011c021740dfd8ba
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.6
+  date: 2020-08-24T13:33:08.860Z
+- commits:
     - subject: Move platform/jwt into infra/auth
       hash: ffbb8d9abab89c02c871568b04d897b777b8e866
       body: ''
