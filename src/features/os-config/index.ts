@@ -1,13 +1,13 @@
-import type { RequestHandler } from 'express';
+import type { Application, RequestHandler } from 'express';
 
 import {
 	DEVICE_CONFIG_OPENVPN_CA,
 	DEVICE_CONFIG_OPENVPN_CONFIG,
 	DEVICE_CONFIG_SSH_AUTHORIZED_KEYS,
-} from '../lib/config';
-import { b64decode } from '../lib/utils';
+} from '../../lib/config';
+import { b64decode } from '../../lib/utils';
 
-export const getOsConfiguration: RequestHandler = (_req, res) => {
+const getOsConfiguration: RequestHandler = (_req, res) => {
 	res.json({
 		services: {
 			openvpn: {
@@ -20,4 +20,8 @@ export const getOsConfiguration: RequestHandler = (_req, res) => {
 		},
 		schema_version: '1.0.0',
 	});
+};
+
+export const setup = (app: Application) => {
+	app.get('/os/v1/config/', getOsConfiguration);
 };

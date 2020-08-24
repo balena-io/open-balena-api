@@ -7,7 +7,7 @@ import * as applications from '../routes/applications';
 import * as config from '../routes/config';
 import * as deviceTypes from '../features/device-types';
 import * as devices from '../routes/devices';
-import * as os from '../routes/os';
+import * as osConfig from '../features/os-config';
 import * as registry from '../features/registry';
 import * as services from '../routes/services';
 import * as auth from '../features/auth';
@@ -76,6 +76,5 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	);
 
 	deviceTypes.setup(app);
-
-	app.get('/os/v1/config/', os.getOsConfiguration);
+	osConfig.setup(app);
 };
