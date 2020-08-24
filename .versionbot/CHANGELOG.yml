@@ -1,4 +1,23 @@
 - commits:
+    - subject: Move routes/device-types into features/device-types
+      hash: 78611effc878ad2221ab1c7057a6e3225b05e862
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move lib/device-types to features/device-types
+      hash: e775cc35e4635904cfcb6233175cfa37646e2d01
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.7
+  date: 2020-08-24T14:04:50.104Z
+- commits:
     - subject: Move platform/permissions to infra/auth
       hash: 3159628ff13e669aea24c905aa4a52c2b89f4627
       body: ''
