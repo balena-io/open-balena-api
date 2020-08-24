@@ -26,8 +26,6 @@ import {
 	SENTRY_DSN,
 } from './lib/config';
 
-import * as _applicationRoutes from './routes/applications';
-
 import {
 	captureException,
 	handleHttpErrors,
@@ -94,7 +92,7 @@ import {
 	startDeviceTypeSynchronization,
 } from './features/device-types/sync';
 import { proxy as supervisorProxy } from './features/device-proxy/device-proxy';
-import { generateConfig } from './lib/device-config';
+import { generateConfig } from './features/device-config/device-config';
 import {
 	filterDeviceConfig,
 	formatImageLocation,
@@ -111,7 +109,7 @@ import {
 	ALLOWED_NAMES,
 	BLOCKED_NAMES,
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
-} from './lib/env-vars';
+} from './features/vars-schema/env-vars';
 import * as baseAuth from './lib/auth';
 // TODO: This should not be exported
 import { varListInsert } from './features/device-state/routes/state';

@@ -8,7 +8,7 @@ import {
 	checkConfigVarNameValidity,
 	checkEnvVarNameValidity,
 	checkEnvVarValueValidity,
-} from '../../lib/env-vars';
+} from '../../features/vars-schema/env-vars';
 
 type ValidateFn = (varName?: string, varValue?: string) => void;
 

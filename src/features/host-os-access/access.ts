@@ -3,8 +3,8 @@ import type { Request, Response } from 'express';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 
-import { reqHasPermission } from '../infra/auth/auth';
-import { captureException } from '../infra/error-handling';
+import { reqHasPermission } from '../../infra/auth/auth';
+import { captureException } from '../../infra/error-handling';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
