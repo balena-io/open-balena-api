@@ -71,7 +71,9 @@ export const createProvisioningApiKey: RequestHandler = async (req, res) => {
 	}
 };
 
-// FIXME(refactor): this is legacy; move it out of here
+/**
+ * @deprecated this is a legacy api key for very old devices and should not be used any more
+ */
 export const createUserApiKey: RequestHandler = async (req, res) => {
 	try {
 		const user = await getUser(req);

@@ -148,7 +148,9 @@ export const createNamedUserApiKey: PartialCreateKey = _.partial(
 	'named-user-api-key',
 );
 
-// Deprecated
+/**
+ * @deprecated this is a legacy api key for very old devices and should not be used any more
+ */
 export const createUserApiKey: PartialCreateKey = _.partial(
 	createApiKey,
 	'user',
