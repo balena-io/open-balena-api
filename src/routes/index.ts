@@ -1,7 +1,7 @@
 import type { Application } from 'express';
 
 import type { SetupOptions } from '../index';
-import * as access from '../routes/access';
+import * as hostOSAccess from '../features/host-os-access';
 import * as apiKeys from '../features/api-keys';
 import * as deviceConfig from '../features/device-config';
 import * as varsSchema from '../features/vars-schema';
@@ -16,32 +16,19 @@ import * as deviceProvisioning from '../features/device-provisioning';
 import * as deviceProxy from '../features/device-proxy';
 import * as vpn from '../features/vpn';
 
-import { authorizedMiddleware } from '../infra/auth';
-
 export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	varsSchema.setup(app);
 	auth.setup(app, onLogin);
-
 	deviceProvisioning.setup(app);
 	deviceState.setup(app);
 	deviceLogs.setup(app);
 	dependentDevices.setup(app);
 	deviceProxy.setup(app);
-
 	deviceConfig.setup(app);
-
 	apiKeys.setup(app);
-
 	vpn.setup(app);
-
 	registry.setup(app);
-
-	app.get(
-		'/access/v1/hostos/:device_uuid',
-		authorizedMiddleware,
-		access.hostOSAccess,
-	);
-
+	hostOSAccess.setup(app);
 	deviceTypes.setup(app);
 	osConfig.setup(app);
 };
