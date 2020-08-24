@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import 'mocha';
 import { app } from '../init';
 import { SUPERUSER_EMAIL } from '../src/lib/config';
-import { createScopedAccessToken } from '../src/platform/jwt';
+import { createScopedAccessToken } from '../src/infra/auth/jwt';
 
 import * as fixtures from './test-lib/fixtures';
 import { supertest, UserObjectParam } from './test-lib/supertest';

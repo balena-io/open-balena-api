@@ -15,7 +15,7 @@ import * as pine from '@balena/pinejs';
 
 import type { User as DbUser } from './models';
 import type { defaultFindUser$select } from './infra/auth/auth';
-import * as jwt from './platform/jwt';
+import * as jwt from './infra/auth/jwt-passport';
 passport.use(jwt.strategy);
 
 import {
@@ -62,7 +62,7 @@ import {
 	assignUserPermission,
 	assignUserRole,
 } from './platform/permissions';
-import { createScopedAccessToken, createJwt } from './platform/jwt';
+import { createScopedAccessToken, createJwt } from './infra/auth/jwt';
 import { gracefullyDenyDeletedDevices } from './features/device-state/middleware';
 import {
 	authenticatedMiddleware,
@@ -116,7 +116,7 @@ import * as baseAuth from './lib/auth';
 // TODO: This should not be exported
 import { varListInsert } from './features/device-state/routes/state';
 
-export type { Creds, User } from './platform/jwt';
+export type { Creds, User } from './infra/auth/jwt-passport';
 export type { Access } from './routes/registry';
 export type { ApplicationType } from './lib/application-types';
 export type { DeviceType } from './lib/device-types';
