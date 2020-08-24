@@ -9,17 +9,13 @@ import * as deviceTypes from '../features/device-types';
 import * as devices from '../routes/devices';
 import * as osConfig from '../features/os-config';
 import * as registry from '../features/registry';
-import * as services from '../routes/services';
 import * as auth from '../features/auth';
 import * as deviceLogs from '../features/device-logs';
 import * as deviceState from '../features/device-state';
 import * as deviceProxy from '../features/device-proxy';
+import * as vpn from '../features/vpn';
 
-import {
-	apiKeyMiddleware,
-	authorizedMiddleware,
-	permissionRequiredMiddleware,
-} from '../infra/auth';
+import { apiKeyMiddleware, authorizedMiddleware } from '../infra/auth';
 
 export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.get('/config/vars', config.vars);
@@ -49,23 +45,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 
 	apiKeys.setup(app);
 
-	app.get(
-		'/services/vpn/auth/:device_uuid',
-		apiKeyMiddleware,
-		services.vpn.authDevice,
-	);
-	app.post(
-		'/services/vpn/client-connect',
-		apiKeyMiddleware,
-		permissionRequiredMiddleware('service.vpn'),
-		services.vpn.clientConnect,
-	);
-	app.post(
-		'/services/vpn/client-disconnect',
-		apiKeyMiddleware,
-		permissionRequiredMiddleware('service.vpn'),
-		services.vpn.clientDisconnect,
-	);
+	vpn.setup(app);
 
 	registry.setup(app);
 
