@@ -8,9 +8,9 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../infra/error-handling';
+} from '../../infra/error-handling';
 
-import { isValidInteger } from '../lib/utils';
+import { isValidInteger } from '../../lib/utils';
 
 const { BadRequestError } = errors;
 const { api } = sbvrUtils;

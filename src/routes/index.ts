@@ -6,17 +6,17 @@ import * as apiKeys from '../features/api-keys';
 import * as deviceConfig from '../features/device-config';
 import * as config from '../routes/config';
 import * as deviceTypes from '../features/device-types';
-import * as devices from '../routes/devices';
 import * as osConfig from '../features/os-config';
 import * as registry from '../features/registry';
 import * as auth from '../features/auth';
+import * as dependentDevices from '../features/dependent-devices';
 import * as deviceLogs from '../features/device-logs';
 import * as deviceState from '../features/device-state';
 import * as deviceProvisioning from '../features/device-provisioning';
 import * as deviceProxy from '../features/device-proxy';
 import * as vpn from '../features/vpn';
 
-import { apiKeyMiddleware, authorizedMiddleware } from '../infra/auth';
+import { authorizedMiddleware } from '../infra/auth';
 
 export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.get('/config/vars', config.vars);
@@ -26,11 +26,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	deviceProvisioning.setup(app);
 	deviceState.setup(app);
 	deviceLogs.setup(app);
-	app.post(
-		'/dependent/v1/scan',
-		apiKeyMiddleware,
-		devices.receiveOnlineDependentDevices,
-	);
+	dependentDevices.setup(app);
 	deviceProxy.setup(app);
 
 	deviceConfig.setup(app);
