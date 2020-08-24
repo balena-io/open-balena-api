@@ -21,7 +21,7 @@ import {
 	UnknownDeviceTypeError,
 	InvalidDeviceTypeError,
 	UnknownVersionError,
-} from '../errors';
+} from '../../lib/errors';
 
 export type DeviceType = deviceTypesLib.DeviceType;
 

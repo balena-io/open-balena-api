@@ -9,7 +9,7 @@ import {
 	translateError,
 } from '../infra/error-handling';
 
-import * as deviceTypesLib from '../lib/device-types';
+import * as deviceTypesLib from '../features/device-types/device-types';
 
 const { api } = sbvrUtils;
 

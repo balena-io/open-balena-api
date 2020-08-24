@@ -1,6 +1,6 @@
 import { sbvrUtils } from '@balena/pinejs';
 
-import { getDeviceTypeIdBySlug } from '../lib/device-types';
+import { getDeviceTypeIdBySlug } from '../features/device-types/device-types';
 import { UnknownDeviceTypeError, InvalidDeviceTypeError } from '../lib/errors';
 
 export const resolveDeviceType = async (

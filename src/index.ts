@@ -88,11 +88,11 @@ import {
 	getAccessibleDeviceTypes,
 	findBySlug,
 	getDeviceTypeIdBySlug,
-} from './lib/device-types';
+} from './features/device-types/device-types';
 import {
 	setSyncMap,
 	startDeviceTypeSynchronization,
-} from './lib/device-types/sync';
+} from './features/device-types/sync';
 import { proxy as supervisorProxy } from './lib/device-proxy';
 import { generateConfig } from './lib/device-config';
 import {
@@ -119,7 +119,7 @@ import { varListInsert } from './features/device-state/routes/state';
 export type { Creds, User } from './infra/auth/jwt-passport';
 export type { Access } from './routes/registry';
 export type { ApplicationType } from './lib/application-types';
-export type { DeviceType } from './lib/device-types';
+export type { DeviceType } from './features/device-types/device-types';
 
 export { DefaultApplicationType } from './lib/application-types';
 export * as request from './lib/request';

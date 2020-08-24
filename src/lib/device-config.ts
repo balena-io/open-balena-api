@@ -14,7 +14,7 @@ import {
 	createProvisioningApiKey,
 	createUserApiKey,
 } from '../infra/auth/api-keys';
-import type { DeviceType } from './device-types';
+import type { DeviceType } from '../features/device-types/device-types';
 
 const { BadRequestError } = errors;
 

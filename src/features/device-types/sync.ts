@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import Bluebird = require('bluebird');
 import { captureException } from '../../infra/error-handling';
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import { getAllDeviceTypes } from '.';
+import { getAllDeviceTypes } from './device-types';
 import { DeviceType } from './build-info-facade';
 
 const DEVICE_TYPES_SYNC_INTERVAL = 5 * 60 * 1000; // 5 mins
