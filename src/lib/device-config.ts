@@ -13,7 +13,7 @@ import { captureException } from '../infra/error-handling';
 import {
 	createProvisioningApiKey,
 	createUserApiKey,
-} from '../infra/auth/api-keys';
+} from '../features/api-keys/lib';
 import type { DeviceType } from '../features/device-types/device-types';
 
 const { BadRequestError } = errors;
