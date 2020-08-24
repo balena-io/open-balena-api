@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix the device type synchronization interval to 5 minutes
+      hash: b37e3cb26eb400d42bed5ef532c221a8c2103a23
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.94.3
+  date: 2020-08-24T12:22:50.027Z
+- commits:
     - subject: Move platform/auth into infra/auth
       hash: 22745dd58bf37b4fa220ec76769027650d0a5959
       body: ''
