@@ -12,6 +12,7 @@ import * as registry from '../features/registry';
 import * as auth from '../features/auth';
 import * as deviceLogs from '../features/device-logs';
 import * as deviceState from '../features/device-state';
+import * as deviceProvisioning from '../features/device-provisioning';
 import * as deviceProxy from '../features/device-proxy';
 import * as vpn from '../features/vpn';
 
@@ -22,7 +23,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 
 	auth.setup(app, onLogin);
 
-	app.post('/device/register', apiKeyMiddleware, devices.register);
+	deviceProvisioning.setup(app);
 	deviceState.setup(app);
 	deviceLogs.setup(app);
 	app.post(
