@@ -14,8 +14,9 @@ import {
 } from './routes';
 
 export const setup = (app: Application) => {
-	// FIXME(refactor): this is legacy; move it out of here
-	// this is deprecated and should be phased out - it's a user api key as well - the appId is irrelevant
+	/**
+	 * @deprecated this is a legacy api key for very old devices and should not be used any more
+	 */
 	app.post(
 		'/application/:appId/generate-api-key',
 		authorizedMiddleware,
