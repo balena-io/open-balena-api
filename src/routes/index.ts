@@ -4,7 +4,7 @@ import type { SetupOptions } from '../index';
 import * as access from '../routes/access';
 import * as apiKeys from '../features/api-keys';
 import * as deviceConfig from '../features/device-config';
-import * as config from '../routes/config';
+import * as varsSchema from '../features/vars-schema';
 import * as deviceTypes from '../features/device-types';
 import * as osConfig from '../features/os-config';
 import * as registry from '../features/registry';
@@ -19,8 +19,7 @@ import * as vpn from '../features/vpn';
 import { authorizedMiddleware } from '../infra/auth';
 
 export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
-	app.get('/config/vars', config.vars);
-
+	varsSchema.setup(app);
 	auth.setup(app, onLogin);
 
 	deviceProvisioning.setup(app);

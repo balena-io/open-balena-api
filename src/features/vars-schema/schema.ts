@@ -10,13 +10,13 @@ import {
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
 	ALLOWED_NAMES,
 	ALLOWED_NAMESPACES,
-} from '../lib/env-vars';
+} from './env-vars';
 
 // Return config variable constants for use by external components.
 // A query string parameter of 'deviceType' is accepted, which should
 // be a device type slug.
-export const vars: RequestHandler = (req, res) => {
-	const schema: JSONSchema6 = {
+export const schema: RequestHandler = (req, res) => {
+	const configVarSchema: JSONSchema6 = {
 		type: 'object',
 		$schema: 'http://json-schema.org/draft-06/schema#',
 		properties: Object.assign(
@@ -35,7 +35,7 @@ export const vars: RequestHandler = (req, res) => {
 		whiteListedNames: ALLOWED_NAMES,
 		whiteListedNamespaces: ALLOWED_NAMESPACES,
 		blackListedNames: BLOCKED_NAMES,
-		configVarSchema: schema,
+		configVarSchema,
 	};
 
 	res.json(varsConfig);

@@ -109,7 +109,7 @@ import {
 	ALLOWED_NAMES,
 	BLOCKED_NAMES,
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
-} from './lib/env-vars';
+} from './features/vars-schema/env-vars';
 import * as baseAuth from './lib/auth';
 // TODO: This should not be exported
 import { varListInsert } from './features/device-state/routes/state';
