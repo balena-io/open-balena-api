@@ -10,7 +10,7 @@ import {
 	translateError,
 } from '../infra/error-handling';
 
-import { createDeviceApiKey } from '../infra/auth/api-keys';
+import { createDeviceApiKey } from '../features/api-keys/lib';
 import { checkInt, isValidInteger } from '../lib/utils';
 
 const { BadRequestError, ConflictError } = errors;
