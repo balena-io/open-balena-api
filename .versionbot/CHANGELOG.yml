@@ -1,4 +1,15 @@
 - commits:
+    - subject: Move platform/jwt into infra/auth
+      hash: ffbb8d9abab89c02c871568b04d897b777b8e866
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.5
+  date: 2020-08-24T12:57:20.643Z
+- commits:
     - subject: Update deps
       hash: 0ba81cdb584cb1eebd010274ddc3a7d3b4bb890b
       body: |
