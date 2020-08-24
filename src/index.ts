@@ -14,7 +14,7 @@ import * as Raven from 'raven';
 import * as pine from '@balena/pinejs';
 
 import type { User as DbUser } from './models';
-import type { defaultFindUser$select } from './platform/auth';
+import type { defaultFindUser$select } from './infra/auth/auth';
 import * as jwt from './platform/jwt';
 passport.use(jwt.strategy);
 
@@ -37,21 +37,22 @@ import {
 	findUser,
 	getUser,
 	reqHasPermission,
-	setUserTokenDataCallback,
-	tokenFields,
 	userFields,
 	userHasPermission,
 	comparePassword,
-	generateNewJwtSecret,
-	loginUserXHR,
 	registerUser,
 	setPassword,
-	updateUserXHR,
 	validatePassword,
-	sudoMiddleware,
 	checkUserPassword,
+} from './infra/auth/auth';
+import {
+	setUserTokenDataCallback,
+	tokenFields,
+	generateNewJwtSecret,
+	loginUserXHR,
+	updateUserXHR,
 	createSessionToken,
-} from './platform/auth';
+} from './infra/auth/jwt';
 import {
 	createAllPermissions,
 	setApiKey,
@@ -70,6 +71,7 @@ import {
 	identifyMiddleware,
 	permissionRequiredMiddleware,
 	prefetchApiKeyMiddleware,
+	sudoMiddleware,
 } from './infra/auth';
 import {
 	addDeleteHookForDependents,

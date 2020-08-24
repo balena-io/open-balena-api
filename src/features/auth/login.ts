@@ -2,7 +2,8 @@ import type { RequestHandler } from 'express';
 
 import { errors } from '@balena/pinejs';
 
-import { comparePassword, findUser, loginUserXHR } from '../../platform/auth';
+import { comparePassword, findUser } from '../../infra/auth/auth';
+import { loginUserXHR } from '../../infra/auth/jwt';
 import { captureException } from '../../infra/error-handling';
 
 import type { SetupOptions } from '../../index';

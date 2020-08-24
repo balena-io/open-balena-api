@@ -7,7 +7,7 @@ import { errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 import * as deviceConfig from 'balena-device-config';
 
-import { getUser } from '../platform/auth';
+import { getUser } from '../infra/auth/auth';
 import { captureException } from '../infra/error-handling';
 
 import { createProvisioningApiKey, createUserApiKey } from './api-keys';

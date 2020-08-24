@@ -66,7 +66,7 @@ async function createSuperuser() {
 	const { getOrInsertModelId } = await import('./src/platform');
 
 	const { findUser, registerUser, updatePasswordIfNeeded } = await import(
-		'./src/platform/auth'
+		'./src/infra/auth/auth'
 	);
 	const { ConflictError } = errors;
 
