@@ -1,4 +1,60 @@
 - commits:
+    - subject: Update deps
+      hash: 0ba81cdb584cb1eebd010274ddc3a7d3b4bb890b
+      body: |
+        Update pinejs from 13.13.3 to 13.13.7
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Make use of optional assignment syntax
+              hash: 5c5a7309790a38a7f1cb3f1119b485e0b9f4796f
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.13.7
+          date: 2020-08-24T12:25:49.766Z
+        - commits:
+            - subject: Improve async stack traces
+              hash: aa74e0de7b60d588f9ba3be0d91a9b6cde05555a
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.13.6
+          date: 2020-08-24T10:53:40.329Z
+        - commits:
+            - subject: Convert db module to async/await
+              hash: f19917de235c509e9923be809e4a8e96d9431627
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.13.5
+          date: 2020-08-21T12:36:50.337Z
+        - commits:
+            - subject: Update pg deps
+              hash: 567389857d1341eaf10a44a15b5a46d8f63197ba
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.13.4
+          date: 2020-08-21T12:08:10.193Z
+  version: 0.94.4
+  date: 2020-08-24T12:42:23.103Z
+- commits:
     - subject: Fix the device type synchronization interval to 5 minutes
       hash: b37e3cb26eb400d42bed5ef532c221a8c2103a23
       body: ''
