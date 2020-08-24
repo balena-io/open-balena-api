@@ -8,7 +8,7 @@ import * as config from '../routes/config';
 import * as deviceTypes from '../features/device-types';
 import * as devices from '../routes/devices';
 import * as os from '../routes/os';
-import * as registry from '../routes/registry';
+import * as registry from '../features/registry';
 import * as services from '../routes/services';
 import * as auth from '../features/auth';
 import * as deviceLogs from '../features/device-logs';
@@ -91,7 +91,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 		services.vpn.clientDisconnect,
 	);
 
-	app.get('/auth/v1/token', registry.basicApiKeyAuthenticate, registry.token);
+	registry.setup(app);
 
 	app.get(
 		'/access/v1/hostos/:device_uuid',
