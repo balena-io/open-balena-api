@@ -6,7 +6,7 @@ import { comparePassword, findUser } from '../../infra/auth/auth';
 import { loginUserXHR } from '../../infra/auth/jwt';
 import { captureException } from '../../infra/error-handling';
 
-import type { SetupOptions } from '../../index';
+import type { SetupOptions } from '../..';
 
 const { BadRequestError, NotFoundError } = errors;
 

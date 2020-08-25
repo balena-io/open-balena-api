@@ -6,7 +6,7 @@ import { sbvrUtils, permissions } from '@balena/pinejs';
 
 import { findUser } from './auth';
 import { captureException } from '../error-handling';
-import { getOrInsertId } from '../pinejs-client-helpers/index';
+import { getOrInsertId } from '../pinejs-client-helpers';
 
 const { api } = sbvrUtils;
 
