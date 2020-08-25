@@ -1,4 +1,27 @@
 - commits:
+    - subject: Update dependencies
+      hash: a3f304689ad7f336ed937e56416abf1dc7b17664
+      body: |
+        Update pinejs from 13.13.7 to 13.13.8
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Fix overwriting error messages in migrations failures
+              hash: 4cc96a472da1e12833d1ff9495d542bf15bb1aff
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-13.13.8
+          date: 2020-08-25T11:29:03.139Z
+  version: 0.94.17
+  date: 2020-08-25T15:21:21.233Z
+- commits:
     - subject: Separate dependent devices hooks to its feature
       hash: 4cf8d833eb95792ea6bb68c004973e362d104761
       body: ''
