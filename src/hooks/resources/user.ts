@@ -1,6 +1,6 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
-import { createActor } from '../../infra/auth/hooks';
+import { createActor } from '../../infra/auth/create-actor';
 import { getUser } from '../../infra/auth/auth';
 import { checkSudoValidity, generateNewJwtSecret } from '../../infra/auth/jwt';
 import { assignUserRole } from '../../infra/auth/permissions';

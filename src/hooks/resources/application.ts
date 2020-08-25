@@ -1,6 +1,6 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
-import { createActor } from '../../infra/auth/hooks';
+import { createActor } from '../../infra/auth/create-actor';
 import { captureException } from '../../infra/error-handling';
 
 import { DefaultApplicationType } from '../../features/application-types/application-types';
