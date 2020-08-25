@@ -15,7 +15,7 @@ hooks.addHook('all', 'all', 'all', {
 import './resources/api_key';
 import './resources/application';
 import './resources/device';
-import './resources/envvars';
+import '../features/vars-schema/hooks';
 import './resources/image';
 import './resources/image__is_part_of__release';
 import './resources/release';
@@ -24,3 +24,4 @@ import './resources/service_install';
 import './resources/service_instance';
 import './resources/tags';
 import './resources/user';
+import '../features/dependent-devices/hooks';

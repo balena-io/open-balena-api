@@ -3,12 +3,12 @@ import type { Filter } from 'pinejs-client-core';
 
 import { captureException } from '../../infra/error-handling';
 
-import { postDevices } from '../../features/device-proxy/device-proxy';
+import { postDevices } from '../device-proxy/device-proxy';
 import {
 	checkConfigVarNameValidity,
 	checkEnvVarNameValidity,
 	checkEnvVarValueValidity,
-} from '../../features/vars-schema/env-vars';
+} from './env-vars';
 
 type ValidateFn = (varName?: string, varValue?: string) => void;
 
