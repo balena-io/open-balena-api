@@ -1,11 +1,8 @@
-import * as Bluebird from 'bluebird';
-
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
 import { createActor } from '../../infra/auth/hooks';
 import { getUser } from '../../infra/auth/auth';
 import { checkSudoValidity, generateNewJwtSecret } from '../../infra/auth/jwt';
-import { captureException } from '../../infra/error-handling';
 import { assignUserRole } from '../../infra/auth/permissions';
 import { UnauthorizedError } from '@balena/pinejs/out/sbvr-api/errors';
 
@@ -82,61 +79,5 @@ hooks.addPureHook('DELETE', 'resin', 'user', {
 
 		// Store the user id in the custom request data for later.
 		request.custom.userId = userId;
-	},
-	PRERUN: async ({ req, request, tx, api: resinApi }) => {
-		const { userId } = request.custom;
-
-		const authApiTx = sbvrUtils.api.Auth.clone({
-			passthrough: {
-				tx,
-				req: permissions.root,
-			},
-		});
-
-		const authApiDeletes = Bluebird.map(
-			['user__has__role', 'user__has__permission'],
-			async (resource) => {
-				try {
-					await authApiTx.delete({
-						resource,
-						options: {
-							$filter: {
-								user: userId,
-							},
-						},
-					});
-				} catch (err) {
-					captureException(err, `Error deleting user ${resource}`, { req });
-					throw err;
-				}
-			},
-		);
-
-		const apiKeyDelete = resinApi
-			.get({
-				resource: 'user',
-				id: userId,
-				options: {
-					$select: 'actor',
-				},
-			})
-			.then(async (user: AnyObject) => {
-				request.custom.actorId = user.actor;
-				try {
-					await authApiTx.delete({
-						resource: 'api_key',
-						options: {
-							$filter: {
-								is_of__actor: user.actor,
-							},
-						},
-					});
-				} catch (err) {
-					captureException(err, 'Error deleting user api_key', { req });
-					throw err;
-				}
-			});
-
-		await Promise.all([authApiDeletes, apiKeyDelete]);
 	},
 });

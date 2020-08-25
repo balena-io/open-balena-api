@@ -12,17 +12,13 @@ hooks.addHook('all', 'all', 'all', {
 	},
 });
 
-import './resources/api_key';
 import './resources/application';
 import './resources/device';
-import '../features/vars-schema/hooks';
-import './resources/image';
-import './resources/image__is_part_of__release';
-import './resources/release';
-import './resources/service';
-import './resources/service_install';
 import './resources/service_instance';
-import '../features/tags/hooks';
 import './resources/user';
-import '../features/dependent-devices/hooks';
+
 import '../features/ci-cd/hooks';
+import '../features/cascade-delete/hooks';
+import '../features/dependent-devices/hooks';
+import '../features/tags/hooks';
+import '../features/vars-schema/hooks';

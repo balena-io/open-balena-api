@@ -1,7 +1,6 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
 import { createActor } from '../../infra/auth/hooks';
-import { addDeleteHookForDependents } from '../../infra/cascade-delete';
 import { captureException } from '../../infra/error-handling';
 
 import { DefaultApplicationType } from '../../features/application-types/application-types';
@@ -159,13 +158,3 @@ hooks.addPureHook('DELETE', 'resin', 'application', {
 		});
 	},
 });
-
-addDeleteHookForDependents('application', [
-	['device', 'belongs_to__application'],
-	['application_config_variable', 'application'],
-	['application_environment_variable', 'application'],
-	['application_tag', 'application'],
-	['release', 'belongs_to__application'],
-	['service', 'application'],
-	['application', 'depends_on__application'],
-]);

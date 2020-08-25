@@ -5,7 +5,6 @@ import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
 
 import { createActor } from '../../infra/auth/hooks';
-import { addDeleteHookForDependents } from '../../infra/cascade-delete';
 
 import {
 	checkDevicesCanBeInApplication,
@@ -474,12 +473,3 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		await Promise.all(waitPromises);
 	},
 });
-
-addDeleteHookForDependents('device', [
-	['device_config_variable', 'device'],
-	['device_environment_variable', 'device'],
-	['device_tag', 'device'],
-	['image_install', 'device'],
-	['service_install', 'device'],
-	['gateway_download', 'is_downloaded_by__device'],
-]);
