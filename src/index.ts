@@ -120,7 +120,7 @@ export type { ApplicationType } from './lib/application-types';
 export type { DeviceType } from './features/device-types/device-types';
 
 export { DefaultApplicationType } from './lib/application-types';
-export * as request from './lib/request';
+export * as request from './infra/request-promise';
 export * as config from './lib/config';
 export * as abstractSql from './abstract-sql-utils';
 

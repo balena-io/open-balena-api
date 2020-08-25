@@ -6,7 +6,7 @@ import * as path from 'path';
 
 import { Headers } from 'request';
 import { API_HOST } from '../../src/lib/config';
-import { requestAsync } from '../../src/lib/request';
+import { requestAsync } from '../../src/infra/request-promise';
 
 const { api } = sbvrUtils;
 
