@@ -22,7 +22,7 @@ import './resources/release';
 import './resources/service';
 import './resources/service_install';
 import './resources/service_instance';
-import './resources/tags';
+import '../features/tags/hooks';
 import './resources/user';
 import '../features/dependent-devices/hooks';
 import '../features/ci-cd/hooks';
