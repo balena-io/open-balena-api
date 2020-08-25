@@ -110,21 +110,6 @@ export const updateOrInsertModel = (
 
 // Hook helpers
 
-export const createActor = async ({
-	request,
-	tx,
-}: hooks.HookArgs): Promise<void> => {
-	const result = await sbvrUtils.api.Auth.post({
-		resource: 'actor',
-		passthrough: {
-			tx,
-			req: permissions.root,
-		},
-		options: { returnResource: false },
-	});
-	request.values.actor = result.id;
-};
-
 export function addDeleteHookForDependents(
 	resource: string,
 	dependents: Array<[string, string]>,
