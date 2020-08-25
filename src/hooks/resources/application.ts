@@ -1,6 +1,5 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
-import { createActor } from '../../infra/auth/create-actor';
 import { captureException } from '../../infra/error-handling';
 
 import { DefaultApplicationType } from '../../features/application-types/application-types';
@@ -8,10 +7,6 @@ import { postDevices } from '../../features/device-proxy/device-proxy';
 import { resolveDeviceType } from '../common';
 
 const { BadRequestError, ConflictError, NotFoundError } = errors;
-
-hooks.addPureHook('POST', 'resin', 'application', {
-	POSTPARSE: createActor,
-});
 
 hooks.addPureHook('POST', 'resin', 'application', {
 	POSTPARSE: async (args) => {
