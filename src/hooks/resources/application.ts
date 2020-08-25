@@ -10,25 +10,6 @@ import { resolveDeviceType } from '../common';
 
 const { BadRequestError, ConflictError, NotFoundError } = errors;
 
-const checkDependentApplication: hooks.Hooks['POSTPARSE'] = async ({
-	request,
-	api,
-}) => {
-	const dependsOnApplicationId = request.values.belongs_to__application;
-	if (dependsOnApplicationId != null) {
-		const dependsOnApplication = await api.get({
-			resource: 'application',
-			id: dependsOnApplicationId,
-			options: {
-				$select: ['id'],
-			},
-		});
-		if (dependsOnApplication == null) {
-			throw new BadRequestError('Invalid application to depend upon');
-		}
-	}
-};
-
 hooks.addPureHook('POST', 'resin', 'application', {
 	POSTPARSE: createActor,
 });
@@ -47,10 +28,7 @@ hooks.addPureHook('POST', 'resin', 'application', {
 		}
 
 		try {
-			await Promise.all([
-				resolveDeviceType(api, request, 'is_for__device_type'),
-				checkDependentApplication(args),
-			]);
+			await resolveDeviceType(api, request, 'is_for__device_type');
 			request.values.should_track_latest_release = true;
 			if (request.values.slug == null) {
 				request.values.slug = appName.toLowerCase();
@@ -64,13 +42,8 @@ hooks.addPureHook('POST', 'resin', 'application', {
 	},
 });
 
-hooks.addPureHook('PUT', 'resin', 'application', {
-	POSTPARSE: checkDependentApplication,
-});
-
 hooks.addPureHook('PATCH', 'resin', 'application', {
 	PRERUN: async (args) => {
-		const waitPromises = [checkDependentApplication(args)];
 		const { request } = args;
 		const appName = request.values.app_name;
 
@@ -81,21 +54,17 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 			if (request.values.slug == null) {
 				request.values.slug = appName.toLowerCase();
 			}
-			waitPromises.push(
-				sbvrUtils.getAffectedIds(args).then((ids) => {
-					if (ids.length === 0) {
-						return;
-					}
-					if (ids.length > 1) {
-						throw new ConflictError(
-							'Cannot rename multiple applications to the same name, please specify just one.',
-						);
-					}
-				}),
-			);
+			await sbvrUtils.getAffectedIds(args).then((ids) => {
+				if (ids.length === 0) {
+					return;
+				}
+				if (ids.length > 1) {
+					throw new ConflictError(
+						'Cannot rename multiple applications to the same name, please specify just one.',
+					);
+				}
+			});
 		}
-
-		await Promise.all(waitPromises);
 	},
 	POSTRUN: async ({ request }) => {
 		const affectedIds = request.affectedIds!;

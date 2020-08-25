@@ -24,3 +24,4 @@ import './resources/service_install';
 import './resources/service_instance';
 import './resources/tags';
 import './resources/user';
+import '../features/dependent-devices/hooks';
