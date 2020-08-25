@@ -11,7 +11,7 @@ import {
 } from '../../lib/application-types';
 import { postDevices } from '../../features/device-proxy/device-proxy';
 import { InaccessibleAppError } from '../../lib/errors';
-import * as haikuName from '../../lib/haiku-name';
+import * as haikuName from '../../infra/haiku-name';
 import { pseudoRandomBytesAsync } from '../../lib/utils';
 import { resolveDeviceType } from '../common';
 
