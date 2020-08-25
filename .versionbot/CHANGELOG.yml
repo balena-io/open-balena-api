@@ -1,4 +1,23 @@
 - commits:
+    - subject: Separate dependent devices hooks to its feature
+      hash: 4cf8d833eb95792ea6bb68c004973e362d104761
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move env vars hooks into vars-schema feature
+      hash: 24ac5e547a673015d35309468929df9dae5840cd
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.16
+  date: 2020-08-25T14:53:19.995Z
+- commits:
     - subject: Move pinejs-client-helpers into infra
       hash: 0cad1b3d45ca9336b7d4921d439ec6f2937dc76c
       body: ''
