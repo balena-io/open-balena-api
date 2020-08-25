@@ -17,11 +17,21 @@ import {
 	getLogoUrl,
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
-import {
-	UnknownDeviceTypeError,
-	InvalidDeviceTypeError,
-	UnknownVersionError,
-} from '../../lib/errors';
+
+const { BadRequestError, NotFoundError } = errors;
+export type { NotFoundError };
+
+export class UnknownDeviceTypeError extends NotFoundError {
+	constructor(slug: string) {
+		super(`Unknown device type ${slug}`);
+	}
+}
+
+export class UnknownVersionError extends NotFoundError {
+	constructor(slug: string, buildId: string) {
+		super(`Device ${slug} not found for ${buildId} version`);
+	}
+}
 
 export type DeviceType = deviceTypesLib.DeviceType;
 
@@ -222,7 +232,7 @@ export const findDeviceTypeInfoBySlug = async (
 
 export const validateSlug = (slug?: string) => {
 	if (slug == null || !/^[\w-]+$/.test(slug)) {
-		throw new InvalidDeviceTypeError('Invalid device type');
+		throw new BadRequestError('Invalid device type');
 	}
 	return slug;
 };

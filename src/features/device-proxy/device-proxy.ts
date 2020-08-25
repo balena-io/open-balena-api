@@ -10,7 +10,6 @@ import {
 	translateError,
 } from '../../infra/error-handling';
 
-import { NoDevicesFoundError } from '../../lib/errors';
 import {
 	API_VPN_SERVICE_API_KEY,
 	VPN_CONNECT_PROXY_PORT,
@@ -24,7 +23,7 @@ const DEVICE_REQUEST_TIMEOUT = 50000;
 
 const DELAY_BETWEEN_DEVICE_REQUEST = 50;
 
-const { BadRequestError } = errors;
+const { BadRequestError, NotFoundError } = errors;
 const { api } = sbvrUtils;
 
 const badSupervisorResponse = (
@@ -206,7 +205,7 @@ export async function requestDevices({
 			// Don't throw an error if it's a fire/forget
 			return;
 		}
-		throw new NoDevicesFoundError('No online device(s) found');
+		throw new NotFoundError('No online device(s) found');
 	}
 	// And now fetch device data with full privs
 	const devices = await api.resin.get({
