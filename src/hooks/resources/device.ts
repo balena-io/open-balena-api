@@ -5,7 +5,7 @@ import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
 
 import { createActor } from '../../infra/auth/hooks';
-import { addDeleteHookForDependents } from '../../platform';
+import { addDeleteHookForDependents } from '../../infra/cascade-delete';
 
 import {
 	checkDevicesCanBeInApplication,

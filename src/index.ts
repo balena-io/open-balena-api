@@ -71,11 +71,8 @@ import {
 	prefetchApiKeyMiddleware,
 	sudoMiddleware,
 } from './infra/auth';
-import {
-	addDeleteHookForDependents,
-	updateOrInsertModel,
-	getOrInsertModelId,
-} from './platform';
+import { addDeleteHookForDependents } from './infra/cascade-delete';
+import { updateOrInsertModel, getOrInsertModelId } from './platform';
 import { loginRateLimiter } from './features/auth';
 import { getIP, getIPv4, isValidInteger, throttledForEach } from './lib/utils';
 import {

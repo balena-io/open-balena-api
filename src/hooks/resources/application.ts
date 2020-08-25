@@ -1,7 +1,7 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
 import { createActor } from '../../infra/auth/hooks';
-import { addDeleteHookForDependents } from '../../platform';
+import { addDeleteHookForDependents } from '../../infra/cascade-delete';
 import { captureException } from '../../infra/error-handling';
 
 import { DefaultApplicationType } from '../../lib/application-types';

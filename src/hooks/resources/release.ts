@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 
 import { sbvrUtils, hooks } from '@balena/pinejs';
 
-import { addDeleteHookForDependents } from '../../platform';
+import { addDeleteHookForDependents } from '../../infra/cascade-delete';
 
 const updateLatestRelease = async (
 	id: number,

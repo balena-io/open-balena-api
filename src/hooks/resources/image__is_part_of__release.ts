@@ -1,4 +1,4 @@
-import { addDeleteHookForDependents } from '../../platform';
+import { addDeleteHookForDependents } from '../../infra/cascade-delete';
 
 addDeleteHookForDependents('image__is_part_of__release', [
 	['image_label', 'release_image'],
