@@ -12,7 +12,9 @@ async function onInitMiddleware(initApp: express.Application) {
 
 async function onInitModel() {
 	const { updateOrInsertModel } = await import('./src/platform');
-	const appTypes = await import('./src/lib/application-types');
+	const appTypes = await import(
+		'./src/features/application-types/application-types'
+	);
 	const insert: types.OptionalField<ApplicationType, 'slug'> = _.cloneDeep(
 		appTypes.DefaultApplicationType,
 	);

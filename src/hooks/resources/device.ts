@@ -10,7 +10,7 @@ import { addDeleteHookForDependents } from '../../infra/cascade-delete';
 import {
 	checkDevicesCanBeInApplication,
 	checkDevicesCanHaveDeviceURL,
-} from '../../lib/application-types';
+} from '../../features/application-types/application-types';
 import { postDevices } from '../../features/device-proxy/device-proxy';
 import * as haikuName from '../../infra/haiku-name';
 import { pseudoRandomBytesAsync } from '../../lib/utils';

@@ -4,7 +4,7 @@ import { createActor } from '../../infra/auth/hooks';
 import { addDeleteHookForDependents } from '../../infra/cascade-delete';
 import { captureException } from '../../infra/error-handling';
 
-import { DefaultApplicationType } from '../../lib/application-types';
+import { DefaultApplicationType } from '../../features/application-types/application-types';
 import { postDevices } from '../../features/device-proxy/device-proxy';
 import { resolveDeviceType } from '../common';
 
