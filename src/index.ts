@@ -72,7 +72,10 @@ import {
 	sudoMiddleware,
 } from './infra/auth';
 import { addDeleteHookForDependents } from './infra/cascade-delete';
-import { updateOrInsertModel, getOrInsertModelId } from './platform';
+import {
+	updateOrInsertModel,
+	getOrInsertModelId,
+} from './infra/pinejs-client-helpers';
 import { loginRateLimiter } from './features/auth';
 import { getIP, getIPv4, isValidInteger, throttledForEach } from './lib/utils';
 import {
