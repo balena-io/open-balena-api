@@ -1,4 +1,71 @@
 - commits:
+    - subject: Move pinejs-client-helpers into infra
+      hash: 0cad1b3d45ca9336b7d4921d439ec6f2937dc76c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move application-types into a feature
+      hash: 10280722054efda2c88fee67f2a212bcd6543c46
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Add cascade-delete infra helper
+      hash: efec14d063dddf9b4b0b1a31b9034f6d26769792
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move `createActor` into  infra/auth
+      hash: 11fedc86cb90dca3abfed4219acb6ed1f643a812
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move lib/tags into a feature
+      hash: 2baeb624f0c56a423744e57629ad855e3aef5780
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move lib/errors into the relevant features
+      hash: 9aff32985fdc019e68038e8cb7c193e268e60988
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move request-promise into infra
+      hash: 1ed0746e96172d6a20b2213f893117bd52fb64a2
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move haiku-name into infra
+      hash: 194c462cf25fd2de2d58b961663f82b642c12d38
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.15
+  date: 2020-08-25T13:35:13.523Z
+- commits:
     - subject: Remove routes directory as it no longer serves a purpose
       hash: 400ed0fea3be97c3683ffbb5d430076c0f41c1e1
       body: ''
