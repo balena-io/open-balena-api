@@ -1,11 +1,8 @@
-import { sbvrUtils, errors } from '@balena/pinejs';
+import { sbvrUtils, hooks, errors } from '@balena/pinejs';
+import { captureException } from '../../infra/error-handling';
+import { getDeviceTypeIdBySlug, UnknownDeviceTypeError } from './device-types';
 
-import {
-	getDeviceTypeIdBySlug,
-	UnknownDeviceTypeError,
-} from '../features/device-types/device-types';
-
-const { BadRequestError } = errors;
+const { BadRequestError, ConflictError } = errors;
 
 export const resolveDeviceType = async (
 	api: sbvrUtils.PinejsClient,
@@ -42,3 +39,23 @@ export const resolveDeviceType = async (
 	// set device_type_slug in case the FK column was used.
 	request.values.device_type = dt.slug;
 };
+
+hooks.addPureHook('POST', 'resin', 'application', {
+	POSTPARSE: async (args) => {
+		const { req, request, api } = args;
+
+		try {
+			await resolveDeviceType(api, request, 'is_for__device_type');
+		} catch (err) {
+			if (!(err instanceof ConflictError)) {
+				captureException(err, 'Error in application postparse hook', { req });
+			}
+			throw err;
+		}
+	},
+});
+
+hooks.addPureHook('POST', 'resin', 'device', {
+	POSTPARSE: ({ api, request }) =>
+		resolveDeviceType(api, request, 'is_of__device_type'),
+});

@@ -11,7 +11,6 @@ import {
 import { postDevices } from '../../features/device-proxy/device-proxy';
 import * as haikuName from '../../infra/haiku-name';
 import { pseudoRandomBytesAsync } from '../../lib/utils';
-import { resolveDeviceType } from '../common';
 
 const { BadRequestError } = errors;
 
@@ -109,11 +108,6 @@ const createAppServiceInstalls = async (
 			},
 		},
 	});
-
-hooks.addPureHook('POST', 'resin', 'device', {
-	POSTPARSE: ({ api, request }) =>
-		resolveDeviceType(api, request, 'is_of__device_type'),
-});
 
 hooks.addPureHook('POST', 'resin', 'device', {
 	POSTPARSE: async ({ request }) => {

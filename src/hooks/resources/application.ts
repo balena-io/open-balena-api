@@ -1,16 +1,13 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
-import { captureException } from '../../infra/error-handling';
-
 import { DefaultApplicationType } from '../../features/application-types/application-types';
 import { postDevices } from '../../features/device-proxy/device-proxy';
-import { resolveDeviceType } from '../common';
 
 const { BadRequestError, ConflictError, NotFoundError } = errors;
 
 hooks.addPureHook('POST', 'resin', 'application', {
 	POSTPARSE: async (args) => {
-		const { req, request, api } = args;
+		const { request } = args;
 		const appName = request.values.app_name;
 
 		if (request.values.application_type == null) {
@@ -21,17 +18,9 @@ hooks.addPureHook('POST', 'resin', 'application', {
 			throw new BadRequestError('App name may only contain [a-zA-Z0-9_-].');
 		}
 
-		try {
-			await resolveDeviceType(api, request, 'is_for__device_type');
-			request.values.should_track_latest_release = true;
-			if (request.values.slug == null) {
-				request.values.slug = appName.toLowerCase();
-			}
-		} catch (err) {
-			if (!(err instanceof ConflictError)) {
-				captureException(err, 'Error in application postparse hook', { req });
-			}
-			throw err;
+		request.values.should_track_latest_release = true;
+		if (request.values.slug == null) {
+			request.values.slug = appName.toLowerCase();
 		}
 	},
 });
