@@ -1,9 +1,7 @@
 import * as _ from 'lodash';
 
-import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 import type { FilterObj } from 'pinejs-client-core';
-
-import { captureException } from '../infra/error-handling';
 
 // TODO: Potential races here. They are unlikely but not impossible. Will fix
 // in subsequent PR.
@@ -107,58 +105,3 @@ export const updateOrInsertModel = (
 	tx?: Tx,
 ): Promise<{ id: number }> =>
 	$updateOrInsert(sbvrUtils.api.resin, resource, filter, updateFields, tx);
-
-// Hook helpers
-
-export const createActor = async ({
-	request,
-	tx,
-}: hooks.HookArgs): Promise<void> => {
-	const result = await sbvrUtils.api.Auth.post({
-		resource: 'actor',
-		passthrough: {
-			tx,
-			req: permissions.root,
-		},
-		options: { returnResource: false },
-	});
-	request.values.actor = result.id;
-};
-
-export function addDeleteHookForDependents(
-	resource: string,
-	dependents: Array<[string, string]>,
-) {
-	hooks.addPureHook('DELETE', 'resin', resource, {
-		PRERUN: async (args) => {
-			const { api, req } = args;
-
-			const resourceIds = await sbvrUtils.getAffectedIds(args);
-			if (resourceIds.length === 0) {
-				return;
-			}
-
-			for (const [dependent, resourceIdField] of dependents) {
-				try {
-					await api.delete({
-						resource: dependent,
-						options: {
-							$filter: {
-								[resourceIdField]: { $in: resourceIds },
-							},
-						},
-					});
-				} catch (err) {
-					captureException(
-						err,
-						`Error deleting resource '${dependent}' before deleting '${resource}' `,
-						{
-							req,
-						},
-					);
-					throw err;
-				}
-			}
-		},
-	});
-}

@@ -1,4 +1,4 @@
-import { addDeleteHookForDependents } from '../../platform';
+import { addDeleteHookForDependents } from '../../infra/cascade-delete';
 
 addDeleteHookForDependents('service', [
 	['service_environment_variable', 'service'],

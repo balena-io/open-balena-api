@@ -1,21 +1,30 @@
 import * as _ from 'lodash';
+import { TypedError } from 'typed-error';
 
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
 
-import { addDeleteHookForDependents, createActor } from '../../platform';
+import { createActor } from '../../infra/auth/hooks';
+import { addDeleteHookForDependents } from '../../infra/cascade-delete';
 
 import {
 	checkDevicesCanBeInApplication,
 	checkDevicesCanHaveDeviceURL,
-} from '../../lib/application-types';
+} from '../../features/application-types/application-types';
 import { postDevices } from '../../features/device-proxy/device-proxy';
-import { InaccessibleAppError } from '../../lib/errors';
-import * as haikuName from '../../lib/haiku-name';
+import * as haikuName from '../../infra/haiku-name';
 import { pseudoRandomBytesAsync } from '../../lib/utils';
 import { resolveDeviceType } from '../common';
 
 const { BadRequestError } = errors;
+
+export class InaccessibleAppError extends TypedError {
+	constructor(
+		message = "Application doesn't exist or you have no access to it.",
+	) {
+		super(message);
+	}
+}
 
 const INVALID_NEWLINE_REGEX = /\r|\n/;
 

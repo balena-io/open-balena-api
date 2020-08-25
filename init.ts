@@ -11,8 +11,12 @@ async function onInitMiddleware(initApp: express.Application) {
 }
 
 async function onInitModel() {
-	const { updateOrInsertModel } = await import('./src/platform');
-	const appTypes = await import('./src/lib/application-types');
+	const { updateOrInsertModel } = await import(
+		'./src/infra/pinejs-client-helpers'
+	);
+	const appTypes = await import(
+		'./src/features/application-types/application-types'
+	);
 	const insert: types.OptionalField<ApplicationType, 'slug'> = _.cloneDeep(
 		appTypes.DefaultApplicationType,
 	);
@@ -65,7 +69,9 @@ async function createSuperuser() {
 
 	console.log('Creating superuser account...');
 
-	const { getOrInsertModelId } = await import('./src/platform');
+	const { getOrInsertModelId } = await import(
+		'./src/infra/pinejs-client-helpers'
+	);
 
 	const { findUser, registerUser, updatePasswordIfNeeded } = await import(
 		'./src/infra/auth/auth'

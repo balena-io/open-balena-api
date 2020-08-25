@@ -71,11 +71,11 @@ import {
 	prefetchApiKeyMiddleware,
 	sudoMiddleware,
 } from './infra/auth';
+import { addDeleteHookForDependents } from './infra/cascade-delete';
 import {
-	addDeleteHookForDependents,
 	updateOrInsertModel,
 	getOrInsertModelId,
-} from './platform';
+} from './infra/pinejs-client-helpers';
 import { loginRateLimiter } from './features/auth';
 import { getIP, getIPv4, isValidInteger, throttledForEach } from './lib/utils';
 import {
@@ -116,11 +116,11 @@ import { varListInsert } from './features/device-state/routes/state';
 
 export type { Creds, User } from './infra/auth/jwt-passport';
 export type { Access } from './features/registry/registry';
-export type { ApplicationType } from './lib/application-types';
+export type { ApplicationType } from './features/application-types/application-types';
 export type { DeviceType } from './features/device-types/device-types';
 
-export { DefaultApplicationType } from './lib/application-types';
-export * as request from './lib/request';
+export { DefaultApplicationType } from './features/application-types/application-types';
+export * as request from './infra/request-promise';
 export * as config from './lib/config';
 export * as abstractSql from './abstract-sql-utils';
 

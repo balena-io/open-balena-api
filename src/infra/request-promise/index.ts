@@ -1,7 +1,7 @@
 import * as Bluebird from 'bluebird';
 import * as request from 'request';
 
-import { EXTERNAL_HTTP_TIMEOUT_MS } from './config';
+import { EXTERNAL_HTTP_TIMEOUT_MS } from '../../lib/config';
 
 type Request = typeof request;
 

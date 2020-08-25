@@ -1,6 +1,6 @@
 import { hooks } from '@balena/pinejs';
 
-import { checkTagKeyValidity } from '../../lib/tags';
+import { checkTagKeyValidity } from '../../features/tags/tags';
 
 // Tag hooks
 const addTagHooks = (resource: string) => {

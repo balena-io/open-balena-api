@@ -1,6 +1,6 @@
 import { hooks, permissions, errors } from '@balena/pinejs';
 
-import { addDeleteHookForDependents } from '../../platform';
+import { addDeleteHookForDependents } from '../../infra/cascade-delete';
 
 import { REGISTRY2_HOST } from '../../lib/config';
 import { pseudoRandomBytesAsync } from '../../lib/utils';

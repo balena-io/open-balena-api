@@ -1,7 +1,11 @@
-import { sbvrUtils } from '@balena/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 
-import { getDeviceTypeIdBySlug } from '../features/device-types/device-types';
-import { UnknownDeviceTypeError, InvalidDeviceTypeError } from '../lib/errors';
+import {
+	getDeviceTypeIdBySlug,
+	UnknownDeviceTypeError,
+} from '../features/device-types/device-types';
+
+const { BadRequestError } = errors;
 
 export const resolveDeviceType = async (
 	api: sbvrUtils.PinejsClient,
@@ -21,7 +25,7 @@ export const resolveDeviceType = async (
 	}
 
 	if (!request.values[fkValue]) {
-		throw new InvalidDeviceTypeError();
+		throw new BadRequestError();
 	}
 
 	const dt = (await api.get({
@@ -33,7 +37,7 @@ export const resolveDeviceType = async (
 	})) as { slug: string } | undefined;
 
 	if (!dt) {
-		throw new InvalidDeviceTypeError();
+		throw new BadRequestError();
 	}
 	// set device_type_slug in case the FK column was used.
 	request.values.device_type = dt.slug;
