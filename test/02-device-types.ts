@@ -1,6 +1,4 @@
 import * as _ from 'lodash';
-import 'mocha';
-import { app } from '../init';
 import { expect } from './test-lib/chai';
 
 import { supertest } from './test-lib/supertest';
@@ -8,7 +6,7 @@ import { supertest } from './test-lib/supertest';
 describe('device type endpoints', () => {
 	describe('device type resource', () => {
 		it('should succeed to return a result', async () => {
-			const res = await supertest(app).get('/resin/device_type').expect(200);
+			const res = await supertest().get('/resin/device_type').expect(200);
 			expect(res.body.d).to.be.an('array');
 			res.body.d.forEach((deviceType: any) => {
 				expect(deviceType).to.be.an('object');
@@ -22,7 +20,7 @@ describe('device type endpoints', () => {
 
 	describe('/device-types/v1', () => {
 		it('should succeed to return a result', async () => {
-			const res = await supertest(app).get('/device-types/v1').expect(200);
+			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
 			res.body.forEach((deviceType: any) => {
 				expect(deviceType).to.be.an('object');
@@ -41,7 +39,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should omit releases that have an IGNORE file', async () => {
-			const res = await supertest(app).get('/device-types/v1').expect(200);
+			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
@@ -52,7 +50,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should omit releases that have an IGNORE file that gives an unauthorized error', async () => {
-			const res = await supertest(app).get('/device-types/v1').expect(200);
+			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
@@ -63,7 +61,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should omit releases that have an empty device-type.json', async () => {
-			const res = await supertest(app).get('/device-types/v1').expect(200);
+			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
@@ -74,7 +72,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should omit releases that do not have a device-type.json', async () => {
-			const res = await supertest(app).get('/device-types/v1').expect(200);
+			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
@@ -85,7 +83,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should succeed and omit releases that the retrieval of the IGNORE file fails', async () => {
-			const res = await supertest(app).get('/device-types/v1').expect(200);
+			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
@@ -96,7 +94,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should succeed and omit releases that the retrieval of device-type.json fails', async () => {
-			const res = await supertest(app).get('/device-types/v1').expect(200);
+			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
@@ -107,7 +105,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should succeed and omit device types whose details fail to be retrieved', async () => {
-			const res = await supertest(app).get('/device-types/v1').expect(200);
+			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
 			const deviceType = _.find(
 				res.body,
@@ -118,7 +116,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should not contain device types with no valid releases', async () => {
-			const res = await supertest(app).get('/device-types/v1').expect(200);
+			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
 			const emptyDeviceType = _.find(
 				res.body,
@@ -128,7 +126,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should not contain device types whose details fail to be retrieved', async () => {
-			const res = await supertest(app).get('/device-types/v1').expect(200);
+			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
 			const emptyDeviceType = _.find(
 				res.body,
@@ -138,7 +136,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should return a proper result', async () => {
-			const res = await supertest(app).get('/device-types/v1').expect(200);
+			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
 			expect(res.body).to.have.property('length', 57);
 			const rpi3config = _.find(res.body, { slug: 'raspberrypi3' });
@@ -149,7 +147,7 @@ describe('device type endpoints', () => {
 
 	describe('/device-types/v1/:deviceType', () => {
 		it('should return a proper result', async () => {
-			const res = await supertest(app)
+			const res = await supertest()
 				.get('/device-types/v1/raspberrypi3')
 				.expect(200);
 			expect(res.body).to.be.an('object');
@@ -165,7 +163,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should show devices types for aliases as well', async () => {
-			const res = await supertest(app)
+			const res = await supertest()
 				.get('/device-types/v1/raspberrypi')
 				.expect(200);
 			expect(res.body).to.be.an('object');
@@ -181,7 +179,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should include the logoUrl only when an icon is available', async () => {
-			const { body: rpi3Config } = await supertest(app)
+			const { body: rpi3Config } = await supertest()
 				.get('/device-types/v1/raspberrypi3')
 				.expect(200);
 			expect(rpi3Config).to.have.property(
@@ -189,7 +187,7 @@ describe('device type endpoints', () => {
 				'https://files_host.com/images/raspberrypi3/2.19.0%2Brev1.prod/logo.svg',
 			);
 
-			const { body: rpiConfig } = await supertest(app)
+			const { body: rpiConfig } = await supertest()
 				.get('/device-types/v1/raspberry-pi')
 				.expect(200);
 			expect(rpiConfig).to.not.have.property('logoUrl');
@@ -198,7 +196,7 @@ describe('device type endpoints', () => {
 
 	describe('/device-types/v1/:deviceType/images', () => {
 		it('should return a proper result', async () => {
-			const res = await supertest(app)
+			const res = await supertest()
 				.get('/device-types/v1/raspberrypi3-64/images')
 				.expect(200);
 			expect(res.body).to.deep.equal({
@@ -213,7 +211,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should return a proper result for an alias', async () => {
-			const res = await supertest(app)
+			const res = await supertest()
 				.get('/device-types/v1/raspberrypi364/images')
 				.expect(200);
 			expect(res.body).to.deep.equal({
@@ -228,7 +226,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should omit releases that have an IGNORE file', async () => {
-			const res = await supertest(app)
+			const res = await supertest()
 				.get('/device-types/v1/dt-with-ignored-release/images')
 				.expect(200);
 			expect(res.body).to.deep.equal({
@@ -238,7 +236,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should omit releases that have an IGNORE file that gives an unauthorized error', async () => {
-			const res = await supertest(app)
+			const res = await supertest()
 				.get('/device-types/v1/dt-with-403-ignore-file-release/images')
 				.expect(200);
 			expect(res.body).to.deep.equal({
@@ -248,7 +246,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should omit releases that have an empty device-type.json', async () => {
-			const res = await supertest(app)
+			const res = await supertest()
 				.get('/device-types/v1/dt-with-empty-device-type-json-release/images')
 				.expect(200);
 			expect(res.body).to.deep.equal({
@@ -258,7 +256,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should omit releases that do not have a device-type.json', async () => {
-			const res = await supertest(app)
+			const res = await supertest()
 				.get('/device-types/v1/dt-with-404-device-type-json-release/images')
 				.expect(200);
 			expect(res.body).to.deep.equal({
@@ -268,7 +266,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should succeed and omit releases that the retrieval of the IGNORE file fails', async () => {
-			const res = await supertest(app)
+			const res = await supertest()
 				.get('/device-types/v1/dt-with-500-ignore-file-release/images')
 				.expect(200);
 			expect(res.body).to.deep.equal({
@@ -278,7 +276,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should succeed and omit releases that the retrieval of device-type.json fails', async () => {
-			const res = await supertest(app)
+			const res = await supertest()
 				.get('/device-types/v1/dt-with-500-device-type-json-release/images')
 				.expect(200);
 			expect(res.body).to.deep.equal({
@@ -288,7 +286,7 @@ describe('device type endpoints', () => {
 		});
 
 		it('should succeed and omit device types whose details fail to be retrieved', async () => {
-			const res = await supertest(app)
+			const res = await supertest()
 				.get('/device-types/v1/dt-with-500-device-type-json-release/images')
 				.expect(200);
 			expect(res.body).to.deep.equal({

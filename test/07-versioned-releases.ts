@@ -1,6 +1,4 @@
 import * as _ from 'lodash';
-import 'mocha';
-import { app } from '../init';
 import * as fixtures from './test-lib/fixtures';
 import { expect } from './test-lib/chai';
 
@@ -34,7 +32,7 @@ describe('versioning releases', () => {
 	});
 
 	it('should succeed to return versioned releases', async () => {
-		const res = await supertest(app, user)
+		const res = await supertest(user)
 			.get(`/resin/release?$filter=release_version ne null`)
 			.expect(200);
 		expect(res.body.d).to.have.lengthOf(2);
@@ -44,7 +42,7 @@ describe('versioning releases', () => {
 	});
 
 	it('should succeed to return unversioned releases', async () => {
-		const res = await supertest(app, user)
+		const res = await supertest(user)
 			.get(`/resin/release?$filter=release_version eq null`)
 			.expect(200);
 		expect(res.body.d).to.have.lengthOf(2);
@@ -55,13 +53,13 @@ describe('versioning releases', () => {
 
 	it('should succeed in PATCHing a release version', async () => {
 		const releaseVersion = 'v1.2.3';
-		await supertest(app, user)
+		await supertest(user)
 			.patch(`/resin/release(${release1.id})`)
 			.send({
 				release_version: releaseVersion,
 			})
 			.expect(200);
-		const res = await supertest(app, user)
+		const res = await supertest(user)
 			.get(`/resin/release(${release1.id})`)
 			.expect(200);
 		expect(res.body.d[0])
@@ -71,7 +69,7 @@ describe('versioning releases', () => {
 
 	it('should fail to PATCH a duplicate release version', async () => {
 		const releaseVersion = 'v1.2.3';
-		await supertest(app, user)
+		await supertest(user)
 			.patch(`/resin/release(${release2.id})`)
 			.send({
 				release_version: releaseVersion,
@@ -80,7 +78,7 @@ describe('versioning releases', () => {
 	});
 
 	it('should succeed in PATCHing a null release version', async () => {
-		await supertest(app, user)
+		await supertest(user)
 			.patch(`/resin/release(${release2.id})`)
 			.send({
 				release_version: null,
@@ -89,27 +87,21 @@ describe('versioning releases', () => {
 	});
 
 	it('should confirm that a new release can be created with version', async () => {
-		await supertest(app, user)
-			.post(`/resin/release`)
-			.send(newRelease)
-			.expect(201);
+		await supertest(user).post(`/resin/release`).send(newRelease).expect(201);
 	});
 
 	it('should disallow creating a new release with used version', async () => {
-		await supertest(app, user)
-			.post(`/resin/release`)
-			.send(newRelease)
-			.expect(400);
+		await supertest(user).post(`/resin/release`).send(newRelease).expect(400);
 	});
 
 	it('should confirm that invalidating a release allows reuse of version', async () => {
-		await supertest(app, user)
+		await supertest(user)
 			.patch(`/resin/release(${release1.id})`)
 			.send({
 				is_invalidated: true,
 			})
 			.expect(200);
-		await supertest(app, user)
+		await supertest(user)
 			.patch(`/resin/release(${release2.id})`)
 			.send({
 				release_version: release1.release_version,

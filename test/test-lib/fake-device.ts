@@ -1,9 +1,6 @@
 import { expect } from 'chai';
-import 'mocha';
 import * as randomstring from 'randomstring';
 import * as uuid from 'uuid';
-
-import { app } from '../../init';
 
 import { supertest, UserObjectParam } from './supertest';
 
@@ -42,7 +39,7 @@ export async function provisionDevice(
 	appId: number,
 	supervisorVersion: string | null = null,
 ) {
-	const { body: applications } = await supertest(app, admin)
+	const { body: applications } = await supertest(admin)
 		.get(`/resin/application(${appId})?$expand=is_for__device_type`)
 		.expect(200);
 
@@ -60,7 +57,7 @@ export async function provisionDevice(
 	const deviceType: string = applications.d[0].is_for__device_type[0].slug;
 
 	const deviceUuid = uuid.v4().replace(/\-/g, '').toLowerCase();
-	const { body: deviceEntry } = await supertest(app, admin)
+	const { body: deviceEntry } = await supertest(admin)
 		.post('/resin/device')
 		.send({
 			belongs_to__application: appId,
@@ -70,7 +67,7 @@ export async function provisionDevice(
 		})
 		.expect(201);
 
-	const { body: provisionedDevice } = await supertest(app, admin)
+	const { body: provisionedDevice } = await supertest(admin)
 		.get(`/resin/device(uuid='${deviceUuid}')?$select=supervisor_version`)
 		.expect(200);
 	expect(provisionedDevice.d[0].supervisor_version).to.equal(supervisorVersion);
@@ -82,7 +79,7 @@ export async function provisionDevice(
 		}),
 		token: randomstring.generate(16),
 		getStateV2: async (): Promise<DeviceState> => {
-			const { body: state } = await supertest(app, device)
+			const { body: state } = await supertest(device)
 				.get(`/device/v2/${device.uuid}/state`)
 				.expect(200);
 
@@ -93,14 +90,14 @@ export async function provisionDevice(
 			return state;
 		},
 		patchStateV2: async (devicePatchBody: AnyObject) => {
-			await supertest(app, device)
+			await supertest(device)
 				.patch(`/device/v2/${device.uuid}/state`)
 				.send(devicePatchBody)
 				.expect(200);
 		},
 	};
 
-	await supertest(app, admin)
+	await supertest(admin)
 		.post(`/api-key/device/${device.id}/device-key`)
 		.send({
 			apiKey: device.token,

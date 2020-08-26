@@ -1,13 +1,10 @@
-import * as express from 'express';
+import { app } from '../../init';
 import * as $supertest from 'supertest';
 import { User } from '../../src/infra/auth/jwt-passport';
 
 export type UserObjectParam = Partial<User & { token: string }>;
 
-export const supertest = function (
-	app: express.Express,
-	user?: string | UserObjectParam,
-) {
+export const supertest = function (user?: string | UserObjectParam) {
 	// Can be an object with `token`, a JWT string or an API key string
 	let token = user;
 	if (typeof user === 'object' && user.token) {

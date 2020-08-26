@@ -1,5 +1,3 @@
-import 'mocha';
-import { app } from '../init';
 import { expect } from './test-lib/chai';
 
 import * as Bluebird from 'bluebird';
@@ -92,7 +90,7 @@ describe('Device State v2', () => {
 			});
 
 			it('Should see the application-specific value if one exists', async () => {
-				await supertest(app, admin)
+				await supertest(admin)
 					.post('/resin/application_config_variable')
 					.send({
 						name: 'RESIN_SUPERVISOR_POLL_INTERVAL',
@@ -106,7 +104,7 @@ describe('Device State v2', () => {
 			});
 
 			it('Should see the device-specific value if one exists', async () => {
-				await supertest(app, admin)
+				await supertest(admin)
 					.post('/resin/device_config_variable')
 					.send({
 						name: 'RESIN_SUPERVISOR_POLL_INTERVAL',
@@ -120,7 +118,7 @@ describe('Device State v2', () => {
 			});
 
 			it('Should see the default value if the device-specific value is less than it', async () => {
-				await supertest(app, admin)
+				await supertest(admin)
 					.patch(
 						`/resin/device_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and device eq ${device.id}`,
 					)
@@ -132,7 +130,7 @@ describe('Device State v2', () => {
 				const pollInterval = await stateMock.getPollInterval(device.uuid);
 				expect(pollInterval).to.equal(POLL_MSEC * stateMock.POLL_JITTER_FACTOR);
 
-				await supertest(app, admin)
+				await supertest(admin)
 					.delete(
 						`/resin/device_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and device eq ${device.id}`,
 					)
@@ -140,7 +138,7 @@ describe('Device State v2', () => {
 			});
 
 			it('Should see the default value if the application-specific value is less than it', async () => {
-				await supertest(app, admin)
+				await supertest(admin)
 					.patch(
 						`/resin/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${applicationId}`,
 					)
@@ -152,7 +150,7 @@ describe('Device State v2', () => {
 				const pollInterval = await stateMock.getPollInterval(device.uuid);
 				expect(pollInterval).to.equal(POLL_MSEC * stateMock.POLL_JITTER_FACTOR);
 
-				await supertest(app, admin)
+				await supertest(admin)
 					.delete(
 						`/resin/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${applicationId}`,
 					)
@@ -183,7 +181,7 @@ describe('Device State v2', () => {
 			});
 
 			it('Should see state initially as "unknown"', async () => {
-				const { body } = await supertest(app, admin)
+				const { body } = await supertest(admin)
 					.get(`/resin/device(${device.id})`)
 					.expect(200);
 
@@ -205,7 +203,7 @@ describe('Device State v2', () => {
 					stateMock.DeviceOnlineStates.Online,
 				);
 
-				const { body } = await supertest(app, admin)
+				const { body } = await supertest(admin)
 					.get(`/resin/device(${device.id})`)
 					.expect(200);
 
@@ -229,7 +227,7 @@ describe('Device State v2', () => {
 					stateMock.DeviceOnlineStates.Timeout,
 				);
 
-				const { body } = await supertest(app, admin)
+				const { body } = await supertest(admin)
 					.get(`/resin/device(${device.id})`)
 					.expect(200);
 
@@ -252,7 +250,7 @@ describe('Device State v2', () => {
 					stateMock.DeviceOnlineStates.Online,
 				);
 
-				const { body } = await supertest(app, admin)
+				const { body } = await supertest(admin)
 					.get(`/resin/device(${device.id})`)
 					.expect(200);
 
@@ -278,7 +276,7 @@ describe('Device State v2', () => {
 					stateMock.DeviceOnlineStates.Offline,
 				);
 
-				const { body } = await supertest(app, admin)
+				const { body } = await supertest(admin)
 					.get(`/resin/device(${device.id})`)
 					.expect(200);
 
@@ -337,9 +335,7 @@ describe('Device State v2 patch', function () {
 			body: {
 				d: [updatedDevice],
 			},
-		} = await supertest(app, admin)
-			.get(`/resin/device(${device.id})`)
-			.expect(200);
+		} = await supertest(admin).get(`/resin/device(${device.id})`).expect(200);
 
 		Object.keys(devicePatchBody.local).forEach(
 			(field: keyof typeof devicePatchBody['local']) => {
