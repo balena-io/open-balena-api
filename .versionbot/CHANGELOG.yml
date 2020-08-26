@@ -1,4 +1,23 @@
 - commits:
+    - subject: Remove some model knowledge from infra/auth/jwt-passport
+      hash: 78c9f516cf0ca8d8926a0e086d19dcfc45db760e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Remove model knowledge from infra/cascade-delete
+      hash: 420e8caa5b2f53a2b62c2fdad3ea72dc3db6d819
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.19
+  date: 2020-08-26T12:34:44.938Z
+- commits:
     - subject: Move device types resolution hooks to the device-types feature
       hash: ac195ecd37e165f05383dc9d44f67aafcbab7694
       body: ''
