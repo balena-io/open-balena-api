@@ -1,4 +1,15 @@
 - commits:
+    - subject: Separate update trigger hooks into relevant features
+      hash: bec18a42577bb4b32a5cb2ad6994185ab137938d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.95.2
+  date: 2020-08-26T18:04:15.882Z
+- commits:
     - subject: Remove unnecessary passing of app to every `supertest` usage
       hash: db73597bedbb98c46e426355d62f2600245b507f
       body: ''
