@@ -1,13 +1,8 @@
-import { addDeleteHookForDependents } from '../../infra/cascade-delete';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import { captureException } from '../../infra/error-handling';
+import { setupDeleteCascade } from './setup-delete-cascade';
 
 const { api, getAffectedIds } = sbvrUtils;
-
-const setupDeleteCascade = (
-	resource: string,
-	dependents: Array<[string, string]>,
-) => addDeleteHookForDependents('resin', resource, dependents);
 
 // TODO: These should end up grouped into the features that declare the relationship existence
 

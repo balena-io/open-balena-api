@@ -86,7 +86,7 @@ import {
 	prefetchApiKeyMiddleware,
 	sudoMiddleware,
 } from './infra/auth';
-import { addDeleteHookForDependents } from './infra/cascade-delete';
+import { setupDeleteCascade as addDeleteHookForDependents } from './features/cascade-delete/setup-delete-cascade';
 import {
 	updateOrInsertModel,
 	getOrInsertModelId,
