@@ -16,7 +16,22 @@ import * as pine from '@balena/pinejs';
 import type { User as DbUser } from './models';
 import type { defaultFindUser$select } from './infra/auth/auth';
 import * as jwt from './infra/auth/jwt-passport';
-passport.use(jwt.strategy);
+
+const { api } = pine.sbvrUtils;
+// TODO: Move this into a feature
+passport.use(
+	jwt.createStrategy(
+		async (id: number) =>
+			(await api.resin.get({
+				resource: 'user',
+				id,
+				passthrough: { req: pine.permissions.root },
+				options: {
+					$select: ['actor', 'jwt_secret'],
+				},
+			})) as Pick<DbUser, 'actor' | 'jwt_secret'>,
+	),
+);
 
 import {
 	API_HOST,

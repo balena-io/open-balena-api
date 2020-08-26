@@ -4,9 +4,14 @@ import { captureException } from '../../infra/error-handling';
 
 const { api, getAffectedIds } = sbvrUtils;
 
+const setupDeleteCascade = (
+	resource: string,
+	dependents: Array<[string, string]>,
+) => addDeleteHookForDependents('resin', resource, dependents);
+
 // TODO: These should end up grouped into the features that declare the relationship existence
 
-addDeleteHookForDependents('application', [
+setupDeleteCascade('application', [
 	['device', 'belongs_to__application'],
 	['application_config_variable', 'application'],
 	['application_environment_variable', 'application'],
@@ -16,7 +21,7 @@ addDeleteHookForDependents('application', [
 	['application', 'depends_on__application'],
 ]);
 
-addDeleteHookForDependents('device', [
+setupDeleteCascade('device', [
 	['device_config_variable', 'device'],
 	['device_environment_variable', 'device'],
 	['device_tag', 'device'],
@@ -25,31 +30,31 @@ addDeleteHookForDependents('device', [
 	['gateway_download', 'is_downloaded_by__device'],
 ]);
 
-addDeleteHookForDependents('image', [
+setupDeleteCascade('image', [
 	['image_install', 'installs__image'],
 	['image__is_part_of__release', 'image'],
 	['gateway_download', 'image'],
 ]);
 
-addDeleteHookForDependents('image__is_part_of__release', [
+setupDeleteCascade('image__is_part_of__release', [
 	['image_label', 'release_image'],
 	['image_environment_variable', 'release_image'],
 ]);
 
-addDeleteHookForDependents('release', [
+setupDeleteCascade('release', [
 	['release_tag', 'release'],
 	['image__is_part_of__release', 'is_part_of__release'],
 	['image_install', 'is_provided_by__release'],
 ]);
 
-addDeleteHookForDependents('service', [
+setupDeleteCascade('service', [
 	['service_environment_variable', 'service'],
 	['service_install', 'installs__service'],
 	['image', 'is_a_build_of__service'],
 	['service_label', 'service'],
 ]);
 
-addDeleteHookForDependents('service_install', [
+setupDeleteCascade('service_install', [
 	['device_service_environment_variable', 'service_install'],
 ]);
 
