@@ -1,6 +1,4 @@
 import { expect } from 'chai';
-import 'mocha';
-import { app } from '../init';
 
 import { supertest } from './test-lib/supertest';
 
@@ -95,15 +93,13 @@ const checkBaseVarsResult = (
 
 describe('Basic', () => {
 	it('check /ping route is OK', async () => {
-		const res = await supertest(app).get('/ping').expect(200);
+		const res = await supertest().get('/ping').expect(200);
 		expect(res.text).to.equal('OK');
 	});
 
 	describe('/config/vars', function () {
 		it('should be correct when no device type is provided', async () => {
-			const { body: vars } = await supertest(app)
-				.get('/config/vars')
-				.expect(200);
+			const { body: vars } = await supertest().get('/config/vars').expect(200);
 
 			checkBaseVarsResult(vars);
 		});
@@ -126,7 +122,7 @@ describe('Basic', () => {
 			},
 		].forEach(({ deviceType, extraConfigVarSchemaProperties }) => {
 			it(`should be correct when device type ${deviceType} is specified`, async () => {
-				const { body: vars } = await supertest(app)
+				const { body: vars } = await supertest()
 					.get(`/config/vars?deviceType=${deviceType}`)
 					.expect(200);
 

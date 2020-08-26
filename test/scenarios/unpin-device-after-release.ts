@@ -1,8 +1,5 @@
-import 'mocha';
-
 import * as _ from 'lodash';
 
-import { app } from '../../init';
 import { expect } from '../test-lib/chai';
 import * as fakeDevice from '../test-lib/fake-device';
 import { supertest, UserObjectParam } from '../test-lib/supertest';
@@ -45,15 +42,13 @@ const addReleaseToApp = async (
 	auth: UserObjectParam,
 	release: MockReleaseParams,
 ): Promise<MockRelease> =>
-	(await supertest(app, auth).post(`/resin/release`).send(release).expect(201))
-		.body;
+	(await supertest(auth).post(`/resin/release`).send(release).expect(201)).body;
 
 const addImageToService = async (
 	auth: UserObjectParam,
 	image: MockImageParams,
 ): Promise<MockImage> =>
-	(await supertest(app, auth).post(`/resin/image`).send(image).expect(201))
-		.body;
+	(await supertest(auth).post(`/resin/image`).send(image).expect(201)).body;
 
 const addServiceToApp = async (
 	auth: UserObjectParam,
@@ -61,7 +56,7 @@ const addServiceToApp = async (
 	application: number,
 ): Promise<MockService> =>
 	(
-		await supertest(app, auth)
+		await supertest(auth)
 			.post(`/resin/service`)
 			.send({
 				application,
@@ -75,7 +70,7 @@ const addImageToRelease = async (
 	imageId: number,
 	releaseId: number,
 ): Promise<void> => {
-	await supertest(app, auth)
+	await supertest(auth)
 		.post(`/resin/image__is_part_of__release`)
 		.send({
 			image: imageId,
@@ -146,7 +141,7 @@ describe('Device with missing service installs', () => {
 	});
 
 	it('should pin the device to the first release', async function () {
-		await supertest(app, admin)
+		await supertest(admin)
 			.patch(`/resin/device(${device.id})`)
 			.send({
 				should_be_running__release: releases['deadbeef'],
@@ -212,7 +207,7 @@ describe('Device with missing service installs', () => {
 	});
 
 	it('should un-pin the device', async function () {
-		await supertest(app, admin)
+		await supertest(admin)
 			.patch(`/resin/device(${device.id})`)
 			.send({
 				should_be_running__release: null,

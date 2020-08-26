@@ -3,8 +3,6 @@ import { expect } from './test-lib/chai';
 import * as fixtures from './test-lib/fixtures';
 import { supertest } from './test-lib/supertest';
 
-import { app } from '../init';
-
 const createLog = (extra = {}) => {
 	return {
 		isStdErr: true,
@@ -24,14 +22,14 @@ describe('device log', () => {
 		ctx.device = fx.devices.device1;
 		ctx.device2 = fx.devices.device2;
 
-		const res = await supertest(app, ctx.user)
+		const res = await supertest(ctx.user)
 			.post(`/api-key/device/${ctx.device.id}/device-key`)
 			.expect(200);
 
 		expect(res.body).to.be.a('string');
 		ctx.device.apiKey = res.body;
 
-		const res2 = await supertest(app, ctx.user)
+		const res2 = await supertest(ctx.user)
 			.post('/api-key/user/full')
 			.send({ name: 'name' })
 			.expect(200);
@@ -44,44 +42,44 @@ describe('device log', () => {
 	// Creating
 
 	it('should allow devices to write their own logs', () =>
-		supertest(app, ctx.device.apiKey)
+		supertest(ctx.device.apiKey)
 			.post(`/device/v2/${ctx.device.uuid}/logs`)
 			.send([createLog()])
 			.expect(201));
 
 	it('should allow devices to write many logs in a batch', () =>
-		supertest(app, ctx.device.apiKey)
+		supertest(ctx.device.apiKey)
 			.post(`/device/v2/${ctx.device.uuid}/logs`)
 			.send([createLog(), createLog()])
 			.expect(201));
 
 	it("should not allow devices to write other devices' logs", () =>
-		supertest(app, ctx.device.apiKey)
+		supertest(ctx.device.apiKey)
 			.post(`/device/v2/${ctx.device2.uuid}/logs`)
 			.send([createLog()])
 			// Yields 404 because fetching device2 by uuid yields nothing
 			.expect(404));
 
 	it('should accept and store batches where some logs have serviceId', () =>
-		supertest(app, ctx.device.apiKey)
+		supertest(ctx.device.apiKey)
 			.post(`/device/v2/${ctx.device.uuid}/logs`)
 			.send([createLog({ serviceId: 10 }), createLog()])
 			.expect(201));
 
 	it('should return 201 even when the list of logs is empty', () =>
-		supertest(app, ctx.device.apiKey)
+		supertest(ctx.device.apiKey)
 			.post(`/device/v2/${ctx.device.uuid}/logs`)
 			.send([])
 			.expect(201));
 
 	it('should ignore logs with uuid (from dependent devices)', () =>
-		supertest(app, ctx.device.apiKey)
+		supertest(ctx.device.apiKey)
 			.post(`/device/v2/${ctx.device.uuid}/logs`)
 			.send([createLog({ uuid: 'abcdef' })])
 			.expect(201));
 
 	it('should ignore unknown properties on logs and store them', () =>
-		supertest(app, ctx.device.apiKey)
+		supertest(ctx.device.apiKey)
 			.post(`/device/v2/${ctx.device.uuid}/logs`)
 			.send([createLog({ hello: 'hi there' })])
 			.expect(201));
@@ -92,7 +90,7 @@ describe('device log', () => {
 			{ message: null },
 			{ timestamp: new Date().toISOString() },
 		]) {
-			await supertest(app, ctx.device.apiKey)
+			await supertest(ctx.device.apiKey)
 				.post(`/device/v2/${ctx.device.uuid}/logs`)
 				.send([createLog(extra)])
 				.expect(400);
@@ -102,7 +100,7 @@ describe('device log', () => {
 	// Reading Logs
 
 	it('should allow users to read device logs with a JWT', async () => {
-		const res = await supertest(app, ctx.user)
+		const res = await supertest(ctx.user)
 			.get(`/device/v2/${ctx.device.uuid}/logs`)
 			.expect(200);
 
@@ -127,14 +125,14 @@ describe('device log', () => {
 	});
 
 	it('should allow users to read device logs with user-level API keys', async () => {
-		const res = await supertest(app, ctx.user.apiKey)
+		const res = await supertest(ctx.user.apiKey)
 			.get(`/device/v2/${ctx.device.uuid}/logs`)
 			.expect(200);
 		expect(res.body).to.have.lengthOf(6);
 	});
 
 	it('should support the `count` option in the custom read endpoint if available', async () => {
-		const res = await supertest(app, ctx.user)
+		const res = await supertest(ctx.user)
 			.get(`/device/v2/${ctx.device.uuid}/logs?count=4`)
 			.expect(200);
 		expect(res.body).to.have.lengthOf(4);
@@ -149,7 +147,7 @@ describe('device log', () => {
 	});
 
 	it('should support the `count=all` option in the custom read endpoint if available', async () => {
-		const res = await supertest(app, ctx.user)
+		const res = await supertest(ctx.user)
 			.get(`/device/v2/${ctx.device.uuid}/logs?count=all`)
 			.expect(200);
 		expect(res.body).to.have.lengthOf(6);
@@ -157,7 +155,7 @@ describe('device log', () => {
 
 	it('should reject batches with more logs than allowed', () => {
 		const logs = _.times(11, createLog);
-		return supertest(app, ctx.device.apiKey)
+		return supertest(ctx.device.apiKey)
 			.post(`/device/v2/${ctx.device.uuid}/logs`)
 			.send(logs)
 			.expect(400);

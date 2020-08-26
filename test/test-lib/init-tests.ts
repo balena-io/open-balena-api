@@ -1,4 +1,3 @@
-import { app } from '../../init';
 import * as balenaToken from './balena-token';
 import * as fixtures from './fixtures';
 import { supertest, UserObjectParam } from './supertest';
@@ -28,7 +27,7 @@ const loadAdminUserAndOrganization = async () => {
 	}
 
 	const token = (
-		await supertest(app)
+		await supertest()
 			.post('/login_')
 			.send({
 				username: SUPERUSER_EMAIL,
@@ -40,11 +39,11 @@ const loadAdminUserAndOrganization = async () => {
 	const user = (await balenaToken.parse(token)) as UserObjectParam;
 	user.token = token;
 	user.actor = (
-		await supertest(app, user).get(`/resin/user(${user.id})`).expect(200)
+		await supertest(user).get(`/resin/user(${user.id})`).expect(200)
 	).body.d[0].actor as number;
 
 	const org = (
-		await supertest(app, user)
+		await supertest(user)
 			.get(
 				`/resin/organization?$select=id,name,handle&$filter=handle eq 'admin'`,
 			)

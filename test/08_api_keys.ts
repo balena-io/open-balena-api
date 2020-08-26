@@ -2,7 +2,6 @@ import { VPN_SERVICE_API_KEY } from '../src/lib/config';
 import { expect } from './test-lib/chai';
 import * as fixtures from './test-lib/fixtures';
 import { supertest, UserObjectParam } from './test-lib/supertest';
-import { app } from '../init';
 
 describe('create provisioning apikey', function () {
 	before(async function () {
@@ -13,7 +12,7 @@ describe('create provisioning apikey', function () {
 	});
 
 	after(async function () {
-		await supertest(app, this.user).delete(`/resin/api_key`).expect(200);
+		await supertest(this.user).delete(`/resin/api_key`).expect(200);
 		await fixtures.clean(this.loadedFixtures);
 	});
 
@@ -21,7 +20,7 @@ describe('create provisioning apikey', function () {
 		{
 			title: `using /api-key/application/:appId/provisioning endpoint`,
 			fn(user: UserObjectParam | undefined, applicationId: number) {
-				return supertest(app, user).post(
+				return supertest(user).post(
 					`/api-key/application/${applicationId}/provisioning`,
 				);
 			},
@@ -29,7 +28,7 @@ describe('create provisioning apikey', function () {
 		{
 			title: 'using the /api-key/v1/ endpoint',
 			fn(user: UserObjectParam | undefined, applicationId: number) {
-				return supertest(app, user)
+				return supertest(user)
 					.post(`/api-key/v1/`)
 					.send({
 						actorType: 'application',
@@ -44,7 +43,7 @@ describe('create provisioning apikey', function () {
 				'f716a3e020bd444b885cb394453917520c3cf82e69654f84be0d33e31a0e15';
 
 			after(async function () {
-				await supertest(app, this.user)
+				await supertest(this.user)
 					.delete(`/resin/device?$filter=uuid eq '${uuid}'`)
 					.expect(200);
 			});
@@ -64,7 +63,7 @@ describe('create provisioning apikey', function () {
 			});
 
 			it('then register a device using the provisioning key', async function () {
-				const { body: device } = await supertest(app)
+				const { body: device } = await supertest()
 					.post(`/device/register?apikey=${this.provisioningKey}`)
 					.send({
 						user: this.user.id,
@@ -92,7 +91,7 @@ describe('create device apikey', function () {
 	});
 
 	after(async function () {
-		await supertest(app, this.user).delete(`/resin/api_key`).expect(200);
+		await supertest(this.user).delete(`/resin/api_key`).expect(200);
 		await fixtures.clean(this.loadedFixtures);
 	});
 
@@ -104,7 +103,7 @@ describe('create device apikey', function () {
 				deviceId: number,
 				body?: AnyObject,
 			) {
-				return supertest(app, user)
+				return supertest(user)
 					.post(`/api-key/device/${deviceId}/device-key`)
 					.send(body);
 			},
@@ -116,7 +115,7 @@ describe('create device apikey', function () {
 				deviceId: number,
 				body?: AnyObject,
 			) {
-				return supertest(app, user)
+				return supertest(user)
 					.post(`/api-key/v1/`)
 					.send({
 						actorType: 'device',
@@ -164,7 +163,7 @@ describe('create named user apikey', function () {
 		userIdForUnauthorizedRequest = this.user.id;
 	});
 	after(async function () {
-		await supertest(app, this.user).delete(`/resin/api_key`).expect(200);
+		await supertest(this.user).delete(`/resin/api_key`).expect(200);
 		await fixtures.clean(this.loadedFixtures);
 	});
 
@@ -172,13 +171,13 @@ describe('create named user apikey', function () {
 		{
 			title: 'using the /api-key/user/full endpoint',
 			fn(user: UserObjectParam | undefined, body?: AnyObject) {
-				return supertest(app, user).post(`/api-key/user/full`).send(body);
+				return supertest(user).post(`/api-key/user/full`).send(body);
 			},
 		},
 		{
 			title: 'using the /api-key/v1/ endpoint',
 			fn(user: UserObjectParam | undefined, body?: AnyObject) {
-				return supertest(app, user)
+				return supertest(user)
 					.post(`/api-key/v1/`)
 					.send({
 						actorType: 'user',
@@ -232,12 +231,12 @@ describe('use api key instead of jwt', function () {
 	});
 
 	after(async function () {
-		await supertest(app, this.user).delete(`/resin/api_key`).expect(200);
+		await supertest(this.user).delete(`/resin/api_key`).expect(200);
 		await fixtures.clean(this.loadedFixtures);
 	});
 
 	it('should accept api keys on the Authorization header on custom endpoints already expecting only api keys', async function () {
-		const { status } = await supertest(app, VPN_SERVICE_API_KEY).post(
+		const { status } = await supertest(VPN_SERVICE_API_KEY).post(
 			'/services/vpn/client-connect',
 		);
 
@@ -257,7 +256,7 @@ describe('use api key instead of jwt', function () {
 		{
 			title: 'when generated using the /api-key/user/full endpoint',
 			async beforeFn() {
-				const { body: namedApiKey } = await supertest(app, this.user)
+				const { body: namedApiKey } = await supertest(this.user)
 					.post('/api-key/user/full')
 					.send({ name: 'named' })
 					.expect(200);
@@ -269,7 +268,7 @@ describe('use api key instead of jwt', function () {
 		{
 			title: 'when generated using the /api-key/v1/ endpoint',
 			async beforeFn() {
-				const { body: namedApiKey } = await supertest(app, this.user)
+				const { body: namedApiKey } = await supertest(this.user)
 					.post(`/api-key/v1/`)
 					.send({
 						actorType: 'user',
@@ -287,20 +286,20 @@ describe('use api key instead of jwt', function () {
 			before(beforeFn);
 
 			it('should be able to access an allowed standard endpoint with a named user-level api key', async function () {
-				await supertest(app)
+				await supertest()
 					.get(`/resin/user(${this.user.id})?$select=username`)
 					.query({ apikey: this.namedApiKey })
 					.expect(200);
 			});
 
 			it('should accept api keys on the Authorization header on standard endpoints', async function () {
-				await supertest(app, this.namedApiKey)
+				await supertest(this.namedApiKey)
 					.get(`/resin/user(${this.user.id})?$select=username`)
 					.expect(200);
 			});
 
 			it('should return user info', async function () {
-				const { body } = await supertest(app, this.namedApiKey)
+				const { body } = await supertest(this.namedApiKey)
 					.get('/user/v1/whoami')
 					.expect(200);
 
@@ -312,7 +311,7 @@ describe('use api key instead of jwt', function () {
 			describe('should correctly control access to named user-level api keys', function () {
 				RESTRICTED_ENDPOINTS.forEach(({ method, path, body }) => {
 					it(`${method} ${path}`, async function () {
-						await supertest(app)
+						await supertest()
 							[method](path)
 							.query({ apikey: this.namedApiKey })
 							.send(body)
@@ -326,7 +325,7 @@ describe('use api key instead of jwt', function () {
 	describe('should correctly control access to JWTs', function () {
 		RESTRICTED_ENDPOINTS.forEach(({ method, path, body, status = 200 }) => {
 			it(`${method} ${path}`, async function () {
-				await supertest(app, this.user)[method](path).send(body).expect(status);
+				await supertest(this.user)[method](path).send(body).expect(status);
 			});
 		});
 	});
@@ -339,7 +338,7 @@ describe('standard api key endpoints', async function () {
 		this.loadedFixtures = fx;
 		this.user = fx.users.admin;
 
-		const { body: apikey } = await supertest(app, this.user)
+		const { body: apikey } = await supertest(this.user)
 			.post('/api-key/user/full')
 			.send({ name: 'witty' })
 			.expect(200);
@@ -348,19 +347,19 @@ describe('standard api key endpoints', async function () {
 		this.apikey = apikey;
 	});
 	after(async function () {
-		await supertest(app, this.user).delete(`/resin/api_key`).expect(200);
+		await supertest(this.user).delete(`/resin/api_key`).expect(200);
 		await fixtures.clean(this.loadedFixtures);
 	});
 
 	it('should not allow api keys to be created using the standard endpoint', async function () {
-		await supertest(app, this.user)
+		await supertest(this.user)
 			.post(`/resin/api_key`)
 			.send({ name: 'witty' })
 			.expect(401);
 	});
 
 	it('should allow api keys to read api keys', async function () {
-		const { body } = await supertest(app)
+		const { body } = await supertest()
 			.get(`/resin/api_key?$select=name`)
 			.query({ apikey: this.apikey })
 			.expect(200);
@@ -370,7 +369,7 @@ describe('standard api key endpoints', async function () {
 	});
 
 	it('should allow users to read api keys', async function () {
-		const { body } = await supertest(app, this.user)
+		const { body } = await supertest(this.user)
 			.get(`/resin/api_key?$select=id,name`)
 			.expect(200);
 		expect(body).to.have.property('d').that.has.length(1);
@@ -381,7 +380,7 @@ describe('standard api key endpoints', async function () {
 	});
 
 	it('should not allow api keys to update api keys', async function () {
-		await supertest(app)
+		await supertest()
 			.patch(`/resin/api_key(${this.apiKeyId})`)
 			.query({ apikey: this.apikey })
 			.send({ name: 'unfunny' })
@@ -389,12 +388,12 @@ describe('standard api key endpoints', async function () {
 	});
 
 	it('should allow users to update api keys', async function () {
-		await supertest(app, this.user)
+		await supertest(this.user)
 			.patch(`/resin/api_key(${this.apiKeyId})`)
 			.send({ name: 'unfunny' })
 			.expect(200);
 
-		const { body } = await supertest(app, this.user)
+		const { body } = await supertest(this.user)
 			.get(`/resin/api_key?$select=name`)
 			.expect(200);
 		expect(body).to.have.property('d').that.has.length(1);
@@ -402,18 +401,18 @@ describe('standard api key endpoints', async function () {
 	});
 
 	it('should not allow api keys to delete api keys', async function () {
-		await supertest(app)
+		await supertest()
 			.del(`/resin/api_key(${this.apiKeyId})`)
 			.query({ apikey: this.apikey })
 			.expect(401);
 	});
 
 	it('should allow users to delete api keys', async function () {
-		await supertest(app, this.user)
+		await supertest(this.user)
 			.del(`/resin/api_key(${this.apiKeyId})`)
 			.expect(200);
 
-		const { body } = await supertest(app, this.user)
+		const { body } = await supertest(this.user)
 			.get(`/resin/api_key?$select=id`)
 			.expect(200);
 
@@ -429,13 +428,13 @@ describe('generic-api-key-endpoint', function () {
 	});
 
 	after(async function () {
-		await supertest(app, this.user).delete(`/resin/api_key`).expect(200);
+		await supertest(this.user).delete(`/resin/api_key`).expect(200);
 		await fixtures.clean(this.loadedFixtures);
 	});
 
 	describe('parameter checks', function () {
 		it('should reject unauthorized requests', async function () {
-			await supertest(app)
+			await supertest()
 				.post(`/api-key/v1`)
 				.send({
 					actorType: 'user',
@@ -447,7 +446,7 @@ describe('generic-api-key-endpoint', function () {
 		});
 
 		it('should reject requests for an unsupported actor type', async function () {
-			await supertest(app, this.user)
+			await supertest(this.user)
 				.post(`/api-key/v1`)
 				.send({
 					actorType: 'organization',
@@ -459,7 +458,7 @@ describe('generic-api-key-endpoint', function () {
 		});
 
 		it('should reject requests when the actor type id is missing', async function () {
-			await supertest(app, this.user)
+			await supertest(this.user)
 				.post(`/api-key/v1`)
 				.send({
 					actorType: 'user',
@@ -470,7 +469,7 @@ describe('generic-api-key-endpoint', function () {
 		});
 
 		it('should reject requests when no roles are provided', async function () {
-			await supertest(app, this.user)
+			await supertest(this.user)
 				.post(`/api-key/v1`)
 				.send({
 					actorType: 'user',
@@ -482,7 +481,7 @@ describe('generic-api-key-endpoint', function () {
 		});
 
 		it('should reject requests when the roles are not an array', async function () {
-			await supertest(app, this.user)
+			await supertest(this.user)
 				.post(`/api-key/v1`)
 				.send({
 					actorType: 'user',
@@ -494,7 +493,7 @@ describe('generic-api-key-endpoint', function () {
 		});
 
 		it('should reject requests when the role is not a non-empty string', async function () {
-			await supertest(app, this.user)
+			await supertest(this.user)
 				.post(`/api-key/v1`)
 				.send({
 					actorType: 'user',
@@ -504,7 +503,7 @@ describe('generic-api-key-endpoint', function () {
 				})
 				.expect(400, 'Roles should be an array of role names');
 
-			await supertest(app, this.user)
+			await supertest(this.user)
 				.post(`/api-key/v1`)
 				.send({
 					actorType: 'user',
@@ -516,7 +515,7 @@ describe('generic-api-key-endpoint', function () {
 		});
 
 		it('should reject requests when more than one roles are provided', async function () {
-			await supertest(app, this.user)
+			await supertest(this.user)
 				.post(`/api-key/v1`)
 				.send({
 					actorType: 'user',
@@ -528,7 +527,7 @@ describe('generic-api-key-endpoint', function () {
 		});
 
 		it('should reject requests for named api keys without a name', async function () {
-			await supertest(app, this.user)
+			await supertest(this.user)
 				.post(`/api-key/v1`)
 				.send({
 					actorType: 'user',
@@ -542,7 +541,7 @@ describe('generic-api-key-endpoint', function () {
 		});
 
 		it('should reject requests for named api keys with an empty name', async function () {
-			await supertest(app, this.user)
+			await supertest(this.user)
 				.post(`/api-key/v1`)
 				.send({
 					actorType: 'user',
@@ -557,7 +556,7 @@ describe('generic-api-key-endpoint', function () {
 		});
 
 		it('should be able to create a named api key', async function () {
-			await supertest(app, this.user)
+			await supertest(this.user)
 				.post(`/api-key/v1`)
 				.send({
 					actorType: 'user',
