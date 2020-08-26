@@ -8,7 +8,6 @@ import {
 	checkDevicesCanBeInApplication,
 	checkDevicesCanHaveDeviceURL,
 } from '../../features/application-types/application-types';
-import { postDevices } from '../../features/device-proxy/device-proxy';
 import * as haikuName from '../../infra/haiku-name';
 import { pseudoRandomBytesAsync } from '../../lib/utils';
 
@@ -316,25 +315,6 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		const waitPromises: Array<PromiseLike<any>> = [];
 		const affectedIds = args.request.affectedIds!;
 
-		// Only update devices if they have had their app changed, or the device
-		// name has changed - so a user can restart their service and it will
-		// pick up the change
-		if (
-			(args.request.values.belongs_to__application != null ||
-				args.request.values.device_name != null) &&
-			affectedIds.length !== 0
-		) {
-			waitPromises.push(
-				postDevices({
-					url: '/v1/update',
-					req: permissions.root,
-					filter: { id: { $in: affectedIds } },
-					// Don't wait for the posts to complete, as they may take a long time
-					wait: false,
-				}),
-			);
-		}
-
 		// We only want to set dependent devices offline when the gateway goes
 		// offline, when the gateway comes back it's its job to set the dependent
 		// device back to online as need be.
@@ -441,19 +421,6 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 							),
 						);
 					})(),
-				);
-			}
-
-			// If the device has been pinned/un-pinned then we should alert the supervisor
-			if (affectedIds.length !== 0) {
-				waitPromises.push(
-					postDevices({
-						url: '/v1/update',
-						req: permissions.root,
-						filter: { id: { $in: affectedIds } },
-						// Don't wait for the posts to complete, as they may take a long time
-						wait: false,
-					}),
 				);
 			}
 		}

@@ -1,75 +1,41 @@
 import { sbvrUtils, hooks } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
 
-import { captureException } from '../../infra/error-handling';
+import { captureException } from '../../../infra/error-handling';
 
-import { postDevices } from '../device-proxy/device-proxy';
-import {
-	checkConfigVarNameValidity,
-	checkEnvVarNameValidity,
-	checkEnvVarValueValidity,
-} from './env-vars';
-
-type ValidateFn = (varName?: string, varValue?: string) => void;
-
-const triggerDevices = async (
-	filter: Filter | undefined,
-	req: hooks.HookReq,
-) => {
-	// If we can't find the matching env var to update then we don't ping the devices.
-	// - This should only happen in the case of deleting an application, where we delete all of the env vars at once.
-	if (filter == null) {
-		return;
-	}
-
-	await postDevices({
-		url: '/v1/update',
-		req,
-		filter,
-		// Don't wait for the posts to complete,
-		// as they may take a long time and we've already sent the prompt to update.
-		wait: false,
-	});
-};
+import { postDevices } from '../../device-proxy/device-proxy';
 
 // Env vars hooks
 const addEnvHooks = (
 	resource: string,
-	validateFn: ValidateFn,
 	buildFilter: (
 		args: hooks.HookArgs & {
 			tx: Tx;
 		},
 	) => Promise<Filter | undefined>,
 ): void => {
-	const postParseHook: hooks.Hooks['POSTPARSE'] = async ({ request }) => {
-		await validateFn(request.values.name, request.values.value);
-	};
-	const preRunHook: hooks.Hooks['PRERUN'] = async (args) => {
-		try {
-			const filter = await buildFilter(args);
-			if (filter == null) {
-				return;
-			}
-			const devices = await args.api.get({
-				resource: 'device',
-				options: {
-					$select: 'id',
-					$filter: filter,
-				},
-			});
-			args.request.custom.devices = devices.map(({ id }) => id);
-		} catch (err) {
-			captureException(err, `Error building the ${resource} filter`, {
-				req: args.req,
-			});
-			throw err;
-		}
-	};
-
 	const envVarHook: hooks.Hooks = {
-		POSTPARSE: postParseHook,
-		PRERUN: preRunHook,
+		PRERUN: async (args) => {
+			try {
+				const filter = await buildFilter(args);
+				if (filter == null) {
+					return;
+				}
+				const devices = await args.api.get({
+					resource: 'device',
+					options: {
+						$select: 'id',
+						$filter: filter,
+					},
+				});
+				args.request.custom.devices = devices.map(({ id }) => id);
+			} catch (err) {
+				captureException(err, `Error building the ${resource} filter`, {
+					req: args.req,
+				});
+				throw err;
+			}
+		},
 		POSTRUN: async ({ req, request }) => {
 			const { devices } = request.custom;
 			if (!devices || devices.length === 0) {
@@ -77,7 +43,21 @@ const addEnvHooks = (
 				return;
 			}
 			const filter = { id: { $in: devices } };
-			await triggerDevices(filter, req);
+
+			// If we can't find the matching env var to update then we don't ping the devices.
+			// - This should only happen in the case of deleting an application, where we delete all of the env vars at once.
+			if (filter == null) {
+				return;
+			}
+
+			await postDevices({
+				url: '/v1/update',
+				req,
+				filter,
+				// Don't wait for the posts to complete,
+				// as they may take a long time and we've already sent the prompt to update.
+				wait: false,
+			});
 		},
 	};
 
@@ -87,27 +67,8 @@ const addEnvHooks = (
 	hooks.addPureHook('DELETE', 'resin', resource, envVarHook);
 };
 
-const checkConfigVarValidity: ValidateFn = (varName, varValue) => {
-	if (varName != null) {
-		checkConfigVarNameValidity(varName);
-	}
-	if (varValue != null) {
-		checkEnvVarValueValidity(varValue);
-	}
-};
-
-const checkEnvVarValidity: ValidateFn = (varName, varValue) => {
-	if (varName != null) {
-		checkEnvVarNameValidity(varName);
-	}
-	if (varValue != null) {
-		checkEnvVarValueValidity(varValue);
-	}
-};
-
 addEnvHooks(
 	'application_config_variable',
-	checkConfigVarValidity,
 	async (
 		args: hooks.HookArgs & {
 			tx: Tx;
@@ -150,7 +111,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'application_environment_variable',
-	checkEnvVarValidity,
 	async (
 		args: hooks.HookArgs & {
 			tx: Tx;
@@ -189,7 +149,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'device_config_variable',
-	checkConfigVarValidity,
 	async (
 		args: hooks.HookArgs & {
 			tx: Tx;
@@ -219,7 +178,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'device_environment_variable',
-	checkEnvVarValidity,
 	async (
 		args: hooks.HookArgs & {
 			tx: Tx;
@@ -249,7 +207,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'service_environment_variable',
-	checkEnvVarValidity,
 	async (
 		args: hooks.HookArgs & {
 			tx: Tx;
@@ -312,7 +269,6 @@ addEnvHooks(
 
 addEnvHooks(
 	'device_service_environment_variable',
-	checkEnvVarValidity,
 	async (
 		args: hooks.HookArgs & {
 			tx: Tx;
