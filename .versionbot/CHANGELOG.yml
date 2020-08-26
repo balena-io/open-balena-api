@@ -1,4 +1,55 @@
 - commits:
+    - subject: Move device types resolution hooks to the device-types feature
+      hash: ac195ecd37e165f05383dc9d44f67aafcbab7694
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move auth related hooks to the auth feature
+      hash: 3185bddb4b510c767f0ef5e52880c5d00b8c1f85
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Rename infra/auth/hooks to create-actor as it doesn't set up any hooks
+      hash: 1d2026c747281019c1769323ca2482f185cbff15
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move cascade deletion to a feature
+      hash: 6577b8a39889e5ded47c81953b3d8ba8b8f67255
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move tags hooks to a feature
+      hash: 6643b90e0b9dd62bad5b09814a0b71cf3d1adf7c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move ci-cd hooks to a feature
+      hash: 5c620f764537b56f1e491e71efd5a6550a0e84ec
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.18
+  date: 2020-08-26T11:14:36.516Z
+- commits:
     - subject: Update dependencies
       hash: a3f304689ad7f336ed937e56416abf1dc7b17664
       body: |
