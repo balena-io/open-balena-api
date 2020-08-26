@@ -2,10 +2,11 @@ import { sbvrUtils, hooks } from '@balena/pinejs';
 import { captureException } from '../error-handling';
 
 export function addDeleteHookForDependents(
+	model: string,
 	resource: string,
 	dependents: Array<[string, string]>,
 ) {
-	hooks.addPureHook('DELETE', 'resin', resource, {
+	hooks.addPureHook('DELETE', model, resource, {
 		PRERUN: async (args) => {
 			const { api, req } = args;
 
