@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add request logging feature
+      hash: 2e9546a0e5ab377c55316a46e97b9b8ae6c40c94
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.95.0
+  date: 2020-08-26T16:35:20.725Z
+- commits:
     - subject: Revert breaking change of the exported `addDeleteHookForDependents`
       hash: be97dc16f845822976a587a323464bb109baabae
       body: ''
