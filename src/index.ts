@@ -128,6 +128,10 @@ import {
 import * as baseAuth from './lib/auth';
 // TODO: This should not be exported
 import { varListInsert } from './features/device-state/routes/state';
+import {
+	GetUrlFunction,
+	setupRequestLogging,
+} from './features/request-logging';
 
 export type { Creds, User } from './infra/auth/jwt-passport';
 export type { Access } from './features/registry/registry';
@@ -226,6 +230,7 @@ export interface SetupOptions {
 	version?: string; // this will be reported along with exceptions to Sentry
 	skipHttpsPaths?: string[]; // a list of paths which should be exempt from https redirection
 
+	getUrl: GetUrlFunction;
 	onInit?: SetupFunction;
 	onInitMiddleware?: SetupFunction;
 	onInitModel?: SetupFunction;
@@ -300,6 +305,8 @@ export async function setup(app: Application, options: SetupOptions) {
 	app.use('/ping', (_req, res) => {
 		res.sendStatus(200);
 	});
+
+	setupRequestLogging(app, options.getUrl);
 
 	await options.onInit?.(app);
 
