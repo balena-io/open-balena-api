@@ -23,5 +23,7 @@ declare namespace Express {
 		custom?: AnyObject;
 
 		resetRatelimit?: () => Promise<void>;
+
+		skipLogging?: true;
 	}
 }

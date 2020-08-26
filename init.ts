@@ -5,6 +5,8 @@ import * as _ from 'lodash';
 import config = require('./config');
 import { version } from './package.json';
 
+const getUrl = (req: express.Request) => req.url;
+
 async function onInitMiddleware(initApp: express.Application) {
 	const { forwardRequests } = await import('./src/infra/versions');
 	forwardRequests(initApp, 'v5', 'resin');
@@ -146,6 +148,7 @@ const init = async () => {
 		const { startServer } = await setup(app, {
 			config,
 			version,
+			getUrl,
 			onInitMiddleware,
 			onInitModel,
 			onInitHooks,
