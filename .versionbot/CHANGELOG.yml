@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove unnecessary passing of app to every `supertest` usage
+      hash: db73597bedbb98c46e426355d62f2600245b507f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.95.1
+  date: 2020-08-26T17:31:00.089Z
+- commits:
     - subject: Add request logging feature
       hash: 2e9546a0e5ab377c55316a46e97b9b8ae6c40c94
       body: ''
