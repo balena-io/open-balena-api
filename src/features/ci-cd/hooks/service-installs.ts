@@ -73,8 +73,8 @@ const createAppServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,
 	appId: number,
 	deviceIds: number[],
-): Promise<void> =>
-	createReleaseServiceInstalls(api, deviceIds, {
+): Promise<void> => {
+	await createReleaseServiceInstalls(api, deviceIds, {
 		should_be_running_on__application: {
 			$any: {
 				$alias: 'a',
@@ -82,11 +82,12 @@ const createAppServiceInstalls = async (
 			},
 		},
 	});
+};
 
-hooks.addPureHook('POST', 'resin', 'device', {
-	POSTRUN: async ({ request, api, tx, result: deviceId }) => {
-		// Don't try to add service installs if the device wasn't created
-		if (deviceId == null) {
+hooks.addPureHook('POST', 'resin', 'device_application', {
+	POSTRUN: async ({ request, api, tx, result: deviceAppId }) => {
+		// Don't try to add service installs if the device app wasn't created
+		if (deviceAppId == null) {
 			return;
 		}
 
@@ -95,35 +96,8 @@ hooks.addPureHook('POST', 'resin', 'device', {
 		await createAppServiceInstalls(
 			rootApi,
 			request.values.belongs_to__application,
-			[deviceId],
+			[request.values.device],
 		);
-	},
-});
-
-hooks.addPureHook('PATCH', 'resin', 'device', {
-	POSTRUN: async (args) => {
-		const affectedIds = args.request.affectedIds!;
-
-		// We need to delete all service_install resources for the current device and
-		// create new ones for the new application (if the device is moving application)
-		if (
-			args.request.values.belongs_to__application != null &&
-			affectedIds.length !== 0
-		) {
-			await args.api.delete({
-				resource: 'service_install',
-				options: {
-					$filter: {
-						device: { $in: affectedIds },
-					},
-				},
-			});
-			await createAppServiceInstalls(
-				args.api,
-				args.request.values.belongs_to__application,
-				affectedIds,
-			);
-		}
 	},
 });
 
@@ -144,27 +118,38 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 				const devices = (await api.get({
 					resource: 'device',
 					options: {
-						$select: ['id', 'belongs_to__application'],
+						$select: 'id',
+						$expand: {
+							device_application: {
+								$select: ['belongs_to__application'],
+							},
+						},
 						$filter: {
 							id: { $in: affectedIds },
 						},
 					},
 				})) as Array<{
 					id: number;
-					belongs_to__application: { __id: number };
+					device_application: [{ belongs_to__application: { __id: number } }?];
 				}>;
 				const devicesByApp = _.groupBy(
 					devices,
-					(d) => d.belongs_to__application.__id,
+					(d) => d.device_application[0]?.belongs_to__application.__id,
 				);
 				await Promise.all(
-					Object.keys(devicesByApp).map((appId) =>
-						createAppServiceInstalls(
+					Object.keys(devicesByApp).map(async (groupId) => {
+						const appId =
+							devicesByApp[groupId][0].device_application[0]
+								?.belongs_to__application.__id;
+						if (appId == null) {
+							return;
+						}
+						await createAppServiceInstalls(
 							api,
-							devicesByApp[appId][0].belongs_to__application.__id,
-							devicesByApp[appId].map((d) => d.id),
-						),
-					),
+							appId,
+							devicesByApp[groupId].map((d) => d.id),
+						);
+					}),
 				);
 			}
 		}

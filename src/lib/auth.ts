@@ -18,14 +18,15 @@ export const writePerms = (resource: string, filter: string): string[] => [
 
 const matchesActor = 'actor eq @__ACTOR_ID';
 const matchesUser = `user/any(u:u/${matchesActor})`;
-const ownsDevice = `owns__device/any(d:d/${matchesActor})`;
+const ownsDevice = `device_application/any(da:da/device/any(d:d/${matchesActor}))`;
 const applicationControlsDevice = `application/any(a:a/${ownsDevice} or a/depends_on__application/any(da:da/${ownsDevice}))`;
 
 export const ROLES: {
 	[roleName: string]: string[];
 } = {
 	'provisioning-api-key': [
-		`resin.device.create?belongs_to__application/any(a:a/${matchesActor})`,
+		// TODO-MULTI-APP: This should be restricted to creating devices of a fleet
+		'resin.device.create',
 	],
 	// also default-user (see below)
 	'named-user-api-key': [
@@ -40,6 +41,9 @@ export const ROLES: {
 		'resin.application_type.all',
 		'resin.device.all',
 		'resin.device.tunnel-22222',
+		'resin.device__belongs_to__application.read',
+		'resin.device__belongs_to__application.create',
+		'resin.device__belongs_to__application.delete',
 		'resin.device_config_variable.all',
 		'resin.device_environment_variable.all',
 		'resin.device_tag.all',
@@ -68,7 +72,8 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.device_type.read?describes__device/canAccess()',
 	`resin.device.read?${matchesActor}`,
 	`resin.device.update?${matchesActor}`,
-	'resin.application.read?owns__device/canAccess() or depends_on__application/any(a:a/owns__device/canAccess()) or (is_host eq true and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
+	`resin.device__belongs_to__application.read?device/canAccess()`,
+	'resin.application.read?device_application/canAccess() or depends_on__application/any(a:a/device_application/canAccess()) or (is_host eq true and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
 	'resin.application_tag.read?application/canAccess()',
 	'resin.device_config_variable.read?device/canAccess()',
 	`resin.device_config_variable.create?device/any(d:d/${matchesActor})`,
@@ -87,9 +92,10 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.application_environment_variable.read?application/canAccess()',
 
 	// Dependent device permissions
-	`resin.device.read?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
-	`resin.device.create?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
-	`resin.device.update?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
+	`resin.device.read?device_application/any(da:da/belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice})))`,
+	`resin.device.create?is_managed_by__device/any(md:md/${matchesActor})`,
+	`resin.device__belongs_to__application.create?device/any(d:d/is_managed_by__device/any(md:md/${matchesActor})) and belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
+	`resin.device.update?device_application/any(da:da/belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice})))`,
 
 	'resin.service.read?application/canAccess()',
 
@@ -129,7 +135,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.gateway_download.read?image/canAccess()',
 	...writePerms(
 		'resin.gateway_download',
-		`image/any(i:i/is_a_build_of__service/any(s:s/application/any(a:a/depends_on__application/any(da:da/${ownsDevice}) or a/owns__device/any(d:d/is_managed_by__device/any(md:md/${matchesActor})))))`,
+		`image/any(i:i/is_a_build_of__service/any(s:s/application/any(a:a/depends_on__application/any(da:da/${ownsDevice}) or a/device_application(dapp:dapp/device/any(d:d/is_managed_by__device/any(md:md/${matchesActor}))))))`,
 	),
 
 	`resin.device.write-log?${matchesActor}`,

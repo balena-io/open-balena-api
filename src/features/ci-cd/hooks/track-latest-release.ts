@@ -19,8 +19,8 @@ const updateLatestRelease = async (
 				belongs_to__application: {
 					$select: ['id'],
 					$expand: {
-						owns__device: {
-							$select: ['id'],
+						device_application: {
+							$select: 'device',
 						},
 					},
 				},
@@ -57,8 +57,8 @@ const updateLatestRelease = async (
 	});
 
 	const deviceIds: number[] = _.map(
-		release.belongs_to__application[0].owns__device,
-		(device) => device.id,
+		release.belongs_to__application[0].device_application,
+		(da) => da.device.__id,
 	);
 	const serviceIds: number[] = _.map(
 		release.contains__image,

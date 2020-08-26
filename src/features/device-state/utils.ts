@@ -21,7 +21,8 @@ export const getReleaseForDevice = (
 	if (device.should_be_running__release[0] != null) {
 		return device.should_be_running__release[0];
 	}
-	return device.belongs_to__application[0]?.should_be_running__release[0];
+	return device.device_application[0]?.belongs_to__application[0]
+		?.should_be_running__release[0];
 };
 
 export const serviceInstallFromImage = (

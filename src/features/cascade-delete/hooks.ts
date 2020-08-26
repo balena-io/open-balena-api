@@ -7,7 +7,6 @@ const { api, getAffectedIds } = sbvrUtils;
 // TODO: These should end up grouped into the features that declare the relationship existence
 
 setupDeleteCascade('application', [
-	['device', 'belongs_to__application'],
 	['application_config_variable', 'application'],
 	['application_environment_variable', 'application'],
 	['application_tag', 'application'],
@@ -16,6 +15,89 @@ setupDeleteCascade('application', [
 	['application', 'depends_on__application'],
 ]);
 
+hooks.addPureHook('DELETE', 'resin', 'application', {
+	/**
+	 * Cascade from app -> device when deleting the app to match pre-single-multi-app behavior
+	 */
+	PRERUN: async (args) => {
+		const { req } = args;
+
+		const resourceIds = await sbvrUtils.getAffectedIds(args);
+		if (resourceIds.length === 0) {
+			return;
+		}
+		const deviceApps = await args.api.get({
+			resource: 'device_application',
+			options: {
+				$select: 'device',
+				$filter: {
+					belongs_to__application: { $in: resourceIds },
+				},
+			},
+		});
+
+		if (deviceApps.length === 0) {
+			return;
+		}
+
+		try {
+			await args.api.delete({
+				resource: 'device',
+				options: {
+					$filter: {
+						id: { $in: deviceApps.map((da) => da.device.__id) },
+					},
+				},
+			});
+		} catch (err) {
+			captureException(
+				err,
+				`Error deleting resource 'device' before deleting application' `,
+				{
+					req,
+				},
+			);
+			throw err;
+		}
+	},
+});
+hooks.addPureHook('DELETE', 'resin', 'device_application', {
+	/**
+	 * Null `should_be_running__release` or we won't be able to remove the `device_application` entries due to a rule
+	 */
+	PRERUN: async (args) => {
+		const deviceAppIds = await sbvrUtils.getAffectedIds(args);
+		if (deviceAppIds.length === 0) {
+			return;
+		}
+
+		const deviceApps = (await args.api.get({
+			resource: 'device_application',
+			options: {
+				$select: 'device',
+				$filter: {
+					id: {
+						$in: deviceAppIds,
+					},
+				},
+			},
+		})) as Array<{ device: { __id: number } }>;
+
+		const deviceIds = deviceApps.map(({ device }) => device.__id);
+
+		await args.api.patch({
+			resource: 'device',
+			options: {
+				$filter: {
+					id: { $in: deviceIds },
+					should_be_running__release: { $ne: null },
+				},
+			},
+			body: { should_be_running__release: null },
+		});
+	},
+});
+
 setupDeleteCascade('device', [
 	['device_config_variable', 'device'],
 	['device_environment_variable', 'device'],
@@ -23,6 +105,7 @@ setupDeleteCascade('device', [
 	['image_install', 'device'],
 	['service_install', 'device'],
 	['gateway_download', 'is_downloaded_by__device'],
+	['device_application', 'device'],
 ]);
 
 setupDeleteCascade('image', [

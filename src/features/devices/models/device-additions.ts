@@ -329,17 +329,33 @@ export const addToModel = (
 													],
 												],
 											],
-											['From', ['Table', 'application']],
+											['From', ['Table', 'device-belongs to-application']],
+											[
+												'Join',
+												['Table', 'application'],
+												[
+													'On',
+													[
+														'Equals',
+														[
+															'ReferencedField',
+															'device-belongs to-application',
+															'belongs to-application',
+														],
+														['ReferencedField', 'application', 'id'],
+													],
+												],
+											],
 											[
 												'Where',
 												[
 													'Equals',
 													[
 														'ReferencedField',
+														'device-belongs to-application',
 														'device',
-														'belongs to-application',
 													],
-													['ReferencedField', 'application', 'id'],
+													['ReferencedField', 'device', 'id'],
 												],
 											],
 										],

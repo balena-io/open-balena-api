@@ -65,12 +65,12 @@ export const checkDevicesCanHaveDeviceURL = async (
 							$alias: 'a',
 							$expr: {
 								a: {
-									owns__device: {
+									device_application: {
 										$any: {
-											$alias: 'd',
+											$alias: 'da',
 											$expr: {
-												d: {
-													id: { $in: deviceIDs },
+												da: {
+													device: { $in: deviceIDs },
 												},
 											},
 										},
@@ -115,18 +115,6 @@ const getAppType = async (api: sbvrUtils.PinejsClient, appId: number) => {
 	return appType;
 };
 
-export const checkDeviceCanBeInApplication = async (
-	api: sbvrUtils.PinejsClient,
-	appId: number,
-	device: AnyObject,
-) => {
-	const appType = await getAppType(api, appId);
-	if (appType?.needs__os_version_range == null) {
-		return;
-	}
-	checkVersion(device, appType);
-};
-
 export const checkDevicesCanBeInApplication = async (
 	api: sbvrUtils.PinejsClient,
 	appId: number,
@@ -139,6 +127,9 @@ export const checkDevicesCanBeInApplication = async (
 
 	const devices = await api.get({
 		resource: 'device',
+		passthrough: {
+			req: permissions.rootRead,
+		},
 		options: {
 			$select: ['os_version', 'supervisor_version', 'device_name'],
 			$filter: {

@@ -13,7 +13,16 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 				url: '/v1/update',
 				req: permissions.root,
 				filter: {
-					belongs_to__application: { $in: affectedIds },
+					device_application: {
+						$any: {
+							$alias: 'da',
+							$expr: {
+								da: {
+									belongs_to__application: { $in: affectedIds },
+								},
+							},
+						},
+					},
 					is_running__release: {
 						$ne: request.values.should_be_running__release,
 					},

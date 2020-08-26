@@ -146,6 +146,7 @@ const loaders: Dictionary<LoaderFunc> = {
 		return await createResource({
 			resource: 'device',
 			body: {
+				// TODO-MULTI-APP: This relies on the hook creating the device_application
 				belongs_to__application: application.id,
 				belongs_to__user: user.id,
 				is_of__device_type: (await fixtures.deviceTypes[jsonData.device_type])
@@ -178,13 +179,14 @@ const deleteResource = (resource: string) => async (obj: { id: number }) => {
 	});
 };
 
-const modelUnloadOrder = ['applications'] as const;
+const modelUnloadOrder = ['applications', 'devices'] as const;
 const unloaders: {
 	[K in typeof modelUnloadOrder[number]]: (obj: {
 		id: number;
 	}) => PromiseLike<void>;
 } = {
 	applications: deleteResource('application'),
+	devices: deleteResource('device'),
 };
 
 export const clean = async (fixtures: AnyObject) => {

@@ -229,11 +229,20 @@ export const statePatch: RequestHandler = async (req, res) => {
 										$alias: 'a',
 										$expr: {
 											a: {
-												owns__device: {
+												device_application: {
 													$any: {
-														$alias: 'd',
+														$alias: 'da',
 														$expr: {
-															d: { uuid },
+															da: {
+																device: {
+																	$any: {
+																		$alias: 'd',
+																		$expr: {
+																			d: { uuid },
+																		},
+																	},
+																},
+															},
 														},
 													},
 												},
@@ -300,7 +309,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 				// Get access to a root api, as images shouldn't be allowed to change
 				// the service_install values
 				const rootApi = resinApiTx.clone({
-					passthrough: { req: permissions.root },
+					passthrough: { req: permissions.root, custom, tx },
 				});
 
 				const body = { status: 'deleted' };

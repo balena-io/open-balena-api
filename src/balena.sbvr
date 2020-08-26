@@ -469,6 +469,7 @@ Fact type: device is of device type
 	Synonymous Form: device type describes device
 	Necessity: each device is of exactly one device type.
 Fact type: device belongs to application
+	Term form: device application
 	Synonymous Form: application owns device
 	Necessity: each device belongs to at most one application.
 Fact type: device is online
@@ -722,7 +723,7 @@ Fact type: config has description (Auth)
 
 -- Rules
 
-Rule: It is necessary that each device1 that is managed by a device2, belongs to an application1 that depends on an application2 that owns the device2.
+Rule: It is necessary that each device1 that is managed by a device2, belongs to no applications or belongs to an application1 that depends on an application2 that owns the device2.
 Rule: It is necessary that each release that has a release version1 and has a status that is equal to "success" and is not invalidated, belongs to an application that owns exactly one release that has a release version2 that is equal to the release version1 and has a status that is equal to "success" and is not invalidated.
 Rule: It is necessary that each image that has a status that is equal to "success", has a push timestamp.
 Rule: It is necessary that each release1 that has a status that is equal to "success" and has a commit1, belongs to an application that owns exactly one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.
