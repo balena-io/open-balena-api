@@ -9,14 +9,11 @@ import { TypedError } from 'typed-error';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
 import { JSON_WEB_TOKEN_SECRET } from '../../lib/config';
-import { User as DbUser } from '../../models';
 
 import { captureException } from '../error-handling';
 import { ScopedAccessToken, ScopedToken } from './jwt';
 
 export { SignOptions } from 'jsonwebtoken';
-
-const { api } = sbvrUtils;
 
 class InvalidJwtSecretError extends TypedError {}
 
@@ -52,65 +49,63 @@ const jwtFromRequest = ExtractJwt.versionOneCompatibility({
 	authScheme: 'Bearer',
 });
 
-export const strategy = new JwtStrategy(
-	{
-		secretOrKey: JSON_WEB_TOKEN_SECRET,
-		jwtFromRequest,
-	},
-	(jwtUser: JwtUser, done) =>
-		Bluebird.try(
-			async (): Promise<Creds> => {
-				if (jwtUser == null) {
-					throw new InvalidJwtSecretError();
-				}
-				if ('service' in jwtUser && jwtUser.service) {
-					const { service, apikey } = jwtUser;
-					const apiKeyPermissions = await permissions.getApiKeyPermissions(
-						apikey,
-					);
-					return { service, apikey, permissions: apiKeyPermissions };
-				} else if (
-					'access' in jwtUser &&
-					jwtUser.access != null &&
-					jwtUser.access.actor &&
-					jwtUser.access != null &&
-					jwtUser.access.permissions
-				) {
-					return jwtUser.access;
-				} else if ('id' in jwtUser) {
-					const user = (await api.resin.get({
-						resource: 'user',
-						id: jwtUser.id,
-						passthrough: { req: permissions.root },
-						options: {
-							$select: ['actor', 'jwt_secret'],
-						},
-					})) as Pick<DbUser, 'actor' | 'jwt_secret'>;
-					if (user == null) {
+export const createStrategy = (
+	fetchUser: (
+		id: number,
+	) => Promise<{ jwt_secret: string | null; actor: number }>,
+) =>
+	new JwtStrategy(
+		{
+			secretOrKey: JSON_WEB_TOKEN_SECRET,
+			jwtFromRequest,
+		},
+		(jwtUser: JwtUser, done) =>
+			Bluebird.try(
+				async (): Promise<Creds> => {
+					if (jwtUser == null) {
 						throw new InvalidJwtSecretError();
 					}
+					if ('service' in jwtUser && jwtUser.service) {
+						const { service, apikey } = jwtUser;
+						const apiKeyPermissions = await permissions.getApiKeyPermissions(
+							apikey,
+						);
+						return { service, apikey, permissions: apiKeyPermissions };
+					} else if (
+						'access' in jwtUser &&
+						jwtUser.access != null &&
+						jwtUser.access.actor &&
+						jwtUser.access != null &&
+						jwtUser.access.permissions
+					) {
+						return jwtUser.access;
+					} else if ('id' in jwtUser) {
+						const user = await fetchUser(jwtUser.id);
+						if (user == null) {
+							throw new InvalidJwtSecretError();
+						}
 
-					// Default both to null so that we don't hit issues with null !== undefined
-					const userSecret = user.jwt_secret ?? null;
-					const jwtSecret = jwtUser.jwt_secret ?? null;
+						// Default both to null so that we don't hit issues with null !== undefined
+						const userSecret = user.jwt_secret ?? null;
+						const jwtSecret = jwtUser.jwt_secret ?? null;
 
-					if (userSecret !== jwtSecret) {
-						throw new InvalidJwtSecretError();
+						if (userSecret !== jwtSecret) {
+							throw new InvalidJwtSecretError();
+						}
+
+						jwtUser.actor = user.actor;
+						const userPermissions = await permissions.getUserPermissions(
+							jwtUser.id,
+						);
+
+						jwtUser.permissions = userPermissions;
+						return jwtUser;
+					} else {
+						throw new Error('Invalid JWT');
 					}
-
-					jwtUser.actor = user.actor;
-					const userPermissions = await permissions.getUserPermissions(
-						jwtUser.id,
-					);
-
-					jwtUser.permissions = userPermissions;
-					return jwtUser;
-				} else {
-					throw new Error('Invalid JWT');
-				}
-			},
-		).nodeify(done),
-);
+				},
+			).nodeify(done),
+	);
 
 export const middleware: RequestHandler = (req, res, next) => {
 	const jwtString = jwtFromRequest(req);
