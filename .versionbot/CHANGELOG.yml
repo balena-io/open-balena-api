@@ -1,4 +1,15 @@
 - commits:
+    - subject: Revert breaking change of the exported `addDeleteHookForDependents`
+      hash: be97dc16f845822976a587a323464bb109baabae
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.94.20
+  date: 2020-08-26T14:04:50.044Z
+- commits:
     - subject: Remove some model knowledge from infra/auth/jwt-passport
       hash: 78c9f516cf0ca8d8926a0e086d19dcfc45db760e
       body: ''
