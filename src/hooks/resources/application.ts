@@ -1,22 +1,13 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
-import { createActor } from '../../infra/auth/hooks';
-import { addDeleteHookForDependents } from '../../infra/cascade-delete';
-import { captureException } from '../../infra/error-handling';
-
 import { DefaultApplicationType } from '../../features/application-types/application-types';
 import { postDevices } from '../../features/device-proxy/device-proxy';
-import { resolveDeviceType } from '../common';
 
 const { BadRequestError, ConflictError, NotFoundError } = errors;
 
 hooks.addPureHook('POST', 'resin', 'application', {
-	POSTPARSE: createActor,
-});
-
-hooks.addPureHook('POST', 'resin', 'application', {
 	POSTPARSE: async (args) => {
-		const { req, request, api } = args;
+		const { request } = args;
 		const appName = request.values.app_name;
 
 		if (request.values.application_type == null) {
@@ -27,17 +18,9 @@ hooks.addPureHook('POST', 'resin', 'application', {
 			throw new BadRequestError('App name may only contain [a-zA-Z0-9_-].');
 		}
 
-		try {
-			await resolveDeviceType(api, request, 'is_for__device_type');
-			request.values.should_track_latest_release = true;
-			if (request.values.slug == null) {
-				request.values.slug = appName.toLowerCase();
-			}
-		} catch (err) {
-			if (!(err instanceof ConflictError)) {
-				captureException(err, 'Error in application postparse hook', { req });
-			}
-			throw err;
+		request.values.should_track_latest_release = true;
+		if (request.values.slug == null) {
+			request.values.slug = appName.toLowerCase();
 		}
 	},
 });
@@ -159,13 +142,3 @@ hooks.addPureHook('DELETE', 'resin', 'application', {
 		});
 	},
 });
-
-addDeleteHookForDependents('application', [
-	['device', 'belongs_to__application'],
-	['application_config_variable', 'application'],
-	['application_environment_variable', 'application'],
-	['application_tag', 'application'],
-	['release', 'belongs_to__application'],
-	['service', 'application'],
-	['application', 'depends_on__application'],
-]);

@@ -4,9 +4,6 @@ import { TypedError } from 'typed-error';
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
 
-import { createActor } from '../../infra/auth/hooks';
-import { addDeleteHookForDependents } from '../../infra/cascade-delete';
-
 import {
 	checkDevicesCanBeInApplication,
 	checkDevicesCanHaveDeviceURL,
@@ -14,7 +11,6 @@ import {
 import { postDevices } from '../../features/device-proxy/device-proxy';
 import * as haikuName from '../../infra/haiku-name';
 import { pseudoRandomBytesAsync } from '../../lib/utils';
-import { resolveDeviceType } from '../common';
 
 const { BadRequestError } = errors;
 
@@ -112,15 +108,6 @@ const createAppServiceInstalls = async (
 			},
 		},
 	});
-
-hooks.addPureHook('POST', 'resin', 'device', {
-	POSTPARSE: createActor,
-});
-
-hooks.addPureHook('POST', 'resin', 'device', {
-	POSTPARSE: ({ api, request }) =>
-		resolveDeviceType(api, request, 'is_of__device_type'),
-});
 
 hooks.addPureHook('POST', 'resin', 'device', {
 	POSTPARSE: async ({ request }) => {
@@ -474,12 +461,3 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		await Promise.all(waitPromises);
 	},
 });
-
-addDeleteHookForDependents('device', [
-	['device_config_variable', 'device'],
-	['device_environment_variable', 'device'],
-	['device_tag', 'device'],
-	['image_install', 'device'],
-	['service_install', 'device'],
-	['gateway_download', 'is_downloaded_by__device'],
-]);

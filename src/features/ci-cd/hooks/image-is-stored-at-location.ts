@@ -1,9 +1,7 @@
 import { hooks, permissions, errors } from '@balena/pinejs';
 
-import { addDeleteHookForDependents } from '../../infra/cascade-delete';
-
-import { REGISTRY2_HOST } from '../../lib/config';
-import { pseudoRandomBytesAsync } from '../../lib/utils';
+import { REGISTRY2_HOST } from '../../../lib/config';
+import { pseudoRandomBytesAsync } from '../../../lib/utils';
 
 const { InternalRequestError } = errors;
 
@@ -39,9 +37,3 @@ hooks.addPureHook('POST', 'resin', 'image', {
 		throw new InternalRequestError('Could not generate unique image location');
 	},
 });
-
-addDeleteHookForDependents('image', [
-	['image_install', 'installs__image'],
-	['image__is_part_of__release', 'image'],
-	['gateway_download', 'image'],
-]);

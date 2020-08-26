@@ -2,8 +2,6 @@ import * as _ from 'lodash';
 
 import { sbvrUtils, hooks } from '@balena/pinejs';
 
-import { addDeleteHookForDependents } from '../../infra/cascade-delete';
-
 const updateLatestRelease = async (
 	id: number,
 	{ request, api }: hooks.HookArgs,
@@ -130,18 +128,3 @@ hooks.addPureHook('POST', 'resin', 'release', {
 		}
 	},
 });
-
-const releaseUpdateTimestampHook: hooks.Hooks = {
-	POSTPARSE: ({ request }) => {
-		request.values.update_timestamp = Date.now();
-	},
-};
-
-hooks.addPureHook('PATCH', 'resin', 'release', releaseUpdateTimestampHook);
-hooks.addPureHook('POST', 'resin', 'release', releaseUpdateTimestampHook);
-
-addDeleteHookForDependents('release', [
-	['release_tag', 'release'],
-	['image__is_part_of__release', 'is_part_of__release'],
-	['image_install', 'is_provided_by__release'],
-]);
