@@ -1,54 +1,4 @@
-import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
-
-import { DefaultApplicationType } from '../../features/application-types/application-types';
-
-const { BadRequestError, ConflictError, NotFoundError } = errors;
-
-hooks.addPureHook('POST', 'resin', 'application', {
-	POSTPARSE: async (args) => {
-		const { request } = args;
-		const appName = request.values.app_name;
-
-		if (request.values.application_type == null) {
-			request.values.application_type = DefaultApplicationType.id;
-		}
-
-		if (!/^[a-zA-Z0-9_-]+$/.test(appName)) {
-			throw new BadRequestError('App name may only contain [a-zA-Z0-9_-].');
-		}
-
-		request.values.should_track_latest_release = true;
-		if (request.values.slug == null) {
-			request.values.slug = appName.toLowerCase();
-		}
-	},
-});
-
-hooks.addPureHook('PATCH', 'resin', 'application', {
-	PRERUN: async (args) => {
-		const { request } = args;
-		const appName = request.values.app_name;
-
-		if (appName) {
-			if (!/^[a-zA-Z0-9_-]+$/.test(appName)) {
-				throw new BadRequestError('App name may only contain [a-zA-Z0-9_-].');
-			}
-			if (request.values.slug == null) {
-				request.values.slug = appName.toLowerCase();
-			}
-			await sbvrUtils.getAffectedIds(args).then((ids) => {
-				if (ids.length === 0) {
-					return;
-				}
-				if (ids.length > 1) {
-					throw new ConflictError(
-						'Cannot rename multiple applications to the same name, please specify just one.',
-					);
-				}
-			});
-		}
-	},
-});
+import { sbvrUtils, hooks, errors, permissions } from '@balena/pinejs';
 
 hooks.addPureHook('DELETE', 'resin', 'application', {
 	PRERUN: async (args) => {
@@ -57,7 +7,7 @@ hooks.addPureHook('DELETE', 'resin', 'application', {
 			const { odataQuery } = args.request;
 			if (odataQuery != null && odataQuery.key != null) {
 				// If there's a specific app targeted we make sure we give a 404 for backwards compatibility
-				throw new NotFoundError('Application(s) not found.');
+				throw new errors.NotFoundError('Application(s) not found.');
 			}
 			return;
 		}
@@ -95,7 +45,7 @@ hooks.addPureHook('DELETE', 'resin', 'application', {
 		});
 		if (devices.length !== 0) {
 			const uuids = devices.map(({ uuid }) => uuid);
-			throw new BadRequestError('updateRequired', {
+			throw new errors.BadRequestError('updateRequired', {
 				error: 'updateRequired',
 				message: `Can't delete application(s) ${appIds.join(
 					', ',
