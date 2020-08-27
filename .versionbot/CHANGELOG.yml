@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove duplicated comment
+      hash: a6d058f005b44f17b5188df5e41322b758a9ba20
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.95.5
+  date: 2020-08-27T13:12:11.490Z
+- commits:
     - subject: 'device-types: Wait before rescheduling a fetch'
       hash: c7bb49ac8c14b26840943cd03f3e63febc4ea29d
       body: ''
