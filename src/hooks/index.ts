@@ -1,11 +1,10 @@
-import './resources/device';
-
 import '../features/auth/hooks';
 import '../features/applications/hooks';
 import '../features/ci-cd/hooks';
 import '../features/cascade-delete/hooks';
 import '../features/dependent-devices/hooks';
 import '../features/devices/hooks';
+import '../features/device-urls/hooks';
 import '../features/device-types/hooks';
 import '../features/release-pinning/hooks';
 import '../features/tags/hooks';

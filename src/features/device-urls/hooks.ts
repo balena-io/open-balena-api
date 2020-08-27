@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 
 import { checkDevicesCanHaveDeviceURL } from '../../features/application-types/application-types';
