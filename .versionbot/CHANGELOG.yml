@@ -1,4 +1,71 @@
 - commits:
+    - subject: Remove hooks subdir
+      hash: 4acee2fc58cd8b0a7f4bfa2d5a6ab9cf8c4b61b4
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move device-urls hooks into a device-urls feature
+      hash: a3718aeefd534a85d2c7222033be2e5b93eb6c96
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move release-pinning hooks to a release-pinning feature
+      hash: f27f9d79d21d93dd69497219b402bfb0d57f60e9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move offline cascade hook into dependent-devices feature
+      hash: fc6899a09511184e0f52c9318e251dabe6a4946e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move device move hooks into the devices feature
+      hash: 7cdf86daab2c82302b1e63e276b4b8f05a8ea1f7
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move service install hooks into the ci-cd feature
+      hash: 3771e3fa4baba9bcea5516cdadfca80905d1d491
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move application hooks into an applications feature
+      hash: 5e7e1b608890abdae545f0de5e31c2dd1bad28f1
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move service instance hooks into the vpn integration feature
+      hash: 2516afeab3f8a5cfcc2e10e7f3493d14632eb704
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.95.3
+  date: 2020-08-27T12:36:07.303Z
+- commits:
     - subject: Separate update trigger hooks into relevant features
       hash: bec18a42577bb4b32a5cb2ad6994185ab137938d
       body: ''
