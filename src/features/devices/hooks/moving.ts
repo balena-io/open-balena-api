@@ -68,8 +68,6 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		}
 	},
 	POSTRUN: async (args) => {
-		// We need to delete all service_install resources for the current device and
-		// create new ones for the new application (if the device is moving application)
 		if (args.request.values.belongs_to__application != null) {
 			// Also mark all image installs of moved devices as deleted because
 			// they're for the previous application.
