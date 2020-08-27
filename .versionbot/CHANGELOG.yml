@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'device-types: Wait before rescheduling a fetch'
+      hash: c7bb49ac8c14b26840943cd03f3e63febc4ea29d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.95.4
+  date: 2020-08-27T12:58:09.873Z
+- commits:
     - subject: Remove hooks subdir
       hash: 4acee2fc58cd8b0a7f4bfa2d5a6ab9cf8c4b61b4
       body: ''
