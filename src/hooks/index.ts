@@ -1,7 +1,7 @@
-import './resources/application';
 import './resources/device';
 
 import '../features/auth/hooks';
+import '../features/applications/hooks';
 import '../features/ci-cd/hooks';
 import '../features/cascade-delete/hooks';
 import '../features/dependent-devices/hooks';
