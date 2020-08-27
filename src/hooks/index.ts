@@ -5,6 +5,7 @@ import '../features/applications/hooks';
 import '../features/ci-cd/hooks';
 import '../features/cascade-delete/hooks';
 import '../features/dependent-devices/hooks';
+import '../features/devices/hooks';
 import '../features/device-types/hooks';
 import '../features/tags/hooks';
 import '../features/vars-schema/hooks';
