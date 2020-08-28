@@ -133,6 +133,8 @@ import {
 	setupRequestLogging,
 } from './features/request-logging';
 
+export * as tags from './features/tags/validation';
+
 export type { Creds, User } from './infra/auth/jwt-passport';
 export type { Access } from './features/registry/registry';
 export type { ApplicationType } from './features/application-types/application-types';

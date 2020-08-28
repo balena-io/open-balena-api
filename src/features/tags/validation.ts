@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
 
-import { errors } from '@balena/pinejs';
+import { errors, hooks } from '@balena/pinejs';
 
 const RESERVED_NAMESPACES = ['io.resin.', 'io.balena.'];
 
-export const checkTagKeyValidity = (key: string) => {
+const checkTagKeyValidity = (key: string) => {
 	if (_.isEmpty(key)) {
 		throw new errors.BadRequestError('Tag key cannot be empty.');
 	}
@@ -18,4 +18,20 @@ export const checkTagKeyValidity = (key: string) => {
 			);
 		}
 	});
+};
+
+// Tag hooks
+export const registerTagHooks = (resource: string) => {
+	const nameProp = 'tag_key';
+	const tagHook: hooks.Hooks = {
+		POSTPARSE: ({ request }) => {
+			if (request.values[nameProp] != null) {
+				checkTagKeyValidity(request.values[nameProp]);
+			}
+		},
+	};
+
+	hooks.addPureHook('POST', 'resin', resource, tagHook);
+	hooks.addPureHook('PUT', 'resin', resource, tagHook);
+	hooks.addPureHook('PATCH', 'resin', resource, tagHook);
 };
