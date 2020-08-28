@@ -84,11 +84,6 @@ const createAppServiceInstalls = async (
 	});
 
 hooks.addPureHook('POST', 'resin', 'device', {
-	POSTPARSE: async ({ request }) => {
-		// TODO: Do we actually need to store it or can we use `request.values.belongs_to__application` in the POSTRUN?
-		// Keep the app ID for later -- we'll need it in the POSTRUN hook
-		request.custom.appId = request.values.belongs_to__application;
-	},
 	POSTRUN: async ({ request, api, tx, result: deviceId }) => {
 		// Don't try to add service installs if the device wasn't created
 		if (deviceId == null) {
@@ -97,7 +92,11 @@ hooks.addPureHook('POST', 'resin', 'device', {
 
 		const rootApi = api.clone({ passthrough: { tx, req: permissions.root } });
 
-		await createAppServiceInstalls(rootApi, request.custom.appId, [deviceId]);
+		await createAppServiceInstalls(
+			rootApi,
+			request.values.belongs_to__application,
+			[deviceId],
+		);
 	},
 });
 
