@@ -1,4 +1,15 @@
 - commits:
+    - subject: Export tag hooks registration helper
+      hash: 3c224b26d3161e1b6a567861b9f67c9245340eed
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+      nested: []
+  version: 0.95.7
+  date: 2020-08-28T13:46:19.994Z
+- commits:
     - subject: Stop unnecessarily storing app id in request.custom
       hash: ef4e7a2d8bbf8335a0ebd9a2f9e696ca877c8001
       body: ''
