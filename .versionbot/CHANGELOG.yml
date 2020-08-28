@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add missing import
+      hash: 529ecee5d373049feda4b828c9e8e9df6ef32e24
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.95.8
+  date: 2020-08-28T15:52:17.519Z
+- commits:
     - subject: Export tag hooks registration helper
       hash: 3c224b26d3161e1b6a567861b9f67c9245340eed
       body: ''
