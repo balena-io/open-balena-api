@@ -116,6 +116,7 @@ import {
 	setMinPollInterval,
 } from './features/device-state/utils';
 import {
+	DeviceOnlineStates,
 	getPollInterval,
 	getInstance as getDeviceOnlineStateManager,
 } from './features/device-heartbeat';
@@ -209,6 +210,7 @@ export const device = {
 	serviceInstallFromImage,
 	setMinPollInterval,
 	getPollInterval,
+	DeviceOnlineStates,
 	getDeviceOnlineStateManager,
 };
 export const deviceTypes = {
