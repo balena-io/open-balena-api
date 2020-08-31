@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { sbvrUtils, errors } from '@balena/pinejs';
+import { sbvrUtils, errors, permissions } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 
 export interface ApplicationType {
@@ -90,13 +90,12 @@ export const checkDevicesCanHaveDeviceURL = async (
 	}
 };
 
-export const checkDevicesCanBeInApplication = async (
-	api: sbvrUtils.PinejsClient,
-	appId: number,
-	deviceIds: number[],
-): Promise<void> => {
+const getAppType = async (api: sbvrUtils.PinejsClient, appId: number) => {
 	const [appType] = await api.get({
 		resource: 'application_type',
+		passthrough: {
+			req: permissions.root,
+		},
 		options: {
 			$select: ['needs__os_version_range'],
 			$filter: {
@@ -113,7 +112,28 @@ export const checkDevicesCanBeInApplication = async (
 			},
 		},
 	});
-	if (_.isEmpty(appType) || _.isEmpty(appType.needs__os_version_range)) {
+	return appType;
+};
+
+export const checkDeviceCanBeInApplication = async (
+	api: sbvrUtils.PinejsClient,
+	appId: number,
+	device: AnyObject,
+) => {
+	const appType = await getAppType(api, appId);
+	if (appType?.needs__os_version_range == null) {
+		return;
+	}
+	checkVersion(device, appType);
+};
+
+export const checkDevicesCanBeInApplication = async (
+	api: sbvrUtils.PinejsClient,
+	appId: number,
+	deviceIds: number[],
+): Promise<void> => {
+	const appType = await getAppType(api, appId);
+	if (appType?.needs__os_version_range == null) {
 		return;
 	}
 
@@ -132,18 +152,22 @@ export const checkDevicesCanBeInApplication = async (
 	});
 
 	for (const device of devices) {
-		if (device.os_version == null && device.supervisor_version != null) {
-			throw new DeviceOSVersionIsTooLow(
-				`Device ${device.device_name} is too old to satisfy required version range: ${appType.needs__os_version_range}`,
-			);
-		}
-		if (
-			device.os_version != null &&
-			!semver.satisfies(device.os_version, appType.needs__os_version_range)
-		) {
-			throw new DeviceOSVersionIsTooLow(
-				`Device ${device.device_name} has OS version ${device.os_version} but needs to satisfy version range: ${appType.needs__os_version_range}`,
-			);
-		}
+		checkVersion(device, appType);
+	}
+};
+
+const checkVersion = (device: AnyObject, appType: AnyObject) => {
+	if (device.os_version == null && device.supervisor_version != null) {
+		throw new DeviceOSVersionIsTooLow(
+			`Device ${device.device_name} is too old to satisfy required version range: ${appType.needs__os_version_range}`,
+		);
+	}
+	if (
+		device.os_version != null &&
+		!semver.satisfies(device.os_version, appType.needs__os_version_range)
+	) {
+		throw new DeviceOSVersionIsTooLow(
+			`Device ${device.device_name} has OS version ${device.os_version} but needs to satisfy version range: ${appType.needs__os_version_range}`,
+		);
 	}
 };
