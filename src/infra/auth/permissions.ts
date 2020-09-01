@@ -29,10 +29,12 @@ const assignRolePermissions = (
 	rolePermissions: string[],
 	tx: Tx,
 ) =>
-	Bluebird.map(rolePermissions, async (name) => {
-		const permission = await getOrInsertPermissionId(name, tx);
-		await assignRolePermission(roleId, permission.id, tx);
-	});
+	Promise.all(
+		rolePermissions.map(async (name) => {
+			const permission = await getOrInsertPermissionId(name, tx);
+			await assignRolePermission(roleId, permission.id, tx);
+		}),
+	);
 
 export const assignUserRole = (user: number, role: number, tx: Tx) =>
 	getOrInsertId('user__has__role', { user, role }, tx);
@@ -312,34 +314,35 @@ export async function createAllPermissions(
 		}
 	});
 
-	const apiKeysPromise = Bluebird.map(
-		_.toPairs(apiKeyMap),
-		async ([roleName, { permissions: apiKeyPermissions, key }]) => {
-			try {
-				const role = await createRolePermissions(apiKeyPermissions, roleName);
-				const user = await findUser('guest', tx, ['actor']);
-				if (user?.actor == null) {
-					throw new Error('Cannot find guest user');
-				}
-				const apiKey = await getOrInsertApiKey(user.actor, role, tx);
+	const apiKeysPromise = Promise.all(
+		_.toPairs(apiKeyMap).map(
+			async ([roleName, { permissions: apiKeyPermissions, key }]) => {
+				try {
+					const role = await createRolePermissions(apiKeyPermissions, roleName);
+					const user = await findUser('guest', tx, ['actor']);
+					if (user?.actor == null) {
+						throw new Error('Cannot find guest user');
+					}
+					const apiKey = await getOrInsertApiKey(user.actor, role, tx);
 
-				if (!key) {
-					return apiKey.key;
+					if (!key) {
+						return apiKey.key;
+					}
+					await apiTx.patch({
+						resource: 'api_key',
+						id: apiKey.id,
+						body: {
+							key,
+						},
+					});
+					// authApi.patch doesn't resolve to the result,
+					// have to manually return here
+					return key;
+				} catch (err) {
+					captureException(err, `Error creating ${roleName} API key!`);
 				}
-				await apiTx.patch({
-					resource: 'api_key',
-					id: apiKey.id,
-					body: {
-						key,
-					},
-				});
-				// authApi.patch doesn't resolve to the result,
-				// have to manually return here
-				return key;
-			} catch (err) {
-				captureException(err, `Error creating ${roleName} API key!`);
-			}
-		},
+			},
+		),
 	);
 
 	return await Bluebird.props({
