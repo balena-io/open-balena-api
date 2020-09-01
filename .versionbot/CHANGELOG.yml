@@ -1,4 +1,15 @@
 - commits:
+    - subject: Convert some bluebird to native promises
+      hash: 1ea971ee28149dc33642f07386a1ac8aec8c973f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.96.1
+  date: 2020-09-01T14:12:08.148Z
+- commits:
     - subject: Enforce minimum os versions when creating a device
       hash: 5364a7be5d2f8f660a63fd3a62298ed945e0b894
       body: ''
