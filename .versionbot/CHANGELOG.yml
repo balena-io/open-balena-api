@@ -1,4 +1,15 @@
 - commits:
+    - subject: Enforce minimum os versions when creating a device
+      hash: 5364a7be5d2f8f660a63fd3a62298ed945e0b894
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.96.0
+  date: 2020-09-01T13:03:47.656Z
+- commits:
     - subject: Add missing import
       hash: 529ecee5d373049feda4b828c9e8e9df6ef32e24
       body: ''
