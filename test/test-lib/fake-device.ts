@@ -37,6 +37,7 @@ export interface DeviceState {
 export async function provisionDevice(
 	admin: UserObjectParam,
 	appId: number,
+	osVersion: string | null = null,
 	supervisorVersion: string | null = null,
 ) {
 	const { body: applications } = await supertest(admin)
@@ -63,6 +64,7 @@ export async function provisionDevice(
 			belongs_to__application: appId,
 			uuid: deviceUuid,
 			device_type: deviceType,
+			os_version: osVersion,
 			supervisor_version: supervisorVersion,
 		})
 		.expect(201);

@@ -304,7 +304,12 @@ describe('Device State v2 patch', function () {
 		applicationId = fx.applications.app1.id;
 
 		// create a new device in this test application...
-		device = await fakeDevice.provisionDevice(admin, applicationId, '9.11.1');
+		device = await fakeDevice.provisionDevice(
+			admin,
+			applicationId,
+			'balenaOS 2.42.0+rev1',
+			'9.11.1',
+		);
 	});
 
 	after(async () => {
