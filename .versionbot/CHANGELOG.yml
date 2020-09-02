@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update dependencies
+      hash: 516e7a9503e7de7ccfa0e1fee600316be9fc2d6f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.96.3
+  date: 2020-09-02T16:29:10.706Z
+- commits:
     - subject: Remove some deprecated uses of `req.param`
       hash: b6da26a874d335c914913fdaccdb6b8a158880fd
       body: ''
