@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove some deprecated uses of `req.param`
+      hash: b6da26a874d335c914913fdaccdb6b8a158880fd
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.96.2
+  date: 2020-09-02T16:02:07.345Z
+- commits:
     - subject: Convert some bluebird to native promises
       hash: 1ea971ee28149dc33642f07386a1ac8aec8c973f
       body: ''
