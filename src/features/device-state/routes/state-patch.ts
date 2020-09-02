@@ -156,7 +156,7 @@ const validPatchFields = [
 ];
 
 export const statePatch: RequestHandler = async (req, res) => {
-	const uuid = req.param('uuid');
+	const { uuid } = req.params;
 	if (!uuid) {
 		return res.status(400).end();
 	}

@@ -62,7 +62,7 @@ export const authDevice = async (
 ): Promise<void> => {
 	try {
 		const device = await authQuery()(
-			{ uuid: req.param('device_uuid') },
+			{ uuid: req.params.device_uuid },
 			undefined,
 			{ req },
 		);
