@@ -153,6 +153,15 @@ const validPatchFields = [
 	'api_port',
 	'api_secret',
 	'logs_channel',
+	'memory_usage',
+	'memory_total',
+	'storage_block_device',
+	'storage_usage',
+	'storage_total',
+	'cpu_temp',
+	'cpu_usage',
+	'cpu_id',
+	'is_undervolted',
 ];
 
 export const statePatch: RequestHandler = async (req, res) => {
