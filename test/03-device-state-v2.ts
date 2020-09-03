@@ -331,6 +331,15 @@ describe('Device State v2 patch', function () {
 				mac_address: '00:11:22:33:44:55',
 				download_progress: null,
 				api_port: 48484,
+				cpu_usage: 34,
+				memory_usage: 1000, // 1GB in MiB
+				memory_total: 4000, // 4GB in MiB
+				storage_block_device: '/dev/mmcblk0',
+				storage_usage: 1000, // 1GB in MiB
+				storage_total: 64000, // 64GB in MiB
+				cpu_temp: 56,
+				is_undervolted: true,
+				cpu_id: 'some CPU string',
 			},
 		};
 
@@ -344,7 +353,9 @@ describe('Device State v2 patch', function () {
 
 		Object.keys(devicePatchBody.local).forEach(
 			(field: keyof typeof devicePatchBody['local']) => {
-				expect(updatedDevice[field]).to.equal(devicePatchBody.local[field]);
+				expect(updatedDevice[field], field).to.equal(
+					devicePatchBody.local[field],
+				);
 			},
 		);
 	});
