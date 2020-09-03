@@ -1,4 +1,111 @@
 - commits:
+    - subject: Update to pinejs 14
+      hash: bd482559274f8d09479df00fb72f276183851733
+      body: |
+        Update pinejs from 13.13.8 to 14.0.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Remove api keys permission caching
+              hash: 951077508528a71779958cb5af6f63a62a323541
+              body: ''
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+            - subject: Remove `res` from `PRERESPOND` hooks
+              hash: 2bbffe9b360a3208c2b79da7c23b6f24059d7f7b
+              body: >
+                This allows simplifying internal code and to improve async stack
+                traces
+
+                for internal api calls
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+            - subject: >-
+                Remove `set` as a permission alias in favor of `create` and
+                `update`
+              hash: 6615d089cb3f684b212b7956dbf4c3c3c9978592
+              body: ''
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+            - subject: Remove `get` as a permission alias in favor of `read`
+              hash: ae7c6a8a679a40f4909d56013326338329343adb
+              body: ''
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+            - subject: >-
+                Remove automatic loading of typescript transpiler from
+                config-loader
+              hash: b037001c5c9fd1b2427e4b1a351be57fb1f8175c
+              body: ''
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+            - subject: >-
+                Remove automatic loading of coffeescript transpiler from
+                config-loader
+              hash: c7d60771b91b773221725fbc4b7a4ebb43024ea0
+              body: ''
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+            - subject: Default to omitting metadata in odata responses
+              hash: 74ff70fc098e571d04d036094b4831c265248a3e
+              body: |
+                The metadata can still be included by specifying
+                `$format=json;metadata=full`
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.0.0
+          date: 2020-09-03T13:20:50.282Z
+        - commits:
+            - subject: Update deps
+              hash: 287e21e756814ccdedf373da33b6ce8c6f9ffaa8
+              body: |
+                Update pinejs-client-core from 6.7.2 to 6.7.3
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: >-
+                        Improve $orderby typing to allow `[{a: 'desc'}, {b:
+                        'asc'}]`
+                      hash: 3f66006790c0ace813dd902125b22cf79f2a3095
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: pinejs-client-js-6.7.3
+                  date: 2020-08-26T15:41:19.488Z
+          version: pinejs-13.13.9
+          date: 2020-09-03T09:56:20.457Z
+  version: 0.98.0
+  date: 2020-09-03T18:07:58.201Z
+- commits:
     - subject: Standardize on `read`/`create`/`update` permission names
       hash: 9e1f41e8737ff3661067c18b7286087dd4b12a29
       body: ''
