@@ -32,7 +32,7 @@ describe('session', () => {
 		// Create a token that only has access to the granting users document
 		const accessToken = createScopedAccessToken({
 			actor: record.actor,
-			permissions: ['resin.user.get?actor eq @__ACTOR_ID'],
+			permissions: ['resin.user.read?actor eq @__ACTOR_ID'],
 			expiresIn: 60 * 10,
 		});
 
@@ -52,7 +52,7 @@ describe('session', () => {
 				.expect(200)
 		).body.d[0];
 
-		const permissions = ['resin.application.get?actor eq @__ACTOR_ID'];
+		const permissions = ['resin.application.read?actor eq @__ACTOR_ID'];
 
 		// Create a token that only has access to the granting users applications
 		const accessToken = createScopedAccessToken({
