@@ -1,4 +1,19 @@
 - commits:
+    - subject: 'metadata: Add device metadata'
+      hash: fa044dfa439ba49bb2c2f6825483e065c59f1947
+      body: |
+        Allow the supervisor to send device metadata to the API in the
+        state patch. We can accept CPU, memory, and disk health.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Page <page@balena.io>
+        signed-off-by: Page <page@balena.io>
+      author: Rich Bayliss
+      nested: []
+  version: 0.97.0
+  date: 2020-09-03T13:51:11.012Z
+- commits:
     - subject: Update dependencies
       hash: 516e7a9503e7de7ccfa0e1fee600316be9fc2d6f
       body: ''
