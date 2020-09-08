@@ -1,4 +1,19 @@
 - commits:
+    - subject: Add a "cpu architecture" resource
+      hash: 71e7ef3d2e3618f4857b7905d478ef9eeafad180
+      body: |
+        The device type resource will have a foreign key to an
+        architecture, which for now only has a slug.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.99.0
+  date: 2020-09-08T09:01:21.570Z
+- commits:
     - subject: Update to pinejs 14
       hash: bd482559274f8d09479df00fb72f276183851733
       body: |
