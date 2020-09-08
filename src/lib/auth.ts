@@ -33,6 +33,7 @@ export const ROLES: {
 		'resin.api_key.read?is_of__actor eq @__ACTOR_ID',
 		'resin.application.all',
 		'resin.device_type.read',
+		'resin.cpu_architecture.read',
 		'resin.application_config_variable.all',
 		'resin.application_environment_variable.all',
 		'resin.application_tag.all',

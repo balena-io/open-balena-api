@@ -274,6 +274,7 @@ Term: vpn address
 -- Complex terms
 
 Term: application type
+Term: cpu architecture
 Term: config
 Term: device type
 Term: image
@@ -553,6 +554,13 @@ Fact type: device type has slug
 
 Fact type: device type has name (Auth)
 	Necessity: each device type has exactly one name (Auth)
+
+-- cpu architecture
+
+Fact type: cpu architecture has slug
+	Necessity: each cpu architecture has exactly one slug
+	Necessity: each slug is of exactly one cpu architecture
+
 
 -- release
 
