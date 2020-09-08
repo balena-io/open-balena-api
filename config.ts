@@ -7,7 +7,7 @@ export = {
 		{
 			username: 'guest',
 			password: ' ',
-			permissions: ['resin.device_type.read'],
+			permissions: ['resin.device_type.read', 'resin.cpu_architecture.read'],
 		},
 	],
 } as ConfigLoader.Config;
