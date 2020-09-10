@@ -1,4 +1,17 @@
 - commits:
+    - subject: Export the heartbeat related DeviceOnlineStates enum
+      hash: 414ab1697162349c373e9428f5623039121d76fc
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.99.1
+  date: 2020-09-10T15:32:46.556Z
+- commits:
     - subject: Add a "cpu architecture" resource
       hash: 71e7ef3d2e3618f4857b7905d478ef9eeafad180
       body: |
