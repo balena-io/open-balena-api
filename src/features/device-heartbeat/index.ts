@@ -122,7 +122,7 @@ export const getPollInterval = async (uuid: string) => {
 export const POLL_JITTER_FACTOR = 1.5;
 
 // these align to the text enums coming from the SBVR definition of available values...
-export const enum DeviceOnlineStates {
+export enum DeviceOnlineStates {
 	Unknown = 'unknown',
 	Timeout = 'timeout',
 	Offline = 'offline',
