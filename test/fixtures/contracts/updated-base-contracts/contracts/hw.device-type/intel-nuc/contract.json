@@ -1,0 +1,23 @@
+{
+  "slug": "intel-nuc",
+  "version": "1",
+  "type": "hw.device-type",
+  "aliases": ["nuc"],
+  "name": "Intel NUC",
+  "data": {
+    "arch": "amd64",
+    "hdmi": true,
+    "led": false,
+    "connectivity": {
+      "bluetooth": true,
+      "wifi": true
+    },
+    "storage": {
+      "internal": true
+    },
+    "media": {
+      "installation": "usbkey"
+    },
+    "is_private": false
+  }
+}

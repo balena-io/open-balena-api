@@ -1,0 +1,23 @@
+{
+  "slug": "surface-go",
+  "version": "1",
+  "type": "hw.device-type",
+  "aliases": [],
+  "name": "Microsoft Surface Go",
+  "data": {
+    "arch": "amd64",
+    "hdmi": false,
+    "led": false,
+    "connectivity": {
+      "bluetooth": true,
+      "wifi": true
+    },
+    "storage": {
+      "internal": true
+    },
+    "media": {
+      "installation": "usbkey"
+    },
+    "is_private": false
+  }
+}

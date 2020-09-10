@@ -1,7 +1,65 @@
+import { permissions } from '@balena/pinejs';
+import { api } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
 import * as _ from 'lodash';
 import { expect } from './test-lib/chai';
 
 import { supertest } from './test-lib/supertest';
+// All of these test device types are not part of the contracts, so we have to include them manually until we stop syncing with S3.
+export const addFakeDeviceTypes = async () => {
+	await Promise.all(
+		[
+			{
+				id: 991,
+				slug: 'dt-with-ignored-release',
+				name: 'dt-with-ignored-release',
+			},
+			{
+				id: 992,
+				slug: 'dt-with-403-ignore-file-release',
+				name: 'dt-with-403-ignore-file-release',
+			},
+			{
+				id: 993,
+				slug: 'dt-with-empty-device-type-json-release',
+				name: 'dt-with-empty-device-type-json-release',
+			},
+			{
+				id: 994,
+				slug: 'dt-with-404-device-type-json-release',
+				name: 'dt-with-404-device-type-json-release',
+			},
+			{
+				id: 995,
+				slug: 'dt-with-500-ignore-file-release',
+				name: 'dt-with-500-ignore-file-release',
+			},
+			{
+				id: 996,
+				slug: 'dt-with-500-device-type-json-release',
+				name: 'dt-with-500-device-type-json-release',
+			},
+			{
+				id: 997,
+				slug: 'dt-with-no-valid-releases',
+				name: 'dt-with-no-valid-releases',
+			},
+			{
+				id: 998,
+				slug: 'dt-with-failing-listing',
+				name: 'dt-with-failing-listing',
+			},
+		].map(async (dt) => {
+			await api.resin.post({
+				resource: 'device_type',
+				passthrough: {
+					req: permissions.root,
+				},
+				options: { returnResource: false },
+				body: dt,
+			});
+		}),
+	);
+};
 
 describe('device type endpoints', () => {
 	describe('device type resource', () => {
@@ -14,11 +72,15 @@ describe('device type endpoints', () => {
 				expect(deviceType).to.have.property('name').that.is.a('string');
 			});
 
-			expect(res.body.d).to.have.property('length', 57);
+			expect(res.body.d).to.have.property('length', 13);
 		});
 	});
 
 	describe('/device-types/v1', () => {
+		before(async () => {
+			await addFakeDeviceTypes();
+		});
+
 		it('should succeed to return a result', async () => {
 			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
@@ -138,7 +200,7 @@ describe('device type endpoints', () => {
 		it('should return a proper result', async () => {
 			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
-			expect(res.body).to.have.property('length', 57);
+			expect(res.body).to.have.property('length', 15);
 			const rpi3config = _.find(res.body, { slug: 'raspberrypi3' });
 			expect(rpi3config).to.be.an('object');
 			expect(rpi3config).to.have.property('buildId', '2.19.0+rev1.prod');

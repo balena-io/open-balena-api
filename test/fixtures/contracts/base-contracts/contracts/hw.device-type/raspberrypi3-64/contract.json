@@ -1,0 +1,23 @@
+{
+  "slug": "raspberrypi3-64",
+  "version": "1",
+  "type": "hw.device-type",
+  "aliases": [],
+  "name": "Raspberry Pi 3 64bits",
+  "data": {
+    "arch": "aarch64",
+    "hdmi": true,
+    "led": true,
+    "connectivity": {
+      "bluetooth": true,
+      "wifi": true
+    },
+    "storage": {
+      "internal": false
+    },
+    "media": {
+      "installation": "sdcard"
+    },
+    "is_private": false
+  }
+}

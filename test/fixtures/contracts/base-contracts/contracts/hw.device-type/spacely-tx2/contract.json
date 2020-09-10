@@ -1,0 +1,23 @@
+{
+  "slug": "spacely-tx2",
+  "version": "1",
+  "type": "hw.device-type",
+  "aliases": [],
+  "name": "CTI Spacely TX2",
+  "data": {
+    "arch": "aarch64",
+    "hdmi": true,
+    "led": false,
+    "connectivity": {
+      "bluetooth": true,
+      "wifi": true
+    },
+    "storage": {
+      "internal": true
+    },
+    "media": {
+      "installation": "sdcard"
+    },
+    "is_private": false
+  }
+}

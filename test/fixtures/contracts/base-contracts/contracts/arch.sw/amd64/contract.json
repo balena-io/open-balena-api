@@ -1,0 +1,15 @@
+{
+  "slug": "amd64",
+  "version": "1",
+  "type": "arch.sw",
+  "name": "Intel 64-bit (x86-64)",
+  "data": { "arch": "amd64" },
+  "requires": [
+    {
+      "type": "hw.device-type",
+      "data": {
+        "arch": "amd64"
+      }
+    }
+  ]
+}

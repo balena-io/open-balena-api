@@ -89,6 +89,23 @@ export const AUTH_RESINOS_REGISTRY_CODE = optionalVar(
 	'AUTH_RESINOS_REGISTRY_CODE',
 );
 export const COOKIE_SESSION_SECRET = requiredVar('COOKIE_SESSION_SECRET');
+export const CONTRACTS_PUBLIC_REPO_OWNER = optionalVar(
+	'CONTRACTS_PUBLIC_REPO_OWNER',
+	'balena-io',
+);
+export const CONTRACTS_PUBLIC_REPO_NAME = optionalVar(
+	'CONTRACTS_PUBLIC_REPO_NAME',
+	'contracts',
+);
+export const CONTRACTS_PRIVATE_REPO_OWNER = optionalVar(
+	'CONTRACTS_PRIVATE_REPO_OWNER',
+);
+export const CONTRACTS_PRIVATE_REPO_NAME = optionalVar(
+	'CONTRACTS_PRIVATE_REPO_NAME',
+);
+export const CONTRACTS_PRIVATE_REPO_TOKEN = optionalVar(
+	'CONTRACTS_PRIVATE_REPO_TOKEN',
+);
 export const DB_POOL_SIZE = intVar('DB_POOL_SIZE', undefined);
 export const DELTA_HOST = requiredVar('DELTA_HOST');
 export const FILES_HOST = optionalVar('FILES_HOST', '');

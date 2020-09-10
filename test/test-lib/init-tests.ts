@@ -1,10 +1,14 @@
 import * as balenaToken from './balena-token';
 import * as fixtures from './fixtures';
 import { supertest, UserObjectParam } from './supertest';
+import {
+	getContractRepos,
+	synchronizeContracts,
+} from '../../src/features/contracts';
 
 export const preInit = async () => {
 	await import('./aws-mock');
-	await import('./device-type');
+	await import('./contracts-mock');
 
 	// override the interval used to emit the queue stats event...
 	const { DeviceOnlineStateManager } = await import(
@@ -54,6 +58,9 @@ const loadAdminUserAndOrganization = async () => {
 };
 
 export const postInit = async () => {
+	await synchronizeContracts(getContractRepos());
+	await import('./device-type');
+
 	const { user, org } = await loadAdminUserAndOrganization();
 	fixtures.setDefaultFixtures('users', { admin: Promise.resolve(user) });
 	fixtures.setDefaultFixtures('organizations', { admin: Promise.resolve(org) });

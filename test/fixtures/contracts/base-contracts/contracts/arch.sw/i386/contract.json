@@ -1,0 +1,15 @@
+{
+  "slug": "i386",
+  "version": "1",
+  "type": "arch.sw",
+  "name": "Intel 32-bit (x86)",
+  "data": { "arch": "i386" },
+  "requires": [
+    {
+      "type": "hw.device-type",
+      "data": {
+        "arch": "i386"
+      }
+    }
+  ]
+}

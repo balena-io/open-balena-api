@@ -3,7 +3,7 @@ import { setDefaultFixtures } from './fixtures';
 
 const { api } = sbvrUtils;
 
-interface DeviceType {
+export interface DeviceType {
 	id: number;
 	slug: string;
 	name: string;
@@ -32,6 +32,7 @@ setDefaultFixtures(
 				})) as DeviceType;
 				obj[slug] = deviceType;
 			}
+
 			return obj[slug as any];
 		},
 	}) as any) as Dictionary<Promise<DeviceType>>,
