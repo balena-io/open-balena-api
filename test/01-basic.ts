@@ -117,6 +117,10 @@ describe('Basic', () => {
 				],
 			},
 			{
+				deviceType: 'jetson-tx2',
+				extraConfigVarSchemaProperties: ['RESIN_HOST_ODMDATA_configuration'],
+			},
+			{
 				deviceType: 'up-board',
 				extraConfigVarSchemaProperties: ['RESIN_HOST_CONFIGFS_ssdt'],
 			},

@@ -154,6 +154,34 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 		},
 	},
 	{
+		capableDeviceTypes: [
+			'astro-tx2',
+			'blackboard-tx2',
+			'jetson-tx2',
+			'n310-tx2',
+			'n510-tx2',
+			'orbitty-tx2',
+			'spacely-tx2',
+			'srd3-tx2',
+		],
+		properties: {
+			RESIN_HOST_ODMDATA_configuration: {
+				type: 'integer',
+				oneOf: [
+					{ const: 1, title: 'Configuration #1' },
+					{ const: 2, title: 'Configuration #2' },
+					{ const: 3, title: 'Configuration #3' },
+					{ const: 4, title: 'Configuration #4' },
+					{ const: 5, title: 'Configuration #5' },
+					{ const: 6, title: 'Configuration #6' },
+				],
+				description:
+					'Define the ODMDATA configuration. Only supported by supervisor versions >= v11.13.0.',
+				default: 2,
+			},
+		},
+	},
+	{
 		capableDeviceTypes: ['up-board'],
 		properties: {
 			RESIN_HOST_CONFIGFS_ssdt: {
