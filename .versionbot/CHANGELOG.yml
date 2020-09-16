@@ -1,4 +1,21 @@
 - commits:
+    - subject: 'env-vars: Add ODMDATA config vars for nvidia boards'
+      hash: 01cd142b3edc4b681a2ebf41d8eb17d6d00cf9cd
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: 'https://codepen.io/thgreasi/pen/poyzMRz'
+        see: 'https://codepen.io/thgreasi/pen/poyzMRz'
+        Depends-on: 'https://github.com/balena-io/balena-supervisor/issues/1206'
+        depends-on: 'https://github.com/balena-io/balena-supervisor/issues/1206'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.100.0
+  date: 2020-09-16T20:28:09.762Z
+- commits:
     - subject: Export the heartbeat related DeviceOnlineStates enum
       hash: 414ab1697162349c373e9428f5623039121d76fc
       body: ''
