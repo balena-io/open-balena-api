@@ -1,4 +1,23 @@
 - commits:
+    - subject: 'env-vars: Add DTB config vars for nvidia boards'
+      hash: a6fd6ae4ca890f536a03fee6b7cb25267abcba32
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://www.flowdock.com/app/rulemotion/r-supervisor/threads/54GM3Zqzk75loM4ELl77Zt1w7Vt
+        see: >-
+          https://www.flowdock.com/app/rulemotion/r-supervisor/threads/54GM3Zqzk75loM4ELl77Zt1w7Vt
+        Depends-on: 'https://github.com/balena-io/balena-supervisor/issues/1207'
+        depends-on: 'https://github.com/balena-io/balena-supervisor/issues/1207'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.101.0
+  date: 2020-09-16T20:43:10.073Z
+- commits:
     - subject: 'env-vars: Add ODMDATA config vars for nvidia boards'
       hash: 01cd142b3edc4b681a2ebf41d8eb17d6d00cf9cd
       body: ''
