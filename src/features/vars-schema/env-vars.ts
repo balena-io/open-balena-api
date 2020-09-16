@@ -182,6 +182,29 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 		},
 	},
 	{
+		capableDeviceTypes: [
+			'astro-tx2',
+			'blackboard-tx2',
+			'jetson-tx2',
+			'n310-tx2',
+			'n510-tx2',
+			'orbitty-tx2',
+			'spacely-tx2',
+			'srd3-tx2',
+			'jetson-nano',
+			'jetson-nano-emmc',
+			'jn30b-nano',
+			'photon-nano',
+		],
+		properties: {
+			RESIN_HOST_EXTLINUX_fdt: {
+				type: 'string',
+				description:
+					'Define the file name of the DTB to be used. Only supported by supervisor versions >= v11.14.2.',
+			},
+		},
+	},
+	{
 		capableDeviceTypes: ['up-board'],
 		properties: {
 			RESIN_HOST_CONFIGFS_ssdt: {
