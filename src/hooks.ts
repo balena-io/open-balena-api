@@ -8,6 +8,7 @@ import './features/devices/hooks';
 import './features/device-urls/hooks';
 import './features/device-types/hooks';
 import './features/release-pinning/hooks';
+import './features/rpi/hooks';
 import './features/tags/hooks';
 import './features/vars-schema/hooks';
 import './features/vpn/hooks';

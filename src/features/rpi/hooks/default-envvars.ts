@@ -1,5 +1,5 @@
 import { hooks } from '@balena/pinejs';
-import { PinejsClient } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
+import { sbvrUtils } from '@balena/pinejs';
 import { DeviceType } from '../../device-types/device-types';
 
 // We currently don't have a good way to check the family of a device type, so we have agreed to hard-code it for now.
@@ -15,10 +15,16 @@ const rpiBasedDeviceTypes = [
 	'revpi-core-3',
 ];
 
-const isRpiBased = async (deviceTypeId: number, api: PinejsClient) => {
+const isRpiBased = async (
+	deviceTypeId: number,
+	api: sbvrUtils.PinejsClient,
+) => {
 	const deviceType = (await api.get({
 		resource: 'device_type',
 		id: deviceTypeId,
+		options: {
+			$select: 'slug',
+		},
 	})) as DeviceType | undefined;
 	if (deviceType) {
 		return rpiBasedDeviceTypes.includes(deviceType.slug);
@@ -30,26 +36,19 @@ const isRpiBased = async (deviceTypeId: number, api: PinejsClient) => {
 // We want to set a default gpu mem value for all RPI applications
 hooks.addPureHook('POST', 'resin', 'application', {
 	POSTRUN: async ({ request, result: appId, api }) => {
-		try {
-			const deviceTypeId: number = request.values.is_for__device_type;
-			console.log(deviceTypeId);
-			if (!(await isRpiBased(deviceTypeId, api))) {
-				return;
-			}
-
-			await api.post({
-				resource: 'application_config_variable',
-				body: {
-					application: appId,
-					name: 'BALENA_HOST_CONFIG_gpu_mem',
-					value: '16',
-				},
-				options: { returnResource: false },
-			});
-		} catch (err) {
-			console.log(
-				'Failed to create gpu_mem config variable in application hook, skipping...',
-			);
+		const deviceTypeId: number = request.values.is_for__device_type;
+		if (!(await isRpiBased(deviceTypeId, api))) {
+			return;
 		}
+
+		await api.post({
+			resource: 'application_config_variable',
+			body: {
+				application: appId,
+				name: 'BALENA_HOST_CONFIG_gpu_mem',
+				value: '16',
+			},
+			options: { returnResource: false },
+		});
 	},
 });

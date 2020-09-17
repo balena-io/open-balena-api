@@ -54,7 +54,6 @@ describe('application resource', () => {
 		const varRes = await supertest(admin).get(
 			`/resin/application_config_variable?$filter=application eq ${appRes.body.id}`,
 		);
-		console.log(varRes.body.d);
 		expect(varRes.body.d[0]).to.be.undefined;
 	});
 });
