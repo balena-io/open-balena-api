@@ -1,4 +1,27 @@
 - commits:
+    - subject: Update dependencies
+      hash: ea39f3c622870eaca74017f527b35eac4565cff0
+      body: |
+        Update pinejs from 14.0.0 to 14.1.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Treat deferred foreign key uris as metadata
+              hash: 67306a83ea2d375faaf32292c9cc4cd9d91f1f05
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.1.0
+          date: 2020-09-04T11:15:30.056Z
+  version: 0.101.1
+  date: 2020-09-17T13:18:40.781Z
+- commits:
     - subject: 'env-vars: Add DTB config vars for nvidia boards'
       hash: a6fd6ae4ca890f536a03fee6b7cb25267abcba32
       body: ''
