@@ -1,4 +1,15 @@
 - commits:
+    - subject: Move release pinning validation hook to a rule
+      hash: 6e99fcacce3b654f12d91d26e6f9794c080ba389
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.101.3
+  date: 2020-09-18T12:41:50.425Z
+- commits:
     - subject: Update open-balena-base to v10.0.2
       hash: 72c6e223d59156aa0476f04999695fbf80a64502
       body: |
