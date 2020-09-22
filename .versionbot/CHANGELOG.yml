@@ -1,4 +1,17 @@
 - commits:
+    - subject: Start synchronizing resources with contracts
+      hash: b44b4dcfceb49735e436a72e85523286265ae4ae
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.102.0
+  date: 2020-09-22T12:52:35.771Z
+- commits:
     - subject: Move release pinning validation hook to a rule
       hash: 6e99fcacce3b654f12d91d26e6f9794c080ba389
       body: ''
