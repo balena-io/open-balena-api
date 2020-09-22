@@ -44,12 +44,34 @@ async function onInitHooks() {
 		_.flatMap(auth.ROLES),
 		_.flatMap(auth.KEYS, 'permissions'),
 	);
-	const { setSyncMap } = await import('./src/features/device-types/sync');
+	const { setSyncSettings } = await import('./src/features/contracts');
 	const { getAccessibleDeviceTypes } = await import(
 		'./src/features/device-types/device-types'
 	);
-	setSyncMap({
-		name: { name: 'name' },
+
+	setSyncSettings({
+		'hw.device-type': {
+			resource: 'device_type',
+			uniqueKey: 'slug',
+			map: {
+				slug: {
+					contractField: 'slug',
+				},
+				name: {
+					contractField: 'name',
+				},
+			},
+		},
+
+		'arch.sw': {
+			resource: 'cpu_architecture',
+			uniqueKey: 'slug',
+			map: {
+				slug: {
+					contractField: 'slug',
+				},
+			},
+		},
 	});
 
 	// this will pre-fetch the device types and populate the cache...

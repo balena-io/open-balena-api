@@ -1,0 +1,23 @@
+{
+  "slug": "raspberry-pi",
+  "version": "1",
+  "type": "hw.device-type",
+  "aliases": ["raspberrypi"],
+  "name": "Raspberry Pi (1, Zero, Zero W)",
+  "data": {
+    "arch": "rpi",
+    "hdmi": true,
+    "led": true,
+    "connectivity": {
+      "bluetooth": true,
+      "wifi": true
+    },
+    "storage": {
+      "internal": false
+    },
+    "media": {
+      "installation": "sdcard"
+    },
+    "is_private": false
+  }
+}

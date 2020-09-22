@@ -1,0 +1,23 @@
+{
+  "slug": "raspberry-pi2",
+  "version": "1",
+  "type": "hw.device-type",
+  "aliases": ["raspberrypi2"],
+  "name": "Raspberry Pi 2",
+  "data": {
+    "arch": "armv7hf",
+    "hdmi": true,
+    "led": true,
+    "connectivity": {
+      "bluetooth": false,
+      "wifi": false
+    },
+    "storage": {
+      "internal": false
+    },
+    "media": {
+      "installation": "sdcard"
+    },
+    "is_private": false
+  }
+}

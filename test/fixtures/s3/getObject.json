@@ -143,22 +143,6 @@
 		"ContentType": "application/json",
 		"Body":"{\n\t\"slug\": \"generic-aarch64\",\n\t\"version\": 1,\n\t\"name\": \"Generic AARCH64 (ARMv8) (EXPERIMENTAL)\",\n\t\"arch\": \"aarch64\",\n\t\"state\": \"EXPERIMENTAL\",\n\t\"instructions\": [\n\t\t\"Download/pull the following docker image on the target machine: <code>{{ dockerImage }}</code> .\",\n\t\t\"Download the configuration file and deploy it on target.\",\n\t\t\"Run the resinOS container using <a href=\\\"https://github.com/resin-os/resinos-in-container\\\">resinos-in-container</a>. This tool/script will reference the image and the configuration file (downloaded above) as command line arguments. Example: <code>./resinos-in-container.sh --config ./config.json --image {{ dockerImage }}</code>. Tweak the <code>--config</code> argument based on the filename set for the downloaded configuration file.\"\n\t],\n\t\"gettingStartedLink\": {\n\t\t\"windows\": \"https://docs.resin.io/learn/getting-started/generic-aarch64/nodejs/#add-your-first-device\",\n\t\t\"osx\": \"https://docs.resin.io/learn/getting-started/generic-aarch64/nodejs/#add-your-first-device\",\n\t\t\"linux\": \"https://docs.resin.io/learn/getting-started/generic-aarch64/nodejs/#add-your-first-device\"\n\t},\n\t\"supportsBlink\": false,\n\t\"yocto\": {\n\t\t\"machine\": \"generic-aarch64\",\n\t\t\"image\": \"resin-image\",\n\t\t\"version\": \"yocto-pyro\",\n\t\t\"deployArtifact\": \"docker-image\"\n\t},\n\t\"options\": [\n\t\t{\n\t\t\t\"isGroup\": true,\n\t\t\t\"isCollapsible\": true,\n\t\t\t\"collapsed\": true,\n\t\t\t\"name\": \"advanced\",\n\t\t\t\"message\": \"Advanced\",\n\t\t\t\"options\": [\n\t\t\t\t{\n\t\t\t\t\t\"message\": \"Check for updates every X minutes\",\n\t\t\t\t\t\"name\": \"appUpdatePollInterval\",\n\t\t\t\t\t\"type\": \"number\",\n\t\t\t\t\t\"min\": 0,\n\t\t\t\t\t\"default\": 1\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t]\n}\n"
 	},
-	"images/generic-amd64/1.3.0/device-type.json": {
-		"AcceptRanges": "bytes",
-		"LastModified": "2017-10-25T09:46:51.000Z",
-		"ContentLength": 513,
-		"ETag": "\"ffca00a2e9b526a2565bff7ec6e7f95e\"",
-		"ContentType": "application/json",
-		"Body":"{\n\t\"slug\": \"generic-amd64\",\n\t\"version\": 1,\n\t\"name\": \"Generic amd64\",\n\t\"arch\": \"amd64\",\n\t\"state\": \"RELEASED\",\n\t\"yocto\": {\n\t\t\"machine\": \"\",\n\t\t\"deployArtifact\": \"empty\",\n\t\t\"archive\": true\n\t},\n\t\"options\": [\n\t\t{\n\t\t\t\"isGroup\": true,\n\t\t\t\"isCollapsible\": true,\n\t\t\t\"collapsed\": true,\n\t\t\t\"name\": \"advanced\",\n\t\t\t\"message\": \"Advanced\",\n\t\t\t\"options\": [\n\t\t\t\t{\n\t\t\t\t\t\"message\": \"Check for updates every X minutes\",\n\t\t\t\t\t\"name\": \"appUpdatePollInterval\",\n\t\t\t\t\t\"type\": \"number\",\n\t\t\t\t\t\"min\": 0,\n\t\t\t\t\t\"default\": 1\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t]\n}\n"
-	},
-	"images/generic-armv7/1.3.0/device-type.json": {
-		"AcceptRanges": "bytes",
-		"LastModified": "2017-10-25T10:12:37.000Z",
-		"ContentLength": 515,
-		"ETag": "\"8da306723871deeb5f45a70b0db7d301\"",
-		"ContentType": "application/json",
-		"Body":"{\n\t\"slug\": \"generic-armv7\",\n\t\"version\": 1,\n\t\"name\": \"Generic ARMv7\",\n\t\"arch\": \"armv7hf\",\n\t\"state\": \"RELEASED\",\n\t\"yocto\": {\n\t\t\"machine\": \"\",\n\t\t\"deployArtifact\": \"empty\",\n\t\t\"archive\": true\n\t},\n\t\"options\": [\n\t\t{\n\t\t\t\"isGroup\": true,\n\t\t\t\"isCollapsible\": true,\n\t\t\t\"collapsed\": true,\n\t\t\t\"name\": \"advanced\",\n\t\t\t\"message\": \"Advanced\",\n\t\t\t\"options\": [\n\t\t\t\t{\n\t\t\t\t\t\"message\": \"Check for updates every X minutes\",\n\t\t\t\t\t\"name\": \"appUpdatePollInterval\",\n\t\t\t\t\t\"type\": \"number\",\n\t\t\t\t\t\"min\": 0,\n\t\t\t\t\t\"default\": 1\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t]\n}\n"
-	},
 	"images/generic-armv7ahf/2.12.4+rev1.prod/device-type.json": {
 		"AcceptRanges": "bytes",
 		"LastModified": "2018-03-23T12:12:44.000Z",

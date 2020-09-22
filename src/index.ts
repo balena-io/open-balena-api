@@ -102,10 +102,6 @@ import {
 	findBySlug,
 	getDeviceTypeIdBySlug,
 } from './features/device-types/device-types';
-import {
-	setSyncMap,
-	startDeviceTypeSynchronization,
-} from './features/device-types/sync';
 import { proxy as supervisorProxy } from './features/device-proxy/device-proxy';
 import { generateConfig } from './features/device-config/device-config';
 import {
@@ -133,6 +129,10 @@ import {
 	GetUrlFunction,
 	setupRequestLogging,
 } from './features/request-logging';
+import {
+	startContractSynchronization,
+	setSyncSettings,
+} from './features/contracts';
 
 export * as tags from './features/tags/validation';
 
@@ -216,8 +216,10 @@ export const device = {
 export const deviceTypes = {
 	getAccessibleDeviceTypes,
 	findBySlug,
-	setSyncMap,
 	getDeviceTypeIdBySlug,
+};
+export const contracts = {
+	setSyncSettings,
 };
 export const envVarsConfig = {
 	ALLOWED_NAMES,
@@ -332,7 +334,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	// start consuming the API heartbeat state queue...
 	getDeviceOnlineStateManager().start();
 
-	startDeviceTypeSynchronization();
+	startContractSynchronization();
 
 	return {
 		app,

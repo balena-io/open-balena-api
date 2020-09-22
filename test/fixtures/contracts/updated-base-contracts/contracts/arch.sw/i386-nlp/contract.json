@@ -1,0 +1,15 @@
+{
+  "slug": "i386-nlp",
+  "version": "1",
+  "type": "arch.sw",
+  "name": "Intel 32-bit (x86) for Intel Quark",
+  "data": { "arch": "i386-nlp" },
+  "requires": [
+    {
+      "type": "hw.device-type",
+      "data": {
+        "arch": "i386-nlp"
+      }
+    }
+  ]
+}

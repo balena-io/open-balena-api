@@ -1,0 +1,23 @@
+{
+  "slug": "fincm3",
+  "version": "1",
+  "type": "hw.device-type",
+  "aliases": [],
+  "name": "Fin",
+  "data": {
+    "arch": "armv7hf",
+    "hdmi": true,
+    "led": true,
+    "connectivity": {
+      "bluetooth": true,
+      "wifi": true
+    },
+    "storage": {
+      "internal": true
+    },
+    "media": {
+      "installation": "dfu"
+    },
+    "is_private": false
+  }
+}

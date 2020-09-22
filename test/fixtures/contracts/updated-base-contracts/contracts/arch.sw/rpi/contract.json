@@ -1,0 +1,15 @@
+{
+  "slug": "rpi",
+  "version": "1",
+  "type": "arch.sw",
+  "name": "ARM v6",
+  "data": { "arch": "armv6hf" },
+  "requires": [
+    {
+      "type": "hw.device-type",
+      "data": {
+        "arch": "rpi"
+      }
+    }
+  ]
+}

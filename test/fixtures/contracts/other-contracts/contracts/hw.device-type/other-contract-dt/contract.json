@@ -1,0 +1,23 @@
+{
+  "slug": "other-contract-dt",
+  "version": "1",
+  "type": "hw.device-type",
+  "aliases": [],
+  "name": "Other DT",
+  "data": {
+    "arch": "armv7hf",
+    "hdmi": true,
+    "led": true,
+    "connectivity": {
+      "bluetooth": true,
+      "wifi": true
+    },
+    "storage": {
+      "internal": true
+    },
+    "media": {
+      "installation": "dfu"
+    },
+    "is_private": false
+  }
+}

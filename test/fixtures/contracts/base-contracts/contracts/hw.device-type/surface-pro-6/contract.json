@@ -1,0 +1,23 @@
+{
+  "slug": "surface-pro-6",
+  "version": "1",
+  "type": "hw.device-type",
+  "aliases": [],
+  "name": "Microsoft Surface Pro 6",
+  "data": {
+    "arch": "amd64",
+    "hdmi": true,
+    "led": false,
+    "connectivity": {
+      "bluetooth": true,
+      "wifi": true
+    },
+    "storage": {
+      "internal": true
+    },
+    "media": {
+      "installation": "usbkey"
+    },
+    "is_private": false
+  }
+}
