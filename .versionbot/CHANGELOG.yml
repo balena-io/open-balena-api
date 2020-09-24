@@ -1,4 +1,23 @@
 - commits:
+    - subject: Skip marking dependent device as unmanaged to later mark as managed
+      hash: f2bbafcaba717d0102fd3bea43432bfca42b6818
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Avoid needing to update newly provisioned dependent devices
+      hash: bf7b1bf4068c5dd70920b1ad25623b0ffc559a2c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.102.1
+  date: 2020-09-24T14:38:20.942Z
+- commits:
     - subject: Start synchronizing resources with contracts
       hash: b44b4dcfceb49735e436a72e85523286265ae4ae
       body: ''
