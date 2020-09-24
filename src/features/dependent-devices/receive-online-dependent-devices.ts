@@ -86,6 +86,13 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 					$filter: {
 						is_managed_by__device: gateway,
 						belongs_to__application: dependent_app,
+						...(online_dependent_devices.length === 0
+							? {}
+							: {
+									$not: {
+										local_id: { $in: online_dependent_devices },
+									},
+							  }),
 					},
 				},
 				body: {
@@ -152,6 +159,9 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 								$or: [
 									{
 										is_managed_by__device: null,
+									},
+									{
+										is_managed_by__device: gateway,
 									},
 									{
 										is_locked_until__date: null,
