@@ -78,7 +78,37 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 		await sbvrUtils.db.transaction(async (tx) => {
 			const resinApiTx = api.resin.clone({ passthrough: { tx, req } });
 
+			// Set all dependent devices currently being managed by
+			// this gateway to unmanaged
+			await resinApiTx.patch({
+				resource: 'device',
+				options: {
+					$filter: {
+						is_managed_by__device: gateway,
+						belongs_to__application: dependent_app,
+						...(online_dependent_devices.length === 0
+							? {}
+							: {
+									$not: {
+										local_id: { $in: online_dependent_devices },
+									},
+							  }),
+					},
+				},
+				body: {
+					is_managed_by__device: null,
+					is_locked_until__date: null,
+					is_online: false,
+				},
+			});
+
 			if (online_dependent_devices.length > 0) {
+				const setManagedBody = {
+					is_managed_by__device: gateway,
+					is_locked_until__date: expiry_date,
+					is_online: true,
+				};
+
 				// Get all dependent devices matching those we're receiving,
 				// so we can figure out which need to be provisioned
 				const devices = (await resinApiTx.get({
@@ -96,8 +126,10 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 					online_dependent_devices,
 					devices.map(({ local_id }) => local_id),
 				);
-				await Promise.all(
-					toBeProvisioned.map(async (localId) => {
+				// Remove the devices we're going to provision so we can avoid trying to patch them
+				_.pull(online_dependent_devices, toBeProvisioned);
+				await Promise.all([
+					...toBeProvisioned.map(async (localId) => {
 						// Provision new dependent devices
 						await resinApiTx.post({
 							resource: 'device',
@@ -111,57 +143,38 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 									length: 62,
 									charset: 'hex',
 								}),
+								...setManagedBody,
 							},
 							options: { returnResource: false },
 						});
 					}),
-				);
-			}
-			// Set all dependent devices currently being managed by
-			// this gateway to unmanaged
-			await resinApiTx.patch({
-				resource: 'device',
-				options: {
-					$filter: {
-						is_managed_by__device: gateway,
-						belongs_to__application: dependent_app,
-					},
-				},
-				body: {
-					is_managed_by__device: null,
-					is_locked_until__date: null,
-					is_online: false,
-				},
-			});
-
-			if (online_dependent_devices.length > 0) {
-				// Set all dependent devices that are in online_dependent_devices
-				// and unmanaged to managed
-				await resinApiTx.patch({
-					resource: 'device',
-					options: {
-						$filter: {
-							local_id: { $in: online_dependent_devices },
-							belongs_to__application: dependent_app,
-							$or: [
-								{
-									is_managed_by__device: null,
-								},
-								{
-									is_locked_until__date: null,
-								},
-								{
-									is_locked_until__date: { $le: { $now: {} } },
-								},
-							],
+					// Set all dependent devices that are in online_dependent_devices
+					// and unmanaged to managed
+					resinApiTx.patch({
+						resource: 'device',
+						options: {
+							$filter: {
+								local_id: { $in: online_dependent_devices },
+								belongs_to__application: dependent_app,
+								$or: [
+									{
+										is_managed_by__device: null,
+									},
+									{
+										is_managed_by__device: gateway,
+									},
+									{
+										is_locked_until__date: null,
+									},
+									{
+										is_locked_until__date: { $le: { $now: {} } },
+									},
+								],
+							},
 						},
-					},
-					body: {
-						is_managed_by__device: gateway,
-						is_locked_until__date: expiry_date,
-						is_online: true,
-					},
-				});
+						body: setManagedBody,
+					}),
+				]);
 			}
 
 			res.sendStatus(200);
