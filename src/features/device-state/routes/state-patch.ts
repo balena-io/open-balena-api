@@ -137,7 +137,6 @@ const deleteOldGatewayDownloads = async (
 
 const validPatchFields = [
 	'is_managed_by__device',
-	'should_be_running__release',
 	'device_name',
 	'status',
 	'is_online',
@@ -213,9 +212,25 @@ export const statePatch: RequestHandler = async (req, res) => {
 				throw new UnauthorizedError();
 			}
 
+			const waitPromises: Array<PromiseLike<any>> = [];
+
+			if (!_.isEmpty(deviceBody)) {
+				waitPromises.push(
+					resinApiTx.patch({
+						resource: 'device',
+						id: device.id,
+						options: {
+							$filter: { $not: deviceBody },
+						},
+						body: deviceBody,
+					}),
+				);
+			}
+
 			if (local != null) {
+				const deviceAppBody: AnyObject = {};
 				if (local.is_on__commit === null) {
-					deviceBody!.is_running__release = null;
+					deviceAppBody.is_running__release = null;
 				} else if (local.is_on__commit !== undefined) {
 					const [release] = await resinApiTx.get({
 						resource: 'release',
@@ -256,24 +271,25 @@ export const statePatch: RequestHandler = async (req, res) => {
 
 					if (release != null) {
 						// Only set the running release if it's valid, otherwise just silently ignore it
-						deviceBody!.is_running__release = release.id;
+						deviceAppBody.is_running__release = release.id;
 					}
 				}
-			}
+				if (local.should_be_running__release !== undefined) {
+					deviceAppBody.should_be_running__release =
+						local.should_be_running__release;
+				}
 
-			const waitPromises: Array<PromiseLike<any>> = [];
-
-			if (!_.isEmpty(deviceBody)) {
-				waitPromises.push(
-					resinApiTx.patch({
-						resource: 'device',
-						id: device.id,
-						options: {
-							$filter: { $not: deviceBody },
-						},
-						body: deviceBody,
-					}),
-				);
+				if (!_.isEmpty(deviceAppBody)) {
+					waitPromises.push(
+						resinApiTx.patch({
+							resource: 'device_application',
+							options: {
+								$filter: { device: device.id, $not: deviceAppBody },
+							},
+							body: deviceAppBody,
+						}),
+					);
+				}
 			}
 
 			if (apps != null) {

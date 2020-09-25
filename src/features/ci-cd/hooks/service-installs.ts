@@ -101,57 +101,61 @@ hooks.addPureHook('POST', 'resin', 'device_application', {
 	},
 });
 
-hooks.addPureHook('PATCH', 'resin', 'device', {
+hooks.addPureHook('PATCH', 'resin', 'device_application', {
 	POSTRUN: async ({ api, request }) => {
 		const affectedIds = request.affectedIds!;
 		if (
-			request.values.should_be_running__release !== undefined &&
-			affectedIds.length !== 0
+			affectedIds.length === 0 ||
+			request.values.should_be_running__release === undefined
 		) {
-			// If the device was preloaded, and then pinned, service_installs do not exist
-			// for this device+release combination. We need to create these
-			if (request.values.should_be_running__release != null) {
-				await createReleaseServiceInstalls(api, affectedIds, {
-					id: request.values.should_be_running__release,
-				});
-			} else {
-				const devices = (await api.get({
-					resource: 'device',
-					options: {
-						$select: 'id',
-						$expand: {
-							device_application: {
-								$select: ['belongs_to__application'],
-							},
-						},
-						$filter: {
-							id: { $in: affectedIds },
-						},
+			return;
+		}
+
+		const deviceApps = (await api.get({
+			resource: 'device_application',
+			options: {
+				$select: ['device', 'belongs_to__application'],
+				$filter: {
+					id: {
+						$in: affectedIds,
 					},
-				})) as Array<{
-					id: number;
-					device_application: [{ belongs_to__application: { __id: number } }?];
-				}>;
-				const devicesByApp = _.groupBy(
-					devices,
-					(d) => d.device_application[0]?.belongs_to__application.__id,
-				);
-				await Promise.all(
-					Object.keys(devicesByApp).map(async (groupId) => {
-						const appId =
-							devicesByApp[groupId][0].device_application[0]
-								?.belongs_to__application.__id;
-						if (appId == null) {
-							return;
-						}
-						await createAppServiceInstalls(
-							api,
-							appId,
-							devicesByApp[groupId].map((d) => d.id),
-						);
-					}),
-				);
-			}
+				},
+			},
+		})) as Array<{
+			device: { __id: number };
+			belongs_to__application: { __id: number };
+		}>;
+
+		if (deviceApps.length === 0) {
+			return;
+		}
+
+		const deviceIds = deviceApps.map(({ device }) => device.__id);
+
+		// If the device was preloaded, and then pinned, service_installs do not exist
+		// for this device+release combination. We need to create these
+		if (request.values.should_be_running__release != null) {
+			await createReleaseServiceInstalls(api, deviceIds, {
+				id: request.values.should_be_running__release,
+			});
+		} else {
+			const devicesByApp = _.groupBy(
+				deviceApps,
+				(d) => d.belongs_to__application.__id,
+			);
+			await Promise.all(
+				Object.keys(devicesByApp).map(async (groupId) => {
+					const appId = devicesByApp[groupId][0]?.belongs_to__application.__id;
+					if (appId == null) {
+						return;
+					}
+					await createAppServiceInstalls(
+						api,
+						appId,
+						devicesByApp[groupId].map((d) => d.device.__id),
+					);
+				}),
+			);
 		}
 	},
 });

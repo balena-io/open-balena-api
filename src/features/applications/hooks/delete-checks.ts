@@ -35,13 +35,22 @@ hooks.addPureHook('DELETE', 'resin', 'application', {
 							},
 						},
 					},
-					is_running__release: {
+					device_application: {
 						$any: {
-							$alias: 'r',
+							$alias: 'da',
 							$expr: {
-								r: {
-									belongs_to__application: {
-										$in: appIds,
+								da: {
+									is_running__release: {
+										$any: {
+											$alias: 'r',
+											$expr: {
+												r: {
+													belongs_to__application: {
+														$in: appIds,
+													},
+												},
+											},
+										},
 									},
 								},
 							},

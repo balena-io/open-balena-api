@@ -74,7 +74,6 @@ const stateQuery = _.once(() =>
 				device_environment_variable: {
 					$select: ['name', 'value'],
 				},
-				should_be_running__release: releaseExpand,
 				service_install: {
 					$select: ['id'],
 					$expand: {
@@ -97,6 +96,7 @@ const stateQuery = _.once(() =>
 				device_application: {
 					$select: 'id',
 					$expand: {
+						should_be_running__release: releaseExpand,
 						belongs_to__application: {
 							$select: ['id', 'app_name'],
 							$expand: {

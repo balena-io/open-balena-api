@@ -142,7 +142,7 @@ describe('Device with missing service installs', () => {
 
 	it('should pin the device to the first release', async function () {
 		await supertest(admin)
-			.patch(`/resin/device(${device.id})`)
+			.patch(`/resin/device_application?$filter=device eq ${device.id}`)
 			.send({
 				should_be_running__release: releases['deadbeef'],
 			})
@@ -208,7 +208,7 @@ describe('Device with missing service installs', () => {
 
 	it('should un-pin the device', async function () {
 		await supertest(admin)
-			.patch(`/resin/device(${device.id})`)
+			.patch(`/resin/device_application?$filter=device eq ${device.id}`)
 			.send({
 				should_be_running__release: null,
 			})

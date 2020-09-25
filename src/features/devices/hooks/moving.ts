@@ -26,21 +26,6 @@ hooks.addPureHook('DELETE', 'resin', 'device_application', {
 			})) as Array<{ device: { __id: number } }>;
 
 			deviceIds = deviceApps.map(({ device }) => device.__id);
-
-			// When moving application make sure to set the build to null instead of pointing to a build of the wrong application
-			await args.api.patch({
-				resource: 'device',
-				body: {
-					should_be_running__release: null,
-				},
-				options: {
-					$filter: {
-						id: {
-							$in: deviceIds,
-						},
-					},
-				},
-			});
 		}
 		// Store the devices being affected for the POSTRUN
 		request.custom.deviceIds = deviceIds;

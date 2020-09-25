@@ -61,42 +61,6 @@ hooks.addPureHook('DELETE', 'resin', 'application', {
 		}
 	},
 });
-hooks.addPureHook('DELETE', 'resin', 'device_application', {
-	/**
-	 * Null `should_be_running__release` or we won't be able to remove the `device_application` entries due to a rule
-	 */
-	PRERUN: async (args) => {
-		const deviceAppIds = await sbvrUtils.getAffectedIds(args);
-		if (deviceAppIds.length === 0) {
-			return;
-		}
-
-		const deviceApps = (await args.api.get({
-			resource: 'device_application',
-			options: {
-				$select: 'device',
-				$filter: {
-					id: {
-						$in: deviceAppIds,
-					},
-				},
-			},
-		})) as Array<{ device: { __id: number } }>;
-
-		const deviceIds = deviceApps.map(({ device }) => device.__id);
-
-		await args.api.patch({
-			resource: 'device',
-			options: {
-				$filter: {
-					id: { $in: deviceIds },
-					should_be_running__release: { $ne: null },
-				},
-			},
-			body: { should_be_running__release: null },
-		});
-	},
-});
 
 setupDeleteCascade('device', [
 	['device_config_variable', 'device'],

@@ -315,13 +315,17 @@ export const addToModel = (
 										'is provided by-release',
 									],
 									[
-										'Coalesce',
-										['ReferencedField', 'device', 'should be running-release'],
+										'SelectQuery',
 										[
-											'SelectQuery',
+											'Select',
 											[
-												'Select',
 												[
+													'Coalesce',
+													[
+														'ReferencedField',
+														'device-belongs to-application',
+														'should be running-release',
+													],
 													[
 														'ReferencedField',
 														'application',
@@ -329,34 +333,34 @@ export const addToModel = (
 													],
 												],
 											],
-											['From', ['Table', 'device-belongs to-application']],
+										],
+										['From', ['Table', 'device-belongs to-application']],
+										[
+											'Join',
+											['Table', 'application'],
 											[
-												'Join',
-												['Table', 'application'],
-												[
-													'On',
-													[
-														'Equals',
-														[
-															'ReferencedField',
-															'device-belongs to-application',
-															'belongs to-application',
-														],
-														['ReferencedField', 'application', 'id'],
-													],
-												],
-											],
-											[
-												'Where',
+												'On',
 												[
 													'Equals',
 													[
 														'ReferencedField',
 														'device-belongs to-application',
-														'device',
+														'belongs to-application',
 													],
-													['ReferencedField', 'device', 'id'],
+													['ReferencedField', 'application', 'id'],
 												],
+											],
+										],
+										[
+											'Where',
+											[
+												'Equals',
+												[
+													'ReferencedField',
+													'device-belongs to-application',
+													'device',
+												],
+												['ReferencedField', 'device', 'id'],
 											],
 										],
 									],
