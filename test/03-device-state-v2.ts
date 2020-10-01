@@ -7,11 +7,13 @@ import { supertest, UserObjectParam } from './test-lib/supertest';
 
 import sinon = require('sinon');
 import configMock = require('../src/lib/config');
-import stateMock = require('../src/features/device-heartbeat');
+import * as stateMock from '../src/features/device-heartbeat';
 import * as fixtures from './test-lib/fixtures';
 
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
+
+const { DeviceOnlineStates } = stateMock;
 
 class StateTracker {
 	public states: Dictionary<stateMock.DeviceOnlineStates> = {};
@@ -162,9 +164,18 @@ describe('Device State v2', () => {
 			const devicePollInterval =
 				Math.ceil((POLL_MSEC * stateMock.POLL_JITTER_FACTOR) / 1000) * 1000;
 
+			let deviceUserRequestedState: fakeDevice.Device;
+
+			before(async () => {
+				deviceUserRequestedState = await fakeDevice.provisionDevice(
+					admin,
+					applicationId,
+				);
+			});
+
 			const stateChangeEventSpy = sinon.spy();
 			stateMock.getInstance().on('change', (args) => {
-				if (args.uuid !== device.uuid) {
+				if (![device.uuid, deviceUserRequestedState.uuid].includes(args.uuid)) {
 					return;
 				}
 
@@ -180,113 +191,140 @@ describe('Device State v2', () => {
 				stateMock.getInstance().off('stats', statsEventSpy);
 			});
 
-			it('Should see state initially as "unknown"', async () => {
-				const { body } = await supertest(admin)
-					.get(`/resin/device(${device.id})`)
-					.expect(200);
+			[
+				{
+					tokenType: 'device API Key',
+					getActor: () => device,
+					heartbeatAfterGet: DeviceOnlineStates.Online,
+					getDevice: () => device,
+					getStateV2: () => device.getStateV2(),
+				},
+				{
+					tokenType: 'user token',
+					getActor: () => admin,
+					heartbeatAfterGet: DeviceOnlineStates.Online,
+					getDevice: () => deviceUserRequestedState,
+					getStateV2: () =>
+						fakeDevice.getStateV2(admin, deviceUserRequestedState.uuid),
+				},
+			].forEach(
+				({ tokenType, getActor, heartbeatAfterGet, getDevice, getStateV2 }) => {
+					describe(`Given a ${tokenType}`, function () {
+						it('Should see state initially as "unknown"', async () => {
+							const { body } = await supertest(getActor())
+								.get(`/resin/device(${getDevice().id})`)
+								.expect(200);
 
-				expect(body.d[0]).to.not.be.undefined;
-				expect(body.d[0]).to.have.property(
-					'api_heartbeat_state',
-					stateMock.DeviceOnlineStates.Unknown,
-					'API heartbeat state is not unknown (default)',
-				);
-			});
+							expect(body.d[0]).to.not.be.undefined;
+							expect(body.d[0]).to.have.property(
+								'api_heartbeat_state',
+								DeviceOnlineStates.Unknown,
+								'API heartbeat state is not unknown (default)',
+							);
+						});
 
-			it('Should see state become "online" after a state poll', async () => {
-				stateChangeEventSpy.resetHistory();
-				await device.getStateV2();
+						it(`Should have the "${heartbeatAfterGet}" heartbeat state after a state poll`, async () => {
+							stateChangeEventSpy.resetHistory();
+							await getStateV2();
 
-				await waitFor(() => stateChangeEventSpy.called);
+							if (heartbeatAfterGet !== DeviceOnlineStates.Unknown) {
+								await waitFor(() => stateChangeEventSpy.called);
+							} else {
+								await Bluebird.delay(1000);
+								expect(stateChangeEventSpy.called).to.be.false;
+							}
 
-				expect(tracker.states[device.uuid]).to.equal(
-					stateMock.DeviceOnlineStates.Online,
-				);
+							expect(tracker.states[getDevice().uuid]).to.equal(
+								heartbeatAfterGet,
+							);
 
-				const { body } = await supertest(admin)
-					.get(`/resin/device(${device.id})`)
-					.expect(200);
+							const { body } = await supertest(getActor())
+								.get(`/resin/device(${getDevice().id})`)
+								.expect(200);
 
-				expect(body.d[0]).to.not.be.undefined;
-				expect(body.d[0]).to.have.property(
-					'api_heartbeat_state',
-					stateMock.DeviceOnlineStates.Online,
-					'API heartbeat state is not online',
-				);
-			});
+							expect(body.d[0]).to.not.be.undefined;
+							expect(body.d[0]).to.have.property(
+								'api_heartbeat_state',
+								heartbeatAfterGet,
+								`API heartbeat state is not ${heartbeatAfterGet}`,
+							);
+						});
 
-			it(`Should see state become "timeout" following a delay of ${
-				devicePollInterval / 1000
-			} seconds`, async () => {
-				stateChangeEventSpy.resetHistory();
-				await Bluebird.delay(devicePollInterval);
+						it(`Should see state become "timeout" following a delay of ${
+							devicePollInterval / 1000
+						} seconds`, async () => {
+							stateChangeEventSpy.resetHistory();
+							await Bluebird.delay(devicePollInterval);
 
-				await waitFor(() => stateChangeEventSpy.called);
+							await waitFor(() => stateChangeEventSpy.called);
 
-				expect(tracker.states[device.uuid]).to.equal(
-					stateMock.DeviceOnlineStates.Timeout,
-				);
+							expect(tracker.states[getDevice().uuid]).to.equal(
+								DeviceOnlineStates.Timeout,
+							);
 
-				const { body } = await supertest(admin)
-					.get(`/resin/device(${device.id})`)
-					.expect(200);
+							const { body } = await supertest(getActor())
+								.get(`/resin/device(${getDevice().id})`)
+								.expect(200);
 
-				expect(body.d[0]).to.not.be.undefined;
-				expect(body.d[0]).to.have.property(
-					'api_heartbeat_state',
-					stateMock.DeviceOnlineStates.Timeout,
-					'API heartbeat state is not timeout',
-				);
-			});
+							expect(body.d[0]).to.not.be.undefined;
+							expect(body.d[0]).to.have.property(
+								'api_heartbeat_state',
+								DeviceOnlineStates.Timeout,
+								'API heartbeat state is not timeout',
+							);
+						});
 
-			it(`Should see state become "online" again, following a state poll`, async () => {
-				stateChangeEventSpy.resetHistory();
+						it(`Should see state become "online" again, following a state poll`, async () => {
+							stateChangeEventSpy.resetHistory();
 
-				await device.getStateV2();
+							await getStateV2();
 
-				await waitFor(() => stateChangeEventSpy.called);
+							await waitFor(() => stateChangeEventSpy.called);
 
-				expect(tracker.states[device.uuid]).to.equal(
-					stateMock.DeviceOnlineStates.Online,
-				);
+							expect(tracker.states[getDevice().uuid]).to.equal(
+								DeviceOnlineStates.Online,
+							);
 
-				const { body } = await supertest(admin)
-					.get(`/resin/device(${device.id})`)
-					.expect(200);
+							const { body } = await supertest(getActor())
+								.get(`/resin/device(${getDevice().id})`)
+								.expect(200);
 
-				expect(body.d[0]).to.not.be.undefined;
-				expect(body.d[0]).to.have.property(
-					'api_heartbeat_state',
-					stateMock.DeviceOnlineStates.Online,
-					'API heartbeat state is not online',
-				);
-			});
+							expect(body.d[0]).to.not.be.undefined;
+							expect(body.d[0]).to.have.property(
+								'api_heartbeat_state',
+								DeviceOnlineStates.Online,
+								'API heartbeat state is not online',
+							);
+						});
 
-			it(`Should see state become "offline" following a delay of ${
-				TIMEOUT_SEC + devicePollInterval / 1000
-			} seconds`, async () => {
-				stateChangeEventSpy.resetHistory();
+						it(`Should see state become "offline" following a delay of ${
+							TIMEOUT_SEC + devicePollInterval / 1000
+						} seconds`, async () => {
+							stateChangeEventSpy.resetHistory();
 
-				await Bluebird.delay(devicePollInterval + TIMEOUT_SEC * 1000);
+							await Bluebird.delay(devicePollInterval + TIMEOUT_SEC * 1000);
 
-				// it will be called for TIMEOUT and OFFLINE...
-				await waitFor(() => stateChangeEventSpy.calledTwice);
+							// it will be called for TIMEOUT and OFFLINE...
+							await waitFor(() => stateChangeEventSpy.calledTwice);
 
-				expect(tracker.states[device.uuid]).to.equal(
-					stateMock.DeviceOnlineStates.Offline,
-				);
+							expect(tracker.states[getDevice().uuid]).to.equal(
+								DeviceOnlineStates.Offline,
+							);
 
-				const { body } = await supertest(admin)
-					.get(`/resin/device(${device.id})`)
-					.expect(200);
+							const { body } = await supertest(getActor())
+								.get(`/resin/device(${getDevice().id})`)
+								.expect(200);
 
-				expect(body.d[0]).to.not.be.undefined;
-				expect(body.d[0]).to.have.property(
-					'api_heartbeat_state',
-					stateMock.DeviceOnlineStates.Offline,
-					'API heartbeat state is not offline',
-				);
-			});
+							expect(body.d[0]).to.not.be.undefined;
+							expect(body.d[0]).to.have.property(
+								'api_heartbeat_state',
+								DeviceOnlineStates.Offline,
+								'API heartbeat state is not offline',
+							);
+						});
+					});
+				},
+			);
 		});
 	});
 });
