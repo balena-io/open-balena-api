@@ -65,17 +65,17 @@ const handleResponse: request.RequestCallback = (err, response) => {
 export const fetchContractsLocally = async (repos: RepositoryInfo[]) => {
 	await Promise.all(
 		repos.map(async (repo) => {
+			const untar = tar.extract({
+				C: await prepareContractDirectory(repo),
+				strip: 1,
+			});
+
 			// We cast to ReadableStream explicitly because `request.get is of type `request.Request` and it controls whether it is a readable or writable stream internally so it is not typings-compatible with ReadableStream, even though it it functionally equivalent.
 			const get = (request.get(
 				getArchiveLinkForRepo(repo),
 				getRequestOptions(repo),
 				handleResponse,
 			) as unknown) as NodeJS.ReadableStream;
-
-			const untar = tar.extract({
-				C: await prepareContractDirectory(repo),
-				strip: 1,
-			});
 
 			await pipeline(get, untar);
 		}),
