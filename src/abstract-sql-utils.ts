@@ -22,6 +22,7 @@ export const aliasTable = (
 	abstractSqlModel.tables[toResourceName] = _.cloneDeep(
 		abstractSqlModel.tables[resourceName],
 	);
+	abstractSqlModel.tables[toResourceName].name = toResourceName;
 	if (definition) {
 		abstractSqlModel.tables[toResourceName].definition = definition;
 	}
