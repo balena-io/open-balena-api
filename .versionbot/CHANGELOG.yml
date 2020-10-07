@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix fetching contracts randomly failing due to a bug in request
+      hash: 260bd6a6bedee6442f1303a611fb5350574e82d3
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.102.3
+  date: 2020-10-05T14:37:10.764Z
+- commits:
     - subject: Update dependencies
       hash: ee6489f138e659faa052d8a5a7edab5c600cce4b
       body: |
