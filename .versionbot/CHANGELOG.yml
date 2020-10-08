@@ -1,4 +1,27 @@
 - commits:
+    - subject: Update open-balena-base to 10.1.0
+      hash: dee39c1bba6fb3ec203840a48fcf5a539a435e20
+      body: |
+        Update open-balena-base from 10.0.2 to 10.1.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 12.19.0
+              hash: 8431b0e087367ac38454017f86bd1d6f8e8eb814
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-10.1.0
+          date: 2020-10-07T14:47:49.406Z
+  version: 0.102.4
+  date: 2020-10-08T10:07:15.135Z
+- commits:
     - subject: Fix fetching contracts randomly failing due to a bug in request
       hash: 260bd6a6bedee6442f1303a611fb5350574e82d3
       body: ''
