@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'tests: consistify naming scheme'
+      hash: 41df2ef3cff527a7d7cdd12327bb1935d46250dc
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.102.5
+  date: 2020-10-12T12:27:41.357Z
+- commits:
     - subject: Update open-balena-base to 10.1.0
       hash: dee39c1bba6fb3ec203840a48fcf5a539a435e20
       body: |
