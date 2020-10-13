@@ -67,143 +67,80 @@ const addEnvHooks = (
 	hooks.addPureHook('DELETE', 'resin', resource, envVarHook);
 };
 
-addEnvHooks(
-	'application_config_variable',
-	async (
-		args: hooks.HookArgs & {
-			tx: Tx;
-		},
-	) => {
-		if (args.req.body.application != null) {
-			// If we have an application passed in the body (ie POST) then we can use that to find the devices to update.
-			return {
-				belongs_to__application: args.req.body.application,
-			};
-		}
+const addAppEnvHooks = (resource: string) =>
+	addEnvHooks(
+		resource,
+		async (
+			args: hooks.HookArgs & {
+				tx: Tx;
+			},
+		) => {
+			if (args.req.body.application != null) {
+				// If we have an application passed in the body (ie POST) then we can use that to find the devices to update.
+				return {
+					belongs_to__application: args.req.body.application,
+				};
+			}
+			const envVarIds = await sbvrUtils.getAffectedIds(args);
+			if (envVarIds.length === 0) {
+				return;
+			}
 
-		const envVarIds = await sbvrUtils.getAffectedIds(args);
-		if (envVarIds.length === 0) {
-			return;
-		}
-		return {
-			belongs_to__application: {
-				$any: {
-					$alias: 'a',
-					$expr: {
-						a: {
-							application_config_variable: {
-								$any: {
-									$alias: 'e',
-									$expr: {
-										e: {
-											id: { $in: envVarIds },
-										},
+			return {
+				belongs_to__application: {
+					$any: {
+						$alias: 'a',
+						$expr: {
+							a: {
+								[resource]: {
+									$any: {
+										$alias: 'e',
+										$expr: { e: { id: { $in: envVarIds } } },
 									},
 								},
 							},
 						},
 					},
 				},
-			},
-		};
-	},
-);
-
-addEnvHooks(
-	'application_environment_variable',
-	async (
-		args: hooks.HookArgs & {
-			tx: Tx;
-		},
-	) => {
-		if (args.req.body.application != null) {
-			// If we have an application passed in the body (ie POST) then we can use that to find the devices to update.
-			return {
-				belongs_to__application: args.req.body.application,
 			};
-		}
-		const envVarIds = await sbvrUtils.getAffectedIds(args);
-		if (envVarIds.length === 0) {
-			return;
-		}
+		},
+	);
 
-		return {
-			belongs_to__application: {
-				$any: {
-					$alias: 'a',
-					$expr: {
-						a: {
-							application_environment_variable: {
-								$any: {
-									$alias: 'e',
-									$expr: { e: { id: { $in: envVarIds } } },
-								},
-							},
+addAppEnvHooks('application_config_variable');
+addAppEnvHooks('application_environment_variable');
+
+const addDeviceEnvHooks = (resource: string) =>
+	addEnvHooks(
+		resource,
+		async (
+			args: hooks.HookArgs & {
+				tx: Tx;
+			},
+		) => {
+			if (args.req.body.device != null) {
+				// If we have a device passed in the body (ie POST) then we can use that as ID filter.
+				return { id: args.req.body.device };
+			}
+
+			const envVarIds = await sbvrUtils.getAffectedIds(args);
+			if (envVarIds.length === 0) {
+				return;
+			}
+			return {
+				[resource]: {
+					$any: {
+						$alias: 'e',
+						$expr: {
+							e: { id: { $in: envVarIds } },
 						},
 					},
 				},
-			},
-		};
-	},
-);
-
-addEnvHooks(
-	'device_config_variable',
-	async (
-		args: hooks.HookArgs & {
-			tx: Tx;
+			};
 		},
-	) => {
-		if (args.req.body.device != null) {
-			// If we have a device passed in the body (ie POST) then we can use that as ID filter.
-			return { id: args.req.body.device };
-		}
+	);
 
-		const envVarIds = await sbvrUtils.getAffectedIds(args);
-		if (envVarIds.length === 0) {
-			return;
-		}
-		return {
-			device_config_variable: {
-				$any: {
-					$alias: 'e',
-					$expr: {
-						e: { id: { $in: envVarIds } },
-					},
-				},
-			},
-		};
-	},
-);
-
-addEnvHooks(
-	'device_environment_variable',
-	async (
-		args: hooks.HookArgs & {
-			tx: Tx;
-		},
-	) => {
-		if (args.req.body.device != null) {
-			// If we have a device passed in the body (ie POST) then we can use that as ID filter.
-			return { id: args.req.body.device };
-		}
-
-		const envVarIds = await sbvrUtils.getAffectedIds(args);
-		if (envVarIds.length === 0) {
-			return;
-		}
-		return {
-			device_environment_variable: {
-				$any: {
-					$alias: 'e',
-					$expr: {
-						e: { id: { $in: envVarIds } },
-					},
-				},
-			},
-		};
-	},
-);
+addDeviceEnvHooks('device_config_variable');
+addDeviceEnvHooks('device_environment_variable');
 
 addEnvHooks(
 	'service_environment_variable',
