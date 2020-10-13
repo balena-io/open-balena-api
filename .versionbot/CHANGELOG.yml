@@ -1,4 +1,17 @@
 - commits:
+    - subject: Abstract the app & device env var update trigger hooks
+      hash: adb8a5ea7f5f3132ea28817196dfcc9e9c554ac9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.102.6
+  date: 2020-10-13T13:43:16.242Z
+- commits:
     - subject: 'tests: consistify naming scheme'
       hash: 41df2ef3cff527a7d7cdd12327bb1935d46250dc
       body: ''
