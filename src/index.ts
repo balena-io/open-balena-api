@@ -86,6 +86,7 @@ import {
 	prefetchApiKeyMiddleware,
 	sudoMiddleware,
 } from './infra/auth';
+import { isApiKeyWithRole } from './features/api-keys/lib';
 import { setupDeleteCascade as addDeleteHookForDependents } from './features/cascade-delete/setup-delete-cascade';
 import {
 	updateOrInsertModel,
@@ -200,6 +201,9 @@ export const utils = {
 	isValidInteger,
 	varListInsert,
 	throttledForEach,
+};
+export const apiKeys = {
+	isApiKeyWithRole,
 };
 export const device = {
 	supervisorProxy,

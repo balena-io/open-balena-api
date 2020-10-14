@@ -202,7 +202,7 @@ describe('Device State v2', () => {
 				{
 					tokenType: 'user token',
 					getActor: () => admin,
-					heartbeatAfterGet: DeviceOnlineStates.Online,
+					heartbeatAfterGet: DeviceOnlineStates.Unknown,
 					getDevice: () => deviceUserRequestedState,
 					getStateV2: () =>
 						fakeDevice.getStateV2(admin, deviceUserRequestedState.uuid),
@@ -235,7 +235,9 @@ describe('Device State v2', () => {
 							}
 
 							expect(tracker.states[getDevice().uuid]).to.equal(
-								heartbeatAfterGet,
+								heartbeatAfterGet !== DeviceOnlineStates.Unknown
+									? heartbeatAfterGet
+									: undefined,
 							);
 
 							const { body } = await supertest(getActor())
@@ -249,6 +251,10 @@ describe('Device State v2', () => {
 								`API heartbeat state is not ${heartbeatAfterGet}`,
 							);
 						});
+
+						if (heartbeatAfterGet === DeviceOnlineStates.Unknown) {
+							return;
+						}
 
 						it(`Should see state become "timeout" following a delay of ${
 							devicePollInterval / 1000

@@ -7,6 +7,7 @@ import { RedisClient } from 'redis';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
 import { captureException } from '../../infra/error-handling';
+import { isApiKeyWithRole } from '../api-keys/lib';
 
 import { events as deviceStateEvents } from '../device-state';
 
@@ -429,9 +430,21 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		this.isConsuming = true;
 		this.consume();
 
-		deviceStateEvents.on('get-state', async (uuid) => {
+		deviceStateEvents.on('get-state', async (uuid, { apiKey }) => {
 			try {
-				const pollInterval = await getPollInterval(uuid);
+				const key = apiKey?.key;
+				if (typeof key !== 'string') {
+					return;
+				}
+
+				const [isDeviceApiKey, pollInterval] = await Promise.all([
+					isApiKeyWithRole(key, 'device-api-key'),
+					getPollInterval(uuid),
+				]);
+
+				if (!isDeviceApiKey) {
+					return;
+				}
 
 				this.captureEventFor(uuid, pollInterval / 1000);
 			} catch (err) {

@@ -162,7 +162,8 @@ export const state: RequestHandler = async (req, res) => {
 	if (!uuid) {
 		return res.status(400).end();
 	}
-	events.emit('get-state', uuid);
+	const { apiKey } = req;
+	events.emit('get-state', uuid, { apiKey });
 
 	try {
 		const device = await sbvrUtils.db.readTransaction!((tx) =>
