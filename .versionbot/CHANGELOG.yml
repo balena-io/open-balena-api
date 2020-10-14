@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'model: Add UUID to Application model'
+      hash: 346ac32948177883f56ececdc6b78c71239b706f
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Rich Bayliss <rich@balena.io>
+        signed-off-by: Rich Bayliss <rich@balena.io>
+      author: Rich Bayliss
+      nested: []
+  version: 0.103.0
+  date: 2020-10-14T14:58:44.123Z
+- commits:
     - subject: Abstract the app & device env var update trigger hooks
       hash: adb8a5ea7f5f3132ea28817196dfcc9e9c554ac9
       body: ''
