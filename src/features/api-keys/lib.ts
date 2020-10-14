@@ -221,3 +221,42 @@ export const createGenericApiKey = async (
 		},
 	);
 };
+
+export const isApiKeyWithRole = async (
+	key: string,
+	roleName: string,
+	tx?: Tx,
+) => {
+	const role = await api.Auth.get({
+		resource: 'role',
+		passthrough: { tx, req: permissions.root },
+		id: {
+			name: roleName,
+		},
+		options: {
+			$select: 'id',
+			$filter: {
+				is_of__api_key: {
+					$any: {
+						$alias: 'khr',
+						$expr: {
+							khr: {
+								api_key: {
+									$any: {
+										$alias: 'k',
+										$expr: {
+											k: {
+												key,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	});
+	return role != null;
+};

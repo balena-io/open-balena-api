@@ -1,4 +1,4 @@
-import type { Application } from 'express';
+import type { Application, Request } from 'express';
 import type StrictEventEmitter from 'strict-event-emitter-types';
 
 import { EventEmitter } from 'events';
@@ -24,7 +24,7 @@ export const setup = (app: Application) => {
 };
 
 export interface Events {
-	'get-state': (uuid: string) => void;
+	'get-state': (uuid: string, req: Pick<Request, 'apiKey'>) => void;
 }
 export const events: StrictEventEmitter<
 	EventEmitter,

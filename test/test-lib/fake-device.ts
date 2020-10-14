@@ -34,6 +34,21 @@ export interface DeviceState {
 	};
 }
 
+export const getStateV2 = async (
+	user: UserObjectParam,
+	deviceUuid: string,
+): Promise<DeviceState> => {
+	const { body: state } = await supertest(user)
+		.get(`/device/v2/${deviceUuid}/state`)
+		.expect(200);
+
+	expect(state).to.have.property('local');
+	expect(state.local).to.have.property('name');
+	expect(state.local).to.have.property('config');
+
+	return state;
+};
+
 export async function provisionDevice(
 	admin: UserObjectParam,
 	appId: number,
@@ -81,15 +96,7 @@ export async function provisionDevice(
 		}),
 		token: randomstring.generate(16),
 		getStateV2: async (): Promise<DeviceState> => {
-			const { body: state } = await supertest(device)
-				.get(`/device/v2/${device.uuid}/state`)
-				.expect(200);
-
-			expect(state).to.have.property('local');
-			expect(state.local).to.have.property('name');
-			expect(state.local).to.have.property('config');
-
-			return state;
+			return await getStateV2(device, device.uuid);
 		},
 		patchStateV2: async (devicePatchBody: AnyObject) => {
 			await supertest(device)
