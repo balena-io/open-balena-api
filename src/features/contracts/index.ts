@@ -54,6 +54,10 @@ type FieldsMap = {
 	[dbField: string]: {
 		contractField: string;
 		default?: any;
+		refersTo?: {
+			resource: string;
+			uniqueKey: string;
+		};
 	};
 };
 // This map will hold information on which contract fields imported from the contract type will be synced to which db model and fields.
@@ -71,13 +75,37 @@ export function setSyncSettings(syncSettings: SyncSettings) {
 	globalSyncSettings = syncSettings;
 }
 
-const mapModel = (contractEntry: Contract, map: FieldsMap) => {
+const mapModel = async (
+	contractEntry: Contract,
+	map: FieldsMap,
+	rootApi: sbvrUtils.PinejsClient,
+) => {
 	const mappedModel: { [k: string]: any } = {};
 	for (const key of Object.keys(map) as Array<keyof typeof map>) {
-		mappedModel[key] =
-			_.get(contractEntry, map[key]?.contractField) ?? map[key]!.default;
-	}
+		const mapper = map[key];
+		const contractValue =
+			_.get(contractEntry, mapper?.contractField) ?? mapper!.default;
 
+		if (mapper.refersTo) {
+			try {
+				const [arch] = await rootApi.get({
+					resource: mapper.refersTo.resource,
+					options: {
+						$filter: { [mapper.refersTo.uniqueKey]: contractValue },
+						$select: ['id'],
+					},
+				});
+
+				mappedModel[key] = arch?.id;
+			} catch (err) {
+				console.error(
+					`Failed to get contract refer id for field ${key} of resource ${mapper.refersTo.resource}`,
+				);
+			}
+		} else {
+			mappedModel[key] = contractValue;
+		}
+	}
 	return mappedModel;
 };
 
@@ -129,13 +157,13 @@ const syncContractsToDb = async (
 		throw new Error(`Contract does not have a corresponding mapping: ${type}`);
 	}
 
-	const mappedModel = contracts.map((contract) =>
-		mapModel(contract, typeMap.map),
-	);
-
 	const rootApi = sbvrUtils.api.resin.clone({
 		passthrough: { req: permissions.root },
 	});
+
+	const mappedModel = contracts.map((contract) =>
+		mapModel(contract, typeMap.map, rootApi),
+	);
 
 	const existingEntries = (await rootApi.get({
 		resource: typeMap.resource,
@@ -164,18 +192,17 @@ export const synchronizeContracts = async (contractRepos: RepositoryInfo[]) => {
 		console.error(`Failed to fetch contracts, skipping...`, err.message);
 	}
 
-	await Promise.all(
-		['hw.device-type', 'arch.sw'].map(async (contractType) => {
-			try {
-				const contracts = await getContracts(contractType);
-				await syncContractsToDb(contractType, contracts, globalSyncSettings);
-			} catch (err) {
-				console.error(
-					`Failed to synchronize contract type: ${contractType}, skipping...`,
-				);
-			}
-		}),
-	);
+	// We don't have automatic dependency resolution, so the order matters here.
+	for (const contractType of ['arch.sw', 'hw.device-type']) {
+		try {
+			const contracts = await getContracts(contractType);
+			await syncContractsToDb(contractType, contracts, globalSyncSettings);
+		} catch (err) {
+			console.error(
+				`Failed to synchronize contract type: ${contractType}, skipping...`,
+			);
+		}
+	}
 };
 
 export const startContractSynchronization = async () => {

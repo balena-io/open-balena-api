@@ -60,6 +60,13 @@ async function onInitHooks() {
 				name: {
 					contractField: 'name',
 				},
+				is_of__cpu_architecture: {
+					contractField: 'data.arch',
+					refersTo: {
+						resource: 'cpu_architecture',
+						uniqueKey: 'slug',
+					},
+				},
 			},
 		},
 

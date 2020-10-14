@@ -12,41 +12,49 @@ export const addFakeDeviceTypes = async () => {
 				id: 991,
 				slug: 'dt-with-ignored-release',
 				name: 'dt-with-ignored-release',
+				is_of__cpu_architecture: 1,
 			},
 			{
 				id: 992,
 				slug: 'dt-with-403-ignore-file-release',
 				name: 'dt-with-403-ignore-file-release',
+				is_of__cpu_architecture: 1,
 			},
 			{
 				id: 993,
 				slug: 'dt-with-empty-device-type-json-release',
 				name: 'dt-with-empty-device-type-json-release',
+				is_of__cpu_architecture: 1,
 			},
 			{
 				id: 994,
 				slug: 'dt-with-404-device-type-json-release',
 				name: 'dt-with-404-device-type-json-release',
+				is_of__cpu_architecture: 1,
 			},
 			{
 				id: 995,
 				slug: 'dt-with-500-ignore-file-release',
 				name: 'dt-with-500-ignore-file-release',
+				is_of__cpu_architecture: 1,
 			},
 			{
 				id: 996,
 				slug: 'dt-with-500-device-type-json-release',
 				name: 'dt-with-500-device-type-json-release',
+				is_of__cpu_architecture: 1,
 			},
 			{
 				id: 997,
 				slug: 'dt-with-no-valid-releases',
 				name: 'dt-with-no-valid-releases',
+				is_of__cpu_architecture: 1,
 			},
 			{
 				id: 998,
 				slug: 'dt-with-failing-listing',
 				name: 'dt-with-failing-listing',
+				is_of__cpu_architecture: 1,
 			},
 		].map(async (dt) => {
 			await api.resin.post({

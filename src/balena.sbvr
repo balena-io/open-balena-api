@@ -558,6 +558,9 @@ Fact type: device type has slug
 Fact type: device type has name (Auth)
 	Necessity: each device type has exactly one name (Auth)
 
+Fact type: device type is of cpu architecture
+	Necessity: each device type is of exactly one cpu architecture
+
 -- cpu architecture
 
 Fact type: cpu architecture has slug
