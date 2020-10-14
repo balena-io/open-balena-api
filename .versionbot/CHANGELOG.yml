@@ -1,4 +1,29 @@
 - commits:
+    - subject: 'device-heartbeat: Only update for requests using the device API Key'
+      hash: 0bce898f8dbddf9933e0d62f2236be796091ff51
+      body: ''
+      footer:
+        Resolves: '#267'
+        resolves: '#267'
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Test heartbeat state changes with both user JWT & device API Key
+      hash: a6dff309cfdefb7b7cef2ea91693ead36fdf9d87
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.103.1
+  date: 2020-10-14T20:24:08.821Z
+- commits:
     - subject: 'model: Add UUID to Application model'
       hash: 346ac32948177883f56ececdc6b78c71239b706f
       body: ''
