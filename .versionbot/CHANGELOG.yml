@@ -1,4 +1,82 @@
 - commits:
+    - subject: Update dependencies
+      hash: c14ac31bd89f770ccac60fee6d6a12dbfc882a6c
+      body: |
+        Update pinejs from 14.1.1 to 14.2.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Condense starting a read only transaction to a single statement
+              hash: bdde855cccbff6e1de706355cda1b973b3eb7e9e
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.2.2
+          date: 2020-10-15T12:17:20.476Z
+        - commits:
+            - subject: Update README now that sbvr-compiler/odata-compiler are included
+              hash: 62f2846dbc0b950eeea6401e7d0782e639a7a018
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.2.1
+          date: 2020-10-13T12:00:30.220Z
+        - commits:
+            - subject: >-
+                Update dependencies, adding support for negative constants in
+                sbvr
+              hash: e82a9aeb51d17812d9969146323d747794e47d89
+              body: |
+                Update sbvr-parser from 1.0.1 to 1.1.1
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Update dependencies
+                      hash: 5739ec4e6a5da71bfcfe1cb6a9b5c3e13dc1f56e
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: sbvr-parser-1.1.1
+                  date: 2020-10-07T12:54:19.137Z
+                - commits:
+                    - subject: Add support for negative numbers for embedded data
+                      hash: a5d4f168e66ee209b673f7b20bfc4eb7e2ad657a
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                  version: sbvr-parser-1.1.0
+                  date: 2020-10-07T12:26:21.195Z
+          version: pinejs-14.2.0
+          date: 2020-10-13T11:32:30.079Z
+    - subject: Add is of cpu architecture to device type
+      hash: 99d0558c9d3ec063fa006a3fcc9d0e049250e19c
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.104.0
+  date: 2020-10-16T12:50:40.093Z
+- commits:
     - subject: 'device-heartbeat: Only update for requests using the device API Key'
       hash: 0bce898f8dbddf9933e0d62f2236be796091ff51
       body: ''
