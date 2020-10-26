@@ -56,7 +56,7 @@ ON "device-belongs to-application" ("should be running-release");
 
 -- "device config variable"."device" is the first part of an automated unique index
 
--- "device environment variable"."device" is the first part of an automated unique index
+-- "device application environment variable"."device application" is the first part of an automated unique index
 
 -- "device tag"."device" is the first part of an automated unique index
 

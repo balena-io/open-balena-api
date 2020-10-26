@@ -71,9 +71,6 @@ const stateQuery = _.once(() =>
 						name: 'asc',
 					},
 				},
-				device_environment_variable: {
-					$select: ['name', 'value'],
-				},
 				service_install: {
 					$select: ['id'],
 					$expand: {
@@ -96,6 +93,9 @@ const stateQuery = _.once(() =>
 				device_application: {
 					$select: 'id',
 					$expand: {
+						device_application_environment_variable: {
+							$select: ['name', 'value'],
+						},
 						should_be_running__release: releaseExpand,
 						belongs_to__application: {
 							$select: ['id', 'app_name'],
@@ -134,6 +134,11 @@ const stateQuery = _.once(() =>
 					$expand: {
 						device_application: {
 							$select: 'belongs_to__application',
+							$expand: {
+								device_application_environment_variable: {
+									$select: ['name', 'value'],
+								},
+							},
 						},
 						service_install: {
 							$select: ['id'],
@@ -153,9 +158,6 @@ const stateQuery = _.once(() =>
 							},
 						},
 						device_config_variable: {
-							$select: ['name', 'value'],
-						},
-						device_environment_variable: {
 							$select: ['name', 'value'],
 						},
 					},
@@ -227,7 +229,11 @@ export const state: RequestHandler = async (req, res) => {
 				varListInsert(ipr.image_environment_variable, environment);
 				varListInsert(parentApp.application_environment_variable, environment);
 				varListInsert(svc.service_environment_variable, environment);
-				varListInsert(device.device_environment_variable, environment);
+				varListInsert(
+					// TODO-MULTI-APP
+					device.device_application[0].device_application_environment_variable,
+					environment,
+				);
 				varListInsert(si.device_service_environment_variable, environment);
 
 				const labels: Dictionary<string> = {};
@@ -374,7 +380,11 @@ export const state: RequestHandler = async (req, res) => {
 				);
 			}
 
-			varListInsert(depDev.device_environment_variable, environment);
+			varListInsert(
+				// TODO-MULTI-APP
+				depDev.device_application[0].device_application_environment_variable,
+				environment,
+			);
 			if (svcInstall != null) {
 				varListInsert(
 					svcInstall.device_service_environment_variable,

@@ -43,7 +43,7 @@ export const ROLES: {
 		'resin.device.tunnel-22222',
 		'resin.device__belongs_to__application.all',
 		'resin.device_config_variable.all',
-		'resin.device_environment_variable.all',
+		'resin.device_application_environment_variable.all',
 		'resin.device_tag.all',
 		'resin.device_service_environment_variable.all',
 		'resin.gateway_download.all',
@@ -83,10 +83,10 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.application_config_variable.read?application/canAccess()',
 	'resin.release.read?should_be_running_on__device_application/canAccess() or belongs_to__application/canAccess()',
 	'resin.release_tag.read?release/canAccess()',
-	'resin.device_environment_variable.read?device/canAccess()',
+	'resin.device_application_environment_variable.read?device_application/canAccess()',
 	...writePerms(
-		'resin.device_environment_variable',
-		`device/any(d:d/${matchesActor})`,
+		'resin.device_application_environment_variable',
+		`device_application/any(da:device/any(d:d/${matchesActor}))`,
 	),
 	'resin.application_environment_variable.read?application/canAccess()',
 

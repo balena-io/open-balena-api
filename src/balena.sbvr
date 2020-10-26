@@ -317,10 +317,6 @@ Term: device
 		Necessity: each device has exactly one api heartbeat state
 		Definition: "online" or "offline" or "timeout" or "unknown"
 
-	Fact type: device has env var name
-		Term Form: device environment variable
-		Database Table Name: device environment variable
-
 	Fact type: device has name (Auth)
 		Term Form: device config variable
 		Database Table Name: device config variable
@@ -544,6 +540,10 @@ Fact type: device application is running release
 	Synonymous Form: release is running on device application
 	Necessity: each device application is running at most one release.
 
+Fact type: device application has name (Auth)
+	Term Form: device application environment variable
+	Database Table Name: device application environment variable
+
 -- application config variable
 
 Fact type: application config variable has value
@@ -651,10 +651,10 @@ Fact type: service label has value
 	Necessity: each service label has exactly one value.
 
 
--- device environment variable
+-- device application environment variable
 
-Fact type: device environment variable has value
-	Necessity: each device environment variable has exactly one value.
+Fact type: device application environment variable has value
+	Necessity: each device application environment variable has exactly one value.
 
 
 -- application environment variable

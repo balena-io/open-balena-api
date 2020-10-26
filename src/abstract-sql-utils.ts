@@ -64,21 +64,6 @@ export const renameField = (
 };
 
 export const renameEnvVarName = (abstractSql: AbstractSqlModel) => {
-	// Patching device environment variable term
-	renameField(
-		abstractSql,
-		'device-has-env var name',
-		['device', 'has'],
-		'env var name',
-		'name',
-	);
-	renameField(
-		abstractSql,
-		'device-has-env var name',
-		['has'],
-		'env var name',
-		'name',
-	);
 	// Patching application environment variable term
 	renameField(
 		abstractSql,

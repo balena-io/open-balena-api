@@ -162,7 +162,7 @@ const addDeviceEnvHooks = (resource: string) =>
 	);
 
 addDeviceEnvHooks('device_config_variable');
-addDeviceEnvHooks('device_environment_variable');
+addDeviceEnvHooks('device_application_environment_variable');
 
 addEnvHooks(
 	'service_environment_variable',
