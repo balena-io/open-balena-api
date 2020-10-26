@@ -21,7 +21,7 @@ IF NOT EXISTS(
 	EXECUTE PROCEDURE "trigger_update_modified_at"();
 END IF;
 END;
-$$
+$$;
 
 CREATE TABLE IF NOT EXISTS "organization membership" (
 	"created at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
@@ -49,7 +49,7 @@ IF NOT EXISTS(
 	EXECUTE PROCEDURE "trigger_update_modified_at"();
 END IF;
 END;
-$$
+$$;
 
 ALTER TABLE "application"
 ADD COLUMN "organization" INTEGER NULL,
