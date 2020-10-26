@@ -26,7 +26,7 @@ IF NOT EXISTS(
 	EXECUTE PROCEDURE "trigger_update_modified_at"();
 END IF;
 END;
-$$
+$$;
 
 ALTER TABLE "device"
 ADD COLUMN "should be managed by-supervisor release" INTEGER NULL,
