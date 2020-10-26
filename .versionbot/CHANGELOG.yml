@@ -1,5 +1,28 @@
 - commits:
     - subject: Update dependencies
+      hash: e91626f6f5430a17df1d05d579316e355cf15f87
+      body: |
+        Update pinejs from 14.2.2 to 14.2.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Fix logger creation for nodejs 14
+              hash: 599ccf40d3ae6b7c1c0a7fba148385de5e6f721e
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.2.3
+          date: 2020-10-22T09:29:51.229Z
+  version: 0.104.1
+  date: 2020-10-26T16:59:10.235Z
+- commits:
+    - subject: Update dependencies
       hash: c14ac31bd89f770ccac60fee6d6a12dbfc882a6c
       body: |
         Update pinejs from 14.1.1 to 14.2.2
