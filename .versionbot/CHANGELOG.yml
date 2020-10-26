@@ -1,4 +1,27 @@
 - commits:
+    - subject: Add tests that validate migrations
+      hash: 2257397ae6c7538b5437f9996b8feba050288251
+      body: |
+        Update pinejs from 14.2.3 to 14.2.4
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Leave the migrationsPath intact when loading a model
+              hash: 0f6081548868d641265e409d0262fc9e9810cb4f
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.2.4
+          date: 2020-10-26T17:44:30.841Z
+  version: 0.104.2
+  date: 2020-10-26T21:29:37.554Z
+- commits:
     - subject: Update dependencies
       hash: e91626f6f5430a17df1d05d579316e355cf15f87
       body: |
