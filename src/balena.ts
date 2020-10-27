@@ -4,6 +4,8 @@ import {
 	renameEnvVarName,
 } from './abstract-sql-utils';
 
+import * as deviceAdditions from './features/devices/models/device-additions';
+
 export const apiRoot = 'resin';
 export const modelName = 'balena';
 export const migrationsPath = __dirname + '/migrations/';
@@ -16,3 +18,5 @@ aliasTable(abstractSql, 'application', 'my application', {
 });
 
 renameEnvVarName(abstractSql);
+
+deviceAdditions.addToModel(abstractSql);

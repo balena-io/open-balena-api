@@ -25,7 +25,7 @@ describe('session', () => {
 	it('/user/v1/whoami returns a user when using a correctly scoped access token', async function () {
 		const record = (
 			await supertest(admin)
-				.get("/v5/user?$filter=username eq 'admin'")
+				.get("/resin/user?$filter=username eq 'admin'")
 				.expect(200)
 		).body.d[0];
 
@@ -48,7 +48,7 @@ describe('session', () => {
 	it('/user/v1/whoami returns a 401 error when using a scoped access token that does not have user permissions', async function () {
 		const record = (
 			await supertest(admin)
-				.get("/v5/user?$filter=username eq 'admin'")
+				.get("/resin/user?$filter=username eq 'admin'")
 				.expect(200)
 		).body.d[0];
 
