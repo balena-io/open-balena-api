@@ -1,4 +1,23 @@
 - commits:
+    - subject: Bump OData version to v6
+      hash: dbe0cb97b2b78097f179e058588d826fff7afe84
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Akis Kesoglou
+      nested: []
+    - subject: Add computed fields for “overall status” and “overall progress”
+      hash: d0411cb00d18a85a16bed2d5ffb2f6e88b806f33
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Akis Kesoglou
+      nested: []
+  version: 0.105.0
+  date: 2020-10-27T11:56:30.607Z
+- commits:
     - subject: Add tests that validate migrations
       hash: 2257397ae6c7538b5437f9996b8feba050288251
       body: |
