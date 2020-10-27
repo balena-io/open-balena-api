@@ -135,6 +135,8 @@ import {
 	setSyncSettings,
 } from './features/contracts';
 
+import * as deviceAdditions from './features/devices/models/device-additions';
+
 export * as tags from './features/tags/validation';
 
 export type { Creds, User } from './infra/auth/jwt-passport';
@@ -206,6 +208,7 @@ export const apiKeys = {
 	isApiKeyWithRole,
 };
 export const device = {
+	addVirtualFieldsToModel: deviceAdditions.addToModel,
 	supervisorProxy,
 	generateConfig,
 	filterDeviceConfig,
