@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'cpu architecture: add synonymous form to device type'
+      hash: 0cfc308b41f01b91c0976f5a5e910691eb3899d3
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.106.2
+  date: 2020-10-28T18:34:50.057Z
+- commits:
     - subject: Update tsconfig target to es2020
       hash: 814851af268a58eb6ecbcb90d0980dc104dc8129
       body: ''
