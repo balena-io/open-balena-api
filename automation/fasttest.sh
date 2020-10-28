@@ -7,7 +7,8 @@ CONFIG_FILE="$(pwd)/.fasttest"
 
 db_id=$(sed -n "1{p;q;}" "$CONFIG_FILE" 2>/dev/null) || true
 redis_id=$(sed -n "2{p;q;}" "$CONFIG_FILE" 2>/dev/null) || true
-api_id=$(sed -n "3{p;q;}" "$CONFIG_FILE" 2>/dev/null) || true
+loki_id=$(sed -n "3{p;q;}" "$CONFIG_FILE" 2>/dev/null) || true
+api_id=$(sed -n "4{p;q;}" "$CONFIG_FILE" 2>/dev/null) || true
 
 
 external=''
@@ -41,12 +42,12 @@ done
 
 if [[ $teardown -eq 1 ]]; then
 	echo 'Tearing down test environment...'
-	teardown $IMAGE_NAME $db_id $redis_id $api_id
+	teardown $IMAGE_NAME $db_id $redis_id $loki_id $api_id
 	rm "$CONFIG_FILE" 2>/dev/null || true
 	exit 0
 fi
 
-if [ -z "$db_id" ] || [ -z "$redis_id" ] || [ -z "$api_id" ]; then
+if [ -z "$db_id" ] || [ -z "$redis_id" ] || [ -z "$loki_id" ] || [ -z "$api_id" ]; then
 	echo 'Creating test environment...'
 
 	# cleanup stray containers
@@ -61,7 +62,10 @@ if [ -z "$db_id" ] || [ -z "$redis_id" ] || [ -z "$api_id" ]; then
 	redis_id=$(runredis '-p 6378:6379')
 	echo $redis_id >>"$CONFIG_FILE"
 
-	api_id=$(runapi $IMAGE_NAME $db_id $redis_id " -p 9228:9229 -v $(pwd):/usr/src/app")
+	loki_id=$(runloki '-p 3100:3100')
+	echo $loki_id >>"$CONFIG_FILE"
+
+	api_id=$(runapi $IMAGE_NAME $db_id $redis_id $loki_id " -p 9228:9229 -v $(pwd):/usr/src/app")
 	echo $api_id >>"$CONFIG_FILE"
 
 	# run prettier once before the initial setup, so that `npm run lint` does not fail
@@ -69,7 +73,7 @@ if [ -z "$db_id" ] || [ -z "$redis_id" ] || [ -z "$api_id" ]; then
 
 	setup $api_id
 else
-	docker start $db_id $redis_id $api_id
+	docker start $db_id $redis_id $loki_id $api_id
 fi
 
 echo '-----------------------------------------------------------------------'
@@ -77,6 +81,7 @@ echo 'Using containers:'
 echo "  API: $api_id"
 echo "   DB: $db_id"
 echo "Redis: $redis_id"
+echo " Loki: $loki_id"
 echo '-----------------------------------------------------------------------'
 
 echo 'Clearing database'

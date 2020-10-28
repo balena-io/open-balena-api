@@ -20,7 +20,9 @@ import {
 	addRetentionLimit,
 	BACKEND_UNAVAILABLE_FLUSH_INTERVAL,
 	getBackend,
+	getLokiBackend,
 	NDJSON_CTYPE,
+	shouldPublishToLoki,
 	STREAM_FLUSH_INTERVAL,
 	WRITE_BUFFER_LIMIT,
 } from './config';
@@ -45,7 +47,7 @@ async function getWriteContext(
 		resource: 'device',
 		id: { uuid },
 		options: {
-			$select: ['id', 'logs_channel'],
+			$select: ['id', 'logs_channel', 'belongs_to__application'],
 			$expand: {
 				image_install: {
 					$select: 'id',
@@ -65,6 +67,9 @@ async function getWriteContext(
 		| {
 				id: number;
 				logs_channel?: string;
+				belongs_to__application: {
+					__id: number;
+				};
 				image_install: Array<{
 					id: number;
 					image: Array<{
@@ -81,6 +86,7 @@ async function getWriteContext(
 	}
 	return {
 		id: device.id,
+		belongs_to__application: device.belongs_to__application.__id,
 		logs_channel: device.logs_channel,
 		uuid,
 		images: device.image_install.map((imageInstall) => {
@@ -118,7 +124,17 @@ export const store: RequestHandler = async (req: Request, res: Response) => {
 		const body: AnySupervisorLog[] = req.body;
 		const logs: DeviceLog[] = supervisor.convertLogs(ctx, body);
 		if (logs.length) {
-			await getBackend(ctx).publish(ctx, logs);
+			// start publishing to both backends
+			await Promise.all([
+				getBackend(ctx).publish(ctx, logs),
+				shouldPublishToLoki()
+					? getLokiBackend()
+							.publish(ctx, logs)
+							.catch((err) =>
+								captureException(err, 'Failed to publish logs to Loki'),
+							)
+					: undefined,
+			]);
 		}
 		res.sendStatus(201);
 	} catch (err) {
@@ -211,14 +227,22 @@ function handleStreamingWrite(
 			// Don't flush if the backend is reporting as unavailable
 			if (buffer.length && backend.available) {
 				// Even if the connection was closed, still flush the buffer
-				const promise = backend.publish(ctx, buffer);
+				const publishingToRedis = backend.publish(ctx, buffer);
+				const publishingToLoki = shouldPublishToLoki()
+					? getLokiBackend()
+							.publish(ctx, buffer)
+							.catch((err) =>
+								captureException(err, 'Failed to publish logs to Loki'),
+							)
+					: undefined;
 				// Clear the buffer
 				buffer.length = 0;
 				// Resume in case it was paused due to buffering
 				if (req.isPaused()) {
 					req.resume();
 				}
-				await promise;
+				// Wait for publishing to complete
+				await Promise.all([publishingToRedis, publishingToLoki]);
 			}
 
 			// If headers were sent, it means the connection is ended

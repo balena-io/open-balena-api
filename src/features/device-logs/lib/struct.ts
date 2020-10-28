@@ -1,6 +1,7 @@
 export interface LogContext {
 	id: number;
 	uuid: string;
+	belongs_to__application: number;
 	logs_channel?: string;
 	retention_limit?: number;
 }

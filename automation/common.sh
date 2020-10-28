@@ -5,8 +5,9 @@ teardown () {
 	local image_name=$1
 	local db_id=$2
 	local redis_id=$3
-	local api_id=$4
-	docker rm -fv $api_id $db_id $redis_id 2>/dev/null || true
+	local loki_id=$4
+	local api_id=$5
+	docker rm -fv $api_id $db_id $redis_id $loki_id 2>/dev/null || true
 	docker rmi $image_name 2>/dev/null || true
 }
 
@@ -29,17 +30,23 @@ runredis () {
 	docker run $1 -d 'redis:alpine'
 }
 
+runloki () {
+	docker run $1 -d 'grafana/loki:1.4.1'
+}
+
 runapi () {
 	local image_name=$1
 	local db_id=$2
 	local redis_id=$3
-	local extra_vol_args=$4
-	local extra_env_args=$5
+	local loki_id=$4
+	local extra_vol_args=$5
+	local extra_env_args=$6
 
 	docker run -d \
 		--privileged \
 		--link $db_id \
 		--link $redis_id \
+		--link $loki_id \
 		-v /sys/fs/cgroup:/sys/fs/cgroup:ro \
 		-e API_HOST=127.0.0.1 \
 		-e API_VPN_SERVICE_API_KEY=api_vpn_service_api_key \
@@ -64,6 +71,9 @@ runapi () {
 		-e PORT=80 \
 		-e REDIS_HOST=$redis_id \
 		-e REDIS_PORT=6379 \
+		-e LOKI_HOST=$loki_id \
+		-e LOKI_PORT=9095 \
+		-e LOKI_WRITE_PCT=100 \
 		-e REGISTRY2_HOST=registry2.balenadev.io \
 		-e REQUEST_MOCK_DEBUG=0 \
 		-e RUN_TESTS=1 \
