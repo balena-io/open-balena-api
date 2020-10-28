@@ -559,7 +559,9 @@ Fact type: device type has name (Auth)
 	Necessity: each device type has exactly one name (Auth)
 
 Fact type: device type is of cpu architecture
-	Necessity: each device type is of exactly one cpu architecture
+	Synonymous form: device type supports cpu architecture
+	Synonymous form: cpu architecture is supported by device type
+	Necessity: each device type supports exactly one cpu architecture
 
 -- cpu architecture
 
