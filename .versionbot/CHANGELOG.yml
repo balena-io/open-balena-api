@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update tsconfig target to es2020
+      hash: 814851af268a58eb6ecbcb90d0980dc104dc8129
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.106.1
+  date: 2020-10-28T14:07:55.046Z
+- commits:
     - subject: Update open-balena-base to 11.0.0
       hash: 4f90901e14e08bf033ea955c0b33ef79edf0e90b
       body: |
