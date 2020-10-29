@@ -1,4 +1,17 @@
 - commits:
+    - subject: Make cpu architecture self-contained
+      hash: af48e69e6827c1b2bbfed54989c8daae768a8ea9
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.107.0
+  date: 2020-10-29T08:51:30.593Z
+- commits:
     - subject: 'cpu architecture: add synonymous form to device type'
       hash: 0cfc308b41f01b91c0976f5a5e910691eb3899d3
       body: ''
