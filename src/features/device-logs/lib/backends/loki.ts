@@ -15,6 +15,7 @@ import {
 	QuerierClient,
 	QueryRequest,
 	QueryResponse,
+	ServiceError,
 	status,
 	StreamAdapter,
 	TailRequest,
@@ -31,8 +32,29 @@ import {
 	Subscription,
 } from '../struct';
 import { captureException } from '../../../../infra/error-handling';
+import {
+	setCurrentSubscriptions,
+	incrementSubscriptionTotal,
+	incrementPublishCallSuccessTotal,
+	incrementPublishCallFailedTotal,
+	incrementLokiPushErrorTotal,
+	incrementPublishLogMessagesTotal,
+	incrementPublishLogMessagesDropped,
+	incrementLokiPushTotal,
+	updateLokiPushDurationHistogram,
+	incrementPublishCallTotal,
+} from './metrics';
 
 const { BadRequestError } = errors;
+
+// invert status object for quick lookup of status identifier using status code
+const statusKeys = _.transform(
+	status,
+	function (result: Dictionary<string>, value, key) {
+		result[value] = key;
+	},
+	{},
+);
 
 const MIN_BACKOFF = 100;
 const MAX_BACKOFF = 10 * 1000;
@@ -74,6 +96,7 @@ function backoff<T extends (...args: any[]) => any>(
 				}
 			}
 		}
+		throw Error(`Backoff exceeded`);
 	};
 }
 
@@ -96,9 +119,14 @@ export class LokiBackend implements DeviceLogsBackend {
 			),
 		);
 		this.tailCalls = new Map();
-		this.push = backoff(this.push.bind(this), (err: any) =>
-			[status.UNAVAILABLE, status.RESOURCE_EXHAUSTED].includes(err.code),
-		);
+		this.push = backoff(this.push.bind(this), (err: ServiceError): boolean => {
+			incrementLokiPushErrorTotal(
+				err.code ? statusKeys[err.code] : 'UNDEFINED',
+			);
+			return [status.UNAVAILABLE, status.RESOURCE_EXHAUSTED].includes(
+				err.code ?? -1,
+			);
+		});
 	}
 
 	public get available(): boolean {
@@ -107,7 +135,7 @@ export class LokiBackend implements DeviceLogsBackend {
 
 	/**
 	 *
-	 * Return $count of logs matching device_id in descending (BACKWARD) order.
+	 * Return $count of logs matching device_id in ascending order.
 	 *
 	 * The logs are sorted by timestamp since Loki returns a distinct stream for each label combination.
 	 *
@@ -155,11 +183,16 @@ export class LokiBackend implements DeviceLogsBackend {
 		ctx: LogWriteContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	): Promise<any> {
+		incrementPublishCallTotal();
+		incrementPublishLogMessagesTotal(logs.length);
 		const streams = this.fromDeviceLogsToStreams(ctx, logs);
 		try {
 			await this.push(ctx.belongs_to__application, streams);
+			incrementPublishCallSuccessTotal();
 		} catch (err) {
-			captureException(err);
+			incrementPublishCallFailedTotal();
+			incrementPublishLogMessagesDropped(logs.length);
+			captureException(err, `Failed to publish logs for device ${ctx.uuid}`);
 			throw new BadRequestError(
 				`Failed to publish logs for device ${ctx.uuid}`,
 			);
@@ -167,9 +200,13 @@ export class LokiBackend implements DeviceLogsBackend {
 	}
 
 	private push(appId: number, streams: StreamAdapter[]): Promise<any> {
+		incrementLokiPushTotal();
 		const pushRequest = new PushRequest();
 		pushRequest.setStreamsList(streams);
-		return this.pusher.push(pushRequest, createOrgIdMetadata(String(appId)));
+		const startAt = Date.now();
+		return this.pusher
+			.push(pushRequest, createOrgIdMetadata(String(appId)))
+			.finally(() => updateLokiPushDurationHistogram(Date.now() - startAt));
 	}
 
 	public subscribe(ctx: LogContext, subscription: Subscription) {
@@ -198,12 +235,16 @@ export class LokiBackend implements DeviceLogsBackend {
 				}
 				this.subscriptions.removeListener(key, subscription);
 				this.tailCalls.delete(key);
+				setCurrentSubscriptions(this.tailCalls.size);
 			});
 			call.on('end', () => {
 				this.subscriptions.removeListener(key, subscription);
 				this.tailCalls.delete(key);
+				setCurrentSubscriptions(this.tailCalls.size);
 			});
 			this.tailCalls.set(key, call);
+			incrementSubscriptionTotal();
+			setCurrentSubscriptions(this.tailCalls.size);
 		}
 		this.subscriptions.on(key, subscription);
 	}

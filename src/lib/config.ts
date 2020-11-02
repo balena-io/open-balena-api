@@ -143,7 +143,7 @@ export const RATE_LIMIT_MEMORY_BACKEND = optionalVar(
 export const REDIS_HOST = requiredVar('REDIS_HOST');
 export const REDIS_PORT = intVar('REDIS_PORT');
 export const LOKI_HOST = optionalVar('LOKI_HOST');
-export const LOKI_PORT = intVar('LOKI_PORT', 3100);
+export const LOKI_PORT = intVar('LOKI_PORT', 9095);
 // control the percent of logs written to Loki while scaling up
 export const LOKI_WRITE_PCT = intVar('LOKI_WRITE_PCT', 0);
 export const REGISTRY2_HOST = requiredVar('REGISTRY2_HOST');
