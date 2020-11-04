@@ -1,4 +1,21 @@
 - commits:
+    - subject: Add limited retries to device type fetching from S3
+      hash: 9c8ad00d99b239d258dcea7130dba5dee9e60b7b
+      body: |
+        Currently if the API fails to fetch the device types,
+        it would retry infinitely, making the dashboard fail
+        to load in BoB if there are no device types in S3, and
+        this should resolve that.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.108.0
+  date: 2020-11-04T13:52:50.195Z
+- commits:
     - subject: Make cpu architecture self-contained
       hash: af48e69e6827c1b2bbfed54989c8daae768a8ea9
       body: ''
