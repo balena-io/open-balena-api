@@ -17,6 +17,7 @@ import {
 	getLogoUrl,
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
+import { withRetries } from '../../lib/utils';
 
 const { BadRequestError, NotFoundError } = errors;
 export type { NotFoundError };
@@ -46,7 +47,6 @@ interface DeviceTypeInfo {
 }
 
 const SPECIAL_SLUGS = ['edge'];
-const RETRY_DELAY = 2000; // ms
 const DEVICE_TYPES_CACHE_EXPIRATION = 5 * 60 * 1000; // 5 mins
 
 function sortBuildIds(ids: string[]): string[] {
@@ -140,8 +140,7 @@ async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 		return result;
 	} catch (err) {
 		captureException(err, 'Failed to get device types');
-		await Bluebird.delay(RETRY_DELAY);
-		return await fetchDeviceTypes();
+		throw err;
 	}
 }
 
@@ -160,11 +159,13 @@ async function fetchDeviceTypesAndReschedule(): Promise<
 	Dictionary<DeviceTypeInfo>
 > {
 	try {
-		const promise = fetchDeviceTypes().then(async (deviceTypeInfo) => {
-			// when the promise gets resolved, cache it
-			deviceTypesCache = promise;
-			return deviceTypeInfo;
-		});
+		const promise = withRetries(fetchDeviceTypes).then(
+			async (deviceTypeInfo) => {
+				// when the promise gets resolved, cache it
+				deviceTypesCache = promise;
+				return deviceTypeInfo;
+			},
+		);
 
 		// if the cache is still empty, use this promise so that
 		// we do not start a second set of requests to s3
