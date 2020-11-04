@@ -65,3 +65,20 @@ export const throttledForEach = async <T, U>(
 	// We return the results of the iterator so the caller can await them as necessary
 	return await Promise.all(promises);
 };
+
+export const withRetries = async <T>(
+	func: () => Promise<T>,
+	delayDuration = 2000,
+	retries = 2,
+): Promise<T> => {
+	try {
+		return await func();
+	} catch (err) {
+		if (retries <= 0) {
+			throw err;
+		}
+
+		await delay(delayDuration);
+		return await withRetries(func, delayDuration, retries - 1);
+	}
+};
