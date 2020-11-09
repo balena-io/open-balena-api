@@ -1,4 +1,17 @@
 - commits:
+    - subject: Upgrade Loki test image to 2.0.0
+      hash: 1c327925fb12a706ca7bf7e1ad7f2d9c89d5d404
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thomas Manning <thomasm@balena.io>
+        signed-off-by: Thomas Manning <thomasm@balena.io>
+      author: Thomas Manning
+      nested: []
+  version: 0.109.1
+  date: 2020-11-09T12:32:44.566Z
+- commits:
     - subject: >-
         Remove `--ignore-scripts` from Dockerfile so that `grpc` binary can be
         installed
