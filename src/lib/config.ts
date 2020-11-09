@@ -199,3 +199,7 @@ export const HIDE_UNVERSIONED_ENDPOINT = boolVar(
 	'HIDE_UNVERSIONED_ENDPOINT',
 	true,
 );
+
+export const EXTRA_CONTAINERS = optionalVar('EXTRA_CONTAINERS', '')
+	.split(',')
+	.map((s) => s.trim());
