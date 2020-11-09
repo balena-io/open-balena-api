@@ -1,6 +1,8 @@
 import type { DeviceLogsBackend, LogContext } from './struct';
 
 import { RedisBackend } from './backends/redis';
+import { LokiBackend } from './backends/loki';
+import { LOKI_HOST, LOKI_WRITE_PCT } from '../../../lib/config';
 
 export const NDJSON_CTYPE = 'application/x-ndjson';
 
@@ -17,6 +19,10 @@ export const WRITE_BUFFER_LIMIT = 50;
 const DEFAULT_RETENTION_LIMIT = 1000;
 
 const redis = new RedisBackend();
+const loki = new LokiBackend();
+
+export const shouldPublishToLoki = () =>
+	LOKI_HOST && LOKI_WRITE_PCT > Math.random() * 100;
 
 export function addRetentionLimit(ctx: LogContext) {
 	ctx.retention_limit = DEFAULT_RETENTION_LIMIT;
@@ -24,4 +30,8 @@ export function addRetentionLimit(ctx: LogContext) {
 
 export function getBackend(_ctx: LogContext): DeviceLogsBackend {
 	return redis;
+}
+
+export function getLokiBackend(): DeviceLogsBackend {
+	return loki;
 }
