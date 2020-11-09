@@ -31,7 +31,7 @@ runredis () {
 }
 
 runloki () {
-	docker run $1 -d 'grafana/loki:1.4.1'
+	docker run $1 -d 'grafana/loki:2.0.0'
 }
 
 runapi () {
