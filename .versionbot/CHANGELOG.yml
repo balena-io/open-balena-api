@@ -1,4 +1,39 @@
 - commits:
+    - subject: >-
+        Remove `--ignore-scripts` from Dockerfile so that `grpc` binary can be
+        installed
+      hash: 86f51080d72522c63d1014c928d307df401157eb
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thomas Manning <thomasm@balena.io>
+        signed-off-by: Thomas Manning <thomasm@balena.io>
+      author: Thomas Manning
+      nested: []
+    - subject: Add metrics for device logging
+      hash: 0a9b4b8a90b91d9731f002e35d8726b0337d400a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thomas Manning <thomasm@balena.io>
+        signed-off-by: Thomas Manning <thomasm@balena.io>
+      author: Thomas Manning
+      nested: []
+    - subject: Add new logging backend LokiBackend
+      hash: 5c4fbdd4117af959e612d669449f92b488f329a6
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thomas Manning <thomasm@balena.io>
+        signed-off-by: Thomas Manning <thomasm@balena.io>
+      author: Thomas Manning
+      nested: []
+  version: 0.109.0
+  date: 2020-11-08T09:26:50.324Z
+- commits:
     - subject: Add limited retries to device type fetching from S3
       hash: 9c8ad00d99b239d258dcea7130dba5dee9e60b7b
       body: |
