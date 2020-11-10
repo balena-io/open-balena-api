@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix device types migration
+      hash: 3af609411ca7910bb2ce1b8ac964ab411ed1113c
+      body: |
+        Fixes commit 81b1879 (#167).
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+      nested: []
+  version: 0.109.2
+  date: 2020-11-10T14:15:50.115Z
+- commits:
     - subject: Upgrade Loki test image to 2.0.0
       hash: 1c327925fb12a706ca7bf7e1ad7f2d9c89d5d404
       body: ''
