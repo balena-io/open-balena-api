@@ -16,6 +16,9 @@ ALTER COLUMN "is for-device type table" SET NOT NULL;
 ALTER TABLE "application"
 RENAME COLUMN "is for-device type table" TO "is for-device type";
 
+ALTER TABLE "application"
+DROP COLUMN IF EXISTS "device type";
+
 -- fix up device table
 
 UPDATE "device"
@@ -31,3 +34,6 @@ ALTER COLUMN "is of-device type table" SET NOT NULL;
 
 ALTER TABLE "device"
 RENAME COLUMN "is of-device type table" TO "is of-device type";
+
+ALTER TABLE "device"
+DROP COLUMN IF EXISTS "device type";
