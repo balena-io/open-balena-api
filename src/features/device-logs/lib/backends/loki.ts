@@ -56,6 +56,10 @@ const statusKeys = _.transform(
 	{},
 );
 
+// Retries disabled so that writes to Redis are not delayed on Loki error
+const RETRIES_ENABLED = false;
+// Timeout set to 1s so that writes to Redis are not delayed if Loki is slow
+const PUSH_TIMEOUT = 1000;
 const MIN_BACKOFF = 100;
 const MAX_BACKOFF = 10 * 1000;
 const VERSION = 1;
@@ -123,8 +127,9 @@ export class LokiBackend implements DeviceLogsBackend {
 			incrementLokiPushErrorTotal(
 				err.code ? statusKeys[err.code] : 'UNDEFINED',
 			);
-			return [status.UNAVAILABLE, status.RESOURCE_EXHAUSTED].includes(
-				err.code ?? -1,
+			return (
+				RETRIES_ENABLED &&
+				[status.UNAVAILABLE, status.RESOURCE_EXHAUSTED].includes(err.code ?? -1)
 			);
 		});
 	}
@@ -183,15 +188,16 @@ export class LokiBackend implements DeviceLogsBackend {
 		ctx: LogWriteContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	): Promise<any> {
+		const countLogs = logs.length;
 		incrementPublishCallTotal();
-		incrementPublishLogMessagesTotal(logs.length);
+		incrementPublishLogMessagesTotal(countLogs);
 		const streams = this.fromDeviceLogsToStreams(ctx, logs);
 		try {
 			await this.push(ctx.belongs_to__application, streams);
 			incrementPublishCallSuccessTotal();
 		} catch (err) {
 			incrementPublishCallFailedTotal();
-			incrementPublishLogMessagesDropped(logs.length);
+			incrementPublishLogMessagesDropped(countLogs);
 			captureException(err, `Failed to publish logs for device ${ctx.uuid}`);
 			throw new BadRequestError(
 				`Failed to publish logs for device ${ctx.uuid}`,
@@ -205,7 +211,9 @@ export class LokiBackend implements DeviceLogsBackend {
 		pushRequest.setStreamsList(streams);
 		const startAt = Date.now();
 		return this.pusher
-			.push(pushRequest, createOrgIdMetadata(String(appId)))
+			.push(pushRequest, createOrgIdMetadata(String(appId)), {
+				deadline: Date.now() + PUSH_TIMEOUT,
+			})
 			.finally(() => updateLokiPushDurationHistogram(Date.now() - startAt));
 	}
 
