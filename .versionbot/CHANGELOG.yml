@@ -1,4 +1,19 @@
 - commits:
+    - subject: >-
+        Set Loki timeout to 1 second with no retries so log writes are not
+        unreasonably delayed if Loki down
+      hash: 7e37a696ff6adb70c57de3729f7f3988689abef6
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thomas Manning <thomasm@balena.io>
+        signed-off-by: Thomas Manning <thomasm@balena.io>
+      author: Thomas Manning
+      nested: []
+  version: 0.109.3
+  date: 2020-11-11T06:48:11.626Z
+- commits:
     - subject: Fix device types migration
       hash: 3af609411ca7910bb2ce1b8ac964ab411ed1113c
       body: |
