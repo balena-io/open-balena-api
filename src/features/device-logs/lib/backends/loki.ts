@@ -168,7 +168,7 @@ export class LokiBackend implements DeviceLogsBackend {
 					streams.push(...queryResponse.getStreamsList());
 				});
 				call.on('error', (error: Error & { details: string }) => {
-					const message = `Failed to query logs for device ${ctx.uuid}`;
+					const message = `Failed to query logs from ${LOKI_HOST}:${LOKI_PORT} for device ${ctx.uuid}`;
 					captureException(error, message);
 					reject(new BadRequestError(message));
 				});
@@ -198,7 +198,10 @@ export class LokiBackend implements DeviceLogsBackend {
 		} catch (err) {
 			incrementPublishCallFailedTotal();
 			incrementPublishLogMessagesDropped(countLogs);
-			captureException(err, `Failed to publish logs for device ${ctx.uuid}`);
+			captureException(
+				err,
+				`Failed to publish logs to ${LOKI_HOST}:${LOKI_PORT} for device ${ctx.uuid}`,
+			);
 			throw new BadRequestError(
 				`Failed to publish logs for device ${ctx.uuid}`,
 			);
@@ -239,7 +242,10 @@ export class LokiBackend implements DeviceLogsBackend {
 			});
 			call.on('error', (err: Error & { details: string }) => {
 				if (err.details !== 'Cancelled') {
-					captureException(err, 'Loki tail call error.');
+					captureException(
+						err,
+						`Loki tail call error from ${LOKI_HOST}:${LOKI_PORT} for device ${ctx.uuid}`,
+					);
 				}
 				this.subscriptions.removeListener(key, subscription);
 				this.tailCalls.delete(key);
