@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add Loki host and port to sentry messages
+      hash: 36980076eb5abad778277f9562dec61ae7d96fa7
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thomas Manning <thomasm@balena.io>
+        signed-off-by: Thomas Manning <thomasm@balena.io>
+      author: Thomas Manning
+      nested: []
+  version: 0.109.4
+  date: 2020-11-11T11:16:06.847Z
+- commits:
     - subject: >-
         Set Loki timeout to 1 second with no retries so log writes are not
         unreasonably delayed if Loki down
