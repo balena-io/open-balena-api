@@ -7,6 +7,7 @@ import './features/dependent-devices/hooks';
 import './features/devices/hooks';
 import './features/device-urls/hooks';
 import './features/device-types/hooks';
+import './features/releases/hooks';
 import './features/tags/hooks';
 import './features/vars-schema/hooks';
 import './features/vpn/hooks';
