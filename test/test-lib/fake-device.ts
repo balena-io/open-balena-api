@@ -40,11 +40,30 @@ export interface DeviceState {
 	};
 }
 
-export const getState = async (
+export interface DeviceStateEC {
+	local: {
+		name?: string;
+		supervisor_version?: string;
+		config: _.Dictionary<string>;
+		apps: _.Dictionary<
+			DeviceStateApp & {
+				appId: number;
+				uuid: string;
+				install_type: string;
+			}
+		>;
+	};
+	dependent: {
+		apps: _.Dictionary<DeviceStateApp>;
+		devices: AnyObject;
+	};
+}
+
+export const getState = async <T extends DeviceState>(
 	user: UserObjectParam,
 	deviceUuid: string,
 	version: string = 'v2',
-): Promise<DeviceState> => {
+): Promise<T> => {
 	const { body: state } = await supertest(user)
 		.get(`/device/${version}/${deviceUuid}/state`)
 		.expect(200);
@@ -103,7 +122,7 @@ export async function provisionDevice(
 		getState: async (): Promise<DeviceState> => {
 			return await getState(device, device.uuid);
 		},
-		getStateByUuid: async (): Promise<DeviceState> => {
+		getStateByUuid: async (): Promise<DeviceStateEC> => {
 			return await getState(device, device.uuid, 'v2ec');
 		},
 		patchStateV2: async (devicePatchBody: AnyObject) => {

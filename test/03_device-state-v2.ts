@@ -85,6 +85,21 @@ describe('Device State v2', () => {
 		mockery.deregisterMock('../src/lib/device-online-state');
 	});
 
+	describe('Simple Model Check', () => {
+		it('should have the required info without any releases', async () => {
+			const tempDevice = await fakeDevice.provisionDevice(admin, applicationId);
+			const state = await tempDevice.getState();
+
+			expect(state.local.apps).to.have.property(`${applicationId}`);
+			expect(state.local.apps[`${applicationId}`])
+				.to.have.property('name')
+				.which.equals(fx.applications.app1.app_name);
+			expect(state.local.apps[`${applicationId}`]).to.have.property('services');
+			expect(state.local.apps[`${applicationId}`]).to.have.property('volumes');
+			expect(state.local.apps[`${applicationId}`]).to.have.property('networks');
+		});
+	});
+
 	describe(`API heartbeat state`, () => {
 		describe('Poll Interval Acquisition', () => {
 			it('Should see default value when not overridden', async () => {

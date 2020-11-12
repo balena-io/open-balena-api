@@ -1,0 +1,47 @@
+{
+	"image1": {
+		"user": "admin",
+		"service": "service1",
+		"releases": [ "release1" ],
+		"image_size": 1337,
+		"project_type": "Dockerfile.template",
+		"build_log": "this is the build log",
+		"status": "success"
+	},
+	"image2": {
+		"user": "admin",
+		"service": "service1",
+		"releases": [ "release1" ],
+		"image_size": 12345678,
+		"project_type": "project type goes here",
+		"build_log": "This is also the build log",
+		"status": "success"
+	},
+	"image3": {
+		"user": "admin",
+		"service": "service2",
+		"releases": [ "release2" ],
+		"image_size": 2048,
+		"project_type": "project type goes here",
+		"build_log": "This is also the build log",
+		"status": "success"
+	},
+	"supervisorImage": {
+		"user": "admin",
+		"service": "supervisorService",
+		"releases": [ "supervisorRelease" ],
+		"image_size": 2048,
+		"project_type": "project type goes here",
+		"build_log": "This is also the build log",
+		"status": "success"
+	},
+	"supervisorImagePi": {
+		"user": "admin",
+		"service": "supervisorService",
+		"releases": [ "supervisorReleasePi" ],
+		"image_size": 2048,
+		"project_type": "project type goes here",
+		"build_log": "This is also the build log",
+		"status": "success"
+	}
+}

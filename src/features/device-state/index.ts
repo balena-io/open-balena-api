@@ -15,6 +15,15 @@ export const setup = (app: Application) => {
 		apiKeyMiddleware,
 		state,
 	);
+	app.get(
+		'/device/v2ec/:uuid/state',
+		gracefullyDenyDeletedDevices,
+		apiKeyMiddleware,
+		async function (req, res, next) {
+			req.headers['x-balena-state-format'] = 'v2+extraContainers';
+			return state(req, res, next);
+		},
+	);
 	app.patch(
 		'/device/v2/:uuid/state',
 		gracefullyDenyDeletedDevices,

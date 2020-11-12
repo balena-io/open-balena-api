@@ -112,7 +112,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.image.read?image_install/canAccess() or image__is_part_of__release/canAccess()',
 
 	'resin.image_install.read?device/canAccess()',
-	`resin.image_install.create?device/any(d:d/${matchesActor} or d/is_managed_by__device/any(md:md/${matchesActor})) and installs__image/any(i:i/image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/belongs_to__application/any(a:a/${ownsDevice}))))`,
+	`resin.image_install.create?device/any(d:d/${matchesActor} or d/is_managed_by__device/any(md:md/${matchesActor})) and installs__image/any(i:i/image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/belongs_to__application/any(a:a/${ownsDevice} or (a/is_public eq true) or (a/is_host eq true)))))`,
 	`resin.image_install.update?device/any(d:d/${matchesActor} or d/is_managed_by__device/any(md:md/${matchesActor}))`,
 
 	'resin.image_label.read?release_image/canAccess()',

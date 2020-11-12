@@ -14,6 +14,8 @@ import {
 } from '../utils';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { events } from '..';
+import * as conf from '../../../lib/config';
+import { omit } from 'lodash';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -25,6 +27,161 @@ export const varListInsert = (varList: EnvVarList, obj: Dictionary<string>) => {
 	});
 };
 
+export type App = {
+	name: string;
+	commit: string;
+	releaseId: number;
+	appId?: string;
+	uuid?: string;
+	type?: 'supervised' | 'supervisor' | 'hostapp' | 'hostapp extension';
+	services: {
+		[id: number]: AppService;
+	};
+	volumes: any;
+	networks: any;
+};
+
+export type AppService = {
+	imageId: number;
+	serviceName: string;
+	image: string;
+	running: boolean;
+	environment: Dictionary<string>;
+	labels: Dictionary<string>;
+	contract?: string;
+};
+
+export type LocalState = {
+	name: string;
+	config: Dictionary<string>;
+	apps: Dictionary<Partial<App>>;
+	extraContainers?: Dictionary<Partial<App>>;
+};
+
+async function buildAppFromRelease(
+	device: AnyObject,
+	application: AnyObject,
+	release: AnyObject,
+	config: Dictionary<string>,
+): Promise<App> {
+	let composition: any = {};
+	const services: App['services'] = {};
+
+	// Parse the composition to forward values to the device
+	if (_.isObject(release.composition)) {
+		composition = release.composition;
+	} else {
+		try {
+			composition = JSON.parse(release.composition);
+		} catch (e) {
+			composition = {};
+		}
+	}
+
+	(release.contains__image as AnyObject[]).forEach((ipr) => {
+		// extract the per-image information
+		const image = ipr.image[0];
+
+		const serviceInstall = (() => {
+			const si = serviceInstallFromImage(device, image);
+
+			if (si != null) {
+				return si;
+			}
+
+			if (image.is_a_build_of__service[0] == null) {
+				throw new Error(
+					`Could not find service install for device: '${
+						device.uuid
+					}', image: '${image?.id}', service: '${JSON.stringify(
+						image?.is_a_build_of__service,
+					)}', service installs: '${JSON.stringify(device.service_install)}'`,
+				);
+			}
+
+			/**
+			 * Return a fake service install as this is what we will use for Extra Containers / MultiApp
+			 */
+			return {
+				service: [image.is_a_build_of__service[0]],
+				device_service_environment_variable: [],
+			};
+		})();
+
+		/**
+		 * Get the first service in the array, which will be tied to a service install OR directlty to an extra container app
+		 */
+		const [service] = serviceInstall.service;
+
+		const environment: Dictionary<string> = {};
+		varListInsert(ipr.image_environment_variable, environment);
+		varListInsert(application.application_environment_variable, environment);
+		varListInsert(service.service_environment_variable, environment);
+		varListInsert(device.device_environment_variable, environment);
+		varListInsert(
+			serviceInstall.device_service_environment_variable,
+			environment,
+		);
+
+		const labels: Dictionary<string> = {};
+		[...ipr.image_label, ...service.service_label].forEach(
+			({ label_name, value }: { label_name: string; value: string }) => {
+				labels[label_name] = value;
+			},
+		);
+
+		_.each(ConfigurationVarsToLabels, (labelName, confName) => {
+			if (confName in config && !(labelName in labels)) {
+				labels[labelName] = config[confName];
+			}
+		});
+
+		const imgRegistry =
+			image.is_stored_at__image_location +
+			(image.content_hash != null ? `@${image.content_hash}` : '');
+
+		services[service.id] = {
+			imageId: image.id,
+			serviceName: service.service_name,
+			image: formatImageLocation(imgRegistry),
+			// This needs spoken about...
+			running: true,
+			environment,
+			labels,
+		};
+		// Don't send a null contract as this is a waste
+		// of bandwidth (a null contract is the same as
+		// the lack of a contract field)
+		if (image.contract != null) {
+			services[service.id].contract = image.contract;
+		}
+
+		if (
+			composition != null &&
+			composition.services != null &&
+			composition.services[service.service_name] != null
+		) {
+			const compositionService = composition.services[service.service_name];
+			// We remove the `build` properly explicitly as it's expected to be present
+			// for the builder, but makes no sense for the supervisor to support
+			delete compositionService.build;
+			services[service.id] = {
+				...compositionService,
+				...services[service.id],
+			};
+		}
+	});
+
+	return {
+		releaseId: release.id,
+		commit: release.commit,
+		name: application.app_name,
+		services,
+		networks: composition?.networks || {},
+		volumes: composition?.volumes || {},
+	};
+}
+
 // These 2 config vars below are mapped to labels if missing for backwards-compatibility
 // See: https://github.com/resin-io/hq/issues/1340
 const ConfigurationVarsToLabels = {
@@ -33,8 +190,11 @@ const ConfigurationVarsToLabels = {
 };
 
 const releaseExpand = {
-	$select: ['id', 'commit', 'composition'],
+	$select: ['id', 'commit', 'composition', 'release_version'],
 	$expand: {
+		has__tag_key: {
+			$select: ['tag_key', 'value'],
+		},
 		contains__image: {
 			$select: 'id',
 			$expand: {
@@ -43,9 +203,21 @@ const releaseExpand = {
 						'id',
 						'is_stored_at__image_location',
 						'content_hash',
-						'is_a_build_of__service',
 						'contract',
 					],
+					$expand: {
+						is_a_build_of__service: {
+							$select: ['id', 'service_name'],
+							$expand: {
+								service_environment_variable: {
+									$select: ['name', 'value'],
+								},
+								service_label: {
+									$select: ['label_name', 'value'],
+								},
+							},
+						},
+					},
 				},
 				image_label: {
 					$select: ['label_name', 'value'],
@@ -63,7 +235,7 @@ const stateQuery = _.once(() =>
 		resource: 'device',
 		id: { uuid: { '@': 'uuid' } },
 		options: {
-			$select: ['device_name', 'os_version'],
+			$select: ['device_name', 'os_version', 'supervisor_version'],
 			$expand: {
 				device_config_variable: {
 					$select: ['name', 'value'],
@@ -95,7 +267,7 @@ const stateQuery = _.once(() =>
 					},
 				},
 				belongs_to__application: {
-					$select: ['id', 'app_name'],
+					$select: ['id', 'app_name', 'uuid', 'install_type'],
 					$expand: {
 						application_config_variable: {
 							$select: ['name', 'value'],
@@ -152,6 +324,7 @@ const stateQuery = _.once(() =>
 						},
 					},
 				},
+				should_be_managed_by__release: releaseExpand,
 			},
 		},
 	}),
@@ -174,120 +347,132 @@ export const state: RequestHandler = async (req, res) => {
 			throw new UnauthorizedError();
 		}
 
-		const parentApp: AnyObject = device.belongs_to__application[0];
-
-		const release = getReleaseForDevice(device);
 		const config: Dictionary<string> = {};
+
+		// add any app-specific config values...
+		const parentApp: AnyObject = device.belongs_to__application[0];
 		varListInsert(parentApp.application_config_variable, config);
+
+		// override with device-specific values...
 		varListInsert(device.device_config_variable, config);
 		filterDeviceConfig(config, device.os_version);
 		setMinPollInterval(config);
 
-		const services: AnyObject = {};
+		// get the release of the main app that this device should run...
+		const release = getReleaseForDevice(device);
 
-		let composition: AnyObject | undefined;
-		if (release != null) {
-			// Parse the composition to forward values to the device
-			if (_.isObject(release.composition)) {
-				composition = release.composition;
-			} else {
-				try {
-					composition = JSON.parse(release.composition);
-				} catch (e) {
-					composition = {};
-				}
+		// grab the main app for this device...
+		const mainApp =
+			release == null
+				? {
+						name: parentApp.app_name,
+						services: {},
+						networks: {},
+						volumes: {},
+				  }
+				: await buildAppFromRelease(device, parentApp, release, config);
+
+		/**
+		 * Grab the supervisor version for this device, either:
+		 * - the version which should be managing the device
+		 * - the version last reported to be managing the device
+		 * - empty string
+		 */
+		const supervisorVersion: string = (() => {
+			const [supervisorRelease] = device.should_be_managed_by__release;
+
+			if (supervisorRelease?.release_version != null) {
+				return supervisorRelease.release_version;
 			}
 
-			(release.contains__image as AnyObject[]).forEach((ipr) => {
-				// extract the per-image information
-				const image = ipr.image[0];
+			return device.supervisor_version ?? '';
+		})();
 
-				const si = serviceInstallFromImage(device, image);
-				if (si == null) {
-					throw new Error(
-						`Could not find service install for device: '${uuid}', image: '${
-							image?.id
-						}', service: '${JSON.stringify(
-							image?.is_a_build_of__service,
-						)}', service installs: '${JSON.stringify(device.service_install)}'`,
-					);
-				}
-				const svc = si.service[0];
+		// grab the system apps for this device...
+		const extraContainers =
+			conf.EXTRA_CONTAINERS.length === 0
+				? []
+				: await sbvrUtils.db.readTransaction!(async (tx) => {
+						const resinApiTx = api.resin.clone({ passthrough: { req, tx } });
+						return await resinApiTx.get({
+							resource: 'application',
+							options: {
+								$select: ['id', 'app_name', 'uuid', 'install_type'],
+								$expand: {
+									application_config_variable: {
+										$select: ['name', 'value'],
+										$orderby: {
+											name: 'asc',
+										},
+									},
+									application_environment_variable: {
+										$select: ['name', 'value'],
+										$orderby: {
+											name: 'asc',
+										},
+									},
+									should_be_running__release: releaseExpand,
+								},
+								$filter: {
+									uuid: {
+										$in: conf.EXTRA_CONTAINERS,
+									},
+									should_be_running__release: {
+										$any: {
+											$alias: 'r',
+											$expr: {
+												r: {
+													has__tag_key: {
+														$any: {
+															$alias: 'rt',
+															$expr: {
+																rt: {
+																	tag_key: {
+																		$startswith: 'BALENA_REQUIRED_SUPERVISOR_',
+																	},
+																	value: supervisorVersion,
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						});
+				  });
 
-				const environment: Dictionary<string> = {};
-				varListInsert(ipr.image_environment_variable, environment);
-				varListInsert(parentApp.application_environment_variable, environment);
-				varListInsert(svc.service_environment_variable, environment);
-				varListInsert(device.device_environment_variable, environment);
-				varListInsert(si.device_service_environment_variable, environment);
-
-				const labels: Dictionary<string> = {};
-				[...ipr.image_label, ...svc.service_label].forEach(
-					({ label_name, value }: { label_name: string; value: string }) => {
-						labels[label_name] = value;
-					},
-				);
-
-				_.each(ConfigurationVarsToLabels, (labelName, confName) => {
-					if (confName in config && !(labelName in labels)) {
-						labels[labelName] = config[confName];
-					}
-				});
-
-				const imgRegistry =
-					image.is_stored_at__image_location +
-					(image.content_hash != null ? `@${image.content_hash}` : '');
-
-				services[svc.id] = {
-					imageId: image.id,
-					serviceName: svc.service_name,
-					image: formatImageLocation(imgRegistry),
-					// This needs spoken about...
-					running: true,
-					environment,
-					labels,
-				};
-				// Don't send a null contract as this is a waste
-				// of bandwidth (a null contract is the same as
-				// the lack of a contract field)
-				if (image.contract != null) {
-					services[svc.id].contract = image.contract;
-				}
-
-				if (
-					composition != null &&
-					composition.services != null &&
-					composition.services[svc.service_name] != null
-				) {
-					const compositionService = composition.services[svc.service_name];
-					// We remove the `build` properly explicitly as it's expected to be present
-					// for the builder, but makes no sense for the supervisor to support
-					delete compositionService.build;
-					services[svc.id] = {
-						...compositionService,
-						...services[svc.id],
-					};
-				}
-			});
-		}
-
-		const volumes = composition?.volumes || {};
-		const networks = composition?.networks || {};
-
-		const local = {
+		const local: LocalState = {
 			name: device.device_name,
 			config,
 			apps: {
 				[parentApp.id]: {
-					name: parentApp.app_name,
-					commit: release?.commit,
-					releaseId: release?.id,
-					services,
-					volumes,
-					networks,
+					...mainApp,
+					uuid: parentApp.uuid,
+					appId: parentApp.id,
+					type: parentApp.install_type,
 				},
 			},
 		};
+
+		if (extraContainers.length > 0) {
+			local.extraContainers = {};
+			for (const app of extraContainers) {
+				local.extraContainers[app.uuid] = {
+					...(await buildAppFromRelease(
+						device,
+						app,
+						app.should_be_running__release[0],
+						config,
+					)),
+					type: app.install_type,
+					appId: app.id,
+					uuid: app.uuid,
+				};
+			}
+		}
 
 		const dependent = {
 			apps: {} as AnyObject,
@@ -382,6 +567,26 @@ export const state: RequestHandler = async (req, res) => {
 				},
 			};
 		});
+
+		if (req.headers['x-balena-state-format'] === 'v2+extraContainers') {
+			const apps = Object.entries(local.apps).map(([appId, info]) => {
+				return [info.uuid, { ...info, appId: parseInt(appId, 10) }];
+			});
+			const containers = Object.entries(local.extraContainers ?? {}).map(
+				([appUuid, info]) => {
+					return [appUuid, { ...info, uuid: appUuid }];
+				},
+			);
+
+			delete local.extraContainers;
+			local.apps = Object.fromEntries([...apps, ...containers]);
+		} else {
+			const apps = Object.entries(local.apps).map(([appId, info]) => {
+				return [appId, omit(info, ['appId', 'type', 'uuid'])];
+			});
+
+			local.apps = Object.fromEntries(apps);
+		}
 
 		res.json({
 			local,

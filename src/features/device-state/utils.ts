@@ -33,10 +33,14 @@ export const serviceInstallFromImage = (
 	}
 
 	let id: number;
-	if (typeof image.is_a_build_of__service === 'object') {
-		id = image.is_a_build_of__service.__id;
+	if (Array.isArray(image.is_a_build_of__service)) {
+		id = image.is_a_build_of__service[0].id;
 	} else {
-		id = image.is_a_build_of__service;
+		id = image.is_a_build_of__service.__id;
+	}
+
+	if (isNaN(id)) {
+		return;
 	}
 
 	return _.find(device.service_install, (si) => si.service[0].id === id);

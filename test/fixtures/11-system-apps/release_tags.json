@@ -1,0 +1,14 @@
+{
+	"tag1": {
+		"user": "admin",
+		"release": "release2",
+		"tag_key": "BALENA_REQUIRED_SUPERVISOR_1.0.0",
+		"value": "1.0.0"
+	},
+	"tag2": {
+		"user": "admin",
+		"release": "release2",
+		"tag_key": "BALENA_REQUIRED_SUPERVISOR_1.0.1",
+		"value": "1.0.1"
+	}
+}
