@@ -167,20 +167,22 @@ describe('Device State v2', () => {
 
 			let deviceUserRequestedState: fakeDevice.Device;
 
+			const stateChangeEventSpy = sinon.spy();
 			before(async () => {
 				deviceUserRequestedState = await fakeDevice.provisionDevice(
 					admin,
 					applicationId,
 				);
-			});
 
-			const stateChangeEventSpy = sinon.spy();
-			stateMock.getInstance().on('change', (args) => {
-				if (![device.uuid, deviceUserRequestedState.uuid].includes(args.uuid)) {
-					return;
-				}
+				stateMock.getInstance().on('change', (args) => {
+					if (
+						![device.uuid, deviceUserRequestedState.uuid].includes(args.uuid)
+					) {
+						return;
+					}
 
-				stateChangeEventSpy(args);
+					stateChangeEventSpy(args);
+				});
 			});
 
 			it('Should see the stats event emitted more than three times', async () => {
@@ -198,7 +200,7 @@ describe('Device State v2', () => {
 					getActor: () => device,
 					heartbeatAfterGet: DeviceOnlineStates.Online,
 					getDevice: () => device,
-					getStateV2: () => device.getStateV2(),
+					getStateV2: () => device.getState(),
 				},
 				{
 					tokenType: 'user token',
@@ -206,7 +208,7 @@ describe('Device State v2', () => {
 					heartbeatAfterGet: DeviceOnlineStates.Unknown,
 					getDevice: () => deviceUserRequestedState,
 					getStateV2: () =>
-						fakeDevice.getStateV2(admin, deviceUserRequestedState.uuid),
+						fakeDevice.getState(admin, deviceUserRequestedState.uuid),
 				},
 			].forEach(
 				({ tokenType, getActor, heartbeatAfterGet, getDevice, getStateV2 }) => {

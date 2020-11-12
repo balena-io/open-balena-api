@@ -135,7 +135,7 @@ describe('Device with missing service installs', () => {
 	it('should add a new device', async function () {
 		device = await fakeDevice.provisionDevice(admin, applicationId);
 
-		const state = await device.getStateV2();
+		const state = await device.getState();
 		expect(state.local.apps[applicationId]).to.have.property(
 			'commit',
 			'deadbeef',
@@ -151,7 +151,7 @@ describe('Device with missing service installs', () => {
 			})
 			.expect(200);
 
-		const state = await device.getStateV2();
+		const state = await device.getState();
 		expect(state.local.apps[applicationId]).to.have.property(
 			'commit',
 			'deadbeef',
@@ -201,7 +201,7 @@ describe('Device with missing service installs', () => {
 		});
 		await addImageToRelease(admin, secondImageId, releaseId);
 
-		const state = await device.getStateV2();
+		const state = await device.getState();
 		expect(state.local.apps[applicationId]).to.have.property(
 			'commit',
 			'deadbeef',
@@ -219,7 +219,7 @@ describe('Device with missing service installs', () => {
 	});
 
 	it('should pull the intended state', async function () {
-		const state = await device.getStateV2();
+		const state = await device.getState();
 		expect(state.local.apps[applicationId]).to.have.property(
 			'commit',
 			'abcd0001',
