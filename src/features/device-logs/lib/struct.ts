@@ -66,3 +66,7 @@ export enum StreamState {
 	Saturated,
 	Closed,
 }
+
+export interface DeviceLogsUsageMeter {
+	incrementBytesRetained(ctx: LogContext, bytes: number): void;
+}

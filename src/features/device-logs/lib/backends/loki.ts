@@ -28,6 +28,7 @@ import {
 	DeviceLog,
 	DeviceLogsBackend,
 	LogContext,
+	DeviceLogsUsageMeter,
 	LogWriteContext,
 	Subscription,
 } from '../struct';
@@ -109,6 +110,7 @@ export class LokiBackend implements DeviceLogsBackend {
 	private querier: QuerierClient;
 	private pusher: IGrpcClientAsync;
 	private tailCalls: Map<string, ClientReadableStream<TailResponse>>;
+	private usageMeter: DeviceLogsUsageMeter | undefined;
 
 	constructor() {
 		this.subscriptions = new EventEmitter();
@@ -194,6 +196,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		const streams = this.fromDeviceLogsToStreams(ctx, logs);
 		try {
 			await this.push(ctx.belongs_to__application, streams);
+			this.usageMeter?.incrementBytesRetained(ctx, this.getSizeInBytes(logs));
 			incrementPublishCallSuccessTotal();
 		} catch (err) {
 			incrementPublishCallFailedTotal();
@@ -267,6 +270,14 @@ export class LokiBackend implements DeviceLogsBackend {
 		const key = this.getKey(ctx);
 		const call = this.tailCalls.get(key);
 		call?.cancel();
+	}
+
+	public attachUsageMeter(usageMeter: DeviceLogsUsageMeter) {
+		this.usageMeter = usageMeter;
+	}
+
+	public detachUsageMeter() {
+		this.usageMeter = undefined;
 	}
 
 	private getDeviceQuery(ctx: LogContext) {
@@ -356,5 +367,9 @@ export class LokiBackend implements DeviceLogsBackend {
 			stream.addEntries(entry);
 		}
 		return streams;
+	}
+
+	private getSizeInBytes(logs: DeviceLog[]) {
+		return logs.reduce((sum, log) => sum + Buffer.byteLength(log.message), 0);
 	}
 }

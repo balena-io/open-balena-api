@@ -2,6 +2,7 @@ import _ = require('lodash');
 import * as Bluebird from 'bluebird';
 import { expect } from './test-lib/chai';
 import { LokiBackend } from '../src/features/device-logs/lib/backends/loki';
+import { DeviceLogsUsageMeter } from '../src/features/device-logs/lib/struct';
 
 const createLog = (extra = {}) => {
 	return {
@@ -124,5 +125,33 @@ describe('loki backend', () => {
 			];
 			await loki.publish(ctx, logs);
 		}).timeout(5000, 'Subscription did not receive logs');
+	});
+
+	it('should call usageMeter after successful publish', async function () {
+		const loki = new LokiBackend();
+		const ctx = createContext();
+		const logs = [
+			createLog({ serviceId: 1 }),
+			createLog({ serviceId: 2 }),
+			createLog({ serviceId: 3 }),
+		];
+		const size = logs.reduce(
+			(sum, log) => sum + Buffer.byteLength(log.message),
+			0,
+		);
+		await new Bluebird(async (resolve) => {
+			const meter: DeviceLogsUsageMeter = {
+				incrementBytesRetained: (_ctx, bytes: number) => {
+					if (size !== bytes) {
+						throw new Error('Retained bytes does not match expected size');
+					} else {
+						loki.detachUsageMeter(); // detach to prevent multiple calls due to subsequent tests
+						resolve();
+					}
+				},
+			};
+			loki.attachUsageMeter(meter);
+			await loki.publish(ctx, logs);
+		}).timeout(1000, 'Usage meter not called');
 	});
 });
