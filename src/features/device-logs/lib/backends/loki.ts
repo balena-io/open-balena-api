@@ -62,7 +62,7 @@ const RETRIES_ENABLED = false;
 const PUSH_TIMEOUT = 1000;
 const MIN_BACKOFF = 100;
 const MAX_BACKOFF = 10 * 1000;
-const VERSION = 1;
+const VERSION = 2;
 
 function createTimestampFromDate(date = new Date()) {
 	const timestamp = new Timestamp();
@@ -277,8 +277,8 @@ export class LokiBackend implements DeviceLogsBackend {
 		return `app:${ctx.belongs_to__application}:device:${ctx.id}:${suffix}`;
 	}
 
-	private getLabels(ctx: LogContext, log: DeviceLog): string {
-		return `{device_id="${ctx.id}", service_id="${log.serviceId ?? 'null'}"}`;
+	private getLabels(ctx: LogContext): string {
+		return `{device_id="${ctx.id}"}`;
 	}
 
 	private validateLog(log: DeviceLog): asserts log is DeviceLog {
@@ -343,7 +343,7 @@ export class LokiBackend implements DeviceLogsBackend {
 			const logJson = JSON.stringify(log);
 			// create entry with labels, line and timestamp
 			const entry = new EntryAdapter().setLine(logJson).setTimestamp(timestamp);
-			const labels = this.getLabels(ctx, log);
+			const labels = this.getLabels(ctx);
 			// append entry to stream
 			let stream = streamIndex[labels];
 			if (!stream) {

@@ -54,8 +54,8 @@ describe('loki backend', () => {
 		// @ts-expect-error usage of private function
 		const streams = loki.fromDeviceLogsToStreams(ctx, _.cloneDeep(logs));
 		expect(streams.length).to.be.equal(
-			4,
-			'should be 4 streams since 5 logs have 4 distinct services (null, 1, 2, 3)',
+			1,
+			'should be 1 stream since all logs share the same device id',
 		);
 		// @ts-expect-error usage of private function
 		const logsFromStreams = loki.fromStreamsToDeviceLogs(streams);
