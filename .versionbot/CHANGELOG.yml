@@ -1,4 +1,23 @@
 - commits:
+    - subject: Update dependencies
+      hash: 605d1f92878abf2c0c2ffae7179aac7c1d63cc00
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Specify es2020 for @balena/es-version
+      hash: bc0324ea1044b4ca9ddcf8196c9f10ee792ad925
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.110.2
+  date: 2020-11-23T17:28:37.685Z
+- commits:
     - subject: Improve the cache of the S3-fetched device types
       hash: 4ee7e7cee87aee63384e29ca83e00500154f274b
       body: ''
