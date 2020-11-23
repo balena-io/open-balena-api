@@ -1,4 +1,17 @@
 - commits:
+    - subject: Improve the cache of the S3-fetched device types
+      hash: 4ee7e7cee87aee63384e29ca83e00500154f274b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.110.1
+  date: 2020-11-23T16:38:40.494Z
+- commits:
     - subject: Add contract field to release resource
       hash: 1e89823f4bb1712963cede5a7b29acffd22296e4
       body: ''
