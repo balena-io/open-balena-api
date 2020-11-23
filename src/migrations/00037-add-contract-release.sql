@@ -1,0 +1,2 @@
+ALTER TABLE "release" 
+ADD COLUMN IF NOT EXISTS "contract" TEXT NULL;
