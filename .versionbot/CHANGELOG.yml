@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add contract field to release resource
+      hash: 1e89823f4bb1712963cede5a7b29acffd22296e4
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.110.0
+  date: 2020-11-23T14:59:30.408Z
+- commits:
     - subject: Update open-balena-base to 11.0.2
       hash: c2c5015410f26538c408880d38eecf53b2268f73
       body: |
