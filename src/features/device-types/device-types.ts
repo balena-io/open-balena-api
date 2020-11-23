@@ -101,50 +101,48 @@ async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	const result: Dictionary<DeviceTypeInfo> = {};
 	getIsIgnored.clear();
 	getDeviceTypeJson.clear();
-	try {
-		const slugs = await listFolders(IMAGE_STORAGE_PREFIX);
-		await Promise.all(
-			slugs.map(async (slug) => {
-				try {
-					const builds = await listFolders(getImageKey(slug));
-					if (_.isEmpty(builds)) {
-						return;
-					}
-
-					const sortedBuilds = sortBuildIds(builds);
-					const latestBuildInfo = await getFirstValidBuild(slug, sortedBuilds);
-					if (!latestBuildInfo) {
-						return;
-					}
-
-					result[slug] = {
-						versions: builds,
-						latest: latestBuildInfo,
-					};
-
-					_.forEach(latestBuildInfo.deviceType.aliases, (alias) => {
-						result[alias] = result[slug];
-					});
-				} catch (err) {
-					captureException(
-						err,
-						`Failed to find a valid build for device type ${slug}`,
-					);
+	const slugs = await listFolders(IMAGE_STORAGE_PREFIX);
+	await Promise.all(
+		slugs.map(async (slug) => {
+			try {
+				const builds = await listFolders(getImageKey(slug));
+				if (_.isEmpty(builds)) {
+					return;
 				}
-			}),
-		);
 
-		if (_.isEmpty(result) && !_.isEmpty(slugs)) {
-			throw new InternalRequestError('Could not retrieve any device type');
-		}
-		return result;
-	} catch (err) {
-		captureException(err, 'Failed to get device types');
-		throw err;
+				const sortedBuilds = sortBuildIds(builds);
+				const latestBuildInfo = await getFirstValidBuild(slug, sortedBuilds);
+				if (!latestBuildInfo) {
+					return;
+				}
+
+				result[slug] = {
+					versions: builds,
+					latest: latestBuildInfo,
+				};
+
+				_.forEach(latestBuildInfo.deviceType.aliases, (alias) => {
+					result[alias] = result[slug];
+				});
+			} catch (err) {
+				captureException(
+					err,
+					`Failed to find a valid build for device type ${slug}`,
+				);
+			}
+		}),
+	);
+
+	if (_.isEmpty(result) && !_.isEmpty(slugs)) {
+		throw new InternalRequestError('Could not retrieve any device type');
 	}
+	return result;
 }
 
-let deviceTypesCache: Promise<Dictionary<DeviceTypeInfo>> | undefined;
+let deviceTypesCache:
+	| Promise<Dictionary<DeviceTypeInfo>>
+	| Dictionary<DeviceTypeInfo>
+	| undefined;
 
 async function scheduleFetchDeviceTypes() {
 	try {
@@ -159,13 +157,7 @@ async function fetchDeviceTypesAndReschedule(): Promise<
 	Dictionary<DeviceTypeInfo>
 > {
 	try {
-		const promise = withRetries(fetchDeviceTypes).then(
-			async (deviceTypeInfo) => {
-				// when the promise gets resolved, cache it
-				deviceTypesCache = promise;
-				return deviceTypeInfo;
-			},
-		);
+		const promise = withRetries(fetchDeviceTypes);
 
 		// if the cache is still empty, use this promise so that
 		// we do not start a second set of requests to s3
@@ -173,7 +165,17 @@ async function fetchDeviceTypesAndReschedule(): Promise<
 		if (!deviceTypesCache) {
 			deviceTypesCache = promise;
 		}
-		return await promise;
+
+		try {
+			deviceTypesCache = await promise;
+			return deviceTypesCache;
+		} catch (err) {
+			if (deviceTypesCache === promise) {
+				deviceTypesCache = undefined;
+			}
+			captureException(err, 'Failed to get device types');
+			throw err;
+		}
 	} finally {
 		// schedule a re-run to update the local cache - do not wait for it
 		scheduleFetchDeviceTypes();
