@@ -28,7 +28,15 @@ export function addRetentionLimit(ctx: LogContext) {
 	ctx.retention_limit = DEFAULT_RETENTION_LIMIT;
 }
 
-export function getBackend(_ctx: LogContext): DeviceLogsBackend {
+export function getBackend(ctx: LogContext): DeviceLogsBackend {
+	if (ctx?.backend === 'redis') {
+		return getRedisBackend();
+	} else {
+		return getLokiBackend();
+	}
+}
+
+export function getRedisBackend(): DeviceLogsBackend {
 	return redis;
 }
 

@@ -4,6 +4,7 @@ export interface LogContext {
 	belongs_to__application: number;
 	logs_channel?: string;
 	retention_limit?: number;
+	backend?: string;
 }
 
 export interface LogWriteContext extends LogContext {
