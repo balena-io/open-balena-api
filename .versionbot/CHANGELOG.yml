@@ -1,4 +1,17 @@
 - commits:
+    - subject: Remove `service_id` from LokiBackend labels to reduce cardinality
+      hash: 152aa18e7b411306827913600fc5f57d614d4a39
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thomas Manning <thomasm@balena.io>
+        signed-off-by: Thomas Manning <thomasm@balena.io>
+      author: Thomas Manning
+      nested: []
+  version: 0.110.3
+  date: 2020-11-26T08:11:18.096Z
+- commits:
     - subject: Update dependencies
       hash: 605d1f92878abf2c0c2ffae7179aac7c1d63cc00
       body: ''
