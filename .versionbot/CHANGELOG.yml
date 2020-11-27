@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add option to Loki backend to print verbose error message
+      hash: 5956bafee7df4623647ad58a0f34336af9c294d7
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thomas Manning <thomasm@balena.io>
+        signed-off-by: Thomas Manning <thomasm@balena.io>
+      author: Thomas Manning
+      nested: []
+  version: 0.110.4
+  date: 2020-11-27T09:44:18.616Z
+- commits:
     - subject: Remove `service_id` from LokiBackend labels to reduce cardinality
       hash: 152aa18e7b411306827913600fc5f57d614d4a39
       body: ''
