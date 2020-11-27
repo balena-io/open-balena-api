@@ -63,6 +63,7 @@ const PUSH_TIMEOUT = 1000;
 const MIN_BACKOFF = 100;
 const MAX_BACKOFF = 10 * 1000;
 const VERSION = 2;
+const VERBOSE_ERROR_MESSAGE = true;
 
 function createTimestampFromDate(date = new Date()) {
 	const timestamp = new Timestamp();
@@ -198,10 +199,11 @@ export class LokiBackend implements DeviceLogsBackend {
 		} catch (err) {
 			incrementPublishCallFailedTotal();
 			incrementPublishLogMessagesDropped(countLogs);
-			captureException(
-				err,
-				`Failed to publish logs to ${LOKI_HOST}:${LOKI_PORT} for device ${ctx.uuid}`,
-			);
+			let message = `Failed to publish logs to ${LOKI_HOST}:${LOKI_PORT} for device ${ctx.uuid}`;
+			if (VERBOSE_ERROR_MESSAGE) {
+				message += JSON.stringify(logs, null, '\t').substr(0, 1000);
+			}
+			captureException(err, message);
 			throw new BadRequestError(
 				`Failed to publish logs for device ${ctx.uuid}`,
 			);
