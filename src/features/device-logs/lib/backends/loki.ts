@@ -63,21 +63,12 @@ const PUSH_TIMEOUT = 1000;
 const MIN_BACKOFF = 100;
 const MAX_BACKOFF = 10 * 1000;
 const VERSION = 2;
-const VERBOSE_ERROR_MESSAGE = true;
+const VERBOSE_ERROR_MESSAGE = false;
 
 function createTimestampFromDate(date = new Date()) {
 	const timestamp = new Timestamp();
 	timestamp.fromDate(date);
 	return timestamp;
-}
-
-function convertToNanoseconds(milliseconds: number, nonce: number) {
-	const MS_TO_NANOS = 1000000;
-	const seconds = Math.floor(milliseconds / 1000);
-	const nanos = (milliseconds % 1000) * MS_TO_NANOS;
-
-	// use nonce to create unique nanosecond component
-	return [seconds, nanos + nonce];
 }
 
 function backoff<T extends (...args: any[]) => any>(
@@ -180,7 +171,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		);
 		return _.orderBy(
 			this.fromStreamsToDeviceLogs(responseStreams),
-			'timestamp',
+			'nanoTimestamp',
 			'asc',
 		);
 	}
@@ -201,7 +192,11 @@ export class LokiBackend implements DeviceLogsBackend {
 			incrementPublishLogMessagesDropped(countLogs);
 			let message = `Failed to publish logs to ${LOKI_HOST}:${LOKI_PORT} for device ${ctx.uuid}`;
 			if (VERBOSE_ERROR_MESSAGE) {
-				message += JSON.stringify(logs, null, '\t').substr(0, 1000);
+				message += JSON.stringify(
+					logs,
+					(key, value) => (key === 'nanoTimestamp' ? undefined : value),
+					'\t',
+				).substr(0, 1000);
 			}
 			captureException(err, message);
 			throw new BadRequestError(
@@ -310,6 +305,10 @@ export class LokiBackend implements DeviceLogsBackend {
 		try {
 			return stream.getEntriesList().map((entry: EntryAdapter) => {
 				const log = JSON.parse(entry.getLine());
+				const timestamp = entry.getTimestamp() as Timestamp;
+				log.nanoTimestamp =
+					BigInt(timestamp.getSeconds()) * 1000000000n +
+					BigInt(timestamp.getNanos());
 				if (log.version !== VERSION) {
 					throw new Error(
 						`Invalid Loki serialization version: ${JSON.stringify(log)}`,
@@ -328,21 +327,18 @@ export class LokiBackend implements DeviceLogsBackend {
 		ctx: LogWriteContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	) {
-		let nonce = 0;
 		const streams: StreamAdapter[] = [];
 		const streamIndex: { [key: string]: StreamAdapter } = {}; // index streams by labels for fast lookup
 		for (const log of logs) {
 			this.validateLog(log);
 			log.version = VERSION;
-			const [seconds, nanoseconds] = convertToNanoseconds(
-				log.timestamp,
-				nonce++,
-			);
 			const timestamp = new Timestamp();
-			timestamp.setSeconds(seconds);
-			timestamp.setNanos(nanoseconds);
+			timestamp.setSeconds(Math.floor(Number(log.nanoTimestamp / 1000000000n)));
+			timestamp.setNanos(Number(log.nanoTimestamp % 1000000000n));
 			// store log line as JSON
-			const logJson = JSON.stringify(log);
+			const logJson = JSON.stringify(log, (key, value) =>
+				key === 'nanoTimestamp' ? undefined : value,
+			);
 			// create entry with labels, line and timestamp
 			const entry = new EntryAdapter().setLine(logJson).setTimestamp(timestamp);
 			const labels = this.getLabels(ctx);

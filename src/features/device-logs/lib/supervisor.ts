@@ -9,6 +9,7 @@ import type {
 	OldSupervisorLog,
 	SupervisorLog,
 } from './struct';
+import { getNanoTimestamp } from '../../../lib/utils';
 
 const MAX_LOGS_PER_BATCH = 10;
 
@@ -45,6 +46,7 @@ export class Supervisor {
 			return;
 		}
 		return {
+			nanoTimestamp: getNanoTimestamp(),
 			createdAt: Date.now(),
 			timestamp: log.timestamp,
 			isSystem: log.isSystem === true,
@@ -72,6 +74,7 @@ export class Supervisor {
 			}
 		}
 		return {
+			nanoTimestamp: getNanoTimestamp(),
 			createdAt: Date.now(),
 			timestamp: log.timestamp,
 			isSystem: log.is_system === true,

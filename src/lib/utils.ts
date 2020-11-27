@@ -4,6 +4,14 @@ import * as ipaddr from 'ipaddr.js';
 import { promisify } from 'util';
 import { delay } from 'bluebird';
 
+// process.hrtime() will give nanos, but it is from an unknown relative time, not epoch.
+// This approach calculates the difference and adds to get the current nano time.
+const loadNs = BigInt(Date.now()) * 1000000n - process.hrtime.bigint();
+
+export function getNanoTimestamp() {
+	return loadNs + process.hrtime.bigint();
+}
+
 export const pseudoRandomBytesAsync = promisify(pseudoRandomBytes);
 
 export const isValidInteger = (num: any): num is number => {

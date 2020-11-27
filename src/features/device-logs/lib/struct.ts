@@ -16,6 +16,7 @@ export interface LogWriteContext extends LogContext {
 // This is the format we store and that we output to consumers
 export interface DeviceLog {
 	message: string;
+	nanoTimestamp: bigint;
 	// These 2 dates are timestamps including milliseconds
 	createdAt: number;
 	timestamp: number;
