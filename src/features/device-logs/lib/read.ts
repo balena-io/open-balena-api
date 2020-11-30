@@ -17,6 +17,7 @@ import {
 	HEARTBEAT_INTERVAL,
 	NDJSON_CTYPE,
 } from './config';
+import { getNanoTimestamp } from '../../../lib/utils';
 
 const { NotFoundError } = errors;
 const { api } = sbvrUtils;
@@ -76,6 +77,7 @@ async function handleStreamingRead(
 		if (dropped) {
 			const now = Date.now();
 			onLog({
+				nanoTimestamp: getNanoTimestamp(),
 				createdAt: now,
 				timestamp: now,
 				isStdErr: true,

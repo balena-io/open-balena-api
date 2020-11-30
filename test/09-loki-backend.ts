@@ -2,12 +2,14 @@ import _ = require('lodash');
 import * as Bluebird from 'bluebird';
 import { expect } from './test-lib/chai';
 import { LokiBackend } from '../src/features/device-logs/lib/backends/loki';
+import { getNanoTimestamp } from '../src/lib/utils';
 
 const createLog = (extra = {}) => {
 	return {
 		isStdErr: true,
 		isSystem: true,
 		message: `a log line`,
+		nanoTimestamp: getNanoTimestamp(),
 		timestamp: Date.now(),
 		createdAt: Date.now(),
 		...extra,
@@ -65,12 +67,13 @@ describe('loki backend', () => {
 	it('should push multiple logs with different labels and return in order', async function () {
 		const loki = new LokiBackend();
 		const ctx = createContext();
+		const now = getNanoTimestamp();
 		const logs = [
-			createLog({ timestamp: Date.now() - 4 }),
-			createLog({ timestamp: Date.now() - 3 }),
-			createLog({ timestamp: Date.now() - 2, isStdErr: false }),
-			createLog({ timestamp: Date.now() - 1, isStdErr: false }),
-			createLog({ timestamp: Date.now(), isStdErr: false, isSystem: false }),
+			createLog({ nanoTimestamp: now - 4n }),
+			createLog({ nanoTimestamp: now - 3n }),
+			createLog({ nanoTimestamp: now - 2n, isStdErr: false }),
+			createLog({ nanoTimestamp: now - 1n, isStdErr: false }),
+			createLog({ nanoTimestamp: now, isStdErr: false, isSystem: false }),
 		];
 		const response = await loki.publish(ctx, _.cloneDeep(logs));
 		expect(response).to.be.not.null;
@@ -114,13 +117,13 @@ describe('loki backend', () => {
 			});
 			// let time pass after subscription so multiple logs with different times can be published
 			await Bluebird.delay(100);
-			const now = Date.now();
+			const now = getNanoTimestamp();
 			const logs = [
-				createLog({ timestamp: now - 4 }),
-				createLog({ timestamp: now - 3 }),
-				createLog({ timestamp: now - 2, isStdErr: false }),
-				createLog({ timestamp: now - 1, isStdErr: false }),
-				createLog({ timestamp: now, isStdErr: false, isSystem: false }),
+				createLog({ nanoTimestamp: now - 4n }),
+				createLog({ nanoTimestamp: now - 3n }),
+				createLog({ nanoTimestamp: now - 2n, isStdErr: false }),
+				createLog({ nanoTimestamp: now - 1n, isStdErr: false }),
+				createLog({ nanoTimestamp: now, isStdErr: false, isSystem: false }),
 			];
 			await loki.publish(ctx, logs);
 		}).timeout(5000, 'Subscription did not receive logs');
