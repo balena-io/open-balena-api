@@ -1,4 +1,19 @@
 - commits:
+    - subject: >-
+        Change LokiBackend to store using nanosecond timestamp calculated when
+        log was received
+      hash: 20e6da8bd35843496b8a032d82936896057c2310
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thomas Manning <thomasm@balena.io>
+        signed-off-by: Thomas Manning <thomasm@balena.io>
+      author: Thomas Manning
+      nested: []
+  version: 0.110.5
+  date: 2020-11-27T15:42:36.268Z
+- commits:
     - subject: Add option to Loki backend to print verbose error message
       hash: 5956bafee7df4623647ad58a0f34336af9c294d7
       body: ''
