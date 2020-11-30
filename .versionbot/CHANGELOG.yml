@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix device log read serialization to ignore `nanoTimestamp`
+      hash: 0aa1f69ba0e761c3645cbcb319e84bad2dffe145
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thomas Manning <thomasm@balena.io>
+        signed-off-by: Thomas Manning <thomasm@balena.io>
+      author: Thomas Manning
+      nested: []
+  version: 0.110.6
+  date: 2020-11-30T11:49:16.853Z
+- commits:
     - subject: >-
         Change LokiBackend to store using nanosecond timestamp calculated when
         log was received
