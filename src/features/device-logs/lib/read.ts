@@ -61,7 +61,11 @@ async function handleStreamingRead(
 			dropped++;
 		} else if (state !== StreamState.Closed) {
 			if (
-				!res.write(JSON.stringify(log) + '\n') &&
+				!res.write(
+					JSON.stringify(log, (key, value) =>
+						key === 'nanoTimestamp' ? undefined : value,
+					) + '\n',
+				) &&
 				state === StreamState.Writable
 			) {
 				state = StreamState.Saturated;
