@@ -14,6 +14,14 @@ export function getNanoTimestamp() {
 
 export const pseudoRandomBytesAsync = promisify(pseudoRandomBytes);
 
+export const isValidUrl = (url: string) => {
+	try {
+		return Boolean(new URL(url));
+	} catch {
+		return false;
+	}
+};
+
 export const isValidInteger = (num: any): num is number => {
 	const n = checkInt(num);
 	return n !== false && n > 0;

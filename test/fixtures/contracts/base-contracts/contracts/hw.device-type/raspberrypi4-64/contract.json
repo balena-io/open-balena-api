@@ -4,6 +4,12 @@
   "type": "hw.device-type",
   "aliases": [],
   "name": "Raspberry Pi 4 (using 64bit OS)",
+  "assets": {
+    "logo": {
+      "url": "./raspberrypi4-64.svg",
+      "name": "logo"
+    }
+  },
   "data": {
     "arch": "aarch64",
     "hdmi": true,

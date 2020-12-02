@@ -4,6 +4,12 @@
   "type": "hw.device-type",
   "aliases": ["nuc"],
   "name": "Intel NUC",
+  "assets": {
+    "logo": {
+      "url": "./intel-nuc.svg",
+      "name": "logo"
+    }
+  },
   "data": {
     "arch": "amd64",
     "hdmi": true,

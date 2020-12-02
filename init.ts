@@ -60,6 +60,9 @@ async function onInitHooks() {
 				name: {
 					contractField: 'name',
 				},
+				logo: {
+					contractField: 'assets.logo.url',
+				},
 				is_of__cpu_architecture: {
 					contractField: 'data.arch',
 					refersTo: {

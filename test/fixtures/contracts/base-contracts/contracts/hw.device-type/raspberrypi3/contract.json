@@ -4,6 +4,12 @@
   "type": "hw.device-type",
   "aliases": [],
   "name": "Raspberry Pi 3",
+  "assets": {
+    "logo": {
+      "url": "./raspberrypi3.svg",
+      "name": "logo"
+    }
+  },
   "data": {
     "arch": "armv7hf",
     "hdmi": true,

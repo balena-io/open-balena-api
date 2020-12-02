@@ -8,12 +8,81 @@ import * as stream from 'stream';
 import * as path from 'path';
 import * as os from 'os';
 import type { RepositoryInfo, Contract } from './index';
+import { isValidUrl } from '../../lib/utils';
 
 const pipeline = util.promisify(stream.pipeline);
 const exists = util.promisify(fs.exists);
 const mkdir = util.promisify(fs.mkdir);
 
 const CONTRACTS_BASE_DIR = path.join(os.tmpdir(), 'contracts');
+
+const getDataUri = async (
+	filePath: string,
+	mimeType: 'image/png' | 'image/svg+xml',
+) => {
+	const base64Content = (await fs.promises.readFile(filePath)).toString(
+		'base64',
+	);
+	return `data:${mimeType};base64,${base64Content}`;
+};
+
+// All assets that are stored together with the contract are encoded and stored in a dataurl format.
+const handleLocalAssetUrl = async (assetUrl: string): Promise<string> => {
+	switch (path.extname(assetUrl)) {
+		case '.svg': {
+			return getDataUri(assetUrl, 'image/svg+xml');
+		}
+		case '.png': {
+			return getDataUri(assetUrl, 'image/png');
+		}
+		default:
+			return assetUrl;
+	}
+};
+
+const normalizeAssets = async (
+	contractFilepath: string,
+	assets: Contract['assets'],
+) => {
+	if (!assets || _.isEmpty(assets)) {
+		return assets;
+	}
+
+	const normalizedAssets: Contract['assets'] = {};
+
+	await Promise.all(
+		Object.entries(assets).map(async ([key, asset]) => {
+			if (isValidUrl(asset.url)) {
+				normalizedAssets[key] = asset;
+				return;
+			}
+
+			// Convert from relative to absolute path for the asset file and make sure it doesn't try to access files outside of the contract folder.
+			const contractDir = path.dirname(contractFilepath);
+			const normalizedUrl = path.resolve(contractDir, asset.url);
+			if (!normalizedUrl.startsWith(contractDir)) {
+				console.error(
+					`Contract asset URL '${asset.url}' is invalid, excluding asset from contract`,
+				);
+				return;
+			}
+
+			try {
+				normalizedAssets[key] = {
+					...asset,
+					url: await handleLocalAssetUrl(normalizedUrl),
+				};
+			} catch (e) {
+				console.error(
+					`Failed to normalize contract asset for url ${normalizedUrl}, excluding asset`,
+					e,
+				);
+			}
+		}),
+	);
+
+	return normalizedAssets;
+};
 
 const getArchiveLinkForRepo = (repo: RepositoryInfo) => {
 	return `https://api.github.com/repos/${repo.owner}/${repo.name}/tarball`;
@@ -101,7 +170,12 @@ export const getContracts = async (type: string): Promise<Contract[]> => {
 
 	const contracts = await Promise.all(
 		contractFiles.map(async (file) => {
-			return JSON.parse(await fs.promises.readFile(file, { encoding: 'utf8' }));
+			const contract = JSON.parse(
+				await fs.promises.readFile(file, { encoding: 'utf8' }),
+			);
+
+			contract.assets = await normalizeAssets(file, contract.assets);
+			return contract;
 		}),
 	);
 

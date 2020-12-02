@@ -65,6 +65,34 @@ describe('contracts', () => {
 			).to.not.be.undefined;
 		});
 
+		it('should normalize the assets included with the contracts', async () => {
+			mockRepo('balena-io', 'contracts', 'base-contracts');
+			mockRepo('balena-io', 'other-contracts');
+			await fetchContractsLocally([
+				{ owner: 'balena-io', name: 'contracts' },
+				{ owner: 'balena-io', name: 'other-contracts' },
+			]);
+
+			const contracts = await getContracts('hw.device-type');
+			const rpi3Contract = contracts.find(
+				(contract) => contract.slug === 'raspberrypi3',
+			);
+			const otherDtContract = contracts.find(
+				(contract) => contract.slug === 'other-contract-dt',
+			);
+
+			expect(rpi3Contract?.assets?.logo).to.exist;
+			expect(rpi3Contract?.assets?.logo.url).to.contain(
+				'data:image/svg+xml;base64,',
+			);
+			expect(rpi3Contract?.assets?.logo.url).to.have.length(6850);
+
+			expect(otherDtContract?.assets?.logo).to.exist;
+			expect(otherDtContract?.assets?.logo.url).to.equal(
+				'https://balena.io/logo.png',
+			);
+		});
+
 		it('should update data as the contracts change', async () => {
 			mockRepo('balena-io', 'contracts', 'base-contracts');
 			await fetchContractsLocally([{ owner: 'balena-io', name: 'contracts' }]);

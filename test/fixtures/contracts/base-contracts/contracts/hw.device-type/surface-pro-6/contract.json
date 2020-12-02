@@ -3,7 +3,13 @@
   "version": "1",
   "type": "hw.device-type",
   "aliases": [],
-  "name": "Microsoft Surface Pro 6",
+  "name": "Microsoft Surface 6",
+  "assets": {
+    "logo": {
+      "url": "./surface-pro-6.svg",
+      "name": "logo"
+    }
+  },
   "data": {
     "arch": "amd64",
     "hdmi": true,

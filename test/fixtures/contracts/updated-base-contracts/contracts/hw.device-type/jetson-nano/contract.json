@@ -1,19 +1,23 @@
 {
-  "slug": "skx2",
+  "slug": "jetson-nano",
   "version": "1",
   "type": "hw.device-type",
   "aliases": [],
-  "name": "SKX2",
+  "name": "Nvidia Jetson Nano SD-CARD",
+  "assets": [{
+    "url": "./jetson-nano.svg",
+    "name": "logo"
+  }],
   "data": {
     "arch": "aarch64",
     "hdmi": true,
     "led": false,
     "connectivity": {
-      "bluetooth": true,
-      "wifi": true
+      "bluetooth": false,
+      "wifi": false
     },
     "storage": {
-      "internal": true
+      "internal": false
     },
     "media": {
       "installation": "sdcard"

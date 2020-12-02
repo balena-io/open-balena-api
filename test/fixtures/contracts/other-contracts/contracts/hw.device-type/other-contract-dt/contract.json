@@ -4,6 +4,12 @@
   "type": "hw.device-type",
   "aliases": [],
   "name": "Other DT",
+  "assets": {
+    "logo": {
+      "url": "https://balena.io/logo.png",
+      "name": "logo"
+    }
+  },
   "data": {
     "arch": "armv7hf",
     "hdmi": true,

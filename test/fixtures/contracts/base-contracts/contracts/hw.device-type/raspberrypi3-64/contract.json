@@ -3,7 +3,13 @@
   "version": "1",
   "type": "hw.device-type",
   "aliases": [],
-  "name": "Raspberry Pi 3 64bits",
+  "name": "Raspberry Pi 3 (using 64bit OS)",
+  "assets": {
+    "logo": {
+      "url": "./raspberrypi3-64.svg",
+      "name": "logo"
+    }
+  },
   "data": {
     "arch": "aarch64",
     "hdmi": true,
