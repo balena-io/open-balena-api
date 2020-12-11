@@ -1,4 +1,15 @@
 - commits:
+    - subject: Avoid updating unchanged entries when syncing a contract
+      hash: f8dce734a22c163831b79a0aa2b7f213691fa753
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.110.8
+  date: 2020-12-11T18:21:16.448Z
+- commits:
     - subject: Update pinejs to 14.2.6
       hash: 8cd9f6cfe49679c3be0d82532e1f84d074903e08
       body: |
