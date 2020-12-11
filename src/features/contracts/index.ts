@@ -125,8 +125,7 @@ const upsertEntries = async (
 						resource,
 						body: entry,
 						options: {
-							$filter: { [uniqueField]: entry[uniqueField] },
-							returnResource: false,
+							$filter: { [uniqueField]: entry[uniqueField], $not: entry },
 						},
 					});
 				}
