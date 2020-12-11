@@ -71,10 +71,6 @@ const stateQuery = _.once(() =>
 						name: 'asc',
 					},
 				},
-				device_environment_variable: {
-					$select: ['name', 'value'],
-				},
-				should_be_running__release: releaseExpand,
 				service_install: {
 					$select: ['id'],
 					$expand: {
@@ -94,19 +90,14 @@ const stateQuery = _.once(() =>
 						},
 					},
 				},
-				belongs_to__application: {
-					$select: ['id', 'app_name'],
+				device_application: {
+					$select: 'id',
 					$expand: {
-						application_config_variable: {
-							$select: ['name', 'value'],
-							$orderby: {
-								name: 'asc',
-							},
-						},
-						application_environment_variable: {
+						device_application_environment_variable: {
 							$select: ['name', 'value'],
 						},
-						is_depended_on_by__application: {
+						should_be_running__release: releaseExpand,
+						belongs_to__application: {
 							$select: ['id', 'app_name'],
 							$expand: {
 								application_config_variable: {
@@ -118,15 +109,37 @@ const stateQuery = _.once(() =>
 								application_environment_variable: {
 									$select: ['name', 'value'],
 								},
+								is_depended_on_by__application: {
+									$select: ['id', 'app_name'],
+									$expand: {
+										application_config_variable: {
+											$select: ['name', 'value'],
+											$orderby: {
+												name: 'asc',
+											},
+										},
+										application_environment_variable: {
+											$select: ['name', 'value'],
+										},
+										should_be_running__release: releaseExpand,
+									},
+								},
 								should_be_running__release: releaseExpand,
 							},
 						},
-						should_be_running__release: releaseExpand,
 					},
 				},
 				manages__device: {
-					$select: ['uuid', 'device_name', 'belongs_to__application'],
+					$select: ['uuid', 'device_name'],
 					$expand: {
+						device_application: {
+							$select: 'belongs_to__application',
+							$expand: {
+								device_application_environment_variable: {
+									$select: ['name', 'value'],
+								},
+							},
+						},
 						service_install: {
 							$select: ['id'],
 							$top: 1,
@@ -145,9 +158,6 @@ const stateQuery = _.once(() =>
 							},
 						},
 						device_config_variable: {
-							$select: ['name', 'value'],
-						},
-						device_environment_variable: {
 							$select: ['name', 'value'],
 						},
 					},
@@ -174,7 +184,8 @@ export const state: RequestHandler = async (req, res) => {
 			throw new UnauthorizedError();
 		}
 
-		const parentApp: AnyObject = device.belongs_to__application[0];
+		const parentApp: AnyObject =
+			device.device_application[0]?.belongs_to__application[0];
 
 		const release = getReleaseForDevice(device);
 		const config: Dictionary<string> = {};
@@ -218,7 +229,11 @@ export const state: RequestHandler = async (req, res) => {
 				varListInsert(ipr.image_environment_variable, environment);
 				varListInsert(parentApp.application_environment_variable, environment);
 				varListInsert(svc.service_environment_variable, environment);
-				varListInsert(device.device_environment_variable, environment);
+				varListInsert(
+					// TODO-MULTI-APP
+					device.device_application[0].device_application_environment_variable,
+					environment,
+				);
 				varListInsert(si.device_service_environment_variable, environment);
 
 				const labels: Dictionary<string> = {};
@@ -334,7 +349,8 @@ export const state: RequestHandler = async (req, res) => {
 		);
 
 		(device.manages__device as AnyObject[]).forEach((depDev) => {
-			const depAppId: number = depDev.belongs_to__application.__id;
+			const depAppId: number =
+				depDev.device_application[0]?.belongs_to__application.__id;
 			const {
 				release: depRelease,
 				application_environment_variable,
@@ -364,7 +380,11 @@ export const state: RequestHandler = async (req, res) => {
 				);
 			}
 
-			varListInsert(depDev.device_environment_variable, environment);
+			varListInsert(
+				// TODO-MULTI-APP
+				depDev.device_application[0].device_application_environment_variable,
+				environment,
+			);
 			if (svcInstall != null) {
 				varListInsert(
 					svcInstall.device_service_environment_variable,

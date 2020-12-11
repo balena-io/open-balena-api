@@ -73,8 +73,8 @@ const createAppServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,
 	appId: number,
 	deviceIds: number[],
-): Promise<void> =>
-	createReleaseServiceInstalls(api, deviceIds, {
+): Promise<void> => {
+	await createReleaseServiceInstalls(api, deviceIds, {
 		should_be_running_on__application: {
 			$any: {
 				$alias: 'a',
@@ -82,11 +82,12 @@ const createAppServiceInstalls = async (
 			},
 		},
 	});
+};
 
-hooks.addPureHook('POST', 'resin', 'device', {
-	POSTRUN: async ({ request, api, tx, result: deviceId }) => {
-		// Don't try to add service installs if the device wasn't created
-		if (deviceId == null) {
+hooks.addPureHook('POST', 'resin', 'device_application', {
+	POSTRUN: async ({ request, api, tx, result: deviceAppId }) => {
+		// Don't try to add service installs if the device app wasn't created
+		if (deviceAppId == null) {
 			return;
 		}
 
@@ -95,78 +96,66 @@ hooks.addPureHook('POST', 'resin', 'device', {
 		await createAppServiceInstalls(
 			rootApi,
 			request.values.belongs_to__application,
-			[deviceId],
+			[request.values.device],
 		);
 	},
 });
 
-hooks.addPureHook('PATCH', 'resin', 'device', {
-	POSTRUN: async (args) => {
-		const affectedIds = args.request.affectedIds!;
-
-		// We need to delete all service_install resources for the current device and
-		// create new ones for the new application (if the device is moving application)
-		if (
-			args.request.values.belongs_to__application != null &&
-			affectedIds.length !== 0
-		) {
-			await args.api.delete({
-				resource: 'service_install',
-				options: {
-					$filter: {
-						device: { $in: affectedIds },
-					},
-				},
-			});
-			await createAppServiceInstalls(
-				args.api,
-				args.request.values.belongs_to__application,
-				affectedIds,
-			);
-		}
-	},
-});
-
-hooks.addPureHook('PATCH', 'resin', 'device', {
+hooks.addPureHook('PATCH', 'resin', 'device_application', {
 	POSTRUN: async ({ api, request }) => {
 		const affectedIds = request.affectedIds!;
 		if (
-			request.values.should_be_running__release !== undefined &&
-			affectedIds.length !== 0
+			affectedIds.length === 0 ||
+			request.values.should_be_running__release === undefined
 		) {
-			// If the device was preloaded, and then pinned, service_installs do not exist
-			// for this device+release combination. We need to create these
-			if (request.values.should_be_running__release != null) {
-				await createReleaseServiceInstalls(api, affectedIds, {
-					id: request.values.should_be_running__release,
-				});
-			} else {
-				const devices = (await api.get({
-					resource: 'device',
-					options: {
-						$select: ['id', 'belongs_to__application'],
-						$filter: {
-							id: { $in: affectedIds },
-						},
+			return;
+		}
+
+		const deviceApps = (await api.get({
+			resource: 'device_application',
+			options: {
+				$select: ['device', 'belongs_to__application'],
+				$filter: {
+					id: {
+						$in: affectedIds,
 					},
-				})) as Array<{
-					id: number;
-					belongs_to__application: { __id: number };
-				}>;
-				const devicesByApp = _.groupBy(
-					devices,
-					(d) => d.belongs_to__application.__id,
-				);
-				await Promise.all(
-					Object.keys(devicesByApp).map((appId) =>
-						createAppServiceInstalls(
-							api,
-							devicesByApp[appId][0].belongs_to__application.__id,
-							devicesByApp[appId].map((d) => d.id),
-						),
-					),
-				);
-			}
+				},
+			},
+		})) as Array<{
+			device: { __id: number };
+			belongs_to__application: { __id: number };
+		}>;
+
+		if (deviceApps.length === 0) {
+			return;
+		}
+
+		const deviceIds = deviceApps.map(({ device }) => device.__id);
+
+		// If the device was preloaded, and then pinned, service_installs do not exist
+		// for this device+release combination. We need to create these
+		if (request.values.should_be_running__release != null) {
+			await createReleaseServiceInstalls(api, deviceIds, {
+				id: request.values.should_be_running__release,
+			});
+		} else {
+			const devicesByApp = _.groupBy(
+				deviceApps,
+				(d) => d.belongs_to__application.__id,
+			);
+			await Promise.all(
+				Object.keys(devicesByApp).map(async (groupId) => {
+					const appId = devicesByApp[groupId][0]?.belongs_to__application.__id;
+					if (appId == null) {
+						return;
+					}
+					await createAppServiceInstalls(
+						api,
+						appId,
+						devicesByApp[groupId].map((d) => d.device.__id),
+					);
+				}),
+			);
 		}
 	},
 });

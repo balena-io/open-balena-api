@@ -13,11 +13,20 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 				url: '/v1/update',
 				req: permissions.root,
 				filter: {
-					belongs_to__application: { $in: affectedIds },
-					is_running__release: {
-						$ne: request.values.should_be_running__release,
+					device_application: {
+						$any: {
+							$alias: 'da',
+							$expr: {
+								da: {
+									belongs_to__application: { $in: affectedIds },
+									is_running__release: {
+										$ne: request.values.should_be_running__release,
+									},
+									should_be_running__release: null,
+								},
+							},
+						},
 					},
-					should_be_running__release: null,
 				},
 				// Don't wait for the posts to complete, as they may take a long time and we've already sent the prompt to update.
 				wait: false,

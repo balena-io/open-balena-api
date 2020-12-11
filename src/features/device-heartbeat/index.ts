@@ -64,12 +64,21 @@ const getPollIntervalForParentApplication = _.once(() =>
 						$alias: 'a',
 						$expr: {
 							a: {
-								owns__device: {
+								device_application: {
 									$any: {
-										$alias: 'd',
+										$alias: 'da',
 										$expr: {
-											d: {
-												uuid: { '@': 'uuid' },
+											da: {
+												device: {
+													$any: {
+														$alias: 'd',
+														$expr: {
+															d: {
+																uuid: { '@': 'uuid' },
+															},
+														},
+													},
+												},
 											},
 										},
 									},

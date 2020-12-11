@@ -17,7 +17,7 @@ const envVarHook: hooks.Hooks = {
 
 for (const resource of [
 	'application_environment_variable',
-	'device_environment_variable',
+	'device_application_environment_variable',
 	'service_environment_variable',
 	'device_service_environment_variable',
 ]) {

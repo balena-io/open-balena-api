@@ -137,7 +137,6 @@ const deleteOldGatewayDownloads = async (
 
 const validPatchFields = [
 	'is_managed_by__device',
-	'should_be_running__release',
 	'device_name',
 	'status',
 	'is_online',
@@ -213,45 +212,6 @@ export const statePatch: RequestHandler = async (req, res) => {
 				throw new UnauthorizedError();
 			}
 
-			if (local != null) {
-				if (local.is_on__commit === null) {
-					deviceBody!.is_running__release = null;
-				} else if (local.is_on__commit !== undefined) {
-					const [release] = await resinApiTx.get({
-						resource: 'release',
-						options: {
-							$select: 'id',
-							$filter: {
-								commit: local.is_on__commit,
-								status: 'success',
-								belongs_to__application: {
-									$any: {
-										$alias: 'a',
-										$expr: {
-											a: {
-												owns__device: {
-													$any: {
-														$alias: 'd',
-														$expr: {
-															d: { uuid },
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					});
-
-					if (release != null) {
-						// Only set the running release if it's valid, otherwise just silently ignore it
-						deviceBody!.is_running__release = release.id;
-					}
-				}
-			}
-
 			const waitPromises: Array<PromiseLike<any>> = [];
 
 			if (!_.isEmpty(deviceBody)) {
@@ -265,6 +225,71 @@ export const statePatch: RequestHandler = async (req, res) => {
 						body: deviceBody,
 					}),
 				);
+			}
+
+			if (local != null) {
+				const deviceAppBody: AnyObject = {};
+				if (local.is_on__commit === null) {
+					deviceAppBody.is_running__release = null;
+				} else if (local.is_on__commit !== undefined) {
+					const [release] = await resinApiTx.get({
+						resource: 'release',
+						options: {
+							$select: 'id',
+							$filter: {
+								commit: local.is_on__commit,
+								status: 'success',
+								belongs_to__application: {
+									$any: {
+										$alias: 'a',
+										$expr: {
+											a: {
+												device_application: {
+													$any: {
+														$alias: 'da',
+														$expr: {
+															da: {
+																device: {
+																	$any: {
+																		$alias: 'd',
+																		$expr: {
+																			d: { uuid },
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					});
+
+					if (release != null) {
+						// Only set the running release if it's valid, otherwise just silently ignore it
+						deviceAppBody.is_running__release = release.id;
+					}
+				}
+				if (local.should_be_running__release !== undefined) {
+					deviceAppBody.should_be_running__release =
+						local.should_be_running__release;
+				}
+
+				if (!_.isEmpty(deviceAppBody)) {
+					waitPromises.push(
+						resinApiTx.patch({
+							resource: 'device_application',
+							options: {
+								$filter: { device: device.id, $not: deviceAppBody },
+							},
+							body: deviceAppBody,
+						}),
+					);
+				}
 			}
 
 			if (apps != null) {
@@ -300,7 +325,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 				// Get access to a root api, as images shouldn't be allowed to change
 				// the service_install values
 				const rootApi = resinApiTx.clone({
-					passthrough: { req: permissions.root },
+					passthrough: { req: permissions.root, custom, tx },
 				});
 
 				const body = { status: 'deleted' };

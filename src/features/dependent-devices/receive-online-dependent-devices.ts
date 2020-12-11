@@ -85,7 +85,16 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 				options: {
 					$filter: {
 						is_managed_by__device: gateway,
-						belongs_to__application: dependent_app,
+						device_application: {
+							$any: {
+								$alias: 'da',
+								$expr: {
+									da: {
+										belongs_to__application: dependent_app,
+									},
+								},
+							},
+						},
 						...(online_dependent_devices.length === 0
 							? {}
 							: {
@@ -116,7 +125,16 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 					options: {
 						$select: 'local_id',
 						$filter: {
-							belongs_to__application: dependent_app,
+							device_application: {
+								$any: {
+									$alias: 'da',
+									$expr: {
+										da: {
+											belongs_to__application: dependent_app,
+										},
+									},
+								},
+							},
 							local_id: { $in: online_dependent_devices },
 						},
 					},
@@ -136,6 +154,7 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 							body: {
 								uuid: randomstring.generate({ length: 62, charset: 'hex' }),
 								belongs_to__user: user,
+								// TODO-MULTI-APP: This relies on the hook creating the device_application
 								belongs_to__application: dependent_app,
 								device_type: dependent_device_type,
 								local_id: localId,
@@ -155,7 +174,16 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 						options: {
 							$filter: {
 								local_id: { $in: online_dependent_devices },
-								belongs_to__application: dependent_app,
+								device_application: {
+									$any: {
+										$alias: 'da',
+										$expr: {
+											da: {
+												belongs_to__application: dependent_app,
+											},
+										},
+									},
+								},
 								$or: [
 									{
 										is_managed_by__device: null,
