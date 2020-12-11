@@ -315,13 +315,17 @@ export const addToModel = (
 										'is provided by-release',
 									],
 									[
-										'Coalesce',
-										['ReferencedField', 'device', 'should be running-release'],
+										'SelectQuery',
 										[
-											'SelectQuery',
+											'Select',
 											[
-												'Select',
 												[
+													'Coalesce',
+													[
+														'ReferencedField',
+														'device-belongs to-application',
+														'should be running-release',
+													],
 													[
 														'ReferencedField',
 														'application',
@@ -329,18 +333,34 @@ export const addToModel = (
 													],
 												],
 											],
-											['From', ['Table', 'application']],
+										],
+										['From', ['Table', 'device-belongs to-application']],
+										[
+											'Join',
+											['Table', 'application'],
 											[
-												'Where',
+												'On',
 												[
 													'Equals',
 													[
 														'ReferencedField',
-														'device',
+														'device-belongs to-application',
 														'belongs to-application',
 													],
 													['ReferencedField', 'application', 'id'],
 												],
+											],
+										],
+										[
+											'Where',
+											[
+												'Equals',
+												[
+													'ReferencedField',
+													'device-belongs to-application',
+													'device',
+												],
+												['ReferencedField', 'device', 'id'],
 											],
 										],
 									],

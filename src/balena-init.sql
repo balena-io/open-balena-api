@@ -39,18 +39,20 @@ ON "application" ("application type");
 
 CREATE INDEX IF NOT EXISTS "device_actor_idx"
 ON "device" ("actor");
-CREATE INDEX IF NOT EXISTS "device_application_idx"
-ON "device" ("belongs to-application");
 CREATE INDEX IF NOT EXISTS "device_is_managed_by_device_idx"
 ON "device" ("is managed by-device");
 CREATE INDEX IF NOT EXISTS "device_is_managed_by_service_instance_idx"
 ON "device" ("is managed by-service instance");
 CREATE INDEX IF NOT EXISTS "device_device_type_idx"
 ON "device" ("is of-device type");
-CREATE INDEX IF NOT EXISTS "device_is_running_release_idx"
-ON "device" ("is running-release");
-CREATE INDEX IF NOT EXISTS "device_should_be_running_release_idx"
-ON "device" ("should be running-release");
+
+-- "device-belongs to-application"."device" is the first part of an automated unique index
+CREATE INDEX IF NOT EXISTS "device_application_application_idx"
+ON "device-belongs to-application" ("belongs to-application");
+CREATE INDEX IF NOT EXISTS "device_application_is_running_release_idx"
+ON "device-belongs to-application" ("is running-release");
+CREATE INDEX IF NOT EXISTS "device_application_should_be_running_release_idx"
+ON "device-belongs to-application" ("should be running-release");
 
 -- "device config variable"."device" is the first part of an automated unique index
 

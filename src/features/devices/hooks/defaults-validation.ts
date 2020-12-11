@@ -58,15 +58,6 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			}
 		}
 
-		// When moving application make sure to set the build to null, unless a specific new
-		// build has been targeted, instead of pointing to a build of the wrong application
-		if (
-			request.values.belongs_to__application != null &&
-			request.values.should_be_running__release === undefined
-		) {
-			request.values.should_be_running__release = null;
-		}
-
 		if (request.values.is_connected_to_vpn != null) {
 			request.values.is_online = request.values.is_connected_to_vpn;
 			request.values.last_vpn_event = new Date();

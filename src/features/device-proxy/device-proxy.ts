@@ -95,12 +95,22 @@ export const proxy = async (req: Request, res: Response) => {
 
 		// Only check the validity of ids if they exist.
 		if (appId != null) {
-			filter.belongs_to__application = checkInt(appId);
-			if (filter.belongs_to__application === false) {
+			const parsedAppId = checkInt(appId);
+			if (parsedAppId === false) {
 				throw new BadRequestError(
 					'App ID must be a valid integer if specified',
 				);
 			}
+			filter.device_application = {
+				$any: {
+					$alias: 'da',
+					$expr: {
+						da: {
+							belongs_to__application: parsedAppId,
+						},
+					},
+				},
+			};
 		}
 		if (deviceId != null) {
 			filter.id = checkInt(deviceId);

@@ -49,7 +49,7 @@ export const register: RequestHandler = async (req, res) => {
 		// but clone to make sure it isn't propagated elsewhere
 		req = _.clone(req);
 		req.apiKey = _.cloneDeep(req.apiKey);
-		if (req.apiKey != null && req.apiKey.permissions != null) {
+		if (req.apiKey?.permissions != null) {
 			req.apiKey.permissions.push('resin.device.read');
 			req.apiKey.permissions.push('resin.device.create-device-api-key');
 		}
@@ -57,13 +57,16 @@ export const register: RequestHandler = async (req, res) => {
 		const response = await sbvrUtils.db.transaction(async (tx) => {
 			const device = await api.resin.post({
 				resource: 'device',
-				passthrough: { req, tx },
+				passthrough: {
+					req,
+					tx,
+				},
 				body: {
 					belongs_to__user: userId,
-					belongs_to__application: applicationId,
 					device_type: deviceType,
 					supervisor_version: supervisorVersion,
 					uuid,
+					belongs_to__application: applicationId,
 				},
 			});
 			if (device == null) {

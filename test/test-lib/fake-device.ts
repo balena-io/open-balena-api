@@ -76,6 +76,7 @@ export async function provisionDevice(
 	const { body: deviceEntry } = await supertest(admin)
 		.post('/resin/device')
 		.send({
+			// TODO-MULTI-APP: This relies on the hook creating the device_application
 			belongs_to__application: appId,
 			uuid: deviceUuid,
 			device_type: deviceType,

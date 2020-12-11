@@ -74,7 +74,6 @@ const stateQuery = _.once(() =>
 				device_environment_variable: {
 					$select: ['name', 'value'],
 				},
-				should_be_running__release: releaseExpand,
 				service_install: {
 					$select: ['id'],
 					$expand: {
@@ -94,19 +93,11 @@ const stateQuery = _.once(() =>
 						},
 					},
 				},
-				belongs_to__application: {
-					$select: ['id', 'app_name'],
+				device_application: {
+					$select: 'id',
 					$expand: {
-						application_config_variable: {
-							$select: ['name', 'value'],
-							$orderby: {
-								name: 'asc',
-							},
-						},
-						application_environment_variable: {
-							$select: ['name', 'value'],
-						},
-						is_depended_on_by__application: {
+						should_be_running__release: releaseExpand,
+						belongs_to__application: {
 							$select: ['id', 'app_name'],
 							$expand: {
 								application_config_variable: {
@@ -118,15 +109,32 @@ const stateQuery = _.once(() =>
 								application_environment_variable: {
 									$select: ['name', 'value'],
 								},
+								is_depended_on_by__application: {
+									$select: ['id', 'app_name'],
+									$expand: {
+										application_config_variable: {
+											$select: ['name', 'value'],
+											$orderby: {
+												name: 'asc',
+											},
+										},
+										application_environment_variable: {
+											$select: ['name', 'value'],
+										},
+										should_be_running__release: releaseExpand,
+									},
+								},
 								should_be_running__release: releaseExpand,
 							},
 						},
-						should_be_running__release: releaseExpand,
 					},
 				},
 				manages__device: {
-					$select: ['uuid', 'device_name', 'belongs_to__application'],
+					$select: ['uuid', 'device_name'],
 					$expand: {
+						device_application: {
+							$select: 'belongs_to__application',
+						},
 						service_install: {
 							$select: ['id'],
 							$top: 1,
@@ -174,7 +182,8 @@ export const state: RequestHandler = async (req, res) => {
 			throw new UnauthorizedError();
 		}
 
-		const parentApp: AnyObject = device.belongs_to__application[0];
+		const parentApp: AnyObject =
+			device.device_application[0]?.belongs_to__application[0];
 
 		const release = getReleaseForDevice(device);
 		const config: Dictionary<string> = {};
@@ -334,7 +343,8 @@ export const state: RequestHandler = async (req, res) => {
 		);
 
 		(device.manages__device as AnyObject[]).forEach((depDev) => {
-			const depAppId: number = depDev.belongs_to__application.__id;
+			const depAppId: number =
+				depDev.device_application[0]?.belongs_to__application.__id;
 			const {
 				release: depRelease,
 				application_environment_variable,

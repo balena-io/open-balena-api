@@ -78,24 +78,46 @@ const addAppEnvHooks = (resource: string) =>
 			if (args.req.body.application != null) {
 				// If we have an application passed in the body (ie POST) then we can use that to find the devices to update.
 				return {
-					belongs_to__application: args.req.body.application,
+					device_application: {
+						$any: {
+							$alias: 'da',
+							$expr: {
+								da: {
+									belongs_to__application: args.req.body.application,
+								},
+							},
+						},
+					},
 				};
 			}
+
 			const envVarIds = await sbvrUtils.getAffectedIds(args);
 			if (envVarIds.length === 0) {
 				return;
 			}
-
 			return {
-				belongs_to__application: {
+				device_application: {
 					$any: {
-						$alias: 'a',
+						$alias: 'da',
 						$expr: {
-							a: {
-								[resource]: {
+							da: {
+								belongs_to__application: {
 									$any: {
-										$alias: 'e',
-										$expr: { e: { id: { $in: envVarIds } } },
+										$alias: 'a',
+										$expr: {
+											a: {
+												[resource]: {
+													$any: {
+														$alias: 'e',
+														$expr: {
+															e: {
+																id: { $in: envVarIds },
+															},
+														},
+													},
+												},
+											},
+										},
 									},
 								},
 							},
