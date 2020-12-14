@@ -1,4 +1,15 @@
 - commits:
+    - subject: Simplify/optimize rules for runnable releases
+      hash: 0d604443cc4797af35bce54dc1c4c5348f3a10c8
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.110.9
+  date: 2020-12-14T13:51:41.732Z
+- commits:
     - subject: Avoid updating unchanged entries when syncing a contract
       hash: f8dce734a22c163831b79a0aa2b7f213691fa753
       body: ''
