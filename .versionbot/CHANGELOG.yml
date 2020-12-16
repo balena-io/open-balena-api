@@ -1,4 +1,111 @@
 - commits:
+    - subject: Update dependencies
+      hash: 9d954da9b08dfaa9414c79e031fee337e1bdb989
+      body: |
+        Update pinejs from 14.2.6 to 14.6.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update dependencies
+              hash: 256e8874f9ef4336c8de1f43c4eec5121ce7878c
+              body: |
+                Update abstract-sql-compiler from 7.0.6 to 7.2.0
+                Update sbvr-types from 3.1.2 to 3.1.3
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Add an `optimizeSchema` function
+                      hash: 43a3c0eac0ed0c57a79fbc62d025c058ab8dbb1c
+                      body: >
+                        Currently this can optimize certain rules into check
+                        constraints
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-7.2.0
+                  date: 2020-12-16T16:59:18.573Z
+                - commits:
+                    - subject: Add check constraint support at the table level
+                      hash: 2ac556f3bdc6143a9a4be37c47079659ee20a866
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-7.1.0
+                  date: 2020-12-09T22:44:11.220Z
+                - commits:
+                    - subject: >-
+                        Convert tests from coffeescript to type-checked
+                        javascript
+                      hash: ec898159bee4cff9300c5d8b655eb02327a9f636
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-7.0.7
+                  date: 2020-12-09T22:08:07.007Z
+                - commits:
+                    - subject: Improve types for `SHA`
+                      hash: e7e86f33f8e8c420dd634fd1310bc8104c9651c7
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: sbvr-types-3.1.3
+                  date: 2020-12-11T15:54:24.200Z
+          version: pinejs-14.6.0
+          date: 2020-12-16T18:28:20.216Z
+        - commits:
+            - subject: Add an abstract-sql-compiler bin helper
+              hash: 10d084e12c173882f15a441315593ac652388545
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.5.0
+          date: 2020-12-16T18:08:50.023Z
+        - commits:
+            - subject: >-
+                Add support for prettifying check constraints with their
+                description
+              hash: 8c231c779c7198c8442e11fa46c913f48d44cb20
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.4.0
+          date: 2020-12-14T18:53:53.182Z
+        - commits:
+            - subject: Add support for differentiating check constraint errors
+              hash: 638b76813d21dadca515cf579acc95189e0ca0c5
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.3.0
+          date: 2020-12-09T16:42:20.322Z
+  version: 0.110.10
+  date: 2020-12-16T18:49:50.847Z
+- commits:
     - subject: Simplify/optimize rules for runnable releases
       hash: 0d604443cc4797af35bce54dc1c4c5348f3a10c8
       body: ''
