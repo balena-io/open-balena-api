@@ -5,3 +5,4 @@ import './create-user-actor';
 import './fetch-api-key';
 import './restrict-user-deletion';
 import './update-jwt-secret';
+import './validate-username-email';
