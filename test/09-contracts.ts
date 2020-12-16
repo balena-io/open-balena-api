@@ -168,7 +168,7 @@ describe('contracts', () => {
 
 			expect(dbDeviceTypes).to.have.length(14);
 			expect(newDt).to.not.be.undefined;
-			expect(finDt).to.have.property('name', 'Fin');
+			expect(finDt).to.have.property('name', 'Balena Fin (CM3)');
 		});
 	});
 });

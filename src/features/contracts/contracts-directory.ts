@@ -7,8 +7,10 @@ import * as util from 'util';
 import * as stream from 'stream';
 import * as path from 'path';
 import * as os from 'os';
+import validator from 'validator';
 import type { RepositoryInfo, Contract } from './index';
-import { isValidUrl } from '../../lib/utils';
+import { getBase64DataUri } from '../../lib/utils';
+import { captureException } from '../../infra/error-handling';
 
 const pipeline = util.promisify(stream.pipeline);
 const exists = util.promisify(fs.exists);
@@ -16,27 +18,17 @@ const mkdir = util.promisify(fs.mkdir);
 
 const CONTRACTS_BASE_DIR = path.join(os.tmpdir(), 'contracts');
 
-const getDataUri = async (
-	filePath: string,
-	mimeType: 'image/png' | 'image/svg+xml',
-) => {
-	const base64Content = (await fs.promises.readFile(filePath)).toString(
-		'base64',
-	);
-	return `data:${mimeType};base64,${base64Content}`;
-};
-
 // All assets that are stored together with the contract are encoded and stored in a dataurl format.
 const handleLocalAssetUrl = async (assetUrl: string): Promise<string> => {
 	switch (path.extname(assetUrl)) {
 		case '.svg': {
-			return getDataUri(assetUrl, 'image/svg+xml');
+			return getBase64DataUri(assetUrl, 'image/svg+xml');
 		}
 		case '.png': {
-			return getDataUri(assetUrl, 'image/png');
+			return getBase64DataUri(assetUrl, 'image/png');
 		}
 		default:
-			return assetUrl;
+			return '';
 	}
 };
 
@@ -52,16 +44,20 @@ const normalizeAssets = async (
 
 	await Promise.all(
 		Object.entries(assets).map(async ([key, asset]) => {
-			if (isValidUrl(asset.url)) {
+			if (validator.isURL(asset.url)) {
 				normalizedAssets[key] = asset;
 				return;
 			}
 
 			// Convert from relative to absolute path for the asset file and make sure it doesn't try to access files outside of the contract folder.
 			const contractDir = path.dirname(contractFilepath);
-			const normalizedUrl = path.resolve(contractDir, asset.url);
-			if (!normalizedUrl.startsWith(contractDir)) {
-				console.error(
+			const assetRealPath = await fs.promises.realpath(
+				path.join(contractDir, asset.url),
+			);
+
+			if (!assetRealPath.startsWith(contractDir)) {
+				captureException(
+					new Error('Invalid contract asset URL'),
 					`Contract asset URL '${asset.url}' is invalid, excluding asset from contract`,
 				);
 				return;
@@ -70,12 +66,12 @@ const normalizeAssets = async (
 			try {
 				normalizedAssets[key] = {
 					...asset,
-					url: await handleLocalAssetUrl(normalizedUrl),
+					url: await handleLocalAssetUrl(assetRealPath),
 				};
 			} catch (e) {
-				console.error(
-					`Failed to normalize contract asset for url ${normalizedUrl}, excluding asset`,
-					e,
+				captureException(
+					new Error('Normalizing contract asset failed'),
+					`Failed to normalize contract asset for url ${assetRealPath}, excluding asset`,
 				);
 			}
 		}),

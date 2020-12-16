@@ -1,6 +1,7 @@
 import { pseudoRandomBytes } from 'crypto';
 import type { Request } from 'express';
 import * as ipaddr from 'ipaddr.js';
+import * as fs from 'fs';
 import { promisify } from 'util';
 import { delay } from 'bluebird';
 
@@ -13,14 +14,6 @@ export function getNanoTimestamp() {
 }
 
 export const pseudoRandomBytesAsync = promisify(pseudoRandomBytes);
-
-export const isValidUrl = (url: string) => {
-	try {
-		return Boolean(new URL(url));
-	} catch {
-		return false;
-	}
-};
 
 export const isValidInteger = (num: any): num is number => {
 	const n = checkInt(num);
@@ -61,6 +54,16 @@ export const getIPv4 = (req: Request): string | undefined => {
 	} catch {
 		// Ignore errors
 	}
+};
+
+export const getBase64DataUri = async (
+	filePath: string,
+	mimeType: 'image/png' | 'image/svg+xml',
+) => {
+	const base64Content = (await fs.promises.readFile(filePath)).toString(
+		'base64',
+	);
+	return `data:${mimeType};base64,${base64Content}`;
 };
 
 export const b64decode = (str: string): string =>
