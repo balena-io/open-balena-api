@@ -121,6 +121,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			'raspberrypi3-64',
 			'raspberrypi3',
 			'raspberrypi4-64',
+			'raspberrypi400-64',
 			'fincm3',
 			'revpi-core-3',
 			'npe-x500-m3',
