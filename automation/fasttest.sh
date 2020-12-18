@@ -34,6 +34,12 @@ while [[ $# -gt 0 ]]; do
 		--profile)
 			extra_args="${extra_args} --inspect-brk=0.0.0.0"
 		;;
+		--generate-config)
+			echo "Generating config as $1"
+			echo
+			extra_env="${extra_env} --env GENERATE_CONFIG=$1"
+			shift
+		;;
 		*)
 			test_files="$test_files $key"
 		;;
@@ -100,4 +106,5 @@ if [[ -z "$test_versions" ]]; then
 else
 	echo "Running versions:$test_versions"
 fi
+
 docker exec ${extra_env} --env TEST_VERSIONS="$test_versions" --env TEST_FILES="$test_files" -it $api_id ./node_modules/.bin/mocha --bail ${extra_args}
