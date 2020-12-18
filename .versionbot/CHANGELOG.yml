@@ -1,4 +1,20 @@
 - commits:
+    - subject: Export the DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES
+      hash: b653ffa24b61403036be309eec22e7c029b0e963
+      body: |
+        This is needed so that the cloud API can add private
+        device types in the device type specific config vars
+        definitions.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.112.0
+  date: 2020-12-18T12:20:12.543Z
+- commits:
     - subject: Expose the RPi family config vars to raspberrypi400-64
       hash: c67eb9d851d1c901a65a9369448d8732739a6bee
       body: ''
