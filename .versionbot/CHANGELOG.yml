@@ -1,4 +1,21 @@
 - commits:
+    - subject: Expose the RPi family config vars to raspberrypi400-64
+      hash: c67eb9d851d1c901a65a9369448d8732739a6bee
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://www.flowdock.com/app/rulemotion/resin-devices/threads/2gZsIuD2JGueoZRebq8nYyXtowN
+        see: >-
+          https://www.flowdock.com/app/rulemotion/resin-devices/threads/2gZsIuD2JGueoZRebq8nYyXtowN
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.111.0
+  date: 2020-12-18T11:55:53.591Z
+- commits:
     - subject: Update dependencies
       hash: 9d954da9b08dfaa9414c79e031fee337e1bdb989
       body: |
