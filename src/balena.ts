@@ -13,8 +13,8 @@ export const initSqlPath = __dirname + '/balena-init.sql';
 export const abstractSql = generateAbstractSqlModel(__dirname + '/balena.sbvr');
 
 aliasTable(abstractSql, 'application', 'my application', {
-	extraBinds: [],
-	abstractSqlQuery: ['Resource', 'application'],
+	binds: [],
+	abstractSql: ['Resource', 'application'],
 });
 
 renameEnvVarName(abstractSql);

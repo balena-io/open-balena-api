@@ -1,8 +1,11 @@
 import { readFileSync } from 'fs';
 import * as _ from 'lodash';
 
-import type { AbstractSqlModel } from '@balena/abstract-sql-compiler';
-import type { Definition } from '@balena/odata-to-abstract-sql';
+import type {
+	AbstractSqlModel,
+	Definition,
+} from '@balena/abstract-sql-compiler';
+
 import { sbvrUtils } from '@balena/pinejs';
 
 export const generateAbstractSqlModel = (
@@ -25,6 +28,8 @@ export const aliasTable = (
 	if (definition) {
 		abstractSqlModel.tables[toResourceName].definition = definition;
 	}
+	abstractSqlModel.tables[toResourceName].name = toResourceName;
+	abstractSqlModel.tables[toResourceName].resourceName = toResourceName;
 
 	abstractSqlModel.relationships[toResourceName] = _.cloneDeep(
 		abstractSqlModel.relationships[resourceName],
