@@ -122,6 +122,7 @@ import {
 	ALLOWED_NAMES,
 	BLOCKED_NAMES,
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
+	DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES,
 } from './features/vars-schema/env-vars';
 import * as baseAuth from './lib/auth';
 // TODO: This should not be exported
@@ -232,6 +233,7 @@ export const envVarsConfig = {
 	ALLOWED_NAMES,
 	BLOCKED_NAMES,
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
+	DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES,
 };
 
 export const AUTH_PATH = '/auth';
