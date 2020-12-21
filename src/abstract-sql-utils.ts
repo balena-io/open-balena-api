@@ -7,6 +7,9 @@ import type {
 } from '@balena/abstract-sql-compiler';
 
 import { sbvrUtils } from '@balena/pinejs';
+import * as AbstractSqlCompiler from '@balena/abstract-sql-compiler';
+
+export const { optimizeSchema } = AbstractSqlCompiler.postgres;
 
 export const generateAbstractSqlModel = (
 	seModelPath: string,
