@@ -1,4 +1,27 @@
 - commits:
+    - subject: Update open-balena-base to 11.0.3
+      hash: add440bf51b79a63e875002a36e2638f8c154d0d
+      body: |
+        Update open-balena-base from 11.0.2 to 11.0.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 14.15.3 and npm to 6.14.9
+              hash: 6d9ed96133ca1b4783eafc8b8698f10cd88aaad2
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.0.3
+          date: 2020-12-18T12:11:00.995Z
+  version: 0.114.2
+  date: 2020-12-23T18:37:00.697Z
+- commits:
     - subject: 'env-vars: Add the RESIN_ & BALENA_ namespaces programmatically'
       hash: 88845455feefa174d5c261bee31372cda5e390c3
       body: ''
