@@ -156,6 +156,9 @@ Term: last vpn event
 Term: local id
 	Concept Type: Short Text (Type)
 
+Term: logo
+	Concept Type: Text (Type)
+
 Term: logs channel
 	Concept Type: Short Text (Type)
 
@@ -562,6 +565,9 @@ Fact type: device type is of cpu architecture
 	Synonymous form: device type supports cpu architecture
 	Synonymous form: cpu architecture is supported by device type
 	Necessity: each device type supports exactly one cpu architecture
+
+Fact type: device type has logo
+	Necessity: each device type has at most one logo
 
 -- cpu architecture
 

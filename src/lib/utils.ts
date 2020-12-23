@@ -1,6 +1,7 @@
 import { pseudoRandomBytes } from 'crypto';
 import type { Request } from 'express';
 import * as ipaddr from 'ipaddr.js';
+import * as fs from 'fs';
 import { promisify } from 'util';
 import { delay } from 'bluebird';
 
@@ -53,6 +54,16 @@ export const getIPv4 = (req: Request): string | undefined => {
 	} catch {
 		// Ignore errors
 	}
+};
+
+export const getBase64DataUri = async (
+	filePath: string,
+	mimeType: 'image/png' | 'image/svg+xml',
+) => {
+	const base64Content = (await fs.promises.readFile(filePath)).toString(
+		'base64',
+	);
+	return `data:${mimeType};base64,${base64Content}`;
 };
 
 export const b64decode = (str: string): string =>

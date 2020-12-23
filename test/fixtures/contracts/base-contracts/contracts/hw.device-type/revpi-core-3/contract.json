@@ -4,6 +4,12 @@
   "type": "hw.device-type",
   "aliases": [],
   "name": "Revolution Pi Core 3",
+  "assets": {
+    "logo": {
+      "url": "./revpi-core-3.svg",
+      "name": "logo"
+    }
+  },
   "data": {
     "arch": "armv7hf",
     "hdmi": true,

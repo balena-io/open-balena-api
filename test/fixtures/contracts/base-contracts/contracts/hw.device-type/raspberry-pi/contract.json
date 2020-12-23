@@ -3,7 +3,13 @@
   "version": "1",
   "type": "hw.device-type",
   "aliases": ["raspberrypi"],
-  "name": "Raspberry Pi (1, Zero, Zero W)",
+  "name": "Raspberry Pi (v1 / Zero / Zero W)",
+  "assets": {
+    "logo": {
+      "url": "./raspberry-pi.svg",
+      "name": "logo"
+    }
+  },
   "data": {
     "arch": "rpi",
     "hdmi": true,

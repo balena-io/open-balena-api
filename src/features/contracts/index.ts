@@ -18,12 +18,18 @@ export interface RepositoryInfo {
 	token?: string;
 }
 
+export interface ContractAsset {
+	url: string;
+	name?: string;
+}
+
 export interface Contract {
 	slug: string;
 	version: number;
 	type: string;
 	aliases?: string[];
 	name: string;
+	assets?: Dictionary<ContractAsset>;
 	data: any;
 }
 
@@ -84,7 +90,7 @@ const mapModel = async (
 	for (const key of Object.keys(map) as Array<keyof typeof map>) {
 		const mapper = map[key];
 		const contractValue =
-			_.get(contractEntry, mapper?.contractField) ?? mapper!.default;
+			_.get(contractEntry, mapper?.contractField) ?? mapper?.default;
 
 		if (mapper.refersTo) {
 			try {
