@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'env-vars: Add the RESIN_ & BALENA_ namespaces programmatically'
+      hash: 88845455feefa174d5c261bee31372cda5e390c3
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.114.1
+  date: 2020-12-23T17:40:10.875Z
+- commits:
     - subject: Changes based on PR review
       hash: 6f0dbee49206663912e08d1d5bcc1cdd97bfca5d
       body: ''
