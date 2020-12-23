@@ -1,4 +1,27 @@
 - commits:
+    - subject: Changes based on PR review
+      hash: 6f0dbee49206663912e08d1d5bcc1cdd97bfca5d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+    - subject: Add a base64-encoded logo to device types
+      hash: d236f9a96e7984e15022c85040435fae88aeca70
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.114.0
+  date: 2020-12-23T15:21:14.200Z
+- commits:
     - subject: Update pinejs to 14.7.0
       hash: e5b69152b68796809e31fe1c45c69d5a806289f8
       body: |
