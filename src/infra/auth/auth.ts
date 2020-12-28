@@ -9,15 +9,8 @@ import { User } from './jwt-passport';
 import { getIP } from '../../lib/utils';
 import type { User as DbUser } from '../../models';
 
-const {
-	BadRequestError,
-	ConflictError,
-	UnauthorizedError,
-	NotFoundError,
-} = errors;
+const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
-
-const USERNAME_BLACKLIST = ['root'];
 
 export const userHasPermission = (
 	user: undefined | sbvrUtils.User,
@@ -290,19 +283,6 @@ export const registerUser = async (
 	tx: Tx,
 	req?: Request,
 ): Promise<AnyObject> => {
-	if (USERNAME_BLACKLIST.includes(userData.username)) {
-		throw new ConflictError('This username is blacklisted');
-	}
-	let existingUser = await findUser(userData.email, tx, ['id']);
-	if (existingUser) {
-		throw new ConflictError('This email is already taken');
-	}
-
-	existingUser = await findUser(userData.username, tx, ['id']);
-	if (existingUser) {
-		throw new ConflictError('This username is already taken');
-	}
-
 	let clientIP;
 	if (req) {
 		clientIP = getIP(req);
