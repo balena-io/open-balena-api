@@ -5,7 +5,7 @@ import { sbvrUtils, permissions } from '@balena/pinejs';
 import { getUser } from '../../infra/auth/auth';
 import { captureException, handleHttpErrors } from '../../infra/error-handling';
 
-import type { User as DbUser } from '../../models';
+import type { User as DbUser } from '../../balena-model';
 
 const { api } = sbvrUtils;
 

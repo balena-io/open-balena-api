@@ -13,7 +13,7 @@ import * as Raven from 'raven';
 
 import * as pine from '@balena/pinejs';
 
-import type { User as DbUser } from './models';
+import type { User as DbUser } from './balena-model';
 import type { defaultFindUser$select } from './infra/auth/auth';
 import * as jwt from './infra/auth/jwt-passport';
 
