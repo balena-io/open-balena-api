@@ -4,6 +4,7 @@ import * as express from 'express';
 import * as _ from 'lodash';
 import config = require('./config');
 import { version } from './package.json';
+import * as fs from 'fs';
 
 const getUrl = (req: express.Request) => req.url;
 
@@ -166,6 +167,15 @@ app.enable('trust proxy');
 
 const init = async () => {
 	try {
+		const generateConfig = (process.env.GENERATE_CONFIG || '').trim();
+		if (generateConfig.length > 0) {
+			await fs.promises.writeFile(
+				generateConfig,
+				JSON.stringify(config, null, '\t'),
+			);
+			process.exit();
+		}
+
 		const doRunTests =
 			(process.env.RUN_TESTS || '').trim() === '1'
 				? await import('./test/test-lib/init-tests')
