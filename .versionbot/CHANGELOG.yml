@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add the ability to generate a materialized pinejs config.json
+      hash: 8f7569e4d29fe143ef653cb42eb1b29eac8c62f3
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.115.2
+  date: 2020-12-28T19:43:06.614Z
+- commits:
     - subject: >-
         Catch exception when resolving asset real path to prevent other contract
         syncing to fail
