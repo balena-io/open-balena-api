@@ -1,4 +1,15 @@
 - commits:
+    - subject: Perform username/email checks in a hook rather than custom function
+      hash: 8def9edff1aba65c86471350ff3b39cf4865a756
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.115.0
+  date: 2020-12-23T19:03:37.348Z
+- commits:
     - subject: Update open-balena-base to 11.0.3
       hash: add440bf51b79a63e875002a36e2638f8c154d0d
       body: |
