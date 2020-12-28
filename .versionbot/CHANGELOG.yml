@@ -1,4 +1,19 @@
 - commits:
+    - subject: >-
+        Catch exception when resolving asset real path to prevent other contract
+        syncing to fail
+      hash: 2ff289c61a12089e86fa7aa5caf392fdd674ecc0
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.115.1
+  date: 2020-12-28T16:08:45.337Z
+- commits:
     - subject: Perform username/email checks in a hook rather than custom function
       hash: 8def9edff1aba65c86471350ff3b39cf4865a756
       body: ''
