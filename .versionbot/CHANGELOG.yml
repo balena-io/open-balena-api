@@ -1,4 +1,165 @@
 - commits:
+    - subject: Add and use automatically generated model typings
+      hash: fabe57d640838cdc9466240a5f811cb1f38fe6d3
+      body: |
+        Update pinejs from 14.7.0 to 14.9.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update abstract-sql-to-typescript to 1.0.1
+              hash: fa2d67e6e0770141ef160218f2e83252b05a0a26
+              body: |
+                Update abstract-sql-to-typescript from 1.0.0 to 1.0.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Fix types for ConceptType fields
+                      hash: b718096c1ead1c276e687e444e09b388d6e4f966
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-to-typescript-1.0.1
+                  date: 2020-12-28T20:00:06.230Z
+          version: pinejs-14.9.1
+          date: 2020-12-28T20:15:05.545Z
+        - commits:
+            - subject: >-
+                Add support for config file inputs to
+                abstract-sql/odata-compiler
+              hash: 6b7b825bc478d7931340f8aeb760bb5e569bbff3
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+            - subject: Add support for more input types to abstract-sql-compiler
+              hash: 431f3dbcb2177c602042e01c46eac45b185c555c
+              body: >
+                We now support support passing an SBVR file or a model
+                specification
+
+                as well as an abstract sql model, and we also accept any file
+                type that
+
+                is acceptable to nodejs `require` rather than just a JSON file
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.9.0
+          date: 2020-12-28T19:36:16.000Z
+        - commits:
+            - subject: Add typescript type generation to sbvr/abstract-sql-compiler
+              hash: d73e2d48f95771a1fd0d737701b7d0d4dac4cefb
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.8.0
+          date: 2020-12-28T19:02:51.939Z
+        - commits:
+            - subject: Share code between the cli tools
+              hash: 26e2aa66057336338cc6497b1dbf655c22b67d53
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.7.2
+          date: 2020-12-28T18:50:15.152Z
+        - commits:
+            - subject: Update abstract-sql-compiler to 7.4.2
+              hash: df8305ad2098b68be9fb5cd64685c8df17756a8a
+              body: |
+                Update abstract-sql-compiler from 7.4.1 to 7.4.2
+                Update odata-to-abstract-sql from 5.4.0 to 5.4.1
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+              author: Thodoris Greasidis
+              nested:
+                - commits:
+                    - subject: Improve Relationship typings
+                      hash: 91465f7c65bc43ee2eba1c9db7dbce424a1b18d4
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                        See: >-
+                          https://github.com/balena-io/open-balena-api/pull/510#discussion_r546872607
+                        see: >-
+                          https://github.com/balena-io/open-balena-api/pull/510#discussion_r546872607
+                        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                      author: Thodoris Greasidis
+                      nested: []
+                  version: abstract-sql-compiler-7.4.2
+                  date: 2020-12-21T23:58:09.407Z
+                - commits:
+                    - subject: Update abstract-sql-compiler to 7.4.2
+                      hash: 4fc1c0cb35edb423a98e66f2c10347290ae25e0c
+                      body: |
+                        Update abstract-sql-compiler from 7.4.0 to 7.4.2
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                      author: Thodoris Greasidis
+                      nested:
+                        - commits:
+                            - subject: Improve Relationship typings
+                              hash: 91465f7c65bc43ee2eba1c9db7dbce424a1b18d4
+                              body: ''
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                                See: >-
+                                  https://github.com/balena-io/open-balena-api/pull/510#discussion_r546872607
+                                see: >-
+                                  https://github.com/balena-io/open-balena-api/pull/510#discussion_r546872607
+                                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                              author: Thodoris Greasidis
+                              nested: []
+                          version: abstract-sql-compiler-7.4.2
+                          date: 2020-12-21T23:58:09.407Z
+                        - commits:
+                            - subject: >-
+                                Fix `containsNode` when that node type is at the
+                                top level
+                              hash: 888791a9b281d5fc91ddeb8876f024b1397718e7
+                              body: ''
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: abstract-sql-compiler-7.4.1
+                          date: 2020-12-18T20:17:51.469Z
+                  version: odata-to-abstract-sql-5.4.1
+                  date: 2020-12-26T20:45:55.372Z
+          version: pinejs-14.7.1
+          date: 2020-12-28T18:37:36.032Z
+  version: 0.115.3
+  date: 2020-12-28T20:57:49.496Z
+- commits:
     - subject: Add the ability to generate a materialized pinejs config.json
       hash: 8f7569e4d29fe143ef653cb42eb1b29eac8c62f3
       body: ''
