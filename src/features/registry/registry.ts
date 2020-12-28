@@ -17,7 +17,7 @@ import {
 	REGISTRY2_HOST,
 	TOKEN_AUTH_BUILDER_TOKEN,
 } from '../../lib/config';
-import type { User as DbUser } from '../../models';
+import type { User as DbUser } from '../../balena-model';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;

@@ -7,7 +7,7 @@ import { retrieveAPIKey } from './api-keys';
 import { User } from './jwt-passport';
 
 import { getIP } from '../../lib/utils';
-import type { User as DbUser } from '../../models';
+import type { User as DbUser } from '../../balena-model';
 
 const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
