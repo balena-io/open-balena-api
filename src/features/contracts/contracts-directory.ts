@@ -49,29 +49,29 @@ const normalizeAssets = async (
 				return;
 			}
 
-			// Convert from relative to absolute path for the asset file and make sure it doesn't try to access files outside of the contract folder.
-			const contractDir = path.dirname(contractFilepath);
-			const assetRealPath = await fs.promises.realpath(
-				path.join(contractDir, asset.url),
-			);
-
-			if (!assetRealPath.startsWith(contractDir)) {
-				captureException(
-					new Error('Invalid contract asset URL'),
-					`Contract asset URL '${asset.url}' is invalid, excluding asset from contract`,
-				);
-				return;
-			}
-
 			try {
+				// Convert from relative to absolute path for the asset file and make sure it doesn't try to access files outside of the contract folder.
+				const contractDir = path.dirname(contractFilepath);
+				const assetRealPath = await fs.promises.realpath(
+					path.join(contractDir, asset.url),
+				);
+
+				if (!assetRealPath.startsWith(contractDir)) {
+					captureException(
+						new Error('Invalid contract asset URL'),
+						`Contract asset URL '${asset.url}' is invalid, excluding asset from contract`,
+					);
+					return;
+				}
+
 				normalizedAssets[key] = {
 					...asset,
 					url: await handleLocalAssetUrl(assetRealPath),
 				};
-			} catch (e) {
+			} catch (err) {
 				captureException(
-					new Error('Normalizing contract asset failed'),
-					`Failed to normalize contract asset for url ${assetRealPath}, excluding asset`,
+					err,
+					`Failed to normalize contract asset for url ${asset.url}, excluding asset`,
 				);
 			}
 		}),
