@@ -1,4 +1,15 @@
 - commits:
+    - subject: Regenerate balena-model types to include type helpers
+      hash: a8d98c9f608aed7b7f2ee8126648fcaebc21c94e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.115.5
+  date: 2021-01-04T15:49:20.402Z
+- commits:
     - subject: Update pinejs to 14.9.2
       hash: 280ca4e2a150a2d47669ca3b49dcd9a816139c06
       body: |
