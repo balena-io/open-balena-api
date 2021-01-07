@@ -44,4 +44,5 @@ config/env
 /.ts-node
 /.fast-boot.json
 /.coffee
+/.materialized-config.json
 /.pinejs-cache.json
