@@ -447,3 +447,9 @@ export interface MyApplication {
 	is_archived: boolean;
 	uuid: string;
 }
+
+export interface UserHasDirectAccessToApplication {
+	id: number;
+	user: { __id: number } | [User];
+	has_direct_access_to__application: { __id: number } | [Application];
+}

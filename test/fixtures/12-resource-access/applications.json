@@ -1,0 +1,12 @@
+{
+	"app1": {
+		"user": "admin",
+		"app_name": "test_app1",
+		"device_type": "raspberry-pi"
+	},
+	"app2": {
+		"user": "admin",
+		"app_name": "test_app2",
+		"device_type": "raspberry-pi"
+	}
+}

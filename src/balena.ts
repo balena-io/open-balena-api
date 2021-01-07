@@ -4,6 +4,7 @@ import {
 	renameEnvVarName,
 } from './abstract-sql-utils';
 
+import * as userHasDirectAccessToApplication from './features/applications/models/user__has_direct_access_to__application';
 import * as deviceAdditions from './features/devices/models/device-additions';
 
 export const apiRoot = 'resin';
@@ -19,4 +20,5 @@ aliasTable(abstractSql, 'application', 'my application', {
 
 renameEnvVarName(abstractSql);
 
+userHasDirectAccessToApplication.addToModel(abstractSql);
 deviceAdditions.addToModel(abstractSql);
