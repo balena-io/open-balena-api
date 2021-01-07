@@ -1,4 +1,19 @@
 - commits:
+    - subject: Add `user has direct access to application` virtual resource
+      hash: 9784a799935138d1d06432e6777907ddae73d6a3
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: 'https://app.frontapp.com/open/cnv_8tqn74d'
+        see: 'https://app.frontapp.com/open/cnv_8tqn74d'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.116.0
+  date: 2021-01-07T12:42:44.392Z
+- commits:
     - subject: Regenerate balena-model types to include type helpers
       hash: a8d98c9f608aed7b7f2ee8126648fcaebc21c94e
       body: ''
