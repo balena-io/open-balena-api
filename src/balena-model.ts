@@ -1,5 +1,5 @@
 /**
- * This file is generated with `npm run fasttest -- --generate-config materialized-config.json && npx abstract-sql-compiler generate-types materialized-config.json src/balena-model.ts`
+ * This file is auto-generated with `npm run generate-model-types`
  */
 
 export type DateString = string;
