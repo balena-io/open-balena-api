@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add npm script for generating model typings
+      hash: e952bdfad4a43140396b4ad527d8b982ab0267b5
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.116.1
+  date: 2021-01-07T13:35:50.278Z
+- commits:
     - subject: Add `user has direct access to application` virtual resource
       hash: 9784a799935138d1d06432e6777907ddae73d6a3
       body: ''
