@@ -14,7 +14,8 @@
   "scripts": {
     "fasttest": "IMAGE_NAME=test-open-balena-api-fast ./automation/fasttest.sh",
     "fasttest-cleanup": "IMAGE_NAME=test-open-balena-api-fast ./automation/fasttest.sh --teardown",
-    "generate-model-types": "npm run fasttest -- --generate-config .materialized-config.json && echo '/**\n * This file is auto-generated with `npm run generate-model-types`\n */\n' > src/balena-model.ts && npx abstract-sql-compiler generate-types .materialized-config.json >> src/balena-model.ts",
+    "materialize-config": "npm run fasttest -- --generate-config .materialized-config.json",
+    "generate-model-types": "npm run materialize-config && echo '/**\n * This file is auto-generated with `npm run generate-model-types`\n */\n' > src/balena-model.ts && npx abstract-sql-compiler generate-types .materialized-config.json >> src/balena-model.ts",
     "build": "npm run clean && tsc --project ./tsconfig.build.json && copyup \"src/**/*.sbvr\" \"src/**/*.sql\" dist/",
     "clean": "rimraf dist/",
     "lint": "balena-lint --typescript src/ test/ typings/ init.ts index.js && tsc --noEmit --project .",
