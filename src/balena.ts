@@ -2,6 +2,7 @@ import {
 	aliasTable,
 	generateAbstractSqlModel,
 	renameEnvVarName,
+	optimizeSchema,
 } from './abstract-sql-utils';
 
 import * as userHasDirectAccessToApplication from './features/applications/models/user__has_direct_access_to__application';
@@ -22,3 +23,5 @@ renameEnvVarName(abstractSql);
 
 userHasDirectAccessToApplication.addToModel(abstractSql);
 deviceAdditions.addToModel(abstractSql);
+
+optimizeSchema(abstractSql);

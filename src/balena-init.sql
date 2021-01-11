@@ -125,8 +125,6 @@ ON "device" ("uuid" text_pattern_ops);
 CREATE INDEX IF NOT EXISTS "device_id_actor_managed_device_idx"
 ON "device" ("id", "actor", "is managed by-device");
 
-CREATE INDEX IF NOT EXISTS "image_status_push_timestamp_idx"
-ON "image" ("status", "push timestamp");
 -- Optimization for querying endswith of "is stored at-image location" for resolving access
 CREATE INDEX IF NOT EXISTS "image_is_stored_at_image_location_idx"
 ON "image" USING GIN ("is stored at-image location" gin_trgm_ops);
