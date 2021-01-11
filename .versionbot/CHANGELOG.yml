@@ -1,4 +1,66 @@
 - commits:
+    - subject: Update pinejs to 14.10.0 to enable postgres keepalive
+      hash: 3d61888fc5d2667b70a77e6c792dabec0aef141e
+      body: |
+        Update pinejs from 14.9.2 to 14.10.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: >-
+                Enable keepAlive for postgres by default with the ability to
+                disable
+              hash: 17f87b11c7a90d2854e43e026310ffacc30f34dd
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.10.0
+          date: 2021-01-06T17:25:06.369Z
+        - commits:
+            - subject: >-
+                Ensure database connection errors are wrapped as
+                `DatabaseError`s
+              hash: 9e38c17841635a15ccbded69f1518db65f3ba3c2
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.9.5
+          date: 2021-01-06T13:32:20.239Z
+        - commits:
+            - subject: 'Dev: switch from grunt-replace to grunt-contrib-replace'
+              hash: 11af8aedcf7c433ef10a256cf84fae6042e8ddef
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.9.4
+          date: 2021-01-06T11:12:15.791Z
+        - commits:
+            - subject: Use an .npmrc to prevent creating a package-lock on each install
+              hash: cdaccaf22a81e79c63bde0785ae32bd94decc866
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+              author: Thodoris Greasidis
+              nested: []
+          version: pinejs-14.9.3
+          date: 2021-01-05T11:43:29.118Z
+  version: 0.117.1
+  date: 2021-01-11T19:55:00.368Z
+- commits:
     - subject: Make use of rule to check constraint optimizations
       hash: bd3b791efd8bb386b62edb9464e20601790af983
       body: ''
