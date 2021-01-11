@@ -1,4 +1,15 @@
 - commits:
+    - subject: Make use of rule to check constraint optimizations
+      hash: bd3b791efd8bb386b62edb9464e20601790af983
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.117.0
+  date: 2021-01-11T19:26:30.512Z
+- commits:
     - subject: Split npm script for model typings generation to two separate ones
       hash: e8a4c20fab016016e96ab07392edb32dae30e221
       body: ''
