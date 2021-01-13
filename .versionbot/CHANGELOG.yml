@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove unnecessary DELETE hook that tries to validate config/env vars
+      hash: 6174c46e2ed5bde1501cbbda145c62cd7bc32cd4
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.117.2
+  date: 2021-01-13T13:05:41.240Z
+- commits:
     - subject: Update pinejs to 14.10.0 to enable postgres keepalive
       hash: 3d61888fc5d2667b70a77e6c792dabec0aef141e
       body: |
