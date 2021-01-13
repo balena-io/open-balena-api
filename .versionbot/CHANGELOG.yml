@@ -1,4 +1,17 @@
 - commits:
+    - subject: Express user has direct access to application using a CROSS JOIN
+      hash: d8b50a9e9103525e0087eacbe600394b5aa0c833
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.117.3
+  date: 2021-01-13T13:57:17.834Z
+- commits:
     - subject: Remove unnecessary DELETE hook that tries to validate config/env vars
       hash: 6174c46e2ed5bde1501cbbda145c62cd7bc32cd4
       body: ''
