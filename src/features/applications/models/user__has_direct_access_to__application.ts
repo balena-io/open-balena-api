@@ -107,16 +107,13 @@ export const addToModel = (
 				],
 			],
 			['From', ['Alias', ['Resource', 'application'], 'application']],
+			['CrossJoin', ['Alias', ['Resource', 'user'], 'application.user']],
 			[
-				'Join',
-				['Alias', ['Resource', 'user'], 'application.user'],
+				'Where',
 				[
-					'On',
-					[
-						'Equals',
-						['ReferencedField', 'application.user', 'actor'],
-						['Bind', '@__ACTOR_ID'],
-					],
+					'Equals',
+					['ReferencedField', 'application.user', 'actor'],
+					['Bind', '@__ACTOR_ID'],
 				],
 			],
 		]),
