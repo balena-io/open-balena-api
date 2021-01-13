@@ -22,7 +22,7 @@ for (const resource of [
 	'application_config_variable',
 	'device_config_variable',
 ]) {
-	for (const method of ['POST', 'PATCH', 'PUT', 'DELETE'] as const) {
+	for (const method of ['POST', 'PATCH', 'PUT'] as const) {
 		hooks.addPureHook(method, 'resin', resource, envVarHook);
 	}
 }
