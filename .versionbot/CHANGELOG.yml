@@ -1,4 +1,27 @@
 - commits:
+    - subject: Update open-balena-base to 11.0.4
+      hash: cc911b794553ae339ec1d63efebb17f4b80fa3eb
+      body: |
+        Update open-balena-base from 11.0.3 to 11.0.4
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 14.15.4 and npm to 6.14.10
+              hash: 0a52eb67b211fdc31d73e279e6e871b2e803f485
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.0.4
+          date: 2021-01-08T15:21:19.521Z
+  version: 0.117.4
+  date: 2021-01-13T14:20:41.047Z
+- commits:
     - subject: Express user has direct access to application using a CROSS JOIN
       hash: d8b50a9e9103525e0087eacbe600394b5aa0c833
       body: ''
