@@ -312,6 +312,7 @@ Term: application
 	Fact type: application has tag key
 		Term Form: application tag
 		Database Table Name: application tag
+		Necessity: each application tag has a tag key that has a Length (Type) that is greater than 0.
 
 Term: device
 	Concept Type: actor (Auth)
@@ -343,12 +344,14 @@ Term: device
 	Fact type: device has tag key
 		Term Form: device tag
 		Database Table Name: device tag
+		Necessity: each device tag has a tag key that has a Length (Type) that is greater than 0.
 
 Term: release
 
 Fact type: release has tag key
 	Term Form: release tag
 	Database Table Name: release tag
+	Necessity: each release tag has a tag key that has a Length (Type) that is greater than 0.
 
 Fact type: image is downloaded by device
 	Synonymous Form: device downloads image
