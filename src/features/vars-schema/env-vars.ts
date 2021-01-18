@@ -91,6 +91,12 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 			'Enable / Disable triggering updates instantly on startup or after pushing a release. Only supported by supervisor versions >= v9.13.0.',
 		default: 'true',
 	},
+	BALENA_HOST_SPLASH_IMAGE: {
+		type: 'string',
+		format: 'data-url',
+		description:
+			'Define the PNG image to be used for the boot splash screen. Only supported by supervisor versions >= v12.3.0.',
+	},
 };
 
 export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{

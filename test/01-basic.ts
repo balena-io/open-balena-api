@@ -80,6 +80,7 @@ const checkBaseVarsResult = (
 	const configVarSchemaKeys = Object.keys(configVarSchema.properties).sort();
 	expect(configVarSchemaKeys).to.deep.equal(
 		[
+			'BALENA_HOST_SPLASH_IMAGE',
 			'RESIN_SUPERVISOR_CONNECTIVITY_CHECK',
 			'RESIN_SUPERVISOR_INSTANT_UPDATE_TRIGGER',
 			'RESIN_SUPERVISOR_LOG_CONTROL',
