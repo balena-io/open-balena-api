@@ -17,7 +17,6 @@ export type Fixtures = Dictionary<Dictionary<any>>;
 type LoaderFunc = (
 	jsonData: AnyObject,
 	fixtures: PartiallyAppliedFixtures,
-	tx: Tx,
 ) => PromiseLike<any>;
 
 const logErrorAndThrow = (message: string, ...args: any[]) => {
@@ -200,10 +199,9 @@ const loadFixtureModel = (
 	loader: LoaderFunc,
 	fixtures: PendingFixtures,
 	data: AnyObject,
-	tx: Tx,
 ) => {
 	return _.mapValues(data, async (d) =>
-		loader(d, await Bluebird.props(fixtures), tx),
+		loader(d, await Bluebird.props(fixtures)),
 	);
 };
 
@@ -241,17 +239,13 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 		)
 		.map((file) => file.slice(0, -'.json'.length).trim());
 
-	return await sbvrUtils.db.transaction(async (tx) => {
-		models.forEach((model) => {
-			fixtures[model] = import(
-				path.join('../fixtures', fixtureName, `${model}.json`)
-			).then((fromJson) =>
-				loadFixtureModel(loaders[model], fixtures, fromJson, tx),
-			);
-		});
-
-		return await Bluebird.props(
-			_.mapValues(fixtures, (fx) => Bluebird.props(fx)),
-		);
+	models.forEach((model) => {
+		fixtures[model] = import(
+			path.join('../fixtures', fixtureName, `${model}.json`)
+		).then((fromJson) => loadFixtureModel(loaders[model], fixtures, fromJson));
 	});
+
+	return await Bluebird.props(
+		_.mapValues(fixtures, (fx) => Bluebird.props(fx)),
+	);
 };
