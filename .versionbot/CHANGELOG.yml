@@ -1,4 +1,15 @@
 - commits:
+    - subject: 'Tests: remove unused `tx` argument from fixtures'
+      hash: 72bb7a72efd288bbbc1d138dacf784ac70e7d7ba
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.118.1
+  date: 2021-01-18T18:01:20.508Z
+- commits:
     - subject: Add BALENA_HOST_SPLASH_IMAGE config var in the schema
       hash: 2284a76f839a1fbfb30d5e9836848f05c2be275d
       body: ''
