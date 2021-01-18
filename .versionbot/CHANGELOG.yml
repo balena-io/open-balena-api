@@ -1,4 +1,25 @@
 - commits:
+    - subject: Add BALENA_HOST_SPLASH_IMAGE config var in the schema
+      hash: 2284a76f839a1fbfb30d5e9836848f05c2be275d
+      body: ''
+      footer:
+        Resolves: '#530'
+        resolves: '#530'
+        Change-type: minor
+        change-type: minor
+        Depends-on: 'https://github.com/balena-os/meta-balena/pull/2092'
+        depends-on: 'https://github.com/balena-os/meta-balena/pull/2092'
+        See: >-
+          https://www.flowdock.com/app/rulemotion/r-etcherprv/threads/uBhQEVeU3r8gmPdHIzpfffbhSGM
+        see: >-
+          https://www.flowdock.com/app/rulemotion/r-etcherprv/threads/uBhQEVeU3r8gmPdHIzpfffbhSGM
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.118.0
+  date: 2021-01-18T17:17:30.302Z
+- commits:
     - subject: Update open-balena-base to 11.0.4
       hash: cc911b794553ae339ec1d63efebb17f4b80fa3eb
       body: |
