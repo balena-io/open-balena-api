@@ -1,3 +1,5 @@
+import './backwards-compatible-delete-error';
 import './defaults';
-import './delete-checks';
+import './check-device-releases-before-delete';
+import './unpin-release-before-delete';
 import './rename';

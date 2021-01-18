@@ -4,11 +4,6 @@ hooks.addPureHook('DELETE', 'resin', 'application', {
 	PRERUN: async (args) => {
 		const appIds = await sbvrUtils.getAffectedIds(args);
 		if (appIds.length === 0) {
-			const { odataQuery } = args.request;
-			if (odataQuery != null && odataQuery.key != null) {
-				// If there's a specific app targeted we make sure we give a 404 for backwards compatibility
-				throw new errors.NotFoundError('Application(s) not found.');
-			}
 			return;
 		}
 		// find devices which are
@@ -56,16 +51,5 @@ hooks.addPureHook('DELETE', 'resin', 'application', {
 				uuids,
 			});
 		}
-		// We need to null `should_be_running__release` or otherwise we have a circular dependency and cannot delete either
-		await args.api.patch({
-			resource: 'application',
-			options: {
-				$filter: {
-					id: { $in: appIds },
-					should_be_running__release: { $ne: null },
-				},
-			},
-			body: { should_be_running__release: null },
-		});
 	},
 });
