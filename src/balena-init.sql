@@ -12,6 +12,10 @@ ADD COLUMN IF NOT EXISTS "jwt secret" VARCHAR(255) NULL;
 ALTER TABLE "device"
 ALTER COLUMN "api heartbeat state" SET DEFAULT 'unknown';
 
+ALTER TABLE "release"
+ALTER COLUMN "release type" SET DEFAULT 'final',
+ALTER COLUMN "is passing tests" SET DEFAULT 1;
+
 -------------------------------
 -- Start foreign key indexes --
 -------------------------------
