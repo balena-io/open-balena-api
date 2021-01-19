@@ -1,4 +1,17 @@
 - commits:
+    - subject: Separate application delete hook components into individual hooks
+      hash: e1a5ffa9af59f5c67766bfd999b6a3b2632b7506
+      body: |
+        This allows them to be isolated from each other and also allows them to
+        be executed in parallel
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.118.2
+  date: 2021-01-18T22:04:40.566Z
+- commits:
     - subject: 'Tests: remove unused `tx` argument from fixtures'
       hash: 72bb7a72efd288bbbc1d138dacf784ac70e7d7ba
       body: ''
