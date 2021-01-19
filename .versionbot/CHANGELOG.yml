@@ -1,4 +1,17 @@
 - commits:
+    - subject: include empty stubbed migration
+      hash: 247256f004901502c5dd54b6bc6bf987a9eeb035
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.118.5
+  date: 2021-01-19T18:04:30.375Z
+- commits:
     - subject: Update pinejs to 14.10.2 for performance optimization
       hash: a883fb704e7ad7ae1401afa3b541f8a4f3ccdd6c
       body: |
