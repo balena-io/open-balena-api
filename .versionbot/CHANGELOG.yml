@@ -1,4 +1,19 @@
 - commits:
+    - subject: 'model: add some release metadata'
+      hash: 6f6cff6746dbd90cb154c2dc474adf5e3a95afb0
+      body: ''
+      footer:
+        Connects-to: 'https://github.com/balena-io/balena-io/issues/2335'
+        connects-to: 'https://github.com/balena-io/balena-io/issues/2335'
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.118.3
+  date: 2021-01-19T14:34:21.934Z
+- commits:
     - subject: Separate application delete hook components into individual hooks
       hash: e1a5ffa9af59f5c67766bfd999b6a3b2632b7506
       body: |
