@@ -228,6 +228,9 @@ Term: push timestamp
 Term: release version
 	Concept Type: Short Text (Type)
 
+Term: release type
+	Concept Type: Short Text (Type)
+
 Term: scope
 	Concept Type: Short Text (Type)
 
@@ -605,6 +608,10 @@ Fact type: release has release version
 	Necessity: each release has at most one release version
 Fact type: release has contract
 	Necessity: each release has at most one contract
+Fact type: release is passing tests
+Fact type: release has release type
+	Necessity: each release has exactly one release type.
+	Definition: "final" or "draft"
 
 
 -- service environment variable
