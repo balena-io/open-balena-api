@@ -1,4 +1,33 @@
 - commits:
+    - subject: Update pinejs to 14.10.2 for performance optimization
+      hash: a883fb704e7ad7ae1401afa3b541f8a4f3ccdd6c
+      body: |
+        Update pinejs from 14.10.1 to 14.10.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Optimize generating constrained abstract sql model
+              hash: b176abf77bf4f550ea7728fee52b5d6746ec7d22
+              body: >
+                Instantiating an `OData2AbstractSQL` instance can be relatively
+                costly
+
+                and as such reusing a memoized instance can provide a reasonable
+
+                performance improvement
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.10.2
+          date: 2021-01-18T21:14:38.233Z
+  version: 0.118.4
+  date: 2021-01-19T17:52:26.410Z
+- commits:
     - subject: 'model: add some release metadata'
       hash: 6f6cff6746dbd90cb154c2dc474adf5e3a95afb0
       body: ''
