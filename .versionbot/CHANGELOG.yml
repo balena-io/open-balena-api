@@ -1,4 +1,15 @@
 - commits:
+    - subject: Switch to using an object to specify dependent resources to delete
+      hash: 2f35215e966f3c3951b07f85596e489942f45e50
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.119.0
+  date: 2021-01-22T16:03:13.524Z
+- commits:
     - subject: Update pinejs to 14.14.0
       hash: 062323eccc76d38fb34a0873e0a99b483241390a
       body: |
