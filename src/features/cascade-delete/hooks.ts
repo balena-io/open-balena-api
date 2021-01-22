@@ -6,52 +6,52 @@ const { api, getAffectedIds } = sbvrUtils;
 
 // TODO: These should end up grouped into the features that declare the relationship existence
 
-setupDeleteCascade('application', [
-	['device', 'belongs_to__application'],
-	['application_config_variable', 'application'],
-	['application_environment_variable', 'application'],
-	['application_tag', 'application'],
-	['release', 'belongs_to__application'],
-	['service', 'application'],
-	['application', 'depends_on__application'],
-]);
+setupDeleteCascade('application', {
+	device: 'belongs_to__application',
+	application_config_variable: 'application',
+	application_environment_variable: 'application',
+	application_tag: 'application',
+	release: 'belongs_to__application',
+	service: 'application',
+	application: 'depends_on__application',
+});
 
-setupDeleteCascade('device', [
-	['device_config_variable', 'device'],
-	['device_environment_variable', 'device'],
-	['device_tag', 'device'],
-	['image_install', 'device'],
-	['service_install', 'device'],
-	['gateway_download', 'is_downloaded_by__device'],
-]);
+setupDeleteCascade('device', {
+	device_config_variable: 'device',
+	device_environment_variable: 'device',
+	device_tag: 'device',
+	image_install: 'device',
+	service_install: 'device',
+	gateway_download: 'is_downloaded_by__device',
+});
 
-setupDeleteCascade('image', [
-	['image_install', 'installs__image'],
-	['image__is_part_of__release', 'image'],
-	['gateway_download', 'image'],
-]);
+setupDeleteCascade('image', {
+	image_install: 'installs__image',
+	image__is_part_of__release: 'image',
+	gateway_download: 'image',
+});
 
-setupDeleteCascade('image__is_part_of__release', [
-	['image_label', 'release_image'],
-	['image_environment_variable', 'release_image'],
-]);
+setupDeleteCascade('image__is_part_of__release', {
+	image_label: 'release_image',
+	image_environment_variable: 'release_image',
+});
 
-setupDeleteCascade('release', [
-	['release_tag', 'release'],
-	['image__is_part_of__release', 'is_part_of__release'],
-	['image_install', 'is_provided_by__release'],
-]);
+setupDeleteCascade('release', {
+	release_tag: 'release',
+	image__is_part_of__release: 'is_part_of__release',
+	image_install: 'is_provided_by__release',
+});
 
-setupDeleteCascade('service', [
-	['service_environment_variable', 'service'],
-	['service_install', 'installs__service'],
-	['image', 'is_a_build_of__service'],
-	['service_label', 'service'],
-]);
+setupDeleteCascade('service', {
+	service_environment_variable: 'service',
+	service_install: 'installs__service',
+	image: 'is_a_build_of__service',
+	service_label: 'service',
+});
 
-setupDeleteCascade('service_install', [
-	['device_service_environment_variable', 'service_install'],
-]);
+setupDeleteCascade('service_install', {
+	device_service_environment_variable: 'service_install',
+});
 
 const deleteApiKeyHooks: hooks.Hooks = {
 	PRERUN: async (args) => {

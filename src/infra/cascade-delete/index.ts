@@ -4,8 +4,12 @@ import { captureException } from '../error-handling';
 export function addDeleteHookForDependents(
 	model: string,
 	resource: string,
-	dependents: Array<[string, string]>,
-) {
+	dependents: {
+		[dependentResource: string]: string | string[];
+	},
+): void {
+	const dependentResources = Object.keys(dependents);
+
 	hooks.addPureHook('DELETE', model, resource, {
 		PRERUN: async (args) => {
 			const { api, req } = args;
@@ -15,20 +19,22 @@ export function addDeleteHookForDependents(
 				return;
 			}
 
-			for (const [dependent, resourceIdField] of dependents) {
+			for (const dependentResource of dependentResources) {
+				const resourceIdField = dependents[dependentResource];
 				try {
+					const filter = Array.isArray(resourceIdField)
+						? resourceIdField.map((f) => ({ [f]: { $in: resourceIds } }))
+						: { [resourceIdField]: { $in: resourceIds } };
 					await api.delete({
-						resource: dependent,
+						resource: dependentResource,
 						options: {
-							$filter: {
-								[resourceIdField]: { $in: resourceIds },
-							},
+							$filter: filter,
 						},
 					});
 				} catch (err) {
 					captureException(
 						err,
-						`Error deleting resource '${dependent}' before deleting '${resource}' `,
+						`Error deleting resource '${dependentResource}' before deleting '${resource}' `,
 						{
 							req,
 						},
