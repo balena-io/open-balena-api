@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix potential TypeError from attempting to read `.length` of null
+      hash: 40797a88d31f19e9a558aa0a10ae66251d205f00
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.119.1
+  date: 2021-01-25T13:41:40.648Z
+- commits:
     - subject: Switch to using an object to specify dependent resources to delete
       hash: 2f35215e966f3c3951b07f85596e489942f45e50
       body: ''
