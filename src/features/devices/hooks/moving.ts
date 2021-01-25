@@ -72,7 +72,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			// Also mark all image installs of moved devices as deleted because
 			// they're for the previous application.
 			const { movedDevices } = args.request.custom;
-			if (movedDevices.length > 0) {
+			if (movedDevices != null && movedDevices.length > 0) {
 				await args.api.patch({
 					resource: 'image_install',
 					body: {
