@@ -1,4 +1,60 @@
 - commits:
+    - subject: Update pinejs to 14.14.3
+      hash: 30897a2b4739fe67047d929fb0822b57820d0915
+      body: |
+        Update pinejs from 14.14.0 to 14.14.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update odata-parser to 2.2.2 for optimized number parsing
+              hash: bc1ebfa88818d767f71c3f4a74f84ff5172cef89
+              body: |
+                Update odata-parser from 2.2.1 to 2.2.2
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Optimize number parsing
+                      hash: e443ad68f1e3b68ae9aee771160b81da5f319e9c
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: odata-parser-2.2.2
+                  date: 2021-01-25T13:00:50.460Z
+          version: pinejs-14.14.3
+          date: 2021-01-25T13:32:51.513Z
+        - commits:
+            - subject: Use 400s for data type validation errors
+              hash: accb2af358db0da17c441e8e0e2c5b4978660d88
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.14.2
+          date: 2021-01-25T12:11:29.450Z
+        - commits:
+            - subject: Use 500s for any database errors that are not explicitly handled
+              hash: b23493871a05b0f3e94eec9df660346910cc53da
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.14.1
+          date: 2021-01-25T11:59:49.995Z
+  version: 0.119.2
+  date: 2021-01-25T14:11:09.348Z
+- commits:
     - subject: Fix potential TypeError from attempting to read `.length` of null
       hash: 40797a88d31f19e9a558aa0a10ae66251d205f00
       body: ''
