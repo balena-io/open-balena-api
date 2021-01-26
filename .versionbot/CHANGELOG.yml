@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove Rich from CODEOWNERS
+      hash: b66f0aa362a0bb84901fb1e0cceab92af4faee4d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+      nested: []
+  version: 0.119.3
+  date: 2021-01-26T12:14:00.675Z
+- commits:
     - subject: Update pinejs to 14.14.3
       hash: 30897a2b4739fe67047d929fb0822b57820d0915
       body: |
