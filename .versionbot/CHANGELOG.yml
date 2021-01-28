@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'tests: prefix all tests with [0-9][0-9]_ for consistency'
+      hash: 914ef3361b2660d5e2f8a49484d7c2a685472e6a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.119.5
+  date: 2021-01-28T15:52:26.286Z
+- commits:
     - subject: Add tests for the unique successful release commit rule
       hash: b5ca5c1c49214984ff6692aee1d68d4aa1e85b7d
       body: ''
