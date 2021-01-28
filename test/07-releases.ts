@@ -4,6 +4,72 @@ import { expect } from './test-lib/chai';
 
 import { supertest, UserObjectParam } from './test-lib/supertest';
 
+describe('releases', () => {
+	let fx: fixtures.Fixtures;
+	let user: UserObjectParam;
+	let newRelease: AnyObject;
+
+	before(async () => {
+		fx = await fixtures.load('07-releases');
+		user = fx.users.admin;
+		newRelease = {
+			belongs_to__application: fx.applications.app1.id,
+			commit: '57d00829-492d-4124-bca2-fde28df9e590',
+			status: 'success',
+			composition: {},
+			source: 'test',
+			start_timestamp: Date.now(),
+		};
+	});
+	after(async () => {
+		await fixtures.clean(fx);
+	});
+
+	it('should be able to create a new failed release for a given commit', async () => {
+		await supertest(user)
+			.post(`/resin/release`)
+			.send({
+				...newRelease,
+				status: 'error',
+			})
+			.expect(201);
+	});
+
+	it('should be able to create an extra failed release for the same commit', async () => {
+		await supertest(user)
+			.post(`/resin/release`)
+			.send({
+				...newRelease,
+				status: 'error',
+			})
+			.expect(201);
+	});
+
+	it('should be able to create a new successful release for the same commit', async () => {
+		await supertest(user).post(`/resin/release`).send(newRelease).expect(201);
+	});
+
+	it('should disallow creating an additional successful release for the same commit', async () => {
+		const { body } = await supertest(user)
+			.post(`/resin/release`)
+			.send(newRelease)
+			.expect(400);
+		expect(body).that.equals(
+			'It is necessary that each release1 that has a status that is equal to "success" and has a commit1, belongs to an application that owns exactly one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.',
+		);
+	});
+
+	it('should be able to create a new successful release for the same commit in a different application', async () => {
+		await supertest(user)
+			.post(`/resin/release`)
+			.send({
+				...newRelease,
+				belongs_to__application: fx.applications.app2.id,
+			})
+			.expect(201);
+	});
+});
+
 describe('versioning releases', () => {
 	let fx: fixtures.Fixtures;
 	let user: UserObjectParam;
@@ -12,7 +78,7 @@ describe('versioning releases', () => {
 	let newRelease: AnyObject;
 
 	before(async () => {
-		fx = await fixtures.load('07-versioned-releases');
+		fx = await fixtures.load('07-releases');
 		user = fx.users.admin;
 		release1 = fx.releases.release1;
 		release2 = fx.releases.release2;
@@ -26,7 +92,6 @@ describe('versioning releases', () => {
 			start_timestamp: Date.now(),
 		};
 	});
-
 	after(async () => {
 		await fixtures.clean(fx);
 	});
