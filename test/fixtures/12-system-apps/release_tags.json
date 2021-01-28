@@ -1,0 +1,38 @@
+{
+	"tag1": {
+		"user": "admin",
+		"release": "release2",
+		"tag_key": "BALENA_REQUIRED_SUPERVISOR_v1.0.0",
+		"value": "v1.0.0"
+	},
+	"tag2": {
+		"user": "admin",
+		"release": "release2",
+		"tag_key": "BALENA_REQUIRED_SUPERVISOR_v1.0.1",
+		"value": "v1.0.1"
+	},
+	"tag3": {
+		"user": "admin",
+		"release": "supervisorRelease1",
+		"tag_key": "BALENA_REQUIRED_SUPERVISOR_v1.0.0",
+		"value": "v1.0.0"
+	},
+	"tag4": {
+		"user": "admin",
+		"release": "supervisorRelease1",
+		"tag_key": "BALENA_REQUIRED_SUPERVISOR_v1.0.1",
+		"value": "v1.0.1"
+	},
+	"tag5": {
+		"user": "admin",
+		"release": "supervisorRelease2",
+		"tag_key": "BALENA_REQUIRED_SUPERVISOR_v1.0.0",
+		"value": "v1.0.0"
+	},
+	"tag6": {
+		"user": "admin",
+		"release": "supervisorRelease2",
+		"tag_key": "BALENA_REQUIRED_SUPERVISOR_v1.0.1",
+		"value": "v1.0.1"
+	}
+}

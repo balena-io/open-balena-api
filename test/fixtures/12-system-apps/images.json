@@ -26,10 +26,19 @@
 		"build_log": "This is also the build log",
 		"status": "success"
 	},
-	"supervisorImage": {
+	"supervisorImage1": {
 		"user": "admin",
 		"service": "supervisorService",
-		"releases": [ "supervisorRelease" ],
+		"releases": [ "supervisorRelease1" ],
+		"image_size": 2048,
+		"project_type": "project type goes here",
+		"build_log": "This is also the build log",
+		"status": "success"
+	},
+	"supervisorImage2": {
+		"user": "admin",
+		"service": "supervisorService",
+		"releases": [ "supervisorRelease2" ],
 		"image_size": 2048,
 		"project_type": "project type goes here",
 		"build_log": "This is also the build log",

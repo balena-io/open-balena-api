@@ -32,12 +32,27 @@
 		},
 		"source": "cloud"
 	},
-	"supervisorRelease": {
+	"supervisorRelease1": {
 		"user": "admin",
 		"application": "supervisorApp",
 		"commit": "aaaabbbb",
 		"status": "success",
-		"release_version": "1.0.0",
+		"release_version": "v1.0.0",
+		"composition": {
+			"services": {
+				"supervisorImage": {
+					"build": "./"
+				}
+			}
+		},
+		"source": "cloud"
+	},
+	"supervisorRelease2": {
+		"user": "admin",
+		"application": "supervisorApp",
+		"commit": "aaa1bbbb",
+		"status": "running",
+		"release_version": "v1.0.1",
 		"composition": {
 			"services": {
 				"supervisorImage": {

@@ -1,0 +1,17 @@
+{
+	"service1": {
+		"user": "admin",
+		"application": "app1",
+		"service_name": "main"
+	},
+	"service2": {
+		"user": "admin",
+		"application": "systemApp1",
+		"service_name": "haproxy"
+	},
+	"supervisorService": {
+		"user": "admin",
+		"application": "supervisorApp",
+		"service_name": "resin-supervisor"
+	}
+}

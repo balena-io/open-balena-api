@@ -1,8 +1,0 @@
-{
-    "systemAppVar1": {
-        "user": "admin",
-        "application": "systemApp1",
-        "name": "CERT_DOMAIN",
-        "value": "my-network.com"
-    }
-}

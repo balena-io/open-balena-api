@@ -1,8 +1,0 @@
-{
-    "systemAppServiceVar1": {
-        "user": "admin",
-        "service": "service2",
-        "name": "EXTRA_FLAGS",
-        "value": "-a -b -c"
-    }
-}

@@ -1,0 +1,37 @@
+{
+	"app1": {
+		"user": "admin",
+		"device_type": "intel-nuc",
+		"app_name": "test-app-1"
+	},
+	"systemApp1": {
+		"uuid": "f3ad5e4c8309404b834b1dbae41fa6fc",
+		"user": "admin",
+		"device_type": "intel-nuc",
+		"app_name": "system-app-1-nuc",
+		"install_type": "supervised",
+		"is_public": true
+	},
+	"systemApp2": {
+		"uuid": "031f48d8f47b4062ad2d67b8de933711",
+		"user": "admin",
+		"device_type": "raspberrypi3",
+		"app_name": "system-app-1-pi",
+		"install_type": "supervised",
+		"is_public": true
+	},
+	"supervisorApp": {
+		"user": "admin",
+		"device_type": "intel-nuc",
+		"app_name": "supervisor-intel-nuc",
+		"install_type": "supervisor",
+		"is_public": true
+	},
+	"supervisorAppPi": {
+		"user": "admin",
+		"device_type": "raspberrypi3",
+		"app_name": "supervisor-raspberrypi3",
+		"install_type": "supervisor",
+		"is_public": true
+	}
+}
