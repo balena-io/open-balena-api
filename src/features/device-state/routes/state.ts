@@ -391,7 +391,8 @@ export const state: RequestHandler = async (req, res) => {
 				return supervisorRelease.release_version;
 			}
 
-			return device.supervisor_version ?? '';
+			// supervisors do not report their version with a preceding `v`, but elsewhere it's used
+			return `v${device.supervisor_version}` ?? '';
 		})();
 
 		// grab the system apps for this device...
