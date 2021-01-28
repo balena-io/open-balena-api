@@ -55,7 +55,7 @@ describe('releases', () => {
 			.send(newRelease)
 			.expect(400);
 		expect(body).that.equals(
-			'It is necessary that each release1 that has a status that is equal to "success" and has a commit1, belongs to an application that owns exactly one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.',
+			'It is necessary that each application that owns a release1 that has a status that is equal to "success" and has a commit1, owns at most one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.',
 		);
 	});
 
