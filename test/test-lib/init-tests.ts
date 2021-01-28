@@ -64,5 +64,5 @@ export const postInit = async () => {
 	const { user, org } = await loadAdminUserAndOrganization();
 	fixtures.setDefaultFixtures('users', { admin: Promise.resolve(user) });
 	fixtures.setDefaultFixtures('organizations', { admin: Promise.resolve(org) });
-	await import('../00-init');
+	await import('../00_init');
 };
