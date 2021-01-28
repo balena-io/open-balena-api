@@ -19,22 +19,26 @@ describe('Extra Containers', function () {
 		let applicationId: number;
 		let systemAppUuid: string;
 		let systemAppServiceId: number;
+		let supervisorAppUuid: string;
 		let device: fakeDevice.Device;
-		let supervisorRelease: number;
+		let supervisorRelease1: number;
+		let supervisorRelease2: number;
 		let supervisorReleaseBadArch: number;
 		let serviceInstallId: number;
 
 		before(async () => {
 			mockery.registerMock('../src/lib/config', configMock);
-			fx = await fixtures.load('11-system-apps');
+			fx = await fixtures.load('12-system-apps');
 
 			admin = fx.users.admin;
 			applicationId = fx.applications.app1.id;
 
 			systemAppUuid = fx.applications.systemApp1.uuid;
+			supervisorAppUuid = fx.applications.supervisorApp.uuid;
 			systemAppServiceId = fx.services.service2.id;
 
-			supervisorRelease = fx.releases.supervisorRelease.id;
+			supervisorRelease1 = fx.releases.supervisorRelease1.id;
+			supervisorRelease2 = fx.releases.supervisorRelease2.id;
 			supervisorReleaseBadArch = fx.releases.supervisorReleasePi.id;
 
 			// create a new device in this test application...
@@ -128,14 +132,14 @@ describe('Extra Containers', function () {
 			expect(state.local.extraContainers).to.be.undefined;
 		});
 
-		it('should have a single extra container', async () => {
+		it('should have a single supervised extra container', async () => {
 			setSystemAppsValue([systemAppUuid, '031f48d8f47b4062ad2d67b8de933711']);
 			expect(configMock.EXTRA_CONTAINERS).to.be.an('array').with.lengthOf(2);
 
 			await supertest(device)
 				.patch(`/resin/device(${device.id})`)
 				.send({
-					should_be_managed_by__release: supervisorRelease,
+					should_be_managed_by__release: supervisorRelease1,
 				})
 				.expect(200);
 
@@ -171,12 +175,53 @@ describe('Extra Containers', function () {
 				.equals('-a -b -c');
 		});
 
+		it('should have a single supervisor extra container', async () => {
+			setSystemAppsValue([
+				supervisorAppUuid,
+				'031f48d8f47b4062ad2d67b8de933711',
+			]);
+			expect(configMock.EXTRA_CONTAINERS).to.be.an('array').with.lengthOf(2);
+
+			await supertest(device)
+				.patch(`/resin/device(${device.id})`)
+				.send({
+					should_be_managed_by__release: supervisorRelease1,
+				})
+				.expect(200);
+
+			// set our second release as completed so it's updated as latest
+			await supertest(admin)
+				.patch(`/resin/release(${supervisorRelease2})`)
+				.send({
+					status: 'success',
+				})
+				.expect(200);
+
+			const state = await device.getState();
+
+			// should have some extra containers...
+			expect(state.local.extraContainers, 'extraContainers is undefined').to.not
+				.be.undefined;
+			expect(
+				state.local.extraContainers,
+				'extraContainers has the wrong number of apps',
+			).to.not.be.empty;
+			expect(
+				Object.getOwnPropertyNames(state.local.extraContainers),
+			).to.have.lengthOf(1);
+
+			// we need to ensure non-latest supervisors are still returned
+			expect(supervisorRelease1).to.equal(
+				state.local.extraContainers?.[`${supervisorAppUuid}`].releaseId,
+			);
+		});
+
 		it('should create image installs when PATCHing the state endpoint, for extra containers', async () => {
 			setSystemAppsValue([systemAppUuid]);
 			await supertest(device)
 				.patch(`/resin/device(${device.id})`)
 				.send({
-					should_be_managed_by__release: supervisorRelease,
+					should_be_managed_by__release: supervisorRelease1,
 				})
 				.expect(200);
 

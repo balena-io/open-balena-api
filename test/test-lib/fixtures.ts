@@ -89,6 +89,7 @@ const loaders: Dictionary<LoaderFunc> = {
 			'application_type',
 			'uuid',
 			'is_public',
+			'install_type',
 		);
 
 		return await createResource({
