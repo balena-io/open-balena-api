@@ -74,6 +74,7 @@ function createTimestampFromDate(date = new Date()) {
 function backoff<T extends (...args: any[]) => any>(
 	fn: T,
 	retryIf: (err: Error) => boolean,
+	shouldThrow: (err: Error) => boolean,
 ) {
 	return async (...args: Parameters<T>): Promise<ReturnType<T> | undefined> => {
 		let nextBackoff = MIN_BACKOFF;
@@ -87,8 +88,10 @@ function backoff<T extends (...args: any[]) => any>(
 					// fibonacci
 					nextBackoff = nextBackoff + prevBackoff;
 					prevBackoff = nextBackoff - prevBackoff;
-				} else {
+				} else if (shouldThrow(err)) {
 					throw err;
+				} else {
+					return;
 				}
 			}
 		}
@@ -115,15 +118,27 @@ export class LokiBackend implements DeviceLogsBackend {
 			),
 		);
 		this.tailCalls = new Map();
-		this.push = backoff(this.push.bind(this), (err: ServiceError): boolean => {
-			incrementLokiPushErrorTotal(
-				err.code ? statusKeys[err.code] : 'UNDEFINED',
-			);
-			return (
-				RETRIES_ENABLED &&
-				[status.UNAVAILABLE, status.RESOURCE_EXHAUSTED].includes(err.code ?? -1)
-			);
-		});
+		this.push = backoff(
+			this.push.bind(this),
+			(err: ServiceError): boolean => {
+				const errorCode =
+					err.code && statusKeys[err.code]
+						? statusKeys[err.code]
+						: err.message.includes("reason: 'entry out of order'")
+						? 'OUT_OF_ORDER'
+						: 'UNDEFINED';
+				incrementLokiPushErrorTotal(errorCode);
+				return (
+					RETRIES_ENABLED &&
+					[status.UNAVAILABLE, status.RESOURCE_EXHAUSTED].includes(
+						err.code ?? -1,
+					)
+				);
+			},
+			(err: ServiceError): boolean => {
+				return !err.message.includes("reason: 'entry out of order'");
+			},
+		);
 	}
 
 	public get available(): boolean {

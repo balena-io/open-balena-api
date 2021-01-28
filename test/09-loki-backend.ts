@@ -128,4 +128,15 @@ describe('loki backend', () => {
 			await loki.publish(ctx, logs);
 		}).timeout(5000, 'Subscription did not receive logs');
 	});
+
+	it('should handle out-of-order errors silently', async function () {
+		const ctx = createContext({ belongs_to__application: 2 });
+		const loki = new LokiBackend();
+		const now = Date.now();
+		const logs = [
+			createLog({ timestamp: now }),
+			createLog({ timestamp: now - 1 }),
+		];
+		await loki.publish(ctx, logs); // expect throw if not handled silently
+	});
 });
