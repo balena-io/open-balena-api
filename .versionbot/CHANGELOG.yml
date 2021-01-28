@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add tests for the unique successful release commit rule
+      hash: b5ca5c1c49214984ff6692aee1d68d4aa1e85b7d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.119.4
+  date: 2021-01-28T14:10:16.647Z
+- commits:
     - subject: Remove Rich from CODEOWNERS
       hash: b66f0aa362a0bb84901fb1e0cceab92af4faee4d
       body: ''
