@@ -190,7 +190,13 @@ const ConfigurationVarsToLabels = {
 };
 
 const releaseExpand = {
-	$select: ['id', 'commit', 'composition', 'release_version'],
+	$select: [
+		'id',
+		'commit',
+		'composition',
+		'release_version',
+		'belongs_to__application',
+	],
 	$expand: {
 		has__tag_key: {
 			$select: ['tag_key', 'value'],
@@ -389,7 +395,7 @@ export const state: RequestHandler = async (req, res) => {
 		})();
 
 		// grab the system apps for this device...
-		const extraContainers =
+		let extraContainers =
 			conf.EXTRA_CONTAINERS.length === 0
 				? []
 				: await sbvrUtils.db.readTransaction!(async (tx) => {
@@ -417,6 +423,10 @@ export const state: RequestHandler = async (req, res) => {
 									uuid: {
 										$in: conf.EXTRA_CONTAINERS,
 									},
+									// we'll load supervisors separately since they don't track latest
+									install_type: {
+										$ne: 'supervisor',
+									},
 									should_be_running__release: {
 										$any: {
 											$alias: 'r',
@@ -443,7 +453,6 @@ export const state: RequestHandler = async (req, res) => {
 							},
 						});
 				  });
-
 		const local: LocalState = {
 			name: device.device_name,
 			config,
@@ -456,6 +465,40 @@ export const state: RequestHandler = async (req, res) => {
 				},
 			},
 		};
+		if (device.should_be_managed_by__release.length !== 0) {
+			const supervisorApp =
+				(await sbvrUtils.db.readTransaction!(async (tx) => {
+					const resinApiTx = api.resin.clone({ passthrough: { req, tx } });
+					return await resinApiTx.get({
+						resource: 'application',
+						id:
+							device.should_be_managed_by__release[0].belongs_to__application
+								.__id,
+						options: {
+							$select: ['id', 'app_name', 'uuid', 'install_type'],
+							$expand: {
+								application_config_variable: {
+									$select: ['name', 'value'],
+									$orderby: {
+										name: 'asc',
+									},
+								},
+								application_environment_variable: {
+									$select: ['name', 'value'],
+									$orderby: {
+										name: 'asc',
+									},
+								},
+							},
+						},
+					});
+				})) || {};
+			if (supervisorApp) {
+				supervisorApp.should_be_running__release =
+					device.should_be_managed_by__release;
+				extraContainers = [...extraContainers, supervisorApp];
+			}
+		}
 
 		if (extraContainers.length > 0) {
 			local.extraContainers = {};

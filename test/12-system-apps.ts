@@ -132,7 +132,7 @@ describe('Extra Containers', function () {
 			expect(state.local.extraContainers).to.be.undefined;
 		});
 
-		it('should have a single supervised extra container', async () => {
+		it('should have a single supervised extra container, alongside supervisor container', async () => {
 			setSystemAppsValue([systemAppUuid, '031f48d8f47b4062ad2d67b8de933711']);
 			expect(configMock.EXTRA_CONTAINERS).to.be.an('array').with.lengthOf(2);
 
@@ -154,7 +154,7 @@ describe('Extra Containers', function () {
 			).to.not.be.empty;
 			expect(
 				Object.getOwnPropertyNames(state.local.extraContainers),
-			).to.have.lengthOf(1);
+			).to.have.lengthOf(2);
 
 			// should have a specific supervised app...
 			const systemApp1 = state.local.extraContainers?.[`${systemAppUuid}`];
