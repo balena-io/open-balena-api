@@ -65,7 +65,7 @@
 	"supervisorReleasePi": {
 		"user": "admin",
 		"application": "supervisorAppPi",
-		"commit": "aaaabbbb",
+		"commit": "aaa2bbbb",
 		"status": "success",
 		"release_version": "1.0.0",
 		"composition": {
