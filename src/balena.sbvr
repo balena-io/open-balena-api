@@ -735,7 +735,7 @@ Fact type: config has description (Auth)
 Rule: It is necessary that each device1 that is managed by a device2, belongs to an application1 that depends on an application2 that owns the device2.
 Rule: It is necessary that each release that has a release version1 and has a status that is equal to "success" and is not invalidated, belongs to an application that owns exactly one release that has a release version2 that is equal to the release version1 and has a status that is equal to "success" and is not invalidated.
 Rule: It is necessary that each image that has a status that is equal to "success", has a push timestamp.
-Rule: It is necessary that each release1 that has a status that is equal to "success" and has a commit1, belongs to an application that owns exactly one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.
+Rule: It is necessary that each application that owns a release1 that has a status that is equal to "success" and has a commit1, owns at most one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.
 Rule: It is necessary that each release that should be running on a device, has a status that is equal to "success" and belongs to an application1 that the device belongs to.
 Rule: It is necessary that each release that should be running on an application, has a status that is equal to "success" and belongs to the application.
 Rule: It is necessary that each release that contains at least 2 images, belongs to an application that has an application type that supports multicontainer.
