@@ -14,7 +14,7 @@ import {
 } from '../utils';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { events } from '..';
-import * as conf from '../../../lib/config';
+import { EXTRA_CONTAINERS } from '../../../lib/config';
 import { omit } from 'lodash';
 
 const { UnauthorizedError } = errors;
@@ -397,7 +397,7 @@ export const state: RequestHandler = async (req, res) => {
 
 		// grab the system apps for this device...
 		let extraContainers =
-			conf.EXTRA_CONTAINERS.length === 0
+			EXTRA_CONTAINERS.length === 0
 				? []
 				: await sbvrUtils.db.readTransaction!(async (tx) => {
 						const resinApiTx = api.resin.clone({ passthrough: { req, tx } });
@@ -422,7 +422,7 @@ export const state: RequestHandler = async (req, res) => {
 								},
 								$filter: {
 									uuid: {
-										$in: conf.EXTRA_CONTAINERS,
+										$in: EXTRA_CONTAINERS,
 									},
 									// we'll load supervisors separately since they don't track latest
 									install_type: {

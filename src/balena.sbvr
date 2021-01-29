@@ -458,7 +458,7 @@ Fact type: application has uuid
 	Necessity: each application has a uuid that has a Length (Type) that is equal to 32.
 Fact type: application is public
 Fact type: application has install type
-	Necessity: each application has at most one install type
+	Necessity: each application has exactly one install type
 	Definition: "hostapp" or "hostapp extension" or "supervised" or "supervisor"
 
 -- service instance
