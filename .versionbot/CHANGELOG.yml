@@ -1,4 +1,15 @@
 - commits:
+    - subject: 'CODEOWNERS: Use the balena-api dev team'
+      hash: f58f76334e32640b934447a069aa6f5cb26b76d8
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.120.1
+  date: 2021-01-29T15:37:50.022Z
+- commits:
     - subject: Optimize the unique commit per successful release per app rule
       hash: 8e92f57aa696922d4da0d63c360cdf7d594554a1
       body: ''
