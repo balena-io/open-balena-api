@@ -1,13 +1,8 @@
-import * as _ from 'lodash';
-
 import { errors, hooks } from '@balena/pinejs';
 
 const RESERVED_NAMESPACES = ['io.resin.', 'io.balena.'];
 
 const checkTagKeyValidity = (key: string) => {
-	if (_.isEmpty(key)) {
-		throw new errors.BadRequestError('Tag key cannot be empty.');
-	}
 	if (/\s/.test(key)) {
 		throw new errors.BadRequestError('Tag keys cannot contain whitespace.');
 	}
