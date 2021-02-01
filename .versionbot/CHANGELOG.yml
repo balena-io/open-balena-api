@@ -1,4 +1,15 @@
 - commits:
+    - subject: 'Support setting pg statement/query timeouts, defaulting to 60s/61s'
+      hash: 1e457bd50e6676e685b87d51c0bfdcd69f5f4e04
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.120.3
+  date: 2021-02-01T14:12:06.656Z
+- commits:
     - subject: 'Update pinejs to 14.15.0, reducing the cases we need to run rules'
       hash: 9b99197d8585201d493d7a3520af9876d178a155
       body: |
