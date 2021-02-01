@@ -37,6 +37,8 @@ import {
 	API_HOST,
 	COOKIE_SESSION_SECRET,
 	DB_POOL_SIZE,
+	DB_STATEMENT_TIMEOUT,
+	DB_QUERY_TIMEOUT,
 	NODE_ENV,
 	SENTRY_DSN,
 } from './lib/config';
@@ -265,6 +267,12 @@ export interface SetupOptions {
 export async function setup(app: Application, options: SetupOptions) {
 	if (DB_POOL_SIZE != null) {
 		pine.env.db.poolSize = DB_POOL_SIZE;
+	}
+	if (DB_STATEMENT_TIMEOUT != null) {
+		pine.env.db.statementTimeout = DB_STATEMENT_TIMEOUT;
+	}
+	if (DB_QUERY_TIMEOUT != null) {
+		pine.env.db.queryTimeout = DB_QUERY_TIMEOUT;
 	}
 
 	app.disable('x-powered-by');

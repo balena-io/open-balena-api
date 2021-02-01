@@ -107,6 +107,11 @@ export const CONTRACTS_PRIVATE_REPO_TOKEN = optionalVar(
 	'CONTRACTS_PRIVATE_REPO_TOKEN',
 );
 export const DB_POOL_SIZE = intVar('DB_POOL_SIZE', undefined);
+export const DB_STATEMENT_TIMEOUT = intVar('DB_STATEMENT_TIMEOUT', 1 * MINUTES);
+export const DB_QUERY_TIMEOUT = intVar(
+	'DB_QUERY_TIMEOUT',
+	DB_STATEMENT_TIMEOUT + 1 * SECONDS,
+);
 export const DELTA_HOST = requiredVar('DELTA_HOST');
 export const FILES_HOST = optionalVar('FILES_HOST', '');
 export const DEVICE_CONFIG_OPENVPN_CA = requiredVar('DEVICE_CONFIG_OPENVPN_CA');
@@ -120,7 +125,7 @@ export const DEVICE_CONFIG_SSH_AUTHORIZED_KEYS = optionalVar(
 );
 export const EXTERNAL_HTTP_TIMEOUT_MS = intVar(
 	'EXTERNAL_HTTP_TIMEOUT_MS',
-	25000,
+	25 * SECONDS,
 );
 export const IMAGE_STORAGE_BUCKET = requiredVar('IMAGE_STORAGE_BUCKET');
 export const IMAGE_STORAGE_ENDPOINT = requiredVar('IMAGE_STORAGE_ENDPOINT');
@@ -163,5 +168,5 @@ export const VPN_GUEST_API_KEY = process.env.VPN_GUEST_API_KEY;
 
 export const DEFAULT_SUPERVISOR_POLL_INTERVAL = intVar(
 	'DEFAULT_SUPERVISOR_POLL_INTERVAL',
-	10 * 60 * 1000,
+	10 * MINUTES,
 );
