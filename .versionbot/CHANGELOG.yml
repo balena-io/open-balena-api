@@ -1,4 +1,21 @@
 - commits:
+    - subject: 'vars-schema: Add HOST_CONFIG HDMI config definitions for the RPi family'
+      hash: 077df7f0e098cbb2f526825e5b7fdcfcf79c855a
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://www.raspberrypi.org/documentation/configuration/config-txt/video.md
+        see: >-
+          https://www.raspberrypi.org/documentation/configuration/config-txt/video.md
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.121.0
+  date: 2021-02-01T14:39:00.989Z
+- commits:
     - subject: 'Support setting pg statement/query timeouts, defaulting to 60s/61s'
       hash: 1e457bd50e6676e685b87d51c0bfdcd69f5f4e04
       body: ''
