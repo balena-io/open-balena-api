@@ -110,6 +110,11 @@ describe('Basic', () => {
 			{
 				deviceType: 'fincm3',
 				extraConfigVarSchemaProperties: [
+					'BALENA_HOST_CONFIG_display_rotate',
+					'BALENA_HOST_CONFIG_hdmi_cvt',
+					'BALENA_HOST_CONFIG_hdmi_force_hotplug',
+					'BALENA_HOST_CONFIG_hdmi_group',
+					'BALENA_HOST_CONFIG_hdmi_mode',
 					'RESIN_HOST_CONFIG_disable_splash',
 					'RESIN_HOST_CONFIG_dtparam',
 					'RESIN_HOST_CONFIG_dtoverlay',
