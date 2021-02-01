@@ -141,6 +141,35 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 				description: 'Define device GPU memory in megabytes.',
 				default: 16,
 			},
+			BALENA_HOST_CONFIG_hdmi_cvt: {
+				type: 'string',
+				description: 'Define a custom CVT mode for the HDMI',
+				examples: ['480 360 60 1 0 0 0'],
+			},
+			BALENA_HOST_CONFIG_hdmi_force_hotplug: {
+				type: 'integer',
+				enum: [0, 1],
+				description: 'Force the HDMI hotplug signal',
+				default: 0,
+			},
+			BALENA_HOST_CONFIG_hdmi_group: {
+				type: 'integer',
+				description: 'Define the HDMI output group',
+				examples: [2],
+				default: 0,
+			},
+			BALENA_HOST_CONFIG_hdmi_mode: {
+				type: 'integer',
+				description: 'Define the HDMI output format',
+				examples: [87],
+				default: 1,
+			},
+			BALENA_HOST_CONFIG_display_rotate: {
+				type: 'string',
+				description: 'Define the rotation or flip of the display',
+				examples: ['1', '0x10000'],
+				default: '0',
+			},
 		},
 	},
 	{
