@@ -96,6 +96,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		format: 'data-url',
 		description:
 			'Define the PNG image to be used for the boot splash screen. Only supported by supervisor versions >= v12.3.0.',
+		maxLength: 13400, // ~10KB base64 encoded image
 	},
 };
 
