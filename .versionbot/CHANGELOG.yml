@@ -1,4 +1,21 @@
 - commits:
+    - subject: Add a maximum file size for the BALENA_HOST_SPLASH_IMAGE config var
+      hash: 44f8745317768bf486a80fc5fa3469f83c8918b9
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://www.flowdock.com/app/rulemotion/r-etcherprv/threads/uBhQEVeU3r8gmPdHIzpfffbhSGM
+        see: >-
+          https://www.flowdock.com/app/rulemotion/r-etcherprv/threads/uBhQEVeU3r8gmPdHIzpfffbhSGM
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.123.0
+  date: 2021-02-02T17:10:40.811Z
+- commits:
     - subject: Move tag key and device uuid length validation into SBVR rules
       hash: 8d97541e63017265235bcfc42e016b1057cb06a8
       body: |
