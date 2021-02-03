@@ -1,4 +1,19 @@
 - commits:
+    - subject: Add permission checking to the supervisor proxy
+      hash: 7a11888204b10546b124b4ceefedce67d2302041
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: 'https://github.com/balena-io/balena-api/issues/2966'
+        see: 'https://github.com/balena-io/balena-api/issues/2966'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.123.1
+  date: 2021-02-03T12:45:50.107Z
+- commits:
     - subject: Add a maximum file size for the BALENA_HOST_SPLASH_IMAGE config var
       hash: 44f8745317768bf486a80fc5fa3469f83c8918b9
       body: ''
