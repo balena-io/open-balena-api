@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
 
+import type { Device } from '../../balena-model';
 import {
 	captureException,
 	handleHttpErrors,
@@ -184,7 +185,10 @@ export async function requestDevices({
 	if (!['PUT', 'PATCH', 'POST', 'HEAD', 'DELETE', 'GET'].includes(method)) {
 		throw new BadRequestError(`Invalid method '${method}'`);
 	}
-	const deviceIds = await api.resin.get({
+	const resinApi = api.resin.clone({
+		passthrough: { req },
+	});
+	const deviceIds = ((await resinApi.get({
 		resource: 'device',
 		options: {
 			$select: 'id',
@@ -198,14 +202,27 @@ export async function requestDevices({
 				],
 			},
 		},
-		passthrough: { req },
-	});
+	})) as Array<Pick<Device, 'id'>>).map(({ id }) => id);
 	if (deviceIds.length === 0) {
 		if (!wait) {
 			// Don't throw an error if it's a fire/forget
 			return;
 		}
 		throw new NotFoundError('No online device(s) found');
+	}
+	if (method !== 'GET') {
+		await Promise.all(
+			deviceIds.map(async (deviceId) => {
+				const res = (await resinApi.post({
+					url: `device(${deviceId})/canAccess`,
+					body: { action: 'update' },
+				})) as { d?: Array<{ id: number }> };
+
+				if (res?.d?.[0]?.id !== deviceId) {
+					throw new errors.ForbiddenError();
+				}
+			}),
+		);
 	}
 	// And now fetch device data with full privs
 	const devices = await api.resin.get({
@@ -217,7 +234,7 @@ export async function requestDevices({
 				is_managed_by__service_instance: { $select: 'ip_address' },
 			},
 			$filter: {
-				id: { $in: deviceIds.map(({ id }) => id) },
+				id: { $in: deviceIds },
 				is_managed_by__service_instance: {
 					$any: {
 						$alias: 'si',
