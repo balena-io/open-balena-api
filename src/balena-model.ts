@@ -366,6 +366,8 @@ export interface Release {
 	update_timestamp: DateString;
 	release_version: string | null;
 	contract: {} | null;
+	is_passing_tests: boolean;
+	release_type: 'final' | 'draft';
 }
 
 export interface ReleaseTag {
