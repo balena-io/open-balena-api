@@ -1,4 +1,20 @@
 - commits:
+    - subject: 'releases: add new metadata to release model'
+      hash: ec66920ee984640dc3078e8ae7422b64d5b2bdd1
+      body: |
+        filter non-final/untested releases from the state endpoint
+      footer:
+        Connects-to: 'https://github.com/balena-io/balena-io/issues/2335'
+        connects-to: 'https://github.com/balena-io/balena-io/issues/2335'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.124.0
+  date: 2021-02-05T15:21:45.625Z
+- commits:
     - subject: Add permission checking to the supervisor proxy
       hash: 7a11888204b10546b124b4ceefedce67d2302041
       body: ''
