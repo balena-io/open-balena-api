@@ -1,0 +1,10 @@
+{
+  "slug": "family-surface",
+  "version": "1.0.0",
+  "type": "hw.device-family",
+  "aliases": [],
+  "name": "Surface",
+  "data": {
+    "manufacturedBy": "manufacturer-microsoft"
+  }
+}
