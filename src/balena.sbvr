@@ -603,6 +603,7 @@ Fact type: device family has slug
 Fact type: device family has name (Auth)
 	Necessity: each device family has exactly one name (Auth)
 Fact type: device family is manufactured by device manufacturer
+	Synonymous Form: device manufacturer manufactures device family
 	Necessity: each device family is manufactured by at most one device manufacturer
 
 
