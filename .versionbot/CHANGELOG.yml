@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add synonymous form to device family manufacturer
+      hash: bff125b4bc02b284cfdea7ead8cd1d1984f3a850
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.126.0
+  date: 2021-02-08T17:24:00.622Z
+- commits:
     - subject: Add device family and manufacturer resources
       hash: 9c78ada68f3c4bbac84f7f76e78c303cc29e2163
       body: ''
