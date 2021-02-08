@@ -22,6 +22,23 @@ const clearDeviceTypeResource = () => {
 	});
 };
 
+const compareContractsToDb = async ({
+	contract,
+	db,
+}: {
+	contract: string;
+	db: string;
+}) => {
+	const fromContracts = (await getContracts(contract))
+		.map((x) => x.slug)
+		.sort();
+	const fromDb = (await supertest().get(`/resin/${db}`).expect(200)).body.d
+		.map((x: { slug: string }) => x.slug)
+		.sort();
+
+	expect(fromContracts).to.equal(fromDb);
+};
+
 describe('contracts', () => {
 	before(() => {
 		removeContractInterceptors();
@@ -124,28 +141,14 @@ describe('contracts', () => {
 		it('should write the set contract data to the DB', async () => {
 			mockRepo('balena-io', 'contracts', 'base-contracts');
 			await synchronizeContracts([{ owner: 'balena-io', name: 'contracts' }]);
-
-			const deviceTypes = (await getContracts('hw.device-type'))
-				.map((x) => x.slug)
-				.sort();
-
-			const cpuArch = (await getContracts('arch.sw')).map((x) => x.slug).sort();
-
-			const dbDeviceTypes = (
-				await supertest().get('/resin/device_type').expect(200)
-			).body.d
-				.map((x: { slug: string }) => x.slug)
-				.sort();
-
-			const dbCpuArch = (
-				await supertest().get('/resin/cpu_architecture').expect(200)
-			).body.d
-				.map((x: { slug: string }) => x.slug)
-				.sort();
-
-			expect(dbDeviceTypes).to.have.length(13);
-			expect(deviceTypes).to.eql(dbDeviceTypes);
-			expect(cpuArch).to.eql(dbCpuArch);
+			Promise.all(
+				[
+					{ contract: 'hw.device-type', db: 'device_type' },
+					{ contract: 'arch.sw', db: 'cpu_architecture' },
+					{ contract: 'hw.device-family', db: 'device_family' },
+					{ contract: 'hw.device-manufacturer', db: 'device_manufacturer' },
+				].map(compareContractsToDb),
+			);
 		});
 
 		it('should update the DB data once a contract changes', async () => {
@@ -168,7 +171,7 @@ describe('contracts', () => {
 
 			expect(dbDeviceTypes).to.have.length(14);
 			expect(newDt).to.not.be.undefined;
-			expect(finDt).to.have.property('name', 'Balena Fin (CM3)');
+			expect(finDt).to.have.property('name', 'Fin');
 		});
 	});
 });

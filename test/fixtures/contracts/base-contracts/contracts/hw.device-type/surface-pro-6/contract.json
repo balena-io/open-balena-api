@@ -12,6 +12,7 @@
   },
   "data": {
     "arch": "amd64",
+    "family": "family-surface",
     "hdmi": true,
     "led": false,
     "connectivity": {

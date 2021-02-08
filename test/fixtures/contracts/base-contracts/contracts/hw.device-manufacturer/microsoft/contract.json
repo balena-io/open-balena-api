@@ -1,0 +1,8 @@
+{
+  "slug": "manufacturer-microsoft",
+  "version": "1.0.0",
+  "type": "hw.device-manufacturer",
+  "aliases": [],
+  "name": "Microsoft",
+  "data": {}
+}

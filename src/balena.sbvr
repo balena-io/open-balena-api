@@ -283,6 +283,8 @@ Term: application type
 Term: cpu architecture
 Term: config
 Term: device type
+Term: device family
+Term: device manufacturer
 Term: image
 Term: organization
 Term: service instance
@@ -575,11 +577,33 @@ Fact type: device type is of cpu architecture
 Fact type: device type has logo
 	Necessity: each device type has at most one logo
 
+Fact type: device type belongs to device family
+	Synonymous form: device family has device type
+	Necessity: each device type belongs to at most one device family
+
 -- cpu architecture
 
 Fact type: cpu architecture has slug
 	Necessity: each cpu architecture has exactly one slug
 	Necessity: each slug is of exactly one cpu architecture
+
+-- device manufacturer
+
+Fact type: device manufacturer has slug
+	Necessity: each device manufacturer has exactly one slug
+	Necessity: each slug is of exactly one device manufacturer
+Fact type: device manufacturer has name (Auth)
+	Necessity: each device manufacturer has exactly one name (Auth)
+
+-- device family
+
+Fact type: device family has slug
+	Necessity: each device family has exactly one slug
+	Necessity: each slug is of exactly one device family
+Fact type: device family has name (Auth)
+	Necessity: each device family has exactly one name (Auth)
+Fact type: device family is manufactured by device manufacturer
+	Necessity: each device family is manufactured by at most one device manufacturer
 
 
 -- release

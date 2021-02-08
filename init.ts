@@ -71,6 +71,46 @@ async function onInitHooks() {
 						uniqueKey: 'slug',
 					},
 				},
+				belongs_to__device_family: {
+					contractField: 'data.family',
+					refersTo: {
+						resource: 'device_family',
+						uniqueKey: 'slug',
+					},
+				},
+			},
+		},
+
+		'hw.device-family': {
+			resource: 'device_family',
+			uniqueKey: 'slug',
+			map: {
+				slug: {
+					contractField: 'slug',
+				},
+				name: {
+					contractField: 'name',
+				},
+				is_manufactured_by__device_manufacturer: {
+					contractField: 'data.manufacturedBy',
+					refersTo: {
+						resource: 'device_manufacturer',
+						uniqueKey: 'slug',
+					},
+				},
+			},
+		},
+
+		'hw.device-manufacturer': {
+			resource: 'device_manufacturer',
+			uniqueKey: 'slug',
+			map: {
+				slug: {
+					contractField: 'slug',
+				},
+				name: {
+					contractField: 'name',
+				},
 			},
 		},
 

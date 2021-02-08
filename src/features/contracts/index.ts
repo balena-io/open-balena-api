@@ -9,6 +9,7 @@ import {
 	CONTRACTS_PUBLIC_REPO_NAME,
 	CONTRACTS_PUBLIC_REPO_OWNER,
 } from '../../lib/config';
+import { captureException } from '../../infra/error-handling';
 
 const SYNC_INTERVAL = 5 * 60 * 1000;
 
@@ -92,9 +93,9 @@ const mapModel = async (
 		const contractValue =
 			_.get(contractEntry, mapper?.contractField) ?? mapper?.default;
 
-		if (mapper.refersTo) {
+		if (mapper.refersTo && contractValue != null) {
 			try {
-				const [arch] = await rootApi.get({
+				const [entry] = await rootApi.get({
 					resource: mapper.refersTo.resource,
 					options: {
 						$filter: { [mapper.refersTo.uniqueKey]: contractValue },
@@ -102,14 +103,15 @@ const mapModel = async (
 					},
 				});
 
-				mappedModel[key] = arch?.id;
+				mappedModel[key] = entry?.id ?? null;
 			} catch (err) {
 				console.error(
-					`Failed to get contract refer id for field ${key} of resource ${mapper.refersTo.resource}`,
+					`Failed to get contract refer id for field ${key} of resource ${mapper.refersTo.resource}.`,
+					err.message,
 				);
 			}
 		} else {
-			mappedModel[key] = contractValue;
+			mappedModel[key] = contractValue ?? null;
 		}
 	}
 	return mappedModel;
@@ -131,7 +133,10 @@ const upsertEntries = async (
 						resource,
 						body: entry,
 						options: {
-							$filter: { [uniqueField]: entry[uniqueField], $not: entry },
+							$filter: {
+								[uniqueField]: entry[uniqueField],
+								$not: entry,
+							},
 						},
 					});
 				}
@@ -198,12 +203,18 @@ export const synchronizeContracts = async (contractRepos: RepositoryInfo[]) => {
 	}
 
 	// We don't have automatic dependency resolution, so the order matters here.
-	for (const contractType of ['arch.sw', 'hw.device-type']) {
+	for (const contractType of [
+		'arch.sw',
+		'hw.device-manufacturer',
+		'hw.device-family',
+		'hw.device-type',
+	]) {
 		try {
 			const contracts = await getContracts(contractType);
 			await syncContractsToDb(contractType, contracts, globalSyncSettings);
 		} catch (err) {
-			console.error(
+			captureException(
+				err,
 				`Failed to synchronize contract type: ${contractType}, skipping...`,
 			);
 		}
