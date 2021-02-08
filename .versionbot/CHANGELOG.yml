@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add device family and manufacturer resources
+      hash: 9c78ada68f3c4bbac84f7f76e78c303cc29e2163
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.125.0
+  date: 2021-02-08T12:58:41.237Z
+- commits:
     - subject: 'releases: add new metadata to release model'
       hash: ec66920ee984640dc3078e8ae7422b64d5b2bdd1
       body: |
