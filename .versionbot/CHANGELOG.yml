@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix missing field in migration for device family
+      hash: 302dc254999bc21c8ecb35a5d82c794b868fd628
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Stevche Radevski <stevche@balena.io>
+        signed-off-by: Stevche Radevski <stevche@balena.io>
+      author: Stevche Radevski
+      nested: []
+  version: 0.126.1
+  date: 2021-02-09T11:46:44.997Z
+- commits:
     - subject: Add synonymous form to device family manufacturer
       hash: bff125b4bc02b284cfdea7ead8cd1d1984f3a850
       body: ''
