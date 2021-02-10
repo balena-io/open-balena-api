@@ -105,6 +105,7 @@ import {
 	findBySlug,
 	getDeviceTypeIdBySlug,
 } from './features/device-types/device-types';
+import { getDeviceTypes as getDeviceTypesRoute } from './features/device-types/routes';
 import { proxy as supervisorProxy } from './features/device-proxy/device-proxy';
 import { generateConfig } from './features/device-config/device-config';
 import {
@@ -232,6 +233,7 @@ export const deviceTypes = {
 	getAccessibleDeviceTypes,
 	findBySlug,
 	getDeviceTypeIdBySlug,
+	getDeviceTypes: getDeviceTypesRoute,
 };
 export const contracts = {
 	setSyncSettings,
