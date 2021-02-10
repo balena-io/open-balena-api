@@ -3,6 +3,7 @@ import type { RequestHandler } from 'express';
 import { sbvrUtils } from '@balena/pinejs';
 
 import { captureException, handleHttpErrors } from '../../infra/error-handling';
+import { UserHasPublicKey } from '../../balena-model';
 
 export const getUserPublicKeys: RequestHandler = async (req, res) => {
 	const { username } = req.params;
@@ -27,7 +28,7 @@ export const getUserPublicKeys: RequestHandler = async (req, res) => {
 				},
 			},
 			passthrough: { req },
-		})) as Array<{ public_key: string }>;
+		})) as Array<Pick<UserHasPublicKey, 'public_key'>>;
 
 		const authorizedKeys = data.map((e) => e.public_key).join('\n');
 		res.status(200).send(authorizedKeys);

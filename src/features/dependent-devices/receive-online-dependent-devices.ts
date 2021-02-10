@@ -11,6 +11,7 @@ import {
 } from '../../infra/error-handling';
 
 import { isValidInteger } from '../../lib/utils';
+import { Device } from '../../balena-model';
 
 const { BadRequestError } = errors;
 const { api } = sbvrUtils;
@@ -120,7 +121,7 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 							local_id: { $in: online_dependent_devices },
 						},
 					},
-				})) as Array<{ local_id: string }>;
+				})) as Array<Pick<Device, 'local_id'>>;
 				// Get the local_id for each dependent device that needs to be provisioned
 				const toBeProvisioned = _.difference(
 					online_dependent_devices,
