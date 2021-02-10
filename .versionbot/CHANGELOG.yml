@@ -1,4 +1,15 @@
 - commits:
+    - subject: Export `getDeviceTypesRoute`
+      hash: 4280972afdecb7e520c423fc213dc919ae3e1c0b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.126.3
+  date: 2021-02-10T17:00:59.889Z
+- commits:
     - subject: Minor typing improvements
       hash: c9d14e0514c6283f9f254ff0d5f465dd153dbbeb
       body: ''
