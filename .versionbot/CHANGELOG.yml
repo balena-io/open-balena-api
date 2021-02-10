@@ -1,4 +1,15 @@
 - commits:
+    - subject: Minor typing improvements
+      hash: c9d14e0514c6283f9f254ff0d5f465dd153dbbeb
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.126.2
+  date: 2021-02-10T16:39:00.841Z
+- commits:
     - subject: Fix missing field in migration for device family
       hash: 302dc254999bc21c8ecb35a5d82c794b868fd628
       body: ''
