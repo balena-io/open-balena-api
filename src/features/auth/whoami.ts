@@ -5,7 +5,7 @@ import { sbvrUtils, permissions } from '@balena/pinejs';
 import { getUser } from '../../infra/auth/auth';
 import { captureException, handleHttpErrors } from '../../infra/error-handling';
 
-import type { User as DbUser } from '../../balena-model';
+import type { User } from '../../balena-model';
 
 const { api } = sbvrUtils;
 
@@ -29,7 +29,7 @@ export const whoami: RequestHandler = async (req, res) => {
 					$select: 'id',
 					$top: 1,
 				},
-			})) as Array<{ id: number }>;
+			})) as Array<Pick<User, 'id'>>;
 
 			// If the count is 0, then this token doesn't have access to the
 			// user resource and we should just continue with whatever was
@@ -44,7 +44,7 @@ export const whoami: RequestHandler = async (req, res) => {
 					options: {
 						$select: ['id', 'username', 'email'],
 					},
-				})) as Pick<DbUser, 'id' | 'username' | 'email'>;
+				})) as Pick<User, 'id' | 'username' | 'email'>;
 
 				return res.json({
 					id,

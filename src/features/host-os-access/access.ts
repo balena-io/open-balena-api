@@ -5,6 +5,7 @@ import * as semver from 'balena-semver';
 
 import { reqHasPermission } from '../../infra/auth/auth';
 import { captureException } from '../../infra/error-handling';
+import { Device } from '../../balena-model';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -23,7 +24,7 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 		passthrough: {
 			req,
 		},
-	})) as { id: number; os_version: string } | undefined;
+	})) as Pick<Device, 'id' | 'os_version'> | undefined;
 
 	if (device == null) {
 		res.sendStatus(401);
