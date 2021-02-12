@@ -325,13 +325,22 @@ const deleteResource = (resource: string) => async (obj: { id: number }) => {
 	});
 };
 
-const modelUnloadOrder = ['applications'] as const;
+const modelUnloadOrder = [
+	'image_install',
+	'devices',
+	'applications',
+	'releases',
+];
+
 const unloaders: {
 	[K in typeof modelUnloadOrder[number]]: (obj: {
 		id: number;
 	}) => PromiseLike<void>;
 } = {
+	devices: deleteResource('device'),
 	applications: deleteResource('application'),
+	releases: deleteResource('release'),
+	image_install: deleteResource('image_install'),
 };
 
 export const clean = async (fixtures: AnyObject) => {
