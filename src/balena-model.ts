@@ -136,6 +136,27 @@ export interface DeviceType {
 	name: string;
 	is_of__cpu_architecture: { __id: number } | [CpuArchitecture];
 	logo: string | null;
+	belongs_to__device_family: { __id: number } | [DeviceFamily?] | null;
+}
+
+export interface DeviceFamily {
+	created_at: DateString;
+	modified_at: DateString;
+	id: number;
+	slug: string;
+	name: string;
+	is_manufactured_by__device_manufacturer:
+		| { __id: number }
+		| [DeviceManufacturer?]
+		| null;
+}
+
+export interface DeviceManufacturer {
+	created_at: DateString;
+	modified_at: DateString;
+	id: number;
+	slug: string;
+	name: string;
 }
 
 export interface Image {
@@ -190,6 +211,8 @@ export interface Application {
 	is_host: boolean;
 	is_archived: boolean;
 	uuid: string;
+	is_public: boolean;
+	install_type: 'hostapp' | 'hostapp extension' | 'supervised' | 'supervisor';
 }
 
 export interface ApplicationEnvironmentVariable {
@@ -289,6 +312,7 @@ export interface Device {
 	is_managed_by__service_instance: { __id: number } | [ServiceInstance?] | null;
 	should_be_running__release: { __id: number } | [Release?] | null;
 	is_managed_by__device: { __id: number } | [Device?] | null;
+	should_be_managed_by__release: { __id: number } | [Release?] | null;
 	is_web_accessible: boolean | null;
 	overall_status: string | null;
 	overall_progress: number | null;
@@ -448,6 +472,8 @@ export interface MyApplication {
 	is_host: boolean;
 	is_archived: boolean;
 	uuid: string;
+	is_public: boolean;
+	install_type: 'hostapp' | 'hostapp extension' | 'supervised' | 'supervisor';
 }
 
 export interface UserHasDirectAccessToApplication {

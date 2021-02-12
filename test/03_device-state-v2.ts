@@ -215,18 +215,18 @@ describe('Device State v2', () => {
 					getActor: () => device,
 					heartbeatAfterGet: DeviceOnlineStates.Online,
 					getDevice: () => device,
-					getStateV2: () => device.getState(),
+					getState: () => device.getState(),
 				},
 				{
 					tokenType: 'user token',
 					getActor: () => admin,
 					heartbeatAfterGet: DeviceOnlineStates.Unknown,
 					getDevice: () => deviceUserRequestedState,
-					getStateV2: () =>
+					getState: () =>
 						fakeDevice.getState(admin, deviceUserRequestedState.uuid),
 				},
 			].forEach(
-				({ tokenType, getActor, heartbeatAfterGet, getDevice, getStateV2 }) => {
+				({ tokenType, getActor, heartbeatAfterGet, getDevice, getState }) => {
 					describe(`Given a ${tokenType}`, function () {
 						it('Should see state initially as "unknown"', async () => {
 							const { body } = await supertest(getActor())
@@ -243,7 +243,7 @@ describe('Device State v2', () => {
 
 						it(`Should have the "${heartbeatAfterGet}" heartbeat state after a state poll`, async () => {
 							stateChangeEventSpy.resetHistory();
-							await getStateV2();
+							await getState();
 
 							if (heartbeatAfterGet !== DeviceOnlineStates.Unknown) {
 								await waitFor(() => stateChangeEventSpy.called);
@@ -301,7 +301,7 @@ describe('Device State v2', () => {
 						it(`Should see state become "online" again, following a state poll`, async () => {
 							stateChangeEventSpy.resetHistory();
 
-							await getStateV2();
+							await getState();
 
 							await waitFor(() => stateChangeEventSpy.called);
 
