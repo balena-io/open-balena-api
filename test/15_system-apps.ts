@@ -28,7 +28,7 @@ describe('Extra Containers', function () {
 
 		before(async () => {
 			mockery.registerMock('../src/lib/config', configMock);
-			fx = await fixtures.load('12-system-apps');
+			fx = await fixtures.load('15-system-apps');
 
 			admin = fx.users.admin;
 			applicationId = fx.applications.app1.id;
@@ -53,6 +53,7 @@ describe('Extra Containers', function () {
 		});
 
 		after(async () => {
+			await fixtures.clean({ devices: [device] });
 			await fixtures.clean(fx);
 			mockery.deregisterMock('../src/lib/config');
 		});
