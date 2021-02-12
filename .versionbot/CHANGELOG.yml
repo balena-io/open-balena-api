@@ -1,4 +1,261 @@
 - commits:
+    - subject: Update pinejs to 14.18.1
+      hash: 4bd0018eda0c7ae5e0c8bcec8d8774cea49a2def
+      body: |
+        Update pinejs from 14.15.0 to 14.18.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: >-
+                Update abstract-sql-compiler  fix modified fields for upsert
+                queries
+              hash: 1cf94e975f25cfc1ec394e72a4215db8b8fb132e
+              body: |
+                Update abstract-sql-compiler from 7.10.1 to 7.10.2
+                Update sbvr-types from 3.4.0 to 3.4.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Fix `getModifiedFields` for `UpsertQuery`s
+                      hash: c19c902f1a6e268952540cd19960f6752a303f65
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-7.10.2
+                  date: 2021-02-12T19:36:19.259Z
+                - commits:
+                    - subject: >-
+                        Remove unnecessary native fact type entries for
+                        synonymous forms
+                      hash: 64e889f7bda6f3dcf4c539248e737fef26b5686c
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: sbvr-types-3.4.1
+                  date: 2021-02-10T18:13:49.610Z
+          version: pinejs-14.18.1
+          date: 2021-02-12T19:54:40.437Z
+        - commits:
+            - subject: >-
+                Add support for sbvr date comparison and allow referencing
+                current time
+              hash: f011242d85dd5016947e881da27dec8705c233c0
+              body: |
+                Update lf-to-abstract-sql from 4.1.1 to 4.2.0
+                Update sbvr-parser from 1.1.1 to 1.2.2
+                Update sbvr-types from 3.2.0 to 3.4.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Add support for native `Name`s from sbvr-types
+                      hash: 542bfaa5bfce17b01817cee3930c5da4d087a6ab
+                      body: |
+                        Update sbvr-parser from 1.1.1 to 1.2.0
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: >-
+                                Add support for a `Name` role binding in the lf
+                                validator
+                              hash: 5d84fe2abf2b6a34fa35e9d985443eb71f87a1d9
+                              body: ''
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                              author: Pagan Gazzard
+                          version: sbvr-parser-1.2.0
+                          date: 2021-02-05T20:28:39.791Z
+                  version: lf-to-abstract-sql-4.2.0
+                  date: 2021-02-05T20:42:19.505Z
+                - commits:
+                    - subject: Optimize `StartX` rules
+                      hash: df251a17063d038e142dc7013c24a84158f33efa
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                    - subject: >-
+                        Optimize `Identifier` when branch tracking is disabled
+                        (the default)
+                      hash: f32e75c391fc060d6cd6396667e0ed1714a4c105
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                    - subject: Optimize `IdentifierPart` rule
+                      hash: 5f390ce4b4317a824acfa13fee7c114ac69ca1ac
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: sbvr-parser-1.2.2
+                  date: 2021-02-08T21:21:29.705Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: 7b79ecf9de0fac908a4063c90050e8a9879241f9
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: sbvr-parser-1.2.1
+                  date: 2021-02-08T19:44:38.524Z
+                - commits:
+                    - subject: >-
+                        Add support for a `Name` role binding in the lf
+                        validator
+                      hash: 5d84fe2abf2b6a34fa35e9d985443eb71f87a1d9
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                  version: sbvr-parser-1.2.0
+                  date: 2021-02-05T20:28:39.791Z
+                - commits:
+                    - subject: >-
+                        Add a `Current Time` name that can be used to refer to
+                        the current time
+                      hash: 83d20325939d0e5f9922f57a36e0932ba71ebad4
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                  version: sbvr-types-3.4.0
+                  date: 2021-02-08T13:54:15.848Z
+                - commits:
+                    - subject: >-
+                        Add `is before` & `is after` verbs to the Date &
+                        DateTime types
+                      hash: 9d4414558d16821e485e08fc4a0504ef1d6c617f
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                      author: Thodoris Greasidis
+                  version: sbvr-types-3.3.0
+                  date: 2021-02-05T20:43:59.350Z
+          version: pinejs-14.18.0
+          date: 2021-02-08T21:42:46.201Z
+        - commits:
+            - subject: Fix .sbvr bundling in webpack
+              hash: ad8558afdbb24a7ee5cb900321d6e6e25901f87d
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: Fix extended-sbvr-parser export
+              hash: 23c3c429b68e4dbfe0f10716fe931d30d62798b9
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.17.1
+          date: 2021-02-08T15:30:40.032Z
+        - commits:
+            - subject: Export extended-sbvr-parser from server-glue/server
+              hash: 5f6adc0bbc9315e79637a49a08a941a981255865
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.17.0
+          date: 2021-02-08T14:09:09.957Z
+        - commits:
+            - subject: Simplify server-glue/server exports
+              hash: e39ad5b22fa6cd145e04167746e0f5c2015b6813
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.16.1
+          date: 2021-02-08T13:55:30.305Z
+        - commits:
+            - subject: >-
+                Update sbvr-types to 3.2.0, adding support for more `Text
+                (Type)` verbs
+              hash: 0dfaca632831caa6545d0b81f299b5c723f675a1
+              body: |
+                Update abstract-sql-compiler from 7.10.0 to 7.10.1
+                Update sbvr-types from 3.1.3 to 3.2.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: >-
+                        Separate code relating to referenced fields out of the
+                        main file
+                      hash: 7ca7b5cfad4e8833293426235667cc59245f427a
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-7.10.1
+                  date: 2021-01-29T18:35:19.430Z
+                - commits:
+                    - subject: Add support for the `contains` verb to the text type
+                      hash: 8e074867c7b94f99664b14caaebeddb5e9f1fe9c
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Thodoris Greasidis
+                    - subject: Add support for the`ends with` verb to the text type
+                      hash: 4e233bffa0800a9601e80aebf86d70cd518c2901
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Thodoris Greasidis
+                    - subject: Add support for the `starts with` verb to the text type
+                      hash: 1b5652a57bbad48f9b9b18c88f8b4ad9e6b01441
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Thodoris Greasidis
+                  version: sbvr-types-3.2.0
+                  date: 2021-01-29T19:15:49.140Z
+          version: pinejs-14.16.0
+          date: 2021-02-01T14:20:08.537Z
+  version: 0.126.4
+  date: 2021-02-12T20:26:05.819Z
+- commits:
     - subject: Export `getDeviceTypesRoute`
       hash: 4280972afdecb7e520c423fc213dc919ae3e1c0b
       body: ''
