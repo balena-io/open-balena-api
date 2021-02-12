@@ -784,5 +784,6 @@ Rule: It is necessary that each release that should be running on a device, has 
 Rule: It is necessary that each release that should be running on an application, has a status that is equal to "success" and belongs to the application.
 Rule: It is necessary that each release that contains at least 2 images, belongs to an application that has an application type that supports multicontainer.
 
--- TODO: This rule should be updated to use the device type arch once that is fully modeled.
-Rule: It is necessary that each device that should be managed by a release, should be managed by a release that has a status that is equal to "success" and belongs to an application that is public and is not host and is for a device type that describes the device.
+-- native supervisor release rules, separated for legibility
+Rule: It is necessary that each release that should manage a device, has a status that is equal to "success" and has exactly one release version.
+Rule: It is necessary that each release that should manage a device that is of a device type1, belongs to an application that is for a device type2 that is of a cpu architecture that is supported by the device type1.

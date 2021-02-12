@@ -326,10 +326,10 @@ const deleteResource = (resource: string) => async (obj: { id: number }) => {
 };
 
 const modelUnloadOrder = [
-	'image_install',
 	'devices',
 	'applications',
 	'releases',
+	'image_install',
 ];
 
 const unloaders: {
