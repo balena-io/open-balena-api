@@ -74,6 +74,28 @@ export function intVar<R>(varName: string, defaultValue?: R): number | R {
 	return i;
 }
 
+export function boolVar(varName: string): boolean;
+export function boolVar<R>(varName: string, defaultValue: R): boolean | R;
+export function boolVar<R>(varName: string, defaultValue?: R): boolean | R {
+	if (arguments.length === 1) {
+		requiredVar(varName);
+	}
+
+	const s = process.env[varName];
+	if (s == null) {
+		return defaultValue!;
+	}
+	if (s === 'false') {
+		return false;
+	}
+	if (s === 'true') {
+		return true;
+	}
+	throw new Error(
+		`Invalid value for boolean var '${varName}', got '${s}', expected 'true' or 'false'`,
+	);
+}
+
 export const API_HOST = requiredVar('API_HOST');
 export const API_HEARTBEAT_STATE_ENABLED = intVar(
 	'API_HEARTBEAT_STATE_ENABLED',
@@ -132,8 +154,10 @@ export const IMAGE_STORAGE_ENDPOINT = requiredVar('IMAGE_STORAGE_ENDPOINT');
 export const IMAGE_STORAGE_PREFIX = requiredVar('IMAGE_STORAGE_PREFIX');
 export const IMAGE_STORAGE_ACCESS_KEY = optionalVar('IMAGE_STORAGE_ACCESS_KEY');
 export const IMAGE_STORAGE_SECRET_KEY = optionalVar('IMAGE_STORAGE_SECRET_KEY');
-export const IMAGE_STORAGE_FORCE_PATH_STYLE =
-	optionalVar('IMAGE_STORAGE_FORCE_PATH_STYLE') === 'true';
+export const IMAGE_STORAGE_FORCE_PATH_STYLE = boolVar(
+	'IMAGE_STORAGE_FORCE_PATH_STYLE',
+	false,
+);
 export const JSON_WEB_TOKEN_EXPIRY_MINUTES = intVar(
 	'JSON_WEB_TOKEN_EXPIRY_MINUTES',
 );
