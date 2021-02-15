@@ -1,4 +1,15 @@
 - commits:
+    - subject: Run tests against the exposed api version rather than internal
+      hash: 78db18affa76835b5f49d97516fe855b5ad41e63
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.126.5
+  date: 2021-02-15T17:19:37.552Z
+- commits:
     - subject: Update pinejs to 14.18.1
       hash: 4bd0018eda0c7ae5e0c8bcec8d8774cea49a2def
       body: |
