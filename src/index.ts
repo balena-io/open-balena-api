@@ -41,6 +41,7 @@ import {
 	DB_QUERY_TIMEOUT,
 	NODE_ENV,
 	SENTRY_DSN,
+	HIDE_UNVERSIONED_ENDPOINT,
 } from './lib/config';
 
 import {
@@ -335,6 +336,12 @@ export async function setup(app: Application, options: SetupOptions) {
 	app.use('/ping', (_req, res) => {
 		res.sendStatus(200);
 	});
+
+	if (HIDE_UNVERSIONED_ENDPOINT) {
+		app.use('/resin', (_req, res) => {
+			res.sendStatus(404);
+		});
+	}
 
 	setupRequestLogging(app, options.getUrl);
 
