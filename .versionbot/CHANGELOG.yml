@@ -1,4 +1,19 @@
 - commits:
+    - subject: Add a `boolVar` helper for config to standardize boolean config vars
+      hash: 8041b9696a6b91bc9ef76e8f19c870c8a139f00e
+      body: |
+        This now requires boolean config vars must be `true` or `false`, or
+        not set if they're optional, previously we compared against just `true`
+        so any other values would be treated as `false` which could be
+        confusing in the case of eg `1`/`on`
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.127.0
+  date: 2021-02-15T18:01:47.325Z
+- commits:
     - subject: Run tests against the exposed api version rather than internal
       hash: 78db18affa76835b5f49d97516fe855b5ad41e63
       body: ''
