@@ -4,6 +4,7 @@ import { createScopedAccessToken } from '../src/infra/auth/jwt';
 
 import * as fixtures from './test-lib/fixtures';
 import { supertest, UserObjectParam } from './test-lib/supertest';
+import { version } from './test-lib/versions';
 
 describe('session', () => {
 	let admin: UserObjectParam;
@@ -25,7 +26,7 @@ describe('session', () => {
 	it('/user/v1/whoami returns a user when using a correctly scoped access token', async function () {
 		const record = (
 			await supertest(admin)
-				.get("/resin/user?$filter=username eq 'admin'")
+				.get(`/${version}/user?$filter=username eq 'admin'`)
 				.expect(200)
 		).body.d[0];
 
@@ -48,7 +49,7 @@ describe('session', () => {
 	it('/user/v1/whoami returns a 401 error when using a scoped access token that does not have user permissions', async function () {
 		const record = (
 			await supertest(admin)
-				.get("/resin/user?$filter=username eq 'admin'")
+				.get(`/${version}/user?$filter=username eq 'admin'`)
 				.expect(200)
 		).body.d[0];
 

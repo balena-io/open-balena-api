@@ -1,6 +1,7 @@
 import * as balenaToken from './balena-token';
 import * as fixtures from './fixtures';
 import { supertest, UserObjectParam } from './supertest';
+import { version } from './versions';
 import {
 	getContractRepos,
 	synchronizeContracts,
@@ -43,13 +44,13 @@ const loadAdminUserAndOrganization = async () => {
 	const user = (await balenaToken.parse(token)) as UserObjectParam;
 	user.token = token;
 	user.actor = (
-		await supertest(user).get(`/resin/user(${user.id})`).expect(200)
+		await supertest(user).get(`/${version}/user(${user.id})`).expect(200)
 	).body.d[0].actor as number;
 
 	const org = (
 		await supertest(user)
 			.get(
-				`/resin/organization?$select=id,name,handle&$filter=handle eq 'admin'`,
+				`/${version}/organization?$select=id,name,handle&$filter=handle eq 'admin'`,
 			)
 			.expect(200)
 	).body.d[0];

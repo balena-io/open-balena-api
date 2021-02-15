@@ -3,6 +3,7 @@ import * as fixtures from './test-lib/fixtures';
 import { expect } from './test-lib/chai';
 
 import { supertest, UserObjectParam } from './test-lib/supertest';
+import { version } from './test-lib/versions';
 
 describe('releases', () => {
 	let fx: fixtures.Fixtures;
@@ -27,7 +28,7 @@ describe('releases', () => {
 
 	it('should be able to create a new failed release for a given commit', async () => {
 		await supertest(user)
-			.post(`/resin/release`)
+			.post(`/${version}/release`)
 			.send({
 				...newRelease,
 				status: 'error',
@@ -37,7 +38,7 @@ describe('releases', () => {
 
 	it('should be able to create an extra failed release for the same commit', async () => {
 		await supertest(user)
-			.post(`/resin/release`)
+			.post(`/${version}/release`)
 			.send({
 				...newRelease,
 				status: 'error',
@@ -46,12 +47,15 @@ describe('releases', () => {
 	});
 
 	it('should be able to create a new successful release for the same commit', async () => {
-		await supertest(user).post(`/resin/release`).send(newRelease).expect(201);
+		await supertest(user)
+			.post(`/${version}/release`)
+			.send(newRelease)
+			.expect(201);
 	});
 
 	it('should disallow creating an additional successful release for the same commit', async () => {
 		const { body } = await supertest(user)
-			.post(`/resin/release`)
+			.post(`/${version}/release`)
 			.send(newRelease)
 			.expect(400);
 		expect(body).that.equals(
@@ -61,7 +65,7 @@ describe('releases', () => {
 
 	it('should be able to create a new successful release for the same commit in a different application', async () => {
 		await supertest(user)
-			.post(`/resin/release`)
+			.post(`/${version}/release`)
 			.send({
 				...newRelease,
 				belongs_to__application: fx.applications.app2.id,
@@ -98,7 +102,7 @@ describe('versioning releases', () => {
 
 	it('should succeed to return versioned releases', async () => {
 		const res = await supertest(user)
-			.get(`/resin/release?$filter=release_version ne null`)
+			.get(`/${version}/release?$filter=release_version ne null`)
 			.expect(200);
 		expect(res.body.d).to.have.lengthOf(2);
 		(res.body.d as AnyObject[]).forEach((release) => {
@@ -108,7 +112,7 @@ describe('versioning releases', () => {
 
 	it('should succeed to return unversioned releases', async () => {
 		const res = await supertest(user)
-			.get(`/resin/release?$filter=release_version eq null`)
+			.get(`/${version}/release?$filter=release_version eq null`)
 			.expect(200);
 		expect(res.body.d).to.have.lengthOf(2);
 		(res.body.d as AnyObject[]).forEach((release) => {
@@ -119,13 +123,13 @@ describe('versioning releases', () => {
 	it('should succeed in PATCHing a release version', async () => {
 		const releaseVersion = 'v1.2.3';
 		await supertest(user)
-			.patch(`/resin/release(${release1.id})`)
+			.patch(`/${version}/release(${release1.id})`)
 			.send({
 				release_version: releaseVersion,
 			})
 			.expect(200);
 		const res = await supertest(user)
-			.get(`/resin/release(${release1.id})`)
+			.get(`/${version}/release(${release1.id})`)
 			.expect(200);
 		expect(res.body.d[0])
 			.to.have.property('release_version')
@@ -135,7 +139,7 @@ describe('versioning releases', () => {
 	it('should fail to PATCH a duplicate release version', async () => {
 		const releaseVersion = 'v1.2.3';
 		await supertest(user)
-			.patch(`/resin/release(${release2.id})`)
+			.patch(`/${version}/release(${release2.id})`)
 			.send({
 				release_version: releaseVersion,
 			})
@@ -144,7 +148,7 @@ describe('versioning releases', () => {
 
 	it('should succeed in PATCHing a null release version', async () => {
 		await supertest(user)
-			.patch(`/resin/release(${release2.id})`)
+			.patch(`/${version}/release(${release2.id})`)
 			.send({
 				release_version: null,
 			})
@@ -152,22 +156,28 @@ describe('versioning releases', () => {
 	});
 
 	it('should confirm that a new release can be created with version', async () => {
-		await supertest(user).post(`/resin/release`).send(newRelease).expect(201);
+		await supertest(user)
+			.post(`/${version}/release`)
+			.send(newRelease)
+			.expect(201);
 	});
 
 	it('should disallow creating a new release with used version', async () => {
-		await supertest(user).post(`/resin/release`).send(newRelease).expect(400);
+		await supertest(user)
+			.post(`/${version}/release`)
+			.send(newRelease)
+			.expect(400);
 	});
 
 	it('should confirm that invalidating a release allows reuse of version', async () => {
 		await supertest(user)
-			.patch(`/resin/release(${release1.id})`)
+			.patch(`/${version}/release(${release1.id})`)
 			.send({
 				is_invalidated: true,
 			})
 			.expect(200);
 		await supertest(user)
-			.patch(`/resin/release(${release2.id})`)
+			.patch(`/${version}/release(${release2.id})`)
 			.send({
 				release_version: release1.release_version,
 			})

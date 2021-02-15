@@ -2,6 +2,7 @@ import { expect } from './test-lib/chai';
 
 import * as fakeDevice from './test-lib/fake-device';
 import { supertest, UserObjectParam } from './test-lib/supertest';
+import { version } from './test-lib/versions';
 
 import * as fixtures from './test-lib/fixtures';
 
@@ -36,7 +37,7 @@ describe(`Tracking latest release`, () => {
 	it('Should allow pinning a device to a draft and untested release', async () => {
 		const pinnedRelease = fx.releases.release1;
 		await supertest(admin)
-			.patch(`/resin/device(${device.id})`)
+			.patch(`/${version}/device(${device.id})`)
 			.send({
 				should_be_running__release: pinnedRelease.id,
 			})
@@ -46,7 +47,7 @@ describe(`Tracking latest release`, () => {
 			pinnedRelease.id,
 		);
 		await supertest(admin)
-			.patch(`/resin/device(${device.id})`)
+			.patch(`/${version}/device(${device.id})`)
 			.send({
 				should_be_running__release: null,
 			})
@@ -56,7 +57,7 @@ describe(`Tracking latest release`, () => {
 	it('Should update latest release to a newly-marked final release', async () => {
 		const expectedLatest = fx.releases.release2;
 		await supertest(admin)
-			.patch(`/resin/release(${expectedLatest.id})`)
+			.patch(`/${version}/release(${expectedLatest.id})`)
 			.send({
 				release_type: 'final',
 				start_timestamp: Date.now(),
@@ -71,7 +72,7 @@ describe(`Tracking latest release`, () => {
 	it('Should update latest release to a release now passing tests', async () => {
 		const expectedLatest = fx.releases.release3;
 		await supertest(admin)
-			.patch(`/resin/release(${expectedLatest.id})`)
+			.patch(`/${version}/release(${expectedLatest.id})`)
 			.send({
 				is_passing_tests: true,
 				start_timestamp: Date.now(),
@@ -86,7 +87,7 @@ describe(`Tracking latest release`, () => {
 	it('Should update latest release to previous final release passing tests', async () => {
 		const expectedLatest = fx.releases.release2;
 		await supertest(admin)
-			.patch(`/resin/release(${fx.releases.release3.id})`)
+			.patch(`/${version}/release(${fx.releases.release3.id})`)
 			.send({
 				is_passing_tests: false,
 			})

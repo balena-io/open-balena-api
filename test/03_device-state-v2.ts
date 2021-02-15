@@ -4,6 +4,7 @@ import * as Bluebird from 'bluebird';
 import * as mockery from 'mockery';
 import * as fakeDevice from './test-lib/fake-device';
 import { supertest, UserObjectParam } from './test-lib/supertest';
+import { version } from './test-lib/versions';
 
 import sinon = require('sinon');
 import configMock = require('../src/lib/config');
@@ -93,7 +94,7 @@ describe('Device State v2', () => {
 
 			it('Should see the application-specific value if one exists', async () => {
 				await supertest(admin)
-					.post('/resin/application_config_variable')
+					.post(`/${version}/application_config_variable`)
 					.send({
 						name: 'RESIN_SUPERVISOR_POLL_INTERVAL',
 						value: '123000',
@@ -107,7 +108,7 @@ describe('Device State v2', () => {
 
 			it('Should see the device-specific value if one exists', async () => {
 				await supertest(admin)
-					.post('/resin/device_config_variable')
+					.post(`/${version}/device_config_variable`)
 					.send({
 						name: 'RESIN_SUPERVISOR_POLL_INTERVAL',
 						value: '321000',
@@ -122,7 +123,7 @@ describe('Device State v2', () => {
 			it('Should see the default value if the device-specific value is less than it', async () => {
 				await supertest(admin)
 					.patch(
-						`/resin/device_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and device eq ${device.id}`,
+						`/${version}/device_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and device eq ${device.id}`,
 					)
 					.send({
 						value: `${POLL_MSEC - 100}`,
@@ -134,7 +135,7 @@ describe('Device State v2', () => {
 
 				await supertest(admin)
 					.delete(
-						`/resin/device_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and device eq ${device.id}`,
+						`/${version}/device_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and device eq ${device.id}`,
 					)
 					.expect(200);
 			});
@@ -142,7 +143,7 @@ describe('Device State v2', () => {
 			it('Should see the default value if the application-specific value is less than it', async () => {
 				await supertest(admin)
 					.patch(
-						`/resin/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${applicationId}`,
+						`/${version}/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${applicationId}`,
 					)
 					.send({
 						value: `${POLL_MSEC - 200}`,
@@ -154,7 +155,7 @@ describe('Device State v2', () => {
 
 				await supertest(admin)
 					.delete(
-						`/resin/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${applicationId}`,
+						`/${version}/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${applicationId}`,
 					)
 					.expect(200);
 			});
@@ -212,7 +213,7 @@ describe('Device State v2', () => {
 					describe(`Given a ${tokenType}`, function () {
 						it('Should see state initially as "unknown"', async () => {
 							const { body } = await supertest(getActor())
-								.get(`/resin/device(${getDevice().id})`)
+								.get(`/${version}/device(${getDevice().id})`)
 								.expect(200);
 
 							expect(body.d[0]).to.not.be.undefined;
@@ -241,7 +242,7 @@ describe('Device State v2', () => {
 							);
 
 							const { body } = await supertest(getActor())
-								.get(`/resin/device(${getDevice().id})`)
+								.get(`/${version}/device(${getDevice().id})`)
 								.expect(200);
 
 							expect(body.d[0]).to.not.be.undefined;
@@ -269,7 +270,7 @@ describe('Device State v2', () => {
 							);
 
 							const { body } = await supertest(getActor())
-								.get(`/resin/device(${getDevice().id})`)
+								.get(`/${version}/device(${getDevice().id})`)
 								.expect(200);
 
 							expect(body.d[0]).to.not.be.undefined;
@@ -292,7 +293,7 @@ describe('Device State v2', () => {
 							);
 
 							const { body } = await supertest(getActor())
-								.get(`/resin/device(${getDevice().id})`)
+								.get(`/${version}/device(${getDevice().id})`)
 								.expect(200);
 
 							expect(body.d[0]).to.not.be.undefined;
@@ -318,7 +319,7 @@ describe('Device State v2', () => {
 							);
 
 							const { body } = await supertest(getActor())
-								.get(`/resin/device(${getDevice().id})`)
+								.get(`/${version}/device(${getDevice().id})`)
 								.expect(200);
 
 							expect(body.d[0]).to.not.be.undefined;
@@ -393,7 +394,9 @@ describe('Device State v2 patch', function () {
 			body: {
 				d: [updatedDevice],
 			},
-		} = await supertest(admin).get(`/resin/device(${device.id})`).expect(200);
+		} = await supertest(admin)
+			.get(`/${version}/device(${device.id})`)
+			.expect(200);
 
 		Object.keys(devicePatchBody.local).forEach(
 			(field: keyof typeof devicePatchBody['local']) => {
