@@ -3,6 +3,7 @@ import * as randomstring from 'randomstring';
 import * as uuid from 'uuid';
 
 import { supertest, UserObjectParam } from './supertest';
+import { version } from './versions';
 
 interface DeviceStateApp {
 	name: string;
@@ -56,7 +57,7 @@ export async function provisionDevice(
 	supervisorVersion: string | null = null,
 ) {
 	const { body: applications } = await supertest(admin)
-		.get(`/resin/application(${appId})?$expand=is_for__device_type`)
+		.get(`/${version}/application(${appId})?$expand=is_for__device_type`)
 		.expect(200);
 
 	expect(applications).to.have.property('d').that.is.an('array');
@@ -74,7 +75,7 @@ export async function provisionDevice(
 
 	const deviceUuid = uuid.v4().replace(/\-/g, '').toLowerCase();
 	const { body: deviceEntry } = await supertest(admin)
-		.post('/resin/device')
+		.post(`/${version}/device`)
 		.send({
 			belongs_to__application: appId,
 			uuid: deviceUuid,
@@ -85,7 +86,7 @@ export async function provisionDevice(
 		.expect(201);
 
 	const { body: provisionedDevice } = await supertest(admin)
-		.get(`/resin/device(uuid='${deviceUuid}')?$select=supervisor_version`)
+		.get(`/${version}/device(uuid='${deviceUuid}')?$select=supervisor_version`)
 		.expect(200);
 	expect(provisionedDevice.d[0].supervisor_version).to.equal(supervisorVersion);
 

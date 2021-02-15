@@ -2,6 +2,7 @@ import { VPN_SERVICE_API_KEY } from '../src/lib/config';
 import { expect } from './test-lib/chai';
 import * as fixtures from './test-lib/fixtures';
 import { supertest, UserObjectParam } from './test-lib/supertest';
+import { version } from './test-lib/versions';
 
 describe('create provisioning apikey', function () {
 	before(async function () {
@@ -12,7 +13,7 @@ describe('create provisioning apikey', function () {
 	});
 
 	after(async function () {
-		await supertest(this.user).delete(`/resin/api_key`).expect(200);
+		await supertest(this.user).delete(`/${version}/api_key`).expect(200);
 		await fixtures.clean(this.loadedFixtures);
 	});
 
@@ -44,7 +45,7 @@ describe('create provisioning apikey', function () {
 
 			after(async function () {
 				await supertest(this.user)
-					.delete(`/resin/device?$filter=uuid eq '${uuid}'`)
+					.delete(`/${version}/device?$filter=uuid eq '${uuid}'`)
 					.expect(200);
 			});
 
@@ -91,7 +92,7 @@ describe('create device apikey', function () {
 	});
 
 	after(async function () {
-		await supertest(this.user).delete(`/resin/api_key`).expect(200);
+		await supertest(this.user).delete(`/${version}/api_key`).expect(200);
 		await fixtures.clean(this.loadedFixtures);
 	});
 
@@ -163,7 +164,7 @@ describe('create named user apikey', function () {
 		userIdForUnauthorizedRequest = this.user.id;
 	});
 	after(async function () {
-		await supertest(this.user).delete(`/resin/api_key`).expect(200);
+		await supertest(this.user).delete(`/${version}/api_key`).expect(200);
 		await fixtures.clean(this.loadedFixtures);
 	});
 
@@ -231,7 +232,7 @@ describe('use api key instead of jwt', function () {
 	});
 
 	after(async function () {
-		await supertest(this.user).delete(`/resin/api_key`).expect(200);
+		await supertest(this.user).delete(`/${version}/api_key`).expect(200);
 		await fixtures.clean(this.loadedFixtures);
 	});
 
@@ -287,14 +288,14 @@ describe('use api key instead of jwt', function () {
 
 			it('should be able to access an allowed standard endpoint with a named user-level api key', async function () {
 				await supertest()
-					.get(`/resin/user(${this.user.id})?$select=username`)
+					.get(`/${version}/user(${this.user.id})?$select=username`)
 					.query({ apikey: this.namedApiKey })
 					.expect(200);
 			});
 
 			it('should accept api keys on the Authorization header on standard endpoints', async function () {
 				await supertest(this.namedApiKey)
-					.get(`/resin/user(${this.user.id})?$select=username`)
+					.get(`/${version}/user(${this.user.id})?$select=username`)
 					.expect(200);
 			});
 
@@ -347,20 +348,20 @@ describe('standard api key endpoints', async function () {
 		this.apikey = apikey;
 	});
 	after(async function () {
-		await supertest(this.user).delete(`/resin/api_key`).expect(200);
+		await supertest(this.user).delete(`/${version}/api_key`).expect(200);
 		await fixtures.clean(this.loadedFixtures);
 	});
 
 	it('should not allow api keys to be created using the standard endpoint', async function () {
 		await supertest(this.user)
-			.post(`/resin/api_key`)
+			.post(`/${version}/api_key`)
 			.send({ name: 'witty' })
 			.expect(401);
 	});
 
 	it('should allow api keys to read api keys', async function () {
 		const { body } = await supertest()
-			.get(`/resin/api_key?$select=name`)
+			.get(`/${version}/api_key?$select=name`)
 			.query({ apikey: this.apikey })
 			.expect(200);
 
@@ -370,7 +371,7 @@ describe('standard api key endpoints', async function () {
 
 	it('should allow users to read api keys', async function () {
 		const { body } = await supertest(this.user)
-			.get(`/resin/api_key?$select=id,name`)
+			.get(`/${version}/api_key?$select=id,name`)
 			.expect(200);
 		expect(body).to.have.property('d').that.has.length(1);
 		const [apiKey] = body.d;
@@ -381,7 +382,7 @@ describe('standard api key endpoints', async function () {
 
 	it('should not allow api keys to update api keys', async function () {
 		await supertest()
-			.patch(`/resin/api_key(${this.apiKeyId})`)
+			.patch(`/${version}/api_key(${this.apiKeyId})`)
 			.query({ apikey: this.apikey })
 			.send({ name: 'unfunny' })
 			.expect(401);
@@ -389,12 +390,12 @@ describe('standard api key endpoints', async function () {
 
 	it('should allow users to update api keys', async function () {
 		await supertest(this.user)
-			.patch(`/resin/api_key(${this.apiKeyId})`)
+			.patch(`/${version}/api_key(${this.apiKeyId})`)
 			.send({ name: 'unfunny' })
 			.expect(200);
 
 		const { body } = await supertest(this.user)
-			.get(`/resin/api_key?$select=name`)
+			.get(`/${version}/api_key?$select=name`)
 			.expect(200);
 		expect(body).to.have.property('d').that.has.length(1);
 		expect(body.d[0]).to.have.property('name').that.equals('unfunny');
@@ -402,18 +403,18 @@ describe('standard api key endpoints', async function () {
 
 	it('should not allow api keys to delete api keys', async function () {
 		await supertest()
-			.del(`/resin/api_key(${this.apiKeyId})`)
+			.del(`/${version}/api_key(${this.apiKeyId})`)
 			.query({ apikey: this.apikey })
 			.expect(401);
 	});
 
 	it('should allow users to delete api keys', async function () {
 		await supertest(this.user)
-			.del(`/resin/api_key(${this.apiKeyId})`)
+			.del(`/${version}/api_key(${this.apiKeyId})`)
 			.expect(200);
 
 		const { body } = await supertest(this.user)
-			.get(`/resin/api_key?$select=id`)
+			.get(`/${version}/api_key?$select=id`)
 			.expect(200);
 
 		expect(body).to.have.property('d').that.has.length(0);
@@ -428,7 +429,7 @@ describe('generic-api-key-endpoint', function () {
 	});
 
 	after(async function () {
-		await supertest(this.user).delete(`/resin/api_key`).expect(200);
+		await supertest(this.user).delete(`/${version}/api_key`).expect(200);
 		await fixtures.clean(this.loadedFixtures);
 	});
 

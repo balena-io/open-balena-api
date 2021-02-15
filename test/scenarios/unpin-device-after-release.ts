@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { expect } from '../test-lib/chai';
 import * as fakeDevice from '../test-lib/fake-device';
 import { supertest, UserObjectParam } from '../test-lib/supertest';
+import { version } from '../test-lib/versions';
 
 import * as fixtures from '../test-lib/fixtures';
 
@@ -42,13 +43,15 @@ const addReleaseToApp = async (
 	auth: UserObjectParam,
 	release: MockReleaseParams,
 ): Promise<MockRelease> =>
-	(await supertest(auth).post(`/resin/release`).send(release).expect(201)).body;
+	(await supertest(auth).post(`/${version}/release`).send(release).expect(201))
+		.body;
 
 const addImageToService = async (
 	auth: UserObjectParam,
 	image: MockImageParams,
 ): Promise<MockImage> =>
-	(await supertest(auth).post(`/resin/image`).send(image).expect(201)).body;
+	(await supertest(auth).post(`/${version}/image`).send(image).expect(201))
+		.body;
 
 const addServiceToApp = async (
 	auth: UserObjectParam,
@@ -57,7 +60,7 @@ const addServiceToApp = async (
 ): Promise<MockService> =>
 	(
 		await supertest(auth)
-			.post(`/resin/service`)
+			.post(`/${version}/service`)
 			.send({
 				application,
 				service_name: serviceName,
@@ -71,7 +74,7 @@ const addImageToRelease = async (
 	releaseId: number,
 ): Promise<void> => {
 	await supertest(auth)
-		.post(`/resin/image__is_part_of__release`)
+		.post(`/${version}/image__is_part_of__release`)
 		.send({
 			image: imageId,
 			is_part_of__release: releaseId,
@@ -142,7 +145,7 @@ describe('Device with missing service installs', () => {
 
 	it('should pin the device to the first release', async function () {
 		await supertest(admin)
-			.patch(`/resin/device(${device.id})`)
+			.patch(`/${version}/device(${device.id})`)
 			.send({
 				should_be_running__release: releases['deadbeef'],
 			})
@@ -208,7 +211,7 @@ describe('Device with missing service installs', () => {
 
 	it('should un-pin the device', async function () {
 		await supertest(admin)
-			.patch(`/resin/device(${device.id})`)
+			.patch(`/${version}/device(${device.id})`)
 			.send({
 				should_be_running__release: null,
 			})

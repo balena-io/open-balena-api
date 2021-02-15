@@ -6,6 +6,7 @@ import {
 } from '../src/features/contracts/contracts-directory';
 import { expect } from './test-lib/chai';
 import { supertest } from './test-lib/supertest';
+import { version } from './test-lib/versions';
 import {
 	removeContractInterceptors,
 	mockRepo,
@@ -32,7 +33,7 @@ const compareContractsToDb = async ({
 	const fromContracts = (await getContracts(contract))
 		.map((x) => x.slug)
 		.sort();
-	const fromDb = (await supertest().get(`/resin/${db}`).expect(200)).body.d
+	const fromDb = (await supertest().get(`/${version}/${db}`).expect(200)).body.d
 		.map((x: { slug: string }) => x.slug)
 		.sort();
 
@@ -159,7 +160,7 @@ describe('contracts', () => {
 			await synchronizeContracts([{ owner: 'balena-io', name: 'contracts' }]);
 
 			const dbDeviceTypes: DeviceType[] = (
-				await supertest().get('/resin/device_type').expect(200)
+				await supertest().get(`/${version}/device_type`).expect(200)
 			).body.d;
 
 			const newDt = dbDeviceTypes.find(

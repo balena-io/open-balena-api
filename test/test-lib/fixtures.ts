@@ -7,6 +7,7 @@ import * as path from 'path';
 import { Headers } from 'request';
 import { API_HOST } from '../../src/lib/config';
 import { requestAsync } from '../../src/infra/request-promise';
+import { version } from './versions';
 
 const { api } = sbvrUtils;
 
@@ -38,7 +39,7 @@ const createResource = async (args: {
 	}
 
 	const [response, responseBody] = await requestAsync({
-		url: `http://${API_HOST}/resin/${resource}`,
+		url: `http://${API_HOST}/${version}/${resource}`,
 		headers,
 		method,
 		json: true,

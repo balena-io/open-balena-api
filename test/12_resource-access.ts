@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import { expect } from './test-lib/chai';
 import * as fixtures from './test-lib/fixtures';
 import { supertest } from './test-lib/supertest';
+import { version } from './test-lib/versions';
 
 describe('resource access', function () {
 	before(async function () {
@@ -36,10 +37,12 @@ describe('resource access', function () {
 		},
 	].forEach(({ title, odataPart, appIdField = 'id' }) => {
 		describe(`${title} access`, function () {
-			it(`should be able to see all applications in /resin/${title}`, async function () {
+			it(`should be able to see all applications in /${version}/${title}`, async function () {
 				const {
 					body: { d },
-				} = await supertest(this.user).get(`/resin/${odataPart}`).expect(200);
+				} = await supertest(this.user)
+					.get(`/${version}/${odataPart}`)
+					.expect(200);
 
 				const expectedAppIds = [this.application1.id, this.application2.id];
 
@@ -59,7 +62,7 @@ describe('resource access', function () {
 			const {
 				body: { d },
 			} = await supertest(this.user)
-				.get(`/resin/user__has_direct_access_to__application`)
+				.get(`/${version}/user__has_direct_access_to__application`)
 				.expect(200);
 
 			expect(d).to.be.an('array').that.has.length(2);
