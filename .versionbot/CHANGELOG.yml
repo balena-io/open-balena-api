@@ -1,4 +1,15 @@
 - commits:
+    - subject: Stop exposing `/resin/`
+      hash: dfc621f326462a8399ab1b2f53e282fa7cb2bcbe
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.128.0
+  date: 2021-02-17T12:39:37.195Z
+- commits:
     - subject: Add a `boolVar` helper for config to standardize boolean config vars
       hash: 8041b9696a6b91bc9ef76e8f19c870c8a139f00e
       body: |
