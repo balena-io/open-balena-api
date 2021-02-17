@@ -2,6 +2,7 @@ import * as mockery from 'mockery';
 import { expect } from './test-lib/chai';
 import * as fixtures from './test-lib/fixtures';
 import * as fakeDevice from './test-lib/fake-device';
+import { version } from './test-lib/versions';
 
 import * as configMock from '../src/lib/config';
 import { UserObjectParam } from './test-lib/supertest';
@@ -45,7 +46,7 @@ describe('Extra Containers', function () {
 			device = await fakeDevice.provisionDevice(admin, applicationId);
 
 			const { body } = await supertest(admin)
-				.get(`/resin/service_install?$filter=device eq ${device.id}`)
+				.get(`/${version}/service_install?$filter=device eq ${device.id}`)
 				.expect(200);
 
 			const [si] = body.d;
@@ -69,7 +70,7 @@ describe('Extra Containers', function () {
 			};
 
 			await supertest(admin)
-				.post('/resin/application_environment_variable')
+				.post(`/${version}/application_environment_variable`)
 				.send({
 					application: applicationId,
 					name: 'ENV_VAR',
@@ -79,7 +80,7 @@ describe('Extra Containers', function () {
 			await checkVar('app_env_var');
 
 			await supertest(admin)
-				.post('/resin/service_environment_variable')
+				.post(`/${version}/service_environment_variable`)
 				.send({
 					service: fx.services.service1.id,
 					name: 'ENV_VAR',
@@ -89,7 +90,7 @@ describe('Extra Containers', function () {
 			await checkVar('srv_env_var');
 
 			await supertest(admin)
-				.post('/resin/device_environment_variable')
+				.post(`/${version}/device_environment_variable`)
 				.send({
 					device: device.id,
 					name: 'ENV_VAR',
@@ -99,7 +100,7 @@ describe('Extra Containers', function () {
 			await checkVar('dev_env_var');
 
 			await supertest(admin)
-				.post('/resin/device_service_environment_variable')
+				.post(`/${version}/device_service_environment_variable`)
 				.send({
 					service_install: serviceInstallId,
 					name: 'ENV_VAR',
@@ -138,7 +139,7 @@ describe('Extra Containers', function () {
 			expect(configMock.EXTRA_CONTAINERS).to.be.an('array').with.lengthOf(2);
 
 			await supertest(device)
-				.patch(`/resin/device(${device.id})`)
+				.patch(`/${version}/device(${device.id})`)
 				.send({
 					should_be_managed_by__release: supervisorRelease1,
 				})
@@ -184,7 +185,7 @@ describe('Extra Containers', function () {
 			expect(configMock.EXTRA_CONTAINERS).to.be.an('array').with.lengthOf(2);
 
 			await supertest(device)
-				.patch(`/resin/device(${device.id})`)
+				.patch(`/${version}/device(${device.id})`)
 				.send({
 					should_be_managed_by__release: supervisorRelease1,
 				})
@@ -192,7 +193,7 @@ describe('Extra Containers', function () {
 
 			// set our second release as completed so it's updated as latest
 			await supertest(admin)
-				.patch(`/resin/release(${supervisorRelease2})`)
+				.patch(`/${version}/release(${supervisorRelease2})`)
 				.send({
 					status: 'success',
 				})
@@ -220,7 +221,7 @@ describe('Extra Containers', function () {
 		it('should create image installs when PATCHing the state endpoint, for extra containers', async () => {
 			setSystemAppsValue([systemAppUuid]);
 			await supertest(device)
-				.patch(`/resin/device(${device.id})`)
+				.patch(`/${version}/device(${device.id})`)
 				.send({
 					should_be_managed_by__release: supervisorRelease1,
 				})
@@ -297,7 +298,7 @@ describe('Extra Containers', function () {
 
 		it('should not run a supervisor of the wrong arch', async () => {
 			await supertest(device)
-				.patch(`/resin/device(${device.id})`)
+				.patch(`/${version}/device(${device.id})`)
 				.send({
 					should_be_managed_by__release: supervisorReleaseBadArch,
 				})

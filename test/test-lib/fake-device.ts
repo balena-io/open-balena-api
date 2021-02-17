@@ -62,10 +62,10 @@ export interface DeviceStateEC {
 export const getState = async <T extends DeviceState>(
 	user: UserObjectParam,
 	deviceUuid: string,
-	version: string = 'v2',
+	stateVersion: string = 'v2',
 ): Promise<T> => {
 	const { body: state } = await supertest(user)
-		.get(`/device/${version}/${deviceUuid}/state`)
+		.get(`/device/${stateVersion}/${deviceUuid}/state`)
 		.expect(200);
 
 	expect(state).to.have.property('local');
@@ -108,11 +108,6 @@ export async function provisionDevice(
 		})
 		.expect(201);
 
-	const { body: provisionedDevice } = await supertest(admin)
-		.get(`/${version}/device(uuid='${deviceUuid}')?$select=supervisor_version`)
-		.expect(200);
-	expect(provisionedDevice.d[0].supervisor_version).to.equal(supervisorVersion);
-
 	const device = {
 		...(deviceEntry as {
 			id: number;
@@ -148,7 +143,7 @@ export async function provisionDevice(
 	});
 
 	const { body: provisionedDevice } = await supertest(admin)
-		.get(`/resin/device(uuid='${deviceUuid}')?$select=supervisor_version`)
+		.get(`/${version}/device(uuid='${deviceUuid}')?$select=supervisor_version`)
 		.expect(200);
 	expect(provisionedDevice.d[0].supervisor_version).to.equal(supervisorVersion);
 
