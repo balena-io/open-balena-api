@@ -16,7 +16,7 @@ ALTER TABLE "release"
 ALTER COLUMN "release type" SET DEFAULT 'final',
 ALTER COLUMN "is passing tests" SET DEFAULT 1;
 
-ALTER TABLE "application"
+ALTER TABLE "image"
 ALTER COLUMN "install type" SET DEFAULT 'supervised';
 
 -------------------------------

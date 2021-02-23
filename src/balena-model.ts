@@ -176,6 +176,7 @@ export interface Image {
 	status: string;
 	content_hash: string | null;
 	contract: {} | null;
+	install_type: 'hostapp' | 'hostapp extension' | 'supervised' | 'supervisor';
 }
 
 export interface Organization {
@@ -212,7 +213,6 @@ export interface Application {
 	is_archived: boolean;
 	uuid: string;
 	is_public: boolean;
-	install_type: 'hostapp' | 'hostapp extension' | 'supervised' | 'supervisor';
 }
 
 export interface ApplicationEnvironmentVariable {
@@ -473,7 +473,6 @@ export interface MyApplication {
 	is_archived: boolean;
 	uuid: string;
 	is_public: boolean;
-	install_type: 'hostapp' | 'hostapp extension' | 'supervised' | 'supervisor';
 }
 
 export interface UserHasDirectAccessToApplication {

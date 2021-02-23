@@ -33,7 +33,6 @@ export type App = {
 	releaseId: number;
 	appId?: string;
 	uuid?: string;
-	type?: 'supervised' | 'supervisor' | 'hostapp' | 'hostapp extension';
 	services: {
 		[id: number]: AppService;
 	};
@@ -46,6 +45,7 @@ export type AppService = {
 	serviceName: string;
 	image: string;
 	running: boolean;
+	type?: 'supervised' | 'supervisor' | 'hostapp' | 'hostapp extension';
 	environment: Dictionary<string>;
 	labels: Dictionary<string>;
 	contract?: string;
@@ -146,6 +146,7 @@ async function buildAppFromRelease(
 			image: formatImageLocation(imgRegistry),
 			// This needs spoken about...
 			running: true,
+			type: image.install_type,
 			environment,
 			labels,
 		};
@@ -210,6 +211,7 @@ const releaseExpand = {
 						'is_stored_at__image_location',
 						'content_hash',
 						'contract',
+						'install_type',
 					],
 					$expand: {
 						is_a_build_of__service: {
@@ -273,7 +275,7 @@ const stateQuery = _.once(() =>
 					},
 				},
 				belongs_to__application: {
-					$select: ['id', 'app_name', 'uuid', 'install_type'],
+					$select: ['id', 'app_name', 'uuid'],
 					$expand: {
 						application_config_variable: {
 							$select: ['name', 'value'],
@@ -404,7 +406,7 @@ export const state: RequestHandler = async (req, res) => {
 						return await resinApiTx.get({
 							resource: 'application',
 							options: {
-								$select: ['id', 'app_name', 'uuid', 'install_type'],
+								$select: ['id', 'app_name', 'uuid'],
 								$expand: {
 									application_config_variable: {
 										$select: ['name', 'value'],
@@ -423,10 +425,6 @@ export const state: RequestHandler = async (req, res) => {
 								$filter: {
 									uuid: {
 										$in: EXTRA_CONTAINERS,
-									},
-									// we'll load supervisors separately since they don't track latest
-									install_type: {
-										$ne: 'supervisor',
 									},
 									should_be_running__release: {
 										$any: {
@@ -462,7 +460,6 @@ export const state: RequestHandler = async (req, res) => {
 					...mainApp,
 					uuid: parentApp.uuid,
 					appId: parentApp.id,
-					type: parentApp.install_type,
 				},
 			},
 		};
@@ -476,7 +473,7 @@ export const state: RequestHandler = async (req, res) => {
 							device.should_be_managed_by__release[0].belongs_to__application
 								.__id,
 						options: {
-							$select: ['id', 'app_name', 'uuid', 'install_type'],
+							$select: ['id', 'app_name', 'uuid'],
 							$expand: {
 								application_config_variable: {
 									$select: ['name', 'value'],
@@ -511,7 +508,6 @@ export const state: RequestHandler = async (req, res) => {
 						app.should_be_running__release[0],
 						config,
 					)),
-					type: app.install_type,
 					appId: app.id,
 					uuid: app.uuid,
 				};

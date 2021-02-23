@@ -457,9 +457,6 @@ Fact type: application has uuid
 	Necessity: each uuid is of exactly one application.
 	Necessity: each application has a uuid that has a Length (Type) that is equal to 32.
 Fact type: application is public
-Fact type: application has install type
-	Necessity: each application has exactly one install type
-	Definition: "hostapp" or "hostapp extension" or "supervised" or "supervisor"
 
 -- service instance
 
@@ -685,6 +682,9 @@ Fact type: image has content hash
 	Necessity: each image has at most one content hash.
 Fact type: image has contract
 	Necessity: each image has at most one contract
+Fact type: image has install type
+	Necessity: each image has exactly one install type
+	Definition: "hostapp" or "hostapp extension" or "supervised" or "supervisor"
 
 
 -- image label

@@ -9,7 +9,6 @@
 		"user": "admin",
 		"device_type": "intel-nuc",
 		"app_name": "system-app-1-nuc",
-		"install_type": "supervised",
 		"is_public": true
 	},
 	"systemApp2": {
@@ -17,21 +16,18 @@
 		"user": "admin",
 		"device_type": "raspberrypi3",
 		"app_name": "system-app-1-pi",
-		"install_type": "supervised",
 		"is_public": true
 	},
 	"supervisorApp": {
 		"user": "admin",
 		"device_type": "intel-nuc",
 		"app_name": "supervisor-intel-nuc",
-		"install_type": "supervisor",
 		"is_public": true
 	},
 	"supervisorAppPi": {
 		"user": "admin",
 		"device_type": "raspberrypi3",
 		"app_name": "supervisor-raspberrypi3",
-		"install_type": "supervisor",
 		"is_public": true
 	}
 }

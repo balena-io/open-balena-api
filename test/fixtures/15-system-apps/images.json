@@ -24,6 +24,7 @@
 		"image_size": 2048,
 		"project_type": "project type goes here",
 		"build_log": "This is also the build log",
+		"install_type": "supervised",
 		"status": "success"
 	},
 	"supervisorImage1": {
@@ -31,6 +32,7 @@
 		"service": "supervisorService",
 		"releases": [ "supervisorRelease1" ],
 		"image_size": 2048,
+		"install_type": "supervisor",
 		"project_type": "project type goes here",
 		"build_log": "This is also the build log",
 		"status": "success"
@@ -39,6 +41,7 @@
 		"user": "admin",
 		"service": "supervisorService",
 		"releases": [ "supervisorRelease2" ],
+		"install_type": "supervisor",
 		"image_size": 2048,
 		"project_type": "project type goes here",
 		"build_log": "This is also the build log",
@@ -49,6 +52,7 @@
 		"service": "supervisorService",
 		"releases": [ "supervisorReleasePi" ],
 		"image_size": 2048,
+		"install_type": "supervisor",
 		"project_type": "project type goes here",
 		"build_log": "This is also the build log",
 		"status": "success"
