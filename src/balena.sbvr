@@ -439,6 +439,7 @@ Fact type: application has slug
 	Necessity: each application has exactly one slug
 	Necessity: each slug is of exactly one application
 Fact type: application is for device type
+	Synonymous Form: device type is default for application
 	Necessity: each application is for exactly one device type
 Fact type: application should be running release
 	Synonymous Form: release should be running on application

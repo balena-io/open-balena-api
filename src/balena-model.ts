@@ -136,6 +136,27 @@ export interface DeviceType {
 	name: string;
 	is_of__cpu_architecture: { __id: number } | [CpuArchitecture];
 	logo: string | null;
+	belongs_to__device_family: { __id: number } | [DeviceFamily?] | null;
+}
+
+export interface DeviceFamily {
+	created_at: DateString;
+	modified_at: DateString;
+	id: number;
+	slug: string;
+	name: string;
+	is_manufactured_by__device_manufacturer:
+		| { __id: number }
+		| [DeviceManufacturer?]
+		| null;
+}
+
+export interface DeviceManufacturer {
+	created_at: DateString;
+	modified_at: DateString;
+	id: number;
+	slug: string;
+	name: string;
 }
 
 export interface Image {
