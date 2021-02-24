@@ -9,6 +9,7 @@ interface DeviceStateApp {
 	name: string;
 	commit: string;
 	releaseId: number;
+	releaseVersion: string;
 	services: _.Dictionary<{
 		image: string;
 		volumes: string[];
@@ -49,7 +50,6 @@ export interface DeviceStateEC {
 			DeviceStateApp & {
 				appId: number;
 				uuid: string;
-				install_type: string;
 			}
 		>;
 	};

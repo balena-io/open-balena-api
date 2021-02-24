@@ -31,6 +31,7 @@ export type App = {
 	name: string;
 	commit: string;
 	releaseId: number;
+	releaseVersion: string;
 	appId?: string;
 	uuid?: string;
 	services: {
@@ -45,7 +46,6 @@ export type AppService = {
 	serviceName: string;
 	image: string;
 	running: boolean;
-	type?: 'supervised' | 'supervisor' | 'hostapp' | 'hostapp extension';
 	environment: Dictionary<string>;
 	labels: Dictionary<string>;
 	contract?: string;
@@ -146,7 +146,6 @@ async function buildAppFromRelease(
 			image: formatImageLocation(imgRegistry),
 			// This needs spoken about...
 			running: true,
-			type: image.install_type,
 			environment,
 			labels,
 		};
@@ -175,6 +174,7 @@ async function buildAppFromRelease(
 
 	return {
 		releaseId: release.id,
+		releaseVersion: release.release_version,
 		commit: release.commit,
 		name: application.app_name,
 		services,
@@ -211,7 +211,6 @@ const releaseExpand = {
 						'is_stored_at__image_location',
 						'content_hash',
 						'contract',
-						'install_type',
 					],
 					$expand: {
 						is_a_build_of__service: {

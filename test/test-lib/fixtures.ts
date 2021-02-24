@@ -224,7 +224,6 @@ const loaders: Dictionary<LoaderFunc> = {
 				'end_timestamp',
 				'push_timestamp',
 				'is_stored_at__image_location',
-				'install_type',
 			);
 
 			const newImage = await createResource({

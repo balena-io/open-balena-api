@@ -20,7 +20,6 @@ describe('Extra Containers', function () {
 		let applicationId: number;
 		let systemAppUuid: string;
 		let systemAppServiceId: number;
-		let supervisorAppServiceId: number;
 		let supervisorAppUuid: string;
 		let device: fakeDevice.Device;
 		let supervisorRelease1: number;
@@ -41,7 +40,6 @@ describe('Extra Containers', function () {
 
 			supervisorRelease1 = fx.releases.supervisorRelease1.id;
 			supervisorRelease2 = fx.releases.supervisorRelease2.id;
-			supervisorAppServiceId = fx.services.supervisorService.id;
 			supervisorReleaseBadArch = fx.releases.supervisorReleasePi.id;
 
 			// create a new device in this test application...
@@ -163,14 +161,12 @@ describe('Extra Containers', function () {
 			// should have a specific supervised app...
 			const systemApp1 = state.local.extraContainers?.[`${systemAppUuid}`];
 			expect(systemApp1).to.have.property('services').which.is.not.empty;
+			expect(systemApp1).to.have.property('releaseVersion').which.is.not.empty;
 
 			// should have some environment variables...
 			const systemAppService1 = systemApp1?.services[`${systemAppServiceId}`];
 			expect(systemAppService1).to.have.property('environment').which.is.not
 				.empty;
-			expect(systemAppService1)
-				.to.have.property('type')
-				.which.equals('supervised');
 
 			// should have specific environment variables...
 			expect(systemAppService1?.environment)
@@ -220,11 +216,8 @@ describe('Extra Containers', function () {
 
 			// we need to ensure non-latest supervisors are still returned
 			expect(supervisorRelease1).to.equal(supervisorApp1?.releaseId);
-			const supervisorAppService1 =
-				supervisorApp1?.services[`${supervisorAppServiceId}`];
-			expect(supervisorAppService1)
-				.to.have.property('type')
-				.which.equals('supervisor');
+			expect(supervisorApp1).to.have.property('releaseVersion').which.is.not
+				.empty;
 		});
 
 		it('should create image installs when PATCHing the state endpoint, for extra containers', async () => {
@@ -292,9 +285,6 @@ describe('Extra Containers', function () {
 
 			// should have some environment variables...
 			const systemAppService1 = systemApp1?.services[`${systemAppServiceId}`];
-			expect(systemAppService1)
-				.to.have.property('type')
-				.which.equals('supervised');
 			expect(systemAppService1).to.have.property('environment').which.is.not
 				.empty;
 

@@ -176,7 +176,6 @@ export interface Image {
 	status: string;
 	content_hash: string | null;
 	contract: {} | null;
-	install_type: 'hostapp' | 'hostapp extension' | 'supervised' | 'supervisor';
 }
 
 export interface Organization {
