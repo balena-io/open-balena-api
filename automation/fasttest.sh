@@ -71,7 +71,7 @@ if [ -z "$db_id" ] || [ -z "$redis_id" ] || [ -z "$loki_id" ] || [ -z "$api_id" 
 	loki_id=$(runloki '-p 3100:3100')
 	echo $loki_id >>"$CONFIG_FILE"
 
-	api_id=$(runapi $IMAGE_NAME $db_id $redis_id $loki_id " -p 9228:9229 -v $(pwd):/usr/src/app")
+	api_id=$(runapi $IMAGE_NAME $db_id $redis_id $loki_id " -p 9229:9229 -v $(pwd):/usr/src/app")
 	echo $api_id >>"$CONFIG_FILE"
 
 	# run prettier once before the initial setup, so that `npm run lint` does not fail
