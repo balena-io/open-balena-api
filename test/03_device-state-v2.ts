@@ -356,21 +356,26 @@ describe('Device State v2', () => {
 describe('Device State v2 patch', function () {
 	let fx: fixtures.Fixtures;
 	let admin: UserObjectParam;
-	let applicationId: number;
-	let device: fakeDevice.Device;
+	let deviceForUpdatedState: fakeDevice.Device;
+	let deviceForSupervisorUpdate: fakeDevice.Device;
 
 	before(async () => {
 		fx = await fixtures.load('03-device-state-v2');
 
 		admin = fx.users.admin;
-		applicationId = fx.applications.app1.id;
 
-		// create a new device in this test application...
-		device = await fakeDevice.provisionDevice(
+		// new devices in this test application...
+		deviceForUpdatedState = await fakeDevice.provisionDevice(
 			admin,
-			applicationId,
+			fx.applications.app1.id,
 			'balenaOS 2.42.0+rev1',
 			'9.11.1',
+		);
+		deviceForSupervisorUpdate = await fakeDevice.provisionDevice(
+			admin,
+			fx.applications.app2.id,
+			'balenaOS 2.3.0+rev1',
+			'3.1.4',
 		);
 	});
 
@@ -405,14 +410,14 @@ describe('Device State v2 patch', function () {
 			},
 		};
 
-		await device.patchStateV2(devicePatchBody);
+		await deviceForUpdatedState.patchStateV2(devicePatchBody);
 
 		const {
 			body: {
 				d: [updatedDevice],
 			},
 		} = await supertest(admin)
-			.get(`/${version}/device(${device.id})`)
+			.get(`/${version}/device(${deviceForUpdatedState.id})`)
 			.expect(200);
 
 		Object.keys(devicePatchBody.local).forEach(
@@ -422,5 +427,34 @@ describe('Device State v2 patch', function () {
 				);
 			},
 		);
+	});
+
+	it('should update the managed by release', async () => {
+		const devicePatchBody = {
+			local: {
+				device_name: 'reported_device_name',
+				status: 'Idle',
+				is_online: true,
+				os_version: 'balenaOS 2.3.0+rev1',
+				os_variant: 'prod',
+				supervisor_version: '3.1.4',
+				provisioning_progress: null,
+				provisioning_state: null,
+				ip_address: '192.168.1.2',
+				mac_address: '00:11:22:33:44:66',
+			},
+		};
+
+		await deviceForSupervisorUpdate.patchStateV2(devicePatchBody);
+
+		const {
+			body: {
+				d: [updatedDevice],
+			},
+		} = await supertest(admin)
+			.get(`/${version}/device(${deviceForSupervisorUpdate.id})`)
+			.expect(200);
+		expect(updatedDevice.should_be_managed_by__release).to.not.be.undefined;
+		expect(updatedDevice.should_be_managed_by__release).to.not.be.null;
 	});
 });

@@ -1,0 +1,7 @@
+{
+	"supervisorService": {
+		"user": "admin",
+		"application": "supervisorApp",
+		"service_name": "resin-supervisor"
+	}
+}

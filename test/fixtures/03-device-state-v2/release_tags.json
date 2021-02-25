@@ -1,0 +1,8 @@
+{
+	"tag1": {
+		"user": "admin",
+		"release": "supervisorRelease",
+		"tag_key": "BALENA_REQUIRED_SUPERVISOR_v3.1.4",
+		"value": "v3.1.4"
+	}
+}
