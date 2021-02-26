@@ -1,4 +1,15 @@
 - commits:
+    - subject: Allow pinejs to enforce the at most one app with a given name rule
+      hash: 410e6e8efc0858882950463f8483e7e503072a7c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.128.4
+  date: 2021-02-26T19:43:12.104Z
+- commits:
     - subject: 'fixtures: autogenerate commit if not provided'
       hash: 8b27482fb158f449684f0ca0783a0cb3e3b29dd9
       body: ''
