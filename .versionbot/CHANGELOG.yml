@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'fixtures: autogenerate commit if not provided'
+      hash: 8b27482fb158f449684f0ca0783a0cb3e3b29dd9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.128.3
+  date: 2021-02-25T18:34:41.443Z
+- commits:
     - subject: Update open-balena-base to 11.1.0
       hash: 6e004dc027715b980a684b5f2793bf11a56206b7
       body: |
