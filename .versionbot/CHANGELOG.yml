@@ -1,4 +1,18 @@
 - commits:
+    - subject: Add device type is default for application
+      hash: fb52e32f106f8d6acdd16edd9acb65166e2dcc1a
+      body: |
+        Add device type is default for application synonymous form
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+      nested: []
+  version: 0.128.5
+  date: 2021-03-01T09:15:41.997Z
+- commits:
     - subject: Allow pinejs to enforce the at most one app with a given name rule
       hash: 410e6e8efc0858882950463f8483e7e503072a7c
       body: ''
