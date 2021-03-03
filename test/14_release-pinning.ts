@@ -17,8 +17,10 @@ describe(`Tracking latest release`, () => {
 	let admin: UserObjectParam;
 	let applicationId: number;
 	let application2Id: number;
+	let application3Id: number;
 	let device: fakeDevice.Device;
 	let device2: fakeDevice.Device;
+	let device3: fakeDevice.Device;
 
 	before(async () => {
 		fx = await fixtures.load('13-release-pinning');
@@ -26,10 +28,12 @@ describe(`Tracking latest release`, () => {
 		admin = fx.users.admin;
 		applicationId = fx.applications.app1.id;
 		application2Id = fx.applications.app2.id;
+		application3Id = fx.applications.app3.id;
 
 		// create a new device in this test application...
 		device = await fakeDevice.provisionDevice(admin, applicationId);
 		device2 = await fakeDevice.provisionDevice(admin, application2Id);
+		device3 = await fakeDevice.provisionDevice(admin, application3Id);
 	});
 
 	after(async () => {
@@ -194,6 +198,80 @@ describe(`Tracking latest release`, () => {
 			expect(device2state.local.apps[application2Id].releaseId).to.equal(
 				app2ReleaseId,
 			);
+		});
+	});
+
+	describe('given an app that does not track the latest release', function () {
+		let app3ReleaseId: number;
+
+		before(async function () {
+			await supertest(admin)
+				.patch(`/${version}/application(${application3Id})`)
+				.send({
+					should_track_latest_release: false,
+				})
+				.expect(200);
+
+			const app3Release = await addReleaseToApp(admin, {
+				belongs_to__application: application3Id,
+				is_created_by__user: admin.id!,
+				build_log: '',
+				commit: `deadbeef`,
+				composition: '',
+				source: '',
+				status: 'running',
+				start_timestamp: Date.now(),
+			});
+			app3ReleaseId = app3Release.id;
+
+			const { id: serviceId } = await addServiceToApp(
+				admin,
+				'new-untracked-release-service',
+				application3Id,
+			);
+
+			const { id: imageId } = await addImageToService(admin, {
+				is_a_build_of__service: serviceId,
+				build_log: '',
+				start_timestamp: Date.now(),
+				end_timestamp: Date.now(),
+				push_timestamp: Date.now(),
+				image_size: 1024,
+				status: 'success',
+			});
+			await addImageToRelease(admin, imageId, app3ReleaseId);
+
+			await supertest(admin)
+				.patch(`/${version}/release(${app3ReleaseId})`)
+				.send({
+					status: 'success',
+					end_timestamp: Date.now(),
+				})
+				.expect(200);
+		});
+
+		it('should not update the target release', async function () {
+			const expectedApp3Latest = fx.releases.app3release1;
+			const device3state = await device3.getStateV2();
+			expect(device3state.local.apps[application3Id].releaseId).to.equal(
+				expectedApp3Latest.id,
+			);
+		});
+
+		it('should add any new service installs of the new release', async function () {
+			const {
+				body: { d: serviceInstalls },
+			} = await supertest(admin)
+				.get(
+					`/${version}/service_install?$select=id&$expand=installs__service($select=service_name)&$filter=device eq ${device3.id}`,
+				)
+				.expect(200);
+
+			expect(serviceInstalls).to.be.an('array');
+			const serviceNames = serviceInstalls.map(
+				(si: AnyObject) => si.installs__service[0].service_name,
+			);
+			expect(serviceNames).to.include('new-untracked-release-service');
 		});
 	});
 });

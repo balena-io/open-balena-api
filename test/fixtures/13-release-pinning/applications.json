@@ -8,5 +8,10 @@
         "user": "admin",
         "device_type": "intel-nuc",
         "app_name": "test-app-2"
+    },
+    "app3": {
+        "user": "admin",
+        "device_type": "intel-nuc",
+        "app_name": "test-app-3"
     }
 }
