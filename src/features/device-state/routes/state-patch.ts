@@ -69,6 +69,36 @@ const upsertImageInstall = async (
 	}
 };
 
+const deleteOldImageInstalls = async (
+	resinApi: sbvrUtils.PinejsClient,
+	deviceId: number,
+	imageIds: number[],
+): Promise<void> => {
+	// Get access to a root api, as images shouldn't be allowed to change
+	// the service_install values
+	const rootApi = resinApi.clone({
+		passthrough: { req: permissions.root },
+	});
+
+	const body = { status: 'deleted' };
+	const filter: Filter = {
+		device: deviceId,
+	};
+	if (imageIds.length !== 0) {
+		filter.$not = [body, { image: { $in: imageIds } }];
+	} else {
+		filter.$not = body;
+	}
+
+	await rootApi.patch({
+		resource: 'image_install',
+		body,
+		options: {
+			$filter: filter,
+		},
+	});
+};
+
 const upsertGatewayDownload = async (
 	resinApi: sbvrUtils.PinejsClient,
 	gatewayDownload: Pick<GatewayDownload, 'id'>,
@@ -317,30 +347,8 @@ export const statePatch: RequestHandler = async (req, res) => {
 					);
 				}
 
-				// Get access to a root api, as images shouldn't be allowed to change
-				// the service_install values
-				const rootApi = resinApiTx.clone({
-					passthrough: { req: permissions.root },
-				});
-
-				const body = { status: 'deleted' };
-				const filter: Filter = {
-					device: device.id,
-				};
-				if (imageIds.length !== 0) {
-					filter.$not = [body, { image: { $in: imageIds } }];
-				} else {
-					filter.$not = body;
-				}
-
 				waitPromises.push(
-					rootApi.patch({
-						resource: 'image_install',
-						body,
-						options: {
-							$filter: filter,
-						},
-					}),
+					deleteOldImageInstalls(resinApiTx, device.id, imageIds),
 				);
 			}
 
