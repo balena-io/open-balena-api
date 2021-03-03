@@ -1,4 +1,15 @@
 - commits:
+    - subject: Use already available primary key values in device state-patch
+      hash: 3c380cf12a396c505168bf3a890ab2a8954344b1
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.128.7
+  date: 2021-03-03T15:24:32.171Z
+- commits:
     - subject: Update dependencies
       hash: c8db6b18772ec75b6b9a5bc8b915de871b411dd0
       body: |
