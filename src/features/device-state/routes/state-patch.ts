@@ -73,9 +73,15 @@ const upsertGatewayDownload = async (
 	resinApi: sbvrUtils.PinejsClient,
 	gatewayDownload: Pick<GatewayDownload, 'id'>,
 	deviceId: number,
-	imageId: number,
-	status: string,
-	downloadProgress: number | null,
+	{
+		imageId,
+		status,
+		downloadProgress,
+	}: {
+		imageId: number;
+		status: unknown;
+		downloadProgress: unknown;
+	},
 ): Promise<void> => {
 	if (gatewayDownload == null) {
 		await resinApi.post({
@@ -380,9 +386,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 										resinApiTx,
 										existingGatewayDownloadsByImage[gatewayDownload.imageId],
 										device.id,
-										gatewayDownload.imageId,
-										gatewayDownload.status,
-										gatewayDownload.downloadProgress,
+										gatewayDownload,
 									);
 								}),
 							);
