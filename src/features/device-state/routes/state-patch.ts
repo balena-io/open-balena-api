@@ -56,10 +56,7 @@ const upsertImageInstall = async (
 		}
 		await resinApi.patch({
 			resource: 'image_install',
-			id: {
-				device: deviceId,
-				installs__image: imageId,
-			},
+			id: imgInstall.id,
 			body,
 			options: {
 				$filter: {
@@ -101,10 +98,7 @@ const upsertGatewayDownload = async (
 	} else {
 		await resinApi.patch({
 			resource: 'gateway_download',
-			id: {
-				image: imageId,
-				is_downloaded_by__device: deviceId,
-			},
+			id: gatewayDownload.id,
 			body: {
 				status,
 				download_progress: downloadProgress,
