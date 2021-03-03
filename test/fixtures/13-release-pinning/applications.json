@@ -3,5 +3,10 @@
         "user": "admin",
         "device_type": "intel-nuc",
         "app_name": "test-app-1"
+    },
+    "app2": {
+        "user": "admin",
+        "device_type": "intel-nuc",
+        "app_name": "test-app-2"
     }
 }
