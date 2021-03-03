@@ -16,11 +16,18 @@ const { api } = sbvrUtils;
 const upsertImageInstall = async (
 	resinApi: sbvrUtils.PinejsClient,
 	imgInstall: Pick<ImageInstall, 'id'>,
-	imageId: number,
+	{
+		imageId,
+		releaseId,
+		status,
+		downloadProgress,
+	}: {
+		imageId: number;
+		releaseId: number;
+		status: unknown;
+		downloadProgress: unknown;
+	},
 	deviceId: number,
-	status: string,
-	releaseId: number,
-	dlProg?: number,
 ): Promise<void> => {
 	if (imgInstall == null) {
 		// we need to create it with a POST
@@ -31,7 +38,7 @@ const upsertImageInstall = async (
 				installs__image: imageId,
 				install_date: new Date(),
 				status,
-				download_progress: dlProg,
+				download_progress: downloadProgress,
 				is_provided_by__release: releaseId,
 			},
 			options: { returnResource: false },
@@ -42,8 +49,8 @@ const upsertImageInstall = async (
 			status,
 			is_provided_by__release: releaseId,
 		};
-		if (dlProg !== undefined) {
-			body.download_progress = dlProg;
+		if (downloadProgress !== undefined) {
+			body.download_progress = downloadProgress;
 		}
 		await resinApi.patch({
 			resource: 'image_install',
@@ -264,9 +271,13 @@ export const statePatch: RequestHandler = async (req, res) => {
 						if (!Number.isFinite(releaseId)) {
 							throw new BadRequestError('Invalid release ID value in request');
 						}
-						const { status, download_progress } = svc;
 
-						return { imageId, releaseId, status, download_progress };
+						return {
+							imageId,
+							releaseId,
+							status: svc.status,
+							downloadProgress: svc.download_progress,
+						};
 					}),
 				);
 				const imageIds = imgInstalls.map(({ imageId }) => imageId);
@@ -292,19 +303,14 @@ export const statePatch: RequestHandler = async (req, res) => {
 							);
 
 							await Promise.all(
-								imgInstalls.map(
-									async ({ imageId, releaseId, status, download_progress }) => {
-										await upsertImageInstall(
-											resinApiTx,
-											existingImgInstallsByImage[imageId],
-											imageId,
-											device.id,
-											status,
-											releaseId,
-											download_progress,
-										);
-									},
-								),
+								imgInstalls.map(async (imgInstall) => {
+									await upsertImageInstall(
+										resinApiTx,
+										existingImgInstallsByImage[imgInstall.imageId],
+										imgInstall,
+										device.id,
+									);
+								}),
 							);
 						})(),
 					);
