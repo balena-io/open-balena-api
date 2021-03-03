@@ -8,7 +8,11 @@ import {
 } from '../../../infra/error-handling';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils';
-import { ImageInstall, PickDeferred } from '../../../balena-model';
+import {
+	GatewayDownload,
+	ImageInstall,
+	PickDeferred,
+} from '../../../balena-model';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -67,21 +71,12 @@ const upsertImageInstall = async (
 
 const upsertGatewayDownload = async (
 	resinApi: sbvrUtils.PinejsClient,
+	gatewayDownload: Pick<GatewayDownload, 'id'>,
 	deviceId: number,
 	imageId: number,
 	status: string,
 	downloadProgress: number | null,
 ): Promise<void> => {
-	const gatewayDownload = await resinApi.get({
-		resource: 'gateway_download',
-		id: {
-			image: imageId,
-			is_downloaded_by__device: deviceId,
-		},
-		options: {
-			$select: 'id',
-		},
-	});
 	if (gatewayDownload == null) {
 		await resinApi.post({
 			resource: 'gateway_download',
@@ -345,22 +340,55 @@ export const statePatch: RequestHandler = async (req, res) => {
 
 			if (dependent != null && dependent.apps != null) {
 				// Handle dependent devices if necessary
-				const imageIds: number[] = [];
-				_.each(dependent.apps, ({ images }) => {
-					_.each(images, ({ status, download_progress }, imageIdStr) => {
+				const gatewayDownloads = _.flatMap(dependent.apps, ({ images }) =>
+					_.map(images, ({ status, download_progress }, imageIdStr) => {
 						const imageId = parseInt(imageIdStr, 10);
-						imageIds.push(imageId);
-						waitPromises.push(
-							upsertGatewayDownload(
-								resinApiTx,
-								device.id,
-								imageId,
-								status,
-								download_progress,
-							),
-						);
-					});
-				});
+						if (!Number.isFinite(imageId)) {
+							throw new BadRequestError('Invalid image ID value in request');
+						}
+
+						return {
+							imageId,
+							status,
+							downloadProgress: download_progress,
+						};
+					}),
+				);
+				const imageIds = gatewayDownloads.map(({ imageId }) => imageId);
+
+				if (imageIds.length > 0) {
+					waitPromises.push(
+						(async () => {
+							const existingGatewayDownloads = (await resinApiTx.get({
+								resource: 'gateway_download',
+								options: {
+									$select: ['id', 'image'],
+									$filter: {
+										is_downloaded_by__device: device.id,
+										image: { $in: imageIds },
+									},
+								},
+							})) as Array<PickDeferred<GatewayDownload, 'id' | 'image'>>;
+							const existingGatewayDownloadsByImage = _.keyBy(
+								existingGatewayDownloads,
+								({ image }) => image.__id,
+							);
+
+							await Promise.all(
+								gatewayDownloads.map(async (gatewayDownload) => {
+									await upsertGatewayDownload(
+										resinApiTx,
+										existingGatewayDownloadsByImage[gatewayDownload.imageId],
+										device.id,
+										gatewayDownload.imageId,
+										gatewayDownload.status,
+										gatewayDownload.downloadProgress,
+									);
+								}),
+							);
+						})(),
+					);
+				}
 
 				waitPromises.push(
 					deleteOldGatewayDownloads(resinApiTx, device.id, imageIds),
