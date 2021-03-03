@@ -8,29 +8,20 @@ import {
 } from '../../../infra/error-handling';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils';
+import { ImageInstall, PickDeferred } from '../../../balena-model';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
 
 const upsertImageInstall = async (
 	resinApi: sbvrUtils.PinejsClient,
+	imgInstall: Pick<ImageInstall, 'id'>,
 	imageId: number,
 	deviceId: number,
 	status: string,
 	releaseId: number,
 	dlProg?: number,
 ): Promise<void> => {
-	const imgInstall = await resinApi.get({
-		resource: 'image_install',
-		id: {
-			installs__image: imageId,
-			device: deviceId,
-		},
-		options: {
-			$select: 'id',
-		},
-	});
-
 	if (imgInstall == null) {
 		// we need to create it with a POST
 		await resinApi.post({
@@ -262,34 +253,62 @@ export const statePatch: RequestHandler = async (req, res) => {
 			}
 
 			if (apps != null) {
-				const imageIds: number[] = [];
-
-				_.each(apps, (app) => {
-					_.each(app.services, (svc, imageIdStr) => {
+				const imgInstalls = _.flatMap(apps, (app) =>
+					_.map(app.services, (svc, imageIdStr) => {
 						const imageId = parseInt(imageIdStr, 10);
-						imageIds.push(imageId);
-						const { status, download_progress } = svc;
-						const releaseId = parseInt(svc.releaseId, 10);
-
 						if (!Number.isFinite(imageId)) {
 							throw new BadRequestError('Invalid image ID value in request');
 						}
+
+						const releaseId = parseInt(svc.releaseId, 10);
 						if (!Number.isFinite(releaseId)) {
 							throw new BadRequestError('Invalid release ID value in request');
 						}
+						const { status, download_progress } = svc;
 
-						waitPromises.push(
-							upsertImageInstall(
-								resinApiTx,
-								imageId,
-								device.id,
-								status,
-								releaseId,
-								download_progress,
-							),
-						);
-					});
-				});
+						return { imageId, releaseId, status, download_progress };
+					}),
+				);
+				const imageIds = imgInstalls.map(({ imageId }) => imageId);
+
+				if (imageIds.length > 0) {
+					waitPromises.push(
+						(async () => {
+							const existingImgInstalls = (await resinApiTx.get({
+								resource: 'image_install',
+								options: {
+									$select: ['id', 'installs__image'],
+									$filter: {
+										device: device.id,
+										installs__image: { $in: imageIds },
+									},
+								},
+							})) as Array<
+								PickDeferred<ImageInstall, 'id' | 'installs__image'>
+							>;
+							const existingImgInstallsByImage = _.keyBy(
+								existingImgInstalls,
+								({ installs__image }) => installs__image.__id,
+							);
+
+							await Promise.all(
+								imgInstalls.map(
+									async ({ imageId, releaseId, status, download_progress }) => {
+										await upsertImageInstall(
+											resinApiTx,
+											existingImgInstallsByImage[imageId],
+											imageId,
+											device.id,
+											status,
+											releaseId,
+											download_progress,
+										);
+									},
+								),
+							);
+						})(),
+					);
+				}
 
 				// Get access to a root api, as images shouldn't be allowed to change
 				// the service_install values
