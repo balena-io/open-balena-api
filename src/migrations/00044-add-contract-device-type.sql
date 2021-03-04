@@ -1,0 +1,2 @@
+ALTER TABLE "device type" 
+ADD COLUMN IF NOT EXISTS "contract" TEXT NULL;

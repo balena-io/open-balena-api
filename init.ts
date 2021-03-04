@@ -57,6 +57,7 @@ async function onInitHooks() {
 		'hw.device-type': {
 			resource: 'device_type',
 			uniqueKey: 'slug',
+			includeRawContract: true,
 			map: {
 				slug: {
 					contractField: 'slug',

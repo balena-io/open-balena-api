@@ -578,6 +578,9 @@ Fact type: device type is of cpu architecture
 Fact type: device type has logo
 	Necessity: each device type has at most one logo
 
+Fact type: device type has contract
+	Necessity: each device type has at most one contract
+
 Fact type: device type belongs to device family
 	Synonymous form: device family has device type
 	Necessity: each device type belongs to at most one device family
