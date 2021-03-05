@@ -1,4 +1,17 @@
 - commits:
+    - subject: Added contract to device type and update database synchronization
+      hash: befd9c14d93deb088e3a325fbfba473126632c34
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Micah Halter <micah@balena.io>
+        signed-off-by: Micah Halter <micah@balena.io>
+      author: Micah Halter
+      nested: []
+  version: 0.129.0
+  date: 2021-03-05T14:02:18.048Z
+- commits:
     - subject: Update pinejs to pick up rule optimizations for deletes
       hash: 9c24c85fac1f988c81bd1f8bd148ce35f7a90ec8
       body: |
