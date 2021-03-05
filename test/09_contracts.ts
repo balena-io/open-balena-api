@@ -159,6 +159,12 @@ describe('contracts', () => {
 			mockRepo('balena-io', 'contracts', 'updated-base-contracts');
 			await synchronizeContracts([{ owner: 'balena-io', name: 'contracts' }]);
 
+			const contracts = await getContracts('hw.device-type');
+
+			const finDtContract = contracts.find(
+				(dbDeviceType) => dbDeviceType.slug === 'fincm3',
+			);
+
 			const dbDeviceTypes: DeviceType[] = (
 				await supertest().get(`/${version}/device_type`).expect(200)
 			).body.d;
@@ -173,6 +179,7 @@ describe('contracts', () => {
 			expect(dbDeviceTypes).to.have.length(14);
 			expect(newDt).to.not.be.undefined;
 			expect(finDt).to.have.property('name', 'Fin');
+			expect(finDt).to.have.property('contract', JSON.stringify(finDtContract));
 		});
 	});
 });

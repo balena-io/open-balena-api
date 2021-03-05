@@ -67,13 +67,17 @@ type FieldsMap = {
 		};
 	};
 };
+
+type SyncSetting = {
+	resource: string;
+	uniqueKey: string;
+	includeRawContract?: boolean;
+	map: FieldsMap;
+};
+
 // This map will hold information on which contract fields imported from the contract type will be synced to which db model and fields.
 type SyncSettings = {
-	[contractType: string]: {
-		resource: string;
-		uniqueKey: string;
-		map: FieldsMap;
-	};
+	[contractType: string]: SyncSetting;
 };
 
 let globalSyncSettings: SyncSettings | undefined;
@@ -84,12 +88,16 @@ export function setSyncSettings(syncSettings: SyncSettings) {
 
 const mapModel = async (
 	contractEntry: Contract,
-	map: FieldsMap,
+	{ includeRawContract, map }: SyncSetting,
 	rootApi: sbvrUtils.PinejsClient,
 ) => {
 	const mappedModel: { [k: string]: any } = {};
+	if (includeRawContract) {
+		mappedModel['contract'] = JSON.stringify(contractEntry);
+	}
 	for (const key of Object.keys(map) as Array<keyof typeof map>) {
 		const mapper = map[key];
+
 		const contractValue =
 			_.get(contractEntry, mapper?.contractField) ?? mapper?.default;
 
@@ -172,7 +180,7 @@ const syncContractsToDb = async (
 	});
 
 	const mappedModel = contracts.map((contract) =>
-		mapModel(contract, typeMap.map, rootApi),
+		mapModel(contract, typeMap, rootApi),
 	);
 
 	const existingEntries = (await rootApi.get({
