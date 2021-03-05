@@ -91,13 +91,14 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 			request.values.should_be_running__release != null &&
 			affectedIds.length !== 0
 		) {
-			// Ensure that every device of the app we've just pinned to a release has the necessary service install entries
+			// Ensure that every device of the app we've just pinned, that is not itself pinned, has the necessary service install entries
 			const devices = (await api.get({
 				resource: 'device',
 				options: {
 					$select: 'id',
 					$filter: {
 						belongs_to__application: { $in: affectedIds },
+						should_be_running__release: null,
 					},
 				},
 			})) as Array<Pick<Device, 'id'>>;
