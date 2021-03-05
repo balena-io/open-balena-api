@@ -1,4 +1,19 @@
 - commits:
+    - subject: >-
+        Fixed JSON serialization of device-type contracts going into the
+        database.
+      hash: c53c3d3bb8ef955963df2c658cbd54821de22482
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Micah Halter <micah@balena.io>
+        signed-off-by: Micah Halter <micah@balena.io>
+      author: Micah Halter
+      nested: []
+  version: 0.129.2
+  date: 2021-03-05T20:06:00.598Z
+- commits:
     - subject: Fix release tracking of concurrent builds
       hash: dcdcc0defbf39f6f889f9dbf92c63a5fcee026ce
       body: ''
