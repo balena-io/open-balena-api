@@ -21,9 +21,6 @@ const updateLatestRelease = async (
 		options: {
 			$select: 'id',
 			$expand: {
-				owns__device: {
-					$select: ['id'],
-				},
 				owns__release: {
 					$select: 'id',
 					$top: 1,
@@ -36,24 +33,10 @@ const updateLatestRelease = async (
 						is_invalidated: false,
 						status: 'success',
 					},
-					$expand: {
-						contains__image: {
-							$select: ['id'],
-							$expand: {
-								image: {
-									$select: ['id'],
-									$expand: {
-										is_a_build_of__service: {
-											$select: ['id'],
-										},
-									},
-								},
-							},
-						},
-					},
 				},
 			},
 			$filter: {
+				should_track_latest_release: true,
 				owns__release: {
 					$any: {
 						$alias: 'r',
@@ -90,53 +73,6 @@ const updateLatestRelease = async (
 					should_be_running__release: release.id,
 				},
 			});
-
-			const deviceIds: number[] = _.map(
-				app.owns__device,
-				(device) => device.id,
-			);
-			const serviceIds: number[] = _.map(
-				release.contains__image,
-				(ipr) => ipr.image[0].is_a_build_of__service[0].id,
-			);
-			if (deviceIds.length === 0 || serviceIds.length === 0) {
-				return;
-			}
-			const serviceInstalls = await api.get({
-				resource: 'service_install',
-				options: {
-					$select: ['device', 'installs__service'],
-					$filter: {
-						device: { $in: deviceIds },
-						installs__service: { $in: serviceIds },
-					},
-				},
-			});
-			const serviceInstallsByDevice = _.groupBy(
-				serviceInstalls,
-				(si) => si.device.__id as number,
-			);
-			await Promise.all(
-				deviceIds.map(async (deviceId) => {
-					const existingServiceIds: number[] = _.map(
-						serviceInstallsByDevice[deviceId],
-						(si) => si.installs__service.__id,
-					);
-					const deviceServiceIds = _.difference(serviceIds, existingServiceIds);
-					await Promise.all(
-						deviceServiceIds.map(async (serviceId) => {
-							await api.post({
-								resource: 'service_install',
-								body: {
-									device: deviceId,
-									installs__service: serviceId,
-								},
-								options: { returnResource: false },
-							});
-						}),
-					);
-				}),
-			);
 		}),
 	);
 };

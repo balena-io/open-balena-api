@@ -258,20 +258,43 @@ describe(`Tracking latest release`, () => {
 			);
 		});
 
-		it('should add any new service installs of the new release', async function () {
+		it('should add any new service installs of the new release at the point it is actually pinned', async function () {
 			const {
-				body: { d: serviceInstalls },
+				body: { d: serviceInstallsBefore },
 			} = await supertest(admin)
 				.get(
 					`/${version}/service_install?$select=id&$expand=installs__service($select=service_name)&$filter=device eq ${device3.id}`,
 				)
 				.expect(200);
 
-			expect(serviceInstalls).to.be.an('array');
-			const serviceNames = serviceInstalls.map(
+			expect(serviceInstallsBefore).to.be.an('array');
+			const serviceNamesBefore = serviceInstallsBefore.map(
 				(si: AnyObject) => si.installs__service[0].service_name,
 			);
-			expect(serviceNames).to.include('new-untracked-release-service');
+			expect(serviceNamesBefore).to.not.include(
+				'new-untracked-release-service',
+			);
+
+			await supertest(admin)
+				.patch(`/${version}/application(${application3Id})`)
+				.send({
+					should_be_running__release: app3ReleaseId,
+				})
+				.expect(200);
+
+			const {
+				body: { d: serviceInstallsAfter },
+			} = await supertest(admin)
+				.get(
+					`/${version}/service_install?$select=id&$expand=installs__service($select=service_name)&$filter=device eq ${device3.id}`,
+				)
+				.expect(200);
+
+			expect(serviceInstallsAfter).to.be.an('array');
+			const serviceNamesAfter = serviceInstallsAfter.map(
+				(si: AnyObject) => si.installs__service[0].service_name,
+			);
+			expect(serviceNamesAfter).to.include('new-untracked-release-service');
 		});
 	});
 });
