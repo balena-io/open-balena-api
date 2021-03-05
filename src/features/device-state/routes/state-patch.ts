@@ -125,12 +125,18 @@ const upsertGatewayDownload = async (
 			options: { returnResource: false },
 		});
 	} else {
+		const body: AnyObject = {
+			status,
+			download_progress: downloadProgress,
+		};
 		await resinApi.patch({
 			resource: 'gateway_download',
 			id: gatewayDownload.id,
-			body: {
-				status,
-				download_progress: downloadProgress,
+			body,
+			options: {
+				$filter: {
+					$not: body,
+				},
 			},
 		});
 	}
@@ -141,20 +147,23 @@ const deleteOldGatewayDownloads = async (
 	deviceId: number,
 	imageIds: number[],
 ): Promise<void> => {
+	const body = { status: 'deleted' };
 	const filter: Filter = {
 		is_downloaded_by__device: deviceId,
 	};
 
 	if (imageIds.length !== 0) {
-		filter.$not = { image: { $in: imageIds } };
+		filter.$not = [body, { image: { $in: imageIds } }];
+	} else {
+		filter.$not = body;
 	}
 
 	await resinApi.patch({
 		resource: 'gateway_download',
+		body,
 		options: {
 			$filter: filter,
 		},
-		body: { status: 'deleted' },
 	});
 };
 
