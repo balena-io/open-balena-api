@@ -1,4 +1,39 @@
 - commits:
+    - subject: Fix release tracking of concurrent builds
+      hash: dcdcc0defbf39f6f889f9dbf92c63a5fcee026ce
+      body: ''
+      footer:
+        Resolves: '#591'
+        resolves: '#591'
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Test new service install creation for pinned applications
+      hash: 69475158ae1d3e5e87aeb690876832da70e3cfc1
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Test release tracking of concurrent builds
+      hash: ca3268e51f02b3b98d3aa45ec1a9ba52d648cb3f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.129.1
+  date: 2021-03-05T15:01:01.103Z
+- commits:
     - subject: Added contract to device type and update database synchronization
       hash: befd9c14d93deb088e3a325fbfba473126632c34
       body: ''
