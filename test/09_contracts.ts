@@ -179,7 +179,10 @@ describe('contracts', () => {
 			expect(dbDeviceTypes).to.have.length(14);
 			expect(newDt).to.not.be.undefined;
 			expect(finDt).to.have.property('name', 'Fin');
-			expect(finDt).to.have.property('contract', JSON.stringify(finDtContract));
+			expect(finDt).to.have.deep.property(
+				'contract',
+				JSON.parse(JSON.stringify(finDtContract)),
+			);
 		});
 	});
 });

@@ -93,7 +93,7 @@ const mapModel = async (
 ) => {
 	const mappedModel: { [k: string]: any } = {};
 	if (includeRawContract) {
-		mappedModel['contract'] = JSON.stringify(contractEntry);
+		mappedModel['contract'] = contractEntry;
 	}
 	for (const key of Object.keys(map) as Array<keyof typeof map>) {
 		const mapper = map[key];
@@ -135,6 +135,10 @@ const upsertEntries = async (
 	await Bluebird.map(
 		newData,
 		async (entry: any) => {
+			const entryQuery =
+				'contract' in entry && entry.contract != null
+					? { ...entry, contract: JSON.stringify(entry.contract) }
+					: entry;
 			try {
 				if (existingData.has(entry[uniqueField])) {
 					return await rootApi.patch({
@@ -143,7 +147,7 @@ const upsertEntries = async (
 						options: {
 							$filter: {
 								[uniqueField]: entry[uniqueField],
-								$not: entry,
+								$not: entryQuery,
 							},
 						},
 					});
