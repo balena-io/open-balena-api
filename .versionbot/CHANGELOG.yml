@@ -1,4 +1,39 @@
 - commits:
+    - subject: 'State-patch: Optimize noop gateway download updates'
+      hash: c6620ee8737fe33dc9a8075a7b83a4c8266eb235
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Separate marking old image installs deleted to a function
+      hash: 510dd434cb4efb812a98bd7ac8ad270f57b7c685
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: 'State-patch: Use 1 GET for updating any number of gateway downloads'
+      hash: b80a9891e61178a00d0a117bd1afbc515655865a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: 'State-patch: Use 1 GET for updating any number of image installs'
+      hash: f92c4ba2f0e51a10b491625be30980e15ef319ff
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.128.8
+  date: 2021-03-05T12:49:51.997Z
+- commits:
     - subject: Use already available primary key values in device state-patch
       hash: 3c380cf12a396c505168bf3a890ab2a8954344b1
       body: ''
