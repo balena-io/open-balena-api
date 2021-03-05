@@ -8,29 +8,31 @@ import {
 } from '../../../infra/error-handling';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils';
+import {
+	GatewayDownload,
+	ImageInstall,
+	PickDeferred,
+} from '../../../balena-model';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
 
 const upsertImageInstall = async (
 	resinApi: sbvrUtils.PinejsClient,
-	imageId: number,
+	imgInstall: Pick<ImageInstall, 'id'>,
+	{
+		imageId,
+		releaseId,
+		status,
+		downloadProgress,
+	}: {
+		imageId: number;
+		releaseId: number;
+		status: unknown;
+		downloadProgress: unknown;
+	},
 	deviceId: number,
-	status: string,
-	releaseId: number,
-	dlProg?: number,
 ): Promise<void> => {
-	const imgInstall = await resinApi.get({
-		resource: 'image_install',
-		id: {
-			installs__image: imageId,
-			device: deviceId,
-		},
-		options: {
-			$select: 'id',
-		},
-	});
-
 	if (imgInstall == null) {
 		// we need to create it with a POST
 		await resinApi.post({
@@ -40,7 +42,7 @@ const upsertImageInstall = async (
 				installs__image: imageId,
 				install_date: new Date(),
 				status,
-				download_progress: dlProg,
+				download_progress: downloadProgress,
 				is_provided_by__release: releaseId,
 			},
 			options: { returnResource: false },
@@ -51,8 +53,8 @@ const upsertImageInstall = async (
 			status,
 			is_provided_by__release: releaseId,
 		};
-		if (dlProg !== undefined) {
-			body.download_progress = dlProg;
+		if (downloadProgress !== undefined) {
+			body.download_progress = downloadProgress;
 		}
 		await resinApi.patch({
 			resource: 'image_install',
@@ -67,23 +69,50 @@ const upsertImageInstall = async (
 	}
 };
 
-const upsertGatewayDownload = async (
+const deleteOldImageInstalls = async (
 	resinApi: sbvrUtils.PinejsClient,
 	deviceId: number,
-	imageId: number,
-	status: string,
-	downloadProgress: number | null,
+	imageIds: number[],
 ): Promise<void> => {
-	const gatewayDownload = await resinApi.get({
-		resource: 'gateway_download',
-		id: {
-			image: imageId,
-			is_downloaded_by__device: deviceId,
-		},
+	// Get access to a root api, as images shouldn't be allowed to change
+	// the service_install values
+	const rootApi = resinApi.clone({
+		passthrough: { req: permissions.root },
+	});
+
+	const body = { status: 'deleted' };
+	const filter: Filter = {
+		device: deviceId,
+	};
+	if (imageIds.length !== 0) {
+		filter.$not = [body, { image: { $in: imageIds } }];
+	} else {
+		filter.$not = body;
+	}
+
+	await rootApi.patch({
+		resource: 'image_install',
+		body,
 		options: {
-			$select: 'id',
+			$filter: filter,
 		},
 	});
+};
+
+const upsertGatewayDownload = async (
+	resinApi: sbvrUtils.PinejsClient,
+	gatewayDownload: Pick<GatewayDownload, 'id'>,
+	deviceId: number,
+	{
+		imageId,
+		status,
+		downloadProgress,
+	}: {
+		imageId: number;
+		status: unknown;
+		downloadProgress: unknown;
+	},
+): Promise<void> => {
 	if (gatewayDownload == null) {
 		await resinApi.post({
 			resource: 'gateway_download',
@@ -262,80 +291,116 @@ export const statePatch: RequestHandler = async (req, res) => {
 			}
 
 			if (apps != null) {
-				const imageIds: number[] = [];
-
-				_.each(apps, (app) => {
-					_.each(app.services, (svc, imageIdStr) => {
+				const imgInstalls = _.flatMap(apps, (app) =>
+					_.map(app.services, (svc, imageIdStr) => {
 						const imageId = parseInt(imageIdStr, 10);
-						imageIds.push(imageId);
-						const { status, download_progress } = svc;
-						const releaseId = parseInt(svc.releaseId, 10);
-
 						if (!Number.isFinite(imageId)) {
 							throw new BadRequestError('Invalid image ID value in request');
 						}
+
+						const releaseId = parseInt(svc.releaseId, 10);
 						if (!Number.isFinite(releaseId)) {
 							throw new BadRequestError('Invalid release ID value in request');
 						}
 
-						waitPromises.push(
-							upsertImageInstall(
-								resinApiTx,
-								imageId,
-								device.id,
-								status,
-								releaseId,
-								download_progress,
-							),
-						);
-					});
-				});
+						return {
+							imageId,
+							releaseId,
+							status: svc.status,
+							downloadProgress: svc.download_progress,
+						};
+					}),
+				);
+				const imageIds = imgInstalls.map(({ imageId }) => imageId);
 
-				// Get access to a root api, as images shouldn't be allowed to change
-				// the service_install values
-				const rootApi = resinApiTx.clone({
-					passthrough: { req: permissions.root },
-				});
+				if (imageIds.length > 0) {
+					waitPromises.push(
+						(async () => {
+							const existingImgInstalls = (await resinApiTx.get({
+								resource: 'image_install',
+								options: {
+									$select: ['id', 'installs__image'],
+									$filter: {
+										device: device.id,
+										installs__image: { $in: imageIds },
+									},
+								},
+							})) as Array<
+								PickDeferred<ImageInstall, 'id' | 'installs__image'>
+							>;
+							const existingImgInstallsByImage = _.keyBy(
+								existingImgInstalls,
+								({ installs__image }) => installs__image.__id,
+							);
 
-				const body = { status: 'deleted' };
-				const filter: Filter = {
-					device: device.id,
-				};
-				if (imageIds.length !== 0) {
-					filter.$not = [body, { image: { $in: imageIds } }];
-				} else {
-					filter.$not = body;
+							await Promise.all(
+								imgInstalls.map(async (imgInstall) => {
+									await upsertImageInstall(
+										resinApiTx,
+										existingImgInstallsByImage[imgInstall.imageId],
+										imgInstall,
+										device.id,
+									);
+								}),
+							);
+						})(),
+					);
 				}
 
 				waitPromises.push(
-					rootApi.patch({
-						resource: 'image_install',
-						body,
-						options: {
-							$filter: filter,
-						},
-					}),
+					deleteOldImageInstalls(resinApiTx, device.id, imageIds),
 				);
 			}
 
 			if (dependent != null && dependent.apps != null) {
 				// Handle dependent devices if necessary
-				const imageIds: number[] = [];
-				_.each(dependent.apps, ({ images }) => {
-					_.each(images, ({ status, download_progress }, imageIdStr) => {
+				const gatewayDownloads = _.flatMap(dependent.apps, ({ images }) =>
+					_.map(images, ({ status, download_progress }, imageIdStr) => {
 						const imageId = parseInt(imageIdStr, 10);
-						imageIds.push(imageId);
-						waitPromises.push(
-							upsertGatewayDownload(
-								resinApiTx,
-								device.id,
-								imageId,
-								status,
-								download_progress,
-							),
-						);
-					});
-				});
+						if (!Number.isFinite(imageId)) {
+							throw new BadRequestError('Invalid image ID value in request');
+						}
+
+						return {
+							imageId,
+							status,
+							downloadProgress: download_progress,
+						};
+					}),
+				);
+				const imageIds = gatewayDownloads.map(({ imageId }) => imageId);
+
+				if (imageIds.length > 0) {
+					waitPromises.push(
+						(async () => {
+							const existingGatewayDownloads = (await resinApiTx.get({
+								resource: 'gateway_download',
+								options: {
+									$select: ['id', 'image'],
+									$filter: {
+										is_downloaded_by__device: device.id,
+										image: { $in: imageIds },
+									},
+								},
+							})) as Array<PickDeferred<GatewayDownload, 'id' | 'image'>>;
+							const existingGatewayDownloadsByImage = _.keyBy(
+								existingGatewayDownloads,
+								({ image }) => image.__id,
+							);
+
+							await Promise.all(
+								gatewayDownloads.map(async (gatewayDownload) => {
+									await upsertGatewayDownload(
+										resinApiTx,
+										existingGatewayDownloadsByImage[gatewayDownload.imageId],
+										device.id,
+										gatewayDownload,
+									);
+								}),
+							);
+						})(),
+					);
+				}
 
 				waitPromises.push(
 					deleteOldGatewayDownloads(resinApiTx, device.id, imageIds),
