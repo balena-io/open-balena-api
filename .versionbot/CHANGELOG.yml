@@ -1,4 +1,19 @@
 - commits:
+    - subject: Ensure service installs exist at the point of pinning an application
+      hash: 7ac88e4852436a8876e709f20948d1382174cb12
+      body: |
+        This avoids issues where you pin an application to a release for which
+        some devices are missing service installs. It also allows simplifying
+        the "should track latest release" implementation as it no longer needs
+        to care about creating service installs itself
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.129.3
+  date: 2021-03-08T12:45:41.181Z
+- commits:
     - subject: >-
         Fixed JSON serialization of device-type contracts going into the
         database.
