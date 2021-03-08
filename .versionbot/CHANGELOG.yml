@@ -1,4 +1,41 @@
 - commits:
+    - subject: Update pinejs to pick up rule optimizations for inserts
+      hash: 44e3007ee0cf216c0b7d48efed602c937d0ffea4
+      body: |
+        Update pinejs from 14.19.0 to 14.20.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update abstract-sql-compiler bring more rules optimizations
+              hash: da152af1496fd18b53a2108d9be5c77469b76e7a
+              body: |
+                Update abstract-sql-compiler from 7.11.0 to 7.12.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: >-
+                        Enable narrowing down create/delete referenced fields
+                        for nested exists
+                      hash: 5dbc3ddf05701e5b4188bfa8db64d0a12e3b8298
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-7.12.0
+                  date: 2021-03-05T20:34:11.366Z
+          version: pinejs-14.20.0
+          date: 2021-03-08T11:57:21.141Z
+  version: 0.129.4
+  date: 2021-03-08T12:57:53.357Z
+- commits:
     - subject: Ensure service installs exist at the point of pinning an application
       hash: 7ac88e4852436a8876e709f20948d1382174cb12
       body: |
