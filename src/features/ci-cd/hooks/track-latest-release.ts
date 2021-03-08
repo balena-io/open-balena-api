@@ -1,23 +1,18 @@
 import * as _ from 'lodash';
+
 import { sbvrUtils, hooks } from '@balena/pinejs';
 
-const releaseStateFields = [
-	'status',
-	'is_passing_tests',
-	'release_type',
-	'is_invalidated',
-];
-
 const updateLatestRelease = async (
-	api: sbvrUtils.PinejsClient,
-	releaseIds: number[],
+	id: number,
+	{ request, api }: hooks.HookArgs,
 ) => {
-	if (!releaseIds.length) {
+	// We only track builds that are successful
+	if (request.values.status !== 'success') {
 		return;
 	}
-
-	const appsToUpdate = await api.get({
-		resource: 'application',
+	const release = await api.get({
+		resource: 'release',
+		id,
 		options: {
 			$select: 'id',
 			$expand: {
@@ -78,24 +73,26 @@ const updateLatestRelease = async (
 };
 
 hooks.addPureHook('PATCH', 'resin', 'release', {
-	POSTRUN: async ({ api, request }) => {
-		// If we're updating the ci/cd fields of any release (eg marking them as successful) then we update the application to track this release
-		if (
-			request.affectedIds &&
-			request.affectedIds.length > 0 &&
-			releaseStateFields.some((field) => field in request.values)
-		) {
-			await updateLatestRelease(api, request.affectedIds);
+	POSTRUN: async (args) => {
+		const { request } = args;
+		// If we're updating a build by id and setting it successful then we update the application to this build
+		if (request.odataQuery != null) {
+			const keyBind = request.odataQuery.key;
+			// TODO: Support named keys
+			if (keyBind != null && 'bind' in keyBind) {
+				const id = sbvrUtils.resolveOdataBind(request.odataBinds, keyBind);
+				await updateLatestRelease(id, args);
+			}
 		}
 	},
 });
 
 hooks.addPureHook('POST', 'resin', 'release', {
-	POSTRUN: async ({ api, result: releaseId }) => {
-		// If we successfully created a release then check if the latest release needs to be updated.
-		// We avoid checking specific fields & short-circuiting since the db can provide defaults that we later use to filter on.
-		if (releaseId != null) {
-			await updateLatestRelease(api, [releaseId]);
+	POSTRUN: async (args) => {
+		// If we're creating a build then check if the latest release needs to be updated
+		const id = args.result;
+		if (id != null) {
+			await updateLatestRelease(id, args);
 		}
 	},
 });
