@@ -81,7 +81,9 @@ const normalizeAssets = async (
 };
 
 const getArchiveLinkForRepo = (repo: RepositoryInfo) => {
-	return `https://api.github.com/repos/${repo.owner}/${repo.name}/tarball`;
+	return `https://api.github.com/repos/${repo.owner}/${repo.name}/tarball/${
+		repo.branch ?? ''
+	}`;
 };
 
 export const removeContractDirectory = async () => {

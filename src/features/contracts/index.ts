@@ -3,9 +3,11 @@ import * as Bluebird from 'bluebird';
 import { fetchContractsLocally, getContracts } from './contracts-directory';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import {
+	CONTRACTS_PRIVATE_REPO_BRANCH,
 	CONTRACTS_PRIVATE_REPO_NAME,
 	CONTRACTS_PRIVATE_REPO_OWNER,
 	CONTRACTS_PRIVATE_REPO_TOKEN,
+	CONTRACTS_PUBLIC_REPO_BRANCH,
 	CONTRACTS_PUBLIC_REPO_NAME,
 	CONTRACTS_PUBLIC_REPO_OWNER,
 } from '../../lib/config';
@@ -16,6 +18,7 @@ const SYNC_INTERVAL = 5 * 60 * 1000;
 export interface RepositoryInfo {
 	owner: string;
 	name: string;
+	branch?: string;
 	token?: string;
 }
 
@@ -39,6 +42,7 @@ export const getContractRepos = (): RepositoryInfo[] => {
 		{
 			owner: CONTRACTS_PUBLIC_REPO_OWNER,
 			name: CONTRACTS_PUBLIC_REPO_NAME,
+			branch: CONTRACTS_PUBLIC_REPO_BRANCH,
 		},
 	];
 
@@ -50,6 +54,7 @@ export const getContractRepos = (): RepositoryInfo[] => {
 		repos.push({
 			owner: CONTRACTS_PRIVATE_REPO_OWNER,
 			name: CONTRACTS_PRIVATE_REPO_NAME,
+			branch: CONTRACTS_PRIVATE_REPO_BRANCH,
 			token: CONTRACTS_PRIVATE_REPO_TOKEN,
 		});
 	}
