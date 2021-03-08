@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
+import type { Device } from '../../../balena-model';
 
 const createReleaseServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,
@@ -82,6 +83,36 @@ const createAppServiceInstalls = async (
 			},
 		},
 	});
+
+hooks.addPureHook('PATCH', 'resin', 'application', {
+	POSTRUN: async ({ api, request }) => {
+		const affectedIds = request.affectedIds!;
+		if (
+			request.values.should_be_running__release != null &&
+			affectedIds.length !== 0
+		) {
+			// Ensure that every device of the app we've just pinned, that is not itself pinned, has the necessary service install entries
+			const devices = (await api.get({
+				resource: 'device',
+				options: {
+					$select: 'id',
+					$filter: {
+						belongs_to__application: { $in: affectedIds },
+						should_be_running__release: null,
+					},
+				},
+			})) as Array<Pick<Device, 'id'>>;
+
+			await createReleaseServiceInstalls(
+				api,
+				devices.map(({ id }) => id),
+				{
+					id: request.values.should_be_running__release,
+				},
+			);
+		}
+	},
+});
 
 hooks.addPureHook('POST', 'resin', 'device', {
 	POSTRUN: async ({ request, api, tx, result: deviceId }) => {
