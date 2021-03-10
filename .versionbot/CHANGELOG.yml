@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add organization handle validation
+      hash: 1b15c3e9192b8af05f13c4fe6c0572163fb19ad9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.129.7
+  date: 2021-03-10T19:47:32.098Z
+- commits:
     - subject: Add username normalization
       hash: 7c416b41d8921d03dea0ee9a49bbc7d5a2ca5d89
       body: ''
