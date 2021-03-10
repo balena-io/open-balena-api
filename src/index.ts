@@ -95,7 +95,7 @@ import {
 	updateOrInsertModel,
 	getOrInsertModelId,
 } from './infra/pinejs-client-helpers';
-import { loginRateLimiter } from './features/auth';
+import { loginRateLimiter, normalizeHandle } from './features/auth';
 import { getIP, getIPv4, isValidInteger, throttledForEach } from './lib/utils';
 import {
 	createRateLimitMiddleware,
@@ -186,6 +186,7 @@ export const auth = {
 	assignUserRole,
 	getUserIDFromCreds,
 	registryAuth,
+	normalizeHandle,
 };
 export const middleware = {
 	sudoMiddleware,

@@ -8,6 +8,8 @@ import { login } from './login';
 import { getUserPublicKeys } from './public-keys';
 import { whoami } from './whoami';
 
+export * from './handles';
+
 // Rate limit for unauthenticated access
 export const loginRateLimiter = createRateLimitMiddleware({
 	points: 10, // 10 tries
