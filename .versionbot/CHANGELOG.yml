@@ -1,4 +1,15 @@
 - commits:
+    - subject: Only try to validate username/email if they are present
+      hash: f1da633c9c745258b5dbb2bc0c775af428910446
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.129.8
+  date: 2021-03-10T20:14:01.127Z
+- commits:
     - subject: Add organization handle validation
       hash: 1b15c3e9192b8af05f13c4fe6c0572163fb19ad9
       body: ''
