@@ -86,6 +86,7 @@ describe('Device with missing service installs', () => {
 	let fx: fixtures.Fixtures;
 	let admin: UserObjectParam;
 	let applicationId: number;
+	let appUuid: string;
 	let device: fakeDevice.Device;
 	const releases: _.Dictionary<number> = {};
 	const services: _.Dictionary<number> = {};
@@ -95,6 +96,7 @@ describe('Device with missing service installs', () => {
 
 		admin = fx.users.admin;
 		applicationId = fx.applications.app1.id;
+		appUuid = fx.applications.app1.uuid;
 
 		// add a release to the application...
 		const { id: releaseId } = await addReleaseToApp(admin, {
@@ -136,7 +138,7 @@ describe('Device with missing service installs', () => {
 		device = await fakeDevice.provisionDevice(admin, applicationId);
 
 		const state = await device.getState();
-		expect(state.local.apps[applicationId]).to.have.property(
+		expect(state.local.apps[appUuid]).to.have.property(
 			'commit',
 			'deadbeef',
 			"The device isn't running the current application default release",
@@ -152,7 +154,7 @@ describe('Device with missing service installs', () => {
 			.expect(200);
 
 		const state = await device.getState();
-		expect(state.local.apps[applicationId]).to.have.property(
+		expect(state.local.apps[appUuid]).to.have.property(
 			'commit',
 			'deadbeef',
 			"The device isn't running the pinned release",
@@ -202,7 +204,7 @@ describe('Device with missing service installs', () => {
 		await addImageToRelease(admin, secondImageId, releaseId);
 
 		const state = await device.getState();
-		expect(state.local.apps[applicationId]).to.have.property(
+		expect(state.local.apps[appUuid]).to.have.property(
 			'commit',
 			'deadbeef',
 			"The device isn't running the pinned release",
@@ -220,7 +222,7 @@ describe('Device with missing service installs', () => {
 
 	it('should pull the intended state', async function () {
 		const state = await device.getState();
-		expect(state.local.apps[applicationId]).to.have.property(
+		expect(state.local.apps[appUuid]).to.have.property(
 			'commit',
 			'abcd0001',
 			"The device isn't running the default application release",

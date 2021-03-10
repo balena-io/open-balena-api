@@ -66,6 +66,7 @@ describe('Device State v2', () => {
 	let fx: fixtures.Fixtures;
 	let admin: UserObjectParam;
 	let applicationId: number;
+	let appUuid: string;
 	let device: fakeDevice.Device;
 
 	before(async () => {
@@ -73,6 +74,7 @@ describe('Device State v2', () => {
 
 		admin = fx.users.admin;
 		applicationId = fx.applications.app1.id;
+		appUuid = fx.applications.app1.uuid;
 
 		// create a new device in this test application...
 		device = await fakeDevice.provisionDevice(admin, applicationId);
@@ -90,13 +92,13 @@ describe('Device State v2', () => {
 			const tempDevice = await fakeDevice.provisionDevice(admin, applicationId);
 			const state = await tempDevice.getState();
 
-			expect(state.local.apps).to.have.property(`${applicationId}`);
-			expect(state.local.apps[`${applicationId}`])
+			expect(state.local.apps).to.have.property(`${appUuid}`);
+			expect(state.local.apps[`${appUuid}`])
 				.to.have.property('name')
 				.which.equals(fx.applications.app1.app_name);
-			expect(state.local.apps[`${applicationId}`]).to.have.property('services');
-			expect(state.local.apps[`${applicationId}`]).to.have.property('volumes');
-			expect(state.local.apps[`${applicationId}`]).to.have.property('networks');
+			expect(state.local.apps[`${appUuid}`]).to.have.property('services');
+			expect(state.local.apps[`${appUuid}`]).to.have.property('volumes');
+			expect(state.local.apps[`${appUuid}`]).to.have.property('networks');
 		});
 	});
 

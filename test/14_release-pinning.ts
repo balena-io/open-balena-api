@@ -10,6 +10,7 @@ describe(`Tracking latest release`, () => {
 	let fx: fixtures.Fixtures;
 	let admin: UserObjectParam;
 	let applicationId: number;
+	let appUuid: string;
 	let device: fakeDevice.Device;
 
 	before(async () => {
@@ -17,6 +18,7 @@ describe(`Tracking latest release`, () => {
 
 		admin = fx.users.admin;
 		applicationId = fx.applications.app1.id;
+		appUuid = fx.applications.app1.uuid;
 
 		// create a new device in this test application...
 		device = await fakeDevice.provisionDevice(admin, applicationId);
@@ -29,9 +31,7 @@ describe(`Tracking latest release`, () => {
 	it('Should track latest release that is passing tests and final', async () => {
 		const expectedLatest = fx.releases.release0;
 		const state = await device.getState();
-		expect(state.local.apps[applicationId].releaseId).to.equal(
-			expectedLatest.id,
-		);
+		expect(state.local.apps[appUuid].releaseId).to.equal(expectedLatest.id);
 	});
 
 	it('Should allow pinning a device to a draft and untested release', async () => {
@@ -43,9 +43,7 @@ describe(`Tracking latest release`, () => {
 			})
 			.expect(200);
 		const state = await device.getState();
-		expect(state.local.apps[applicationId].releaseId).to.equal(
-			pinnedRelease.id,
-		);
+		expect(state.local.apps[appUuid].releaseId).to.equal(pinnedRelease.id);
 		await supertest(admin)
 			.patch(`/${version}/device(${device.id})`)
 			.send({
@@ -64,9 +62,7 @@ describe(`Tracking latest release`, () => {
 			})
 			.expect(200);
 		const state = await device.getState();
-		expect(state.local.apps[applicationId].releaseId).to.equal(
-			expectedLatest.id,
-		);
+		expect(state.local.apps[appUuid].releaseId).to.equal(expectedLatest.id);
 	});
 
 	it('Should update latest release to a release now passing tests', async () => {
@@ -79,9 +75,7 @@ describe(`Tracking latest release`, () => {
 			})
 			.expect(200);
 		const state = await device.getState();
-		expect(state.local.apps[applicationId].releaseId).to.equal(
-			expectedLatest.id,
-		);
+		expect(state.local.apps[appUuid].releaseId).to.equal(expectedLatest.id);
 	});
 
 	it('Should update latest release to previous final release passing tests', async () => {
@@ -93,8 +87,6 @@ describe(`Tracking latest release`, () => {
 			})
 			.expect(200);
 		const state = await device.getState();
-		expect(state.local.apps[applicationId].releaseId).to.equal(
-			expectedLatest.id,
-		);
+		expect(state.local.apps[appUuid].releaseId).to.equal(expectedLatest.id);
 	});
 });

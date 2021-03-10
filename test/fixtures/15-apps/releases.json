@@ -17,21 +17,6 @@
 		},
 		"source": "cloud"
 	},
-	"release2": {
-		"user": "admin",
-		"application": "systemApp1",
-		"commit": "deadc001",
-		"status": "success",
-		"release_version": "1.0.0",
-		"composition": {
-			"services": {
-				"image3": {
-					"build": "./image3/"
-				}
-			}
-		},
-		"source": "cloud"
-	},
 	"supervisorRelease1": {
 		"user": "admin",
 		"application": "supervisorApp",
@@ -51,7 +36,7 @@
 		"user": "admin",
 		"application": "supervisorApp",
 		"commit": "aaa1bbbb",
-		"status": "running",
+		"status": "success",
 		"release_version": "v1.0.1",
 		"composition": {
 			"services": {

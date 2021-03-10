@@ -29,29 +29,6 @@ export interface DeviceState {
 		supervisor_version?: string;
 		config: _.Dictionary<string>;
 		apps: _.Dictionary<DeviceStateApp>;
-		extraContainers?: _.Dictionary<
-			DeviceStateApp & {
-				type: string;
-			}
-		>;
-	};
-	dependent: {
-		apps: _.Dictionary<DeviceStateApp>;
-		devices: AnyObject;
-	};
-}
-
-export interface DeviceStateEC {
-	local: {
-		name?: string;
-		supervisor_version?: string;
-		config: _.Dictionary<string>;
-		apps: _.Dictionary<
-			DeviceStateApp & {
-				appId: number;
-				uuid: string;
-			}
-		>;
 	};
 	dependent: {
 		apps: _.Dictionary<DeviceStateApp>;
@@ -116,9 +93,6 @@ export async function provisionDevice(
 		token: randomstring.generate(16),
 		getState: async (): Promise<DeviceState> => {
 			return await getState(device, device.uuid);
-		},
-		getStateByUuid: async (): Promise<DeviceStateEC> => {
-			return await getState(device, device.uuid, 'v2ec');
 		},
 		patchStateV2: async (devicePatchBody: AnyObject) => {
 			await supertest(device)

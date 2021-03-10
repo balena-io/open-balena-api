@@ -14,8 +14,6 @@ import {
 } from '../utils';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { events } from '..';
-import { EXTRA_CONTAINERS } from '../../../lib/config';
-import { omit } from 'lodash';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -55,7 +53,6 @@ export type LocalState = {
 	name: string;
 	config: Dictionary<string>;
 	apps: Dictionary<Partial<App>>;
-	extraContainers?: Dictionary<Partial<App>>;
 };
 
 async function buildAppFromRelease(
@@ -100,7 +97,7 @@ async function buildAppFromRelease(
 			}
 
 			/**
-			 * Return a fake service install as this is what we will use for Extra Containers / MultiApp
+			 * Return a fake service install as this is what we will use for MultiApp
 			 */
 			return {
 				service: [image.is_a_build_of__service[0]],
@@ -109,7 +106,7 @@ async function buildAppFromRelease(
 		})();
 
 		/**
-		 * Get the first service in the array, which will be tied to a service install OR directlty to an extra container app
+		 * Get the first service in the array, which will be tied to a service install
 		 */
 		const [service] = serviceInstall.service;
 
@@ -357,8 +354,8 @@ export const state: RequestHandler = async (req, res) => {
 		const config: Dictionary<string> = {};
 
 		// add any app-specific config values...
-		const parentApp: AnyObject = device.belongs_to__application[0];
-		varListInsert(parentApp.application_config_variable, config);
+		const userAppFromApi: AnyObject = device.belongs_to__application[0];
+		varListInsert(userAppFromApi.application_config_variable, config);
 
 		// override with device-specific values...
 		varListInsert(device.device_config_variable, config);
@@ -369,101 +366,21 @@ export const state: RequestHandler = async (req, res) => {
 		const release = getReleaseForDevice(device);
 
 		// grab the main app for this device...
-		const mainApp =
+		const userAppForState =
 			release == null
 				? {
-						name: parentApp.app_name,
+						name: userAppFromApi.app_name,
 						services: {},
 						networks: {},
 						volumes: {},
 				  }
-				: await buildAppFromRelease(device, parentApp, release, config);
+				: await buildAppFromRelease(device, userAppFromApi, release, config);
 
-		/**
-		 * Grab the supervisor version for this device, either:
-		 * - the version which should be managing the device
-		 * - the version last reported to be managing the device
-		 * - empty string
-		 */
-		const supervisorVersion: string = (() => {
-			const [supervisorRelease] = device.should_be_managed_by__release;
-
-			if (supervisorRelease?.release_version != null) {
-				return supervisorRelease.release_version;
+		const supervisorAppFromApi = await (async () => {
+			if (device.should_be_managed_by__release.length === 0) {
+				return undefined;
 			}
-
-			// supervisors do not report their version with a preceding `v`, but elsewhere it's used
-			return `v${device.supervisor_version}` ?? '';
-		})();
-
-		// grab the system apps for this device...
-		let extraContainers =
-			EXTRA_CONTAINERS.length === 0
-				? []
-				: await sbvrUtils.db.readTransaction!(async (tx) => {
-						const resinApiTx = api.resin.clone({ passthrough: { req, tx } });
-						return await resinApiTx.get({
-							resource: 'application',
-							options: {
-								$select: ['id', 'app_name', 'uuid'],
-								$expand: {
-									application_config_variable: {
-										$select: ['name', 'value'],
-										$orderby: {
-											name: 'asc',
-										},
-									},
-									application_environment_variable: {
-										$select: ['name', 'value'],
-										$orderby: {
-											name: 'asc',
-										},
-									},
-									should_be_running__release: releaseExpand,
-								},
-								$filter: {
-									uuid: {
-										$in: EXTRA_CONTAINERS,
-									},
-									should_be_running__release: {
-										$any: {
-											$alias: 'r',
-											$expr: {
-												r: {
-													has__tag_key: {
-														$any: {
-															$alias: 'rt',
-															$expr: {
-																rt: {
-																	tag_key: {
-																		$startswith: 'BALENA_REQUIRED_SUPERVISOR_',
-																	},
-																	value: supervisorVersion,
-																},
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						});
-				  });
-		const local: LocalState = {
-			name: device.device_name,
-			config,
-			apps: {
-				[parentApp.id]: {
-					...mainApp,
-					uuid: parentApp.uuid,
-					appId: parentApp.id,
-				},
-			},
-		};
-		if (device.should_be_managed_by__release.length !== 0) {
-			const supervisorApp =
+			const fromApi =
 				(await sbvrUtils.db.readTransaction!(async (tx) => {
 					const resinApiTx = api.resin.clone({ passthrough: { req, tx } });
 					return await resinApiTx.get({
@@ -490,28 +407,33 @@ export const state: RequestHandler = async (req, res) => {
 						},
 					});
 				})) || {};
-			if (supervisorApp) {
-				supervisorApp.should_be_running__release =
-					device.should_be_managed_by__release;
-				extraContainers = [...extraContainers, supervisorApp];
+			if (!fromApi) {
+				return undefined;
 			}
+			fromApi.should_be_running__release = device.should_be_managed_by__release;
+			return fromApi;
+		})();
+
+		const appsForState: Dictionary<Partial<App>> = {};
+		appsForState[userAppFromApi.uuid] = {
+			...userAppForState,
+			uuid: userAppFromApi.uuid,
+			appId: userAppFromApi.appId,
+		};
+		if (supervisorAppFromApi) {
+			appsForState[supervisorAppFromApi.uuid] = await buildAppFromRelease(
+				device,
+				supervisorAppFromApi,
+				device.should_be_managed_by__release[0],
+				config,
+			);
 		}
 
-		if (extraContainers.length > 0) {
-			local.extraContainers = {};
-			for (const app of extraContainers) {
-				local.extraContainers[app.uuid] = {
-					...(await buildAppFromRelease(
-						device,
-						app,
-						app.should_be_running__release[0],
-						config,
-					)),
-					appId: app.id,
-					uuid: app.uuid,
-				};
-			}
-		}
+		const local: LocalState = {
+			name: device.device_name,
+			config,
+			apps: appsForState,
+		};
 
 		const dependent = {
 			apps: {} as AnyObject,
@@ -526,7 +448,7 @@ export const state: RequestHandler = async (req, res) => {
 			}>;
 		}> = {};
 
-		(parentApp.is_depended_on_by__application as AnyObject[]).forEach(
+		(userAppFromApi.is_depended_on_by__application as AnyObject[]).forEach(
 			(depApp) => {
 				const depRelease = depApp?.should_be_running__release?.[0];
 				depAppCache[depApp.id] = {
@@ -540,7 +462,7 @@ export const state: RequestHandler = async (req, res) => {
 
 				dependent.apps[depApp.id] = {
 					name: depApp.app_name,
-					parentApp: parentApp.id,
+					parentApp: userAppFromApi.id,
 					config: depConfig,
 				};
 
@@ -606,26 +528,6 @@ export const state: RequestHandler = async (req, res) => {
 				},
 			};
 		});
-
-		if (req.headers['x-balena-state-format'] === 'v2+extraContainers') {
-			const apps = Object.entries(local.apps).map(([appId, info]) => {
-				return [info.uuid, { ...info, appId: parseInt(appId, 10) }];
-			});
-			const containers = Object.entries(local.extraContainers ?? {}).map(
-				([appUuid, info]) => {
-					return [appUuid, { ...info, uuid: appUuid }];
-				},
-			);
-
-			delete local.extraContainers;
-			local.apps = Object.fromEntries([...apps, ...containers]);
-		} else {
-			const apps = Object.entries(local.apps).map(([appId, info]) => {
-				return [appId, omit(info, ['appId', 'type', 'uuid'])];
-			});
-
-			local.apps = Object.fromEntries(apps);
-		}
 
 		res.json({
 			local,
