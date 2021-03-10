@@ -1,4 +1,15 @@
 - commits:
+    - subject: Validate username/email on PATCH as well as POST
+      hash: 6a2f59a0d6b65fbd918454b8cd44032ce490feda
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.129.5
+  date: 2021-03-10T18:23:52.498Z
+- commits:
     - subject: Update pinejs to pick up rule optimizations for inserts
       hash: 44e3007ee0cf216c0b7d48efed602c937d0ffea4
       body: |
