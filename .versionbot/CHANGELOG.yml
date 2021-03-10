@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add username normalization
+      hash: 7c416b41d8921d03dea0ee9a49bbc7d5a2ca5d89
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.129.6
+  date: 2021-03-10T19:30:22.728Z
+- commits:
     - subject: Validate username/email on PATCH as well as POST
       hash: 6a2f59a0d6b65fbd918454b8cd44032ce490feda
       body: ''
