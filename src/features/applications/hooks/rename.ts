@@ -10,7 +10,6 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 					'App name may only contain [a-zA-Z0-9_-].',
 				);
 			}
-			request.values.slug ??= appName.toLowerCase();
 		}
 	},
 });
