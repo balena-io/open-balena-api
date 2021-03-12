@@ -25,7 +25,7 @@ export const checkDeviceExists = memoizee(
 		const devices = await checkDeviceExistsQuery()({ uuid });
 		return devices === 0;
 	},
-	{ promise: true, maxAge: 5 * MINUTES },
+	{ promise: true, primitive: true, maxAge: 5 * MINUTES },
 );
 
 export const gracefullyDenyDeletedDevices: RequestHandler = async (
