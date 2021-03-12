@@ -1,4 +1,17 @@
 - commits:
+    - subject: Emit an error on the request stream for non-200s rather than throwing
+      hash: 9f9d50e2ce82b35553e19bdc6d01a41f92f2cb39
+      body: |
+        The throw was in an asynchronous callback and throwing there causes the
+        process to exit
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.131.2
+  date: 2021-03-12T19:42:20.242Z
+- commits:
     - subject: Use primitive mode memoization for device existence cache
       hash: 96caf2cf483eee200bef39f7cfba5ec476f78156
       body: ''
