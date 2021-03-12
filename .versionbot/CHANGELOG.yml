@@ -1,4 +1,17 @@
 - commits:
+    - subject: Expose the RPi family config vars to raspberrypicm4-ioboard
+      hash: ed00627c077abef7ea578e4dfebcd0807ee16239
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.130.0
+  date: 2021-03-12T14:20:26.903Z
+- commits:
     - subject: Cache device existence check for 5 minutes
       hash: 72eb4bfbad725d406eb7a0236ada31b0da8e47ca
       body: |
