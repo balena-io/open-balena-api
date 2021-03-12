@@ -1,4 +1,24 @@
 - commits:
+    - subject: 'Switch application slug to using `${orgHandle}/${appName}`'
+      hash: 74845521aa2505680ece49de1c3feb1db52d8bc4
+      body: |
+        Previously it was using just `${appName}`
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+    - subject: Fix automatic slug renaming on app rename
+      hash: 4237ddcb4345fae4e5e61727ccefc59690d5c8ad
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.131.0
+  date: 2021-03-12T16:59:14.087Z
+- commits:
     - subject: Expose the RPi family config vars to raspberrypicm4-ioboard
       hash: ed00627c077abef7ea578e4dfebcd0807ee16239
       body: ''
