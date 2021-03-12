@@ -1,4 +1,20 @@
 - commits:
+    - subject: Cache device existence check for 5 minutes
+      hash: 72eb4bfbad725d406eb7a0236ada31b0da8e47ca
+      body: |
+        This will reduce the load for the common case where active devices are
+        not regularly deleted with the potential to briefly respond with a 401
+        when a device is first deleted. There may also be a slight delay for
+        restored devices to be able to communicate again however again that is
+        a very rare case.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.129.9
+  date: 2021-03-12T13:07:30.818Z
+- commits:
     - subject: Only try to validate username/email if they are present
       hash: f1da633c9c745258b5dbb2bc0c775af428910446
       body: ''
