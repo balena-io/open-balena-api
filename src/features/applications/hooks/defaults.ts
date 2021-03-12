@@ -18,13 +18,10 @@ const toUuid = (strippedUuid: string): string => {
 };
 
 hooks.addPureHook('POST', 'resin', 'application', {
-	POSTPARSE: async (args) => {
-		const { request } = args;
-		const appName = request.values.app_name;
-
+	POSTPARSE: async ({ request }) => {
 		request.values.application_type ??= DefaultApplicationType.id;
 
-		if (!/^[a-zA-Z0-9_-]+$/.test(appName)) {
+		if (!/^[a-zA-Z0-9_-]+$/.test(request.values.app_name)) {
 			throw new errors.BadRequestError(
 				'App name may only contain [a-zA-Z0-9_-].',
 			);
@@ -40,6 +37,5 @@ hooks.addPureHook('POST', 'resin', 'application', {
 		}
 
 		request.values.should_track_latest_release = true;
-		request.values.slug ??= appName.toLowerCase();
 	},
 });
