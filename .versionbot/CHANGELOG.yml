@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix device existence check to be true when the device does exist
+      hash: 342df08ab0011d4e25662caa0fbda2d02b49af99
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.131.3
+  date: 2021-03-15T12:54:41.192Z
+- commits:
     - subject: Emit an error on the request stream for non-200s rather than throwing
       hash: 9f9d50e2ce82b35553e19bdc6d01a41f92f2cb39
       body: |
