@@ -8,13 +8,13 @@ const toUuid = (strippedUuid: string): string => {
 		return '';
 	}
 
-	const parts: string[] = [];
-	parts.push(strippedUuid.substr(0, 8));
-	parts.push(strippedUuid.substr(8, 4));
-	parts.push(strippedUuid.substr(12, 4));
-	parts.push(strippedUuid.substr(16, 4));
-	parts.push(strippedUuid.substr(20, 12));
-	return parts.join('-');
+	return [
+		strippedUuid.substr(0, 8),
+		strippedUuid.substr(8, 4),
+		strippedUuid.substr(12, 4),
+		strippedUuid.substr(16, 4),
+		strippedUuid.substr(20, 12),
+	].join('-');
 };
 
 hooks.addPureHook('POST', 'resin', 'application', {
