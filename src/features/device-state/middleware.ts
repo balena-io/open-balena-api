@@ -23,7 +23,7 @@ const checkDeviceExistsQuery = _.once(() =>
 export const checkDeviceExists = memoizee(
 	async (uuid: string): Promise<boolean> => {
 		const devices = await checkDeviceExistsQuery()({ uuid });
-		return devices === 0;
+		return devices !== 0;
 	},
 	{ promise: true, primitive: true, maxAge: 5 * MINUTES },
 );
