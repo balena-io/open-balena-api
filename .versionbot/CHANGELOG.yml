@@ -1,4 +1,19 @@
 - commits:
+    - subject: >-
+        Added optional environment variable configuration for contact repository
+        branch
+      hash: 419cfa908a22b7019815d69e593a2de02e9d68d6
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Micah Halter <micah@balena.io>
+        signed-off-by: Micah Halter <micah@balena.io>
+      author: Micah Halter
+      nested: []
+  version: 0.132.0
+  date: 2021-03-15T15:50:43.432Z
+- commits:
     - subject: Add missing `await`
       hash: 2ac6b07d5f9df24ddbecf6881ae7d65035e282ea
       body: ''
