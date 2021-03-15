@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add missing `await`
+      hash: 2ac6b07d5f9df24ddbecf6881ae7d65035e282ea
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.131.5
+  date: 2021-03-15T15:09:45.129Z
+- commits:
     - subject: Simplify `toUuid` slightly
       hash: c2b1883d92782f8b1258c370f8d990edb30ab3a2
       body: ''
