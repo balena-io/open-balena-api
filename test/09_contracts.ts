@@ -11,10 +11,18 @@ import {
 	removeContractInterceptors,
 	mockRepo,
 } from './test-lib/contracts-mock';
-import { synchronizeContracts } from '../src/features/contracts';
+import {
+	RepositoryInfo,
+	synchronizeContracts,
+} from '../src/features/contracts';
 import { api } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
 import { permissions } from '@balena/pinejs';
 import { DeviceType } from './test-lib/device-type';
+
+const contractRepository: RepositoryInfo = {
+	owner: 'balena-io',
+	name: 'contracts',
+};
 
 const clearDeviceTypeResource = () => {
 	return api.resin.delete({
@@ -49,8 +57,8 @@ describe('contracts', () => {
 		await removeContractDirectory();
 		await clearDeviceTypeResource();
 
-		mockRepo('balena-io', 'contracts', 'base-contracts', true);
-		await synchronizeContracts([{ owner: 'balena-io', name: 'contracts' }]);
+		mockRepo(contractRepository, 'base-contracts', true);
+		await synchronizeContracts([contractRepository]);
 	});
 
 	beforeEach(async () => {
@@ -59,8 +67,8 @@ describe('contracts', () => {
 
 	describe('contract fetching', () => {
 		it('should fetch the specified contracts repo locally', async () => {
-			mockRepo('balena-io', 'contracts', 'base-contracts');
-			await fetchContractsLocally([{ owner: 'balena-io', name: 'contracts' }]);
+			mockRepo(contractRepository, 'base-contracts');
+			await fetchContractsLocally([contractRepository]);
 			const contracts = await getContracts('hw.device-type');
 
 			expect(contracts).to.have.length(13);
@@ -69,11 +77,15 @@ describe('contracts', () => {
 		});
 
 		it('should merge multiple contracts repos', async () => {
-			mockRepo('balena-io', 'contracts', 'base-contracts');
-			mockRepo('balena-io', 'other-contracts');
+			const otherContractRepository = {
+				...contractRepository,
+				name: 'other-contracts',
+			};
+			mockRepo(contractRepository, 'base-contracts');
+			mockRepo(otherContractRepository);
 			await fetchContractsLocally([
-				{ owner: 'balena-io', name: 'contracts' },
-				{ owner: 'balena-io', name: 'other-contracts' },
+				contractRepository,
+				otherContractRepository,
 			]);
 			const contracts = await getContracts('hw.device-type');
 
@@ -84,11 +96,15 @@ describe('contracts', () => {
 		});
 
 		it('should normalize the assets included with the contracts', async () => {
-			mockRepo('balena-io', 'contracts', 'base-contracts');
-			mockRepo('balena-io', 'other-contracts');
+			const otherContractRepository = {
+				...contractRepository,
+				name: 'other-contracts',
+			};
+			mockRepo(contractRepository, 'base-contracts');
+			mockRepo(otherContractRepository);
 			await fetchContractsLocally([
-				{ owner: 'balena-io', name: 'contracts' },
-				{ owner: 'balena-io', name: 'other-contracts' },
+				contractRepository,
+				otherContractRepository,
 			]);
 
 			const contracts = await getContracts('hw.device-type');
@@ -112,12 +128,12 @@ describe('contracts', () => {
 		});
 
 		it('should update data as the contracts change', async () => {
-			mockRepo('balena-io', 'contracts', 'base-contracts');
-			await fetchContractsLocally([{ owner: 'balena-io', name: 'contracts' }]);
+			mockRepo(contractRepository, 'base-contracts');
+			await fetchContractsLocally([contractRepository]);
 
 			// A new device type was added, and the fin contract was modified in the updated contracts tarball.
-			mockRepo('balena-io', 'contracts', 'updated-base-contracts');
-			await fetchContractsLocally([{ owner: 'balena-io', name: 'contracts' }]);
+			mockRepo(contractRepository, 'updated-base-contracts');
+			await fetchContractsLocally([contractRepository]);
 
 			const contracts = await getContracts('hw.device-type');
 
@@ -140,8 +156,8 @@ describe('contracts', () => {
 		});
 
 		it('should write the set contract data to the DB', async () => {
-			mockRepo('balena-io', 'contracts', 'base-contracts');
-			await synchronizeContracts([{ owner: 'balena-io', name: 'contracts' }]);
+			mockRepo(contractRepository, 'base-contracts');
+			await synchronizeContracts([contractRepository]);
 			Promise.all(
 				[
 					{ contract: 'hw.device-type', db: 'device_type' },
@@ -153,11 +169,11 @@ describe('contracts', () => {
 		});
 
 		it('should update the DB data once a contract changes', async () => {
-			mockRepo('balena-io', 'contracts', 'base-contracts');
-			await synchronizeContracts([{ owner: 'balena-io', name: 'contracts' }]);
+			mockRepo(contractRepository, 'base-contracts');
+			await synchronizeContracts([contractRepository]);
 
-			mockRepo('balena-io', 'contracts', 'updated-base-contracts');
-			await synchronizeContracts([{ owner: 'balena-io', name: 'contracts' }]);
+			mockRepo(contractRepository, 'updated-base-contracts');
+			await synchronizeContracts([contractRepository]);
 
 			const contracts = await getContracts('hw.device-type');
 
