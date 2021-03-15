@@ -95,7 +95,7 @@ import {
 	updateOrInsertModel,
 	getOrInsertModelId,
 } from './infra/pinejs-client-helpers';
-import { loginRateLimiter } from './features/auth';
+import { loginRateLimiter, normalizeHandle } from './features/auth';
 import { getIP, getIPv4, isValidInteger, throttledForEach } from './lib/utils';
 import {
 	createRateLimitMiddleware,
@@ -140,7 +140,8 @@ import {
 	setSyncSettings,
 } from './features/contracts';
 
-import * as userHasDirectAccessToApplication from './features/applications/models/user__has_direct_access_to__application';
+import { addToModel as addUserHasDirectAccessToApplicationToModel } from './features/applications/models/user__has_direct_access_to__application';
+import { getApplicationSlug } from './features/applications';
 import * as deviceAdditions from './features/devices/models/device-additions';
 
 export * as tags from './features/tags/validation';
@@ -186,6 +187,7 @@ export const auth = {
 	assignUserRole,
 	getUserIDFromCreds,
 	registryAuth,
+	normalizeHandle,
 };
 export const middleware = {
 	sudoMiddleware,
@@ -214,8 +216,8 @@ export const apiKeys = {
 	isApiKeyWithRole,
 };
 export const application = {
-	addUserHasDirectAccessToApplicationToModel:
-		userHasDirectAccessToApplication.addToModel,
+	addUserHasDirectAccessToApplicationToModel,
+	getApplicationSlug,
 };
 export const device = {
 	addVirtualFieldsToModel: deviceAdditions.addToModel,

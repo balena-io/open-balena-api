@@ -1,4 +1,154 @@
 - commits:
+    - subject: Add missing `await`
+      hash: 2ac6b07d5f9df24ddbecf6881ae7d65035e282ea
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.131.5
+  date: 2021-03-15T15:09:45.129Z
+- commits:
+    - subject: Simplify `toUuid` slightly
+      hash: c2b1883d92782f8b1258c370f8d990edb30ab3a2
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.131.4
+  date: 2021-03-15T13:26:05.645Z
+- commits:
+    - subject: Fix device existence check to be true when the device does exist
+      hash: 342df08ab0011d4e25662caa0fbda2d02b49af99
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.131.3
+  date: 2021-03-15T12:54:41.192Z
+- commits:
+    - subject: Emit an error on the request stream for non-200s rather than throwing
+      hash: 9f9d50e2ce82b35553e19bdc6d01a41f92f2cb39
+      body: |
+        The throw was in an asynchronous callback and throwing there causes the
+        process to exit
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.131.2
+  date: 2021-03-12T19:42:20.242Z
+- commits:
+    - subject: Use primitive mode memoization for device existence cache
+      hash: 96caf2cf483eee200bef39f7cfba5ec476f78156
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.131.1
+  date: 2021-03-12T19:00:49.497Z
+- commits:
+    - subject: 'Switch application slug to using `${orgHandle}/${appName}`'
+      hash: 74845521aa2505680ece49de1c3feb1db52d8bc4
+      body: |
+        Previously it was using just `${appName}`
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+    - subject: Fix automatic slug renaming on app rename
+      hash: 4237ddcb4345fae4e5e61727ccefc59690d5c8ad
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.131.0
+  date: 2021-03-12T16:59:14.087Z
+- commits:
+    - subject: Expose the RPi family config vars to raspberrypicm4-ioboard
+      hash: ed00627c077abef7ea578e4dfebcd0807ee16239
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.130.0
+  date: 2021-03-12T14:20:26.903Z
+- commits:
+    - subject: Cache device existence check for 5 minutes
+      hash: 72eb4bfbad725d406eb7a0236ada31b0da8e47ca
+      body: |
+        This will reduce the load for the common case where active devices are
+        not regularly deleted with the potential to briefly respond with a 401
+        when a device is first deleted. There may also be a slight delay for
+        restored devices to be able to communicate again however again that is
+        a very rare case.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.129.9
+  date: 2021-03-12T13:07:30.818Z
+- commits:
+    - subject: Only try to validate username/email if they are present
+      hash: f1da633c9c745258b5dbb2bc0c775af428910446
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.129.8
+  date: 2021-03-10T20:14:01.127Z
+- commits:
+    - subject: Add organization handle validation
+      hash: 1b15c3e9192b8af05f13c4fe6c0572163fb19ad9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.129.7
+  date: 2021-03-10T19:47:32.098Z
+- commits:
+    - subject: Add username normalization
+      hash: 7c416b41d8921d03dea0ee9a49bbc7d5a2ca5d89
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.129.6
+  date: 2021-03-10T19:30:22.728Z
+- commits:
+    - subject: Validate username/email on PATCH as well as POST
+      hash: 6a2f59a0d6b65fbd918454b8cd44032ce490feda
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.129.5
+  date: 2021-03-10T18:23:52.498Z
+- commits:
     - subject: Update pinejs to pick up rule optimizations for inserts
       hash: 44e3007ee0cf216c0b7d48efed602c937d0ffea4
       body: |

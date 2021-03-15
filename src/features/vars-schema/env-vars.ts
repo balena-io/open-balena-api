@@ -106,15 +106,16 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 }> = [
 	{
 		capableDeviceTypes: [
+			'fincm3',
+			'npe-x500-m3',
 			'raspberry-pi',
 			'raspberry-pi2',
-			'raspberrypi3-64',
 			'raspberrypi3',
+			'raspberrypi3-64',
 			'raspberrypi4-64',
 			'raspberrypi400-64',
-			'fincm3',
+			'raspberrypicm4-ioboard',
 			'revpi-core-3',
-			'npe-x500-m3',
 		],
 		properties: {
 			RESIN_HOST_CONFIG_disable_splash: {

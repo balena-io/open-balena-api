@@ -1,7 +1,9 @@
 import type { RequestHandler } from 'express';
 import * as _ from 'lodash';
+import * as memoizee from 'memoizee';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
+import { MINUTES } from '../../lib/config';
 
 const { api } = sbvrUtils;
 
@@ -18,18 +20,22 @@ const checkDeviceExistsQuery = _.once(() =>
 		},
 	}),
 );
+export const checkDeviceExists = memoizee(
+	async (uuid: string): Promise<boolean> => {
+		const devices = await checkDeviceExistsQuery()({ uuid });
+		return devices !== 0;
+	},
+	{ promise: true, primitive: true, maxAge: 5 * MINUTES },
+);
 
 export const gracefullyDenyDeletedDevices: RequestHandler = async (
 	req,
 	res,
 	next,
 ) => {
-	const { uuid } = req.params;
-
-	const returnCode = req.method === 'GET' ? 304 : 200;
-
-	const devices = await checkDeviceExistsQuery()({ uuid });
-	if (devices === 0) {
+	const deviceExists = await checkDeviceExists(req.params.uuid);
+	if (!deviceExists) {
+		const returnCode = req.method === 'GET' ? 304 : 200;
 		res.sendStatus(returnCode);
 		return;
 	}

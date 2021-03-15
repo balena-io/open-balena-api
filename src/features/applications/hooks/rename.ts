@@ -1,8 +1,7 @@
 import { hooks, errors } from '@balena/pinejs';
 
 hooks.addPureHook('PATCH', 'resin', 'application', {
-	PRERUN: async (args) => {
-		const { request } = args;
+	POSTPARSE: ({ request }) => {
 		const appName = request.values.app_name;
 
 		if (appName) {
@@ -11,7 +10,6 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 					'App name may only contain [a-zA-Z0-9_-].',
 				);
 			}
-			request.values.slug ??= appName.toLowerCase();
 		}
 	},
 });

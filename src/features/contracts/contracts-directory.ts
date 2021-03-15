@@ -115,19 +115,6 @@ const getRequestOptions = (repo: RepositoryInfo) => {
 	};
 };
 
-const handleResponse: request.RequestCallback = (err, response) => {
-	if (!err && response.statusCode === 200) {
-		return;
-	}
-
-	throw (
-		err ??
-		new Error(
-			`Invalid response while fetching contracts: ${response.statusMessage}`,
-		)
-	);
-};
-
 // Keeps the contract repos locally and in sync with upstream, if accessible.
 export const fetchContractsLocally = async (repos: RepositoryInfo[]) => {
 	await Promise.all(
@@ -138,11 +125,20 @@ export const fetchContractsLocally = async (repos: RepositoryInfo[]) => {
 			});
 
 			// We cast to ReadableStream explicitly because `request.get is of type `request.Request` and it controls whether it is a readable or writable stream internally so it is not typings-compatible with ReadableStream, even though it it functionally equivalent.
-			const get = (request.get(
-				getArchiveLinkForRepo(repo),
-				getRequestOptions(repo),
-				handleResponse,
-			) as unknown) as NodeJS.ReadableStream;
+			const get = (request
+				.get(getArchiveLinkForRepo(repo), getRequestOptions(repo))
+				.on('response', function (this: request.Request, response) {
+					if (response.statusCode !== 200) {
+						// On any non-200 responses just error and abort the request
+						this.emit(
+							'error',
+							new Error(
+								`Invalid response while fetching contracts: ${response.statusMessage}`,
+							),
+						);
+						this.abort();
+					}
+				}) as unknown) as NodeJS.ReadableStream;
 
 			await pipeline(get, untar);
 		}),
