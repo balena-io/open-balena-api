@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix typing for partial rate limiter key fns
+      hash: d1fb7cb6350ad80b93454875faf7d98a136acc06
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.133.1
+  date: 2021-03-16T17:56:32.446Z
+- commits:
     - subject: Prefetch api keys in the background rather than blocking
       hash: c50306ccb5ac9758856eb7520861b2fd17633660
       body: ''
