@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add support for async functions when generating rate limiter keys
+      hash: 2e8623e84873ec56e47dd047eaf799d63a0af4e0
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.132.5
+  date: 2021-03-16T16:45:56.812Z
+- commits:
     - subject: Update pinejs to 14.22.1
       hash: f58dd1db9a99b4b80ebf7260e2c4307af347c33b
       body: |
