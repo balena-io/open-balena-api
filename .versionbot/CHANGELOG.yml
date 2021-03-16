@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix username & email uniqueness check for batch PATCHes
+      hash: 53e7546009ffc364fb3f562fa0a2058a55ec111a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.132.2
+  date: 2021-03-16T11:57:12.226Z
+- commits:
     - subject: Update dependencies
       hash: 7fca8fc7e8519e17b9cc3012e0ba04016511c313
       body: |
