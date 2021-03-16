@@ -1,8 +1,7 @@
 import type { RequestHandler } from 'express';
 import { checkSudoValidity } from './jwt';
 
-import * as _ from 'lodash';
-import { retrieveAPIKey } from './api-keys';
+import { getAPIKey } from './api-keys';
 import { getUser, reqHasPermission } from './auth';
 
 export const authenticatedMiddleware: RequestHandler = async (
@@ -53,11 +52,7 @@ export const prefetchApiKeyMiddleware: RequestHandler = async (
 	}
 	try {
 		// Note: this won't reply with 401 if there's no api key
-		await retrieveAPIKey(req);
-		// We move the apiKey to the prefetchApiKey and delete it, so that it will only
-		// be used if the full `apiKeyMiddleware` is later used
-		req.prefetchApiKey = req.apiKey;
-		delete req.apiKey;
+		req.prefetchApiKey = await getAPIKey(req);
 		next();
 	} catch (err) {
 		next(err);
