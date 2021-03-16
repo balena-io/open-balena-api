@@ -1,4 +1,23 @@
 - commits:
+    - subject: Prefetch api keys in the background rather than blocking
+      hash: c50306ccb5ac9758856eb7520861b2fd17633660
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+    - subject: Avoid the need to delete `req.apiKey` in prefetch middleware
+      hash: 876c390882ea9b040959310fcd1d2444c3a25742
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.133.0
+  date: 2021-03-16T17:07:11.922Z
+- commits:
     - subject: Add support for async functions when generating rate limiter keys
       hash: 2e8623e84873ec56e47dd047eaf799d63a0af4e0
       body: ''
