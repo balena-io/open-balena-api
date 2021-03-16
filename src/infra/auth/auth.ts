@@ -13,10 +13,10 @@ const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
 
 export const userHasPermission = (
-	user: undefined | sbvrUtils.User,
+	user: undefined | sbvrUtils.Actor,
 	permission: string,
 ): boolean => {
-	if (user == null || user.permissions == null) {
+	if (user?.permissions == null) {
 		return false;
 	}
 	return user.permissions.includes(permission);

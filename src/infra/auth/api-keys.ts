@@ -1,5 +1,4 @@
 import type { Request } from 'express';
-import * as _ from 'lodash';
 
 import { hooks, permissions } from '@balena/pinejs';
 
