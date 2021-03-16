@@ -106,9 +106,9 @@ const $createRateLimitMiddleware = (
 		ignoreIP = false,
 		allowReset = true,
 	}: { ignoreIP?: boolean; allowReset?: boolean } = {},
-	field?: string | ((req: Request, res: Response) => string),
+	field?: string | ((req: Request, res: Response) => Resolvable<string>),
 ): RequestHandler => {
-	let fieldFn: (req: Request, res: Response) => string;
+	let fieldFn: (req: Request, res: Response) => Resolvable<string>;
 	if (field != null) {
 		if (typeof field === 'function') {
 			fieldFn = field;
@@ -119,11 +119,11 @@ const $createRateLimitMiddleware = (
 	} else {
 		fieldFn = () => '';
 	}
-	let keyFn: (req: Request, res: Response) => string;
+	let keyFn: (req: Request, res: Response) => Resolvable<string>;
 	if (ignoreIP) {
 		keyFn = fieldFn;
 	} else {
-		keyFn = (req, res) => req.ip + '$' + fieldFn(req, res);
+		keyFn = async (req, res) => req.ip + '$' + (await fieldFn(req, res));
 	}
 	const addReset = !allowReset
 		? _.noop
@@ -141,7 +141,7 @@ const $createRateLimitMiddleware = (
 		  };
 	return async (req, res, next) => {
 		try {
-			const key = keyFn(req, res);
+			const key = await keyFn(req, res);
 			await rateLimiter.consume(key);
 			addReset(req, key);
 			next();
