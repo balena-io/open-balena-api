@@ -1,18 +1,19 @@
 import type { Request } from 'express';
 
-import { hooks, permissions } from '@balena/pinejs';
+import { hooks, permissions, sbvrUtils } from '@balena/pinejs';
 
 import { isJWT } from './jwt-passport';
 
 const isRequest = (req: hooks.HookReq | Request): req is Request =>
 	'get' in req;
 
-export const retrieveAPIKey = async (
+export const getAPIKey = async (
 	req: hooks.HookReq | Request,
-): Promise<void> => {
-	// We should be able to skip this if req.user but doing so breaks the SDK
-	// because it sends both a JWT and an API Key in requests like /devices/register
-	await permissions.apiKeyMiddleware(req);
+): Promise<sbvrUtils.ApiKey | undefined> => {
+	const apiKey = await permissions.resolveApiKey(req);
+	if (apiKey != null) {
+		return apiKey;
+	}
 
 	// Skip for Pine's request objects that don't support headers
 	if (!isRequest(req)) {
@@ -23,6 +24,17 @@ export const retrieveAPIKey = async (
 	const token = (req.get('Authorization') || '').split(' ', 2)[1];
 	if (token && !isJWT(token)) {
 		// Add support for API keys on Authorization header if a JWT wasn't provided
-		await permissions.authorizationMiddleware(req);
+		return await permissions.resolveAuthHeader(req);
+	}
+};
+
+export const retrieveAPIKey = async (
+	req: hooks.HookReq | Request,
+): Promise<void> => {
+	// We should be able to skip this if req.user but doing so breaks the SDK
+	// because it sends both a JWT and an API Key in requests like /devices/register
+	const apiKey = await getAPIKey(req);
+	if (apiKey != null) {
+		req.apiKey = apiKey;
 	}
 };

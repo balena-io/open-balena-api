@@ -1,8 +1,7 @@
 import type { RequestHandler } from 'express';
 import { checkSudoValidity } from './jwt';
 
-import * as _ from 'lodash';
-import { retrieveAPIKey } from './api-keys';
+import { getAPIKey } from './api-keys';
 import { getUser, reqHasPermission } from './auth';
 
 export const authenticatedMiddleware: RequestHandler = async (
@@ -39,37 +38,29 @@ export const identifyMiddleware: RequestHandler = async (req, _res, next) => {
 	return null;
 };
 
-export const prefetchApiKeyMiddleware: RequestHandler = async (
-	req,
-	_res,
-	next,
-) => {
+export const prefetchApiKeyMiddleware: RequestHandler = (req, _res, next) => {
 	if (req.apiKey) {
 		// If the api key is already set then we just reuse that and keep it
 		if (!req.prefetchApiKey) {
 			req.prefetchApiKey = req.apiKey;
 		}
-		return next();
+	} else {
+		// Start the prefetch and let it run in the background - do not await it
+		req.prefetchApiKey = getAPIKey(req);
 	}
+	next();
+};
+
+export const apiKeyMiddleware: RequestHandler = async (req, _res, next) => {
 	try {
 		// Note: this won't reply with 401 if there's no api key
-		await retrieveAPIKey(req);
-		// We move the apiKey to the prefetchApiKey and delete it, so that it will only
-		// be used if the full `apiKeyMiddleware` is later used
-		req.prefetchApiKey = req.apiKey;
-		delete req.apiKey;
+		if (req.prefetchApiKey && !req.apiKey) {
+			req.apiKey = await req.prefetchApiKey;
+		}
 		next();
 	} catch (err) {
 		next(err);
 	}
-};
-
-export const apiKeyMiddleware: RequestHandler = (req, _res, next) => {
-	// Note: this won't reply with 401 if there's no api key
-	if (req.prefetchApiKey && !req.apiKey) {
-		req.apiKey = req.prefetchApiKey;
-	}
-	return next();
 };
 
 export const permissionRequiredMiddleware = (

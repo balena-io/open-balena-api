@@ -3,7 +3,7 @@
 // tslint:disable-next-line:no-namespace
 declare namespace Express {
 	export interface Request {
-		prefetchApiKey?: ApiKey;
+		prefetchApiKey?: Resolvable<ApiKey>;
 
 		creds?: Creds;
 
