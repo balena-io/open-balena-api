@@ -79,8 +79,14 @@ export const getUserIDFromCreds = (req: Request): string => {
 	return `nouserID`;
 };
 
+export type RateLimitKeyFn = (
+	req: Request,
+	res: Response,
+) => Resolvable<string>;
+export type RateLimitKey = string | RateLimitKeyFn;
+
 export type PartialRateLimitMiddleware = (
-	field?: string | ((req: Request, res: Response) => string),
+	field?: RateLimitKey,
 ) => RequestHandler;
 
 export const createRateLimitMiddleware = (
@@ -106,9 +112,9 @@ const $createRateLimitMiddleware = (
 		ignoreIP = false,
 		allowReset = true,
 	}: { ignoreIP?: boolean; allowReset?: boolean } = {},
-	field?: string | ((req: Request, res: Response) => Resolvable<string>),
+	field?: RateLimitKey,
 ): RequestHandler => {
-	let fieldFn: (req: Request, res: Response) => Resolvable<string>;
+	let fieldFn: RateLimitKeyFn;
 	if (field != null) {
 		if (typeof field === 'function') {
 			fieldFn = field;
@@ -119,7 +125,7 @@ const $createRateLimitMiddleware = (
 	} else {
 		fieldFn = () => '';
 	}
-	let keyFn: (req: Request, res: Response) => Resolvable<string>;
+	let keyFn: RateLimitKeyFn;
 	if (ignoreIP) {
 		keyFn = fieldFn;
 	} else {
