@@ -1,4 +1,17 @@
 - commits:
+    - subject: Allow PATCHing the same username/email on a given user
+      hash: 97da01eaac1d45c0d933289c93efb1e66a5f1a0a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.132.3
+  date: 2021-03-16T12:20:43.156Z
+- commits:
     - subject: Fix username & email uniqueness check for batch PATCHes
       hash: 53e7546009ffc364fb3f562fa0a2058a55ec111a
       body: ''
