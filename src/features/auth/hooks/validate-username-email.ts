@@ -23,12 +23,14 @@ for (const method of ['POST', 'PATCH'] as const) {
 					if (request.values[field] == null) {
 						return;
 					}
+
+					let patchedIds: number[] | undefined;
 					if (method === 'PATCH') {
-						const affectedIds = await sbvrUtils.getAffectedIds(args);
-						if (affectedIds.length === 0) {
+						patchedIds = await sbvrUtils.getAffectedIds(args);
+						if (patchedIds.length === 0) {
 							return;
 						}
-						if (affectedIds.length > 1) {
+						if (patchedIds.length > 1) {
 							// TODO: This should be handled by a rule for case insensitive uniqueness
 							throw new ConflictError(`The ${field} must be unique`);
 						}
@@ -37,7 +39,9 @@ for (const method of ['POST', 'PATCH'] as const) {
 					const existingUser = await findUser(request.values[field], tx, [
 						'id',
 					]);
-					if (existingUser) {
+					const isSameUserPatch =
+						existingUser && patchedIds && existingUser.id === patchedIds[0];
+					if (existingUser && !isSameUserPatch) {
 						throw new ConflictError(`This ${field} is already taken`);
 					}
 				}),
