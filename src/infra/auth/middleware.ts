@@ -38,33 +38,29 @@ export const identifyMiddleware: RequestHandler = async (req, _res, next) => {
 	return null;
 };
 
-export const prefetchApiKeyMiddleware: RequestHandler = async (
-	req,
-	_res,
-	next,
-) => {
+export const prefetchApiKeyMiddleware: RequestHandler = (req, _res, next) => {
 	if (req.apiKey) {
 		// If the api key is already set then we just reuse that and keep it
 		if (!req.prefetchApiKey) {
 			req.prefetchApiKey = req.apiKey;
 		}
-		return next();
+	} else {
+		// Start the prefetch and let it run in the background - do not await it
+		req.prefetchApiKey = getAPIKey(req);
 	}
+	next();
+};
+
+export const apiKeyMiddleware: RequestHandler = async (req, _res, next) => {
 	try {
 		// Note: this won't reply with 401 if there's no api key
-		req.prefetchApiKey = await getAPIKey(req);
+		if (req.prefetchApiKey && !req.apiKey) {
+			req.apiKey = await req.prefetchApiKey;
+		}
 		next();
 	} catch (err) {
 		next(err);
 	}
-};
-
-export const apiKeyMiddleware: RequestHandler = (req, _res, next) => {
-	// Note: this won't reply with 401 if there's no api key
-	if (req.prefetchApiKey && !req.apiKey) {
-		req.apiKey = req.prefetchApiKey;
-	}
-	return next();
 };
 
 export const permissionRequiredMiddleware = (
