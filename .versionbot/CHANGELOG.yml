@@ -1,4 +1,40 @@
 - commits:
+    - subject: Update pinejs to 14.22.1
+      hash: f58dd1db9a99b4b80ebf7260e2c4307af347c33b
+      body: |
+        Update pinejs from 14.21.1 to 14.22.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Only use the api key if we successfully resolved one
+              hash: b95a263781843300e4bd6331951eda5ba686e161
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.22.1
+          date: 2021-03-16T16:13:35.275Z
+        - commits:
+            - subject: >-
+                Expose methods to resolve api keys without immediately using
+                them
+              hash: 9a0144f881f635568784e3ef9f6c8fdbb40dce77
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.22.0
+          date: 2021-03-16T15:35:10.795Z
+  version: 0.132.4
+  date: 2021-03-16T16:35:11.625Z
+- commits:
     - subject: Allow PATCHing the same username/email on a given user
       hash: 97da01eaac1d45c0d933289c93efb1e66a5f1a0a
       body: ''
