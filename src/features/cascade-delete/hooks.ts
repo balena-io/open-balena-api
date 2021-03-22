@@ -1,4 +1,4 @@
-import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
+import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 import { captureException } from '../../infra/error-handling';
 import { setupDeleteCascade } from './setup-delete-cascade';
 
@@ -126,7 +126,10 @@ hooks.addPureHook('DELETE', 'resin', 'user', {
 					$select: 'actor',
 				},
 			})
-			.then(async (user: AnyObject) => {
+			.then(async (user) => {
+				if (user == null) {
+					throw new errors.BadRequestError('Invalid user');
+				}
 				request.custom.actorId = user.actor;
 				try {
 					await authApiTx.delete({

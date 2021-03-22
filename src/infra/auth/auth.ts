@@ -168,10 +168,7 @@ export function getUser(
 	required: false,
 ): Promise<User | undefined>;
 export async function getUser(
-	req: hooks.HookReq & {
-		user?: User;
-		creds?: User;
-	},
+	req: hooks.HookReq & Pick<Request, 'user' | 'creds'>,
 	required = true,
 ): Promise<User | undefined> {
 	await retrieveAPIKey(req);
