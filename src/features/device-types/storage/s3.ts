@@ -105,10 +105,10 @@ export async function listFolders(
 	const res = await req.promise();
 
 	const objects = _(res.CommonPrefixes)
-		.map('Prefix')
+		.map(({ Prefix }) => Prefix)
 		// only keep the folder paths (which are ending with `/`)
-		.filter((p) => p != null && p.endsWith('/'))
-		.map((p: string) =>
+		.filter((p): p is NonNullable<typeof p> => p != null && p.endsWith('/'))
+		.map((p) =>
 			// get the name of the immediately contained folder
 			path.basename(p),
 		)
