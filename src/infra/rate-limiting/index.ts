@@ -14,6 +14,7 @@ import * as redis from 'redis';
 import { captureException } from '../error-handling';
 
 import {
+	MINUTES,
 	RATE_LIMIT_FACTOR,
 	RATE_LIMIT_MEMORY_BACKEND,
 	REDIS_HOST,
@@ -62,7 +63,7 @@ const getStore = (opts: IRateLimiterOptions) => {
 
 	// we need to bind to this error handler otherwise a redis error would kill
 	// the whole process
-	client.on('error', _.throttle(logRedisError, 300000));
+	client.on('error', _.throttle(logRedisError, 5 * MINUTES));
 
 	return new RateLimiterRedis({
 		...opts,

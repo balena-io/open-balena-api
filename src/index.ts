@@ -153,6 +153,7 @@ export type { DeviceType } from './features/device-types/device-types';
 
 export { DefaultApplicationType } from './features/application-types/application-types';
 export * as request from './infra/request-promise';
+export * as scheduler from './infra/scheduler';
 export * as config from './lib/config';
 export * as abstractSql from './abstract-sql-utils';
 
