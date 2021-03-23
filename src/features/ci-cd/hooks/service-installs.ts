@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
-import type { Device } from '../../../balena-model';
 
 const createReleaseServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,
@@ -99,6 +98,43 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 					$expand: {
 						owns__device: {
 							$select: 'id',
+							$expand: {
+								service_install: {
+									$select: 'installs__service',
+									$filter: {
+										installs__service: {
+											$any: {
+												$alias: 'service',
+												$expr: {
+													service: {
+														is_built_by__image: {
+															$any: {
+																$alias: 'img',
+																$expr: {
+																	img: {
+																		release_image: {
+																			$any: {
+																				$alias: 'ri',
+																				$expr: {
+																					ri: {
+																						id:
+																							request.values
+																								.should_be_running__release,
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
 							$filter: {
 								should_be_running__release: null,
 							},
@@ -132,39 +168,21 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 			await Promise.all(
 				appsToUpdate.map(async (app) => {
 					const [release] = app.owns__release;
-					if (release == null) {
+					if (release == null || app.owns__device.length === 0) {
 						return;
 					}
 
-					const deviceIds: number[] = app.owns__device.map(
-						(device: Pick<Device, 'id'>) => device.id,
-					);
 					const serviceIds: number[] = release.contains__image.map(
 						(ipr: AnyObject) => ipr.image[0].is_a_build_of__service.__id,
 					);
-					if (deviceIds.length === 0 || serviceIds.length === 0) {
+					if (serviceIds.length === 0) {
 						return;
 					}
-					const serviceInstalls = await api.get({
-						resource: 'service_install',
-						options: {
-							$select: ['device', 'installs__service'],
-							$filter: {
-								device: { $in: deviceIds },
-								installs__service: { $in: serviceIds },
-							},
-						},
-					});
-					const serviceInstallsByDevice = _.groupBy(
-						serviceInstalls,
-						(si) => si.device.__id as number,
-					);
 					await Promise.all(
-						deviceIds.map(async (deviceId) => {
-							const existingServiceIds: number[] =
-								serviceInstallsByDevice[deviceId]?.map(
-									(si) => si.installs__service.__id,
-								) ?? [];
+						app.owns__device.map(async (device: AnyObject) => {
+							const existingServiceIds: number[] = device.service_install.map(
+								(si: AnyObject) => si.installs__service.__id,
+							);
 							const deviceServiceIds = _.difference(
 								serviceIds,
 								existingServiceIds,
@@ -174,7 +192,7 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 									await api.post({
 										resource: 'service_install',
 										body: {
-											device: deviceId,
+											device: device.id,
 											installs__service: serviceId,
 										},
 										options: { returnResource: false },
