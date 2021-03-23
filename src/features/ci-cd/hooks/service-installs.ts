@@ -111,11 +111,6 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 									$expand: {
 										image: {
 											$select: 'is_a_build_of__service',
-											$expand: {
-												is_a_build_of__service: {
-													$select: 'id',
-												},
-											},
 										},
 									},
 								},
@@ -145,7 +140,7 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 						(device: Pick<Device, 'id'>) => device.id,
 					);
 					const serviceIds: number[] = release.contains__image.map(
-						(ipr: AnyObject) => ipr.image[0].is_a_build_of__service[0].id,
+						(ipr: AnyObject) => ipr.image[0].is_a_build_of__service.__id,
 					);
 					if (deviceIds.length === 0 || serviceIds.length === 0) {
 						return;
