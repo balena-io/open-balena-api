@@ -1,4 +1,15 @@
 - commits:
+    - subject: Optimize getting the list of service installs to create per device
+      hash: 6d6d796787d9471063aae555b72d14bad54840eb
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.133.3
+  date: 2021-03-23T14:29:11.693Z
+- commits:
     - subject: Enable strict options by default and only disable specific ones
       hash: 9ce6cb5e0ca690a34dcb64dfecb3aac2364d0d3b
       body: ''
