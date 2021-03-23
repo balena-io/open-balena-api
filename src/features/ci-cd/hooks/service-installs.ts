@@ -1,36 +1,41 @@
 import * as _ from 'lodash';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
-import type { Device } from '../../../balena-model';
+import type {
+	Device,
+	PickDeferred,
+	Service,
+	ServiceInstall,
+} from '../../../balena-model';
 
 const createReleaseServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,
 	deviceIds: number[],
 	releaseFilter: Filter,
 ): Promise<void> => {
-	await Promise.all(
-		deviceIds.map(async (deviceId) => {
-			const services = await api.get({
-				resource: 'service',
-				options: {
-					$select: 'id',
-					$filter: {
-						is_built_by__image: {
-							$any: {
-								$alias: 'i',
-								$expr: {
-									i: {
-										is_part_of__release: {
-											$any: {
-												$alias: 'ipr',
-												$expr: {
-													ipr: {
-														release: {
-															$any: {
-																$alias: 'r',
-																$expr: { r: releaseFilter },
-															},
-														},
+	if (deviceIds.length === 0) {
+		return;
+	}
+
+	const services = (await api.get({
+		resource: 'service',
+		options: {
+			$select: 'id',
+			$filter: {
+				is_built_by__image: {
+					$any: {
+						$alias: 'i',
+						$expr: {
+							i: {
+								is_part_of__release: {
+									$any: {
+										$alias: 'ipr',
+										$expr: {
+											ipr: {
+												release: {
+													$any: {
+														$alias: 'r',
+														$expr: { r: releaseFilter },
 													},
 												},
 											},
@@ -39,28 +44,46 @@ const createReleaseServiceInstalls = async (
 								},
 							},
 						},
-						// Filter out any services which do have a service install attached
-						$not: {
-							service_install: {
-								$any: {
-									$alias: 'si',
-									$expr: {
-										si: { device: deviceId },
-									},
-								},
-							},
-						},
 					},
 				},
-			});
+			},
+		},
+	})) as Array<Pick<Service, 'id'>>;
+	if (services.length === 0) {
+		return;
+	}
+	const serviceIds = services.map(({ id }) => id);
+
+	const serviceInstalls = (await api.get({
+		resource: 'service_install',
+		options: {
+			$select: ['device', 'installs__service'],
+			$filter: {
+				device: { $in: deviceIds },
+				installs__service: { $in: serviceIds },
+			},
+		},
+	})) as Array<PickDeferred<ServiceInstall, 'device' | 'installs__service'>>;
+	const serviceInstallsByDevice = _.groupBy(
+		serviceInstalls,
+		(si) => si.device.__id as number,
+	);
+
+	await Promise.all(
+		deviceIds.map(async (deviceId) => {
+			const existingServiceIds: number[] = _.map(
+				serviceInstallsByDevice[deviceId],
+				(si) => si.installs__service.__id,
+			);
+			const deviceServiceIds = _.difference(serviceIds, existingServiceIds);
 			await Promise.all(
-				services.map(async (service) => {
+				deviceServiceIds.map(async (serviceId) => {
 					// Create a service_install for this pair of service and device
 					await api.post({
 						resource: 'service_install',
 						body: {
 							device: deviceId,
-							installs__service: service.id,
+							installs__service: serviceId,
 						},
 						options: { returnResource: false },
 					});
