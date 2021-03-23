@@ -92,23 +92,103 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 			affectedIds.length !== 0
 		) {
 			// Ensure that every device of the app we've just pinned, that is not itself pinned, has the necessary service install entries
-			const devices = (await api.get({
-				resource: 'device',
+			const appsToUpdate = await api.get({
+				resource: 'application',
 				options: {
-					$select: 'id',
+					$select: 'owns__device',
+					$expand: {
+						owns__device: {
+							$select: 'id',
+							$filter: {
+								should_be_running__release: null,
+							},
+						},
+						owns__release: {
+							$select: 'contains__image',
+							$expand: {
+								contains__image: {
+									$select: 'image',
+									$expand: {
+										image: {
+											$select: 'is_a_build_of__service',
+											$expand: {
+												is_a_build_of__service: {
+													$select: 'id',
+												},
+											},
+										},
+									},
+								},
+							},
+							$filter: {
+								id: request.values.should_be_running__release,
+							},
+						},
+					},
 					$filter: {
-						belongs_to__application: { $in: affectedIds },
-						should_be_running__release: null,
+						id: { $in: affectedIds },
 					},
 				},
-			})) as Array<Pick<Device, 'id'>>;
+			});
+			if (!appsToUpdate.length) {
+				return;
+			}
 
-			await createReleaseServiceInstalls(
-				api,
-				devices.map(({ id }) => id),
-				{
-					id: request.values.should_be_running__release,
-				},
+			await Promise.all(
+				appsToUpdate.map(async (app) => {
+					const [release] = app.owns__release;
+					if (release == null) {
+						return;
+					}
+
+					const deviceIds: number[] = app.owns__device.map(
+						(device: Pick<Device, 'id'>) => device.id,
+					);
+					const serviceIds: number[] = release.contains__image.map(
+						(ipr: AnyObject) => ipr.image[0].is_a_build_of__service[0].id,
+					);
+					if (deviceIds.length === 0 || serviceIds.length === 0) {
+						return;
+					}
+					const serviceInstalls = await api.get({
+						resource: 'service_install',
+						options: {
+							$select: ['device', 'installs__service'],
+							$filter: {
+								device: { $in: deviceIds },
+								installs__service: { $in: serviceIds },
+							},
+						},
+					});
+					const serviceInstallsByDevice = _.groupBy(
+						serviceInstalls,
+						(si) => si.device.__id as number,
+					);
+					await Promise.all(
+						deviceIds.map(async (deviceId) => {
+							const existingServiceIds: number[] =
+								serviceInstallsByDevice[deviceId]?.map(
+									(si) => si.installs__service.__id,
+								) ?? [];
+							const deviceServiceIds = _.difference(
+								serviceIds,
+								existingServiceIds,
+							);
+							await Promise.all(
+								deviceServiceIds.map(async (serviceId) => {
+									await api.post({
+										resource: 'service_install',
+										body: {
+											device: deviceId,
+											installs__service: serviceId,
+										},
+										options: { returnResource: false },
+									});
+								}),
+							);
+						}),
+					);
+				}),
 			);
 		}
 	},
