@@ -1,4 +1,17 @@
 - commits:
+    - subject: Use primitive memoization mode for build-info-facade
+      hash: 6f6ce395b57258e43df6b49b88194e6920af1f51
+      body: |
+        This can give better performance but requires all arguments to generate
+        unique strings when stringified
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.133.5
+  date: 2021-03-26T14:55:21.071Z
+- commits:
     - subject: Add scheduler mechanism and use it to synchronize contracts
       hash: 245f2e2160b2fc625bee5762509164220c1d8593
       body: ''
