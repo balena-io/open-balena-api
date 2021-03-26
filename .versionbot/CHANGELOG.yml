@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix contracts sync job to run every 5 minutes instead of 5 seconds
+      hash: 60961bb15d6d5bb30a146ea68ea24f57d75074e0
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.133.6
+  date: 2021-03-26T16:34:26.968Z
+- commits:
     - subject: Use primitive memoization mode for build-info-facade
       hash: 6f6ce395b57258e43df6b49b88194e6920af1f51
       body: |
