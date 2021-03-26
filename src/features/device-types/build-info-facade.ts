@@ -14,7 +14,12 @@ export const getIsIgnored = memoizee(
 	async (normalizedSlug: string, buildId: string): Promise<boolean> => {
 		return await fileExists(getImageKey(normalizedSlug, buildId, 'IGNORE'));
 	},
-	{ promise: true, preFetch: true, maxAge: BUILD_PROPERTY_CACHE_EXPIRATION },
+	{
+		promise: true,
+		primitive: true,
+		preFetch: true,
+		maxAge: BUILD_PROPERTY_CACHE_EXPIRATION,
+	},
 );
 
 export const getLogoUrl = memoizee(
@@ -42,7 +47,12 @@ export const getLogoUrl = memoizee(
 			return;
 		}
 	},
-	{ promise: true, preFetch: true, maxAge: BUILD_PROPERTY_CACHE_EXPIRATION },
+	{
+		promise: true,
+		primitive: true,
+		preFetch: true,
+		maxAge: BUILD_PROPERTY_CACHE_EXPIRATION,
+	},
 );
 
 export const getDeviceTypeJson = memoizee(
@@ -62,7 +72,12 @@ export const getDeviceTypeJson = memoizee(
 		}
 		return deviceType;
 	},
-	{ promise: true, preFetch: true, maxAge: BUILD_PROPERTY_CACHE_EXPIRATION },
+	{
+		promise: true,
+		primitive: true,
+		preFetch: true,
+		maxAge: BUILD_PROPERTY_CACHE_EXPIRATION,
+	},
 );
 
 export const getCompressedSize = memoizee(
@@ -73,6 +88,7 @@ export const getCompressedSize = memoizee(
 	},
 	{
 		promise: true,
+		primitive: true,
 		preFetch: true,
 		maxAge: BUILD_COMPRESSED_SIZE_CACHE_EXPIRATION,
 	},
