@@ -244,7 +244,7 @@ export const startContractSynchronization = _.once(async () => {
 	// Schedule to run every 5 minutes
 	scheduleJob(
 		'contractSync',
-		'*/5 * * * * *',
+		'*/5 * * * *',
 		async () => await synchronizeContracts(contractRepos),
 		{
 			// The maximum expected amount of time that the job needs to complete
