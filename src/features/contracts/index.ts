@@ -10,10 +10,10 @@ import {
 	CONTRACTS_PUBLIC_REPO_BRANCH,
 	CONTRACTS_PUBLIC_REPO_NAME,
 	CONTRACTS_PUBLIC_REPO_OWNER,
+	MINUTES,
 } from '../../lib/config';
 import { captureException } from '../../infra/error-handling';
-
-const SYNC_INTERVAL = 5 * 60 * 1000;
+import { scheduleJob } from '../../infra/scheduler';
 
 export interface RepositoryInfo {
 	owner: string;
@@ -238,10 +238,20 @@ export const synchronizeContracts = async (contractRepos: RepositoryInfo[]) => {
 	}
 };
 
-export const startContractSynchronization = async () => {
+export const startContractSynchronization = _.once(async () => {
 	const contractRepos = getContractRepos();
-	while (true) {
-		await synchronizeContracts(contractRepos);
-		await Bluebird.delay(SYNC_INTERVAL);
-	}
-};
+
+	// Schedule to run every 5 minutes
+	scheduleJob(
+		'contractSync',
+		'*/5 * * * * *',
+		async () => await synchronizeContracts(contractRepos),
+		{
+			// The maximum expected amount of time that the job needs to complete
+			// and it should hold the lock to prevent other jobs from starting.
+			// If after that point the job hasn't completed, it is considered
+			// as crashed and the lock is automatically released.
+			ttl: 20 * MINUTES,
+		},
+	);
+});
