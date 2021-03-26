@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add scheduler mechanism and use it to synchronize contracts
+      hash: 245f2e2160b2fc625bee5762509164220c1d8593
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.133.4
+  date: 2021-03-23T17:54:12.562Z
+- commits:
     - subject: Optimize getting the list of service installs to create per device
       hash: 6d6d796787d9471063aae555b72d14bad54840eb
       body: ''
