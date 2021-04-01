@@ -13,7 +13,6 @@ import { captureException } from '../../infra/error-handling';
 import {
 	getCompressedSize,
 	getDeviceTypeJson,
-	getIsIgnored,
 	getLogoUrl,
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
@@ -36,13 +35,8 @@ export class UnknownVersionError extends NotFoundError {
 
 export type DeviceType = deviceTypesLib.DeviceType;
 
-interface BuildInfo {
-	ignored: boolean;
-	deviceType: DeviceType;
-}
-
 interface DeviceTypeInfo {
-	latest: BuildInfo;
+	latest: DeviceType;
 	versions: string[];
 }
 
@@ -59,47 +53,32 @@ function sortBuildIds(ids: string[]): string[] {
 	);
 }
 
-const getBuildData = async (
-	slug: string,
-	buildId: string,
-): Promise<Partial<BuildInfo>> => {
-	const [ignored, deviceType] = await Promise.all([
-		getIsIgnored(slug, buildId),
-		getDeviceTypeJson(slug, buildId).catch(() => undefined),
-	]);
-	return {
-		ignored,
-		deviceType,
-	};
-};
-
 const getFirstValidBuild = async (
 	slug: string,
 	versions: string[],
-): Promise<BuildInfo | undefined> => {
+): Promise<DeviceType | undefined> => {
 	for (const buildId of versions) {
-		let buildInfo: Partial<BuildInfo> | undefined;
+		let deviceType: DeviceType | undefined;
 		try {
-			buildInfo = await getBuildData(slug, buildId);
+			deviceType = await getDeviceTypeJson(slug, buildId);
 		} catch (err) {
 			captureException(
 				err,
 				`Failed to get device type build data for ${slug}/${buildId}`,
 			);
 		}
-		if (buildInfo && !buildInfo.ignored && buildInfo.deviceType) {
+		if (deviceType) {
 			const logoUrl = await getLogoUrl(slug, buildId);
 			if (logoUrl) {
-				buildInfo.deviceType.logoUrl = logoUrl;
+				deviceType.logoUrl = logoUrl;
 			}
-			return buildInfo as BuildInfo;
+			return deviceType;
 		}
 	}
 };
 
 async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	const result: Dictionary<DeviceTypeInfo> = {};
-	getIsIgnored.clear();
 	getDeviceTypeJson.clear();
 	const slugs = await listFolders(IMAGE_STORAGE_PREFIX);
 	await Promise.all(
@@ -111,17 +90,17 @@ async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 				}
 
 				const sortedBuilds = sortBuildIds(builds);
-				const latestBuildInfo = await getFirstValidBuild(slug, sortedBuilds);
-				if (!latestBuildInfo) {
+				const latestDeviceType = await getFirstValidBuild(slug, sortedBuilds);
+				if (!latestDeviceType) {
 					return;
 				}
 
 				result[slug] = {
 					versions: builds,
-					latest: latestBuildInfo,
+					latest: latestDeviceType,
 				};
 
-				_.forEach(latestBuildInfo.deviceType.aliases, (alias) => {
+				_.forEach(latestDeviceType.aliases, (alias) => {
 					result[alias] = result[slug];
 				});
 			} catch (err) {
@@ -211,7 +190,7 @@ const getAccessibleSlugs = async (
 	return _.map(accessibleDeviceTypes, 'slug');
 };
 
-export const findDeviceTypeInfoBySlug = async (
+const findDeviceTypeInfoBySlug = async (
 	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
 ): Promise<DeviceTypeInfo> => {
@@ -224,9 +203,9 @@ export const findDeviceTypeInfoBySlug = async (
 	}
 
 	const [accessibleSlug] = await getAccessibleSlugs(resinApi, [
-		deviceTypeInfo.latest.deviceType.slug,
+		deviceTypeInfo.latest.slug,
 	]);
-	if (accessibleSlug !== deviceTypeInfo.latest.deviceType.slug) {
+	if (accessibleSlug !== deviceTypeInfo.latest.slug) {
 		// We cannot access the device type
 		throw new UnknownDeviceTypeError(slug);
 	}
@@ -240,10 +219,10 @@ export const validateSlug = (slug?: string) => {
 	return slug;
 };
 
-export const getAllDeviceTypes = async () => {
+const getAllDeviceTypes = async () => {
 	const dtInfo = await getDeviceTypes();
 	return _.uniqBy(
-		Object.values(dtInfo).map((dtEntry) => dtEntry.latest.deviceType),
+		Object.values(dtInfo).map((dtEntry) => dtEntry.latest),
 		(dt) => dt.slug,
 	);
 };
@@ -274,7 +253,7 @@ export const findBySlug = async (
 	return deviceType;
 };
 
-export const normalizeDeviceType = async (
+const normalizeDeviceType = async (
 	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
 ): Promise<string> => {
@@ -299,7 +278,7 @@ export const getImageSize = async (
 	buildId: string,
 ): Promise<number> => {
 	const deviceTypeInfo = await findDeviceTypeInfoBySlug(resinApi, slug);
-	const deviceType = deviceTypeInfo.latest.deviceType;
+	const deviceType = deviceTypeInfo.latest;
 	const normalizedSlug = deviceType.slug;
 
 	if (buildId === 'latest') {
@@ -310,12 +289,9 @@ export const getImageSize = async (
 		throw new UnknownVersionError(slug, buildId);
 	}
 
-	const [ignored, hasDeviceTypeJson] = await Promise.all([
-		getIsIgnored(normalizedSlug, buildId),
-		getDeviceTypeJson(normalizedSlug, buildId),
-	]);
+	const hasDeviceTypeJson = await getDeviceTypeJson(normalizedSlug, buildId);
 
-	if (ignored || !hasDeviceTypeJson) {
+	if (!hasDeviceTypeJson) {
 		throw new UnknownVersionError(slug, buildId);
 	}
 
@@ -359,17 +335,16 @@ export const getImageVersions = async (
 	slug: string,
 ): Promise<ImageVersions> => {
 	const deviceTypeInfo = await findDeviceTypeInfoBySlug(resinApi, slug);
-	const deviceType = deviceTypeInfo.latest.deviceType;
+	const deviceType = deviceTypeInfo.latest;
 	const normalizedSlug = deviceType.slug;
 
 	const versionInfo = await Promise.all(
 		deviceTypeInfo.versions.map(async (buildId) => {
 			try {
-				return await Bluebird.props({
+				return {
 					buildId,
-					ignored: getIsIgnored(normalizedSlug, buildId),
-					hasDeviceTypeJson: getDeviceTypeJson(normalizedSlug, buildId),
-				});
+					hasDeviceTypeJson: await getDeviceTypeJson(normalizedSlug, buildId),
+				};
 			} catch {
 				return;
 			}
@@ -377,7 +352,7 @@ export const getImageVersions = async (
 	);
 	const filteredInfo = versionInfo.filter(
 		(buildInfo): buildInfo is NonNullable<typeof buildInfo> =>
-			buildInfo != null && !!buildInfo.hasDeviceTypeJson && !buildInfo.ignored,
+			buildInfo != null && !!buildInfo.hasDeviceTypeJson,
 	);
 	if (_.isEmpty(filteredInfo) && !_.isEmpty(deviceTypeInfo.versions)) {
 		throw new InternalRequestError(
