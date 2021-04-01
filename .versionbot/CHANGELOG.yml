@@ -1,4 +1,18 @@
 - commits:
+    - subject: Simplify ignored device types handling
+      hash: e30a4e6db72d325abeeefd751f0ab454e5541706
+      body: |
+        By handling ignored device types transparently at the point of fetching
+        it allows us to avoid duplicating that code and guarantees the ignoring
+        is always applied
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.133.7
+  date: 2021-04-01T15:22:22.405Z
+- commits:
     - subject: Fix contracts sync job to run every 5 minutes instead of 5 seconds
       hash: 60961bb15d6d5bb30a146ea68ea24f57d75074e0
       body: ''
