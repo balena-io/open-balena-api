@@ -4,7 +4,7 @@
 import type { Request, RequestHandler } from 'express';
 import * as jsonwebtoken from 'jsonwebtoken';
 import * as _ from 'lodash';
-import * as memoize from 'memoizee';
+import { multiCacheMemoizee } from '../../infra/cache';
 import * as uuid from 'uuid';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
@@ -14,6 +14,7 @@ import { captureException, handleHttpErrors } from '../../infra/error-handling';
 import { registryAuth as CERT } from './certs';
 import {
 	AUTH_RESINOS_REGISTRY_CODE,
+	MINUTES,
 	REGISTRY2_HOST,
 	TOKEN_AUTH_BUILDER_TOKEN,
 } from '../../lib/config';
@@ -298,7 +299,7 @@ export const token: RequestHandler = async (req, res) => {
 	}
 };
 
-const $getSubject = memoize(
+const $getSubject = multiCacheMemoizee(
 	async (apiKey: string, subject?: string): Promise<string | undefined> => {
 		if (subject) {
 			try {
@@ -371,8 +372,9 @@ const $getSubject = memoize(
 		}
 	},
 	{
+		cacheKey: '$getSubject',
 		promise: true,
-		maxAge: 5 * 60 * 1000,
+		maxAge: 5 * MINUTES,
 		primitive: true,
 	},
 );

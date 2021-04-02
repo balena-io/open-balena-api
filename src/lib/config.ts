@@ -1,3 +1,8 @@
+export let version: string;
+export function setVersion(v: typeof version) {
+	version = v;
+}
+
 export const SECONDS = 1000;
 export const SECONDS_PER_HOUR = 60 * 60;
 export const MINUTES = 60 * SECONDS;
