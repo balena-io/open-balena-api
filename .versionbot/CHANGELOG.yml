@@ -1,4 +1,15 @@
 - commits:
+    - subject: Support/use multi-level caching that can share cache between instances
+      hash: 225148a311ab57e761bee74cbc3aedf9e8689dad
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.134.0
+  date: 2021-04-06T17:23:23.865Z
+- commits:
     - subject: Simplify ignored device types handling
       hash: e30a4e6db72d325abeeefd751f0ab454e5541706
       body: |
