@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express';
 import * as _ from 'lodash';
-import * as memoizee from 'memoizee';
+import { multiCacheMemoizee } from '../../infra/cache';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import { MINUTES } from '../../lib/config';
@@ -20,12 +20,17 @@ const checkDeviceExistsQuery = _.once(() =>
 		},
 	}),
 );
-export const checkDeviceExists = memoizee(
+export const checkDeviceExists = multiCacheMemoizee(
 	async (uuid: string): Promise<boolean> => {
 		const devices = await checkDeviceExistsQuery()({ uuid });
 		return devices !== 0;
 	},
-	{ promise: true, primitive: true, maxAge: 5 * MINUTES },
+	{
+		cacheKey: 'checkDeviceExists',
+		promise: true,
+		primitive: true,
+		maxAge: 5 * MINUTES,
+	},
 );
 
 export const gracefullyDenyDeletedDevices: RequestHandler = async (

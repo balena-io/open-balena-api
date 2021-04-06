@@ -42,6 +42,7 @@ import {
 	NODE_ENV,
 	SENTRY_DSN,
 	HIDE_UNVERSIONED_ENDPOINT,
+	setVersion,
 } from './lib/config';
 
 import {
@@ -154,6 +155,7 @@ export type { DeviceType } from './features/device-types/device-types';
 export { DefaultApplicationType } from './features/application-types/application-types';
 export * as request from './infra/request-promise';
 export * as scheduler from './infra/scheduler';
+export * as cache from './infra/cache';
 export * as config from './lib/config';
 export * as abstractSql from './abstract-sql-utils';
 
@@ -255,7 +257,7 @@ export type SetupFunction = (app: Application) => void | PromiseLike<void>;
 
 export interface SetupOptions {
 	config: Parameters<typeof pine.init>[1]; // must be absolute or relative to `process.cwd()`
-	version?: string; // this will be reported along with exceptions to Sentry
+	version: string; // this will be reported along with exceptions to Sentry and is also used for caching
 	skipHttpsPaths?: string[]; // a list of paths which should be exempt from https redirection
 
 	getUrl: GetUrlFunction;
@@ -271,6 +273,7 @@ export interface SetupOptions {
 }
 
 export async function setup(app: Application, options: SetupOptions) {
+	setVersion(options.version);
 	if (DB_POOL_SIZE != null) {
 		pine.env.db.poolSize = DB_POOL_SIZE;
 	}

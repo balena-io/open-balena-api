@@ -1,4 +1,5 @@
 import * as memoizee from 'memoizee';
+import { multiCacheMemoizee } from '../../infra/cache';
 
 import * as deviceTypesLib from '@resin.io/device-types';
 
@@ -10,7 +11,7 @@ export type DeviceType = deviceTypesLib.DeviceType;
 const BUILD_PROPERTY_CACHE_EXPIRATION = 10 * 60 * 1000; // 10 mins
 const BUILD_COMPRESSED_SIZE_CACHE_EXPIRATION = 20 * 60 * 1000; // 20 mins
 
-export const getLogoUrl = memoizee(
+export const getLogoUrl = multiCacheMemoizee(
 	async (
 		normalizedSlug: string,
 		buildId: string,
@@ -36,6 +37,7 @@ export const getLogoUrl = memoizee(
 		}
 	},
 	{
+		cacheKey: 'getLogoUrl',
 		promise: true,
 		primitive: true,
 		preFetch: true,
@@ -43,6 +45,7 @@ export const getLogoUrl = memoizee(
 	},
 );
 
+// We only cache this locally since it gets regularly cleared - is it actually necessary to clear?
 export const getDeviceTypeJson = memoizee(
 	async (
 		normalizedSlug: string,
@@ -74,13 +77,14 @@ export const getDeviceTypeJson = memoizee(
 	},
 );
 
-export const getCompressedSize = memoizee(
+export const getCompressedSize = multiCacheMemoizee(
 	async (normalizedSlug: string, buildId: string): Promise<number> => {
 		return await getFolderSize(
 			getImageKey(normalizedSlug, buildId, 'compressed'),
 		);
 	},
 	{
+		cacheKey: 'getCompressedSize',
 		promise: true,
 		primitive: true,
 		preFetch: true,
