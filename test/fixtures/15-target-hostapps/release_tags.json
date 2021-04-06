@@ -1,0 +1,86 @@
+{
+	"releasetag0-variant": {
+		"user": "admin",
+		"release": "release0",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"releasetag0-version": {
+		"user": "admin",
+		"release": "release0",
+		"tag_key": "version",
+		"value": "2.50.0+rev1"
+	},
+	"releasetag1-variant": {
+		"user": "admin",
+		"release": "release1",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"releasetag1-version": {
+		"user": "admin",
+		"release": "release1",
+		"tag_key": "version",
+		"value": "2.50.0+rev1"
+	},
+	"releasetag2-variant": {
+		"user": "admin",
+		"release": "release2",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"releasetag2-version": {
+		"user": "admin",
+		"release": "release2",
+		"tag_key": "version",
+		"value": "2.50.1+rev1"
+	},
+	"releasetag3-variant": {
+		"user": "admin",
+		"release": "release3",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"releasetag3-version": {
+		"user": "admin",
+		"release": "release3",
+		"tag_key": "version",
+		"value": "2021.01.0"
+	},
+	"releasetag4-variant": {
+		"user": "admin",
+		"release": "release4",
+		"tag_key": "variant",
+		"value": "development"
+	},
+	"releasetag4-version": {
+		"user": "admin",
+		"release": "release4",
+		"tag_key": "version",
+		"value": "2.50.0+rev1"
+	},
+	"releasetag5-variant": {
+		"user": "admin",
+		"release": "release5",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"releasetag5-version": {
+		"user": "admin",
+		"release": "release5",
+		"tag_key": "version",
+		"value": "2.52.0+rev1"
+	},
+	"releasetag6-variant": {
+		"user": "admin",
+		"release": "release6",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"releasetag6-version": {
+		"user": "admin",
+		"release": "release6",
+		"tag_key": "version",
+		"value": "2.53.0+rev1"
+	}
+}

@@ -546,6 +546,9 @@ Fact type: device is managed by service instance
 Fact type: device should be running release
 	Synonymous Form: release should be running on device
 	Necessity: each device should be running at most one release
+Fact type: device should be operated by release
+	Synonymous Form: release should operate device
+	Necessity: each device should be operated by at most one release
 Fact type: device1 is managed by device2
 	Synonymous Form: device2 manages device1
 	Necessity: each device1 is managed by at most one device2.
@@ -779,3 +782,6 @@ Rule: It is necessary that each application that owns a release1 that has a stat
 Rule: It is necessary that each release that should be running on a device, has a status that is equal to "success" and belongs to an application1 that the device belongs to.
 Rule: It is necessary that each release that should be running on an application, has a status that is equal to "success" and belongs to the application.
 Rule: It is necessary that each release that contains at least 2 images, belongs to an application that has an application type that supports multicontainer.
+Rule: It is necessary that each release that should operate a device, has a status that is equal to "success".
+Rule: It is necessary that each release that should operate a device, belongs to an application that is host and is for a device type that describes the device.
+Rule: It is necessary that each device that should be operated by a release, should be operated by a release that is not invalidated.
