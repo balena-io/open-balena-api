@@ -212,6 +212,7 @@ export interface Application {
 	is_host: boolean;
 	is_archived: boolean;
 	uuid: string;
+	is_public: boolean;
 }
 
 export interface ApplicationEnvironmentVariable {

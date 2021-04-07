@@ -455,6 +455,7 @@ Fact type: application has uuid
 	Necessity: each application has exactly one uuid.
 	Necessity: each uuid is of exactly one application.
 	Necessity: each application has a uuid that has a Length (Type) that is equal to 32.
+Fact type: application is public
 
 -- service instance
 
