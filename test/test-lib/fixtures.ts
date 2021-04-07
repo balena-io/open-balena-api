@@ -88,6 +88,8 @@ const loaders: Dictionary<LoaderFunc> = {
 			'depends_on__application',
 			'should_track_latest_release',
 			'application_type',
+			'is_public',
+			'is_host',
 		);
 
 		return await createResource({
@@ -181,13 +183,16 @@ const deleteResource = (resource: string) => async (obj: { id: number }) => {
 	});
 };
 
-const modelUnloadOrder = ['applications'] as const;
+const modelUnloadOrder = ['devices', 'applications', 'releases'];
+
 const unloaders: {
 	[K in typeof modelUnloadOrder[number]]: (obj: {
 		id: number;
 	}) => PromiseLike<void>;
 } = {
+	devices: deleteResource('device'),
 	applications: deleteResource('application'),
+	releases: deleteResource('release'),
 };
 
 export const clean = async (fixtures: AnyObject) => {

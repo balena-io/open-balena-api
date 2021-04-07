@@ -1,0 +1,2 @@
+ALTER TABLE "application"
+ADD COLUMN IF NOT EXISTS "is public" INT NOT NULL DEFAULT 0;
