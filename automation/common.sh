@@ -47,8 +47,7 @@ runapi () {
 		--link $db_id \
 		--link $redis_id \
 		--link $loki_id \
-		--cgroupns=host \
-		-v /sys/fs/cgroup:/sys/fs/cgroup:rw \
+		-v /sys/fs/cgroup:/sys/fs/cgroup:ro \
 		-e API_HOST=127.0.0.1 \
 		-e API_VPN_SERVICE_API_KEY=api_vpn_service_api_key \
 		-e BLUEBIRD_DEBUG=1 \
