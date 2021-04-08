@@ -39,6 +39,7 @@ describe('target hostapps', () => {
 	});
 
 	after(async () => {
+		await fixtures.clean({ devices: [device, esrDevice] });
 		await fixtures.clean(fx);
 	});
 
