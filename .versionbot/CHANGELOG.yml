@@ -1,4 +1,15 @@
 - commits:
+    - subject: Support caching of undefined in the multi-level cache
+      hash: 9febb035eebcf6633d4f79da7ebc8fd243efa72c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.134.1
+  date: 2021-04-08T16:36:31.785Z
+- commits:
     - subject: Support/use multi-level caching that can share cache between instances
       hash: 225148a311ab57e761bee74cbc3aedf9e8689dad
       body: ''
