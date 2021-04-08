@@ -38,6 +38,7 @@ export const getLogoUrl = multiCacheMemoizee(
 	},
 	{
 		cacheKey: 'getLogoUrl',
+		undefinedAs: false,
 		promise: true,
 		primitive: true,
 		preFetch: true,
@@ -85,6 +86,7 @@ export const getCompressedSize = multiCacheMemoizee(
 	},
 	{
 		cacheKey: 'getCompressedSize',
+		undefinedAs: false,
 		promise: true,
 		primitive: true,
 		preFetch: true,

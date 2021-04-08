@@ -5,23 +5,62 @@ import { REDIS_HOST, REDIS_PORT } from '../../lib/config';
 import { promisify } from 'util';
 import { version } from '../../lib/config';
 
+export type Defined = string | number | boolean | symbol | bigint | object;
+
+export interface MemoizedFn<T extends (...args: any[]) => Promise<any>> {
+	(...args: Parameters<T>): Promise<ResolvableReturnType<T>>;
+	clear: () => Promise<void>;
+}
+
 /**
  * A multi layer cache compatible with a subset of memoizee options
  * Note: `undefined`/`null` can only be locally cached so avoid if possible
  */
-export const multiCacheMemoizee = <T extends (...args: any[]) => any>(
+export function multiCacheMemoizee<
+	T extends (...args: any[]) => Promise<Defined | undefined>
+>(
 	fn: T,
 	opts: {
 		cacheKey?: string;
+		undefinedAs: Defined;
 		promise: true;
 		primitive: true;
 		preFetch?: true | number;
 		maxAge: number;
 		max?: number;
 	},
-) => {
+): MemoizedFn<T>;
+export function multiCacheMemoizee<
+	T extends (...args: any[]) => Promise<Defined>
+>(
+	fn: T,
+	opts: {
+		cacheKey?: string;
+		undefinedAs?: Defined;
+		promise: true;
+		primitive: true;
+		preFetch?: true | number;
+		maxAge: number;
+		max?: number;
+	},
+): MemoizedFn<T>;
+export function multiCacheMemoizee<
+	T extends (...args: any[]) => Promise<Defined | undefined>
+>(
+	fn: T,
+	opts: {
+		cacheKey?: string;
+		undefinedAs?: Defined;
+		promise: true;
+		primitive: true;
+		preFetch?: true | number;
+		maxAge: number;
+		max?: number;
+	},
+): MemoizedFn<T> {
 	const {
 		cacheKey = fn.name,
+		undefinedAs,
 		promise,
 		primitive,
 		preFetch,
@@ -49,23 +88,48 @@ export const multiCacheMemoizee = <T extends (...args: any[]) => any>(
 	if (preFetch != null) {
 		refreshThreshold = maxAge * (preFetch === true ? 0.333 : preFetch);
 	}
-	return multiCache(fn, cacheKey, {
-		ttl: maxAge,
-		max,
-		refreshThreshold,
-		// Treat everything as cacheable, including `undefined` - the same as memoizee
-		isCacheableValue: () => true,
-	});
-};
+	return multiCache(
+		fn,
+		cacheKey,
+		{
+			ttl: maxAge,
+			max,
+			refreshThreshold,
+			// Treat everything as cacheable, including `undefined` - the same as memoizee
+			isCacheableValue: () => true,
+		},
+		undefinedAs,
+	);
+}
 
 const usedCacheKeys: Dictionary<true> = {};
-const multiCache = <T extends (...args: any[]) => any>(
+/**
+ * @param undefinedAs - The value to use as a proxy for undefined in order to support caches that cannot handle undefined
+ */
+function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	fn: T,
 	cacheKey: string,
 	opts: Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
 		refreshThreshold?: number;
 	} & cacheManager.CacheOptions,
-) => {
+	undefinedAs?: Defined,
+): MemoizedFn<T>;
+function multiCache<T extends (...args: any[]) => Promise<Defined>>(
+	fn: T,
+	cacheKey: string,
+	opts: Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
+		refreshThreshold?: number;
+	} & cacheManager.CacheOptions,
+	undefinedAs?: undefined,
+): MemoizedFn<T>;
+function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
+	fn: T,
+	cacheKey: string,
+	opts: Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
+		refreshThreshold?: number;
+	} & cacheManager.CacheOptions,
+	undefinedAs?: Defined,
+): MemoizedFn<T> {
 	if (usedCacheKeys[cacheKey] === true) {
 		throw new Error(`Cache key '${cacheKey}' has already been taken`);
 	}
@@ -87,12 +151,21 @@ const multiCache = <T extends (...args: any[]) => any>(
 	const keyPrefix = `cache$${version}$${cacheKey}$`;
 	const memoizedFn = async (...args: Parameters<T>) => {
 		const key = `${keyPrefix}${primitiveKey(args)}`;
-		return await cache.wrap<ResolvableReturnType<T>>(key, async () => {
-			return await fn(...args);
-		});
+		const valueFromCache = await cache.wrap<ResolvableReturnType<T>>(
+			key,
+			async () => {
+				const valueToCache = await fn(...args);
+				// Some caches (eg redis) cannot handle caching undefined/null so we convert it to the `undefinedAs` proxy value
+				// which will be used when storing in the cache and then convert it back to undefined when retrieving from the cache
+				return valueToCache === undefined ? undefinedAs : valueToCache;
+			},
+		);
+		return valueFromCache === undefinedAs ? undefined : valueFromCache;
 	};
 
 	memoizedFn.clear = promisify(cache.reset);
 
-	return memoizedFn;
-};
+	// We need to cast because the `undefinedAs` handling makes typescript think we've reintroduced undefined
+	// but we've only reintroduced it if it was previously undefined
+	return memoizedFn as MemoizedFn<T>;
+}

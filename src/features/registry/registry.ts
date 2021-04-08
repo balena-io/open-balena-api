@@ -373,6 +373,7 @@ const $getSubject = multiCacheMemoizee(
 	},
 	{
 		cacheKey: '$getSubject',
+		undefinedAs: false,
 		promise: true,
 		maxAge: 5 * MINUTES,
 		primitive: true,
