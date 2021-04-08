@@ -1,5 +1,45 @@
-import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
+import {
+	sbvrUtils,
+	hooks,
+	permissions,
+	errors as pinejsErrors,
+} from '@balena/pinejs';
+import * as semver from 'balena-semver';
 import * as _ from 'lodash';
+const { BadRequestError } = pinejsErrors;
+
+hooks.addPureHook('PATCH', 'resin', 'device', {
+	/**
+	 * Disallow hostapp downgrades, using the related release resource
+	 */
+	async PRERUN(args) {
+		if (args.request.values.should_have_hostapp__release != null) {
+			// First try to coerce the value to an integer for
+			// moving forward
+			args.request.custom.hostappRelease = parseInt(
+				args.request.values.should_have_hostapp__release,
+				10,
+			);
+			// But let's check we actually got a value
+			// representing an integer
+			if (!Number.isInteger(args.request.custom.hostappRelease)) {
+				throw new BadRequestError('Expected an ID for the hostapp release');
+			}
+
+			// Ensure that we don't ever downgrade the hostapp
+			// from it's current version
+			await sbvrUtils
+				.getAffectedIds(args)
+				.then((ids) =>
+					checkHostappReleaseUpgrades(
+						args.api,
+						ids,
+						args.request.custom.hostappRelease,
+					),
+				);
+		}
+	},
+});
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	/**
@@ -121,4 +161,73 @@ async function getOSReleaseResource(
 			},
 		},
 	});
+}
+
+async function checkHostappReleaseUpgrades(
+	api: sbvrUtils.PinejsClient,
+	deviceIds: number[],
+	newHostappReleaseId: number,
+) {
+	if (deviceIds.length === 0) {
+		return;
+	}
+	const nullHostappCount = await api.get({
+		resource: 'device',
+		options: {
+			$count: { $filter: { id: { $in: deviceIds }, os_version: null } },
+		},
+	});
+
+	if (nullHostappCount === deviceIds.length) {
+		return;
+	}
+
+	const newHostappRelease = await api.get({
+		resource: 'release',
+		id: newHostappReleaseId,
+		options: {
+			$select: 'release_version',
+			$filter: {
+				is_invalidated: false,
+			},
+		},
+	});
+
+	if (newHostappRelease == null) {
+		throw new BadRequestError(
+			`Could not find a hostapp release with this ID ${newHostappReleaseId}`,
+		);
+	}
+
+	const newHostappVersion = newHostappRelease.release_version;
+
+	const releases = await api.get({
+		resource: 'release',
+		options: {
+			$select: 'release_version',
+			$filter: {
+				should_be_hostapp_on__device: {
+					$any: {
+						$alias: 'd',
+						$expr: {
+							d: {
+								id: {
+									$in: deviceIds,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	});
+
+	for (const release of releases) {
+		const oldVersion = release.release_version;
+		if (semver.lt(newHostappVersion, oldVersion)) {
+			throw new BadRequestError(
+				`Attempt to downgrade hostapp, which is not allowed`,
+			);
+		}
+	}
 }

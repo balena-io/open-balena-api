@@ -10,14 +10,14 @@ describe('target hostapps', () => {
 	// TODO should test:
 	// [x] ESR
 	// [x] ensure no upgrading to a different DT (need a rule)
+	// [x] no downgrades (need a hook)
 	// multiple variants
-	// no downgrades (need a hook)
 	//
 	// maybe these are for closed-api:
 	// can migrate ESR -> non-ESR (do we/should we support this?)
 	// [x] can migrate non-ESR -> ESR
 	// do we need ESR at all in oB?
-	// private DTs
+	// private DTs (probably closed)
 	let fx: fixtures.Fixtures;
 	let admin: UserObjectParam;
 	let applicationId: number;
@@ -103,6 +103,13 @@ describe('target hostapps', () => {
 		expect(body.d[0]['should_have_hostapp__release'].__id).to.equal(
 			upgradeReleaseId,
 		);
+	});
+
+	it('should fail to downgrade', async () => {
+		await supertest(admin)
+			.patch(`/${version}/device(${device.id})`)
+			.send({ should_have_hostapp__release: fx.releases.release0.id })
+			.expect(400, '"Attempt to downgrade hostapp, which is not allowed"');
 	});
 
 	it('should succeed in PATCHing device to ESR release', async () => {
