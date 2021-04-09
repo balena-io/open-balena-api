@@ -1,4 +1,38 @@
 - commits:
+    - subject: Update open-balena-base to 11.1.2
+      hash: 270b17fa8c873c284eba92536cacc78c05bf310c
+      body: |
+        Update open-balena-base from 11.1.0 to 11.1.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 14.16.1 and npm to 6.14.12
+              hash: 602c54358898ca38005824c748a0682df814d5a8
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.1.2
+          date: 2021-04-08T16:53:39.920Z
+        - commits:
+            - subject: Drop CircleCI
+              hash: 35e8f707fac5767b1d85c30d3ad9244caef1efd1
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-11.1.1
+          date: 2021-03-17T18:24:28.365Z
+  version: 0.134.2
+  date: 2021-04-09T13:38:16.829Z
+- commits:
     - subject: Support caching of undefined in the multi-level cache
       hash: 9febb035eebcf6633d4f79da7ebc8fd243efa72c
       body: ''
