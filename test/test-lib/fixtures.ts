@@ -134,6 +134,26 @@ const loaders: Dictionary<LoaderFunc> = {
 			user,
 		});
 	},
+	release_tags: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const release = await fixtures.releases[jsonData.release];
+		if (release == null) {
+			logErrorAndThrow(`Could not find release: ${jsonData.release}`);
+		}
+
+		return await createResource({
+			resource: 'release_tag',
+			body: {
+				release: release.id,
+				..._.pick(jsonData, 'tag_key', 'value'),
+			},
+			user,
+		});
+	},
 	devices: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.belongs_to__user];
 		if (user == null) {

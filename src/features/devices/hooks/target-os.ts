@@ -53,6 +53,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 					args.api,
 					ids,
 					args.request.values.os_version,
+					args.request.values.os_variant,
 				);
 			});
 		}
@@ -63,6 +64,7 @@ async function setOSReleaseResource(
 	api: sbvrUtils.PinejsClient,
 	deviceIds: number[],
 	osVersion: string,
+	osVariant: string,
 ) {
 	if (deviceIds.length === 0) {
 		return;
@@ -104,6 +106,7 @@ async function setOSReleaseResource(
 			const [osRelease] = await getOSReleaseResource(
 				api,
 				osVersion,
+				osVariant,
 				deviceType,
 			);
 
@@ -129,6 +132,7 @@ async function setOSReleaseResource(
 async function getOSReleaseResource(
 	api: sbvrUtils.PinejsClient,
 	osVersion: string,
+	osVariant: string,
 	deviceTypeId: string,
 ) {
 	return await api.get({
@@ -136,8 +140,8 @@ async function getOSReleaseResource(
 		options: {
 			$select: ['id', 'belongs_to__application'],
 			$filter: {
-				// TODO: maybe better to use release tags (to respect variant and version, though bleh)
-				release_version: osVersion,
+				// TODO: better to (eventually) use release version, once that's fully supported
+				// https://www.flowdock.com/app/rulemotion/resin-tech/threads/Ao4qzbDh8Z4Pgq_xF99Ld5fME35
 				status: 'success',
 				belongs_to__application: {
 					$any: {
@@ -158,6 +162,40 @@ async function getOSReleaseResource(
 						},
 					},
 				},
+				$and: [
+					{
+						release_tag: {
+							$any: {
+								$alias: 'rt',
+								$expr: {
+									rt: {
+										// TODO: probably better to move all this string munging to a normalization
+										// function. also, maybe we care about devices provisioning with `resinOS` in
+										// the name, but probably we can just treat those as so old it doesn't really
+										// matter.
+										value: osVersion.replace('balenaOS ', ''),
+										tag_key: 'version',
+									},
+								},
+							},
+						},
+					},
+					{
+						release_tag: {
+							$any: {
+								$alias: 'rt',
+								$expr: {
+									rt: {
+										// TODO: probably better to move all this string munging to a normalization
+										// function.
+										value: osVariant === 'prod' ? 'production' : 'development',
+										tag_key: 'variant',
+									},
+								},
+							},
+						},
+					},
+				],
 			},
 		},
 	});

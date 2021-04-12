@@ -11,7 +11,7 @@ describe('target hostapps', () => {
 	// [x] ESR
 	// [x] ensure no upgrading to a different DT (need a rule)
 	// [x] no downgrades (need a hook)
-	// multiple variants
+	// [x] multiple variants
 	//
 	// maybe these are for closed-api:
 	// can migrate ESR -> non-ESR (do we/should we support this?)
@@ -23,6 +23,8 @@ describe('target hostapps', () => {
 	let applicationId: number;
 	let device: fakeDevice.Device;
 	let esrDevice: fakeDevice.Device;
+	let noMatchDevice: fakeDevice.Device;
+	let prodNucHostappReleaseId: number;
 	let raspberryPiHostappReleaseId: number;
 	let upgradeReleaseId: number;
 	let esrHostappReleaseId: number;
@@ -33,13 +35,15 @@ describe('target hostapps', () => {
 		applicationId = fx.applications['user-app1'].id;
 		device = await fakeDevice.provisionDevice(admin, applicationId);
 		esrDevice = await fakeDevice.provisionDevice(admin, applicationId);
+		noMatchDevice = await fakeDevice.provisionDevice(admin, applicationId);
+		prodNucHostappReleaseId = fx.releases.release0.id;
 		raspberryPiHostappReleaseId = fx.releases.release1.id;
 		upgradeReleaseId = fx.releases.release2.id;
 		esrHostappReleaseId = fx.releases.release3.id;
 	});
 
 	after(async () => {
-		await fixtures.clean({ devices: [device, esrDevice] });
+		await fixtures.clean({ devices: [device, esrDevice, noMatchDevice] });
 		await fixtures.clean(fx);
 	});
 
@@ -60,6 +64,9 @@ describe('target hostapps', () => {
 			.expect(200);
 		expect(body.d[0]).to.not.be.undefined;
 		expect(body.d[0]['should_have_hostapp__release']).to.be.not.null;
+		expect(body.d[0]['should_have_hostapp__release'].__id).to.equal(
+			prodNucHostappReleaseId,
+		);
 	});
 
 	it('should provision with a linked ESR hostapp', async () => {
@@ -124,5 +131,26 @@ describe('target hostapps', () => {
 		expect(body.d[0]['should_have_hostapp__release'].__id).to.equal(
 			esrHostappReleaseId,
 		);
+	});
+
+	it('should still provision with a nonexistent hostapp', async () => {
+		const devicePatchBody = {
+			local: {
+				is_online: true,
+				os_version: 'balenaOS 2999.01.0',
+				os_variant: 'prod',
+			},
+		};
+
+		await noMatchDevice.patchStateV2(devicePatchBody);
+		const { body } = await supertest(admin)
+			.get(
+				`/${version}/device(${noMatchDevice.id})?$select=should_have_hostapp__release`,
+			)
+			.expect(200);
+		expect(body.d[0]).to.not.be.undefined;
+		expect(body.d[0]['should_have_hostapp__release']).to.be.null;
+		expect(body.d[0]['os_version']).to.be.not.null;
+		expect(body.d[0]['os_variant']).to.be.not.null;
 	});
 });

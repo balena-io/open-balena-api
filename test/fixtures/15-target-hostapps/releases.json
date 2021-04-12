@@ -30,5 +30,13 @@
 		"source": "cloud",
 		"status": "success",
 		"user": "admin"
+	},
+	"release4": {
+		"application": "intel-nuc",
+		"composition": {},
+		"release_version": "balenaOS 2.50.0+rev1.dev",
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
 	}
 }
