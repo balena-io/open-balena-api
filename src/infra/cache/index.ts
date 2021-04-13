@@ -1,5 +1,6 @@
 import * as cacheManager from 'cache-manager';
 import redisStore = require('cache-manager-redis-store');
+import type { Options as MemoizeeOptions } from 'memoizee';
 import primitiveKey = require('memoizee/normalizers/primitive');
 import { REDIS_HOST, REDIS_PORT } from '../../lib/config';
 import { promisify } from 'util';
@@ -25,10 +26,8 @@ export function multiCacheMemoizee<
 		undefinedAs: Defined;
 		promise: true;
 		primitive: true;
-		preFetch?: true | number;
 		maxAge: number;
-		max?: number;
-	},
+	} & Pick<MemoizeeOptions<any>, 'preFetch' | 'max' | 'normalizer'>,
 ): MemoizedFn<T>;
 export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined>
@@ -39,10 +38,8 @@ export function multiCacheMemoizee<
 		undefinedAs?: Defined;
 		promise: true;
 		primitive: true;
-		preFetch?: true | number;
 		maxAge: number;
-		max?: number;
-	},
+	} & Pick<MemoizeeOptions<any>, 'preFetch' | 'max' | 'normalizer'>,
 ): MemoizedFn<T>;
 export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined | undefined>
@@ -53,10 +50,8 @@ export function multiCacheMemoizee<
 		undefinedAs?: Defined;
 		promise: true;
 		primitive: true;
-		preFetch?: true | number;
 		maxAge: number;
-		max?: number;
-	},
+	} & Pick<MemoizeeOptions<any>, 'preFetch' | 'max' | 'normalizer'>,
 ): MemoizedFn<T> {
 	const {
 		cacheKey = fn.name,
@@ -66,6 +61,7 @@ export function multiCacheMemoizee<
 		preFetch,
 		maxAge,
 		max,
+		normalizer = primitiveKey,
 		...remaining
 	} = opts;
 	const remainingKeys = Object.keys(remaining);
@@ -91,6 +87,7 @@ export function multiCacheMemoizee<
 	return multiCache(
 		fn,
 		cacheKey,
+		normalizer,
 		{
 			ttl: maxAge,
 			max,
@@ -109,6 +106,7 @@ const usedCacheKeys: Dictionary<true> = {};
 function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	fn: T,
 	cacheKey: string,
+	normalizer: NonNullable<MemoizeeOptions<any>['normalizer']>,
 	opts: Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
 		refreshThreshold?: number;
 	} & cacheManager.CacheOptions,
@@ -117,6 +115,7 @@ function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 function multiCache<T extends (...args: any[]) => Promise<Defined>>(
 	fn: T,
 	cacheKey: string,
+	normalizer: NonNullable<MemoizeeOptions<any>['normalizer']>,
 	opts: Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
 		refreshThreshold?: number;
 	} & cacheManager.CacheOptions,
@@ -125,6 +124,7 @@ function multiCache<T extends (...args: any[]) => Promise<Defined>>(
 function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	fn: T,
 	cacheKey: string,
+	normalizer: NonNullable<MemoizeeOptions<any>['normalizer']>,
 	opts: Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
 		refreshThreshold?: number;
 	} & cacheManager.CacheOptions,
@@ -150,7 +150,7 @@ function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	// We include the version so that we get automatic invalidation on updates which might change the memoized fn behavior
 	const keyPrefix = `cache$${version}$${cacheKey}$`;
 	const memoizedFn = async (...args: Parameters<T>) => {
-		const key = `${keyPrefix}${primitiveKey(args)}`;
+		const key = `${keyPrefix}${normalizer(args)}`;
 		const valueFromCache = await cache.wrap<ResolvableReturnType<T>>(
 			key,
 			async () => {
