@@ -2,7 +2,6 @@
 	"release0": {
 		"application": "intel-nuc",
 		"composition": {},
-		"release_version": "balenaOS 2.50.0+rev1",
 		"source": "cloud",
 		"status": "success",
 		"user": "admin"
@@ -10,7 +9,6 @@
 	"release1": {
 		"application": "raspberrypi3",
 		"composition": {},
-		"release_version": "balenaOS 2.50.0+rev1",
 		"source": "cloud",
 		"status": "success",
 		"user": "admin"
@@ -18,7 +16,6 @@
 	"release2": {
 		"application": "intel-nuc",
 		"composition": {},
-		"release_version": "balenaOS 2.50.1+rev1",
 		"source": "cloud",
 		"status": "success",
 		"user": "admin"
@@ -26,7 +23,6 @@
 	"release3": {
 		"application": "intel-nuc-esr",
 		"composition": {},
-		"release_version": "balenaOS 2021.01.0",
 		"source": "cloud",
 		"status": "success",
 		"user": "admin"
@@ -34,7 +30,6 @@
 	"release4": {
 		"application": "intel-nuc",
 		"composition": {},
-		"release_version": "balenaOS 2.50.0+rev1.dev",
 		"source": "cloud",
 		"status": "success",
 		"user": "admin"
