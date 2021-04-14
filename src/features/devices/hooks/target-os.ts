@@ -13,11 +13,11 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	 * Disallow hostapp downgrades, using the related release resource
 	 */
 	async PRERUN(args) {
-		if (args.request.values.should_have_hostapp__release != null) {
+		if (args.request.values.is_initialized_by__release != null) {
 			// First try to coerce the value to an integer for
 			// moving forward
 			args.request.custom.hostappRelease = parseInt(
-				args.request.values.should_have_hostapp__release,
+				args.request.values.is_initialized_by__release,
 				10,
 			);
 			// But let's check we actually got a value
@@ -43,7 +43,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	/**
-	 * When a device checks in with it's initial OS version, set the corresponding should_have_hostapp__release resource
+	 * When a device checks in with it's initial OS version, set the corresponding is_initialized_by__release resource
 	 * using its current reported version.
 	 */
 	async PRERUN(args) {
@@ -122,7 +122,7 @@ async function setOSReleaseResource(
 					},
 				},
 				body: {
-					should_have_hostapp__release: osRelease.id,
+					is_initialized_by__release: osRelease.id,
 				},
 			});
 		}),
@@ -237,6 +237,7 @@ async function checkHostappReleaseUpgrades(
 		);
 	}
 
+	// TODO: this should use tags
 	const newHostappVersion = newHostappRelease.release_version;
 
 	const releases = await api.get({
@@ -244,7 +245,7 @@ async function checkHostappReleaseUpgrades(
 		options: {
 			$select: 'release_version',
 			$filter: {
-				should_be_hostapp_on__device: {
+				initializes__device: {
 					$any: {
 						$alias: 'd',
 						$expr: {

@@ -311,7 +311,7 @@ export interface Device {
 	api_secret: string | null;
 	is_managed_by__service_instance: { __id: number } | [ServiceInstance?] | null;
 	should_be_running__release: { __id: number } | [Release?] | null;
-	should_have_hostapp__release: { __id: number } | [Release?] | null;
+	is_initialized_by__release: { __id: number } | [Release?] | null;
 	is_managed_by__device: { __id: number } | [Device?] | null;
 	is_web_accessible: boolean | null;
 	overall_status: string | null;
@@ -472,6 +472,7 @@ export interface MyApplication {
 	is_host: boolean;
 	is_archived: boolean;
 	uuid: string;
+	is_public: boolean;
 }
 
 export interface UserHasDirectAccessToApplication {

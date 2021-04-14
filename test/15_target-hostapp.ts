@@ -59,12 +59,12 @@ describe('target hostapps', () => {
 		await device.patchStateV2(devicePatchBody);
 		const { body } = await supertest(admin)
 			.get(
-				`/${version}/device(${device.id})?$select=should_have_hostapp__release`,
+				`/${version}/device(${device.id})?$select=is_initialized_by__release`,
 			)
 			.expect(200);
 		expect(body.d[0]).to.not.be.undefined;
-		expect(body.d[0]['should_have_hostapp__release']).to.be.not.null;
-		expect(body.d[0]['should_have_hostapp__release'].__id).to.equal(
+		expect(body.d[0]['is_initialized_by__release']).to.be.not.null;
+		expect(body.d[0]['is_initialized_by__release'].__id).to.equal(
 			prodNucHostappReleaseId,
 		);
 	});
@@ -81,33 +81,33 @@ describe('target hostapps', () => {
 		await esrDevice.patchStateV2(devicePatchBody);
 		const { body } = await supertest(admin)
 			.get(
-				`/${version}/device(${esrDevice.id})?$select=should_have_hostapp__release`,
+				`/${version}/device(${esrDevice.id})?$select=is_initialized_by__release`,
 			)
 			.expect(200);
 		expect(body.d[0]).to.not.be.undefined;
-		expect(body.d[0]['should_have_hostapp__release']).to.be.not.null;
+		expect(body.d[0]['is_initialized_by__release']).to.be.not.null;
 	});
 
 	it('should fail to PATCH intel-nuc device to raspberrypi3 hostapp', async () => {
 		await supertest(admin)
 			.patch(`/${version}/device(${device.id})`)
-			.send({ should_have_hostapp__release: raspberryPiHostappReleaseId })
+			.send({ is_initialized_by__release: raspberryPiHostappReleaseId })
 			.expect(
 				400,
-				'"It is necessary that each release that should be hostapp on a device, belongs to an application that is host and is for a device type that describes the device."',
+				'"It is necessary that each release that initializes a device, belongs to an application that is host and is for a device type that describes the device."',
 			);
 	});
 
 	it('should succeed in PATCHing device to greater version', async () => {
 		await supertest(admin)
 			.patch(`/${version}/device(${device.id})`)
-			.send({ should_have_hostapp__release: upgradeReleaseId })
+			.send({ is_initialized_by__release: upgradeReleaseId })
 			.expect(200);
 		const { body } = await supertest(admin).get(
-			`/${version}/device(${device.id})?$select=should_have_hostapp__release`,
+			`/${version}/device(${device.id})?$select=is_initialized_by__release`,
 		);
 		expect(body.d[0]).to.not.be.undefined;
-		expect(body.d[0]['should_have_hostapp__release'].__id).to.equal(
+		expect(body.d[0]['is_initialized_by__release'].__id).to.equal(
 			upgradeReleaseId,
 		);
 	});
@@ -115,20 +115,20 @@ describe('target hostapps', () => {
 	it('should fail to downgrade', async () => {
 		await supertest(admin)
 			.patch(`/${version}/device(${device.id})`)
-			.send({ should_have_hostapp__release: fx.releases.release0.id })
+			.send({ is_initialized_by__release: fx.releases.release0.id })
 			.expect(400, '"Attempt to downgrade hostapp, which is not allowed"');
 	});
 
 	it('should succeed in PATCHing device to ESR release', async () => {
 		await supertest(admin)
 			.patch(`/${version}/device(${device.id})`)
-			.send({ should_have_hostapp__release: esrHostappReleaseId })
+			.send({ is_initialized_by__release: esrHostappReleaseId })
 			.expect(200);
 		const { body } = await supertest(admin).get(
-			`/${version}/device(${device.id})?$select=should_have_hostapp__release`,
+			`/${version}/device(${device.id})?$select=is_initialized_by__release`,
 		);
 		expect(body.d[0]).to.not.be.undefined;
-		expect(body.d[0]['should_have_hostapp__release'].__id).to.equal(
+		expect(body.d[0]['is_initialized_by__release'].__id).to.equal(
 			esrHostappReleaseId,
 		);
 	});
@@ -145,11 +145,11 @@ describe('target hostapps', () => {
 		await noMatchDevice.patchStateV2(devicePatchBody);
 		const { body } = await supertest(admin)
 			.get(
-				`/${version}/device(${noMatchDevice.id})?$select=should_have_hostapp__release`,
+				`/${version}/device(${noMatchDevice.id})?$select=is_initialized_by__release`,
 			)
 			.expect(200);
 		expect(body.d[0]).to.not.be.undefined;
-		expect(body.d[0]['should_have_hostapp__release']).to.be.null;
+		expect(body.d[0]['is_initialized_by__release']).to.be.null;
 		expect(body.d[0]['os_version']).to.be.not.null;
 		expect(body.d[0]['os_variant']).to.be.not.null;
 	});
