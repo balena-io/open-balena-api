@@ -782,5 +782,5 @@ Rule: It is necessary that each application that owns a release1 that has a stat
 Rule: It is necessary that each release that should be running on a device, has a status that is equal to "success" and belongs to an application1 that the device belongs to.
 Rule: It is necessary that each release that should be running on an application, has a status that is equal to "success" and belongs to the application.
 Rule: It is necessary that each release that contains at least 2 images, belongs to an application that has an application type that supports multicontainer.
-Rule: It is necessary that each release that initializes a device, has a status that is equal to "success" and has exactly one release version.
+Rule: It is necessary that each release that initializes a device, has a status that is equal to "success".
 Rule: It is necessary that each release that initializes a device, belongs to an application that is host and is for a device type that describes the device.

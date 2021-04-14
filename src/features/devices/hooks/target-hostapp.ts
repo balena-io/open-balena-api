@@ -224,9 +224,12 @@ async function checkHostappReleaseUpgrades(
 		resource: 'release',
 		id: newHostappReleaseId,
 		options: {
-			$select: 'release_version',
+			$expand: {
+				release_tag: { $filter: { tag_key: 'version' }, $select: ['value'] },
+			},
 			$filter: {
 				is_invalidated: false,
+				status: 'success',
 			},
 		},
 	});
@@ -237,13 +240,15 @@ async function checkHostappReleaseUpgrades(
 		);
 	}
 
-	// TODO: this should use tags
-	const newHostappVersion = newHostappRelease.release_version;
+	// TODO: this validation should eventually use release_version, not tags
+	const newHostappVersion = newHostappRelease.release_tag[0].value;
 
 	const releases = await api.get({
 		resource: 'release',
 		options: {
-			$select: 'release_version',
+			$expand: {
+				release_tag: { $filter: { tag_key: 'version' }, $select: ['value'] },
+			},
 			$filter: {
 				initializes__device: {
 					$any: {
@@ -262,7 +267,7 @@ async function checkHostappReleaseUpgrades(
 	});
 
 	for (const release of releases) {
-		const oldVersion = release.release_version;
+		const oldVersion = release.release_tag[0].value;
 		if (semver.lt(newHostappVersion, oldVersion)) {
 			throw new BadRequestError(
 				`Attempt to downgrade hostapp, which is not allowed`,
