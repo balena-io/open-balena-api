@@ -1,3 +1,3 @@
 import './defaults-validation';
 import './moving';
-import './target-os';
+import './target-hostapp';
