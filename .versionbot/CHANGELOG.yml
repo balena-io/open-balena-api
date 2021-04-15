@@ -1,4 +1,18 @@
 - commits:
+    - subject: Stop allowing cache clearing for multi-level cache
+      hash: 091863ebed83d587e08db9889bef647f21326393
+      body: |
+        This causes problems with the redis level of the cache because clearing
+        the cache requires clearing the entire redis database which is far more
+        aggressive than we want to support
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.135.0
+  date: 2021-04-15T13:18:37.793Z
+- commits:
     - subject: Add support for the `normalizer` option to the multi-level cache
       hash: be35944fef5dafbff36bd272cc0a67ad870994ae
       body: ''
