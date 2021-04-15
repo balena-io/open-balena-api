@@ -3,15 +3,9 @@ import redisStore = require('cache-manager-redis-store');
 import type { Options as MemoizeeOptions } from 'memoizee';
 import primitiveKey = require('memoizee/normalizers/primitive');
 import { REDIS_HOST, REDIS_PORT } from '../../lib/config';
-import { promisify } from 'util';
 import { version } from '../../lib/config';
 
 export type Defined = string | number | boolean | symbol | bigint | object;
-
-export interface MemoizedFn<T extends (...args: any[]) => Promise<any>> {
-	(...args: Parameters<T>): Promise<ResolvableReturnType<T>>;
-	clear: () => Promise<void>;
-}
 
 /**
  * A multi layer cache compatible with a subset of memoizee options
@@ -28,7 +22,7 @@ export function multiCacheMemoizee<
 		primitive: true;
 		maxAge: number;
 	} & Pick<MemoizeeOptions<any>, 'preFetch' | 'max' | 'normalizer'>,
-): MemoizedFn<T>;
+): T;
 export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined>
 >(
@@ -40,7 +34,7 @@ export function multiCacheMemoizee<
 		primitive: true;
 		maxAge: number;
 	} & Pick<MemoizeeOptions<any>, 'preFetch' | 'max' | 'normalizer'>,
-): MemoizedFn<T>;
+): T;
 export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined | undefined>
 >(
@@ -52,7 +46,7 @@ export function multiCacheMemoizee<
 		primitive: true;
 		maxAge: number;
 	} & Pick<MemoizeeOptions<any>, 'preFetch' | 'max' | 'normalizer'>,
-): MemoizedFn<T> {
+): T {
 	const {
 		cacheKey = fn.name,
 		undefinedAs,
@@ -111,7 +105,7 @@ function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 		refreshThreshold?: number;
 	} & cacheManager.CacheOptions,
 	undefinedAs?: Defined,
-): MemoizedFn<T>;
+): T;
 function multiCache<T extends (...args: any[]) => Promise<Defined>>(
 	fn: T,
 	cacheKey: string,
@@ -120,7 +114,7 @@ function multiCache<T extends (...args: any[]) => Promise<Defined>>(
 		refreshThreshold?: number;
 	} & cacheManager.CacheOptions,
 	undefinedAs?: undefined,
-): MemoizedFn<T>;
+): T;
 function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	fn: T,
 	cacheKey: string,
@@ -129,7 +123,7 @@ function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 		refreshThreshold?: number;
 	} & cacheManager.CacheOptions,
 	undefinedAs?: Defined,
-): MemoizedFn<T> {
+): T {
 	if (usedCacheKeys[cacheKey] === true) {
 		throw new Error(`Cache key '${cacheKey}' has already been taken`);
 	}
@@ -163,9 +157,7 @@ function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 		return valueFromCache === undefinedAs ? undefined : valueFromCache;
 	};
 
-	memoizedFn.clear = promisify(cache.reset);
-
 	// We need to cast because the `undefinedAs` handling makes typescript think we've reintroduced undefined
 	// but we've only reintroduced it if it was previously undefined
-	return memoizedFn as MemoizedFn<T>;
+	return memoizedFn as T;
 }
