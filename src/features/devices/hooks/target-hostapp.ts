@@ -13,11 +13,11 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	 * Disallow hostapp downgrades, using the related release resource
 	 */
 	async PRERUN(args) {
-		if (args.request.values.is_initialized_by__release != null) {
+		if (args.request.values.should_be_operated_by__release != null) {
 			// First try to coerce the value to an integer for
 			// moving forward
 			args.request.custom.hostappRelease = parseInt(
-				args.request.values.is_initialized_by__release,
+				args.request.values.should_be_operated_by__release,
 				10,
 			);
 			// But let's check we actually got a value
@@ -43,7 +43,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	/**
-	 * When a device checks in with it's initial OS version, set the corresponding is_initialized_by__release resource
+	 * When a device checks in with it's initial OS version, set the corresponding should_be_operated_by__release resource
 	 * using its current reported version.
 	 */
 	async PRERUN(args) {
@@ -122,7 +122,7 @@ async function setOSReleaseResource(
 					},
 				},
 				body: {
-					is_initialized_by__release: osRelease.id,
+					should_be_operated_by__release: osRelease.id,
 				},
 			});
 		}),
@@ -250,7 +250,7 @@ async function checkHostappReleaseUpgrades(
 				release_tag: { $filter: { tag_key: 'version' }, $select: ['value'] },
 			},
 			$filter: {
-				initializes__device: {
+				should_operate__device: {
 					$any: {
 						$alias: 'd',
 						$expr: {

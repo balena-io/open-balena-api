@@ -311,7 +311,7 @@ export interface Device {
 	api_secret: string | null;
 	is_managed_by__service_instance: { __id: number } | [ServiceInstance?] | null;
 	should_be_running__release: { __id: number } | [Release?] | null;
-	is_initialized_by__release: { __id: number } | [Release?] | null;
+	should_be_operated_by__release: { __id: number } | [Release?] | null;
 	is_managed_by__device: { __id: number } | [Device?] | null;
 	is_web_accessible: boolean | null;
 	overall_status: string | null;
