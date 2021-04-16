@@ -6,6 +6,7 @@ import {
 } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 import * as _ from 'lodash';
+import { Device, ReleaseTag, PickDeferred } from '../../../balena-model';
 const { BadRequestError } = pinejsErrors;
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
@@ -28,15 +29,12 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 
 			// Ensure that we don't ever downgrade the hostapp
 			// from it's current version
-			await sbvrUtils
-				.getAffectedIds(args)
-				.then((ids) =>
-					checkHostappReleaseUpgrades(
-						args.api,
-						ids,
-						args.request.custom.hostappRelease,
-					),
-				);
+			const ids = await sbvrUtils.getAffectedIds(args);
+			await checkHostappReleaseUpgrades(
+				args.api,
+				ids,
+				args.request.custom.hostappRelease,
+			);
 		}
 	},
 });
@@ -48,14 +46,13 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	 */
 	async PRERUN(args) {
 		if (args.request.values.os_version != null) {
-			await sbvrUtils.getAffectedIds(args).then(async (ids) => {
-				await setOSReleaseResource(
-					args.api,
-					ids,
-					args.request.values.os_version,
-					args.request.values.os_variant,
-				);
-			});
+			const ids = await sbvrUtils.getAffectedIds(args);
+			await setOSReleaseResource(
+				args.api,
+				ids,
+				args.request.values.os_version,
+				args.request.values.os_variant,
+			);
 		}
 	},
 });
@@ -69,7 +66,7 @@ async function setOSReleaseResource(
 	if (deviceIds.length === 0) {
 		return;
 	}
-	const devices = await api.get({
+	const devices = (await api.get({
 		resource: 'device',
 		options: {
 			// if the device already has an os_version, just bail.
@@ -79,7 +76,7 @@ async function setOSReleaseResource(
 			},
 			$select: ['id', 'is_of__device_type'],
 		},
-	});
+	})) as Array<PickDeferred<Device, 'id' | 'is_of__device_type'>>;
 
 	if (devices.length === 0) {
 		return;
@@ -147,18 +144,10 @@ async function getOSReleaseResource(
 					$any: {
 						$alias: 'a',
 						$expr: {
-							$and: [
-								{
-									a: {
-										is_for__device_type: deviceTypeId,
-									},
-								},
-								{
-									a: {
-										is_host: true,
-									},
-								},
-							],
+							a: {
+								is_for__device_type: deviceTypeId,
+								is_host: true,
+							},
 						},
 					},
 				},
@@ -228,6 +217,8 @@ async function checkHostappReleaseUpgrades(
 				release_tag: { $filter: { tag_key: 'version' }, $select: ['value'] },
 			},
 			$filter: {
+				// we shouldn't be able to upgrade to an invalid release, but we can provision to one (so this isn't an
+				// SBVR rule)
 				is_invalidated: false,
 				status: 'success',
 			},
@@ -243,20 +234,28 @@ async function checkHostappReleaseUpgrades(
 	// TODO: this validation should eventually use release_version, not tags
 	const newHostappVersion = newHostappRelease.release_tag[0].value;
 
-	const releases = await api.get({
-		resource: 'release',
+	const releases = (await api.get({
+		resource: 'release_tag',
 		options: {
-			$expand: {
-				release_tag: { $filter: { tag_key: 'version' }, $select: ['value'] },
-			},
+			$select: ['value'],
 			$filter: {
-				should_operate__device: {
+				tag_key: 'version',
+				release: {
 					$any: {
-						$alias: 'd',
+						$alias: 'r',
 						$expr: {
-							d: {
-								id: {
-									$in: deviceIds,
+							r: {
+								should_operate__device: {
+									$any: {
+										$alias: 'd',
+										$expr: {
+											d: {
+												id: {
+													$in: deviceIds,
+												},
+											},
+										},
+									},
 								},
 							},
 						},
@@ -264,10 +263,10 @@ async function checkHostappReleaseUpgrades(
 				},
 			},
 		},
-	});
+	})) as Array<Pick<ReleaseTag, 'value'>>;
 
 	for (const release of releases) {
-		const oldVersion = release.release_tag[0].value;
+		const oldVersion = release.value;
 		if (semver.lt(newHostappVersion, oldVersion)) {
 			throw new BadRequestError(
 				`Attempt to downgrade hostapp, which is not allowed`,
