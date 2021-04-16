@@ -13,8 +13,8 @@ ALTER TABLE "device"
 ALTER COLUMN "api heartbeat state" SET DEFAULT 'unknown';
 
 ALTER TABLE "release"
-ALTER COLUMN "release type" SET DEFAULT 'final',
-ALTER COLUMN "is passing tests" SET DEFAULT 1;
+ALTER COLUMN "release type" SET DEFAULT 'draft',
+ALTER COLUMN "is passing tests" SET DEFAULT 0;
 
 -------------------------------
 -- Start foreign key indexes --

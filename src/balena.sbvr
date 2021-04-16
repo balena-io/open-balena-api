@@ -293,6 +293,7 @@ Term: application
 	Concept Type: actor (Auth)
 
 	Fact type: application [should track latest release]
+		Definition: "none" or "any" or "stable"
 
 	Fact type: application has env var name
 		Term Form: application environment variable

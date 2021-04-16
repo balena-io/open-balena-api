@@ -16,10 +16,13 @@ const updateLatestRelease = async (
 		return;
 	}
 
+	// if should_track_latest_release === 'none', we never update
+	// if should_track_latest_release === 'any', we update regardless
+	// if should_track_latest_release === 'stable', we update to the most recent passing, valid, final release
 	const appsToUpdate = await api.get({
 		resource: 'application',
 		options: {
-			$select: 'id',
+			$select: ['id', 'should_track_latest_release'],
 			$expand: {
 				owns__release: {
 					$select: 'id',
