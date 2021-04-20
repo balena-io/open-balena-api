@@ -24,10 +24,12 @@ describe('target hostapps', () => {
 	let device: fakeDevice.Device;
 	let esrDevice: fakeDevice.Device;
 	let noMatchDevice: fakeDevice.Device;
+	let invalidatedReleaseDevice: fakeDevice.Device;
 	let prodNucHostappReleaseId: number;
 	let raspberryPiHostappReleaseId: number;
 	let upgradeReleaseId: number;
 	let esrHostappReleaseId: number;
+	let invalidatedReleaseId: number;
 
 	before(async () => {
 		fx = await fixtures.load('15-target-hostapps');
@@ -36,10 +38,15 @@ describe('target hostapps', () => {
 		device = await fakeDevice.provisionDevice(admin, applicationId);
 		esrDevice = await fakeDevice.provisionDevice(admin, applicationId);
 		noMatchDevice = await fakeDevice.provisionDevice(admin, applicationId);
+		invalidatedReleaseDevice = await fakeDevice.provisionDevice(
+			admin,
+			applicationId,
+		);
 		prodNucHostappReleaseId = fx.releases.release0.id;
 		raspberryPiHostappReleaseId = fx.releases.release1.id;
 		upgradeReleaseId = fx.releases.release2.id;
 		esrHostappReleaseId = fx.releases.release3.id;
+		invalidatedReleaseId = fx.releases.release5.id;
 	});
 
 	after(async () => {
@@ -150,6 +157,29 @@ describe('target hostapps', () => {
 			.expect(200);
 		expect(body.d[0]).to.not.be.undefined;
 		expect(body.d[0]['should_be_operated_by__release']).to.be.null;
+		expect(body.d[0]['os_version']).to.be.not.null;
+		expect(body.d[0]['os_variant']).to.be.not.null;
+	});
+
+	it('should provision with an invalidated hostapp release', async () => {
+		const devicePatchBody = {
+			local: {
+				is_online: true,
+				os_version: 'balenaOS 2.52.0+rev1',
+				os_variant: 'prod',
+			},
+		};
+
+		await invalidatedReleaseDevice.patchStateV2(devicePatchBody);
+		const { body } = await supertest(admin)
+			.get(
+				`/${version}/device(${invalidatedReleaseDevice.id})?$select=should_be_operated_by__release`,
+			)
+			.expect(200);
+		expect(body.d[0]).to.not.be.undefined;
+		expect(body.d[0]['should_be_operated_by__release'].__id).to.equal(
+			invalidatedReleaseId,
+		);
 		expect(body.d[0]['os_version']).to.be.not.null;
 		expect(body.d[0]['os_variant']).to.be.not.null;
 	});

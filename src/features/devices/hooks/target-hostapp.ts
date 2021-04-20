@@ -209,6 +209,9 @@ async function checkHostappReleaseUpgrades(
 		return;
 	}
 
+	// In order to prevent blocking devices from provisioning, we allow devices to come online, report any version and
+	// we tag it accordingly. However we do not allow devices to _upgrade_ to invalidated releases, so we filter those
+	// out here.
 	const newHostappRelease = await api.get({
 		resource: 'release',
 		id: newHostappReleaseId,

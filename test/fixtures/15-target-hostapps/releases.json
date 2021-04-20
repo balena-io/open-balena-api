@@ -33,5 +33,13 @@
 		"source": "cloud",
 		"status": "success",
 		"user": "admin"
+	},
+	"release5": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"is_invalidated": true,
+		"user": "admin"
 	}
 }
