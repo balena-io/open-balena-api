@@ -22,6 +22,14 @@ jobs:
             docker pull "${DOCKER_IMAGE}:${CIRCLE_BRANCH}" || \
               docker pull "${DOCKER_IMAGE}:master" || true
             docker build --cache-from="${DOCKER_IMAGE}:${CIRCLE_BRANCH}" --cache-from="${DOCKER_IMAGE}:master" --rm=false --pull --tag "${DOCKER_IMAGE}:${CIRCLE_SHA1}" .
+
+      - run:
+          name: Install Grype
+          command: curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b .
+      - run:
+          name: Run Grype
+          command: ./grype ${DOCKER_IMAGE}:${CIRCLE_SHA1} -o table
+
       - run:
           name: Install trivy
           command: |
@@ -29,7 +37,7 @@ jobs:
             curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
       - run:
           name: Scan the local image with trivy
-          command: trivy -f json -o report.json --no-progress --exit-code 1 --severity CRITICAL ${DOCKER_IMAGE}:${CIRCLE_SHA1}
+          command: trivy -f json -o report.json --no-progress --exit-code 0 --severity HIGH ${DOCKER_IMAGE}:${CIRCLE_SHA1}
 
       - store_artifacts:
           path: /tmp/build/report.json
