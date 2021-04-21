@@ -24,15 +24,6 @@ jobs:
             docker build --cache-from="${DOCKER_IMAGE}:${CIRCLE_BRANCH}" --cache-from="${DOCKER_IMAGE}:master" --rm=false --pull --tag "${DOCKER_IMAGE}:${CIRCLE_SHA1}" .
 
       - run:
-          name: Install Grype
-          command: |
-            apk add --update-cache --upgrade curl
-            curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b .
-      - run:
-          name: Run Grype
-          command: ./grype ${DOCKER_IMAGE}:${CIRCLE_SHA1} -o table
-
-      - run:
           name: Install trivy
           command: |
             apk add --update-cache --upgrade curl
