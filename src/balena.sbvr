@@ -738,6 +738,11 @@ Fact type: device tag has value
 
 Fact type: release tag has value
 	Necessity: each release tag has exactly one value.
+Fact type: release tag has release
+	Synonymous Form: release has release tag
+	Necessity: each release tag has exactly one release
+Fact type: release tag has tag key
+    Necessity: each release tag has exactly one tag key
 
 
 -- image install
@@ -772,7 +777,6 @@ Fact type: config has scope
 Fact type: config has description (Auth)
 	Necessity: each config has at most one description (Auth).
 
-
 -- Rules
 
 Rule: It is necessary that each device1 that is managed by a device2, belongs to an application1 that depends on an application2 that owns the device2.
@@ -784,4 +788,5 @@ Rule: It is necessary that each release that should be running on an application
 Rule: It is necessary that each release that contains at least 2 images, belongs to an application that has an application type that supports multicontainer.
 Rule: It is necessary that each release that should operate a device, has a status that is equal to "success".
 Rule: It is necessary that each release that should operate a device, belongs to an application that is host and is for a device type that describes the device.
-Rule: It is necessary that each device that should be operated by a release, should be operated by a release that is not invalidated.
+Rule: It is necessary that each device that should be operated by a release, should be operated by a release that is not invalidated or has a release tag that has a tag key that equals "version" and a value that is contained in an os version of the device.
+-- and has a tag key that equals "variant" and a value that contains an os variant of the device.

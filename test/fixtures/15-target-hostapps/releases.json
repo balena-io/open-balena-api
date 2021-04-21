@@ -41,5 +41,13 @@
 		"status": "success",
 		"is_invalidated": true,
 		"user": "admin"
+	},
+	"release6": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"is_invalidated": true,
+		"user": "admin"
 	}
 }

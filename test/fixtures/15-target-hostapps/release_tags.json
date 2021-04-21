@@ -70,5 +70,17 @@
 		"release": "release5",
 		"tag_key": "version",
 		"value": "2.52.0+rev1"
+	},
+	"releasetag6-variant": {
+		"user": "admin",
+		"release": "release6",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"releasetag6-version": {
+		"user": "admin",
+		"release": "release6",
+		"tag_key": "version",
+		"value": "2.53.0+rev1"
 	}
 }
