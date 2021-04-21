@@ -29,7 +29,7 @@ jobs:
             curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
       - run:
           name: Scan the local image with trivy
-          command: trivy -f json -o report.json --no-progress ${DOCKER_IMAGE}:${CIRCLE_SHA1} && exit 1
+          command: trivy -f json -o report.json ${DOCKER_IMAGE}:${CIRCLE_SHA1}
 
       - store_artifacts:
           path: /tmp/build/report.json
