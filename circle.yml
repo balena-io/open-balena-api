@@ -25,7 +25,9 @@ jobs:
 
       - run:
           name: Install Grype
-          command: curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b .
+          command: |
+            apk add --update-cache --upgrade curl
+            curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b .
       - run:
           name: Run Grype
           command: ./grype ${DOCKER_IMAGE}:${CIRCLE_SHA1} -o table
