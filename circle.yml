@@ -32,7 +32,7 @@ jobs:
           command: trivy -f json -o report.json --no-progress ${DOCKER_IMAGE}:${CIRCLE_SHA1}
 
       - store_artifacts:
-          path: /tmp/build/report.txt
+          path: /tmp/build/report.json
 
       - run:
           name: Test
