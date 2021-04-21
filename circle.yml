@@ -30,6 +30,10 @@ jobs:
       - run:
           name: Scan the local image with trivy
           command: trivy -f table -o report.txt --no-progress ${DOCKER_IMAGE}:${CIRCLE_SHA1}
+
+      - store_artifacts:
+        path: /tmp/build/report.txt
+
       - run:
           name: Test
           command: |
