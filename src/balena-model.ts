@@ -136,6 +136,7 @@ export interface DeviceType {
 	name: string;
 	is_of__cpu_architecture: { __id: number } | [CpuArchitecture];
 	logo: string | null;
+	contract: {} | null;
 	belongs_to__device_family: { __id: number } | [DeviceFamily?] | null;
 }
 
@@ -470,6 +471,7 @@ export interface MyApplication {
 	is_host: boolean;
 	is_archived: boolean;
 	uuid: string;
+	is_public: boolean;
 }
 
 export interface UserHasDirectAccessToApplication {
