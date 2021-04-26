@@ -1,4 +1,20 @@
 - commits:
+    - subject: 'auth: remove unnecessary brackets'
+      hash: 55bcd667c5ceb77c40c95e4747429107eb34f964
+      body: |
+        i missed pulling this change out from the code review of my related PR
+      footer:
+        Connects-to: 'https://github.com/balena-io/open-balena-api/pull/634'
+        connects-to: 'https://github.com/balena-io/open-balena-api/pull/634'
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.135.3
+  date: 2021-04-26T17:03:41.933Z
+- commits:
     - subject: 'model: regenerate types to pick up changes'
       hash: 682d189cb2e1dcff71163d7c621a7ec9630b18a9
       body: ''
