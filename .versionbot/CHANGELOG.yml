@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'model: regenerate types to pick up changes'
+      hash: 682d189cb2e1dcff71163d7c621a7ec9630b18a9
+      body: ''
+      footer:
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+        Change-type: patch
+        change-type: patch
+      author: Matthew McGinn
+      nested: []
+  version: 0.135.2
+  date: 2021-04-26T13:37:53.521Z
+- commits:
     - subject: 'applications: allow apps to be marked as public'
       hash: 95376cfd85a0cbd163210cb934e657b11e1f0e89
       body: |
