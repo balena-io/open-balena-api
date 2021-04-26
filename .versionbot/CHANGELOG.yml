@@ -1,4 +1,20 @@
 - commits:
+    - subject: 'applications: allow apps to be marked as public'
+      hash: 95376cfd85a0cbd163210cb934e657b11e1f0e89
+      body: |
+        include some shared fixtures extensions
+      footer:
+        Connects-to: 'https://github.com/balena-io/open-balena-api/pull/634'
+        connects-to: 'https://github.com/balena-io/open-balena-api/pull/634'
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.135.1
+  date: 2021-04-26T13:10:53.553Z
+- commits:
     - subject: Stop allowing cache clearing for multi-level cache
       hash: 091863ebed83d587e08db9889bef647f21326393
       body: |
