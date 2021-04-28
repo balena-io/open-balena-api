@@ -1,0 +1,28 @@
+{
+	"intel-nuc": {
+		"user": "admin",
+		"is_host": true,
+		"is_public": true,
+		"device_type": "intel-nuc",
+		"app_name": "intel-nuc"
+	},
+	"intel-nuc-esr": {
+		"user": "admin",
+		"is_host": true,
+		"is_public": true,
+		"device_type": "intel-nuc",
+		"app_name": "intel-nuc-esr"
+	},
+	"raspberrypi3": {
+		"user": "admin",
+		"is_host": true,
+		"is_public": true,
+		"device_type": "raspberrypi3",
+		"app_name": "raspberrypi3"
+	},
+	"user-app1": {
+		"user": "admin",
+		"device_type": "intel-nuc",
+		"app_name": "user-app1"
+	}
+}

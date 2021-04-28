@@ -55,6 +55,8 @@ CREATE INDEX IF NOT EXISTS "device_is_running_release_idx"
 ON "device" ("is running-release");
 CREATE INDEX IF NOT EXISTS "device_should_be_running_release_idx"
 ON "device" ("should be running-release");
+CREATE INDEX IF NOT EXISTS "device_should_be_operated_by_release_idx"
+ON "device" ("should be operated by-release");
 
 -- "device config variable"."device" is the first part of an automated unique index
 

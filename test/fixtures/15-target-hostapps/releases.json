@@ -1,0 +1,53 @@
+{
+	"release0": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	},
+	"release1": {
+		"application": "raspberrypi3",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	},
+	"release2": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	},
+	"release3": {
+		"application": "intel-nuc-esr",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	},
+	"release4": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	},
+	"release5": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"is_invalidated": true,
+		"user": "admin"
+	},
+	"release6": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"is_invalidated": true,
+		"user": "admin"
+	}
+}
