@@ -5,7 +5,7 @@ import { EventEmitter } from 'events';
 import { apiKeyMiddleware } from '../../infra/auth';
 
 import { gracefullyDenyDeletedDevices } from './middleware';
-import { stateV2 } from './routes/state';
+import { stateV2, stateV3 } from './routes/state';
 import { statePatch } from './routes/state-patch';
 
 export const setup = (app: Application) => {
@@ -17,6 +17,19 @@ export const setup = (app: Application) => {
 	);
 	app.patch(
 		'/device/v2/:uuid/state',
+		gracefullyDenyDeletedDevices,
+		apiKeyMiddleware,
+		statePatch,
+	);
+
+	app.get(
+		'/device/v3/:uuid/state',
+		gracefullyDenyDeletedDevices,
+		apiKeyMiddleware,
+		stateV3,
+	);
+	app.patch(
+		'/device/v3/:uuid/state',
 		gracefullyDenyDeletedDevices,
 		apiKeyMiddleware,
 		statePatch,

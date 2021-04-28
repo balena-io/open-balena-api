@@ -1,6 +1,5 @@
 import * as semver from 'balena-semver';
 import * as _ from 'lodash';
-
 import {
 	sbvrUtils,
 	hooks,
@@ -29,7 +28,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	/**
-	 * Disallow supervisor downgrades, using the related release resource
+	 * Disallow supervisor downgrades and create service install for supervisor
 	 */
 	async PRERUN(args) {
 		if (args.request.values.should_be_managed_by__release != null) {

@@ -1,0 +1,22 @@
+{
+	"app1": {
+		"uuid": "f3ad5e4c8309404b834b1dbae41fa6fc",
+		"user": "admin",
+		"device_type": "intel-nuc",
+		"app_name": "test-app-1"
+	},
+	"supervisorApp": {
+		"uuid": "031f48d8f47b4062ad2d67b8de933711",
+		"user": "admin",
+		"device_type": "intel-nuc",
+		"app_name": "supervisor-intel-nuc",
+		"is_public": true
+	},
+	"supervisorAppPi": {
+		"uuid": "445e51f1596045e4832ae633c8a8497d",
+		"user": "admin",
+		"device_type": "raspberrypi3",
+		"app_name": "supervisor-raspberrypi3",
+		"is_public": true
+	}
+}

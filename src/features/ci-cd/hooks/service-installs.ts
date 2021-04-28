@@ -8,10 +8,15 @@ import type {
 	ServiceInstall,
 } from '../../../balena-model';
 
-const createReleaseServiceInstalls = async (
+const actOnReleaseServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,
 	deviceIds: number[],
 	releaseFilter: Filter,
+	handler: (
+		api: sbvrUtils.PinejsClient,
+		deviceIds: number[],
+		serviceIds: number[],
+	) => Promise<void>,
 ): Promise<void> => {
 	if (deviceIds.length === 0) {
 		return;
@@ -54,6 +59,38 @@ const createReleaseServiceInstalls = async (
 	}
 	const serviceIds = services.map(({ id }) => id);
 
+	await handler(api, deviceIds, serviceIds);
+};
+
+const actOnAppServiceInstalls = async (
+	api: sbvrUtils.PinejsClient,
+	appIds: number[],
+	deviceIds: number[],
+	handler: (
+		api: sbvrUtils.PinejsClient,
+		deviceIds: number[],
+		serviceIds: number[],
+	) => Promise<void>,
+): Promise<void> =>
+	actOnReleaseServiceInstalls(
+		api,
+		deviceIds,
+		{
+			should_be_running_on__application: {
+				$any: {
+					$alias: 'a',
+					$expr: { a: { id: { $in: appIds } } },
+				},
+			},
+		},
+		handler,
+	);
+
+const serviceInstallCreationHandler = async (
+	api: sbvrUtils.PinejsClient,
+	deviceIds: number[],
+	serviceIds: number[],
+) => {
 	const serviceInstalls = (await api.get({
 		resource: 'service_install',
 		options: {
@@ -93,19 +130,29 @@ const createReleaseServiceInstalls = async (
 	);
 };
 
-const createAppServiceInstalls = async (
+const createReleaseServiceInstalls = (
+	api: sbvrUtils.PinejsClient,
+	deviceIds: number[],
+	releaseFilter: Filter,
+): Promise<void> =>
+	actOnReleaseServiceInstalls(
+		api,
+		deviceIds,
+		releaseFilter,
+		serviceInstallCreationHandler,
+	);
+
+const createAppServiceInstalls = (
 	api: sbvrUtils.PinejsClient,
 	appId: number,
 	deviceIds: number[],
-): Promise<void> =>
-	createReleaseServiceInstalls(api, deviceIds, {
-		should_be_running_on__application: {
-			$any: {
-				$alias: 'a',
-				$expr: { a: { id: appId } },
-			},
-		},
-	});
+) =>
+	actOnAppServiceInstalls(
+		api,
+		[appId],
+		deviceIds,
+		serviceInstallCreationHandler,
+	);
 
 const deleteServiceInstallsForCurrentApp = (
 	api: sbvrUtils.PinejsClient,

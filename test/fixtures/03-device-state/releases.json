@@ -1,0 +1,17 @@
+{
+	"supervisorRelease": {
+		"user": "admin",
+		"application": "supervisorApp",
+		"commit": "aaa1bbbb",
+		"status": "success",
+		"release_version": "v3.1.4",
+		"composition": {
+			"services": {
+				"supervisorImage": {
+					"build": "./"
+				}
+			}
+		},
+		"source": "cloud"
+	}
+}

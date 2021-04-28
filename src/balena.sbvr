@@ -276,7 +276,6 @@ Term: version
 Term: vpn address
 	Concept Type: Short Text (Type)
 
-
 -- Complex terms
 
 Term: application type

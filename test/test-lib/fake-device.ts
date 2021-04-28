@@ -9,6 +9,7 @@ interface DeviceStateApp {
 	name: string;
 	commit: string;
 	releaseId: number;
+	releaseVersion: string;
 	services: _.Dictionary<{
 		image: string;
 		volumes: string[];
@@ -38,7 +39,7 @@ export interface DeviceState {
 export const getState = async <T extends DeviceState>(
 	user: UserObjectParam,
 	deviceUuid: string,
-	stateVersion: 'v2' = 'v2',
+	stateVersion: 'v2' | 'v3' = 'v2',
 ): Promise<T> => {
 	const { body: state } = await supertest(user)
 		.get(`/device/${stateVersion}/${deviceUuid}/state`)
@@ -93,9 +94,18 @@ export async function provisionDevice(
 		getStateV2: async (): Promise<DeviceState> => {
 			return await getState(device, device.uuid);
 		},
+		getStateV3: async (): Promise<DeviceState> => {
+			return await getState(device, device.uuid, 'v3');
+		},
 		patchStateV2: async (devicePatchBody: AnyObject) => {
 			await supertest(device)
 				.patch(`/device/v2/${device.uuid}/state`)
+				.send(devicePatchBody)
+				.expect(200);
+		},
+		patchStateV3: async (devicePatchBody: AnyObject) => {
+			await supertest(device)
+				.patch(`/device/v3/${device.uuid}/state`)
 				.send(devicePatchBody)
 				.expect(200);
 		},
