@@ -69,7 +69,7 @@ describe('Device State v2', () => {
 	let device: fakeDevice.Device;
 
 	before(async () => {
-		fx = await fixtures.load('03-device-state-v2');
+		fx = await fixtures.load('03-device-state');
 
 		admin = fx.users.admin;
 		applicationId = fx.applications.app1.id;
@@ -206,7 +206,7 @@ describe('Device State v2', () => {
 					heartbeatAfterGet: DeviceOnlineStates.Unknown,
 					getDevice: () => deviceUserRequestedState,
 					getStateV2: () =>
-						fakeDevice.getStateV2(admin, deviceUserRequestedState.uuid),
+						fakeDevice.getState(admin, deviceUserRequestedState.uuid),
 				},
 			].forEach(
 				({ tokenType, getActor, heartbeatAfterGet, getDevice, getStateV2 }) => {
@@ -343,7 +343,7 @@ describe('Device State v2 patch', function () {
 	let device: fakeDevice.Device;
 
 	before(async () => {
-		fx = await fixtures.load('03-device-state-v2');
+		fx = await fixtures.load('03-device-state');
 
 		admin = fx.users.admin;
 		applicationId = fx.applications.app1.id;
