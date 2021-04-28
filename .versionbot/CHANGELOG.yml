@@ -1,4 +1,18 @@
 - commits:
+    - subject: 'hostapps: basic implementation of target hostapp release'
+      hash: 85f72890c99d3e86f91bbc4d3fc0a1184650f60f
+      body: |
+        including a hook to set devices to a hostapp release at provision time
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.136.0
+  date: 2021-04-28T16:51:45.049Z
+- commits:
     - subject: 'auth: remove unnecessary brackets'
       hash: 55bcd667c5ceb77c40c95e4747429107eb34f964
       body: |
