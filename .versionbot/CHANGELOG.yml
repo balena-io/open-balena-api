@@ -1,4 +1,15 @@
 - commits:
+    - subject: Accept additional fields during provisioning if they are provided
+      hash: 9f7d3498da331a7586a47960691a3656849c15bc
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+      nested: []
+  version: 0.136.2
+  date: 2021-04-29T12:21:52.469Z
+- commits:
     - subject: Update dependencies
       hash: ff6b4fbb05175d0d475a47acb5643703c45577c9
       body: |
