@@ -42,7 +42,12 @@ export const register: RequestHandler = async (req, res) => {
 			throw new BadRequestError('API key must be used for registering');
 		}
 
-		const supervisorVersion = req.body.supervisor_version;
+		const {
+			supervisor_version: supervisorVersion,
+			os_version: osVersion,
+			os_variant: osVariant,
+			mac_address: macAddress,
+		} = req.body;
 		const deviceApiKey = req.body.api_key ?? randomstring.generate();
 
 		// Temporarily give the ability to fetch the device we create and create an api key for it,
@@ -63,6 +68,9 @@ export const register: RequestHandler = async (req, res) => {
 					belongs_to__application: applicationId,
 					device_type: deviceType,
 					supervisor_version: supervisorVersion,
+					os_version: osVersion,
+					os_variant: osVariant,
+					mac_address: macAddress,
 					uuid,
 				},
 			});
