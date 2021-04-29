@@ -35,12 +35,13 @@ export interface DeviceState {
 	};
 }
 
-export const getStateV2 = async (
+export const getState = async <T extends DeviceState>(
 	user: UserObjectParam,
 	deviceUuid: string,
-): Promise<DeviceState> => {
+	stateVersion: 'v2' = 'v2',
+): Promise<T> => {
 	const { body: state } = await supertest(user)
-		.get(`/device/v2/${deviceUuid}/state`)
+		.get(`/device/${stateVersion}/${deviceUuid}/state`)
 		.expect(200);
 
 	expect(state).to.have.property('local');
@@ -80,15 +81,8 @@ export async function provisionDevice(
 			belongs_to__application: appId,
 			uuid: deviceUuid,
 			device_type: deviceType,
-			os_version: osVersion,
-			supervisor_version: supervisorVersion,
 		})
 		.expect(201);
-
-	const { body: provisionedDevice } = await supertest(admin)
-		.get(`/${version}/device(uuid='${deviceUuid}')?$select=supervisor_version`)
-		.expect(200);
-	expect(provisionedDevice.d[0].supervisor_version).to.equal(supervisorVersion);
 
 	const device = {
 		...(deviceEntry as {
@@ -97,7 +91,7 @@ export async function provisionDevice(
 		}),
 		token: randomstring.generate(16),
 		getStateV2: async (): Promise<DeviceState> => {
-			return await getStateV2(device, device.uuid);
+			return await getState(device, device.uuid);
 		},
 		patchStateV2: async (devicePatchBody: AnyObject) => {
 			await supertest(device)
@@ -113,6 +107,18 @@ export async function provisionDevice(
 			apiKey: device.token,
 		})
 		.expect(200);
+
+	await device.patchStateV2({
+		local: {
+			os_version: osVersion,
+			supervisor_version: supervisorVersion,
+		},
+	});
+
+	const { body: provisionedDevice } = await supertest(admin)
+		.get(`/${version}/device(uuid='${deviceUuid}')?$select=supervisor_version`)
+		.expect(200);
+	expect(provisionedDevice.d[0].supervisor_version).to.equal(supervisorVersion);
 
 	return device;
 }

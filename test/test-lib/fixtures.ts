@@ -90,6 +90,7 @@ const loaders: Dictionary<LoaderFunc> = {
 			'application_type',
 			'is_public',
 			'is_host',
+			'uuid',
 		);
 
 		return await createResource({
@@ -97,6 +98,50 @@ const loaders: Dictionary<LoaderFunc> = {
 			body: {
 				...body,
 				organization: org.id,
+			},
+			user,
+		});
+	},
+	application_environment_variables: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const application = await fixtures.applications[jsonData.application];
+		if (application == null) {
+			logErrorAndThrow(`Could not find application: ${jsonData.application}`);
+		}
+
+		const body = _.pick(jsonData, 'name', 'value');
+
+		return await createResource({
+			resource: 'application_environment_variable',
+			body: {
+				...body,
+				application: application.id,
+			},
+			user,
+		});
+	},
+	service_environment_variables: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const service = await fixtures.services[jsonData.service];
+		if (service == null) {
+			logErrorAndThrow(`Could not find service: ${jsonData.service}`);
+		}
+
+		const body = _.pick(jsonData, 'name', 'value');
+
+		return await createResource({
+			resource: 'service_environment_variable',
+			body: {
+				...body,
+				service: service.id,
 			},
 			user,
 		});
@@ -154,6 +199,84 @@ const loaders: Dictionary<LoaderFunc> = {
 			user,
 		});
 	},
+	images: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		for (const r of jsonData.releases) {
+			const release = await fixtures.releases[r];
+			if (release == null) {
+				logErrorAndThrow(`Could not find release: ${r}`);
+			}
+
+			const service = await fixtures.services[jsonData.service];
+			if (service == null) {
+				logErrorAndThrow(`Could not find service: ${jsonData.service}`);
+			}
+
+			const body = _.pick(
+				jsonData,
+				'image_size',
+				'project_type',
+				'build_log',
+				'status',
+				'start_timestamp',
+				'end_timestamp',
+				'push_timestamp',
+				'is_stored_at__image_location',
+			);
+
+			const newImage = await createResource({
+				resource: 'image',
+				body: {
+					...{
+						start_timestamp: new Date(),
+						end_timestamp: new Date(),
+						push_timestamp: new Date(),
+						is_stored_at__image_location: '/dev/null',
+						is_a_build_of__service: service.id,
+					},
+					...body,
+				},
+				user,
+			});
+
+			await createResource({
+				resource: 'image__is_part_of__release',
+				body: {
+					image: newImage.id,
+					is_part_of__release: release.id,
+				},
+				user,
+			});
+
+			return newImage;
+		}
+	},
+	services: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const application = await fixtures.applications[jsonData.application];
+		if (application == null) {
+			logErrorAndThrow(`Could not find application: ${jsonData.application}`);
+		}
+
+		const body = _.pick(jsonData, 'service_name');
+
+		return await createResource({
+			resource: 'service',
+			body: {
+				...body,
+				application: application.id,
+			},
+			user,
+		});
+	},
 	devices: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.belongs_to__user];
 		if (user == null) {
@@ -203,7 +326,12 @@ const deleteResource = (resource: string) => async (obj: { id: number }) => {
 	});
 };
 
-const modelUnloadOrder = ['devices', 'applications', 'releases'];
+const modelUnloadOrder = [
+	'devices',
+	'applications',
+	'releases',
+	'image_install',
+];
 
 const unloaders: {
 	[K in typeof modelUnloadOrder[number]]: (obj: {
@@ -213,6 +341,7 @@ const unloaders: {
 	devices: deleteResource('device'),
 	applications: deleteResource('application'),
 	releases: deleteResource('release'),
+	image_install: deleteResource('image_install'),
 };
 
 export const clean = async (fixtures: AnyObject) => {
