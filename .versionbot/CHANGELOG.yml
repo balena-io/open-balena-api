@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove unnecessary delete hook for env var validation
+      hash: eb75eeb0bb7c9c0622fe3e5f9e35e93a37ca9a10
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.136.3
+  date: 2021-04-29T14:55:41.811Z
+- commits:
     - subject: Accept additional fields during provisioning if they are provided
       hash: 9f7d3498da331a7586a47960691a3656849c15bc
       body: ''
