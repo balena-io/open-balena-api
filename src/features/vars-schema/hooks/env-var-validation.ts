@@ -21,7 +21,7 @@ for (const resource of [
 	'service_environment_variable',
 	'device_service_environment_variable',
 ]) {
-	for (const method of ['POST', 'PATCH', 'PUT', 'DELETE'] as const) {
+	for (const method of ['POST', 'PATCH', 'PUT'] as const) {
 		hooks.addPureHook(method, 'resin', resource, envVarHook);
 	}
 }
