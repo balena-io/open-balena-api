@@ -1,4 +1,27 @@
 - commits:
+    - subject: Update dependencies
+      hash: ff6b4fbb05175d0d475a47acb5643703c45577c9
+      body: |
+        Update pinejs from 14.22.1 to 14.22.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Enable strict options by default and only disable specific ones
+              hash: 748e7459458a8c0aad3f491c96cea47b33195447
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.22.2
+          date: 2021-03-22T18:20:22.166Z
+  version: 0.136.1
+  date: 2021-04-29T11:59:32.763Z
+- commits:
     - subject: 'hostapps: basic implementation of target hostapp release'
       hash: 85f72890c99d3e86f91bbc4d3fc0a1184650f60f
       body: |
