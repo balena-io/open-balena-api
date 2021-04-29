@@ -1,4 +1,17 @@
 - commits:
+    - subject: Refactoring to get ready for v3 state endpoint changes
+      hash: 0576685ca16e9a19bfb6ea113f86e7398beb0345
+      body: ''
+      footer:
+        Signed-off-by: PJ <pj@balena.io>
+        signed-off-by: PJ <pj@balena.io>
+        Change-type: patch
+        change-type: patch
+      author: toochevere
+      nested: []
+  version: 0.136.4
+  date: 2021-04-29T17:08:18.908Z
+- commits:
     - subject: Remove unnecessary delete hook for env var validation
       hash: eb75eeb0bb7c9c0622fe3e5f9e35e93a37ca9a10
       body: ''
