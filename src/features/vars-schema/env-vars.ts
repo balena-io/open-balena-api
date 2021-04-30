@@ -111,6 +111,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			'raspberry-pi',
 			'raspberry-pi2',
 			'raspberrypi3',
+			'raspberrypi3-unipi-neuron',
 			'raspberrypi3-64',
 			'raspberrypi4-64',
 			'raspberrypi400-64',
