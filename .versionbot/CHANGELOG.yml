@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add missing foreign key indexes
+      hash: 2efdf0e94aeb94ca81bb925b4675a40589e7ea72
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.137.1
+  date: 2021-04-30T11:33:55.873Z
+- commits:
     - subject: Expose the RPi family config vars to raspberrypi3-unipi-neuron
       hash: db990479be2611f24b6262e12e1dfa092473cea0
       body: ''
