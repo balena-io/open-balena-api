@@ -1,4 +1,17 @@
 - commits:
+    - subject: Expose the RPi family config vars to raspberrypi3-unipi-neuron
+      hash: db990479be2611f24b6262e12e1dfa092473cea0
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Florin Sarbu <florin@balena.io>
+        signed-off-by: Florin Sarbu <florin@balena.io>
+      author: Florin Sarbu
+      nested: []
+  version: 0.137.0
+  date: 2021-04-30T08:42:31.591Z
+- commits:
     - subject: Refactoring to get ready for v3 state endpoint changes
       hash: 0576685ca16e9a19bfb6ea113f86e7398beb0345
       body: ''
