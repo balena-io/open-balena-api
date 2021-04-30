@@ -1,4 +1,19 @@
 - commits:
+    - subject: Revert "Expose the RPi family config vars to raspberrypi3-unipi-neuron"
+      hash: f6cf55cec496c97905f4801d8be08d6b56f1fdb0
+      body: |
+        This reverts commit db990479be2611f24b6262e12e1dfa092473cea0.
+
+        OpenBalena is not the place to do the config vars change for the private
+        device types such as the UniPi Neuron so we revert this commit here.
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Florin Sarbu
+      nested: []
+  version: 0.138.0
+  date: 2021-04-30T12:49:22.990Z
+- commits:
     - subject: Add missing foreign key indexes
       hash: 2efdf0e94aeb94ca81bb925b4675a40589e7ea72
       body: ''
