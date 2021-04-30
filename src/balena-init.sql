@@ -22,6 +22,12 @@ ALTER COLUMN "is passing tests" SET DEFAULT 1;
 CREATE INDEX IF NOT EXISTS "api_key_actor_idx"
 ON "api key" ("is of-actor");
 
+CREATE INDEX IF NOT EXISTS "api_key_has_role_role_idx"
+ON "api key-has-role" ("role");
+
+CREATE INDEX IF NOT EXISTS "api_key_has_permission_permission_idx"
+ON "api key-has-permission" ("permission");
+
 CREATE INDEX IF NOT EXISTS "application_actor_idx"
 ON "application" ("actor");
 CREATE INDEX IF NOT EXISTS "application_depends_on_application_idx"
@@ -62,7 +68,15 @@ ON "device" ("should be operated by-release");
 
 -- "device environment variable"."device" is the first part of an automated unique index
 
+CREATE INDEX IF NOT EXISTS "device_family_manufacturer_idx"
+ON "device family" ("is manufactured by-device manufacturer");
+
 -- "device tag"."device" is the first part of an automated unique index
+
+CREATE INDEX IF NOT EXISTS "device_type_cpu_arch_idx"
+ON "device type" ("is of-cpu architecture");
+CREATE INDEX IF NOT EXISTS "device_type_device_family_idx"
+ON "device type" ("belongs to-device family");
 
 -- "device service environment variable"."service install" is the first part of an automated unique index
 
@@ -101,6 +115,9 @@ ON "release" ("belongs to-application", "commit", "status");
 
 -- "release tag"."release" is the first part of an automated unique index
 
+CREATE INDEX IF NOT EXISTS "role_has_permission_permission_idx"
+ON "role-has-permission" ("permission");
+
 -- "service"."application" is the first part of an automated unique index
 
 -- "service environment variable"."service" is the first part of an automated unique index
@@ -113,6 +130,12 @@ ON "service install" ("installs-service");
 
 CREATE INDEX IF NOT EXISTS "user_actor_idx"
 ON "user" ("actor");
+
+CREATE INDEX IF NOT EXISTS "user_has_permission_permission_idx"
+ON "user-has-permission" ("permission");
+
+CREATE INDEX IF NOT EXISTS "user_has_role_role_idx"
+ON "user-has-role" ("role");
 -----------------------------
 -- End foreign key indexes --
 -----------------------------
