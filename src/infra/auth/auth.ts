@@ -22,6 +22,19 @@ export const userHasPermission = (
 	return user.permissions.includes(permission);
 };
 
+export type GetNewUserRoleFunction = (user: AnyObject) => string;
+
+let getNewUserRole: GetNewUserRoleFunction = () => 'default-user';
+
+export const setRegistrationRoleFunc = (
+	registerFunc: GetNewUserRoleFunction,
+) => {
+	getNewUserRole = registerFunc;
+};
+
+export const getRegistrationRole: typeof getNewUserRole = (user) =>
+	getNewUserRole(user);
+
 /**
  * A known invalid comparisson to emulate a wrong password error.
  * Used to prevent exposing information via timing attacks.

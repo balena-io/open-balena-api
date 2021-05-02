@@ -1,12 +1,13 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
+import { getRegistrationRole } from '../../../infra/auth/auth';
 import { assignUserRole } from '../../../infra/auth/permissions';
 
 const { InternalRequestError } = errors;
 const { api } = sbvrUtils;
 
 hooks.addPureHook('POST', 'resin', 'user', {
-	POSTRUN: async ({ result, tx }) => {
+	POSTRUN: async ({ request, result, tx }) => {
 		const role = await api.Auth.get({
 			resource: 'role',
 			passthrough: {
@@ -14,7 +15,7 @@ hooks.addPureHook('POST', 'resin', 'user', {
 				req: permissions.root,
 			},
 			id: {
-				name: 'default-user',
+				name: getRegistrationRole(request.values),
 			},
 			options: {
 				$select: 'id',

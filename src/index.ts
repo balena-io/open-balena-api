@@ -59,6 +59,8 @@ import {
 	comparePassword,
 	registerUser,
 	setPassword,
+	GetNewUserRoleFunction,
+	setRegistrationRoleFunc,
 	validatePassword,
 	checkUserPassword,
 } from './infra/auth/auth';
@@ -272,6 +274,8 @@ export interface SetupOptions {
 	onLogin?: (
 		user: Pick<DbUser, typeof defaultFindUser$select[number]>,
 	) => PromiseLike<void> | void;
+
+	getNewUserRole?: GetNewUserRoleFunction;
 }
 
 export async function setup(app: Application, options: SetupOptions) {
@@ -360,6 +364,10 @@ export async function setup(app: Application, options: SetupOptions) {
 
 	await pine.init(app, options.config);
 	await options.onInitModel?.(app);
+
+	if (options.getNewUserRole) {
+		setRegistrationRoleFunc(options.getNewUserRole);
+	}
 
 	await import('./hooks');
 	await options.onInitHooks?.(app);
