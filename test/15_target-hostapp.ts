@@ -11,6 +11,7 @@ describe('target hostapps', () => {
 	let admin: UserObjectParam;
 	let applicationId: number;
 	let device: fakeDevice.Device;
+	let preprovisionedDevice: fakeDevice.Device;
 	let esrDevice: fakeDevice.Device;
 	let noMatchDevice: fakeDevice.Device;
 	let invalidatedReleaseDevice: fakeDevice.Device;
@@ -25,6 +26,10 @@ describe('target hostapps', () => {
 		admin = fx.users.admin;
 		applicationId = fx.applications['user-app1'].id;
 		device = await fakeDevice.provisionDevice(admin, applicationId);
+		preprovisionedDevice = await fakeDevice.provisionDevice(
+			admin,
+			applicationId,
+		);
 		esrDevice = await fakeDevice.provisionDevice(admin, applicationId);
 		noMatchDevice = await fakeDevice.provisionDevice(admin, applicationId);
 		invalidatedReleaseDevice = await fakeDevice.provisionDevice(
@@ -40,7 +45,13 @@ describe('target hostapps', () => {
 
 	after(async () => {
 		await fixtures.clean({
-			devices: [device, esrDevice, noMatchDevice, invalidatedReleaseDevice],
+			devices: [
+				device,
+				esrDevice,
+				noMatchDevice,
+				invalidatedReleaseDevice,
+				preprovisionedDevice,
+			],
 		});
 		await fixtures.clean(fx);
 	});
@@ -113,6 +124,38 @@ describe('target hostapps', () => {
 			.patch(`/${version}/device(${device.id})`)
 			.send({ should_be_operated_by__release: prodNucHostappReleaseId })
 			.expect(400, '"Attempt to downgrade hostapp, which is not allowed"');
+	});
+
+	it('should remove target preprovisioned hostapp, if it is an implied downgrade', async () => {
+		// if a device is preprovisioned and pinned to a release
+		// less than the version it initially checks in with, make sure the downgrade doesn't persist
+		const { body } = await supertest(admin)
+			.get(
+				`/${version}/device(${preprovisionedDevice.id})?$select=should_be_operated_by__release`,
+			)
+			.expect(200);
+		expect(body.d[0]['should_be_operated_by__release']).to.be.null;
+
+		await supertest(admin)
+			.patch(`/${version}/device(${preprovisionedDevice.id})`)
+			.send({ should_be_operated_by__release: prodNucHostappReleaseId })
+			.expect(200);
+		const devicePatchBody = {
+			local: {
+				// this version is greater than the one provided by prodNucHostappReleaseId
+				os_version: 'balenaOS 2.50.1+rev1',
+				os_variant: 'prod',
+			},
+		};
+		await preprovisionedDevice.patchStateV2(devicePatchBody);
+		const body2 = await supertest(admin)
+			.get(
+				`/${version}/device(${preprovisionedDevice.id})?$select=should_be_operated_by__release`,
+			)
+			.expect(200);
+		expect(body2.body.d[0]['should_be_operated_by__release'].__id).to.equal(
+			upgradeReleaseId,
+		);
 	});
 
 	it('should succeed in PATCHing device to ESR release', async () => {

@@ -218,11 +218,14 @@ async function checkHostappReleaseUpgrades(
 	const nullHostappCount = await api.get({
 		resource: 'device',
 		options: {
-			$count: { $filter: { id: { $in: deviceIds }, os_version: null } },
+			$count: {
+				$filter: { id: { $in: deviceIds }, os_version: null },
+			},
 		},
 	});
 
 	if (nullHostappCount === deviceIds.length) {
+		// all devices have yet to fully provision, so it's not an upgrade
 		return;
 	}
 
