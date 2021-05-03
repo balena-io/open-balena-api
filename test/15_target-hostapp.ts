@@ -111,7 +111,7 @@ describe('target hostapps', () => {
 	it('should fail to downgrade', async () => {
 		await supertest(admin)
 			.patch(`/${version}/device(${device.id})`)
-			.send({ should_be_operated_by__release: fx.releases.release0.id })
+			.send({ should_be_operated_by__release: prodNucHostappReleaseId })
 			.expect(400, '"Attempt to downgrade hostapp, which is not allowed"');
 	});
 
