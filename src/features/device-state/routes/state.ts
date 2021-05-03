@@ -37,6 +37,11 @@ export type App = {
 	networks: AnyObject;
 };
 
+export type Dependent = {
+	apps: AnyObject;
+	devices: AnyObject;
+};
+
 export type AppService = {
 	imageId: number;
 	serviceName: string;
@@ -374,12 +379,15 @@ const getUserAppForState = async (
 		: await buildAppFromRelease(device, userAppFromApi, release, config);
 };
 
-const getDependent = async (device: AnyObject) => {
+const getDependent = async (device: AnyObject): Promise<Dependent> => {
 	const userAppFromApi: AnyObject = device.belongs_to__application[0];
 
-	const dependent = {
-		apps: {} as AnyObject,
-		devices: {} as AnyObject,
+	const dependendOnByApps = userAppFromApi.is_depended_on_by__application as AnyObject[];
+	const managesDevice = device.manages__device as AnyObject[];
+
+	const dependentInfo: Dependent = {
+		apps: {},
+		devices: {},
 	};
 
 	const depAppCache: Dictionary<{
@@ -390,38 +398,35 @@ const getDependent = async (device: AnyObject) => {
 		}>;
 	}> = {};
 
-	(userAppFromApi.is_depended_on_by__application as AnyObject[]).forEach(
-		(depApp) => {
-			const depRelease = depApp?.should_be_running__release?.[0];
-			depAppCache[depApp.id] = {
-				release: depRelease,
-				application_environment_variable:
-					depApp.application_environment_variable,
-			};
+	dependendOnByApps.forEach((depApp) => {
+		const depRelease = depApp?.should_be_running__release?.[0];
+		depAppCache[depApp.id] = {
+			release: depRelease,
+			application_environment_variable: depApp.application_environment_variable,
+		};
 
-			const depConfig: Dictionary<string> = {};
-			varListInsert(depApp.application_config_variable, depConfig);
+		const depConfig: Dictionary<string> = {};
+		varListInsert(depApp.application_config_variable, depConfig);
 
-			dependent.apps[depApp.id] = {
-				name: depApp.app_name,
-				parentApp: userAppFromApi.id,
-				config: depConfig,
-			};
+		dependentInfo.apps[depApp.id] = {
+			name: depApp.app_name,
+			parentApp: userAppFromApi.id,
+			config: depConfig,
+		};
 
-			const image = depRelease?.contains__image?.[0]?.image?.[0];
-			if (depRelease != null && image != null) {
-				const depAppState = dependent.apps[depApp.id];
-				depAppState.releaseId = depRelease.id;
-				depAppState.imageId = image.id;
-				depAppState.commit = depRelease.commit;
-				depAppState.image = formatImageLocation(
-					image.is_stored_at__image_location,
-				);
-			}
-		},
-	);
+		const image = depRelease?.contains__image?.[0]?.image?.[0];
+		if (depRelease != null && image != null) {
+			const depAppState = dependentInfo.apps[depApp.id];
+			depAppState.releaseId = depRelease.id;
+			depAppState.imageId = image.id;
+			depAppState.commit = depRelease.commit;
+			depAppState.image = formatImageLocation(
+				image.is_stored_at__image_location,
+			);
+		}
+	});
 
-	(device.manages__device as AnyObject[]).forEach((depDev) => {
+	managesDevice.forEach((depDev) => {
 		const depAppId: number = depDev.belongs_to__application.__id;
 		const {
 			release: depRelease,
@@ -460,7 +465,7 @@ const getDependent = async (device: AnyObject) => {
 			);
 		}
 
-		dependent.devices[depDev.uuid] = {
+		dependentInfo.devices[depDev.uuid] = {
 			name: depDev.device_name,
 			apps: {
 				[depAppId]: {
@@ -470,4 +475,6 @@ const getDependent = async (device: AnyObject) => {
 			},
 		};
 	});
+
+	return dependentInfo;
 };
