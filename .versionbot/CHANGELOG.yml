@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'fixtures: reuse variable rather than hardcode the value'
+      hash: d3032d2efb83da3b016162fea827ec4d1b8e9b9f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.138.3
+  date: 2021-05-03T21:45:00.573Z
+- commits:
     - subject: 'fixtures: drop unnecessary state patch value'
       hash: 9e7bfb87beab131ecc066d6bedc447efb7788536
       body: ''
