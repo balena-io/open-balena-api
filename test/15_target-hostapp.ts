@@ -48,7 +48,6 @@ describe('target hostapps', () => {
 	it('should provision with a linked hostapp', async () => {
 		const devicePatchBody = {
 			local: {
-				is_online: true,
 				os_version: 'balenaOS 2.50.0+rev1',
 				os_variant: 'prod',
 			},
@@ -70,7 +69,6 @@ describe('target hostapps', () => {
 	it('should provision with a linked ESR hostapp', async () => {
 		const devicePatchBody = {
 			local: {
-				is_online: true,
 				os_version: 'balenaOS 2021.01.0',
 				os_variant: 'prod',
 			},
@@ -134,7 +132,6 @@ describe('target hostapps', () => {
 	it('should still provision with a nonexistent hostapp', async () => {
 		const devicePatchBody = {
 			local: {
-				is_online: true,
 				os_version: 'balenaOS 2999.01.0',
 				os_variant: 'prod',
 			},
@@ -155,7 +152,6 @@ describe('target hostapps', () => {
 	it('should provision with an invalidated hostapp release', async () => {
 		const devicePatchBody = {
 			local: {
-				is_online: true,
 				os_version: 'balenaOS 2.52.0+rev1',
 				os_variant: 'prod',
 			},
