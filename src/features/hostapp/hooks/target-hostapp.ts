@@ -58,13 +58,16 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	},
 });
 
-hooks.addPureHook('PATCH', 'resin', 'device', {
-	/**
-	 * When a device checks in with it's initial OS version, set the corresponding should_be_operated_by__release resource
-	 * using its current reported version.
-	 */
+/**
+ * When a device checks in with it's initial OS version, set the corresponding should_be_operated_by__release resource
+ * using its current reported version.
+ */
+const hostappHook: hooks.Hooks = {
 	async PRERUN(args) {
-		if (args.request.values.os_version != null) {
+		if (
+			args.request.values.os_version != null &&
+			args.request.values.os_variant != null
+		) {
 			const ids = await sbvrUtils.getAffectedIds(args);
 			await setOSReleaseResource(
 				args.api,
@@ -74,7 +77,49 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			);
 		}
 	},
-});
+};
+
+const postHostappHook: hooks.Hooks = {
+	async POSTPARSE(args) {
+		if (
+			args.request.values.os_version != null &&
+			args.request.values.os_variant != null
+		) {
+			let deviceType = args.request.values.is_of__device_type;
+			if (!deviceType) {
+				const [dt] = await args.api.get({
+					resource: 'device_type',
+					options: {
+						$select: 'id',
+						$filter: {
+							slug: args.request.values.device_type,
+						},
+					},
+				});
+				if (!dt) {
+					return;
+				}
+				deviceType = dt.id;
+			}
+
+			const hostappRelease = await getOSReleaseResource(
+				args.api,
+				args.request.values.os_version,
+				args.request.values.os_variant,
+				deviceType,
+			);
+			// since this is a POST, we _know_ the device is being created and has no current/target state, so we can
+			// just append the target after determining which it is (like a preloaded app)
+			if (hostappRelease && hostappRelease.length > 0) {
+				args.request.values.should_be_operated_by__release =
+					hostappRelease[0].id;
+			}
+		}
+	},
+};
+
+hooks.addPureHook('POST', 'resin', 'device', postHostappHook);
+hooks.addPureHook('PATCH', 'resin', 'device', hostappHook);
 
 async function setOSReleaseResource(
 	api: sbvrUtils.PinejsClient,
