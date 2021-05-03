@@ -784,4 +784,3 @@ Rule: It is necessary that each release that should be running on an application
 Rule: It is necessary that each release that contains at least 2 images, belongs to an application that has an application type that supports multicontainer.
 Rule: It is necessary that each release that should operate a device, has a status that is equal to "success".
 Rule: It is necessary that each release that should operate a device, belongs to an application that is host and is for a device type that describes the device.
-Rule: It is necessary that each device that should be operated by a release, should be operated by a release that is not invalidated.
