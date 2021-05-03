@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix 'dependents' on state not being returned
+      hash: 80d52e8af04d5b5582d74fc68b336a0e9c19909f
+      body: ''
+      footer:
+        Signed-off-by: PJ <pj@balena.io>
+        signed-off-by: PJ <pj@balena.io>
+        Change-type: patch
+        change-type: patch
+      author: toochevere
+      nested: []
+  version: 0.138.1
+  date: 2021-04-30T17:13:02.415Z
+- commits:
     - subject: Revert "Expose the RPi family config vars to raspberrypi3-unipi-neuron"
       hash: f6cf55cec496c97905f4801d8be08d6b56f1fdb0
       body: |
