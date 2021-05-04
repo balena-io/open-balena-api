@@ -1,4 +1,23 @@
 - commits:
+    - subject: 'hostapps: remove rule enforcing valid hostapp releases'
+      hash: b8594fa08de2533b01d3a3f52b6dca001aef6e42
+      body: |
+        We already enforce this in the hook itself, and this rule prevents
+        devices that have provisioned with an invalidated hostapp release from
+        ever PATCHing/updating after the fact. we ideally only want to enforce
+        this rule at upgrade time, rather than always
+      footer:
+        Connects-to: 'https://github.com/balena-io/balena-api/issues/3117'
+        connects-to: 'https://github.com/balena-io/balena-api/issues/3117'
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.138.4
+  date: 2021-05-03T22:09:29.530Z
+- commits:
     - subject: 'fixtures: reuse variable rather than hardcode the value'
       hash: d3032d2efb83da3b016162fea827ec4d1b8e9b9f
       body: ''
