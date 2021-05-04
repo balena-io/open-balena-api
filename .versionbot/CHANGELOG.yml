@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove unnecessary async/await from state endpoint
+      hash: 64135e7b595276fef2cb61e592419d544f98f00d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.138.6
+  date: 2021-05-04T15:14:32.247Z
+- commits:
     - subject: >-
         hostapps: ensure that preprovisioned devices aren't downgraded after
         check in
