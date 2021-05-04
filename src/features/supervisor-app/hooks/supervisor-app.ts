@@ -17,13 +17,12 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	 */
 	async PRERUN(args) {
 		if (args.request.values.supervisor_version != null) {
-			await sbvrUtils.getAffectedIds(args).then(async (ids) => {
-				await setSupervisorReleaseResource(
-					args.api,
-					ids,
-					args.request.values.supervisor_version,
-				);
-			});
+			const ids = await sbvrUtils.getAffectedIds(args);
+			await setSupervisorReleaseResource(
+				args.api,
+				ids,
+				args.request.values.supervisor_version,
+			);
 		}
 	},
 });
@@ -48,15 +47,12 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 
 			// Ensure that we don't ever downgrade the supervisor
 			// from its current version
-			await sbvrUtils
-				.getAffectedIds(args)
-				.then((ids) =>
-					checkSupervisorReleaseUpgrades(
-						args.api,
-						ids,
-						args.request.custom.supervisorRelease,
-					),
-				);
+			const ids = await sbvrUtils.getAffectedIds(args);
+			await checkSupervisorReleaseUpgrades(
+				args.api,
+				ids,
+				args.request.custom.supervisorRelease,
+			);
 		}
 	},
 });

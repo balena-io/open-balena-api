@@ -25,7 +25,7 @@ describe('Devices running supervisor releases', () => {
 	});
 
 	after(async () => {
-		await fixtures.clean({ devices: [device, device2] });
+		await fixtures.clean({ devices: [device, device2, device3] });
 		await fixtures.clean(ctx.fixtures);
 	});
 
