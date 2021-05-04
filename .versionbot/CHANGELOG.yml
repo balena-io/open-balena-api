@@ -1,4 +1,19 @@
 - commits:
+    - subject: >-
+        hostapps: ensure that preprovisioned devices aren't downgraded after
+        check in
+      hash: cf7b203d8a937eaf28cd81cd33a8306119d7ca10
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.138.5
+  date: 2021-05-04T13:26:35.317Z
+- commits:
     - subject: 'hostapps: remove rule enforcing valid hostapp releases'
       hash: b8594fa08de2533b01d3a3f52b6dca001aef6e42
       body: |
