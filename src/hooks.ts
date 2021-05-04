@@ -9,6 +9,7 @@ import './features/device-urls/hooks';
 import './features/device-types/hooks';
 import './features/hostapp/hooks';
 import './features/organizations/hooks';
+import './features/supervisor-app/hooks';
 import './features/tags/hooks';
 import './features/vars-schema/hooks';
 import './features/vpn/hooks';

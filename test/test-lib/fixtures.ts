@@ -172,6 +172,7 @@ const loaders: Dictionary<LoaderFunc> = {
 					'composition',
 					'source',
 					'release_version',
+					'is_invalidated',
 					'release_type',
 					'is_passing_tests',
 				),

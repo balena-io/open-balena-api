@@ -552,6 +552,9 @@ Fact type: device should be operated by release
 Fact type: device1 is managed by device2
 	Synonymous Form: device2 manages device1
 	Necessity: each device1 is managed by at most one device2.
+Fact type: device should be managed by release
+	Synonymous Form: release should manage device
+	Necessity: each device should be managed by at most one release
 
 
 -- application config variable
@@ -784,3 +787,7 @@ Rule: It is necessary that each release that should be running on an application
 Rule: It is necessary that each release that contains at least 2 images, belongs to an application that has an application type that supports multicontainer.
 Rule: It is necessary that each release that should operate a device, has a status that is equal to "success".
 Rule: It is necessary that each release that should operate a device, belongs to an application that is host and is for a device type that describes the device.
+-- native supervisor release rules, separated for legibility
+Rule: It is necessary that each release that should manage a device, has a status that is equal to "success" and has exactly one release version.
+Rule: It is necessary that each release that should manage a device, belongs to an application that is public and is not host.
+Rule: It is necessary that each release that should manage a device that is of a device type1, belongs to an application that is for a device type2 that is of a cpu architecture that is supported by the device type1.

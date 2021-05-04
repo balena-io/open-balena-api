@@ -1,0 +1,58 @@
+{
+	"image1": {
+		"user": "admin",
+		"service": "service1",
+		"releases": [ "5.0.1" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image2": {
+		"user": "admin",
+		"service": "service1",
+		"releases": [ "6.0.1_logstream" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image3": {
+		"user": "admin",
+		"service": "service1",
+		"releases": [ "7.0.1" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image4": {
+		"user": "admin",
+		"service": "service1",
+		"releases": [ "8.0.1" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image5": {
+		"user": "admin",
+		"service": "service2",
+		"releases": [ "user_release" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image6": {
+		"user": "admin",
+		"service": "service3",
+		"releases": [ "hostapp_release" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image7": {
+		"user": "admin",
+		"service": "service1",
+		"releases": [ "8.1.1" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image8": {
+		"user": "admin",
+		"service": "service4",
+		"releases": [ "12.1.1" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	}
+}

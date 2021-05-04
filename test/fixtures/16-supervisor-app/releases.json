@@ -1,0 +1,130 @@
+{
+	"5.0.1": {
+		"user": "admin",
+		"application": "public_app",
+		"release_version": "v5.0.1",
+		"status": "success",
+		"source": "cloud",
+		"composition": {
+			"services": {
+				"image1": {
+					"build": "./image1/"
+				}
+			}
+		}
+	},
+	"6.0.1_logstream": {
+		"user": "admin",
+		"application": "public_app",
+		"release_version": "v6.0.1_logstream",
+		"status": "success",
+		"source": "cloud",
+		"composition": {
+			"services": {
+				"image2": {
+					"build": "./image2/"
+				}
+			}
+		}
+	},
+	"7.0.1": {
+		"user": "admin",
+		"application": "public_app",
+		"release_version": "v7.0.1",
+		"status": "success",
+		"source": "cloud",
+		"composition": {
+			"services": {
+				"image3": {
+					"build": "./image3/"
+				}
+			}
+		}
+	},
+	"8.0.1": {
+		"user": "admin",
+		"application": "public_app",
+		"release_version": "v8.0.1",
+		"status": "success",
+		"source": "cloud",
+		"composition": {
+			"services": {
+				"image4": {
+					"build": "./image4/"
+				}
+			}
+		}
+	},
+	"8.1.1": {
+		"user": "admin",
+		"application": "public_app",
+		"release_version": "v8.1.1",
+		"status": "success",
+		"source": "cloud",
+		"is_invalidated": true,
+		"composition": {
+			"services": {
+				"image7": {
+					"build": "./image7/"
+				}
+			}
+		}
+	},
+	"12.1.1": {
+		"user": "admin",
+		"application": "public_pi_app",
+		"release_version": "v12.1.1",
+		"status": "success",
+		"source": "cloud",
+		"is_invalidated": false,
+		"composition": {
+			"services": {
+				"image8": {
+					"build": "./image8/"
+				}
+			}
+		}
+	},
+	"no_version": {
+		"user": "admin",
+		"application": "public_pi_app",
+		"status": "success",
+		"source": "cloud",
+		"is_invalidated": false,
+		"composition": {
+			"services": {
+				"image8": {
+					"build": "./image8/"
+				}
+			}
+		}
+	},
+	"hostapp_release": {
+		"user": "admin",
+		"application": "host_app",
+		"release_version": "v9.0.1",
+		"status": "success",
+		"source": "cloud",
+		"composition": {
+			"services": {
+				"image6": {
+					"build": "./image6/"
+				}
+			}
+		}
+	},
+	"user_release": {
+		"user": "admin",
+		"application": "app1",
+		"release_version": "v9.0.1",
+		"status": "success",
+		"source": "cloud",
+		"composition": {
+			"services": {
+				"image5": {
+					"build": "./image5/"
+				}
+			}
+		}
+	}
+}
