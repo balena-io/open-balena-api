@@ -1,4 +1,19 @@
 - commits:
+    - subject: 'supervisor-releases: copy across all relevant modeling from closed API'
+      hash: 91eb4c29e6df232a337e007b1889a1180edd4f9b
+      body: ''
+      footer:
+        Connects-to: 'https://github.com/balena-io/open-balena-api/pull/504'
+        connects-to: 'https://github.com/balena-io/open-balena-api/pull/504'
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.138.7
+  date: 2021-05-04T17:26:08.436Z
+- commits:
     - subject: Remove unnecessary async/await from state endpoint
       hash: 64135e7b595276fef2cb61e592419d544f98f00d
       body: ''
