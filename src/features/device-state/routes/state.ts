@@ -58,12 +58,12 @@ export type LocalState = {
 	apps: Dictionary<Partial<App>>;
 };
 
-async function buildAppFromRelease(
+function buildAppFromRelease(
 	device: AnyObject,
 	application: AnyObject,
 	release: AnyObject,
 	config: Dictionary<string>,
-): Promise<App> {
+): App {
 	let composition: AnyObject = {};
 	const services: App['services'] = {};
 
@@ -307,7 +307,7 @@ export const stateV2: RequestHandler = async (req, res) => {
 
 		const appsForState: Dictionary<Partial<App>> = {};
 
-		const userApp = await getUserAppForState(device, config);
+		const userApp = getUserAppForState(device, config);
 		const userAppFromApi: AnyObject = device.belongs_to__application[0];
 		appsForState[userAppFromApi.id] = userApp;
 
@@ -317,7 +317,7 @@ export const stateV2: RequestHandler = async (req, res) => {
 			apps: appsForState,
 		};
 
-		const dependent = await getDependent(device);
+		const dependent = getDependent(device);
 
 		res.json({
 			local,
@@ -359,10 +359,10 @@ const getConfig = (device: AnyObject) => {
 	return config;
 };
 
-const getUserAppForState = async (
+const getUserAppForState = (
 	device: AnyObject,
 	config: Dictionary<string>,
-) => {
+): Partial<App> => {
 	const userAppFromApi: AnyObject = device.belongs_to__application[0];
 
 	// get the release of the main app that this device should run...
@@ -376,10 +376,10 @@ const getUserAppForState = async (
 				networks: {},
 				volumes: {},
 		  }
-		: await buildAppFromRelease(device, userAppFromApi, release, config);
+		: buildAppFromRelease(device, userAppFromApi, release, config);
 };
 
-const getDependent = async (device: AnyObject): Promise<Dependent> => {
+const getDependent = (device: AnyObject): Dependent => {
 	const userAppFromApi: AnyObject = device.belongs_to__application[0];
 
 	const dependendOnByApps = userAppFromApi.is_depended_on_by__application as AnyObject[];
