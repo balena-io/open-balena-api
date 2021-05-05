@@ -212,6 +212,22 @@ describe('target hostapps', () => {
 		);
 		expect(body.d[0]['os_version']).to.be.not.null;
 		expect(body.d[0]['os_variant']).to.be.not.null;
+		const supervisorVersion = 'v12.3.5';
+		const devicePatchBody2 = {
+			local: {
+				supervisor_version: supervisorVersion,
+			},
+		};
+
+		await invalidatedReleaseDevice.patchStateV2(devicePatchBody2);
+		// after provisioning to our invalidated release, let's make sure we're not blocked
+		// in further PATCHing (using supervisor_version here as a proxy/dummy value)
+		const resp = await supertest(admin)
+			.get(
+				`/${version}/device(${invalidatedReleaseDevice.id})?$select=supervisor_version`,
+			)
+			.expect(200);
+		expect(resp.body.d[0]['supervisor_version']).to.equal(supervisorVersion);
 	});
 
 	it('should be able to invalidate a release with devices attached', async () => {
