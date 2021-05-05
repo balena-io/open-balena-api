@@ -1,4 +1,21 @@
 - commits:
+    - subject: >-
+        hostapps: test that devices can still PATCH after provisioning to an
+        invalidated release
+      hash: 89b49ec2b887d4bde4d52b16f92657e2565920da
+      body: ''
+      footer:
+        Connects-to: 'https://github.com/balena-io/balena-api/issues/3117'
+        connects-to: 'https://github.com/balena-io/balena-api/issues/3117'
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.138.8
+  date: 2021-05-05T14:18:11.532Z
+- commits:
     - subject: 'supervisor-releases: copy across all relevant modeling from closed API'
       hash: 91eb4c29e6df232a337e007b1889a1180edd4f9b
       body: ''
