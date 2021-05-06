@@ -9,6 +9,7 @@ describe('Devices running supervisor releases', () => {
 	let device: fakeDevice.Device;
 	let device2: fakeDevice.Device;
 	let device3: fakeDevice.Device;
+	let device4: fakeDevice.Device;
 
 	before(async () => {
 		const fx = await fixtures.load('16-supervisor-app');
@@ -22,10 +23,11 @@ describe('Devices running supervisor releases', () => {
 		device = await fakeDevice.provisionDevice(ctx.admin, ctx.deviceApp.id);
 		device2 = await fakeDevice.provisionDevice(ctx.admin, ctx.deviceApp.id);
 		device3 = await fakeDevice.provisionDevice(ctx.admin, ctx.deviceApp.id);
+		device4 = await fakeDevice.provisionDevice(ctx.admin, ctx.deviceApp.id);
 	});
 
 	after(async () => {
-		await fixtures.clean({ devices: [device, device2, device3] });
+		await fixtures.clean({ devices: [device, device2, device3, device4] });
 		await fixtures.clean(ctx.fixtures);
 	});
 
@@ -90,6 +92,32 @@ describe('Devices running supervisor releases', () => {
 				.expect(200);
 			const res = await supertest(ctx.admin).get(
 				`/${version}/device(${device.id})`,
+			);
+			expect(res.body)
+				.to.have.nested.property('d[0].should_be_managed_by__release.__id')
+				.that.equals(ctx.supervisorReleases['6.0.1_logstream'].id);
+		});
+
+		it('should provision to a _logstream supervisor edition', async () => {
+			await device4.patchStateV2({
+				local: {
+					api_port: 48484,
+					api_secret: 'somesecret',
+					os_version: '2.38.0+rev1',
+					os_variant: 'dev',
+					supervisor_version: '6.0.1',
+					provisioning_progress: null,
+					provisioning_state: '',
+					status: 'Idle',
+					logs_channel: null,
+					update_failed: false,
+					update_pending: false,
+					update_downloaded: false,
+				},
+			});
+
+			const res = await supertest(ctx.admin).get(
+				`/${version}/device(${device4.id})`,
 			);
 			expect(res.body)
 				.to.have.nested.property('d[0].should_be_managed_by__release.__id')
