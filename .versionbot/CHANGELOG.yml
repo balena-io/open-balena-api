@@ -1,4 +1,19 @@
 - commits:
+    - subject: 'supervisor-apps: allow provisioning directly to a logstream edition'
+      hash: 2f58677e999de7cc6a6655775e17d20ef81d3742
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Connects-to: 'https://github.com/balena-io/open-balena-api/issues/665'
+        connects-to: 'https://github.com/balena-io/open-balena-api/issues/665'
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.138.9
+  date: 2021-05-06T16:54:21.866Z
+- commits:
     - subject: >-
         hostapps: test that devices can still PATCH after provisioning to an
         invalidated release
