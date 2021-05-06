@@ -135,8 +135,15 @@ async function getSupervisorReleaseResource(
 		resource: 'release',
 		options: {
 			$select: ['id', 'release_version'],
+			// technically this is in violation of semver, but is required until logstreams go away
+			$orderby: { release_version: 'desc' },
+			$top: 1,
 			$filter: {
-				release_version: `v${supervisorVersion}`,
+				$or: [
+					{ release_version: `v${supervisorVersion}` },
+					{ release_version: `v${supervisorVersion}_logstream` },
+					{ release_version: `v${supervisorVersion}_logstream2` },
+				],
 				status: 'success',
 				belongs_to__application: {
 					$any: {

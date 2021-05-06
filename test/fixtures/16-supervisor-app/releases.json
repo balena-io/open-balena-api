@@ -13,6 +13,20 @@
 			}
 		}
 	},
+	"6.0.1": {
+		"user": "admin",
+		"application": "public_app",
+		"release_version": "v6.0.1",
+		"status": "success",
+		"source": "cloud",
+		"composition": {
+			"services": {
+				"image2": {
+					"build": "./image2/"
+				}
+			}
+		}
+	},
 	"6.0.1_logstream": {
 		"user": "admin",
 		"application": "public_app",
