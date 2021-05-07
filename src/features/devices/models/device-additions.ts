@@ -37,7 +37,7 @@ export const addToModel = (
 	// false), otherwise it'll generate a case that looks into the actual model
 	// field.
 	const isInactive: EqualsNode = addShims
-		? ['Equals', ['Number', 1], ['Number', 2]]
+		? ['Equals', ['Boolean', true], ['Boolean', false]]
 		: [
 				'Equals',
 				['ReferencedField', 'device', 'is active'],
