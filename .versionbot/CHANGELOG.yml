@@ -1,4 +1,15 @@
 - commits:
+    - subject: Use `true = false` rather than `1 = 2` for generating a false result
+      hash: 1fc20cf371d01f12110042da6bfa088e8a9b17d2
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.138.10
+  date: 2021-05-07T14:47:13.413Z
+- commits:
     - subject: 'supervisor-apps: allow provisioning directly to a logstream edition'
       hash: 2f58677e999de7cc6a6655775e17d20ef81d3742
       body: ''
