@@ -25,10 +25,10 @@
     "posttest": "docker rmi test-open-balena-api"
   },
   "dependencies": {
-    "@balena/abstract-sql-compiler": "^7.12.2",
+    "@balena/abstract-sql-compiler": "8.0.0-true-boolean-5914ecfede7efc56e38162b4f9dfa5e19f0d0792",
     "@balena/es-version": "^1.0.0",
     "@balena/node-metrics-gatherer": "5.7.3",
-    "@balena/pinejs": "^14.22.2",
+    "@balena/pinejs": "15.0.0-true-boolean-7896b116c446d891d7a0d5e4085c02a13bc9c725",
     "@resin.io/device-types": "^10.5.0",
     "@types/basic-auth": "^1.1.3",
     "@types/bluebird": "^3.5.33",

@@ -2,6 +2,7 @@ import type {
 	AbstractSqlModel,
 	AbstractSqlQuery,
 	AndNode,
+	BooleanTypeNodes,
 	EqualsNode,
 } from '@balena/abstract-sql-compiler';
 
@@ -36,8 +37,8 @@ export const addToModel = (
 	// it'll generate a dummy case (the equivalent of 1 == 2, which is always
 	// false), otherwise it'll generate a case that looks into the actual model
 	// field.
-	const isInactive: EqualsNode = addShims
-		? ['Equals', ['Boolean', true], ['Boolean', false]]
+	const isInactive: BooleanTypeNodes = addShims
+		? ['Boolean', false]
 		: [
 				'Equals',
 				['ReferencedField', 'device', 'is active'],
