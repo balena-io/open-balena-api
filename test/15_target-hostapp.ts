@@ -250,4 +250,21 @@ describe('target hostapps', () => {
 				`"Could not find a hostapp release with this ID ${prodNucHostappReleaseId}"`,
 			);
 	});
+
+	it("should null target hostapp when a device's device type is changed", async () => {
+		const { body } = await supertest(admin)
+			.get(`/${version}/device_type?$select=id&$filter=slug eq 'raspberrypi3'`)
+			.expect(200);
+		expect(body.d[0]['id']).to.be.not.null;
+		await supertest(admin)
+			.patch(`/${version}/device(${device.id})`)
+			.send({ is_of__device_type: body.d[0]['id'] })
+			.expect(200);
+		const { body: dev } = await supertest(admin)
+			.get(
+				`/${version}/device(${device.id})?$select=should_be_operated_by__release`,
+			)
+			.expect(200);
+		expect(dev.d[0].should_be_operated_by__release).to.be.null;
+	});
 });

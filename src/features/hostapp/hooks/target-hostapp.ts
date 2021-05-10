@@ -41,6 +41,25 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	/**
+	 * If a device changes device types, we need to clear out the related target hostapp release
+	 *
+	 * TODO: changing device types presents us with a bit of a conundrum. since we cannot guarantee parity between
+	 * available OSes for each device type, we cannot just switch the target to the new device type, so instead let's just
+	 * unset the value
+	 */
+
+	async POSTPARSE({ request }) {
+		if (
+			request.values.is_of__device_type != null &&
+			request.values.should_be_operated_by__release === undefined
+		) {
+			request.values.should_be_operated_by__release = null;
+		}
+	},
+});
+
+hooks.addPureHook('PATCH', 'resin', 'device', {
+	/**
 	 * When a device checks in with it's initial OS version, set the corresponding should_be_operated_by__release resource
 	 * using its current reported version.
 	 */
