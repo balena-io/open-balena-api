@@ -1,4 +1,19 @@
 - commits:
+    - subject: 'hostapps: unset a target hostapp when changing device types'
+      hash: ed9f3fed6a92832e103e4c6e768c2adfda09f4b7
+      body: ''
+      footer:
+        Connects-to: 'https://github.com/balena-io/open-balena-api/issues/668'
+        connects-to: 'https://github.com/balena-io/open-balena-api/issues/668'
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.138.11
+  date: 2021-05-11T14:55:41.826Z
+- commits:
     - subject: Use `true = false` rather than `1 = 2` for generating a false result
       hash: 1fc20cf371d01f12110042da6bfa088e8a9b17d2
       body: ''
