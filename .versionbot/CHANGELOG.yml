@@ -1,4 +1,19 @@
 - commits:
+    - subject: Require public apps to be of a non-legacy type
+      hash: f61c60a0efb4929d768bec2265b2b620d3f46aae
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: 'https://github.com/balena-io/balena-api/issues/3129'
+        see: 'https://github.com/balena-io/balena-api/issues/3129'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.139.0
+  date: 2021-05-11T17:22:39.270Z
+- commits:
     - subject: 'hostapps: unset a target hostapp when changing device types'
       hash: ed9f3fed6a92832e103e4c6e768c2adfda09f4b7
       body: ''
