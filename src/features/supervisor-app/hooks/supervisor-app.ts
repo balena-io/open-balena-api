@@ -1,12 +1,12 @@
 import * as semver from 'balena-semver';
 import * as _ from 'lodash';
-
 import {
 	sbvrUtils,
 	hooks,
 	permissions,
 	errors as pinejsErrors,
 } from '@balena/pinejs';
+import { Release } from '../../../balena-model';
 
 const { BadRequestError } = pinejsErrors;
 
@@ -18,8 +18,10 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	async PRERUN(args) {
 		if (args.request.values.supervisor_version != null) {
 			const ids = await sbvrUtils.getAffectedIds(args);
-			await setSupervisorReleaseResource(
-				args.api,
+			const { api } = args;
+
+			await setSupervisorResources(
+				api,
 				ids,
 				args.request.values.supervisor_version,
 			);
@@ -35,24 +37,36 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		if (args.request.values.should_be_managed_by__release != null) {
 			// First try to coerce the value to an integer for
 			// moving forward
-			args.request.custom.supervisorRelease = parseInt(
+
+			const releaseId = parseInt(
 				args.request.values.should_be_managed_by__release,
 				10,
 			);
+
 			// But let's check we actually got a value
 			// representing an integer
-			if (!Number.isInteger(args.request.custom.supervisorRelease)) {
+			if (!Number.isInteger(releaseId)) {
 				throw new BadRequestError('Expected an ID for the supervisor_release');
 			}
+
+			args.request.custom.supervisorRelease = releaseId;
 
 			// Ensure that we don't ever downgrade the supervisor
 			// from its current version
 			const ids = await sbvrUtils.getAffectedIds(args);
-			await checkSupervisorReleaseUpgrades(
-				args.api,
-				ids,
-				args.request.custom.supervisorRelease,
-			);
+			if (ids.length === 0) {
+				return;
+			}
+
+			const release = await getRelease(args.api, releaseId);
+
+			if (!release) {
+				throw new BadRequestError(
+					`Could not find a supervisor release with this ID ${releaseId}`,
+				);
+			}
+
+			await checkSupervisorReleaseUpgrades(args.api, ids, release);
 		}
 	},
 });
@@ -60,11 +74,8 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 async function checkSupervisorReleaseUpgrades(
 	api: sbvrUtils.PinejsClient,
 	deviceIds: number[],
-	newSupervisorReleaseId: number,
-) {
-	if (deviceIds.length === 0) {
-		return;
-	}
+	newSupervisorRelease: Partial<Release>,
+): Promise<boolean> {
 	const nullSupervisorCount = await api.get({
 		resource: 'device',
 		options: {
@@ -73,29 +84,18 @@ async function checkSupervisorReleaseUpgrades(
 	});
 
 	if (nullSupervisorCount === deviceIds.length) {
-		return;
+		return false;
 	}
 
-	const newSupervisorRelease = await api.get({
-		resource: 'release',
-		id: newSupervisorReleaseId,
-		options: {
-			$select: 'release_version',
-			$filter: {
-				is_invalidated: false,
-			},
-		},
-	});
-
-	if (newSupervisorRelease == null) {
+	if (newSupervisorRelease.is_invalidated) {
 		throw new BadRequestError(
-			`Could not find a supervisor release with this ID ${newSupervisorReleaseId}`,
+			`Could not find a valid supervisor release with this ID ${newSupervisorRelease.id}`,
 		);
 	}
 
 	const newSupervisorVersion = newSupervisorRelease.release_version;
 
-	const releases = await api.get({
+	const oldReleases = await api.get({
 		resource: 'release',
 		options: {
 			$select: 'release_version',
@@ -116,14 +116,33 @@ async function checkSupervisorReleaseUpgrades(
 		},
 	});
 
-	for (const release of releases) {
+	let doingUpgrade = false;
+
+	for (const release of oldReleases) {
 		const oldVersion = release.release_version;
-		if (semver.lt(newSupervisorVersion, oldVersion)) {
+		if (semver.gt(newSupervisorVersion, oldVersion)) {
+			doingUpgrade = true;
+		} else if (semver.lt(newSupervisorVersion, oldVersion)) {
 			throw new BadRequestError(
 				`Attempt to downgrade supervisor, which is not allowed`,
 			);
 		}
 	}
+
+	return doingUpgrade;
+}
+
+async function getRelease(
+	api: sbvrUtils.PinejsClient,
+	releaseId: number,
+): Promise<Partial<Release> | undefined> {
+	return await api.get({
+		resource: 'release',
+		id: releaseId,
+		options: {
+			$select: ['release_version', 'is_invalidated'],
+		},
+	});
 }
 
 async function getSupervisorReleaseResource(
@@ -180,7 +199,7 @@ async function getSupervisorReleaseResource(
 	});
 }
 
-async function setSupervisorReleaseResource(
+async function setSupervisorResources(
 	api: sbvrUtils.PinejsClient,
 	deviceIds: number[],
 	supervisorVersion: string,
@@ -221,9 +240,9 @@ async function setSupervisorReleaseResource(
 		},
 	});
 
-	return Promise.all(
+	await Promise.all(
 		_.map(devicesByDeviceTypeArch, async (affectedDevices, deviceTypeArch) => {
-			const affectedDeviceIds = affectedDevices.map((d) => d.id);
+			const affectedDeviceIds = affectedDevices.map((d) => d.id as number);
 
 			const [supervisorRelease] = await getSupervisorReleaseResource(
 				api,
@@ -231,21 +250,31 @@ async function setSupervisorReleaseResource(
 				deviceTypeArch,
 			);
 
-			if (supervisorRelease == null) {
-				return;
+			if (supervisorRelease?.id) {
+				await setSupervisorRelease(
+					rootApi,
+					affectedDeviceIds,
+					supervisorRelease.id,
+				);
 			}
-
-			await rootApi.patch({
-				resource: 'device',
-				options: {
-					$filter: {
-						id: { $in: affectedDeviceIds },
-					},
-				},
-				body: {
-					should_be_managed_by__release: supervisorRelease.id,
-				},
-			});
 		}),
 	);
+}
+
+function setSupervisorRelease(
+	rootApi: sbvrUtils.PinejsClient,
+	deviceIds: number[],
+	supervisorReleaseId: string,
+) {
+	return rootApi.patch({
+		resource: 'device',
+		options: {
+			$filter: {
+				id: { $in: deviceIds },
+			},
+		},
+		body: {
+			should_be_managed_by__release: supervisorReleaseId,
+		},
+	});
 }
