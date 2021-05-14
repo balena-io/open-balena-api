@@ -1,4 +1,27 @@
 - commits:
+    - subject: Update open-balena-base to 11.2.0
+      hash: 3737db9eee1b816a264f7a00e299fb0c2fb093a8
+      body: |
+        Update open-balena-base from 11.1.2 to 11.2.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 14.17.0 and npm to 6.14.13
+              hash: d4a35f84c95db475b972aab4ed7781ce47515f39
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.2.0
+          date: 2021-05-14T15:14:39.729Z
+  version: 0.139.2
+  date: 2021-05-14T16:52:31.983Z
+- commits:
     - subject: 'hostapp: allow devices to provision & set target state via POST'
       hash: 0eca892c689acf33c3d18b7f25b16ab1d90f4731
       body: ''
