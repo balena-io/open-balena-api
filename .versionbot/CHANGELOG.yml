@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'hostapp: allow devices to provision & set target state via POST'
+      hash: 0eca892c689acf33c3d18b7f25b16ab1d90f4731
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Matthew McGinn <matthew@balena.io>
+        signed-off-by: Matthew McGinn <matthew@balena.io>
+      author: Matthew McGinn
+      nested: []
+  version: 0.139.1
+  date: 2021-05-11T20:02:51.875Z
+- commits:
     - subject: Require public apps to be of a non-legacy type
       hash: f61c60a0efb4929d768bec2265b2b620d3f46aae
       body: ''
