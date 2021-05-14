@@ -56,7 +56,7 @@ describe('target hostapps', () => {
 		await fixtures.clean(fx);
 	});
 
-	it('should provision with a linked hostapp', async () => {
+	it('should provision with a linked hostapp (using PATCH)', async () => {
 		const devicePatchBody = {
 			local: {
 				os_version: 'balenaOS 2.50.0+rev1',
@@ -75,6 +75,57 @@ describe('target hostapps', () => {
 		expect(body.d[0]['should_be_operated_by__release'].__id).to.equal(
 			prodNucHostappReleaseId,
 		);
+	});
+
+	it('should provision WITHOUT a linked hostapp (using POST)', async () => {
+		const devicePostBody = {
+			belongs_to__application: applicationId,
+			device_type: 'raspberrypi3',
+			os_version: 'balenaOS 2.99.0+rev1',
+			os_variant: 'prod',
+		};
+
+		const res = await supertest(admin)
+			.post(`/${version}/device`)
+			.send(devicePostBody)
+			.expect(201);
+		const { body } = await supertest(admin)
+			.get(
+				`/${version}/device(${res.body.id})?$select=should_be_operated_by__release`,
+			)
+			.expect(200);
+		expect(body.d[0]).to.not.be.undefined;
+		expect(body.d[0]['should_be_operated_by__release']).to.be.null;
+		await fixtures.clean({
+			devices: [res.body],
+		});
+	});
+
+	it('should provision with a linked hostapp (using POST)', async () => {
+		const devicePostBody = {
+			belongs_to__application: applicationId,
+			device_type: 'intel-nuc',
+			os_version: 'balenaOS 2.50.0+rev1',
+			os_variant: 'prod',
+		};
+
+		const res = await supertest(admin)
+			.post(`/${version}/device`)
+			.send(devicePostBody)
+			.expect(201);
+		const { body } = await supertest(admin)
+			.get(
+				`/${version}/device(${res.body.id})?$select=should_be_operated_by__release`,
+			)
+			.expect(200);
+		expect(body.d[0]).to.not.be.undefined;
+		expect(body.d[0]['should_be_operated_by__release']).to.be.not.null;
+		expect(body.d[0]['should_be_operated_by__release'].__id).to.equal(
+			prodNucHostappReleaseId,
+		);
+		await fixtures.clean({
+			devices: [res.body],
+		});
 	});
 
 	it('should provision with a linked ESR hostapp', async () => {
