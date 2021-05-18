@@ -1,4 +1,15 @@
 - commits:
+    - subject: Expose a `skipLogging` middleware
+      hash: b800a7e7fa0f95720f1ea8da99dfb41ce6a22ec9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.139.3
+  date: 2021-05-18T12:39:28.543Z
+- commits:
     - subject: Update open-balena-base to 11.2.0
       hash: 3737db9eee1b816a264f7a00e299fb0c2fb093a8
       body: |
