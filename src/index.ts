@@ -135,6 +135,7 @@ import { varListInsert } from './features/device-state/routes/state';
 import {
 	GetUrlFunction,
 	setupRequestLogging,
+	skipLogging,
 } from './features/request-logging';
 import {
 	startContractSynchronization,
@@ -202,6 +203,7 @@ export const middleware = {
 	permissionRequired: permissionRequiredMiddleware,
 	loginRateLimiter,
 	createRateLimitMiddleware,
+	skipLogging,
 };
 export const hooks = {
 	addDeleteHookForDependents,
