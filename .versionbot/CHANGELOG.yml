@@ -1,4 +1,19 @@
 - commits:
+    - subject: Add `SUPERVISOR_HARDWARE_METRICS` config var in schema
+      hash: 6ccd7bdb7c87bdfdc737a0fbae191ec9d32f2cfa
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Connects-to: balena-os/balena-supervisor#1666
+        connects-to: balena-os/balena-supervisor#1666
+        Signed-off-by: Christina Wang <christina@balena.io>
+        signed-off-by: Christina Wang <christina@balena.io>
+      author: Christina Wang
+      nested: []
+  version: 0.140.0
+  date: 2021-05-18T19:01:34.493Z
+- commits:
     - subject: Expose a `skipLogging` middleware
       hash: b800a7e7fa0f95720f1ea8da99dfb41ce6a22ec9
       body: ''
