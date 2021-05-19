@@ -32,6 +32,7 @@ export const ALLOWED_NAMES = addReservedPrefixes([
 	'SUPERVISOR_VPN_CONTROL',
 	'SUPERVISOR_PERSISTENT_LOGGING',
 	'SUPERVISOR_INSTANT_UPDATE_TRIGGER',
+	'SUPERVISOR_HARDWARE_METRICS',
 ]);
 
 // Config variable namespaces that are allowed to be set by frontend components
@@ -97,6 +98,12 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		description:
 			'Define the PNG image to be used for the boot splash screen. Only supported by supervisor versions >= v12.3.0.',
 		maxLength: 13400, // ~10KB base64 encoded image
+	},
+	BALENA_SUPERVISOR_HARDWARE_METRICS: {
+		enum: ['false', 'true'],
+		description:
+			'Enable / Disable reporting device metrics such as CPU usage for bandwidth conservation. Only supported by supervisor versions >= v12.8.0.',
+		default: 'true',
 	},
 };
 
