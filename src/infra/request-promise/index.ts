@@ -39,13 +39,13 @@ export const defaultRequest = request.defaults({
 	timeout: EXTERNAL_HTTP_TIMEOUT_MS,
 });
 
-const promisifiedRequest = (Bluebird.promisifyAll(defaultRequest, {
+const promisifiedRequest = Bluebird.promisifyAll(defaultRequest, {
 	multiArgs: true,
-}) as any) as PromisifiedRequest;
+}) as any as PromisifiedRequest;
 
-export const requestAsync = (Bluebird.promisify(promisifiedRequest, {
+export const requestAsync = Bluebird.promisify(promisifiedRequest, {
 	multiArgs: true,
-}) as any) as (
+}) as any as (
 	arg1:
 		| (request.UriOptions & request.CoreOptions)
 		| (request.UrlOptions & request.CoreOptions),

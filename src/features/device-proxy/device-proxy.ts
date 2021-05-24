@@ -188,21 +188,23 @@ export async function requestDevices({
 	const resinApi = api.resin.clone({
 		passthrough: { req },
 	});
-	const deviceIds = ((await resinApi.get({
-		resource: 'device',
-		options: {
-			$select: 'id',
-			$filter: {
-				$and: [
-					{
-						is_connected_to_vpn: true,
-						vpn_address: { $ne: null },
-					},
-					filter,
-				],
+	const deviceIds = (
+		(await resinApi.get({
+			resource: 'device',
+			options: {
+				$select: 'id',
+				$filter: {
+					$and: [
+						{
+							is_connected_to_vpn: true,
+							vpn_address: { $ne: null },
+						},
+						filter,
+					],
+				},
 			},
-		},
-	})) as Array<Pick<Device, 'id'>>).map(({ id }) => id);
+		})) as Array<Pick<Device, 'id'>>
+	).map(({ id }) => id);
 	if (deviceIds.length === 0) {
 		if (!wait) {
 			// Don't throw an error if it's a fire/forget

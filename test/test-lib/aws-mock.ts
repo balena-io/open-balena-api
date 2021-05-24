@@ -41,7 +41,7 @@ class NotFoundError extends Error {
 const toReturnType = <T extends (...args: any[]) => any>(result: {
 	[key: string]: any;
 }) => {
-	return ({
+	return {
 		promise: () => {
 			if (result.Error) {
 				const error = new Error();
@@ -51,7 +51,7 @@ const toReturnType = <T extends (...args: any[]) => any>(result: {
 			}
 			return Bluebird.resolve(result);
 		},
-	} as unknown) as ReturnType<T>;
+	} as unknown as ReturnType<T>;
 };
 
 interface UnauthenticatedRequestParams {

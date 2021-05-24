@@ -63,16 +63,16 @@ export const apiKeyMiddleware: RequestHandler = async (req, _res, next) => {
 	}
 };
 
-export const permissionRequiredMiddleware = (
-	permission: string,
-): RequestHandler => (req, res, next) => {
-	if (reqHasPermission(req, permission)) {
-		next();
-		return null;
-	} else {
-		res.sendStatus(401);
-	}
-};
+export const permissionRequiredMiddleware =
+	(permission: string): RequestHandler =>
+	(req, res, next) => {
+		if (reqHasPermission(req, permission)) {
+			next();
+			return null;
+		} else {
+			res.sendStatus(401);
+		}
+	};
 
 export const sudoMiddleware: RequestHandler = async (req, res, next) => {
 	try {

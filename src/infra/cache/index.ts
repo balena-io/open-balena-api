@@ -12,7 +12,7 @@ export type Defined = string | number | boolean | symbol | bigint | object;
  * Note: `undefined`/`null` can only be locally cached so avoid if possible
  */
 export function multiCacheMemoizee<
-	T extends (...args: any[]) => Promise<Defined | undefined>
+	T extends (...args: any[]) => Promise<Defined | undefined>,
 >(
 	fn: T,
 	opts: {
@@ -24,7 +24,7 @@ export function multiCacheMemoizee<
 	} & Pick<MemoizeeOptions<any>, 'preFetch' | 'max' | 'normalizer'>,
 ): T;
 export function multiCacheMemoizee<
-	T extends (...args: any[]) => Promise<Defined>
+	T extends (...args: any[]) => Promise<Defined>,
 >(
 	fn: T,
 	opts: {
@@ -36,7 +36,7 @@ export function multiCacheMemoizee<
 	} & Pick<MemoizeeOptions<any>, 'preFetch' | 'max' | 'normalizer'>,
 ): T;
 export function multiCacheMemoizee<
-	T extends (...args: any[]) => Promise<Defined | undefined>
+	T extends (...args: any[]) => Promise<Defined | undefined>,
 >(
 	fn: T,
 	opts: {

@@ -73,6 +73,7 @@ export const addToModel = (
 		fieldName: 'overall status',
 		dataType: 'Short Text',
 		computed: [
+			// TODO: should use `is managed by-service instance` with timeout for informing online/offline
 			'Case',
 			[
 				'When',

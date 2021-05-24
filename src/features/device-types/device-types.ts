@@ -79,6 +79,7 @@ const getFirstValidBuild = async (
 
 async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	const result: Dictionary<DeviceTypeInfo> = {};
+	// TODO: Do we really need this clear?
 	getDeviceTypeJson.clear();
 	const slugs = await listFolders(IMAGE_STORAGE_PREFIX);
 	await Promise.all(

@@ -11,7 +11,7 @@ export interface DeviceType {
 
 setDefaultFixtures(
 	'deviceTypes',
-	(new Proxy({} as Dictionary<DeviceType>, {
+	new Proxy({} as Dictionary<DeviceType>, {
 		get: async (obj, slug) => {
 			if (typeof slug === 'string' && !obj.hasOwnProperty(slug)) {
 				if (slug === 'then') {
@@ -35,5 +35,5 @@ setDefaultFixtures(
 
 			return obj[slug as any];
 		},
-	}) as any) as Dictionary<Promise<DeviceType>>,
+	}) as any as Dictionary<Promise<DeviceType>>,
 );
