@@ -125,7 +125,7 @@ export const fetchContractsLocally = async (repos: RepositoryInfo[]) => {
 			});
 
 			// We cast to ReadableStream explicitly because `request.get is of type `request.Request` and it controls whether it is a readable or writable stream internally so it is not typings-compatible with ReadableStream, even though it it functionally equivalent.
-			const get = (request
+			const get = request
 				.get(getArchiveLinkForRepo(repo), getRequestOptions(repo))
 				.on('response', function (this: request.Request, response) {
 					if (response.statusCode !== 200) {
@@ -138,7 +138,7 @@ export const fetchContractsLocally = async (repos: RepositoryInfo[]) => {
 						);
 						this.abort();
 					}
-				}) as unknown) as NodeJS.ReadableStream;
+				}) as unknown as NodeJS.ReadableStream;
 
 			await pipeline(get, untar);
 		}),

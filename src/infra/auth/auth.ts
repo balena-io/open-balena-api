@@ -220,7 +220,7 @@ export async function findUser(
 ): Promise<Pick<DbUser, typeof defaultFindUser$select[number]> | undefined>;
 export async function findUser<
 	T extends DbUser,
-	TProps extends ReadonlyArray<keyof T>
+	TProps extends ReadonlyArray<keyof T>,
 >(
 	loginInfo: string,
 	tx: Tx | undefined,
@@ -228,13 +228,13 @@ export async function findUser<
 ): Promise<Pick<T, typeof $select[number]> | undefined>;
 export async function findUser<
 	T extends DbUser,
-	TProps extends ReadonlyArray<keyof T & string>
+	TProps extends ReadonlyArray<keyof T & string>,
 >(
 	loginInfo: string,
 	tx?: Tx,
-	$select: TProps = (defaultFindUser$select as ReadonlyArray<
+	$select: TProps = defaultFindUser$select as ReadonlyArray<
 		keyof DbUser & string
-	>) as TProps,
+	> as TProps,
 ) {
 	if (!loginInfo) {
 		return;

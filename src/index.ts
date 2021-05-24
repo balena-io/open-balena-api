@@ -396,7 +396,8 @@ function setupMiddleware(app: Application) {
 	app.use(compression());
 	app.use(AUTH_PATH, cookieParser());
 
-	const JSON_REGEXP = /^application\/(([\w!//\$%&\*`\-\.\^~]*\+)?json|csp-report)/i;
+	const JSON_REGEXP =
+		/^application\/(([\w!//\$%&\*`\-\.\^~]*\+)?json|csp-report)/i;
 	const isJson: bodyParser.Options['type'] = (req) => {
 		const contentType = req.headers['content-type'];
 		if (contentType == null) {

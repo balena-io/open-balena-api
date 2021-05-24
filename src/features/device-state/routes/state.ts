@@ -382,7 +382,8 @@ const getUserAppForState = (
 const getDependent = (device: AnyObject): Dependent => {
 	const userAppFromApi: AnyObject = device.belongs_to__application[0];
 
-	const dependendOnByApps = userAppFromApi.is_depended_on_by__application as AnyObject[];
+	const dependendOnByApps =
+		userAppFromApi.is_depended_on_by__application as AnyObject[];
 	const managesDevice = device.manages__device as AnyObject[];
 
 	const dependentInfo: Dependent = {
@@ -428,10 +429,8 @@ const getDependent = (device: AnyObject): Dependent => {
 
 	managesDevice.forEach((depDev) => {
 		const depAppId: number = depDev.belongs_to__application.__id;
-		const {
-			release: depRelease,
-			application_environment_variable,
-		} = depAppCache[depAppId];
+		const { release: depRelease, application_environment_variable } =
+			depAppCache[depAppId];
 
 		const depConfig: Dictionary<string> = {};
 		varListInsert(depDev.device_config_variable, depConfig);

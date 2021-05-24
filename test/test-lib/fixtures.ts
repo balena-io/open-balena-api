@@ -297,8 +297,9 @@ const loaders: Dictionary<LoaderFunc> = {
 			body: {
 				belongs_to__application: application.id,
 				belongs_to__user: user.id,
-				is_of__device_type: (await fixtures.deviceTypes[jsonData.device_type])
-					.id,
+				is_of__device_type: (
+					await fixtures.deviceTypes[jsonData.device_type]
+				).id,
 				..._.pick(
 					jsonData,
 					'custom_latitude',
