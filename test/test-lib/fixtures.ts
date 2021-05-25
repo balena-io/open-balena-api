@@ -3,7 +3,7 @@ import * as Bluebird from 'bluebird';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import * as path from 'path';
-import * as uuid from 'uuid';
+import { randomUUID } from 'crypto';
 
 import { Headers } from 'request';
 import { API_HOST } from '../../src/lib/config';
@@ -164,7 +164,8 @@ const loaders: Dictionary<LoaderFunc> = {
 				belongs_to__user: user.id,
 				start_timestamp: Date.now(),
 				end_timestamp: Date.now(),
-				commit: jsonData.commit ?? uuid.v4().replace(/\-/g, '').toLowerCase(),
+				commit:
+					jsonData.commit ?? randomUUID().replace(/\-/g, '').toLowerCase(),
 				..._.pick(
 					jsonData,
 					'app_name',
