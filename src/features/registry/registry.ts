@@ -5,7 +5,7 @@ import type { Request, RequestHandler } from 'express';
 import * as jsonwebtoken from 'jsonwebtoken';
 import * as _ from 'lodash';
 import { multiCacheMemoizee } from '../../infra/cache';
-import * as uuid from 'uuid';
+import { randomUUID } from 'crypto';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
@@ -254,7 +254,7 @@ const generateToken = (
 	access: Access[],
 ): string => {
 	const payload = {
-		jti: uuid.v4(),
+		jti: randomUUID(),
 		nbf: Math.floor(Date.now() / 1000) - 10,
 		access,
 	};
