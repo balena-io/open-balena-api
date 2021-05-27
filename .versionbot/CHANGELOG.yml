@@ -1,4 +1,15 @@
 - commits:
+    - subject: Convert another case to the built-in uuid generation
+      hash: 0f06f3baede7a57cd49c2565c50fc98e86216f5d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.140.3
+  date: 2021-05-27T14:49:21.402Z
+- commits:
     - subject: Use the built-in nodejs uuid generation in favor of an npm module
       hash: dd922ce42aaab2c989b28a4c8ba470e8a4712547
       body: ''
