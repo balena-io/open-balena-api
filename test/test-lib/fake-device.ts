@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import * as randomstring from 'randomstring';
-import * as uuid from 'uuid';
+import { randomUUID } from 'crypto';
 
 import { supertest, UserObjectParam } from './supertest';
 import { version } from './versions';
@@ -74,7 +74,7 @@ export async function provisionDevice(
 
 	const deviceType: string = applications.d[0].is_for__device_type[0].slug;
 
-	const deviceUuid = uuid.v4().replace(/\-/g, '').toLowerCase();
+	const deviceUuid = randomUUID().replace(/\-/g, '').toLowerCase();
 	const { body: deviceEntry } = await supertest(admin)
 		.post(`/${version}/device`)
 		.send({

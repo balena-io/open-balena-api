@@ -1,4 +1,5 @@
 import { hooks, errors } from '@balena/pinejs';
+import { randomUUID } from 'crypto';
 import * as uuid from 'uuid';
 import { DefaultApplicationType } from '../../application-types/application-types';
 
@@ -27,7 +28,7 @@ hooks.addPureHook('POST', 'resin', 'application', {
 			);
 		}
 
-		request.values.uuid = request.values.uuid ?? uuid.v4().replace(/-/g, '');
+		request.values.uuid = request.values.uuid ?? randomUUID().replace(/-/g, '');
 
 		const appUuid = toUuid(request.values.uuid);
 		if (!uuid.validate(appUuid) || uuid.version(appUuid) !== 4) {
