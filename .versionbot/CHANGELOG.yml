@@ -1,4 +1,27 @@
 - commits:
+    - subject: Test the release type value constraint
+      hash: e9788f8a14f1e941d0be1917a1060a15b6c777be
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Add missing DB constraint on allowed release_type values
+      hash: 59613f9669e3be655c63983e968e028847a405ff
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.140.4
+  date: 2021-06-01T12:47:12.253Z
+- commits:
     - subject: Convert another case to the built-in uuid generation
       hash: 0f06f3baede7a57cd49c2565c50fc98e86216f5d
       body: ''
