@@ -1,4 +1,15 @@
 - commits:
+    - subject: Only delete service installs for the current app when moving
+      hash: 6decbc00643cec39bc26e206bc6268a51768128f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.140.5
+  date: 2021-06-01T13:17:13.793Z
+- commits:
     - subject: Test the release type value constraint
       hash: e9788f8a14f1e941d0be1917a1060a15b6c777be
       body: ''
