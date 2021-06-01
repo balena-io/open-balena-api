@@ -107,6 +107,43 @@ const createAppServiceInstalls = async (
 		},
 	});
 
+const deleteServiceInstallsForCurrentApp = (
+	api: sbvrUtils.PinejsClient,
+	deviceIds: number[],
+) =>
+	api.delete({
+		resource: 'service_install',
+		options: {
+			$filter: {
+				device: { $in: deviceIds },
+				installs__service: {
+					$any: {
+						$alias: 's',
+						$expr: {
+							s: {
+								application: {
+									$any: {
+										$alias: 'a',
+										$expr: {
+											a: {
+												owns__device: {
+													$any: {
+														$alias: 'd',
+														$expr: { d: { id: { $in: deviceIds } } },
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	});
+
 hooks.addPureHook('PATCH', 'resin', 'application', {
 	POSTRUN: async ({ api, request }) => {
 		const affectedIds = request.affectedIds!;
@@ -155,23 +192,16 @@ hooks.addPureHook('POST', 'resin', 'device', {
 });
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
-	POSTRUN: async (args) => {
-		const affectedIds = args.request.affectedIds!;
+	PRERUN: async (args) => {
+		const affectedIds = await sbvrUtils.getAffectedIds(args);
 
-		// We need to delete all service_install resources for the current device and
-		// create new ones for the new application (if the device is moving application)
+		// We need to delete all service_install resources for the current app of these devices
+		// and create new ones for the new application (if the device is moving application)
 		if (
 			args.request.values.belongs_to__application != null &&
 			affectedIds.length !== 0
 		) {
-			await args.api.delete({
-				resource: 'service_install',
-				options: {
-					$filter: {
-						device: { $in: affectedIds },
-					},
-				},
-			});
+			await deleteServiceInstallsForCurrentApp(args.api, affectedIds);
 			await createAppServiceInstalls(
 				args.api,
 				args.request.values.belongs_to__application,
