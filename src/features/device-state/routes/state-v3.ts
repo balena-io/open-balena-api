@@ -34,25 +34,44 @@ export const varListInsert = (
 export const rejectUiConfig = (name: string) =>
 	!/^(BALENA|RESIN)_UI/.test(name);
 
-type CompositionService = AnyObject;
-type LocalStateApp = StateV2['local']['apps'][string];
-type StateV2 = {
+type LocalStateApp = StateV3['local']['apps'][string];
+type ServiceComposition = AnyObject;
+type SharedApp = {
+	/**
+	 * @deprecated to be removed in state v4
+	 */
+	id: number;
+	name: string;
+	is_host?: boolean;
+	/**
+	 * @deprecated to be removed in state v4
+	 */
+	release_id?: number;
+	release_uuid?: string;
+	config: {
+		[varName: string]: string;
+	};
+};
+export type StateV3 = {
 	local: {
 		name: string;
-		config: {
-			[varName: string]: string;
-		};
 		apps: {
-			[id: string]: {
-				name: string;
-				commit?: string;
-				releaseId?: number;
-				services: {
-					[id: string]: CompositionService & {
-						imageId: number;
-						serviceName: string;
+			[uuid: string]: SharedApp & {
+				services?: {
+					[name: string]: {
+						/**
+						 * @deprecated to be removed in state v4
+						 */
+						id: number;
+						/**
+						 * @deprecated to be removed in state v4
+						 */
+						image_id: number;
 						image: string;
-						running: boolean;
+						/**
+						 * Defaults to true if undefined
+						 */
+						running?: boolean;
 						environment: {
 							[varName: string]: string;
 						};
@@ -60,24 +79,22 @@ type StateV2 = {
 							[labelName: string]: string;
 						};
 						contract?: AnyObject;
+						composition?: ServiceComposition;
 					};
 				};
-				volumes: AnyObject;
-				networks: AnyObject;
+				volumes?: AnyObject;
+				networks?: AnyObject;
 			};
 		};
 	};
 	dependent: {
 		apps: {
-			[id: string]: {
-				name: string;
-				parentApp: number;
-				config: {
-					[varName: string]: string;
-				};
-				releaseId?: number;
-				imageId?: number;
-				commit?: string;
+			[uuid: string]: SharedApp & {
+				parent_app: string;
+				/**
+				 * @deprecated to be removed in state v4
+				 */
+				image_id?: number;
 				image?: string;
 			};
 		};
@@ -85,7 +102,7 @@ type StateV2 = {
 			[uuid: string]: {
 				name: string;
 				apps: {
-					[id: string]: {
+					[uuid: string]: {
 						config: {
 							[varName: string]: string;
 						};
@@ -102,9 +119,13 @@ type StateV2 = {
 function buildAppFromRelease(
 	device: AnyObject,
 	application: AnyObject,
-	release: AnyObject,
+	release: AnyObject | undefined,
 	config: Dictionary<string>,
+	stateApp: LocalStateApp,
 ): LocalStateApp {
+	if (release == null) {
+		return stateApp;
+	}
 	let composition: AnyObject = {};
 	const services: LocalStateApp['services'] = {};
 
@@ -159,12 +180,10 @@ function buildAppFromRelease(
 			image.is_stored_at__image_location +
 			(image.content_hash != null ? `@${image.content_hash}` : '');
 
-		services[svc.id] = {
-			imageId: image.id,
-			serviceName: svc.service_name,
+		services[svc.service_name] = {
+			id: svc.id,
+			image_id: image.id,
 			image: formatImageLocation(imgRegistry),
-			// This needs spoken about...
-			running: true,
 			environment,
 			labels,
 		};
@@ -172,7 +191,7 @@ function buildAppFromRelease(
 		// of bandwidth (a null contract is the same as
 		// the lack of a contract field)
 		if (image.contract != null) {
-			services[svc.id].contract = image.contract;
+			services[svc.service_name].contract = image.contract;
 		}
 
 		if (composition?.services?.[svc.service_name] != null) {
@@ -180,21 +199,22 @@ function buildAppFromRelease(
 			// We remove the `build` properly explicitly as it's expected to be present
 			// for the builder, but makes no sense for the supervisor to support
 			delete compositionService.build;
-			services[svc.id] = {
-				...compositionService,
-				...services[svc.id],
-			};
+			services[svc.service_name].composition = compositionService;
 		}
 	});
 
-	return {
-		releaseId: release.id,
-		commit: release.commit,
-		name: application.app_name,
-		services,
-		networks: composition?.networks || {},
-		volumes: composition?.volumes || {},
-	};
+	stateApp.release_id = release.id;
+	stateApp.release_uuid = release.commit;
+	if (composition.networks != null) {
+		stateApp.networks = composition.networks;
+	}
+	if (composition.volumes != null) {
+		stateApp.volumes = composition.volumes;
+	}
+	if (Object.keys(services).length > 0) {
+		stateApp.services = services;
+	}
+	return stateApp;
 }
 
 // These 2 config vars below are mapped to labels if missing for backwards-compatibility
@@ -227,6 +247,12 @@ const releaseExpand = {
 				},
 			},
 		},
+	},
+};
+
+const appExpand = {
+	application_environment_variable: {
+		$select: ['name', 'value'],
 	},
 };
 
@@ -267,19 +293,17 @@ const stateQuery = _.once(() =>
 					},
 				},
 				belongs_to__application: {
-					$select: ['id', 'app_name'],
+					$select: ['id', 'uuid', 'app_name', 'is_host'],
 					$expand: {
+						...appExpand,
 						application_config_variable: {
 							$select: ['name', 'value'],
 							$orderby: {
 								name: 'asc',
 							},
 						},
-						application_environment_variable: {
-							$select: ['name', 'value'],
-						},
 						is_depended_on_by__application: {
-							$select: ['id', 'app_name'],
+							$select: ['id', 'uuid', 'app_name', 'is_host'],
 							$expand: {
 								application_config_variable: {
 									$select: ['name', 'value'],
@@ -324,24 +348,41 @@ const stateQuery = _.once(() =>
 						},
 					},
 				},
+				should_be_managed_by__release: {
+					...releaseExpand,
+					$expand: {
+						...releaseExpand.$expand,
+						belongs_to__application: {
+							$select: ['id', 'uuid', 'app_name', 'is_host'],
+							$expand: appExpand,
+						},
+					},
+				},
 			},
 		},
 	}),
 );
 
-const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
+export const getStateV3 = async (
+	req: Request,
+	uuid: string,
+): Promise<StateV3> => {
 	const device = await getDevice(req, uuid);
 	const config = getConfig(device);
 
-	const userApp = getUserAppForState(device, config);
-	const userAppFromApi: AnyObject = device.belongs_to__application[0];
+	let apps = getUserAppState(device, config);
 
-	const local: StateV2['local'] = {
+	const supervisorRelease = device.should_be_managed_by__release?.[0];
+	if (supervisorRelease) {
+		apps = {
+			...getSupervisorAppState(device, config),
+			...apps,
+		};
+	}
+
+	const local: StateV3['local'] = {
 		name: device.device_name,
-		config,
-		apps: {
-			[userAppFromApi.id]: userApp,
-		},
+		apps,
 	};
 
 	const dependent = getDependent(device);
@@ -351,7 +392,7 @@ const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 	};
 };
 
-export const stateV2: RequestHandler = async (req, res) => {
+export const stateV3: RequestHandler = async (req, res) => {
 	const { uuid } = req.params;
 	if (!uuid) {
 		return res.status(400).end();
@@ -361,7 +402,11 @@ export const stateV2: RequestHandler = async (req, res) => {
 	events.emit('get-state', uuid, { apiKey });
 
 	try {
-		res.json(await getStateV2(req, uuid));
+		const state = await getStateV3(req, uuid);
+		// if(Object.keys(state.local.apps).length < 3) {
+		// 	throw new InternalRequestError('Missing supervisor/host os app')
+		// }
+		res.json(state);
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
 			return;
@@ -402,34 +447,56 @@ const getConfig = (device: AnyObject) => {
 	return config;
 };
 
-const getUserAppForState = (
+const getAppState = (
 	device: AnyObject,
+	application: AnyObject,
+	release: AnyObject | undefined,
 	config: Dictionary<string>,
-): LocalStateApp => {
-	const userAppFromApi: AnyObject = device.belongs_to__application[0];
-
-	// get the release of the main app that this device should run...
-	const release = getReleaseForDevice(device);
-
-	// grab the main app for this device...
-	return release == null
-		? {
-				name: userAppFromApi.app_name,
-				services: {},
-				networks: {},
-				volumes: {},
-		  }
-		: buildAppFromRelease(device, userAppFromApi, release, config);
+): StateV3['local']['apps'] => {
+	return {
+		[application.uuid]: buildAppFromRelease(
+			device,
+			application,
+			release,
+			config,
+			{
+				id: application.id,
+				name: application.app_name,
+				is_host: application.is_host,
+				config,
+			},
+		),
+	};
 };
 
-const getDependent = (device: AnyObject): StateV2['dependent'] => {
+const getUserAppState = (
+	device: AnyObject,
+	config: Dictionary<string>,
+): StateV3['local']['apps'] => {
+	const userApp = device.belongs_to__application[0];
+	const userAppRelease = getReleaseForDevice(device);
+	return getAppState(device, userApp, userAppRelease, config);
+};
+const getSupervisorAppState = (
+	device: AnyObject,
+	config: Dictionary<string>,
+): StateV3['local']['apps'] => {
+	const supervisorRelease = device.should_be_managed_by__release[0];
+	if (!supervisorRelease) {
+		return {};
+	}
+	const supervisorApp = supervisorRelease.belongs_to__application[0];
+	return getAppState(device, supervisorApp, supervisorRelease, config);
+};
+
+const getDependent = (device: AnyObject): StateV3['dependent'] => {
 	const userAppFromApi: AnyObject = device.belongs_to__application[0];
 
 	const dependendOnByApps =
 		userAppFromApi.is_depended_on_by__application as AnyObject[];
 	const managesDevice = device.manages__device as AnyObject[];
 
-	const dependentInfo: StateV2['dependent'] = {
+	const dependentInfo: StateV3['dependent'] = {
 		apps: {},
 		devices: {},
 	};
@@ -440,6 +507,7 @@ const getDependent = (device: AnyObject): StateV2['dependent'] => {
 			name: string;
 			value: string;
 		}>;
+		uuid: string;
 	}> = {};
 
 	dependendOnByApps.forEach((depApp) => {
@@ -447,6 +515,7 @@ const getDependent = (device: AnyObject): StateV2['dependent'] => {
 		depAppCache[depApp.id] = {
 			release: depRelease,
 			application_environment_variable: depApp.application_environment_variable,
+			uuid: depApp.uuid,
 		};
 
 		const depConfig: Dictionary<string> = {};
@@ -456,18 +525,20 @@ const getDependent = (device: AnyObject): StateV2['dependent'] => {
 			rejectUiConfig,
 		);
 
-		dependentInfo.apps[depApp.id] = {
+		dependentInfo.apps[depApp.uuid] = {
+			id: depApp.id,
 			name: depApp.app_name,
-			parentApp: userAppFromApi.id,
+			is_host: depApp.is_host,
+			parent_app: userAppFromApi.uuid,
 			config: depConfig,
 		};
 
 		const image = depRelease?.contains__image?.[0]?.image?.[0];
 		if (depRelease != null && image != null) {
-			const depAppState = dependentInfo.apps[depApp.id];
-			depAppState.releaseId = depRelease.id;
-			depAppState.imageId = image.id;
-			depAppState.commit = depRelease.commit;
+			const depAppState = dependentInfo.apps[depApp.uuid];
+			depAppState.release_id = depRelease.id;
+			depAppState.image_id = image.id;
+			depAppState.release_uuid = depRelease.commit;
 			depAppState.image = formatImageLocation(
 				image.is_stored_at__image_location,
 			);
@@ -476,8 +547,11 @@ const getDependent = (device: AnyObject): StateV2['dependent'] => {
 
 	managesDevice.forEach((depDev) => {
 		const depAppId: number = depDev.belongs_to__application.__id;
-		const { release: depRelease, application_environment_variable } =
-			depAppCache[depAppId];
+		const {
+			release: depRelease,
+			application_environment_variable,
+			uuid: depAppUuid,
+		} = depAppCache[depAppId];
 
 		const depConfig: Dictionary<string> = {};
 		varListInsert(depDev.device_config_variable, depConfig, rejectUiConfig);
@@ -510,7 +584,7 @@ const getDependent = (device: AnyObject): StateV2['dependent'] => {
 		dependentInfo.devices[depDev.uuid] = {
 			name: depDev.device_name,
 			apps: {
-				[depAppId]: {
+				[depAppUuid]: {
 					config: depConfig,
 					environment,
 				},

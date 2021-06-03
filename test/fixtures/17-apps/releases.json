@@ -1,0 +1,65 @@
+{
+	"release1": {
+		"user": "admin",
+		"application": "app1",
+		"commit": "deadbeef",
+		"status": "success",
+		"release_version": "1.0.0",
+		"composition": {
+			"services": {
+				"image1": {
+					"build": "./image1/"
+				},
+				"image2": {
+					"build": "./image2/"
+				}
+			}
+		},
+		"source": "cloud"
+	},
+	"supervisorRelease1": {
+		"user": "admin",
+		"application": "supervisorApp",
+		"commit": "aaaabbbb",
+		"status": "success",
+		"release_version": "v1.0.0",
+		"composition": {
+			"services": {
+				"supervisorImage": {
+					"build": "./"
+				}
+			}
+		},
+		"source": "cloud"
+	},
+	"supervisorRelease2": {
+		"user": "admin",
+		"application": "supervisorApp",
+		"commit": "aaa1bbbb",
+		"status": "success",
+		"release_version": "v1.0.1",
+		"composition": {
+			"services": {
+				"supervisorImage": {
+					"build": "./"
+				}
+			}
+		},
+		"source": "cloud"
+	},
+	"supervisorReleasePi": {
+		"user": "admin",
+		"application": "supervisorAppPi",
+		"commit": "aaa2bbbb",
+		"status": "success",
+		"release_version": "1.0.0",
+		"composition": {
+			"services": {
+				"supervisorImagePi": {
+					"build": "./"
+				}
+			}
+		},
+		"source": "cloud"
+	}
+}

@@ -4,52 +4,34 @@ import { randomUUID } from 'crypto';
 
 import { supertest, UserObjectParam } from './supertest';
 import { version } from './versions';
+import { StateV2 } from '../../src/features/device-state/routes/state-v2';
+import { StateV3 } from '../../src/features/device-state/routes/state-v3';
 
-interface DeviceStateApp {
-	name: string;
-	commit: string;
-	releaseId: number;
-	services: _.Dictionary<{
-		image: string;
-		volumes: string[];
-		imageId: number;
-		serviceName: string;
-		running: boolean;
-		environment: _.Dictionary<string>;
-		labels: _.Dictionary<string>;
-	}>;
-	volumes: _.Dictionary<_.Dictionary<string>>;
-	networks: _.Dictionary<AnyObject>;
-}
-
-export interface DeviceState {
-	local: {
-		name?: string;
-		supervisor_version?: string;
-		config: _.Dictionary<string>;
-		apps: _.Dictionary<DeviceStateApp>;
-	};
-	dependent: {
-		apps: _.Dictionary<DeviceStateApp>;
-		devices: AnyObject;
-	};
-}
-
-export const getState = async <T extends DeviceState>(
+export async function getState(
 	user: UserObjectParam,
 	deviceUuid: string,
-	stateVersion: 'v2' = 'v2',
-): Promise<T> => {
+	stateVersion?: 'v2',
+): Promise<StateV2>;
+export async function getState(
+	user: UserObjectParam,
+	deviceUuid: string,
+	stateVersion: 'v3',
+): Promise<StateV3>;
+export async function getState(
+	user: UserObjectParam,
+	deviceUuid: string,
+	stateVersion: 'v2' | 'v3' = 'v2',
+): Promise<StateV2 | StateV3> {
 	const { body: state } = await supertest(user)
 		.get(`/device/${stateVersion}/${deviceUuid}/state`)
 		.expect(200);
 
 	expect(state).to.have.property('local');
 	expect(state.local).to.have.property('name');
-	expect(state.local).to.have.property('config');
+	expect(state.local).to.have.property('apps');
 
 	return state;
-};
+}
 
 export async function provisionDevice(
 	admin: UserObjectParam,
@@ -90,12 +72,21 @@ export async function provisionDevice(
 			uuid: string;
 		}),
 		token: randomstring.generate(16),
-		getStateV2: async (): Promise<DeviceState> => {
+		getStateV2: async (): Promise<StateV2> => {
 			return await getState(device, device.uuid);
+		},
+		getStateV3: async (): Promise<StateV3> => {
+			return await getState(device, device.uuid, 'v3');
 		},
 		patchStateV2: async (devicePatchBody: AnyObject) => {
 			await supertest(device)
 				.patch(`/device/v2/${device.uuid}/state`)
+				.send(devicePatchBody)
+				.expect(200);
+		},
+		patchStateV3: async (devicePatchBody: AnyObject) => {
+			await supertest(device)
+				.patch(`/device/v3/${device.uuid}/state`)
 				.send(devicePatchBody)
 				.expect(200);
 		},

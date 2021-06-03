@@ -1,0 +1,12 @@
+{
+	"service1": {
+		"user": "admin",
+		"application": "app1",
+		"service_name": "main"
+	},
+	"supervisorService": {
+		"user": "admin",
+		"application": "supervisorApp",
+		"service_name": "resin-supervisor"
+	}
+}

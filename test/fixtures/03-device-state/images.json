@@ -1,0 +1,11 @@
+{
+	"supervisorImage1": {
+		"user": "admin",
+		"service": "supervisorService",
+		"releases": [ "supervisorRelease" ],
+		"image_size": 2048,
+		"project_type": "project type goes here",
+		"build_log": "log",
+		"status": "success"
+	}
+}
