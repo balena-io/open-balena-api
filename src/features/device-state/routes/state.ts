@@ -26,6 +26,16 @@ export const varListInsert = (varList: EnvVarList, obj: Dictionary<string>) => {
 	});
 };
 
+export type AppService = {
+	imageId: number;
+	serviceName: string;
+	image: string;
+	running: boolean;
+	environment: Dictionary<string>;
+	labels: Dictionary<string>;
+	contract?: AnyObject;
+};
+
 export type App = {
 	name: string;
 	commit: string;
@@ -37,25 +47,46 @@ export type App = {
 	networks: AnyObject;
 };
 
-export type Dependent = {
-	apps: AnyObject;
-	devices: AnyObject;
+export type DependentApp = {
+	name: string;
+	parentApp: number;
+	config: Dictionary<string>;
+	releaseId?: number;
+	imageId?: number;
+	commit?: string;
+	image?: string;
 };
 
-export type AppService = {
-	imageId: number;
-	serviceName: string;
-	image: string;
-	running: boolean;
-	environment: Dictionary<string>;
-	labels: Dictionary<string>;
-	contract?: string;
+export type DependentDevice = {
+	name: string;
+	apps: {
+		[id: string]: {
+			config: Dictionary<string>;
+			environment: Dictionary<string>;
+		};
+	};
+};
+
+export type DependentState = {
+	apps: {
+		[id: string]: DependentApp;
+	};
+	devices: {
+		[uuid: string]: DependentDevice;
+	};
 };
 
 export type LocalState = {
 	name: string;
 	config: Dictionary<string>;
-	apps: Dictionary<Partial<App>>;
+	apps: {
+		[id: string]: Partial<App>;
+	};
+};
+
+type StateV2 = {
+	local: LocalState;
+	dependent: DependentState;
 };
 
 function buildAppFromRelease(
@@ -134,11 +165,7 @@ function buildAppFromRelease(
 			services[svc.id].contract = image.contract;
 		}
 
-		if (
-			composition != null &&
-			composition.services != null &&
-			composition.services[svc.service_name] != null
-		) {
+		if (composition?.services?.[svc.service_name] != null) {
 			const compositionService = composition.services[svc.service_name];
 			// We remove the `build` properly explicitly as it's expected to be present
 			// for the builder, but makes no sense for the supervisor to support
@@ -292,6 +319,28 @@ const stateQuery = _.once(() =>
 	}),
 );
 
+const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
+	const device = await getDevice(req, uuid);
+	const config = getConfig(device);
+
+	const userApp = getUserAppForState(device, config);
+	const userAppFromApi: AnyObject = device.belongs_to__application[0];
+
+	const local: LocalState = {
+		name: device.device_name,
+		config,
+		apps: {
+			[userAppFromApi.id]: userApp,
+		},
+	};
+
+	const dependent = getDependent(device);
+	return {
+		local,
+		dependent,
+	};
+};
+
 export const stateV2: RequestHandler = async (req, res) => {
 	const { uuid } = req.params;
 	if (!uuid) {
@@ -302,27 +351,7 @@ export const stateV2: RequestHandler = async (req, res) => {
 	events.emit('get-state', uuid, { apiKey });
 
 	try {
-		const device = await getDevice(req, uuid);
-		const config = getConfig(device);
-
-		const appsForState: Dictionary<Partial<App>> = {};
-
-		const userApp = getUserAppForState(device, config);
-		const userAppFromApi: AnyObject = device.belongs_to__application[0];
-		appsForState[userAppFromApi.id] = userApp;
-
-		const local: LocalState = {
-			name: device.device_name,
-			config,
-			apps: appsForState,
-		};
-
-		const dependent = getDependent(device);
-
-		res.json({
-			local,
-			dependent,
-		});
+		res.json(await getStateV2(req, uuid));
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
 			return;
@@ -379,14 +408,14 @@ const getUserAppForState = (
 		: buildAppFromRelease(device, userAppFromApi, release, config);
 };
 
-const getDependent = (device: AnyObject): Dependent => {
+const getDependent = (device: AnyObject): DependentState => {
 	const userAppFromApi: AnyObject = device.belongs_to__application[0];
 
 	const dependendOnByApps =
 		userAppFromApi.is_depended_on_by__application as AnyObject[];
 	const managesDevice = device.manages__device as AnyObject[];
 
-	const dependentInfo: Dependent = {
+	const dependentInfo: DependentState = {
 		apps: {},
 		devices: {},
 	};
@@ -445,11 +474,7 @@ const getDependent = (device: AnyObject): Dependent => {
 		}
 
 		varListInsert(application_environment_variable, environment);
-		if (
-			svcInstall != null &&
-			svcInstall.service != null &&
-			svcInstall.service[0] != null
-		) {
+		if (svcInstall?.service?.[0] != null) {
 			varListInsert(
 				svcInstall.service[0].service_environment_variable,
 				environment,
