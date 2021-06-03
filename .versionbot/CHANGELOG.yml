@@ -1,4 +1,15 @@
 - commits:
+    - subject: Improve device state typings
+      hash: 57d41ae94e05b2a79c71eaab6a01447190852ebe
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.140.7
+  date: 2021-06-03T15:22:11.649Z
+- commits:
     - subject: Create service installs for target supervisor releases
       hash: 1cab8fcd7b12598def92b5b4a165adc8e7184612
       body: ''
