@@ -23,6 +23,7 @@ export const ALLOWED_NAMES = addReservedPrefixes([
 	'APP_RESTART_POLICY',
 	'APP_RESTART_RETRIES',
 	'DEPENDENT_DEVICES_HOOK_ADDRESS',
+	'OVERRIDE_LOCK',
 	'SUPERVISOR_CONNECTIVITY_CHECK',
 	'SUPERVISOR_HANDOVER_TIMEOUT',
 	'SUPERVISOR_LOCAL_MODE',
@@ -44,7 +45,6 @@ export const ALLOWED_NAMESPACES = addReservedPrefixes(['HOST_', 'UI_']);
 export const BLOCKED_NAMES = addReservedPrefixes([
 	'RESTART',
 	'DEVICE_RESTART',
-	'OVERRIDE_LOCK',
 	'SUPERVISOR_OVERRIDE_LOCK',
 	'SUPERVISOR_NATIVE_LOGGER',
 	'HOST_LOG_TO_DISPLAY',
@@ -91,6 +91,13 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		description:
 			'Enable / Disable triggering updates instantly on startup or after pushing a release. Only supported by supervisor versions >= v9.13.0.',
 		default: 'true',
+	},
+	RESIN_OVERRIDE_LOCK: {
+		type: 'integer',
+		enum: [0, 1],
+		description:
+			'Override the update lock if your app locked updates but is stuck in an invalid state.',
+		default: 0,
 	},
 	BALENA_HOST_SPLASH_IMAGE: {
 		type: 'string',
