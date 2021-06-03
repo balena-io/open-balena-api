@@ -26,67 +26,69 @@ export const varListInsert = (varList: EnvVarList, obj: Dictionary<string>) => {
 	});
 };
 
-export type AppService = {
-	imageId: number;
-	serviceName: string;
-	image: string;
-	running: boolean;
-	environment: Dictionary<string>;
-	labels: Dictionary<string>;
-	contract?: AnyObject;
-};
-
-export type App = {
-	name: string;
-	commit: string;
-	releaseId: number;
-	services: {
-		[id: number]: AppService;
-	};
-	volumes: AnyObject;
-	networks: AnyObject;
-};
-
-export type DependentApp = {
-	name: string;
-	parentApp: number;
-	config: Dictionary<string>;
-	releaseId?: number;
-	imageId?: number;
-	commit?: string;
-	image?: string;
-};
-
-export type DependentDevice = {
-	name: string;
-	apps: {
-		[id: string]: {
-			config: Dictionary<string>;
-			environment: Dictionary<string>;
+type CompositionService = AnyObject;
+type LocalStateApp = StateV2['local']['apps'][string];
+type StateV2 = {
+	local: {
+		name: string;
+		config: {
+			[varName: string]: string;
+		};
+		apps: {
+			[id: string]: {
+				name: string;
+				commit?: string;
+				releaseId?: number;
+				services: {
+					[id: string]: CompositionService & {
+						imageId: number;
+						serviceName: string;
+						image: string;
+						running: boolean;
+						environment: {
+							[varName: string]: string;
+						};
+						labels: {
+							[labelName: string]: string;
+						};
+						contract?: AnyObject;
+					};
+				};
+				volumes: AnyObject;
+				networks: AnyObject;
+			};
 		};
 	};
-};
-
-export type DependentState = {
-	apps: {
-		[id: string]: DependentApp;
+	dependent: {
+		apps: {
+			[id: string]: {
+				name: string;
+				parentApp: number;
+				config: {
+					[varName: string]: string;
+				};
+				releaseId?: number;
+				imageId?: number;
+				commit?: string;
+				image?: string;
+			};
+		};
+		devices: {
+			[uuid: string]: {
+				name: string;
+				apps: {
+					[id: string]: {
+						config: {
+							[varName: string]: string;
+						};
+						environment: {
+							[varName: string]: string;
+						};
+					};
+				};
+			};
+		};
 	};
-	devices: {
-		[uuid: string]: DependentDevice;
-	};
-};
-
-export type LocalState = {
-	name: string;
-	config: Dictionary<string>;
-	apps: {
-		[id: string]: Partial<App>;
-	};
-};
-
-type StateV2 = {
-	local: LocalState;
-	dependent: DependentState;
 };
 
 function buildAppFromRelease(
@@ -94,9 +96,9 @@ function buildAppFromRelease(
 	application: AnyObject,
 	release: AnyObject,
 	config: Dictionary<string>,
-): App {
+): LocalStateApp {
 	let composition: AnyObject = {};
-	const services: App['services'] = {};
+	const services: LocalStateApp['services'] = {};
 
 	// Parse the composition to forward values to the device
 	if (_.isObject(release.composition)) {
@@ -326,7 +328,7 @@ const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 	const userApp = getUserAppForState(device, config);
 	const userAppFromApi: AnyObject = device.belongs_to__application[0];
 
-	const local: LocalState = {
+	const local: StateV2['local'] = {
 		name: device.device_name,
 		config,
 		apps: {
@@ -391,7 +393,7 @@ const getConfig = (device: AnyObject) => {
 const getUserAppForState = (
 	device: AnyObject,
 	config: Dictionary<string>,
-): Partial<App> => {
+): LocalStateApp => {
 	const userAppFromApi: AnyObject = device.belongs_to__application[0];
 
 	// get the release of the main app that this device should run...
@@ -408,14 +410,14 @@ const getUserAppForState = (
 		: buildAppFromRelease(device, userAppFromApi, release, config);
 };
 
-const getDependent = (device: AnyObject): DependentState => {
+const getDependent = (device: AnyObject): StateV2['dependent'] => {
 	const userAppFromApi: AnyObject = device.belongs_to__application[0];
 
 	const dependendOnByApps =
 		userAppFromApi.is_depended_on_by__application as AnyObject[];
 	const managesDevice = device.manages__device as AnyObject[];
 
-	const dependentInfo: DependentState = {
+	const dependentInfo: StateV2['dependent'] = {
 		apps: {},
 		devices: {},
 	};
