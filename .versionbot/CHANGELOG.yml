@@ -1,4 +1,23 @@
 - commits:
+    - subject: Whitelist & add OVERRIDE_LOCK config variable to the env var schema
+      hash: 69497446b6967033b386dd551b6f7b69e835efee
+      body: ''
+      footer:
+        Resolves: '#632'
+        resolves: '#632'
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://www.flowdock.com/app/rulemotion/r-architecture/threads/PnpokyMf9DdpqgMnk-7Qb4gOvZF
+        see: >-
+          https://www.flowdock.com/app/rulemotion/r-architecture/threads/PnpokyMf9DdpqgMnk-7Qb4gOvZF
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.141.0
+  date: 2021-06-03T22:10:51.278Z
+- commits:
     - subject: Further target state typing improvements
       hash: 60a3a88ad2b3fefc0ccaaf09ecc00129281dd99d
       body: ''
