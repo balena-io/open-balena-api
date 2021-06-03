@@ -5,20 +5,38 @@ import { randomUUID } from 'crypto';
 import { supertest, UserObjectParam } from './supertest';
 import { version } from './versions';
 import { StateV2 } from '../../src/features/device-state/routes/state-get-v2';
+import { StateV3 } from '../../src/features/device-state/routes/state-get-v3';
 import { StatePatchV2Body } from '../../src/features/device-state/routes/state-patch-v2';
 
 export async function getState(
 	user: UserObjectParam,
 	deviceUuid: string,
-	stateVersion: 'v2' = 'v2',
-): Promise<StateV2> {
+	stateVersion?: 'v2',
+): Promise<StateV2>;
+export async function getState(
+	user: UserObjectParam,
+	deviceUuid: string,
+	stateVersion: 'v3',
+): Promise<StateV3>;
+export async function getState(
+	user: UserObjectParam,
+	deviceUuid: string,
+	stateVersion: 'v2' | 'v3',
+): Promise<StateV2 | StateV3>;
+export async function getState(
+	user: UserObjectParam,
+	deviceUuid: string,
+	stateVersion: 'v2' | 'v3' = 'v2',
+): Promise<StateV2 | StateV3> {
 	const { body: state } = await supertest(user)
 		.get(`/device/${stateVersion}/${deviceUuid}/state`)
 		.expect(200);
 
-	expect(state).to.have.property('local');
-	expect(state.local).to.have.property('name');
-	expect(state.local).to.have.property('config');
+	const key = stateVersion === 'v2' ? 'local' : deviceUuid;
+
+	expect(state).to.have.property(key);
+	expect(state[key]).to.have.property('name');
+	expect(state[key]).to.have.property('apps');
 
 	return state;
 }
@@ -31,6 +49,7 @@ export async function provisionDevice(
 	appId: number,
 	osVersion?: string,
 	supervisorVersion?: string,
+	supervisorReleaseId?: number,
 ) {
 	const { body: applications } = await supertest(admin)
 		.get(`/${version}/application(${appId})?$expand=is_for__device_type`)
@@ -56,6 +75,7 @@ export async function provisionDevice(
 			belongs_to__application: appId,
 			uuid: deviceUuid,
 			is_of__device_type: deviceTypeId,
+			should_be_managed_by__release: supervisorReleaseId,
 		})
 		.expect(201);
 
@@ -68,9 +88,18 @@ export async function provisionDevice(
 		getStateV2: async (): Promise<StateV2> => {
 			return await getState(device, device.uuid);
 		},
+		getStateV3: async (): Promise<StateV3> => {
+			return await getState(device, device.uuid, 'v3');
+		},
 		patchStateV2: async (devicePatchBody: StatePatchV2Body) => {
 			await supertest(device)
 				.patch(`/device/v2/${device.uuid}/state`)
+				.send(devicePatchBody)
+				.expect(200);
+		},
+		patchStateV3: async (devicePatchBody: AnyObject) => {
+			await supertest(device)
+				.patch(`/device/v3/${device.uuid}/state`)
 				.send(devicePatchBody)
 				.expect(200);
 		},

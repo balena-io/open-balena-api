@@ -12,6 +12,7 @@ import {
 	addServiceToApp,
 	addImageToRelease,
 } from './test-lib/api-helpers';
+import { Release } from '../src/balena-model';
 
 describe(`Tracking latest release`, () => {
 	let fx: fixtures.Fixtures;
@@ -19,6 +20,9 @@ describe(`Tracking latest release`, () => {
 	let applicationId: number;
 	let application2Id: number;
 	let application3Id: number;
+	let appUuid: string;
+	let app2Uuid: string;
+	let app3Uuid: string;
 	let device: fakeDevice.Device;
 	let device2: fakeDevice.Device;
 	let device3: fakeDevice.Device;
@@ -31,6 +35,9 @@ describe(`Tracking latest release`, () => {
 		applicationId = fx.applications.app1.id;
 		application2Id = fx.applications.app2.id;
 		application3Id = fx.applications.app3.id;
+		appUuid = fx.applications.app1.uuid;
+		app2Uuid = fx.applications.app2.uuid;
+		app3Uuid = fx.applications.app3.uuid;
 
 		// create a new device in this test application...
 		device = await fakeDevice.provisionDevice(admin, applicationId);
@@ -45,10 +52,21 @@ describe(`Tracking latest release`, () => {
 
 	it('Should track latest release that is passing tests and final', async () => {
 		const expectedLatest = fx.releases.release0;
-		const state = await device.getStateV2();
-		expect(state.local.apps[applicationId].releaseId).to.equal(
-			expectedLatest.id,
-		);
+
+		const stateV2 = await device.getStateV2();
+		expect(
+			stateV2.local.apps[applicationId].releaseId,
+			'v2 target state should return correct release',
+		).to.equal(expectedLatest.id);
+
+		const stateV3 = await device.getStateV3();
+		expect(
+			stateV3[device.uuid].apps[appUuid].releases,
+			'v3 target state should return correct release',
+		)
+			.to.have.property(expectedLatest.commit)
+			.that.has.property('id')
+			.that.equals(expectedLatest.id);
 	});
 
 	it('Should allow pinning a device to a draft and untested release', async () => {
@@ -59,10 +77,21 @@ describe(`Tracking latest release`, () => {
 				should_be_running__release: pinnedRelease.id,
 			})
 			.expect(200);
-		const state = await device.getStateV2();
-		expect(state.local.apps[applicationId].releaseId).to.equal(
-			pinnedRelease.id,
-		);
+
+		const stateV2 = await device.getStateV2();
+		expect(
+			stateV2.local.apps[applicationId].releaseId,
+			'v2 target state should return correct release',
+		).to.equal(pinnedRelease.id);
+
+		const stateV3 = await device.getStateV3();
+		expect(
+			stateV3[device.uuid].apps[appUuid].releases,
+			'v3 target state should return correct release',
+		)
+			.to.have.property(pinnedRelease.commit)
+			.that.has.property('id')
+			.that.equals(pinnedRelease.id);
 		await supertest(admin)
 			.patch(`/${version}/device(${device.id})`)
 			.send({
@@ -80,10 +109,20 @@ describe(`Tracking latest release`, () => {
 				start_timestamp: Date.now(),
 			})
 			.expect(200);
-		const state = await device.getStateV2();
-		expect(state.local.apps[applicationId].releaseId).to.equal(
-			expectedLatest.id,
-		);
+		const stateV2 = await device.getStateV2();
+		expect(
+			stateV2.local.apps[applicationId].releaseId,
+			'v2 target state should return correct release',
+		).to.equal(expectedLatest.id);
+
+		const stateV3 = await device.getStateV3();
+		expect(
+			stateV3[device.uuid].apps[appUuid].releases,
+			'v3 target state should return correct release',
+		)
+			.to.have.property(expectedLatest.commit)
+			.that.has.property('id')
+			.that.equals(expectedLatest.id);
 	});
 
 	it('Should update latest release to a release now passing tests', async () => {
@@ -95,10 +134,20 @@ describe(`Tracking latest release`, () => {
 				start_timestamp: Date.now(),
 			})
 			.expect(200);
-		const state = await device.getStateV2();
-		expect(state.local.apps[applicationId].releaseId).to.equal(
-			expectedLatest.id,
-		);
+		const stateV2 = await device.getStateV2();
+		expect(
+			stateV2.local.apps[applicationId].releaseId,
+			'v2 target state should return correct release',
+		).to.equal(expectedLatest.id);
+
+		const stateV3 = await device.getStateV3();
+		expect(
+			stateV3[device.uuid].apps[appUuid].releases,
+			'v3 target state should return correct release',
+		)
+			.to.have.property(expectedLatest.commit)
+			.that.has.property('id')
+			.that.equals(expectedLatest.id);
 	});
 
 	it('Should update latest release to previous final release passing tests', async () => {
@@ -109,22 +158,32 @@ describe(`Tracking latest release`, () => {
 				is_passing_tests: false,
 			})
 			.expect(200);
-		const state = await device.getStateV2();
-		expect(state.local.apps[applicationId].releaseId).to.equal(
-			expectedLatest.id,
-		);
+		const stateV2 = await device.getStateV2();
+		expect(
+			stateV2.local.apps[applicationId].releaseId,
+			'v2 target state should return correct release',
+		).to.equal(expectedLatest.id);
+
+		const stateV3 = await device.getStateV3();
+		expect(
+			stateV3[device.uuid].apps[appUuid].releases,
+			'v3 target state should return correct release',
+		)
+			.to.have.property(expectedLatest.commit)
+			.that.has.property('id')
+			.that.equals(expectedLatest.id);
 	});
 
 	describe('given two releases of two applications building in parallel', function () {
-		// used to create uqniue commits for each set of releases
+		// used to create unique commits for each set of releases
 		let testRunsCount = 0;
-		let app1ReleaseId: number;
-		let app2ReleaseId: number;
+		let app1Release: Release;
+		let app2Release: Release;
 
 		beforeEach(async function () {
 			testRunsCount++;
 
-			const app1Release = await addReleaseToApp(admin, {
+			app1Release = await addReleaseToApp(admin, {
 				belongs_to__application: applicationId,
 				is_created_by__user: admin.id!,
 				build_log: '',
@@ -134,9 +193,8 @@ describe(`Tracking latest release`, () => {
 				status: 'running',
 				start_timestamp: Date.now(),
 			});
-			app1ReleaseId = app1Release.id;
 
-			const app2Release = await addReleaseToApp(admin, {
+			app2Release = await addReleaseToApp(admin, {
 				belongs_to__application: application2Id,
 				is_created_by__user: admin.id!,
 				build_log: '',
@@ -146,12 +204,11 @@ describe(`Tracking latest release`, () => {
 				status: 'running',
 				start_timestamp: Date.now(),
 			});
-			app2ReleaseId = app2Release.id;
 		});
 
 		it('should update the target release of both apps when the releases complete in order', async function () {
 			await supertest(admin)
-				.patch(`/${version}/release(${app1ReleaseId})`)
+				.patch(`/${version}/release(${app1Release.id})`)
 				.send({
 					status: 'success',
 					end_timestamp: Date.now(),
@@ -159,26 +216,45 @@ describe(`Tracking latest release`, () => {
 				.expect(200);
 
 			await supertest(admin)
-				.patch(`/${version}/release(${app2ReleaseId})`)
+				.patch(`/${version}/release(${app2Release.id})`)
 				.send({
 					status: 'success',
 					end_timestamp: Date.now(),
 				})
 				.expect(200);
 
-			const device1state = await device.getStateV2();
-			expect(device1state.local.apps[applicationId].releaseId).to.equal(
-				app1ReleaseId,
-			);
-			const device2state = await device2.getStateV2();
-			expect(device2state.local.apps[application2Id].releaseId).to.equal(
-				app2ReleaseId,
-			);
+			const device1stateV2 = await device.getStateV2();
+			expect(
+				device1stateV2.local.apps[applicationId].releaseId,
+				'v2 target state should return correct release for device 1',
+			).to.equal(app1Release.id);
+			const device2stateV2 = await device2.getStateV2();
+			expect(
+				device2stateV2.local.apps[application2Id].releaseId,
+				'v2 target state should return correct release for device 2',
+			).to.equal(app2Release.id);
+
+			const device1stateV3 = await device.getStateV3();
+			expect(
+				device1stateV3[device.uuid].apps[appUuid].releases,
+				'v3 target state should return correct release for device 1',
+			)
+				.to.have.property(app1Release.commit)
+				.that.has.property('id')
+				.that.equals(app1Release.id);
+			const device2stateV3 = await device2.getStateV3();
+			expect(
+				device2stateV3[device2.uuid].apps[app2Uuid].releases,
+				'v3 target state should return correct release for device 2',
+			)
+				.to.have.property(app2Release.commit)
+				.that.has.property('id')
+				.that.equals(app2Release.id);
 		});
 
 		it('should update the target release of both apps when the the later release finishes before the first one', async function () {
 			await supertest(admin)
-				.patch(`/${version}/release(${app2ReleaseId})`)
+				.patch(`/${version}/release(${app2Release.id})`)
 				.send({
 					status: 'success',
 					end_timestamp: Date.now(),
@@ -186,21 +262,40 @@ describe(`Tracking latest release`, () => {
 				.expect(200);
 
 			await supertest(admin)
-				.patch(`/${version}/release(${app1ReleaseId})`)
+				.patch(`/${version}/release(${app1Release.id})`)
 				.send({
 					status: 'success',
 					end_timestamp: Date.now(),
 				})
 				.expect(200);
 
-			const device1state = await device.getStateV2();
-			expect(device1state.local.apps[applicationId].releaseId).to.equal(
-				app1ReleaseId,
-			);
-			const device2state = await device2.getStateV2();
-			expect(device2state.local.apps[application2Id].releaseId).to.equal(
-				app2ReleaseId,
-			);
+			const device1stateV2 = await device.getStateV2();
+			expect(
+				device1stateV2.local.apps[applicationId].releaseId,
+				'v2 target state should return correct release for device 1',
+			).to.equal(app1Release.id);
+			const device2stateV2 = await device2.getStateV2();
+			expect(
+				device2stateV2.local.apps[application2Id].releaseId,
+				'v2 target state should return correct release for device 2',
+			).to.equal(app2Release.id);
+
+			const device1stateV3 = await device.getStateV3();
+			expect(
+				device1stateV3[device.uuid].apps[appUuid].releases,
+				'v3 target state should return correct release for device 1',
+			)
+				.to.have.property(app1Release.commit)
+				.that.has.property('id')
+				.that.equals(app1Release.id);
+			const device2stateV3 = await device2.getStateV3();
+			expect(
+				device2stateV3[device2.uuid].apps[app2Uuid].releases,
+				'v3 target state should return correct release for device 2',
+			)
+				.to.have.property(app2Release.commit)
+				.that.has.property('id')
+				.that.equals(app2Release.id);
 		});
 	});
 
@@ -305,10 +400,17 @@ describe(`Tracking latest release`, () => {
 
 		it('should not update the target release', async function () {
 			const expectedApp3Latest = fx.releases.app3release1;
-			const device3state = await device3.getStateV2();
-			expect(device3state.local.apps[application3Id].releaseId).to.equal(
+
+			const device3stateV2 = await device3.getStateV2();
+			expect(device3stateV2.local.apps[application3Id].releaseId).to.equal(
 				expectedApp3Latest.id,
 			);
+
+			const device3stateV3 = await device3.getStateV3();
+			expect(device3stateV3[device3.uuid].apps[app3Uuid].releases)
+				.to.have.property(expectedApp3Latest.commit)
+				.that.has.property('id')
+				.that.equals(expectedApp3Latest.id);
 		});
 
 		it('should add any new service installs of the new release at the point it is actually pinned', async function () {

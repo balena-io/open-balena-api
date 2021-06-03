@@ -6,6 +6,7 @@ import { apiKeyMiddleware } from '../../infra/auth';
 
 import { resolveOrGracefullyDenyDevices } from './middleware';
 import { stateV2 } from './routes/state-get-v2';
+import { stateV3 } from './routes/state-get-v3';
 import { statePatchV2 } from './routes/state-patch-v2';
 
 export {
@@ -28,6 +29,12 @@ export const setup = (app: Application) => {
 		resolveOrGracefullyDenyDevices,
 		apiKeyMiddleware,
 		stateV2,
+	);
+	app.get(
+		'/device/v3/:uuid/state',
+		resolveOrGracefullyDenyDevices,
+		apiKeyMiddleware,
+		stateV3,
 	);
 	app.patch(
 		'/device/v2/:uuid/state',

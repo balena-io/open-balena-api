@@ -29,300 +29,318 @@ class StateTracker {
 	};
 }
 
-const tracker = new StateTracker();
-
 // @ts-expect-error mock the value for the default poll interval...
 configMock['DEFAULT_SUPERVISOR_POLL_INTERVAL'] = POLL_MSEC;
 
 // @ts-expect-error mock the value for the timeout grace period...
 configMock['API_HEARTBEAT_STATE_TIMEOUT_SECONDS'] = TIMEOUT_SEC;
 
-const updateDeviceModel = stateMock.getInstance()['updateDeviceModel'];
-stateMock.getInstance()['updateDeviceModel'] = function (
-	uuid: string,
-	newState: stateMock.DeviceOnlineStates,
-) {
-	tracker.stateUpdated(uuid, newState);
-	return updateDeviceModel.call(this, uuid, newState);
-};
-
 // register the mocks...
 mockery.registerMock('../src/lib/config', configMock);
-mockery.registerMock('../src/lib/device-online-state', stateMock);
 
-describe('Device State v2', () => {
-	let fx: fixtures.Fixtures;
-	let admin: UserObjectParam;
-	let applicationId: number;
-	let device: fakeDevice.Device;
+(['v2', 'v3'] as const).forEach((stateVersion) =>
+	describe(`Device State ${stateVersion}`, () => {
+		let fx: fixtures.Fixtures;
+		let admin: UserObjectParam;
+		let applicationId: number;
+		let device: fakeDevice.Device;
 
-	before(async () => {
-		fx = await fixtures.load('03-device-state');
+		const tracker = new StateTracker();
+		const updateDeviceModel = stateMock.getInstance()['updateDeviceModel'];
 
-		admin = fx.users.admin;
-		applicationId = fx.applications.app1.id;
+		before(async () => {
+			fx = await fixtures.load('03-device-state');
 
-		// create a new device in this test application...
-		device = await fakeDevice.provisionDevice(admin, applicationId);
-	});
+			admin = fx.users.admin;
+			applicationId = fx.applications.app1.id;
 
-	after(async () => {
-		await fixtures.clean(fx);
-		mockery.deregisterMock('../src/lib/env-vars');
-		mockery.deregisterMock('../src/lib/config');
-		mockery.deregisterMock('../src/lib/device-online-state');
-	});
+			// create a new device in this test application...
+			device = await fakeDevice.provisionDevice(admin, applicationId);
 
-	describe(`API heartbeat state`, () => {
-		describe('Poll Interval Acquisition', () => {
-			it('Should see default value when not overridden', async () => {
-				const pollInterval = await stateMock.getPollInterval(device.uuid);
-				expect(pollInterval).to.equal(POLL_MSEC * stateMock.POLL_JITTER_FACTOR);
-			});
+			stateMock.getInstance()['updateDeviceModel'] = function (
+				uuid: string,
+				newState: stateMock.DeviceOnlineStates,
+			) {
+				tracker.stateUpdated(uuid, newState);
+				return updateDeviceModel.call(this, uuid, newState);
+			};
 
-			it('Should see the application-specific value if one exists', async () => {
-				await supertest(admin)
-					.post(`/${version}/application_config_variable`)
-					.send({
-						name: 'RESIN_SUPERVISOR_POLL_INTERVAL',
-						value: '123000',
-						application: applicationId,
-					})
-					.expect(201);
-
-				const pollInterval = await stateMock.getPollInterval(device.uuid);
-				expect(pollInterval).to.equal(123000 * stateMock.POLL_JITTER_FACTOR);
-			});
-
-			it('Should see the device-specific value if one exists', async () => {
-				await supertest(admin)
-					.post(`/${version}/device_config_variable`)
-					.send({
-						name: 'RESIN_SUPERVISOR_POLL_INTERVAL',
-						value: '321000',
-						device: device.id,
-					})
-					.expect(201);
-
-				const pollInterval = await stateMock.getPollInterval(device.uuid);
-				expect(pollInterval).to.equal(321000 * stateMock.POLL_JITTER_FACTOR);
-			});
-
-			it('Should see the default value if the device-specific value is less than it', async () => {
-				await supertest(admin)
-					.patch(
-						`/${version}/device_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and device eq ${device.id}`,
-					)
-					.send({
-						value: `${POLL_MSEC - 100}`,
-					})
-					.expect(200);
-
-				const pollInterval = await stateMock.getPollInterval(device.uuid);
-				expect(pollInterval).to.equal(POLL_MSEC * stateMock.POLL_JITTER_FACTOR);
-
-				await supertest(admin)
-					.delete(
-						`/${version}/device_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and device eq ${device.id}`,
-					)
-					.expect(200);
-			});
-
-			it('Should see the default value if the application-specific value is less than it', async () => {
-				await supertest(admin)
-					.patch(
-						`/${version}/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${applicationId}`,
-					)
-					.send({
-						value: `${POLL_MSEC - 200}`,
-					})
-					.expect(200);
-
-				const pollInterval = await stateMock.getPollInterval(device.uuid);
-				expect(pollInterval).to.equal(POLL_MSEC * stateMock.POLL_JITTER_FACTOR);
-
-				await supertest(admin)
-					.delete(
-						`/${version}/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${applicationId}`,
-					)
-					.expect(200);
-			});
+			mockery.registerMock('../src/lib/device-online-state', stateMock);
 		});
 
-		describe('Event Tracking', () => {
-			const devicePollInterval =
-				Math.ceil((POLL_MSEC * stateMock.POLL_JITTER_FACTOR) / 1000) * 1000;
+		after(async () => {
+			await fixtures.clean(fx);
+			mockery.deregisterMock('../src/lib/env-vars');
+			mockery.deregisterMock('../src/lib/config');
+			mockery.deregisterMock('../src/lib/device-online-state');
+		});
 
-			let deviceUserRequestedState: fakeDevice.Device;
+		describe(`API heartbeat state`, () => {
+			describe('Poll Interval Acquisition', () => {
+				it('Should see default value when not overridden', async () => {
+					const pollInterval = await stateMock.getPollInterval(device.uuid);
+					expect(pollInterval).to.equal(
+						POLL_MSEC * stateMock.POLL_JITTER_FACTOR,
+					);
+				});
 
-			before(async () => {
-				deviceUserRequestedState = await fakeDevice.provisionDevice(
-					admin,
-					applicationId,
-				);
+				it('Should see the application-specific value if one exists', async () => {
+					await supertest(admin)
+						.post(`/${version}/application_config_variable`)
+						.send({
+							name: 'RESIN_SUPERVISOR_POLL_INTERVAL',
+							value: '123000',
+							application: applicationId,
+						})
+						.expect(201);
+
+					const pollInterval = await stateMock.getPollInterval(device.uuid);
+					expect(pollInterval).to.equal(123000 * stateMock.POLL_JITTER_FACTOR);
+				});
+
+				it('Should see the device-specific value if one exists', async () => {
+					await supertest(admin)
+						.post(`/${version}/device_config_variable`)
+						.send({
+							name: 'RESIN_SUPERVISOR_POLL_INTERVAL',
+							value: '321000',
+							device: device.id,
+						})
+						.expect(201);
+
+					const pollInterval = await stateMock.getPollInterval(device.uuid);
+					expect(pollInterval).to.equal(321000 * stateMock.POLL_JITTER_FACTOR);
+				});
+
+				it('Should see the default value if the device-specific value is less than it', async () => {
+					await supertest(admin)
+						.patch(
+							`/${version}/device_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and device eq ${device.id}`,
+						)
+						.send({
+							value: `${POLL_MSEC - 100}`,
+						})
+						.expect(200);
+
+					const pollInterval = await stateMock.getPollInterval(device.uuid);
+					expect(pollInterval).to.equal(
+						POLL_MSEC * stateMock.POLL_JITTER_FACTOR,
+					);
+
+					await supertest(admin)
+						.delete(
+							`/${version}/device_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and device eq ${device.id}`,
+						)
+						.expect(200);
+				});
+
+				it('Should see the default value if the application-specific value is less than it', async () => {
+					await supertest(admin)
+						.patch(
+							`/${version}/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${applicationId}`,
+						)
+						.send({
+							value: `${POLL_MSEC - 200}`,
+						})
+						.expect(200);
+
+					const pollInterval = await stateMock.getPollInterval(device.uuid);
+					expect(pollInterval).to.equal(
+						POLL_MSEC * stateMock.POLL_JITTER_FACTOR,
+					);
+
+					await supertest(admin)
+						.delete(
+							`/${version}/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${applicationId}`,
+						)
+						.expect(200);
+				});
 			});
 
-			const stateChangeEventSpy = sinon.spy();
-			stateMock.getInstance().on('change', (args) => {
-				if (![device.uuid, deviceUserRequestedState.uuid].includes(args.uuid)) {
-					return;
-				}
+			describe('Event Tracking', () => {
+				const devicePollInterval =
+					Math.ceil((POLL_MSEC * stateMock.POLL_JITTER_FACTOR) / 1000) * 1000;
 
-				stateChangeEventSpy(args);
-			});
+				let deviceUserRequestedState: fakeDevice.Device;
 
-			it('Should see the stats event emitted more than three times', async () => {
-				const statsEventSpy = sinon.spy();
-				stateMock.getInstance().on('stats', statsEventSpy);
+				const stateChangeEventSpy = sinon.spy();
+				before(async () => {
+					deviceUserRequestedState = await fakeDevice.provisionDevice(
+						admin,
+						applicationId,
+					);
 
-				await waitFor({ checkFn: () => statsEventSpy.callCount >= 3 });
-
-				stateMock.getInstance().off('stats', statsEventSpy);
-			});
-
-			[
-				{
-					tokenType: 'device API Key',
-					getActor: () => device,
-					heartbeatAfterGet: DeviceOnlineStates.Online,
-					getDevice: () => device,
-					getStateV2: () => device.getStateV2(),
-				},
-				{
-					tokenType: 'user token',
-					getActor: () => admin,
-					heartbeatAfterGet: DeviceOnlineStates.Unknown,
-					getDevice: () => deviceUserRequestedState,
-					getStateV2: () =>
-						fakeDevice.getState(admin, deviceUserRequestedState.uuid),
-				},
-			].forEach(
-				({ tokenType, getActor, heartbeatAfterGet, getDevice, getStateV2 }) => {
-					describe(`Given a ${tokenType}`, function () {
-						it('Should see state initially as "unknown"', async () => {
-							const { body } = await supertest(getActor())
-								.get(`/${version}/device(${getDevice().id})`)
-								.expect(200);
-
-							expect(body.d[0]).to.not.be.undefined;
-							expect(body.d[0]).to.have.property(
-								'api_heartbeat_state',
-								DeviceOnlineStates.Unknown,
-								'API heartbeat state is not unknown (default)',
-							);
-						});
-
-						it(`Should have the "${heartbeatAfterGet}" heartbeat state after a state poll`, async () => {
-							stateChangeEventSpy.resetHistory();
-							await getStateV2();
-
-							if (heartbeatAfterGet !== DeviceOnlineStates.Unknown) {
-								await waitFor({ checkFn: () => stateChangeEventSpy.called });
-							} else {
-								await setTimeout(1000);
-								expect(stateChangeEventSpy.called).to.be.false;
-							}
-
-							expect(tracker.states[getDevice().uuid]).to.equal(
-								heartbeatAfterGet !== DeviceOnlineStates.Unknown
-									? heartbeatAfterGet
-									: undefined,
-							);
-
-							const { body } = await supertest(getActor())
-								.get(`/${version}/device(${getDevice().id})`)
-								.expect(200);
-
-							expect(body.d[0]).to.not.be.undefined;
-							expect(body.d[0]).to.have.property(
-								'api_heartbeat_state',
-								heartbeatAfterGet,
-								`API heartbeat state is not ${heartbeatAfterGet}`,
-							);
-						});
-
-						if (heartbeatAfterGet === DeviceOnlineStates.Unknown) {
+					stateMock.getInstance().on('change', (args) => {
+						if (
+							![device.uuid, deviceUserRequestedState.uuid].includes(args.uuid)
+						) {
 							return;
 						}
 
-						it(`Should see state become "timeout" following a delay of ${
-							devicePollInterval / 1000
-						} seconds`, async () => {
-							stateChangeEventSpy.resetHistory();
-							await setTimeout(devicePollInterval);
-
-							await waitFor({ checkFn: () => stateChangeEventSpy.called });
-
-							expect(tracker.states[getDevice().uuid]).to.equal(
-								DeviceOnlineStates.Timeout,
-							);
-
-							const { body } = await supertest(getActor())
-								.get(`/${version}/device(${getDevice().id})`)
-								.expect(200);
-
-							expect(body.d[0]).to.not.be.undefined;
-							expect(body.d[0]).to.have.property(
-								'api_heartbeat_state',
-								DeviceOnlineStates.Timeout,
-								'API heartbeat state is not timeout',
-							);
-						});
-
-						it(`Should see state become "online" again, following a state poll`, async () => {
-							stateChangeEventSpy.resetHistory();
-
-							await getStateV2();
-
-							await waitFor({ checkFn: () => stateChangeEventSpy.called });
-
-							expect(tracker.states[getDevice().uuid]).to.equal(
-								DeviceOnlineStates.Online,
-							);
-
-							const { body } = await supertest(getActor())
-								.get(`/${version}/device(${getDevice().id})`)
-								.expect(200);
-
-							expect(body.d[0]).to.not.be.undefined;
-							expect(body.d[0]).to.have.property(
-								'api_heartbeat_state',
-								DeviceOnlineStates.Online,
-								'API heartbeat state is not online',
-							);
-						});
-
-						it(`Should see state become "offline" following a delay of ${
-							TIMEOUT_SEC + devicePollInterval / 1000
-						} seconds`, async () => {
-							stateChangeEventSpy.resetHistory();
-
-							await setTimeout(devicePollInterval + TIMEOUT_SEC * 1000);
-
-							// it will be called for TIMEOUT and OFFLINE...
-							await waitFor({ checkFn: () => stateChangeEventSpy.calledTwice });
-
-							expect(tracker.states[getDevice().uuid]).to.equal(
-								DeviceOnlineStates.Offline,
-							);
-
-							const { body } = await supertest(getActor())
-								.get(`/${version}/device(${getDevice().id})`)
-								.expect(200);
-
-							expect(body.d[0]).to.not.be.undefined;
-							expect(body.d[0]).to.have.property(
-								'api_heartbeat_state',
-								DeviceOnlineStates.Offline,
-								'API heartbeat state is not offline',
-							);
-						});
+						stateChangeEventSpy(args);
 					});
-				},
-			);
+				});
+
+				it('Should see the stats event emitted more than three times', async () => {
+					const statsEventSpy = sinon.spy();
+					stateMock.getInstance().on('stats', statsEventSpy);
+
+					await waitFor({ checkFn: () => statsEventSpy.callCount >= 3 });
+
+					stateMock.getInstance().off('stats', statsEventSpy);
+				});
+
+				[
+					{
+						tokenType: 'device API Key',
+						getActor: () => device,
+						heartbeatAfterGet: DeviceOnlineStates.Online,
+						getDevice: () => device,
+						getState: () =>
+							fakeDevice.getState(device, device.uuid, stateVersion),
+					},
+					{
+						tokenType: 'user token',
+						getActor: () => admin,
+						heartbeatAfterGet: DeviceOnlineStates.Unknown,
+						getDevice: () => deviceUserRequestedState,
+						getState: () =>
+							fakeDevice.getState(
+								admin,
+								deviceUserRequestedState.uuid,
+								stateVersion,
+							),
+					},
+				].forEach(
+					({ tokenType, getActor, heartbeatAfterGet, getDevice, getState }) => {
+						describe(`Given a ${tokenType}`, function () {
+							it('Should see state initially as "unknown"', async () => {
+								const { body } = await supertest(getActor())
+									.get(`/${version}/device(${getDevice().id})`)
+									.expect(200);
+
+								expect(body.d[0]).to.not.be.undefined;
+								expect(body.d[0]).to.have.property(
+									'api_heartbeat_state',
+									DeviceOnlineStates.Unknown,
+									'API heartbeat state is not unknown (default)',
+								);
+							});
+
+							it(`Should have the "${heartbeatAfterGet}" heartbeat state after a state poll`, async () => {
+								stateChangeEventSpy.resetHistory();
+								await getState();
+
+								if (heartbeatAfterGet !== DeviceOnlineStates.Unknown) {
+									await waitFor({ checkFn: () => stateChangeEventSpy.called });
+								} else {
+									await setTimeout(1000);
+									expect(stateChangeEventSpy.called).to.be.false;
+								}
+
+								expect(tracker.states[getDevice().uuid]).to.equal(
+									heartbeatAfterGet !== DeviceOnlineStates.Unknown
+										? heartbeatAfterGet
+										: undefined,
+								);
+
+								const { body } = await supertest(getActor())
+									.get(`/${version}/device(${getDevice().id})`)
+									.expect(200);
+
+								expect(body.d[0]).to.not.be.undefined;
+								expect(body.d[0]).to.have.property(
+									'api_heartbeat_state',
+									heartbeatAfterGet,
+									`API heartbeat state is not ${heartbeatAfterGet}`,
+								);
+							});
+
+							if (heartbeatAfterGet === DeviceOnlineStates.Unknown) {
+								return;
+							}
+
+							it(`Should see state become "timeout" following a delay of ${
+								devicePollInterval / 1000
+							} seconds`, async () => {
+								stateChangeEventSpy.resetHistory();
+								await setTimeout(devicePollInterval);
+
+								await waitFor({ checkFn: () => stateChangeEventSpy.called });
+
+								expect(tracker.states[getDevice().uuid]).to.equal(
+									DeviceOnlineStates.Timeout,
+								);
+
+								const { body } = await supertest(getActor())
+									.get(`/${version}/device(${getDevice().id})`)
+									.expect(200);
+
+								expect(body.d[0]).to.not.be.undefined;
+								expect(body.d[0]).to.have.property(
+									'api_heartbeat_state',
+									DeviceOnlineStates.Timeout,
+									'API heartbeat state is not timeout',
+								);
+							});
+
+							it(`Should see state become "online" again, following a state poll`, async () => {
+								stateChangeEventSpy.resetHistory();
+
+								await getState();
+
+								await waitFor({ checkFn: () => stateChangeEventSpy.called });
+
+								expect(tracker.states[getDevice().uuid]).to.equal(
+									DeviceOnlineStates.Online,
+								);
+
+								const { body } = await supertest(getActor())
+									.get(`/${version}/device(${getDevice().id})`)
+									.expect(200);
+
+								expect(body.d[0]).to.not.be.undefined;
+								expect(body.d[0]).to.have.property(
+									'api_heartbeat_state',
+									DeviceOnlineStates.Online,
+									'API heartbeat state is not online',
+								);
+							});
+
+							it(`Should see state become "offline" following a delay of ${
+								TIMEOUT_SEC + devicePollInterval / 1000
+							} seconds`, async () => {
+								stateChangeEventSpy.resetHistory();
+
+								await setTimeout(devicePollInterval + TIMEOUT_SEC * 1000);
+
+								// it will be called for TIMEOUT and OFFLINE...
+								await waitFor({
+									checkFn: () => stateChangeEventSpy.calledTwice,
+								});
+
+								expect(tracker.states[getDevice().uuid]).to.equal(
+									DeviceOnlineStates.Offline,
+								);
+
+								const { body } = await supertest(getActor())
+									.get(`/${version}/device(${getDevice().id})`)
+									.expect(200);
+
+								expect(body.d[0]).to.not.be.undefined;
+								expect(body.d[0]).to.have.property(
+									'api_heartbeat_state',
+									DeviceOnlineStates.Offline,
+									'API heartbeat state is not offline',
+								);
+							});
+						});
+					},
+				);
+			});
 		});
-	});
-});
+	}),
+);
 
 describe('Device State v2 patch', function () {
 	let fx: fixtures.Fixtures;
