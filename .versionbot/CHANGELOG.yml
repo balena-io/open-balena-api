@@ -1,4 +1,15 @@
 - commits:
+    - subject: Further target state typing improvements
+      hash: 60a3a88ad2b3fefc0ccaaf09ecc00129281dd99d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.140.8
+  date: 2021-06-03T16:37:11.013Z
+- commits:
     - subject: Improve device state typings
       hash: 57d41ae94e05b2a79c71eaab6a01447190852ebe
       body: ''
