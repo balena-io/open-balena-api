@@ -254,3 +254,19 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		}
 	},
 });
+
+hooks.addPureHook('PATCH', 'resin', 'device', {
+	POSTRUN: async ({ api, request }) => {
+		const affectedIds = request.affectedIds!;
+
+		// Create supervisor service installs when the supervisor is pinned
+		if (
+			request.values.should_be_managed_by__release != null &&
+			affectedIds.length !== 0
+		) {
+			await createReleaseServiceInstalls(api, affectedIds, {
+				id: request.values.should_be_managed_by__release,
+			});
+		}
+	},
+});
