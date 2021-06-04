@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update dependencies
+      hash: 846026090fcbde2ce712894d3c0b4c0ce894ec61
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.141.1
+  date: 2021-06-04T11:07:42.396Z
+- commits:
     - subject: Whitelist & add OVERRIDE_LOCK config variable to the env var schema
       hash: 69497446b6967033b386dd551b6f7b69e835efee
       body: ''
