@@ -1,4 +1,21 @@
 - commits:
+    - subject: Prevent converting finalized releases back to draft
+      hash: 0ba184141044defd52a306967992e9f2121833ab
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://www.flowdock.com/app/rulemotion/r-supervisor/threads/JN2-gnspQ-v6WaeWCvm9T8NYDY1
+        see: >-
+          https://www.flowdock.com/app/rulemotion/r-supervisor/threads/JN2-gnspQ-v6WaeWCvm9T8NYDY1
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.142.0
+  date: 2021-06-08T18:44:36.837Z
+- commits:
     - subject: Remove ui config from the state endpoint
       hash: f151389ee5e2b63e387160b42da6ae046734733c
       body: ''
