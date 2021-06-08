@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove ui config from the state endpoint
+      hash: f151389ee5e2b63e387160b42da6ae046734733c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.141.5
+  date: 2021-06-08T14:43:11.445Z
+- commits:
     - subject: Update dependencies
       hash: 27bfb61afb2f6c8c82983a3bdef5d976afd0df88
       body: |
