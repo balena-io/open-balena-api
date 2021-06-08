@@ -4,6 +4,7 @@ import { expect } from './test-lib/chai';
 
 import { supertest, UserObjectParam } from './test-lib/supertest';
 import { version } from './test-lib/versions';
+import { pineTest } from './test-lib/pinetest';
 
 describe('releases', () => {
 	let fx: fixtures.Fixtures;
@@ -182,5 +183,67 @@ describe('versioning releases', () => {
 				release_version: release1.release_version,
 			})
 			.expect(200);
+	});
+});
+
+describe('draft releases', () => {
+	let fx: fixtures.Fixtures;
+	let user: UserObjectParam;
+	let newRelease: AnyObject;
+	let pineUser: typeof pineTest;
+
+	before(async () => {
+		fx = await fixtures.load('07-releases');
+		user = fx.users.admin;
+		pineUser = pineTest.clone({
+			passthrough: { user },
+		});
+	});
+
+	after(async () => {
+		await fixtures.clean(fx);
+	});
+
+	it('should be able to create a draft release', async () => {
+		const { body } = await pineUser
+			.post({
+				resource: 'release',
+				body: {
+					belongs_to__application: fx.applications.app1.id,
+					commit: 'test-commit',
+					status: 'success',
+					release_version: 'v10.1.1',
+					composition: {},
+					source: 'test',
+					release_type: 'draft',
+					start_timestamp: Date.now(),
+				},
+			})
+			.expect(201);
+		newRelease = body;
+	});
+
+	it('should be able to mark it as final', async () => {
+		await pineUser
+			.patch({
+				resource: 'release',
+				id: newRelease.id,
+				body: {
+					release_type: 'final',
+				},
+			})
+			.expect(200);
+	});
+
+	it('should prevent changing a final relase back to draft', async () => {
+		await pineUser
+			.patch({
+				resource: 'release',
+				id: newRelease.id,
+				body: {
+					release_type: 'draft',
+				},
+			})
+			.expect(400, '"Finalized releases cannot be converted to draft."');
 	});
 });
