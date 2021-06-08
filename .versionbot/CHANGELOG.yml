@@ -1,4 +1,15 @@
 - commits:
+    - subject: Updating to use function to get desired user role
+      hash: 2d0b890e708cb4675a95b5ee4c35edab62d71e72
+      body: ''
+      footer:
+        Change-Type: patch
+        change-type: patch
+      author: Nitish Agarwal
+      nested: []
+  version: 0.141.2
+  date: 2021-06-08T12:43:30.866Z
+- commits:
     - subject: Update dependencies
       hash: 846026090fcbde2ce712894d3c0b4c0ce894ec61
       body: ''
