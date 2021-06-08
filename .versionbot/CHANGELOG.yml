@@ -1,4 +1,15 @@
 - commits:
+    - subject: Improve/add typings for the device state patch body
+      hash: 629652b41d4b1f6cebbc9fee9970a72b4e851a49
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.141.3
+  date: 2021-06-08T13:24:13.393Z
+- commits:
     - subject: Updating to use function to get desired user role
       hash: 2d0b890e708cb4675a95b5ee4c35edab62d71e72
       body: ''
