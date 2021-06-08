@@ -194,7 +194,65 @@ const validPatchFields = [
 	'cpu_usage',
 	'cpu_id',
 	'is_undervolted',
-];
+] as const;
+
+type LocalBody = NonNullable<StatePatchBody['local']>;
+/**
+ * These typings should be used as a guide to what should be sent, but cannot be trusted as what actually *is* sent.
+ */
+type StatePatchBody = {
+	local?: {
+		is_managed_by__device?: number;
+		should_be_running__release?: number;
+		name?: string;
+		/**
+		 * @deprecated in favor of name, to match the GET endpoint
+		 */
+		device_name?: string;
+		status?: string;
+		is_online?: boolean;
+		note?: string;
+		os_version?: string;
+		os_variant?: string;
+		supervisor_version?: string;
+		provisioning_progress?: number;
+		provisioning_state?: string;
+		ip_address?: string;
+		mac_address?: string;
+		download_progress?: number;
+		api_port?: number;
+		api_secret?: string;
+		logs_channel?: string;
+		memory_usage?: number;
+		memory_total?: number;
+		storage_block_device?: string;
+		storage_usage?: number;
+		storage_total?: number;
+		cpu_temp?: number;
+		cpu_usage?: number;
+		cpu_id?: string;
+		is_undervolted?: string;
+		is_on__commit?: string | null;
+		apps?: Array<{
+			services?: {
+				[serviceId: string]: {
+					releaseId: number;
+					status: string;
+					download_progress: number;
+				};
+			};
+		}>;
+	};
+	dependent?: {
+		apps?: {
+			[id: string]: {
+				images: {
+					[imageId: string]: { status: string; download_progress: number };
+				};
+			};
+		};
+	};
+};
 
 export const statePatch: RequestHandler = async (req, res) => {
 	const { uuid } = req.params;
@@ -210,10 +268,14 @@ export const statePatch: RequestHandler = async (req, res) => {
 
 	// Every field that is passed to the endpoint is the same, except
 	// device name
-	const { local, dependent } = values;
+	const { local, dependent } = values as StatePatchBody;
 
-	let apps: undefined | AnyObject[];
-	let deviceBody: undefined | AnyObject;
+	let apps: LocalBody['apps'];
+	let deviceBody:
+		| undefined
+		| (Pick<LocalBody, typeof validPatchFields[number]> & {
+				is_running__release?: number | null;
+		  });
 	if (local != null) {
 		apps = local.apps;
 
@@ -307,7 +369,10 @@ export const statePatch: RequestHandler = async (req, res) => {
 							throw new BadRequestError('Invalid image ID value in request');
 						}
 
-						const releaseId = parseInt(svc.releaseId, 10);
+						const releaseId =
+							typeof svc.releaseId === 'number'
+								? svc.releaseId
+								: parseInt(svc.releaseId, 10);
 						if (!Number.isFinite(releaseId)) {
 							throw new BadRequestError('Invalid release ID value in request');
 						}
@@ -361,7 +426,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 				);
 			}
 
-			if (dependent != null && dependent.apps != null) {
+			if (dependent?.apps != null) {
 				// Handle dependent devices if necessary
 				const gatewayDownloads = _.flatMap(dependent.apps, ({ images }) =>
 					_.map(images, ({ status, download_progress }, imageIdStr) => {
