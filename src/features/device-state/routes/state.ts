@@ -20,11 +20,19 @@ const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
 
 export type EnvVarList = Array<{ name: string; value: string }>;
-export const varListInsert = (varList: EnvVarList, obj: Dictionary<string>) => {
-	varList.forEach((evar) => {
-		obj[evar.name] = evar.value;
+export const varListInsert = (
+	varList: EnvVarList,
+	obj: Dictionary<string>,
+	filterFn: (name: string) => boolean = () => true,
+) => {
+	varList.forEach(({ name, value }) => {
+		if (filterFn(name)) {
+			obj[name] = value;
+		}
 	});
 };
+export const rejectUiConfig = (name: string) =>
+	!/^(BALENA|RESIN)_UI/.test(name);
 
 type CompositionService = AnyObject;
 type LocalStateApp = StateV2['local']['apps'][string];
@@ -380,10 +388,14 @@ const getConfig = (device: AnyObject) => {
 
 	// add any app-specific config values...
 	const userAppFromApi: AnyObject = device.belongs_to__application[0];
-	varListInsert(userAppFromApi.application_config_variable, config);
+	varListInsert(
+		userAppFromApi.application_config_variable,
+		config,
+		rejectUiConfig,
+	);
 
 	// override with device-specific values...
-	varListInsert(device.device_config_variable, config);
+	varListInsert(device.device_config_variable, config, rejectUiConfig);
 	filterDeviceConfig(config, device.os_version);
 	setMinPollInterval(config);
 
@@ -438,7 +450,11 @@ const getDependent = (device: AnyObject): StateV2['dependent'] => {
 		};
 
 		const depConfig: Dictionary<string> = {};
-		varListInsert(depApp.application_config_variable, depConfig);
+		varListInsert(
+			depApp.application_config_variable,
+			depConfig,
+			rejectUiConfig,
+		);
 
 		dependentInfo.apps[depApp.id] = {
 			name: depApp.app_name,
@@ -464,7 +480,7 @@ const getDependent = (device: AnyObject): StateV2['dependent'] => {
 			depAppCache[depAppId];
 
 		const depConfig: Dictionary<string> = {};
-		varListInsert(depDev.device_config_variable, depConfig);
+		varListInsert(depDev.device_config_variable, depConfig, rejectUiConfig);
 
 		const ipr = depRelease?.contains__image?.[0];
 		const image = ipr?.image?.[0];
