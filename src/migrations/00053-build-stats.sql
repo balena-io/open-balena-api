@@ -1,0 +1,6 @@
+ALTER TABLE "release"
+ADD COLUMN IF NOT EXISTS "peak memory usage" INT NULL,
+ADD COLUMN IF NOT EXISTS "average memory usage" INT NULL,
+ADD COLUMN IF NOT EXISTS "peak cpu usage" INT NULL,
+ADD COLUMN IF NOT EXISTS "average cpu usage" INT NULL,
+ADD COLUMN IF NOT EXISTS "run time" INT NULL;

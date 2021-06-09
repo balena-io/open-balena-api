@@ -393,6 +393,11 @@ export interface Release {
 	contract: {} | null;
 	is_passing_tests: boolean;
 	release_type: 'final' | 'draft';
+	peak_memory_usage: number | null;
+	peak_cpu_usage: number | null;
+	average_memory_usage: number | null;
+	average_cpu_usage: number | null;
+	run_time: number | null;
 }
 
 export interface ReleaseTag {

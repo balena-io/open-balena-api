@@ -87,6 +87,12 @@ Term: api secret
 Term: app name
 	Concept Type: Text (Type)
 
+Term: average cpu usage
+	Concept Type: Integer (Type)
+
+Term: average memory usage
+	Concept Type: Integer (Type)
+
 Term: build log
 	Concept Type: Text (Type)
 
@@ -207,6 +213,12 @@ Term: os version range
 Term: os variant
 	Concept Type: Short Text (Type)
 
+Term: peak cpu usage
+	Concept Type: Integer (Type)
+
+Term: peak memory usage
+	Concept Type: Integer (Type)
+
 Term: project type
 	Concept Type: Short Text (Type)
 
@@ -230,6 +242,9 @@ Term: release version
 
 Term: release type
 	Concept Type: Short Text (Type)
+
+Term: run time
+	Concept Type: Integer (Type)
 
 Term: scope
 	Concept Type: Short Text (Type)
@@ -379,7 +394,6 @@ Fact type: user (Auth) is member of organization
 	Synonymous Form: organization includes user (Auth)
 	Database Table Name: organization membership
 	Term Form: organization membership
-
 
 -- organization
 
@@ -649,6 +663,16 @@ Fact type: release has release type
 	Necessity: each release has exactly one release type.
 	Definition: "final" or "draft"
 
+Fact type: release has peak memory usage
+	Necessity: each release has at most one peak memory usage
+Fact type: release has peak cpu usage
+	Necessity: each release has at most one peak cpu usage
+Fact type: release has average memory usage
+	Necessity: each release has at most one average memory usage
+Fact type: release has average cpu usage
+	Necessity: each release has at most one average cpu usage
+Fact type: release has run time
+	Necessity: each release has at most one run time
 
 -- service environment variable
 
