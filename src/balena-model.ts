@@ -375,22 +375,10 @@ export interface DeviceTag {
 	value: string;
 }
 
-export interface BuildStat {
-	created_at: DateString;
-	modified_at: DateString;
-	id: number;
-	peak_memory_usage: number;
-	peak_cpu_usage: number;
-	average_memory_usage: number;
-	average_cpu_usage: number;
-	run_time: number;
-}
-
 export interface Release {
 	created_at: DateString;
 	modified_at: DateString;
 	id: number;
-	build_stat: { __id: number } | [BuildStat?] | null;
 	belongs_to__application: { __id: number } | [Application];
 	commit: string;
 	composition: {};
