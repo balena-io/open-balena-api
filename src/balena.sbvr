@@ -87,12 +87,6 @@ Term: api secret
 Term: app name
 	Concept Type: Text (Type)
 
-Term: average cpu usage
-	Concept Type: Integer (Type)
-
-Term: average memory usage
-	Concept Type: Integer (Type)
-
 Term: build log
 	Concept Type: Text (Type)
 
@@ -213,12 +207,6 @@ Term: os version range
 Term: os variant
 	Concept Type: Short Text (Type)
 
-Term: peak cpu usage
-	Concept Type: Integer (Type)
-
-Term: peak memory usage
-	Concept Type: Integer (Type)
-
 Term: project type
 	Concept Type: Short Text (Type)
 
@@ -242,9 +230,6 @@ Term: release version
 
 Term: release type
 	Concept Type: Short Text (Type)
-
-Term: run time
-	Concept Type: Integer (Type)
 
 Term: scope
 	Concept Type: Short Text (Type)
@@ -366,19 +351,6 @@ Term: device
 		Database Table Name: device tag
 		Necessity: each device tag has a tag key that has a Length (Type) that is greater than 0.
 
-Term: build stat
-
-Fact type: build stat has peak memory usage
-	Necessity: each build stat has exactly one peak memory usage
-Fact type: build stat has peak cpu usage
-	Necessity: each build stat has exactly one peak cpu usage
-Fact type: build stat has average memory usage
-	Necessity: each build stat has exactly one average memory usage
-Fact type: build stat has average cpu usage
-	Necessity: each build stat has exactly one average cpu usage
-Fact type: build stat has run time
-	Necessity: each build stat has exactly one run time
-
 Term: release
 
 Fact type: release has tag key
@@ -408,8 +380,6 @@ Fact type: user (Auth) is member of organization
 	Database Table Name: organization membership
 	Term Form: organization membership
 
-Fact type: release has build stat
-	Necessity: each release has at most one build stat.
 
 -- organization
 
