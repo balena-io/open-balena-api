@@ -1,4 +1,35 @@
 - commits:
+    - subject: Revert "Add Build Stat to Release"
+      hash: ed7e4adaae826e6256daae5bca8782c5fc9594aa
+      body: |
+        This reverts commit 7aa26a44848cc825d7202571072d4c7533fc35f7.
+        The commit was accidentally merged to master prematurely.
+      footer:
+        Signed-off-by: Paul Jonathan <pj@balena.io>
+        signed-off-by: Paul Jonathan <pj@balena.io>
+        Change-type: minor
+        change-type: minor
+      author: toochevere
+      nested: []
+    - subject: Add Build Stat to Release
+      hash: 7aa26a44848cc825d7202571072d4c7533fc35f7
+      body: >
+        This change is part of the larger change to add build statistics from
+        the Builder to Releases.
+      footer:
+        Signed-off-by: Paul Jonathan Zoulin <pj@balena.io>
+        signed-off-by: Paul Jonathan Zoulin <pj@balena.io>
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/4dsc0_Fec2ZZ3xxnZT3hkG7UMHM
+        see: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/4dsc0_Fec2ZZ3xxnZT3hkG7UMHM
+      author: toochevere
+      nested: []
+  version: 0.143.0
+  date: 2021-06-10T13:26:22.787Z
+- commits:
     - subject: Prevent converting finalized releases back to draft
       hash: 0ba184141044defd52a306967992e9f2121833ab
       body: ''
