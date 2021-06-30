@@ -1,4 +1,15 @@
 - commits:
+    - subject: Delete CODEOWNERS
+      hash: 70dbbe4fe6a95da8bcb99c5abab069e267b216b2
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: dfunckt
+      nested: []
+  version: 0.143.2
+  date: 2021-06-30T15:34:35.517Z
+- commits:
     - subject: Avoid unnecessary `getAffectedIds` calls when updating devices
       hash: 69518683f9d479113cceabe2b837ac6984c0e2fc
       body: |
