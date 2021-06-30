@@ -193,14 +193,13 @@ hooks.addPureHook('POST', 'resin', 'device', {
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	PRERUN: async (args) => {
-		const affectedIds = await sbvrUtils.getAffectedIds(args);
-
 		// We need to delete all service_install resources for the current app of these devices
 		// and create new ones for the new application (if the device is moving application)
-		if (
-			args.request.values.belongs_to__application != null &&
-			affectedIds.length !== 0
-		) {
+		if (args.request.values.belongs_to__application == null) {
+			return;
+		}
+		const affectedIds = await sbvrUtils.getAffectedIds(args);
+		if (affectedIds.length !== 0) {
 			await deleteServiceInstallsForCurrentApp(args.api, affectedIds);
 			await createAppServiceInstalls(
 				args.api,
