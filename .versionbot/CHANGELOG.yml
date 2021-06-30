@@ -1,4 +1,17 @@
 - commits:
+    - subject: Avoid unnecessary `getAffectedIds` calls when updating devices
+      hash: 69518683f9d479113cceabe2b837ac6984c0e2fc
+      body: |
+        We only need the call if the device is moving between applications
+        which is a tiny minority of the cases in which we patch devices
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.143.1
+  date: 2021-06-30T14:18:51.106Z
+- commits:
     - subject: Revert "Add Build Stat to Release"
       hash: ed7e4adaae826e6256daae5bca8782c5fc9594aa
       body: |
