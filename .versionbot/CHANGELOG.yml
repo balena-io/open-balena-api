@@ -1,4 +1,44 @@
 - commits:
+    - subject: Update pinejs to 14.24.3
+      hash: 574517ae6c79f70f235f4bb04d988d88e8731c3e
+      body: |
+        Update pinejs from 14.24.1 to 14.24.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: >-
+                Optimize pre-processing of odata2AbstractSQL for improving cache
+                hits
+              hash: 85b816e6ce9e9f7137abda74b7df04d9aa3acd93
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.24.3
+          date: 2021-07-02T14:17:11.450Z
+        - commits:
+            - subject: Delete CODEOWNERS
+              hash: d96ec3b30023a50be44e18c5a046a9c9af4fa894
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+                See: >-
+                  https://www.flowdock.com/app/rulemotion/pub/threads/trLcZFnSX9fLZn4LiaIv4xuBbah
+                see: >-
+                  https://www.flowdock.com/app/rulemotion/pub/threads/trLcZFnSX9fLZn4LiaIv4xuBbah
+              author: Thodoris Greasidis
+              nested: []
+          version: pinejs-14.24.2
+          date: 2021-06-30T21:16:07.970Z
+  version: 0.143.3
+  date: 2021-07-02T15:27:06.857Z
+- commits:
     - subject: Delete CODEOWNERS
       hash: 70dbbe4fe6a95da8bcb99c5abab069e267b216b2
       body: ''
