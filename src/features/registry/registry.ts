@@ -264,9 +264,7 @@ const generateToken = (
 		audience,
 		subject,
 		expiresIn: 60 * TOKEN_EXPIRY_MINUTES,
-		header: {
-			kid: CERT.kid,
-		},
+		keyid: CERT.kid,
 	};
 	return jsonwebtoken.sign(payload, CERT.key, options);
 };
