@@ -1,4 +1,46 @@
 - commits:
+    - subject: Update dependencies
+      hash: a7eef31c191d5b4eb84b669f3ec3141bd8c17761
+      body: |
+        Update loki-grpc-client from 1.0.2 to 1.0.5
+        Update @balena/node-metrics-gatherer from 5.7.3 to 5.7.5
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update dependencies
+              hash: 4436c428ce7c495a57758455d992171a58d249b0
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: node-loki-grpc-client-1.0.5
+          date: 2021-07-05T16:34:30.340Z
+        - commits:
+            - subject: Add .versionbot/CHANGELOG.yml for nested changelogs
+              hash: 60cebbb24b75395e20beea8610fabd68d4a69477
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: node-loki-grpc-client-1.0.4
+          date: 2021-07-05T16:22:59.844Z
+        - commits:
+            - author: Vipul Gupta
+              body: ''
+              hash: 514bfb1a7f5ab1cb738f73d4099f61269919ddf6
+              subject: 'patch: Delete Codeowners'
+          date: '2021-07-05T13:46:49Z'
+          version: node-loki-grpc-client-1.0.3
+  version: 0.143.5
+  date: 2021-07-05T16:49:52.188Z
+- commits:
     - subject: Update open-balena-base to 11.3.2
       hash: 7c8839259acaeb9acf90780dd4f136b96913da0e
       body: |
