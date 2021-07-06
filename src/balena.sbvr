@@ -457,6 +457,12 @@ Fact type: application has uuid
 	Necessity: each application has a uuid that has a Length (Type) that is equal to 32.
 Fact type: application is public
 
+-- The following declaration works-around the fact that pine doesn't add the
+-- the relation between the resource and its concept type.
+Fact type: application has actor (Auth)
+	Synonymous Form: actor (Auth) is of application
+	Necessity: each application has exactly one actor (Auth)
+
 -- service instance
 
 Fact type: service instance has service type
