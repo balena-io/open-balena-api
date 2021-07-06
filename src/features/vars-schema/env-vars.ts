@@ -282,14 +282,6 @@ export const checkConfigVarNameValidity = (name: string) => {
 
 export const checkEnvVarNameValidity = (name: string) => {
 	checkVarName('Environment variable', name);
-
-	if (startsWithAny(RESERVED_NAMESPACES, name)) {
-		throw new BadRequestError(
-			`Environment variables beginning with ${RESERVED_NAMESPACES.join(
-				', ',
-			)} are reserved.`,
-		);
-	}
 };
 
 export const checkEnvVarValueValidity = (value: string) => {
