@@ -28,7 +28,7 @@
     "@balena/abstract-sql-compiler": "^7.13.1",
     "@balena/es-version": "^1.0.0",
     "@balena/node-metrics-gatherer": "5.7.5",
-    "@balena/pinejs": "^14.24.3",
+    "@balena/pinejs": "^14.25.0",
     "@resin.io/device-types": "^10.5.0",
     "@types/basic-auth": "^1.1.3",
     "@types/bluebird": "^3.5.35",
