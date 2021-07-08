@@ -1,4 +1,110 @@
 - commits:
+    - subject: Bump pinejs to add `is of` reverse relationship for concept types
+      hash: aef207b81078d4792d61b7bc6380abcde0dad841
+      body: |+
+        Update pinejs from 14.24.3 to 14.25.0
+
+      footer:
+        Resolves: '#707'
+        resolves: '#707'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested:
+        - commits:
+            - subject: >-
+                Bump dependencies to add `is of` reverse relationship for
+                concept types
+              hash: acc42801ef9f10451150ef951309482bcf73ef11
+              body: |
+                Update lf-to-abstract-sql from 4.2.2 to 4.3.0
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+              author: Thodoris Greasidis
+              nested:
+                - commits:
+                    - subject: >-
+                        Add an automatic `is of` reverse relationship for
+                        concept types
+                      hash: f84a80730b68b34203bfec29f97e5dac6b464857
+                      body: ''
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested: []
+                  version: lf-to-abstract-sql-4.3.0
+                  date: 2021-07-06T16:36:07.964Z
+          version: pinejs-14.25.0
+          date: 2021-07-08T15:02:26.358Z
+        - commits:
+            - subject: Fix Hooks URL
+              hash: d39ef2080f820a482cd5ac71e2f5119b6777b87d
+              body: |
+                Fix Hooks URL
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Matthew Yarmolinsky <matthew-timothy@balena.io>
+                signed-off-by: Matthew Yarmolinsky <matthew-timothy@balena.io>
+              author: Matthew Yarmolinsky
+              nested: []
+          version: pinejs-14.24.6
+          date: 2021-07-06T19:23:42.739Z
+        - commits:
+            - subject: Update user SBVR model URL
+              hash: 6be1602acdb4dfcfe6abd86e206fd95fde8fe898
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Matthew Yarmolinsky <matthew-timothy@balena.io>
+                signed-off-by: Matthew Yarmolinsky <matthew-timothy@balena.io>
+              author: Matthew Yarmolinsky
+              nested: []
+          version: pinejs-14.24.5
+          date: 2021-07-06T17:56:51.871Z
+        - commits:
+            - subject: Avoid concat/_.uniq calls in getReqPermissions
+              hash: 9cd074a5c810ba66130695758ccbf9cc6d7b46d1
+              body: >
+                These are relatively expensive considering it is a fairly hot
+                function
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: >-
+                Validate the guest permissions when caching rather than on each
+                use
+              hash: adb225303a7d9a008e8a1ae00a7a8b2ac8bf4d6f
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: >-
+                Remove unnecessary code now that a request can only use a single
+                actor
+              hash: 2371a120c05ceeebe2ec249fd4f9afb0f23d6c83
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.24.4
+          date: 2021-07-06T14:12:28.605Z
+  version: 0.144.0
+  date: 2021-07-08T20:36:36.857Z
+- commits:
     - subject: Update dependencies
       hash: a7eef31c191d5b4eb84b669f3ec3141bd8c17761
       body: |
