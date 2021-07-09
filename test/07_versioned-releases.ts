@@ -598,7 +598,7 @@ describe('draft releases', () => {
 					release_version: 'v10.1.1',
 					composition: {},
 					source: 'test',
-					release_type: 'draft',
+					is_final: false,
 					start_timestamp: Date.now(),
 				},
 			})
@@ -628,7 +628,7 @@ describe('draft releases', () => {
 				resource: 'release',
 				id: newRelease.id,
 				body: {
-					release_type: 'final',
+					is_final: true,
 				},
 			})
 			.expect(200);
@@ -654,7 +654,7 @@ describe('draft releases', () => {
 				resource: 'release',
 				id: newRelease.id,
 				body: {
-					release_type: 'draft',
+					is_final: false,
 				},
 			})
 			.expect(400, '"Finalized releases cannot be converted to draft."');
