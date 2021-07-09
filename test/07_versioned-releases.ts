@@ -105,7 +105,7 @@ const getTopRevision = async (
 };
 
 /** must be more than 3 */
-const RELEASE_FINALIZATION_TEST_CONCURENCY = 10;
+const RELEASE_FINALIZATION_TEST_CONCURENCY = 30;
 expect(RELEASE_FINALIZATION_TEST_CONCURENCY).to.be.greaterThanOrEqual(
 	3,
 	'Please define a RELEASE_FINALIZATION_TEST_CONCURENCY >= 3',
