@@ -231,6 +231,9 @@ Term: release version
 Term: release type
 	Concept Type: Short Text (Type)
 
+Term: revision
+	Concept Type: Integer (Type)
+
 Term: scope
 	Concept Type: Short Text (Type)
 
@@ -251,6 +254,18 @@ Term: start timestamp
 
 Term: status
 	Concept Type: Short Text (Type)
+
+Term: semver
+	Concept Type: Short Text (Type)
+
+Term: semver major
+	Concept Type: Integer (Type)
+
+Term: semver minor
+	Concept Type: Integer (Type)
+
+Term: semver patch
+	Concept Type: Integer (Type)
 
 Term: supervisor version
 	Concept Type: Short Text (Type)
@@ -645,9 +660,23 @@ Fact type: release has release version
 Fact type: release has contract
 	Necessity: each release has at most one contract
 Fact type: release is passing tests
+-- TODO: Drop after the release versioning migration
 Fact type: release has release type
 	Necessity: each release has exactly one release type.
 	Definition: "final" or "draft"
+Fact type: release is finalized at date
+	Necessity: each release is finalized at at most one date.
+Fact type: release has semver
+	Necessity: each release has exactly one semver.
+Fact type: release has semver major
+	Necessity: each release has exactly one semver major.
+Fact type: release has semver minor
+	Necessity: each release has exactly one semver minor.
+Fact type: release has semver patch
+	Necessity: each release has exactly one semver patch.
+Fact type: release has revision
+	Necessity: each release has at most one revision.
+	Necessity: each release that has a revision, has a revision that is greater than or equal to 0.
 
 
 -- service environment variable

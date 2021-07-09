@@ -101,3 +101,21 @@ export const withRetries = async <T>(
 		return await withRetries(func, delayDuration, retries - 1);
 	}
 };
+
+/**
+ * Useful when you want to avoid having to manually parse the key
+ * or when need order guarantees while iterating the keys.
+ */
+export const groupByMap = <K, V>(enrties: V[], iteratee: (item: V) => K) => {
+	const result = new Map<K, V[]>();
+	for (const entry of enrties) {
+		const key = iteratee(entry);
+		let keyGroup = result.get(key);
+		if (keyGroup == null) {
+			keyGroup = [];
+			result.set(key, keyGroup);
+		}
+		keyGroup.push(entry);
+	}
+	return result;
+};
