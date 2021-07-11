@@ -228,9 +228,6 @@ Term: push timestamp
 Term: release version
 	Concept Type: Short Text (Type)
 
-Term: release type
-	Concept Type: Short Text (Type)
-
 Term: revision
 	Concept Type: Integer (Type)
 
@@ -657,10 +654,6 @@ Fact type: release has release version
 Fact type: release has contract
 	Necessity: each release has at most one contract
 Fact type: release is passing tests
--- TODO: Drop after the release versioning migration
-Fact type: release has release type
-	Necessity: each release has exactly one release type.
-	Definition: "final" or "draft"
 Fact type: release is finalized at date
 	Necessity: each release is finalized at at most one date.
 Fact type: release has semver major
