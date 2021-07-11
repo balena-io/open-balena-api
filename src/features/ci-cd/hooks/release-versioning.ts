@@ -77,11 +77,6 @@ const getNextRevision = async (
 		: 0;
 };
 
-const releaseTypeToFinalMap = {
-	draft: false,
-	final: true,
-};
-
 const PLAIN_SEMVER_REGEX = /^([0-9]+)\.([0-9]+)\.([0-9]+)$/;
 
 interface CustomObjectBase {
@@ -92,25 +87,6 @@ interface CustomObjectBase {
 const parseReleaseVersioningFields: (args: sbvrUtils.HookArgs) => void = ({
 	request,
 }) => {
-	const { is_final, release_type } = request.values;
-	if (typeof is_final === 'boolean') {
-		// TODO[release versioning next step]: Drop this once we move the release_type to a translation
-		const inferredReleaseType = is_final ? 'final' : 'draft';
-		if (release_type != null && release_type !== inferredReleaseType) {
-			throw new errors.BadRequestError(
-				'Conflict between the provided is_final and release_type values',
-			);
-		}
-		request.values.release_type = inferredReleaseType;
-	} else if (
-		typeof release_type === 'string' &&
-		release_type in releaseTypeToFinalMap
-	) {
-		// TODO[release versioning next step]: Drop this once we move the release_type to a translation
-		request.values.is_final =
-			releaseTypeToFinalMap[release_type as keyof typeof releaseTypeToFinalMap];
-	}
-
 	if (request.values.semver != null) {
 		const semverMatches = PLAIN_SEMVER_REGEX.exec(request.values.semver);
 		if (semverMatches == null) {
