@@ -102,6 +102,7 @@ import { loginRateLimiter, normalizeHandle } from './features/auth';
 import { getIP, getIPv4, isValidInteger, throttledForEach } from './lib/utils';
 import {
 	createRateLimitMiddleware,
+	createRateLimiter,
 	getUserIDFromCreds,
 } from './infra/rate-limiting';
 import {
@@ -195,6 +196,10 @@ export const auth = {
 	registryAuth,
 	normalizeHandle,
 };
+export const rateLimiting = {
+	createRateLimitMiddleware,
+	createRateLimiter,
+};
 export const middleware = {
 	sudoMiddleware,
 	authenticated: authenticatedMiddleware,
@@ -204,7 +209,6 @@ export const middleware = {
 	identify: identifyMiddleware,
 	permissionRequired: permissionRequiredMiddleware,
 	loginRateLimiter,
-	createRateLimitMiddleware,
 	skipLogging,
 };
 export const hooks = {

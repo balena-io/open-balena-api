@@ -3,7 +3,6 @@ import type { Request, Response, RequestHandler } from 'express';
 import * as _ from 'lodash';
 import {
 	IRateLimiterOptions,
-	RateLimiterAbstract,
 	RateLimiterCluster,
 	RateLimiterMemory,
 	RateLimiterRedis,
@@ -39,7 +38,7 @@ const logRedisError = (err: Error) => {
 const redisRetryStrategy: redis.RetryStrategy = _.constant(200);
 
 // Use redis as a store.
-const createRateLimiter = (opts: IRateLimiterOptions) => {
+export const createRateLimiter = (opts: IRateLimiterOptions) => {
 	if (opts.points != null) {
 		opts.points *= RATE_LIMIT_FACTOR;
 	}
@@ -124,12 +123,10 @@ export type PartialRateLimitMiddleware = (
 ) => RequestHandler;
 
 export const createRateLimitMiddleware = (
-	opts: IRateLimiterOptions,
+	rateLimiter: ReturnType<typeof createRateLimiter>,
 	keyOpts: Parameters<typeof $createRateLimitMiddleware>[1] = {},
-): PartialRateLimitMiddleware => {
-	const rateLimiter = createRateLimiter(opts);
-	return _.partial($createRateLimitMiddleware, rateLimiter, keyOpts);
-};
+): PartialRateLimitMiddleware =>
+	_.partial($createRateLimitMiddleware, rateLimiter, keyOpts);
 
 // If 'field' is set, the middleware will apply the rate limit to requests
 // that originate from the same IP *and* have the same 'field'.
@@ -137,7 +134,7 @@ export const createRateLimitMiddleware = (
 // If 'field' is not set, the rate limit will be applied to *all* requests
 // originating from a particular IP.
 const $createRateLimitMiddleware = (
-	rateLimiter: RateLimiterAbstract,
+	rateLimiter: ReturnType<typeof createRateLimiter>,
 	{
 		ignoreIP = false,
 		allowReset = true,
