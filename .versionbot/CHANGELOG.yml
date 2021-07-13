@@ -1,4 +1,73 @@
 - commits:
+    - subject: Update pinejs and use HttpError's for the rate-limiting errors
+      hash: 1ac3efbf690bfc9d1c15641f28e0712a493ef3ed
+      body: |
+        Update pinejs from 14.25.0 to 14.26.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: >-
+                Standardize http error to response conversion and response
+                sending
+              hash: 5243cdff5b2c259de1b8fc2cf00408b565b33cda
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.26.1
+          date: 2021-07-13T16:39:51.679Z
+        - commits:
+            - subject: Add the ability to include headers with http errors
+              hash: 2a0733c8b49969a4593a9852598a175dd02ab66c
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.26.0
+          date: 2021-07-13T15:24:36.114Z
+        - commits:
+            - subject: Reduce duplication for http error constructors
+              hash: 2ab6037174e2018819eadb9245db1e7f8a9fa06c
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.25.2
+          date: 2021-07-13T14:42:04.603Z
+        - commits:
+            - subject: Update dependencies
+              hash: d7065d79a37bccb465c3541b7290881af0f27801
+              body: |
+                Update odata-parser from 2.2.5 to 2.2.6
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Switch to peggy for compiling the grammar
+                      hash: 57330ff50fda619d56d3bc32ebef6cf7cebfa395
+                      body: ''
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: odata-parser-2.2.6
+                  date: 2021-07-09T12:31:51.225Z
+          version: pinejs-14.25.1
+          date: 2021-07-09T13:00:27.876Z
+  version: 0.144.1
+  date: 2021-07-13T16:56:38.521Z
+- commits:
     - subject: Bump pinejs to add `is of` reverse relationship for concept types
       hash: aef207b81078d4792d61b7bc6380abcde0dad841
       body: |+
