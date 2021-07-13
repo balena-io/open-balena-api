@@ -70,6 +70,7 @@ export const handleHttpErrors = (req: Request, res: Response, err: Error) => {
 		}
 		res.status(err.status);
 		const body = err.getResponseBody();
+		res.set(err.headers);
 		if (typeof body === 'string') {
 			res.send(escapeHtml(body));
 		} else {

@@ -11,7 +11,7 @@ import {
 } from 'rate-limiter-flexible';
 import * as redis from 'redis';
 
-import { captureException } from '../error-handling';
+import { captureException, handleHttpErrors } from '../error-handling';
 
 import {
 	MINUTES,
@@ -20,6 +20,10 @@ import {
 	REDIS_HOST,
 	REDIS_PORT,
 } from '../../lib/config';
+import {
+	InternalRequestError,
+	TooManyRequestsError,
+} from '@balena/pinejs/out/sbvr-api/errors';
 
 const logRedisError = (err: Error) => {
 	// do not log these errors, because this would flood our logs
@@ -35,7 +39,11 @@ const logRedisError = (err: Error) => {
 const redisRetryStrategy: redis.RetryStrategy = _.constant(200);
 
 // Use redis as a store.
-const getStore = (opts: IRateLimiterOptions) => {
+const createRateLimiter = (opts: IRateLimiterOptions) => {
+	if (opts.points != null) {
+		opts.points *= RATE_LIMIT_FACTOR;
+	}
+
 	let insuranceLimiter;
 	if (isMaster) {
 		insuranceLimiter = new RateLimiterMemory({
@@ -65,12 +73,37 @@ const getStore = (opts: IRateLimiterOptions) => {
 	// the whole process
 	client.on('error', _.throttle(logRedisError, 5 * MINUTES));
 
-	return new RateLimiterRedis({
+	const rateLimiter = new RateLimiterRedis({
 		...opts,
 		keyPrefix: 'api:ratelimiting:redis:',
 		storeClient: client,
 		insuranceLimiter,
 	});
+
+	return {
+		consume: async (...args: Parameters<RateLimiterRedis['consume']>) => {
+			try {
+				return await rateLimiter.consume(...args);
+			} catch (e) {
+				if (e instanceof RateLimiterRes) {
+					const headers: { [header: string]: string } = {};
+					if (e.msBeforeNext) {
+						headers['Retry-After'] = `${Math.round(e.msBeforeNext / 1000)}`;
+					}
+					throw new TooManyRequestsError(
+						'Too Many Requests',
+						undefined,
+						headers,
+					);
+				} else {
+					throw new InternalRequestError();
+				}
+			}
+		},
+		delete: async (...args: Parameters<RateLimiterRedis['delete']>) => {
+			return await rateLimiter.delete(...args);
+		},
+	};
 };
 
 export const getUserIDFromCreds = (req: Request): string => {
@@ -94,12 +127,8 @@ export const createRateLimitMiddleware = (
 	opts: IRateLimiterOptions,
 	keyOpts: Parameters<typeof $createRateLimitMiddleware>[1] = {},
 ): PartialRateLimitMiddleware => {
-	if (opts.points != null) {
-		opts.points *= RATE_LIMIT_FACTOR;
-	}
-	const store = getStore(opts);
-
-	return _.partial($createRateLimitMiddleware, store, keyOpts);
+	const rateLimiter = createRateLimiter(opts);
+	return _.partial($createRateLimitMiddleware, rateLimiter, keyOpts);
 };
 
 // If 'field' is set, the middleware will apply the rate limit to requests
@@ -152,16 +181,12 @@ const $createRateLimitMiddleware = (
 			await rateLimiter.consume(key);
 			addReset(req, key);
 			next();
-		} catch (e) {
-			if (e instanceof RateLimiterRes) {
-				if (e.msBeforeNext) {
-					res.set('Retry-After', `${Math.round(e.msBeforeNext / 1000)}`);
-				}
-				res.status(429).send('Too Many Requests');
-			} else {
-				captureException(e, 'Error during rate limiting', { req });
-				res.sendStatus(500);
+		} catch (err) {
+			if (handleHttpErrors(req, res, err)) {
+				return;
 			}
+			captureException(err, 'Error during rate limiting', { req });
+			res.sendStatus(500);
 		}
 	};
 };
