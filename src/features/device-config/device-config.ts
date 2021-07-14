@@ -10,7 +10,11 @@ import * as deviceConfig from 'balena-device-config';
 import { getUser } from '../../infra/auth/auth';
 import { captureException } from '../../infra/error-handling';
 
-import { createProvisioningApiKey, createUserApiKey } from '../api-keys/lib';
+import {
+	ApiKeyOptions,
+	createProvisioningApiKey,
+	createUserApiKey,
+} from '../api-keys/lib';
 import type { DeviceType } from '../device-types/device-types';
 
 const { BadRequestError } = errors;
@@ -49,7 +53,21 @@ export const generateConfig = async (
 			// Older ones have to use the old "user api keys"
 			return await createUserApiKey(req, (await userPromise).id);
 		}
-		return await createProvisioningApiKey(req, app.id);
+
+		const apiKeyOptions: ApiKeyOptions = {};
+
+		// Checking both req.body and req.query given both GET and POST support
+		// Ref: https://github.com/balena-io/balena-api/blob/master/src/routes/applications.ts#L95
+		const keyName: string | undefined =
+			req.body.provisioningKeyName ??
+			req.query.provisioningKeyName ??
+			undefined;
+
+		if (typeof keyName === 'string') {
+			apiKeyOptions.name = keyName;
+		}
+
+		return await createProvisioningApiKey(req, app.id, apiKeyOptions);
 	})();
 
 	// There may be multiple CAs, this doesn't matter as all will be passed in the config
