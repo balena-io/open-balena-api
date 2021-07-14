@@ -37,8 +37,20 @@ const logRedisError = (err: Error) => {
 */
 const redisRetryStrategy: redis.RetryStrategy = _.constant(200);
 
+const usedKeyScopes: Dictionary<true> = {};
+
 // Use redis as a store.
-export const createRateLimiter = (opts: IRateLimiterOptions) => {
+export const createRateLimiter = (
+	keyScope: string,
+	opts: IRateLimiterOptions,
+) => {
+	if (usedKeyScopes[keyScope] === true) {
+		throw new Error(
+			`RateLimiter scope key '${keyScope}' has already been taken`,
+		);
+	}
+	usedKeyScopes[keyScope] = true;
+
 	if (opts.points != null) {
 		opts.points *= RATE_LIMIT_FACTOR;
 	}
@@ -47,12 +59,12 @@ export const createRateLimiter = (opts: IRateLimiterOptions) => {
 	if (isMaster) {
 		insuranceLimiter = new RateLimiterMemory({
 			...opts,
-			keyPrefix: 'api:ratelimiting:memory',
+			keyPrefix: `api:ratelimiting:memory:${keyScope}`,
 		});
 	} else {
 		insuranceLimiter = new RateLimiterCluster({
 			...opts,
-			keyPrefix: 'api:ratelimiting:cluster',
+			keyPrefix: `api:ratelimiting:cluster:${keyScope}`,
 			timeoutMs: 3000, // Promise is rejected, if master doesn't answer for 3 secs
 		});
 	}
@@ -74,7 +86,7 @@ export const createRateLimiter = (opts: IRateLimiterOptions) => {
 
 	const rateLimiter = new RateLimiterRedis({
 		...opts,
-		keyPrefix: 'api:ratelimiting:redis:',
+		keyPrefix: `api:ratelimiting:redis:${keyScope}`,
 		storeClient: client,
 		insuranceLimiter,
 	});

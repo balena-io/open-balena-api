@@ -10,7 +10,7 @@ import { store, storeStream } from './lib/store';
 
 // Rate limit for device log creation, a maximum of 15 batches every 10 second window
 const deviceLogsRateLimiter = createRateLimitMiddleware(
-	createRateLimiter({
+	createRateLimiter('device-logs', {
 		points: 14, // allow 15 device log batches (1+14 "retries") per window
 		blockDuration: 10, // seconds
 		duration: 10, // reset counter after 10 seconds (from the first batch of the window)
