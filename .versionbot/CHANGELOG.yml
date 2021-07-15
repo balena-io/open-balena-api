@@ -1,4 +1,21 @@
 - commits:
+    - subject: 'rate-limiting: Add a required key scope parameter'
+      hash: 2e0ee15a227837e9a60edbc3ea68b85efd67f965
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://www.flowdock.com/app/rulemotion/resin-devops/threads/3YptdRi0qaO77P5D0PgcDLLAjTI
+        see: >-
+          https://www.flowdock.com/app/rulemotion/resin-devops/threads/3YptdRi0qaO77P5D0PgcDLLAjTI
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.146.0
+  date: 2021-07-15T13:50:03.111Z
+- commits:
     - subject: Allow creating/using a rate limiter that is separate from a middleware
       hash: a13cc9f1f7f0652f412de59e58c3c5f315e59c09
       body: ''
