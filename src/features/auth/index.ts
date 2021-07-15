@@ -15,7 +15,7 @@ export * from './handles';
 
 // Rate limit for unauthenticated access
 export const loginRateLimiter = createRateLimitMiddleware(
-	createRateLimiter({
+	createRateLimiter('login', {
 		points: 10, // 10 tries
 		blockDuration: 1 * SECONDS_PER_HOUR, // wait 1 hour after 10 tries (in seconds)
 		duration: 2 * SECONDS_PER_HOUR, // reset counter after 2 hours (in seconds)
