@@ -46,22 +46,24 @@ describe('Apps', function () {
 
 		it('should have a supervisor app if managed by release', async () => {
 			const state = await deviceWithSupervisor.getStateV3();
-			const supervisorApp1 = state.local.apps?.[`${supervisorAppUuid}`];
+			const supervisorApp1 =
+				state[deviceWithSupervisor.uuid].apps?.[`${supervisorAppUuid}`];
 
 			expect(supervisorApp1, 'supervisor is undefined').to.not.be.undefined;
 			expect(
-				Object.keys(state.local.apps).length,
+				Object.keys(state[deviceWithSupervisor.uuid].apps).length,
 				'wrong number of apps',
 			).to.be.equal(2);
 		});
 
 		it('should not have a supervisor app if not managed by release', async () => {
 			const state = await deviceWithoutSupervisor.getStateV3();
-			const supervisorApp1 = state.local.apps?.[`${supervisorAppUuid}`];
+			const supervisorApp1 =
+				state[deviceWithoutSupervisor.uuid].apps?.[`${supervisorAppUuid}`];
 
 			expect(supervisorApp1, 'supervisor is undefined').to.be.undefined;
 			expect(
-				Object.keys(state.local.apps).length,
+				Object.keys(state[deviceWithoutSupervisor.uuid].apps).length,
 				'wrong number of apps',
 			).to.be.equal(1);
 		});

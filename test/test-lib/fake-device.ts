@@ -26,9 +26,11 @@ export async function getState(
 		.get(`/device/${stateVersion}/${deviceUuid}/state`)
 		.expect(200);
 
-	expect(state).to.have.property('local');
-	expect(state.local).to.have.property('name');
-	expect(state.local).to.have.property('apps');
+	const key = stateVersion === 'v2' ? 'local' : deviceUuid;
+
+	expect(state).to.have.property(key);
+	expect(state[key]).to.have.property('name');
+	expect(state[key]).to.have.property('apps');
 
 	return state;
 }

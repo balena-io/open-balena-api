@@ -82,76 +82,124 @@ export type StateV2 = {
 
 const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 	const stateV3 = await getStateV3(req, uuid);
+	const { [uuid]: local, ...dependent } = stateV3;
 	let config = {};
-	for (const app of Object.values(stateV3.local.apps)) {
+	for (const app of Object.values(local.apps)) {
 		config = {
 			...config,
 			...app.config,
 		};
 	}
+	// dependent: {
+	// 	apps: {
+	// 		[id: string]: {
+	// 			name: string;
+	// 			parentApp: number;
+	// 			config: {
+	// 				[varName: string]: string;
+	// 			};
+	// 			releaseId?: number;
+	// 			imageId?: number;
+	// 			commit?: string;
+	// 			image?: string;
+	// 		};
+	// 	};
+	// 	devices: {
+	// 		[uuid: string]: {
+	// 			name: string;
+	// 			apps: {
+	// 				[id: string]: {
+	// 					config: {
+	// 						[varName: string]: string;
+	// 					};
+	// 					environment: {
+	// 						[varName: string]: string;
+	// 					};
+	// 				};
+	// 			};
+	// 		};
+	// 	};
+	// };
+
+	const dependentDevices: StateV2['dependent']['devices'] = _.mapValues(
+		dependent,
+		({ name, apps }) => {
+			return {
+				name,
+				apps: Object.fromEntries(
+					_.map(apps, ({ id, config: depConfig, releases = {} }) => {
+						return [
+							id,
+							{
+								config: depConfig,
+								// WARNING: assumes single-app + single-container
+								environment: Object.values(
+									Object.values(releases)[0]?.services ?? {},
+								)[0]?.environment,
+							},
+						];
+					}),
+				),
+			};
+		},
+	);
+
 	return {
 		local: {
-			...stateV3.local,
+			...local,
 			config,
-			apps: _(stateV3.local.apps)
+			apps: _(local.apps)
 				.mapKeys(({ id }) => id)
-				.mapValues(
-					({
-						name,
-						release_uuid: commit,
-						release_id: releaseId,
-						services = {},
-						volumes = {},
-						networks = {},
-					}) => {
-						const v2Services: StateV2['local']['apps'][string]['services'] = {};
-						for (const [serviceName, service] of Object.entries(services)) {
-							v2Services[service.id] = {
-								...service.composition,
-								imageId: service.image_id,
-								serviceName,
-								image: service.image,
-								running: service.running ?? true,
-								environment: service.environment,
-								labels: service.labels,
-								contract: service.contract,
-							};
-						}
-						return {
-							name,
-							commit,
-							releaseId,
-							services: v2Services,
-							volumes,
-							networks,
+				.mapValues(({ name, releases = {}, volumes = {}, networks = {} }) => {
+					const [commit] = Object.keys(releases);
+					const { id: releaseId, services = {} } = releases[commit] ?? {};
+					const v2Services: StateV2['local']['apps'][string]['services'] = {};
+					for (const [serviceName, service] of Object.entries(services)) {
+						v2Services[service.id] = {
+							...service.composition,
+							imageId: service.image_id,
+							serviceName,
+							image: service.image,
+							running: service.running ?? true,
+							environment: service.environment,
+							labels: service.labels,
+							contract: service.contract,
 						};
-					},
-				)
-				.value(),
-		},
-		dependent: {
-			apps: _(stateV3.dependent.apps)
-				.mapKeys(({ id }) => id)
-				.mapValues((app) => {
+					}
 					return {
-						name: app.name,
-						parentApp: stateV3.local.apps[app.parent_app].id,
-						config: app.config,
-						releaseId: app.release_id,
-						commit: app.release_uuid,
-						imageId: app.image_id,
-						image: app.image,
+						name,
+						commit,
+						releaseId,
+						services: v2Services,
+						volumes,
+						networks,
 					};
 				})
 				.value(),
-			devices: _.mapValues(stateV3.dependent.devices, ({ name, apps }) => {
-				return {
-					name,
-					apps: _.mapKeys(apps, (_v, appUuid) => {
-						return stateV3.dependent.apps[appUuid].id;
-					}),
-				};
-			}),
+		},
+		dependent: {
+			apps: {},
+			// apps: _(dependent.apps)
+			// 	.mapKeys(({ id }) => id)
+			// 	.mapValues((app) => {
+			// 		const { releases = {} } = app;
+			// 		// WARNING: this assumes single-app
+			// 		const [commit] = Object.keys(releases);
+			// 		const { id: releaseId, services = {} } = releases[commit] ?? {};
+			// 		// WARNING: this assumes single-container
+			// 		const [serviceName] = Object.keys(services);
+			// 		return {
+			// 			name: app.name,
+			// 			parentApp: local.apps[app.parent_app!].id,
+			// 			config: app.config,
+			// 			releaseId,
+			// 			commit,
+			// 			imageId: services[serviceName].image_id,
+			// 			image: services[serviceName].image,
+			// 		};
+			// 	})
+			// 	.value(),
+			devices: dependentDevices,
 		},
 	};
 };

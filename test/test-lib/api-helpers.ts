@@ -1,3 +1,4 @@
+import { Release } from '../../src/balena-model';
 import { supertest, UserObjectParam } from '../test-lib/supertest';
 import { version } from '../test-lib/versions';
 
@@ -31,14 +32,13 @@ interface MockServiceParams {
 	service_name: string;
 }
 
-type MockRelease = MockReleaseParams & { id: number };
 type MockImage = MockImageParams & { id: number };
 type MockService = MockServiceParams & { id: number };
 
 export const addReleaseToApp = async (
 	auth: UserObjectParam,
 	release: MockReleaseParams,
-): Promise<MockRelease> =>
+): Promise<Release> =>
 	(await supertest(auth).post(`/${version}/release`).send(release).expect(201))
 		.body;
 
