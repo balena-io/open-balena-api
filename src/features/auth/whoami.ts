@@ -64,6 +64,6 @@ export const whoami: RequestHandler = async (req, res) => {
 			return;
 		}
 		captureException(err, 'Error while getting user info', { req });
-		res.sendStatus(500);
+		res.status(500).end();
 	}
 };

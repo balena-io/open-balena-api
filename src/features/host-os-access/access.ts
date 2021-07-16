@@ -27,7 +27,7 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 	})) as Pick<Device, 'id' | 'os_version'> | undefined;
 
 	if (device == null) {
-		res.sendStatus(401);
+		res.status(401).end();
 		return;
 	}
 
@@ -45,14 +45,14 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 		})) as { d?: AnyObject[] };
 
 		if (!Array.isArray(allowedDevices.d) || allowedDevices.d.length !== 1) {
-			res.sendStatus(401);
+			res.status(401).end();
 			return;
 		}
 
 		const allowedDevice = allowedDevices.d[0];
 
 		if (allowedDevice.id !== device.id) {
-			res.sendStatus(401);
+			res.status(401).end();
 			return;
 		}
 
@@ -61,7 +61,7 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 			reqHasPermission(req, 'support.home') ||
 			reqHasPermission(req, 'admin.home')
 		) {
-			res.sendStatus(200);
+			res.status(200).end();
 			return;
 		}
 
@@ -70,20 +70,20 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 			!device.os_version ||
 			semver.gte(device.os_version, HOSTOS_ACCESS_MIN_OS_VER)
 		) {
-			res.sendStatus(200);
+			res.status(200).end();
 			return;
 		}
 
 		// Users are not allowed to access hostOS for devices with balenaOS < HOSTOS_ACCESS_MIN_OS_VER
-		res.sendStatus(401);
+		res.status(401).end();
 	} catch (err) {
 		if (err instanceof UnauthorizedError) {
 			// Users are not allowed to access hostOS for devices with balenaOS < HOSTOS_ACCESS_MIN_OS_VER
-			res.sendStatus(401);
+			res.status(401).end();
 			return;
 		}
 
 		captureException(err, 'Error checking hostOS access', { req });
-		res.sendStatus(401);
+		res.status(401).end();
 	}
 }

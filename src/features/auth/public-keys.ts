@@ -9,7 +9,7 @@ export const getUserPublicKeys: RequestHandler = async (req, res) => {
 	const { username } = req.params;
 
 	if (username == null) {
-		return res.sendStatus(400);
+		return res.status(400).end();
 	}
 	try {
 		const data = (await sbvrUtils.api.resin.get({
@@ -37,6 +37,6 @@ export const getUserPublicKeys: RequestHandler = async (req, res) => {
 			return;
 		}
 		captureException(err, 'Error getting public keys', { req });
-		res.sendStatus(500);
+		res.status(500).end();
 	}
 };

@@ -136,7 +136,7 @@ export const store: RequestHandler = async (req: Request, res: Response) => {
 					: undefined,
 			]);
 		}
-		res.sendStatus(201);
+		res.status(201).end();
 	} catch (err) {
 		handleStoreErrors(req, res, err);
 	}
@@ -159,7 +159,7 @@ function handleStoreErrors(req: Request, res: Response, err: Error) {
 		return;
 	}
 	captureException(err, 'Failed to store device logs', { req });
-	res.sendStatus(500);
+	res.status(500).end();
 }
 
 function handleStreamingWrite(
@@ -196,7 +196,7 @@ function handleStreamingWrite(
 				}
 				res.status(400).send(translateError(err));
 			} else {
-				res.sendStatus(201);
+				res.status(201).end();
 			}
 		}
 	}

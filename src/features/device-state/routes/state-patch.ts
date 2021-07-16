@@ -484,12 +484,12 @@ export const statePatch: RequestHandler = async (req, res) => {
 			await Promise.all(waitPromises);
 		});
 
-		res.sendStatus(200);
+		res.status(200).end();
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
 		captureException(err, 'Error setting device state', { req });
-		res.sendStatus(500);
+		res.status(500).end();
 	}
 };

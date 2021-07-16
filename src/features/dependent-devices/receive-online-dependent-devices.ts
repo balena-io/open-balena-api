@@ -178,7 +178,7 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 				]);
 			}
 
-			res.sendStatus(200);
+			res.status(200).end();
 		});
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
