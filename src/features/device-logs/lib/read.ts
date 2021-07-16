@@ -38,7 +38,7 @@ export async function read(req: Request, res: Response) {
 			return;
 		}
 		captureException(err, 'Failed to read device logs', { req });
-		res.sendStatus(500);
+		res.status(500).end();
 	}
 }
 

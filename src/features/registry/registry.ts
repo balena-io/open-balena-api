@@ -294,7 +294,7 @@ export const token: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		res.sendStatus(400); // bad request
+		res.status(400).end(); // bad request
 	}
 };
 

@@ -355,7 +355,7 @@ export async function setup(app: Application, options: SetupOptions) {
 
 	if (HIDE_UNVERSIONED_ENDPOINT) {
 		app.use('/resin', (_req, res) => {
-			res.sendStatus(404);
+			res.status(404).end();
 		});
 	}
 

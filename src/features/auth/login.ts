@@ -16,7 +16,7 @@ export const login =
 		const { username, password } = req.body;
 
 		if (!(username && password)) {
-			return res.sendStatus(401);
+			return res.status(401).end();
 		}
 
 		try {
@@ -36,10 +36,10 @@ export const login =
 			await loginUserXHR(res, user.id);
 		} catch (err) {
 			if (err instanceof BadRequestError || err instanceof NotFoundError) {
-				res.sendStatus(401);
+				res.status(401).end();
 				return;
 			}
 			captureException(err, 'Error logging in', { req });
-			res.sendStatus(401);
+			res.status(401).end();
 		}
 	};

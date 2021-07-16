@@ -42,7 +42,7 @@ export const gracefullyDenyDeletedDevices: RequestHandler = async (
 	const deviceExists = await checkDeviceExists(req.params.uuid);
 	if (!deviceExists) {
 		const returnCode = req.method === 'GET' ? 304 : 200;
-		res.sendStatus(returnCode);
+		res.status(returnCode).end();
 		return;
 	}
 

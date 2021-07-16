@@ -15,10 +15,10 @@ export const authenticatedMiddleware: RequestHandler = async (
 			next();
 			return null;
 		} else {
-			res.sendStatus(401);
+			res.status(401).end();
 		}
 	} catch {
-		res.sendStatus(401);
+		res.status(401).end();
 	}
 };
 
@@ -28,7 +28,7 @@ export const authorizedMiddleware: RequestHandler = async (req, res, next) => {
 		next();
 		return null;
 	} catch {
-		res.sendStatus(401);
+		res.status(401).end();
 	}
 };
 
@@ -70,7 +70,7 @@ export const permissionRequiredMiddleware =
 			next();
 			return null;
 		} else {
-			res.sendStatus(401);
+			res.status(401).end();
 		}
 	};
 

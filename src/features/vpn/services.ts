@@ -69,9 +69,9 @@ export const authDevice = async (
 		// for now, if the api key is able to read the device,
 		// it has vpn access
 		if (device) {
-			res.sendStatus(200);
+			res.status(200).end();
 		} else {
-			res.sendStatus(403);
+			res.status(403).end();
 		}
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
@@ -87,15 +87,15 @@ export const clientConnect = async (
 ): Promise<void> => {
 	const body = req.body || {};
 	if (!body.common_name) {
-		res.sendStatus(400);
+		res.status(400).end();
 		return;
 	}
 	if (!body.virtual_address) {
-		res.sendStatus(400);
+		res.status(400).end();
 		return;
 	}
 	if (!body.service_id) {
-		res.sendStatus(400);
+		res.status(400).end();
 		return;
 	}
 
@@ -108,7 +108,7 @@ export const clientConnect = async (
 			},
 			{ req },
 		);
-		res.sendStatus(200);
+		res.status(200).end();
 	} catch (err) {
 		captureException(err, 'Error with vpn client connect', { req });
 		if (handleHttpErrors(req, res, err)) {
@@ -124,11 +124,11 @@ export const clientDisconnect = async (
 ): Promise<void> => {
 	const body = req.body || {};
 	if (!body.common_name) {
-		res.sendStatus(400);
+		res.status(400).end();
 		return;
 	}
 	if (!body.service_id) {
-		res.sendStatus(400);
+		res.status(400).end();
 		return;
 	}
 
@@ -138,7 +138,7 @@ export const clientDisconnect = async (
 			undefined,
 			{ req },
 		);
-		res.sendStatus(200);
+		res.status(200).end();
 	} catch (err) {
 		captureException(err, 'Error with vpn client disconnect', { req });
 		if (handleHttpErrors(req, res, err)) {

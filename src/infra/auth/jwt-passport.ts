@@ -128,7 +128,7 @@ export const middleware: RequestHandler = (req, res, next) => {
 			}
 
 			if (err instanceof InvalidJwtSecretError) {
-				return res.sendStatus(401);
+				return res.status(401).end();
 			}
 			if (err) {
 				captureException(err, 'Error JWT auth', { req });

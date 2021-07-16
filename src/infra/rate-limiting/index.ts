@@ -195,7 +195,7 @@ const $createRateLimitMiddleware = (
 				return;
 			}
 			captureException(err, 'Error during rate limiting', { req });
-			res.sendStatus(500);
+			res.status(500).end();
 		}
 	};
 };
