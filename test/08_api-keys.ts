@@ -455,7 +455,7 @@ describe('generic-api-key-endpoint', function () {
 					roles: ['named-user-api-key'],
 					name: 'a-different-name',
 				})
-				.expect(400, 'Unsupported actor type');
+				.expect(400, '"Unsupported actor type"');
 		});
 
 		it('should reject requests when the actor type id is missing', async function () {
@@ -466,7 +466,7 @@ describe('generic-api-key-endpoint', function () {
 					roles: ['named-user-api-key'],
 					name: 'a-different-name',
 				})
-				.expect(400, 'Actor type id must be a number');
+				.expect(400, '"Actor type id must be a number"');
 		});
 
 		it('should reject requests when no roles are provided', async function () {
@@ -490,7 +490,7 @@ describe('generic-api-key-endpoint', function () {
 					roles: 'named-user-api-key',
 					name: 'a-different-name',
 				})
-				.expect(400, 'Roles should be an array of role names');
+				.expect(400, '"Roles should be an array of role names"');
 		});
 
 		it('should reject requests when the role is not a non-empty string', async function () {
@@ -502,7 +502,7 @@ describe('generic-api-key-endpoint', function () {
 					roles: [''],
 					name: 'a-different-name',
 				})
-				.expect(400, 'Roles should be an array of role names');
+				.expect(400, '"Roles should be an array of role names"');
 
 			await supertest(this.user)
 				.post(`/api-key/v1`)
@@ -512,7 +512,7 @@ describe('generic-api-key-endpoint', function () {
 					roles: [5],
 					name: 'a-different-name',
 				})
-				.expect(400, 'Roles should be an array of role names');
+				.expect(400, '"Roles should be an array of role names"');
 		});
 
 		it('should reject requests when more than one roles are provided', async function () {
@@ -524,7 +524,7 @@ describe('generic-api-key-endpoint', function () {
 					roles: ['named-user-api-key', 'provisioning-api-key'],
 					name: 'a-different-name',
 				})
-				.expect(400, 'API Keys currently only support a single role');
+				.expect(400, '"API Keys currently only support a single role"');
 		});
 
 		it('should reject requests for named api keys without a name', async function () {
@@ -537,7 +537,7 @@ describe('generic-api-key-endpoint', function () {
 				})
 				.expect(
 					400,
-					`API keys with the &#39;named-user-api-key&#39; role require a name`,
+					`"API keys with the 'named-user-api-key' role require a name"`,
 				);
 		});
 
@@ -552,7 +552,7 @@ describe('generic-api-key-endpoint', function () {
 				})
 				.expect(
 					400,
-					`API keys with the &#39;named-user-api-key&#39; role require a name`,
+					`"API keys with the 'named-user-api-key' role require a name"`,
 				);
 		});
 

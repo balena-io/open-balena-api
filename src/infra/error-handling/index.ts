@@ -1,9 +1,8 @@
-import type { Request, Response } from 'express';
 import * as _ from 'lodash';
 import * as Raven from 'raven';
 import escapeHtml = require('escape-html');
 
-import { hooks, errors } from '@balena/pinejs';
+import { hooks, errors, sbvrUtils } from '@balena/pinejs';
 
 const { InternalRequestError, HttpError } = errors;
 
@@ -62,21 +61,10 @@ export function captureException(
 	Raven.captureException(err, options as Raven.CaptureOptions);
 }
 
-export const handleHttpErrors = (req: Request, res: Response, err: Error) => {
-	if (err instanceof HttpError) {
-		if (err instanceof InternalRequestError) {
-			captureException(err, 'Internal server error', { req });
-			err.body ??= 'Server error';
-		}
-		res.status(err.status);
-		const body = err.getResponseBody();
-		res.set(err.headers);
-		if (typeof body === 'string') {
-			res.send(escapeHtml(body));
-		} else {
-			res.json(body);
-		}
-		return true;
+sbvrUtils.onHandleHttpError((req, err) => {
+	if (err instanceof InternalRequestError) {
+		captureException(err, 'Internal server error', { req });
+		err.body ??= 'Server error';
 	}
-	return false;
-};
+});
+export const { handleHttpErrors } = sbvrUtils;
