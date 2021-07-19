@@ -1,4 +1,42 @@
 - commits:
+    - subject: Update pinejs and make use of pinejs' handleHttpErrors
+      hash: 8e6d4d0d95733c0cb7bee46b491c0fb795f90260
+      body: |
+        Update pinejs from 14.27.1 to 14.28.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: >-
+                Export a `handleHttpErrors` function to handle
+                HttpError/subclasses
+              hash: cec95b0f48e13280c7307b19c393054416224715
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.28.0
+          date: 2021-07-19T15:28:31.131Z
+        - commits:
+            - subject: >-
+                Avoid unnecessary work when a request's permission type is
+                specified
+              hash: a0d4c136ad13ff4c098e5005e625fdaacb5e104d
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.27.2
+          date: 2021-07-19T12:40:55.462Z
+  version: 0.148.0
+  date: 2021-07-19T15:59:01.711Z
+- commits:
     - subject: Use `res.status(...).end()` in preference to `res.sendStatus()`
       hash: 4d78c721067aba3e4d8fd7c9d1f8a04baa5a422f
       body: |
