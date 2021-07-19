@@ -104,6 +104,34 @@ const getTopRevision = async (
 	return topRevisionRelease.revision!;
 };
 
+const expectReleaseVersion = (release: Release) => {
+	const {
+		semver,
+		revision,
+		created_at,
+		semver_major,
+		semver_minor,
+		semver_patch,
+	} = release;
+	const createdAtTimestamp = +new Date(created_at);
+	const json = {
+		raw: `${semver}${
+			revision == null
+				? `-${createdAtTimestamp}`
+				: revision > 0
+				? `+rev${revision}`
+				: ''
+		}`,
+		major: semver_major,
+		minor: semver_minor,
+		patch: semver_patch,
+		prerelease: revision == null ? [createdAtTimestamp] : [],
+		build: revision != null && revision > 0 ? [`rev${revision}`] : [],
+		version: `${semver}${revision == null ? `-${createdAtTimestamp}` : ''}`,
+	};
+	expect(release).to.have.deep.property('version', json);
+};
+
 /** must be more than 3 */
 const RELEASE_FINALIZATION_TEST_CONCURENCY = 10;
 expect(RELEASE_FINALIZATION_TEST_CONCURENCY).to.be.greaterThanOrEqual(
@@ -242,6 +270,8 @@ describe('versioning releases', () => {
 						'revision',
 						'is_final',
 						'is_finalized_at__date',
+						'created_at',
+						'version',
 					],
 				},
 			})
@@ -258,6 +288,7 @@ describe('versioning releases', () => {
 		expect(newRelease.is_finalized_at__date).to.equal(
 			freshlyGetRelease.is_finalized_at__date,
 		);
+		expectReleaseVersion(freshlyGetRelease);
 	});
 
 	it('should disallow creating a new release with used version', async () => {
@@ -604,6 +635,38 @@ describe('draft releases', () => {
 			})
 			.expect(201);
 		newRelease = body;
+	});
+
+	it('should mark it as non-final, assign the default semver and keep the revision null', async () => {
+		expect(newRelease).to.have.property('semver', '0.0.0');
+		expect(newRelease).to.have.property('revision', null);
+		expect(newRelease).to.have.property('is_final', false);
+
+		const { body: freshlyGetRelease } = await pineUser
+			.get({
+				resource: 'release',
+				id: newRelease.id,
+				options: {
+					$select: [
+						'semver',
+						'semver_major',
+						'semver_minor',
+						'semver_patch',
+						'revision',
+						'is_final',
+						'created_at',
+						'version',
+					],
+				},
+			})
+			.expect(200);
+		expect(freshlyGetRelease).to.have.property('semver', '0.0.0');
+		expect(freshlyGetRelease).to.have.property('semver_major', 0);
+		expect(freshlyGetRelease).to.have.property('semver_minor', 0);
+		expect(freshlyGetRelease).to.have.property('semver_patch', 0);
+		expect(freshlyGetRelease).to.have.property('revision', null);
+		expect(freshlyGetRelease).to.have.property('is_final', false);
+		expectReleaseVersion(freshlyGetRelease);
 	});
 
 	it('should return the release as not final and with a default semver', async () => {
