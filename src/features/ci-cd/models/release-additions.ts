@@ -5,11 +5,7 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 		fieldName: 'is final',
 		dataType: 'Boolean',
 		required: true,
-		computed: [
-			'Equals',
-			['ReferencedField', 'release', 'release type'],
-			['EmbeddedText', 'final'],
-		],
+		computed: ['Exists', ['ReferencedField', 'release', 'revision']],
 	});
 
 	abstractSql.tables['release'].fields.push({
