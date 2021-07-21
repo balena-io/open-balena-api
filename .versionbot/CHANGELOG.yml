@@ -1,4 +1,19 @@
 - commits:
+    - subject: 'release versioning: Add and start setting the semver & revision fields'
+      hash: ccba62cd4b2c2a827d14a3f82a46c2c1a6d3c75f
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        HQ: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        hq: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.148.0
+  date: 2021-07-21T10:35:11.755Z
+- commits:
     - subject: Use `res.status(...).end()` in preference to `res.sendStatus()`
       hash: 4d78c721067aba3e4d8fd7c9d1f8a04baa5a422f
       body: |
