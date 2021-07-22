@@ -1,4 +1,15 @@
 - commits:
+    - subject: Make use of nullish coalescing
+      hash: 867279d14ec1dfed4eba117c5b308bc48bd3b617
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.148.1
+  date: 2021-07-22T11:57:56.557Z
+- commits:
     - subject: Update pinejs and make use of pinejs' handleHttpErrors
       hash: 8e6d4d0d95733c0cb7bee46b491c0fb795f90260
       body: |
