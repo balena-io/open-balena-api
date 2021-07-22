@@ -22,6 +22,19 @@ jobs:
             docker pull "${DOCKER_IMAGE}:${CIRCLE_BRANCH}" || \
               docker pull "${DOCKER_IMAGE}:master" || true
             docker build --cache-from="${DOCKER_IMAGE}:${CIRCLE_BRANCH}" --cache-from="${DOCKER_IMAGE}:master" --rm=false --pull --tag "${DOCKER_IMAGE}:${CIRCLE_SHA1}" .
+
+      - run:
+          name: Install trivy
+          command: |
+            apk add --update-cache --upgrade curl
+            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+      - run:
+          name: Scan the local image with trivy
+          command: trivy -f json -o report.json --no-progress --exit-code 0 --severity HIGH --ignore-unfixed ${DOCKER_IMAGE}:${CIRCLE_SHA1}
+
+      - store_artifacts:
+          path: /tmp/build/report.json
+
       - run:
           name: Test
           command: |
