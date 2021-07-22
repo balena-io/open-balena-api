@@ -1,27 +1,25 @@
--- Draft releases are represented as having NULL revision
+-- Draft releases are now represented with a NULL revision
 UPDATE "release"
 SET "revision" = NULL
-WHERE "release type" = 'draft';
+WHERE "release type" = 'draft'
+	AND "revision" IS NOT NULL;
 
 UPDATE "release"
 SET "is finalized at-date" = "release"."created_at"
 WHERE "release_type" = 'final'
 	AND "is finalized at-date" IS NULL;
 
--- Parse (best effort) the release version and split it into semver parts with an increasing revision for identical semvers.
-WITH "revisioned release" AS (
-	SELECT splitedReleaseVersion."id",
-		COALESCE(splitedReleaseVersion."semver major", 0) AS "semver major",
-		COALESCE(splitedReleaseVersion."semver minor", 0) AS "semver minor",
-		COALESCE(splitedReleaseVersion."semver patch", 0) AS "semver patch",
-		(ROW_NUMBER() OVER (
-			PARTITION BY splitedReleaseVersion."belongs to-application",
-				COALESCE(splitedReleaseVersion."semver major", 0),
-				COALESCE(splitedReleaseVersion."semver minor", 0),
-				COALESCE(splitedReleaseVersion."semver patch", 0)
-			ORDER BY splitedReleaseVersion."is finalized at-date" ASC,
-				splitedReleaseVersion."id" ASC
-		) - 1) AS "revision"
+-- Parse the release version (best effort) and split it into semver parts with an increasing revision for identical semvers.
+-- The _logstream variants & 4digit versions will get a higher revision b/c they where created later than the base version.
+-- For release versions that are empty or can't be parsed or were parsed as 0.0.0, set 0.0.0 as the semver and increase the revision.
+WITH "parsed version release" AS (
+	SELECT parsedVersionRelease."id",
+		parsedVersionRelease."is finalized at-date",
+		parsedVersionRelease."belongs to-application",
+		-- Had to be a separate SELECT b/c we can't COALESCE REGEXP_MATCHES in the same SELECT.
+		COALESCE(parsedVersionRelease."semver major", 0) AS "semver major",
+		COALESCE(parsedVersionRelease."semver minor", 0) AS "semver minor",
+		COALESCE(parsedVersionRelease."semver patch", 0) AS "semver patch"
 	FROM (
 		SELECT r0."id",
 			r0."is finalized at-date",
@@ -31,40 +29,51 @@ WITH "revisioned release" AS (
 			CAST((REGEXP_MATCHES (r0."release version", '^v?[0-9]+\.[0-9]+\.([0-9]+)'))[1] AS INTEGER) AS "semver patch"
 		FROM "release" r0
 		WHERE r0."release type" = 'final'
-			AND r0."release version" SIMILAR TO 'v?[0-9]+(\.[0-9]+(\.[0-9]+(_logstream[0-9]?)?)?)?'
+			AND r0."release version" SIMILAR TO 'v?[0-9]+(\.[0-9]+(\.[0-9]+(\.[0-9]+)?(_logstream[0-9]?)?)?)?'
+	) AS parsedVersionRelease
+),
+"revisioned release" AS (
+	SELECT splitedReleaseVersion."id",
+		splitedReleaseVersion."semver major",
+		splitedReleaseVersion."semver minor",
+		splitedReleaseVersion."semver patch",
+		(ROW_NUMBER() OVER (
+			PARTITION BY splitedReleaseVersion."belongs to-application",
+				splitedReleaseVersion."semver major",
+				splitedReleaseVersion."semver minor",
+				splitedReleaseVersion."semver patch"
+			ORDER BY
+				splitedReleaseVersion."is finalized at-date" ASC,
+				splitedReleaseVersion."id" ASC
+		) - 1) AS "revision"
+	FROM (
+		SELECT pvr."id",
+			pvr."is finalized at-date",
+			pvr."belongs to-application",
+			pvr."semver major",
+			pvr."semver minor",
+			pvr."semver patch"
+		FROM "parsed version release" pvr
+		UNION ALL
+		SELECT unparsedRelease."id",
+			unparsedRelease."is finalized at-date",
+			unparsedRelease."belongs to-application",
+			0 AS "semver major",
+			0 AS "semver minor",
+			0 AS "semver patch"
+		FROM "release" unparsedRelease
+		WHERE unparsedRelease."release type" = 'final'
+			AND NOT EXISTS (
+				SELECT 1
+				FROM "parsed version release" pvr
+				WHERE pvr."id" = unparsedRelease."id"
+			)
 	) AS splitedReleaseVersion
 )
 UPDATE "release" r  SET
 	"semver major" = rr."semver major",
 	"semver minor" = rr."semver minor",
 	"semver patch" = rr."semver patch",
-	r."revision" = rr."revision"
-FROM "revisioned release" rr
-WHERE r."id" = rr."id";
-
--- For release versions that are empty or can't be parsed or were parsed as 0.0.0, set 0.0.0 as the semver and increase the revision.
-WITH "revisioned release" AS (
-	SELECT r0."id",
-		(ROW_NUMBER() OVER (
-			PARTITION BY r0."belongs to-application"
-			ORDER BY r0."is finalized at-date" ASC, r0."id" ASC
-		) - 1) AS "revision"
-	FROM "release" r0
-	WHERE r0."release type" = 'final'
-		AND (
-			r0."release version" IS NULL
-			OR r0."release version" NOT SIMILAR TO 'v?[0-9]+(\.[0-9]+(\.[0-9]+(_logstream[0-9]?)?)?)?'
-			OR (
-				r0."semver major" = 0
-				AND r0."semver minor" = 0
-				AND r0."semver patch" = 0
-			)
-		)
-)
-UPDATE "release" r  SET
-	"semver major" = 0,
-	"semver minor" = 0,
-	"semver patch" = 0,
 	r."revision" = rr."revision"
 FROM "revisioned release" rr
 WHERE r."id" = rr."id";
