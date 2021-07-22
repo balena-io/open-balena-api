@@ -68,22 +68,12 @@ describe(`Tracking latest release`, () => {
 			.expect(200);
 	});
 
-	it('Should not allow unexpected values for the release type', async () => {
-		const expectedLatest = fx.releases.release2;
-		await supertest(admin)
-			.patch(`/${version}/release(${expectedLatest.id})`)
-			.send({
-				release_type: 'randomtype',
-			})
-			.expect(400, '"Check constraint violated"');
-	});
-
 	it('Should update latest release to a newly-marked final release', async () => {
 		const expectedLatest = fx.releases.release2;
 		await supertest(admin)
 			.patch(`/${version}/release(${expectedLatest.id})`)
 			.send({
-				release_type: 'final',
+				is_final: true,
 				start_timestamp: Date.now(),
 			})
 			.expect(200);
