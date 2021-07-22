@@ -74,7 +74,6 @@ export const createStrategy = (
 					'access' in jwtUser &&
 					jwtUser.access != null &&
 					jwtUser.access.actor &&
-					jwtUser.access != null &&
 					jwtUser.access.permissions
 				) {
 					return jwtUser.access;

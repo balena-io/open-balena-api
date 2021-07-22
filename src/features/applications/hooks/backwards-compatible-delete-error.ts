@@ -5,7 +5,7 @@ hooks.addPureHook('DELETE', 'resin', 'application', {
 		const appIds = await sbvrUtils.getAffectedIds(args);
 		if (appIds.length === 0) {
 			const { odataQuery } = args.request;
-			if (odataQuery != null && odataQuery.key != null) {
+			if (odataQuery?.key != null) {
 				// If there's a specific app targeted we make sure we give a 404 for backwards compatibility
 				throw new errors.NotFoundError('Application(s) not found.');
 			}

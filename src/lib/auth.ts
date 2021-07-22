@@ -190,7 +190,7 @@ const SERVICE_PREFIX = 'service.';
 export const getServiceFromRequest = (req: {
 	apiKey?: sbvrUtils.ApiKey;
 }): string | undefined => {
-	if (req.apiKey == null || req.apiKey.permissions == null) {
+	if (req.apiKey?.permissions == null) {
 		return;
 	}
 	const servicePerm = req.apiKey.permissions.find((perm) =>
