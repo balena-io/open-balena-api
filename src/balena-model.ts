@@ -392,7 +392,13 @@ export interface Release {
 	release_version: string | null;
 	contract: {} | null;
 	is_passing_tests: boolean;
-	release_type: 'final' | 'draft';
+	is_finalized_at__date: DateString | null;
+	semver_major: number;
+	semver_minor: number;
+	semver_patch: number;
+	revision: number | null;
+	is_final: boolean;
+	semver: string;
 }
 
 export interface ReleaseTag {
