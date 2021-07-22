@@ -1,6 +1,11 @@
-import { addDeleteHookForDependents } from '../../infra/cascade-delete';
+import {
+	addDeleteHookForDependents,
+	Dependency,
+} from '../../infra/cascade-delete';
 
-export const setupDeleteCascade = (
+export const setupDeleteCascade = <T extends { [key: string]: any }>(
 	resource: string,
-	dependents: Parameters<typeof addDeleteHookForDependents>[2],
+	dependents: {
+		[dependentResource in keyof T]: Dependency<keyof T>;
+	},
 ) => addDeleteHookForDependents('resin', resource, dependents);
