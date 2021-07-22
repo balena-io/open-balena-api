@@ -1,4 +1,85 @@
 - commits:
+    - subject: 'release versioning: Drop the release type property from the model'
+      hash: 8f18898d5ce8ab47e161495b2ec657088f63de90
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        HQ: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        hq: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Avoid updating the tracked release when a non-eligible one is created
+      hash: 6e1f43c5a84b9a4d58b2da2d92d431787f2ee603
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Add release.version JSON field
+      hash: 8dd2f3a5bbb5fcdb0c2d25572238b884147c9ea3
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: 'release versioning: Read only the new fields but keep setting both'
+      hash: ec5c1f93ec7d3ae90f6a0037b0cc2979aad29f6c
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        HQ: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        hq: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Add release semver & revision uniqueness rule
+      hash: 2928ef6ba04b3ed845ecce3865c7d442d824648c
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: 'release versioning: Migrate records, set both & read only the new fields'
+      hash: 3457988222fd4000259f23a3ec1c4e5026cdc724
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        HQ: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        hq: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: 'release versioning: Add and start setting the semver & revision fields'
+      hash: ccba62cd4b2c2a827d14a3f82a46c2c1a6d3c75f
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        HQ: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        hq: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.148.0
+  date: 2021-07-22T14:29:12.343Z
+- commits:
     - subject: Use `res.status(...).end()` in preference to `res.sendStatus()`
       hash: 4d78c721067aba3e4d8fd7c9d1f8a04baa5a422f
       body: |
