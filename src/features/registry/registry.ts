@@ -96,13 +96,13 @@ const grantAllToBuilder = (parsedScopes: Scope[]): Access[] =>
 	});
 
 const resolveReadAccess = (_req: Request, image?: AnyObject): boolean =>
-	image != null && image.id != null;
+	image?.id != null;
 
 const resolveWriteAccess = async (
 	req: Request,
 	image?: AnyObject,
 ): Promise<boolean> => {
-	if (image == null || image.id == null) {
+	if (image?.id == null) {
 		return false;
 	}
 	try {
@@ -111,7 +111,7 @@ const resolveWriteAccess = async (
 			passthrough: { req },
 			body: { action: 'push' },
 		});
-		return res.d != null && res.d[0] != null && res.d[0].id === image.id;
+		return res.d?.[0]?.id === image.id;
 	} catch (err) {
 		if (!(err instanceof UnauthorizedError)) {
 			captureException(err, 'Failed to resolve registry write access', {

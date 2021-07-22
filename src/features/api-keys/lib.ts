@@ -101,9 +101,7 @@ export const createApiKey = async (
 	actorTypeID: number,
 	options: ApiKeyOptions = {},
 ): Promise<string> => {
-	if (options.apiKey == null) {
-		options.apiKey = randomstring.generate();
-	}
+	options.apiKey ??= randomstring.generate();
 	if (options.tx != null) {
 		return await $createApiKey(
 			actorType,

@@ -34,7 +34,7 @@ export const checkInt = (num?: string): number | false => {
 export const getIP = (req: Request): string | undefined =>
 	req.ip ||
 	(req as any)._remoteAddress ||
-	(req.connection != null && req.connection.remoteAddress) ||
+	req.connection?.remoteAddress ||
 	undefined;
 
 // Returns the IPv4 formatted address if possible, or undefined if not

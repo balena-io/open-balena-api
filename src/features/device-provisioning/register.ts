@@ -54,7 +54,7 @@ export const register: RequestHandler = async (req, res) => {
 		// but clone to make sure it isn't propagated elsewhere
 		req = _.clone(req);
 		req.apiKey = _.cloneDeep(req.apiKey);
-		if (req.apiKey != null && req.apiKey.permissions != null) {
+		if (req.apiKey?.permissions != null) {
 			req.apiKey.permissions.push('resin.device.read');
 			req.apiKey.permissions.push('resin.device.create-device-api-key');
 		}
