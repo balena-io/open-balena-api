@@ -19,8 +19,8 @@ import {
 import {
 	addRetentionLimit,
 	BACKEND_UNAVAILABLE_FLUSH_INTERVAL,
-	getBackend,
 	getLokiBackend,
+	getRedisBackend,
 	NDJSON_CTYPE,
 	shouldPublishToLoki,
 	STREAM_FLUSH_INTERVAL,
@@ -126,7 +126,7 @@ export const store: RequestHandler = async (req: Request, res: Response) => {
 		if (logs.length) {
 			// start publishing to both backends
 			await Promise.all([
-				getBackend(ctx).publish(ctx, logs),
+				getRedisBackend().publish(ctx, logs),
 				shouldPublishToLoki()
 					? getLokiBackend()
 							.publish(ctx, logs)
@@ -173,9 +173,9 @@ function handleStreamingWrite(
 		);
 	}
 
-	const backend = getBackend(ctx);
+	const redisBackend = getRedisBackend();
 	// If the backend is down, reject right away, don't take in new connections
-	if (!backend.available) {
+	if (!redisBackend.available) {
 		throw new ServiceUnavailableError('The logs storage is unavailable');
 	}
 	if (req.get('Content-Type') !== NDJSON_CTYPE) {
@@ -207,7 +207,7 @@ function handleStreamingWrite(
 			buffer.push(log);
 		}
 		// If we buffer too much or the backend goes down, pause it for back-pressure
-		if (buffer.length >= WRITE_BUFFER_LIMIT || !backend.available) {
+		if (buffer.length >= WRITE_BUFFER_LIMIT || !redisBackend.available) {
 			req.pause();
 		}
 	});
@@ -225,9 +225,9 @@ function handleStreamingWrite(
 	async function schedule() {
 		try {
 			// Don't flush if the backend is reporting as unavailable
-			if (buffer.length && backend.available) {
+			if (buffer.length && redisBackend.available) {
 				// Even if the connection was closed, still flush the buffer
-				const publishingToRedis = backend.publish(ctx, buffer);
+				const publishingToRedis = redisBackend.publish(ctx, buffer);
 				const publishingToLoki = shouldPublishToLoki()
 					? getLokiBackend()
 							.publish(ctx, buffer)
@@ -248,7 +248,7 @@ function handleStreamingWrite(
 			// If headers were sent, it means the connection is ended
 			if (!res.headersSent || buffer.length) {
 				// If the backend goes down temporarily, ease down the polling
-				const delay = backend.available
+				const delay = redisBackend.available
 					? STREAM_FLUSH_INTERVAL
 					: BACKEND_UNAVAILABLE_FLUSH_INTERVAL;
 				setTimeout(schedule, delay);
