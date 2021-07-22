@@ -1,12 +1,15 @@
 import * as _ from 'lodash';
 import { sbvrUtils, hooks } from '@balena/pinejs';
 
-const releaseStateFields = [
-	'status',
-	'is_passing_tests',
-	'release_type',
-	'is_invalidated',
-];
+// We only track releases that are successful, final, not invalid, and passing tests
+const trackableReleaseFilter = {
+	revision: { $ne: null },
+	is_passing_tests: true,
+	is_invalidated: false,
+	status: 'success',
+};
+
+const releaseStateFields = Object.keys(trackableReleaseFilter);
 
 const updateLatestRelease = async (
 	api: sbvrUtils.PinejsClient,
@@ -26,13 +29,7 @@ const updateLatestRelease = async (
 					$top: 1,
 					// the most recently started build should be the latest, to ignore variable build times
 					$orderby: { start_timestamp: 'desc' },
-					$filter: {
-						// We only track releases that are successful, final, not invalid, and passing tests
-						release_type: 'final',
-						is_passing_tests: true,
-						is_invalidated: false,
-						status: 'success',
-					},
+					$filter: trackableReleaseFilter,
 				},
 			},
 			$filter: {
@@ -94,8 +91,24 @@ hooks.addPureHook('POST', 'resin', 'release', {
 	POSTRUN: async ({ api, result: releaseId }) => {
 		// If we successfully created a release then check if the latest release needs to be updated.
 		// We avoid checking specific fields & short-circuiting since the db can provide defaults that we later use to filter on.
-		if (releaseId != null) {
-			await updateLatestRelease(api, [releaseId]);
+		if (releaseId == null) {
+			return;
 		}
+		// Try to update the latest release only if it is
+		// eligible to become the new tracked release, since in
+		// the common user flow, the release is finalized
+		// in a follow-up PATCH via a hook.
+		const trackableRelease = await api.get({
+			resource: 'release',
+			id: releaseId,
+			options: {
+				$select: 'id',
+				$filter: trackableReleaseFilter,
+			},
+		});
+		if (trackableRelease == null) {
+			return;
+		}
+		await updateLatestRelease(api, [releaseId]);
 	},
 });
