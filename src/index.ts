@@ -148,6 +148,7 @@ import {
 import { addToModel as addUserHasDirectAccessToApplicationToModel } from './features/applications/models/user__has_direct_access_to__application';
 import { getApplicationSlug } from './features/applications';
 import * as deviceAdditions from './features/devices/models/device-additions';
+import { addToModel as addReleaseAdditionsToModel } from './features/ci-cd/models/release-additions';
 
 export * as tags from './features/tags/validation';
 
@@ -242,6 +243,9 @@ export const device = {
 	getPollInterval,
 	DeviceOnlineStates,
 	getDeviceOnlineStateManager,
+};
+export const release = {
+	addVirtualFieldsToModel: addReleaseAdditionsToModel,
 };
 export const deviceTypes = {
 	getAccessibleDeviceTypes,

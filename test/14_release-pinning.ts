@@ -83,7 +83,7 @@ describe(`Tracking latest release`, () => {
 		await supertest(admin)
 			.patch(`/${version}/release(${expectedLatest.id})`)
 			.send({
-				release_type: 'final',
+				is_final: true,
 				start_timestamp: Date.now(),
 			})
 			.expect(200);
