@@ -101,6 +101,10 @@ export function boolVar<R>(varName: string, defaultValue?: R): boolean | R {
 	);
 }
 
+export const ADVISORY_LOCK_NAMESPACES = {
+	release__revision__belongs_to__application: 1,
+};
+
 export const API_HOST = requiredVar('API_HOST');
 export const API_HEARTBEAT_STATE_ENABLED = intVar(
 	'API_HEARTBEAT_STATE_ENABLED',
