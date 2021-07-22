@@ -49,7 +49,13 @@ export const generateConfig = async (
 			// Older ones have to use the old "user api keys"
 			return await createUserApiKey(req, (await userPromise).id);
 		}
-		return await createProvisioningApiKey(req, app.id);
+		return await createProvisioningApiKey(
+			req,
+			app.id,
+			req.body.provisioningKeyName
+				? { name: req.body.provisioningKeyName }
+				: {},
+		);
 	})();
 
 	// There may be multiple CAs, this doesn't matter as all will be passed in the config
