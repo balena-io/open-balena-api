@@ -220,6 +220,6 @@ export const stateV2: RequestHandler = async (req, res) => {
 			return;
 		}
 		captureException(err, 'Error getting device state', { req });
-		res.sendStatus(500);
+		res.status(500).end();
 	}
 };
