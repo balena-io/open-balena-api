@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import * as mockery from 'mockery';
 import * as sinon from 'sinon';
 import { expect } from './test-lib/chai';
@@ -342,171 +343,214 @@ mockery.registerMock('../src/lib/config', configMock);
 	}),
 );
 
-describe('Device State v2 patch', function () {
-	let fx: fixtures.Fixtures;
-	let admin: UserObjectParam;
-	let pineUser: typeof pineTest;
-	let applicationId: number;
-	let release1: AnyObject;
-	let release2: AnyObject;
-	let device: fakeDevice.Device;
-	const getMetricsRecentlyUpdatedCacheKey = (uuid: string) =>
-		`cache$$lastMetricsReportTime$${uuid}`;
+(['v2', 'v3'] as const).forEach((stateVersion) =>
+	describe(`Device State ${stateVersion} patch`, function () {
+		let fx: fixtures.Fixtures;
+		let admin: UserObjectParam;
+		let pineUser: typeof pineTest;
+		let applicationId: number;
+		let applicationUuid: string;
+		let release1: AnyObject;
+		let release2: AnyObject;
+		let device: fakeDevice.Device;
+		let stateKey: string;
+		const getMetricsRecentlyUpdatedCacheKey = (uuid: string) =>
+			`cache$$lastMetricsReportTime$${uuid}`;
 
-	before(async () => {
-		fx = await fixtures.load('03-device-state');
+		before(async () => {
+			fx = await fixtures.load('03-device-state');
 
-		admin = fx.users.admin;
-		applicationId = fx.applications.app1.id;
-		release1 = fx.releases.release1;
-		release2 = fx.releases.release2;
-		pineUser = pineTest.clone({
-			passthrough: { user: admin },
+			admin = fx.users.admin;
+			applicationUuid = fx.applications.app1.uuid;
+			applicationId = fx.applications.app1.id;
+			release1 = fx.releases.release1;
+			release2 = fx.releases.release2;
+			pineUser = pineTest.clone({
+				passthrough: { user: admin },
+			});
+
+			// create a new device in this test application...
+			device = await fakeDevice.provisionDevice(
+				admin,
+				applicationId,
+				'balenaOS 2.42.0+rev1',
+				'9.11.1',
+			);
+
+			stateKey = stateVersion === 'v2' ? 'local' : device.uuid;
 		});
 
-		// create a new device in this test application...
-		device = await fakeDevice.provisionDevice(
-			admin,
-			applicationId,
-			'balenaOS 2.42.0+rev1',
-			'9.11.1',
-		);
-	});
-
-	after(async () => {
-		await fixtures.clean(fx);
-	});
-
-	it('should save the updated device state', async () => {
-		const devicePatchBody = {
-			local: {
-				device_name: 'reported_device_name',
-				status: 'Idle',
-				is_online: true,
-				os_version: 'balenaOS 2.50.1+rev1',
-				os_variant: 'prod',
-				supervisor_version: '11.4.10',
-				provisioning_progress: null,
-				provisioning_state: null,
-				ip_address: '192.168.1.1',
-				mac_address: '00:11:22:33:44:55',
-				download_progress: null,
-				api_port: 48484,
-				cpu_usage: 34,
-				cpu_temp: 56,
-				memory_usage: 1000, // 1GB in MiB
-				memory_total: 4000, // 4GB in MiB
-				storage_block_device: '/dev/mmcblk0',
-				storage_usage: 1000, // 1GB in MiB
-				storage_total: 64000, // 64GB in MiB
-				is_undervolted: true,
-				cpu_id: 'some CPU string',
-			},
-		};
-
-		await device.patchStateV2(devicePatchBody);
-
-		await expectResourceToMatch(
-			pineUser,
-			'device',
-			device.id,
-			devicePatchBody.local,
-		);
-	});
-
-	it('should set the metrics throttling key in redis', async () => {
-		const cachedValue = await redisRO.get(
-			getMetricsRecentlyUpdatedCacheKey(device.uuid),
-		);
-		expect(cachedValue).to.be.a('string');
-		expect(cachedValue?.startsWith('1')).to.be.true;
-	});
-
-	it('should throttle metrics-only device state updates [same-instance]', async () => {
-		const devicePatchBody = {
-			local: {
-				cpu_usage: 90,
-				cpu_temp: 90,
-			},
-		};
-
-		await device.patchStateV2(devicePatchBody);
-		await setTimeout(200);
-
-		await expectResourceToMatch(pineUser, 'device', device.id, {
-			cpu_usage: 34,
-			cpu_temp: 56,
+		after(async () => {
+			await fixtures.clean(fx);
 		});
-	});
 
-	it('should clear the throttling key from redis after the throttling window passes', async () => {
-		await setTimeout(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
-		expect(await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid))).to
-			.be.null;
-	});
-
-	it('should apply metrics-only device state updates when outside the throttling window', async () => {
-		const devicePatchBody = {
-			local: {
-				cpu_usage: 20,
-				cpu_temp: 20,
-			},
-		};
-
-		await device.patchStateV2(devicePatchBody);
-
-		await expectResourceToMatch(
-			pineUser,
-			'device',
-			device.id,
-			devicePatchBody.local,
-		);
-	});
-
-	it('should throttle metrics-only device state updates [cross-instance]', async () => {
-		// Wait for the local cache to expire
-		await setTimeout(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
-		// confirm that even the redis cache has expired
-		expect(await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid))).to
-			.be.null;
-		const now = `${Date.now()}`;
-		// emulate the creation of a throttling key in redis from a different instance
-		await redis.set(getMetricsRecentlyUpdatedCacheKey(device.uuid), now);
-		expect(
-			await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
-		).to.equal(now);
-
-		const devicePatchBody = {
-			local: {
-				cpu_usage: 90,
-				cpu_temp: 90,
-			},
-		};
-
-		await device.patchStateV2(devicePatchBody);
-
-		await expectResourceToMatch(pineUser, 'device', device.id, {
-			cpu_usage: 20,
-			cpu_temp: 20,
-		});
-	});
-
-	it('should save the updated running release of the device state', async () => {
-		for (const r of [release1, release2]) {
+		it('should save the updated device state', async () => {
 			const devicePatchBody = {
-				local: {
-					is_on__commit: r.commit,
+				[stateKey]: {
+					name: 'reported_device_name',
+					status: 'Idle',
+					is_online: true,
+					os_version: 'balenaOS 2.50.1+rev1',
+					os_variant: 'prod',
+					supervisor_version: '11.4.10',
+					provisioning_progress: null,
+					provisioning_state: null,
+					ip_address: '192.168.1.1',
+					mac_address: '00:11:22:33:44:55',
+					download_progress: null,
+					api_port: 48484,
+					cpu_usage: 34,
+					cpu_temp: 56,
+					memory_usage: 1000, // 1GB in MiB
+					memory_total: 4000, // 4GB in MiB
+					storage_block_device: '/dev/mmcblk0',
+					storage_usage: 1000, // 1GB in MiB
+					storage_total: 64000, // 64GB in MiB
+					is_undervolted: true,
+					cpu_id: 'some CPU string',
 				},
 			};
 
-			await device.patchStateV2(devicePatchBody);
+			await fakeDevice.patchState(
+				device,
+				device.uuid,
+				devicePatchBody,
+				stateVersion,
+			);
+
+			await expectResourceToMatch(
+				pineUser,
+				'device',
+				device.id,
+				_.mapKeys(devicePatchBody[stateKey], (_v, key) =>
+					key === 'name' ? 'device_name' : key,
+				),
+			);
+		});
+
+		it('should set the metrics throttling key in redis', async () => {
+			const cachedValue = await redisRO.get(
+				getMetricsRecentlyUpdatedCacheKey(device.uuid),
+			);
+			expect(cachedValue).to.be.a('string');
+			expect(cachedValue?.startsWith('1')).to.be.true;
+		});
+
+		it('should throttle metrics-only device state updates [same-instance]', async () => {
+			const devicePatchBody = {
+				[stateKey]: {
+					cpu_usage: 90,
+					cpu_temp: 90,
+				},
+			};
+
+			await fakeDevice.patchState(
+				device,
+				device.uuid,
+				devicePatchBody,
+				stateVersion,
+			);
+			await setTimeout(200);
 
 			await expectResourceToMatch(pineUser, 'device', device.id, {
-				is_running__release: (chaiPropertyAssetion) =>
-					chaiPropertyAssetion.that.is
-						.an('object')
-						.that.has.property('__id', r.id),
+				cpu_usage: 34,
+				cpu_temp: 56,
 			});
-		}
-	});
-});
+		});
+
+		it('should clear the throttling key from redis after the throttling window passes', async () => {
+			await setTimeout(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
+			expect(await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)))
+				.to.be.null;
+		});
+
+		it('should apply metrics-only device state updates when outside the throttling window', async () => {
+			const devicePatchBody = {
+				[stateKey]: {
+					cpu_usage: 20,
+					cpu_temp: 20,
+				},
+			};
+
+			await fakeDevice.patchState(
+				device,
+				device.uuid,
+				devicePatchBody,
+				stateVersion,
+			);
+
+			await expectResourceToMatch(
+				pineUser,
+				'device',
+				device.id,
+				devicePatchBody[stateKey],
+			);
+		});
+
+		it('should throttle metrics-only device state updates [cross-instance]', async () => {
+			// Wait for the local cache to expire
+			await setTimeout(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
+			// confirm that even the redis cache has expired
+			expect(await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)))
+				.to.be.null;
+			const now = `${Date.now()}`;
+			// emulate the creation of a throttling key in redis from a different instance
+			await redis.set(getMetricsRecentlyUpdatedCacheKey(device.uuid), now);
+			expect(
+				await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
+			).to.equal(now);
+
+			const devicePatchBody = {
+				[stateKey]: {
+					cpu_usage: 90,
+					cpu_temp: 90,
+				},
+			};
+
+			await fakeDevice.patchState(
+				device,
+				device.uuid,
+				devicePatchBody,
+				stateVersion,
+			);
+
+			await expectResourceToMatch(pineUser, 'device', device.id, {
+				cpu_usage: 20,
+				cpu_temp: 20,
+			});
+		});
+
+		it('should save the updated running release of the device state', async () => {
+			for (const r of [release1, release2]) {
+				const devicePatchBody = {
+					[stateKey]:
+						stateVersion === 'v2'
+							? {
+									is_on__commit: r.commit,
+							  }
+							: {
+									apps: {
+										[applicationUuid]: {
+											release_uuid: r.commit,
+										},
+									},
+							  },
+				};
+
+				await fakeDevice.patchState(
+					device,
+					device.uuid,
+					devicePatchBody,
+					stateVersion,
+				);
+
+				await expectResourceToMatch(pineUser, 'device', device.id, {
+					is_running__release: (chaiPropertyAssetion) =>
+						chaiPropertyAssetion.that.is
+							.an('object')
+							.that.has.property('__id', r.id),
+				});
+			}
+		});
+	}),
+);
