@@ -1,4 +1,19 @@
 - commits:
+    - subject: 'release versioning: Add and start setting the semver & revision fields'
+      hash: 275f21298a88d1a214ef39370e2708e9e0dcbfec
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        HQ: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        hq: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.149.0
+  date: 2021-08-02T08:56:01.822Z
+- commits:
     - subject: Update open-balena-base to 11.3.5
       hash: 7b6aa5d15a987c13a3f763509fb89fca34a36bfa
       body: |
