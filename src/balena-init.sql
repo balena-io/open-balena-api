@@ -13,8 +13,11 @@ ALTER TABLE "device"
 ALTER COLUMN "api heartbeat state" SET DEFAULT 'unknown';
 
 ALTER TABLE "release"
-ALTER COLUMN "release type" SET DEFAULT 'final',
-ALTER COLUMN "is passing tests" SET DEFAULT 1;
+ALTER COLUMN "release type" SET DEFAULT 'final',-- TODO: Drop after the release versioning migration
+ALTER COLUMN "is passing tests" SET DEFAULT 1,
+ALTER COLUMN "semver major" SET DEFAULT 0,
+ALTER COLUMN "semver minor" SET DEFAULT 0,
+ALTER COLUMN "semver patch" SET DEFAULT 0;
 
 -------------------------------
 -- Start foreign key indexes --
@@ -163,3 +166,7 @@ ON "image" USING GIN ("is stored at-image location" gin_trgm_ops);
 -- Optimization for device state query
 CREATE INDEX IF NOT EXISTS "release_id_belongs_to_app_idx"
 ON "release" ("id", "belongs to-application");
+
+-- Optimization for the app-semver-revision uniqueness rule and for computing the next revision
+CREATE INDEX IF NOT EXISTS "release_belongs_to_app_revision_semver_idx"
+ON "release" ("belongs to-application", "revision", "semver major", "semver minor", "semver patch");
