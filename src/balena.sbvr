@@ -310,6 +310,7 @@ Term: organization
 Term: service instance
 
 Term: application
+	Synonym: fleet
 	Concept Type: actor (Auth)
 
 	Fact type: application [should track latest release]
@@ -320,10 +321,12 @@ Term: application
 
 	Fact type: application has env var name
 		Term Form: application environment variable
+		Term Form Synonym: fleet environment variable
 		Database Table Name: application environment variable
 
 	Fact type: application has name (Auth)
 		Term Form: application config variable
+		Term Form Synonym: fleet config variable
 		Database Table Name: application config variable
 
 	Fact type: application has service name
@@ -340,6 +343,7 @@ Term: application
 
 	Fact type: application has tag key
 		Term Form: application tag
+		Term Form Synonym: fleet tag
 		Database Table Name: application tag
 		Necessity: each application tag has a tag key that has a Length (Type) that is greater than 0.
 
