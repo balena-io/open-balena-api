@@ -29,8 +29,10 @@
   "dependencies": {
     "@balena/abstract-sql-compiler": "^7.19.0",
     "@balena/es-version": "^1.0.1",
+    "@balena/lf-to-abstract-sql": "^4.6.0-term-form-synonym-bc495ace1f3c2dc899c9b08103e4a5be913cc742",
     "@balena/node-metrics-gatherer": "^6.0.1",
     "@balena/pinejs": "^14.41.1",
+    "@balena/sbvr-parser": "^1.5.0-term-form-synonym-56ef9ba61d10d08b16fdd2a9891316af989fb09e",
     "@sentry/node": "^6.19.4",
     "@types/basic-auth": "^1.1.3",
     "@types/bluebird": "^3.5.36",
