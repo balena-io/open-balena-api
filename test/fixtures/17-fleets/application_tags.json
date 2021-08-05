@@ -1,0 +1,8 @@
+{
+	"app1-tag1": {
+		"user": "admin",
+		"application": "app1",
+		"tag_key": "test_tag_key",
+		"value": "test_value"
+	}
+}

@@ -1,0 +1,9 @@
+{
+	"release1": {
+		"application": "app1",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	}
+}
