@@ -300,6 +300,7 @@ Term: vpn address
 -- Complex terms
 
 Term: application type
+	Synonym: fleet type
 Term: cpu architecture
 Term: config
 Term: device type
