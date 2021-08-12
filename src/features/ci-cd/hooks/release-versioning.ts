@@ -7,33 +7,35 @@ import type { PickDeferred, Release } from '../../../balena-model';
 
 const { BadRequestError } = errors;
 
-hooks.addPureHook('PATCH', 'resin', 'release', {
-	PRERUN: async (args) => {
-		const { api, request } = args;
-		if (request.values.release_type === 'draft') {
-			const releaseIds = await sbvrUtils.getAffectedIds(args);
-			if (releaseIds.length === 0) {
-				return;
-			}
-			const finalizedReleases = await api.get({
-				resource: 'release',
-				options: {
-					$top: 1,
-					$select: 'id',
-					$filter: {
-						id: { $in: releaseIds },
-						release_type: 'final',
-					},
-				},
-			});
-			if (finalizedReleases.length > 0) {
-				throw new BadRequestError(
-					'Finalized releases cannot be converted to draft.',
-				);
-			}
-		}
-	},
-});
+const preventChangingFinalToDraft = async (
+	args: sbvrUtils.HookArgs & { tx: Tx },
+) => {
+	const { api, request } = args;
+	const { is_final } = request.custom as PatchCustomObject;
+	if (is_final !== false) {
+		return;
+	}
+	const releaseIds = await sbvrUtils.getAffectedIds(args);
+	if (releaseIds.length === 0) {
+		return;
+	}
+	const finalizedReleases = await api.get({
+		resource: 'release',
+		options: {
+			$top: 1,
+			$select: 'id',
+			$filter: {
+				id: { $in: releaseIds },
+				revision: { $ne: null },
+			},
+		},
+	});
+	if (finalizedReleases.length > 0) {
+		throw new BadRequestError(
+			'Finalized releases cannot be converted to draft.',
+		);
+	}
+};
 
 const getAdvisoryLockForApp = async (tx: Tx, appId: number) => {
 	if (!Number.isInteger(appId)) {
@@ -62,10 +64,7 @@ const getNextRevision = async (
 			$filter: {
 				belongs_to__application: applicationId,
 				semver,
-				// Check both fields, so that instances of this deploy step, can work with instances of the next step.
 				revision: { $ne: null },
-				// TODO[release versioning next step]: Drop this after re-migrating all data on step 2:
-				release_type: 'final',
 			},
 			$orderby: {
 				revision: 'desc',
@@ -181,106 +180,100 @@ interface PatchCustomObject extends CustomObjectBase {
 	>;
 }
 
+const setReleasesToSetRevision = async (
+	args: sbvrUtils.HookArgs & { tx: Tx },
+) => {
+	const { request, api } = args;
+	const custom = request.custom as PatchCustomObject;
+	const filters: FilterObj[] = [];
+	if (custom.is_final) {
+		filters.push({
+			revision: { $eq: null },
+		});
+	}
+	if (custom.semver != null) {
+		filters.push({
+			revision: { $ne: null },
+			semver: { $ne: custom.semver },
+		});
+	}
+	if (request.values.belongs_to__application != null) {
+		filters.push({
+			revision: { $ne: null },
+			belongs_to__application: {
+				$ne: request.values.belongs_to__application,
+			},
+		});
+	}
+	if (filters.length === 0) {
+		// no field of interest was PATCHed
+		return;
+	}
+	const releaseIds = await sbvrUtils.getAffectedIds(args);
+	if (!releaseIds.length) {
+		return;
+	}
+	const releasesToSetRevision = (await api.get({
+		resource: 'release',
+		options: {
+			$select: [
+				'id',
+				'semver',
+				'is_finalized_at__date',
+				'belongs_to__application',
+			],
+			$filter: {
+				id: { $in: releaseIds },
+				...(filters.length === 1
+					? filters[0]
+					: {
+							$or: filters,
+					  }),
+			},
+			$orderby: [
+				// order first by application, so that the advisory locks are picked
+				// in a consistent order across requests so that we can avoid deadlocks
+				{ belongs_to__application: 'asc' },
+				// order by finalization date & id in order to have predictable revision ordering
+				{ is_finalized_at__date: 'asc' },
+				{ id: 'asc' },
+			],
+		},
+	})) as NonNullable<PatchCustomObject['releasesToSetRevision']>;
+	if (!releasesToSetRevision.length) {
+		return;
+	}
+	custom.releasesToSetRevision = releasesToSetRevision;
+
+	if (custom.semver == null) {
+		return;
+	}
+	// When changing the semver, set the revision to null so that
+	// we don't end up with duplicate revisions.
+	// We will set the correct value in PRERESPOND
+	await api.patch({
+		resource: 'release',
+		// Needs root because revision is not settable.
+		passthrough: { req: permissions.root },
+		options: {
+			$filter: {
+				id: { $in: releasesToSetRevision.map((r) => r.id) },
+				revision: { $ne: null },
+			},
+		},
+		body: {
+			revision: null,
+		},
+	});
+};
+
 hooks.addPureHook('PATCH', 'resin', 'release', {
 	POSTPARSE: parseReleaseVersioningFields,
 	PRERUN: async (args) => {
-		const { api, request } = args;
-		const custom = request.custom as PatchCustomObject;
-		const filters: FilterObj[] = [];
-		if (custom.is_final) {
-			filters.push({
-				$or: {
-					// Check both fields, so that instances of this deploy step, can work with instances of the next step.
-					revision: { $eq: null },
-					// TODO[release versioning next step]: Drop this after re-migrating all data on step 2:
-					release_type: 'draft',
-				},
-			});
-		}
-		if (custom.semver != null) {
-			filters.push({
-				$or: {
-					// Check both fields, so that instances of this deploy step, can work with instances of the next step.
-					revision: { $ne: null },
-					// TODO[release versioning next step]: Drop this after re-migrating all data on step 2:
-					release_type: 'final',
-				},
-				semver: { $ne: custom.semver },
-			});
-		}
-		if (request.values.belongs_to__application != null) {
-			filters.push({
-				$or: {
-					// Check both fields, so that instances of this deploy step, can work with instances of the next step.
-					revision: { $ne: null },
-					// TODO[release versioning next step]: Drop this after re-migrating all data on step 2:
-					release_type: 'final',
-				},
-				belongs_to__application: {
-					$ne: request.values.belongs_to__application,
-				},
-			});
-		}
-		if (filters.length === 0) {
-			// no field of interest was PATCHed
-			return;
-		}
-		const releaseIds = await sbvrUtils.getAffectedIds(args);
-		if (!releaseIds.length) {
-			return;
-		}
-		const releasesToSetRevision = (await api.get({
-			resource: 'release',
-			options: {
-				$select: [
-					'id',
-					'semver',
-					'is_finalized_at__date',
-					'belongs_to__application',
-				],
-				$filter: {
-					id: { $in: releaseIds },
-					...(filters.length === 1
-						? filters[0]
-						: {
-								$or: filters,
-						  }),
-				},
-				$orderby: [
-					// order first by application, so that the advisory locks are picked
-					// in a consistent order across requests so that we can avoid deadlocks
-					{ belongs_to__application: 'asc' },
-					// order by finalization date & id in order to have predictable revision ordering
-					{ is_finalized_at__date: 'asc' },
-					{ id: 'asc' },
-				],
-			},
-		})) as NonNullable<PatchCustomObject['releasesToSetRevision']>;
-		if (!releasesToSetRevision.length) {
-			return;
-		}
-		custom.releasesToSetRevision = releasesToSetRevision;
-
-		if (custom.semver == null) {
-			return;
-		}
-		// When changing the semver, set the revision to null so that
-		// we don't end up with duplicate revisions.
-		// We will set the correct value in PRERESPOND
-		await api.patch({
-			resource: 'release',
-			// Needs root because revision is not settable.
-			passthrough: { req: permissions.root },
-			options: {
-				$filter: {
-					id: { $in: releasesToSetRevision.map((r) => r.id) },
-					revision: { $ne: null },
-				},
-			},
-			body: {
-				revision: null,
-			},
-		});
+		await Promise.all([
+			setReleasesToSetRevision(args),
+			preventChangingFinalToDraft(args),
+		]);
 	},
 	POSTRUN: async ({ api, request, tx }) => {
 		const { is_final, releasesToSetRevision, semver } =

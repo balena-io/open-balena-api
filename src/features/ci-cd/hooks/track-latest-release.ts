@@ -4,7 +4,7 @@ import { sbvrUtils, hooks } from '@balena/pinejs';
 const releaseStateFields = [
 	'status',
 	'is_passing_tests',
-	'release_type',
+	'revision',
 	'is_invalidated',
 ];
 
@@ -28,7 +28,7 @@ const updateLatestRelease = async (
 					$orderby: { start_timestamp: 'desc' },
 					$filter: {
 						// We only track releases that are successful, final, not invalid, and passing tests
-						release_type: 'final',
+						revision: { $ne: null },
 						is_passing_tests: true,
 						is_invalidated: false,
 						status: 'success',
