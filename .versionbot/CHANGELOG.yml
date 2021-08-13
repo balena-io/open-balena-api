@@ -1,4 +1,39 @@
 - commits:
+    - subject: Avoid updating the tracked release when a non-eligible one is created
+      hash: 45dd2f9c675a684fc90726b3c3e92737c416b996
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Add release.version JSON field
+      hash: d8ccbd3755eaba98c071700f71b8a2b4411b3900
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: 'release versioning: Migrate records, set both & read only the new fields'
+      hash: b1d6cac64d141b87ca3f22abd7082fa223a30fea
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        HQ: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        hq: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.150.0
+  date: 2021-08-13T14:18:21.538Z
+- commits:
     - subject: Update open-balena-base to 11.3.8
       hash: 191ab76489d81b2224e9fb061897ef2642f74d0a
       body: |
