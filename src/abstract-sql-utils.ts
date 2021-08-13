@@ -3,7 +3,9 @@ import * as _ from 'lodash';
 
 import type {
 	AbstractSqlModel,
+	ConcatenateNode,
 	Definition,
+	TextTypeNodes,
 } from '@balena/abstract-sql-compiler';
 
 import { sbvrUtils } from '@balena/pinejs';
@@ -103,3 +105,38 @@ export const renameEnvVarName = (abstractSql: AbstractSqlModel) => {
 		'name',
 	);
 };
+
+const sqlConcatFactory = (
+	...transformers: Array<
+		(node: TextTypeNodes | string) => TextTypeNodes | string
+	>
+) => {
+	return function sqlConcat(
+		[start, ...strings]: TemplateStringsArray,
+		...nodes: Array<TextTypeNodes | string>
+	) {
+		const concats: ConcatenateNode = ['Concatenate'];
+		const addNode = (node: typeof nodes[number]) => {
+			node = transformers.reduce((acc, transformer) => transformer(acc), node);
+			if (typeof node === 'string') {
+				if (node.length > 0) {
+					concats.push(['EmbeddedText', node]);
+				}
+			} else {
+				concats.push(node);
+			}
+		};
+		addNode(start);
+		for (let i = 0; i < strings.length; i++) {
+			addNode(nodes[i]);
+			addNode(strings[i]);
+		}
+
+		return concats;
+	};
+};
+
+// ~Similar to oneLineTrim from common-tags
+export const oneLineTrimSqlConcat = sqlConcatFactory((node) =>
+	typeof node === 'string' ? node.replace(/\s*\n\s*/g, '') : node,
+);
