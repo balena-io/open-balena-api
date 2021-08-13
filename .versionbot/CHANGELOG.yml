@@ -1,4 +1,29 @@
 - commits:
+    - subject: Update open-balena-base to 11.3.9
+      hash: 47db7304f9fb464d551a570f3ce80443af354b13
+      body: |
+        Update open-balena-base from 11.3.8 to 11.3.9
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update no-systemd variant
+              hash: 7649527690631c316bb9db59e2e17d050b581fee
+              body: |
+                * fix entrypoint script no-systemd variant
+                * add retry to oneshot services
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-11.3.9
+          date: 2021-08-13T16:04:05.364Z
+  version: 0.150.1
+  date: 2021-08-13T16:53:31.781Z
+- commits:
     - subject: Avoid updating the tracked release when a non-eligible one is created
       hash: 45dd2f9c675a684fc90726b3c3e92737c416b996
       body: ''
