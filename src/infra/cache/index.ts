@@ -2,8 +2,7 @@ import * as cacheManager from 'cache-manager';
 import redisStore = require('cache-manager-redis-store');
 import type { Options as MemoizeeOptions } from 'memoizee';
 import primitiveKey = require('memoizee/normalizers/primitive');
-import { REDIS_HOST, REDIS_PORT } from '../../lib/config';
-import { version } from '../../lib/config';
+import { REDIS_HOST, REDIS_PORT, version } from '../../lib/config';
 
 export type Defined = string | number | boolean | symbol | bigint | object;
 
@@ -141,9 +140,12 @@ function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	});
 	const cache = cacheManager.multiCaching([memoryCache, redisCache]);
 
-	// We include the version so that we get automatic invalidation on updates which might change the memoized fn behavior
-	const keyPrefix = `cache$${version}$${cacheKey}$`;
+	let keyPrefix: string;
 	const memoizedFn = async (...args: Parameters<T>) => {
+		// We include the version so that we get automatic invalidation on updates which might change the memoized fn behavior,
+		// we also calculate the keyPrefix lazily so that the version has a chance to be set as otherwise the memoized function
+		// creation can happen before the version has been initialized
+		keyPrefix ??= `cache$${version}$${cacheKey}$`;
 		const key = `${keyPrefix}${normalizer(args)}`;
 		const valueFromCache = await cache.wrap<ResolvableReturnType<T>>(
 			key,

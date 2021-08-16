@@ -1,5 +1,10 @@
 export let version: string;
 export function setVersion(v: typeof version) {
+	if (version !== undefined) {
+		throw new Error(
+			`Can only set version once, trying to replace '${version}' with '${v}'`,
+		);
+	}
 	version = v;
 }
 
