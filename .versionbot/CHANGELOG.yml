@@ -1,4 +1,15 @@
 - commits:
+    - subject: Avoid version being undefined in cache keys for multiCache
+      hash: dbefab33aaed2b14e8248f19f80ade8927cfa62f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.150.2
+  date: 2021-08-16T17:35:41.053Z
+- commits:
     - subject: Update open-balena-base to 11.3.9
       hash: 47db7304f9fb464d551a570f3ce80443af354b13
       body: |
