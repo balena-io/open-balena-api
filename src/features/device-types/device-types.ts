@@ -35,6 +35,15 @@ export class UnknownVersionError extends NotFoundError {
 
 export type DeviceType = deviceTypesLib.DeviceType;
 
+let getInvalidatedOsVersionsByDeviceType: () => Promise<
+	Dictionary<Set<string>>
+> = async () => ({});
+export const setInvalidatedOsVersionsProvider = (
+	provider: typeof getInvalidatedOsVersionsByDeviceType,
+) => {
+	getInvalidatedOsVersionsByDeviceType = provider;
+};
+
 interface DeviceTypeInfo {
 	latest: DeviceType;
 	versions: string[];
@@ -81,11 +90,18 @@ async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	const result: Dictionary<DeviceTypeInfo> = {};
 	// TODO: Do we really need this clear?
 	getDeviceTypeJson.clear();
-	const slugs = await listFolders(IMAGE_STORAGE_PREFIX);
+	const [slugs, invalidatedVersionsByDeviceType] = await Promise.all([
+		listFolders(IMAGE_STORAGE_PREFIX),
+		getInvalidatedOsVersionsByDeviceType(),
+	]);
 	await Promise.all(
 		slugs.map(async (slug) => {
 			try {
-				const builds = await listFolders(getImageKey(slug));
+				let builds = await listFolders(getImageKey(slug));
+				const invalidatedVersions = invalidatedVersionsByDeviceType[slug];
+				if (invalidatedVersions != null && invalidatedVersions.size > 0) {
+					builds = builds.filter((build) => invalidatedVersions.has(build));
+				}
 				if (_.isEmpty(builds)) {
 					return;
 				}
@@ -97,7 +113,7 @@ async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 				}
 
 				result[slug] = {
-					versions: builds,
+					versions: sortedBuilds,
 					latest: latestDeviceType,
 				};
 
