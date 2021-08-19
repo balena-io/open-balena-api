@@ -1,4 +1,27 @@
 - commits:
+    - subject: Update open-balena-base to 12.0.0
+      hash: 0469ed78e916946c881da4f5d3c4338481cd0a37
+      body: |
+        Update open-balena-base from 11.3.12 to 12.0.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update to debian bullseye
+              hash: ab2063d323d09fcc7f9ea86bb8228eab9b543fd0
+              body: ''
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-12.0.0
+          date: 2021-08-17T15:19:06.578Z
+  version: 0.151.0
+  date: 2021-08-19T13:56:32.311Z
+- commits:
     - subject: Update open-balena-base to 11.3.12
       hash: 45a0e5afb0fca834996c891c8d34f7768ee63f4f
       body: |
