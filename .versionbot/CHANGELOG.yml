@@ -1,4 +1,27 @@
 - commits:
+    - subject: Update open-balena-base to 12.0.1
+      hash: cc24fd88c171cd30f822455ff5e8a04688522662
+      body: |
+        Update open-balena-base from 12.0.0 to 12.0.1
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Use basic.target as the default target
+              hash: 8e886caf096ab5559f0e841b25e781549d686ce2
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-12.0.1
+          date: 2021-08-19T18:17:33.672Z
+  version: 0.152.0
+  date: 2021-08-19T21:41:00.961Z
+- commits:
     - subject: Update dependencies
       hash: e9dd3e487b937380227ec0a02587cbb3ded9d7a5
       body: ''
