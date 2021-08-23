@@ -1,4 +1,15 @@
 - commits:
+    - subject: Allow specifying a custom readTransaction function for state requests
+      hash: 9d8305c3c686dff9e373de2bb1790a84b4e26394
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.152.2
+  date: 2021-08-23T16:26:15.337Z
+- commits:
     - subject: 'var-schema: Add custom DTB support for TX2 NX variants'
       hash: 033e68aa206cf23eafc7e7c3d80a9bac769dd884
       body: |
