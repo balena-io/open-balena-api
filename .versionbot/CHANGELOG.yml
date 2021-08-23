@@ -1,4 +1,22 @@
 - commits:
+    - subject: 'var-schema: Add custom DTB support for TX2 NX variants'
+      hash: 033e68aa206cf23eafc7e7c3d80a9bac769dd884
+      body: |
+        We now added support for the TX2 NX, let's also add
+        support for custom device tree loading for it as well as
+        for the Photon TX2 NX which is a community device type
+        that's in progress of being added to the supported
+        devices list.
+      footer:
+        Change-type: Patch
+        change-type: Patch
+        Signed-off-by: Alexandru Costache <alexandru@balena.io>
+        signed-off-by: Alexandru Costache <alexandru@balena.io>
+      author: Alexandru Costache
+      nested: []
+  version: 0.152.1
+  date: 2021-08-23T11:20:21.697Z
+- commits:
     - subject: Update open-balena-base to 12.0.1
       hash: cc24fd88c171cd30f822455ff5e8a04688522662
       body: |
