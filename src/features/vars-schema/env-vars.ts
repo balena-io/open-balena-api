@@ -230,6 +230,8 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			'jetson-nano-emmc',
 			'jn30b-nano',
 			'photon-nano',
+			'jetson-tx2-nx-devkit',
+			'photon-tx2-nx',
 		],
 		properties: {
 			RESIN_HOST_EXTLINUX_fdt: {
