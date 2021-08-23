@@ -13,7 +13,7 @@ import {
 	serviceInstallFromImage,
 	setMinPollInterval,
 } from '../utils';
-import { sbvrUtils, errors } from '@balena/pinejs';
+import { sbvrUtils, errors, dbModule } from '@balena/pinejs';
 import { events } from '..';
 
 const { UnauthorizedError } = errors;
@@ -371,8 +371,17 @@ export const stateV2: RequestHandler = async (req, res) => {
 	}
 };
 
+let readTransaction: dbModule.Database['readTransaction'] = (
+	...args: Parameters<dbModule.Database['readTransaction']>
+) => sbvrUtils.db.readTransaction!(...args);
+export const setReadTransaction = (
+	$readTransaction: dbModule.Database['readTransaction'],
+) => {
+	readTransaction = $readTransaction;
+};
+
 const getDevice = async (req: Request, uuid: string) => {
-	const device = await sbvrUtils.db.readTransaction!((tx) =>
+	const device = await readTransaction((tx) =>
 		stateQuery()({ uuid }, undefined, { req, tx }),
 	);
 

@@ -8,6 +8,8 @@ import { gracefullyDenyDeletedDevices } from './middleware';
 import { stateV2 } from './routes/state';
 import { statePatch } from './routes/state-patch';
 
+export { setReadTransaction } from './routes/state';
+
 export const setup = (app: Application) => {
 	app.get(
 		'/device/v2/:uuid/state',
