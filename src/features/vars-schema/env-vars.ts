@@ -96,7 +96,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		type: 'integer',
 		enum: [0, 1],
 		description:
-			'Override the update lock if your app locked updates but is stuck in an invalid state.',
+			'Override the update lock if your app is stuck in an invalid state under an update lock',
 		default: 0,
 	},
 	BALENA_HOST_SPLASH_IMAGE: {
