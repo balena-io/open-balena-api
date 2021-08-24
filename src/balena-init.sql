@@ -13,7 +13,6 @@ ALTER TABLE "device"
 ALTER COLUMN "api heartbeat state" SET DEFAULT 'unknown';
 
 ALTER TABLE "release"
-ALTER COLUMN "release type" SET DEFAULT 'final',-- TODO: Drop after the release versioning migration
 ALTER COLUMN "is passing tests" SET DEFAULT 1,
 ALTER COLUMN "semver major" SET DEFAULT 0,
 ALTER COLUMN "semver minor" SET DEFAULT 0,
