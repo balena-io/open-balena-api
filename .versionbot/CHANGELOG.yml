@@ -1,4 +1,27 @@
 - commits:
+    - subject: Update pinejs to 14.29.0
+      hash: 556d00437085d06c5dbec4316062283a910d211d
+      body: |
+        Update pinejs from 14.28.0 to 14.29.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Use readTransaction for read-only requests
+              hash: 231b5d99f8b8f0e6d83676928c8a2b5daa88a550
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.29.0
+          date: 2021-08-24T14:41:20.962Z
+  version: 0.153.1
+  date: 2021-08-24T15:04:21.214Z
+- commits:
     - subject: 'release versioning: Drop the release type property from the model'
       hash: 24d756c8394bfe59bff0c0be9eaf80421a6a0042
       body: ''
