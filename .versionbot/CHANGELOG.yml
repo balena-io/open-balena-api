@@ -1,4 +1,19 @@
 - commits:
+    - subject: 'release versioning: Drop the release type property from the model'
+      hash: 24d756c8394bfe59bff0c0be9eaf80421a6a0042
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        HQ: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        hq: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.153.0
+  date: 2021-08-24T10:19:07.194Z
+- commits:
     - subject: Allow specifying a custom readTransaction function for state requests
       hash: 9d8305c3c686dff9e373de2bb1790a84b4e26394
       body: ''
