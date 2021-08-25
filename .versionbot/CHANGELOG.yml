@@ -1,4 +1,19 @@
 - commits:
+    - subject: 'release versioning: Drop the release type field from the DB'
+      hash: 2cd1350823b1d7dedb45f9b39ed25174d2f81bfa
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        HQ: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        hq: 'https://jel.ly.fish/8ea1c390-9a85-402d-978c-4d31dcb0d235'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.154.0
+  date: 2021-08-24T17:58:02.789Z
+- commits:
     - subject: Update open-balena-base to 12.0.2
       hash: 455909056e93cd7b9da7e4f41e213815a48e26b2
       body: |
