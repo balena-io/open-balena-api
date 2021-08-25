@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove BALENA_|RESIN_ prefixes
+      hash: 235866ca0cd6912e133f8a352966e5170eda4359
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: ab77
+      nested: []
+  version: 0.155.0
+  date: 2021-08-25T15:49:35.489Z
+- commits:
     - subject: 'release versioning: Drop the release type field from the DB'
       hash: 2cd1350823b1d7dedb45f9b39ed25174d2f81bfa
       body: ''
