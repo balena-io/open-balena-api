@@ -1,0 +1,30 @@
+{
+	"image1": {
+		"user": "admin",
+		"service": "service1",
+		"releases": [ "release0" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image2": {
+		"user": "admin",
+		"service": "service2",
+		"releases": [ "release0" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image3": {
+		"user": "admin",
+		"service": "service3",
+		"releases": [ "release0" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image4": {
+		"user": "admin",
+		"service": "service4",
+		"releases": [ "release0" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	}
+}
