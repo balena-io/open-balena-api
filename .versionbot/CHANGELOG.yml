@@ -1,4 +1,19 @@
 - commits:
+    - subject: Update RESIN_OVERRIDE_LOCK description
+      hash: cb819368cde77af211912f831393a641cb2274a6
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Resolves: 'https://github.com/balena-io/balena-ui/issues/5019'
+        resolves: 'https://github.com/balena-io/balena-ui/issues/5019'
+        Signed-off-by: Vipul Gupta (@vipulgupta2048) <vipul@balena.io>
+        signed-off-by: Vipul Gupta (@vipulgupta2048) <vipul@balena.io>
+      author: Vipul Gupta
+      nested: []
+  version: 0.155.1
+  date: 2021-08-26T07:37:12.458Z
+- commits:
     - subject: Remove BALENA_|RESIN_ prefixes
       hash: 235866ca0cd6912e133f8a352966e5170eda4359
       body: ''
