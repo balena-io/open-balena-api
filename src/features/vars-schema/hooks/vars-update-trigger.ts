@@ -191,55 +191,57 @@ const addDeviceEnvHooks = (resource: string) =>
 addDeviceEnvHooks('device_config_variable');
 addDeviceEnvHooks('device_environment_variable');
 
-addEnvHooks(
-	'service_environment_variable',
-	async (
-		args: hooks.HookArgs & {
-			tx: Tx;
-		},
-	) => {
-		if (args.req.body.service != null) {
-			return {
-				service_install: {
-					$any: {
-						$alias: 'si',
-						$expr: {
-							si: {
-								service: {
-									$any: {
-										$alias: 's',
-										$expr: { s: { id: args.req.body.service } },
+const addServiceEnvHooks = (resource: string) =>
+	addEnvHooks(
+		resource,
+		async (
+			args: hooks.HookArgs & {
+				tx: Tx;
+			},
+		) => {
+			if (args.req.body.service != null) {
+				return {
+					service_install: {
+						$any: {
+							$alias: 'si',
+							$expr: {
+								si: {
+									service: {
+										$any: {
+											$alias: 's',
+											$expr: { s: { id: args.req.body.service } },
+										},
 									},
 								},
 							},
 						},
 					},
-				},
-			};
-		}
+				};
+			}
 
-		const envVarIds = await sbvrUtils.getAffectedIds(args);
-		if (envVarIds.length === 0) {
-			return;
-		}
-		return [
-			envVarIds,
-			(envVarIdsChunk) => ({
-				service_install: {
-					$any: {
-						$alias: 'si',
-						$expr: {
-							si: {
-								service: {
-									$any: {
-										$alias: 's',
-										$expr: {
-											s: {
-												service_environment_variable: {
-													$any: {
-														$alias: 'e',
-														$expr: {
-															e: { id: { $in: envVarIdsChunk } },
+			const envVarIds = await sbvrUtils.getAffectedIds(args);
+			if (envVarIds.length === 0) {
+				return;
+			}
+			return [
+				envVarIds,
+				(envVarIdsChunk) => ({
+					service_install: {
+						$any: {
+							$alias: 'si',
+							$expr: {
+								si: {
+									service: {
+										$any: {
+											$alias: 's',
+											$expr: {
+												s: {
+													[resource]: {
+														$any: {
+															$alias: 'e',
+															$expr: {
+																e: { id: { $in: envVarIdsChunk } },
+															},
 														},
 													},
 												},
@@ -250,79 +252,85 @@ addEnvHooks(
 							},
 						},
 					},
-				},
-			}),
-		];
-	},
-);
-
-addEnvHooks(
-	'device_service_environment_variable',
-	async (
-		args: hooks.HookArgs & {
-			tx: Tx;
+				}),
+			];
 		},
-	) => {
-		if (args.req.body.service_install != null) {
-			return {
-				service_install: {
-					$any: {
-						$alias: 's',
-						$expr: { s: { id: args.req.body.service_install } },
-					},
-				},
-			};
-		}
+	);
+addServiceEnvHooks('service_environment_variable');
+addServiceEnvHooks('service_config_variable');
 
-		const envVarIds = await sbvrUtils.getAffectedIds(args);
-		if (envVarIds.length === 0) {
-			return;
-		}
-		return [
-			envVarIds,
-			(envVarIdsChunk) => ({
-				service_install: {
-					$any: {
-						$alias: 's',
-						$expr: {
-							s: {
-								device_service_environment_variable: {
-									$any: {
-										$alias: 'e',
-										$expr: { e: { id: { $in: envVarIdsChunk } } },
+const addDeviceServiceEnvHooks = (resource: string) =>
+	addEnvHooks(
+		resource,
+		async (
+			args: hooks.HookArgs & {
+				tx: Tx;
+			},
+		) => {
+			if (args.req.body.service_install != null) {
+				return {
+					service_install: {
+						$any: {
+							$alias: 's',
+							$expr: { s: { id: args.req.body.service_install } },
+						},
+					},
+				};
+			}
+
+			const envVarIds = await sbvrUtils.getAffectedIds(args);
+			if (envVarIds.length === 0) {
+				return;
+			}
+			return [
+				envVarIds,
+				(envVarIdsChunk) => ({
+					service_install: {
+						$any: {
+							$alias: 's',
+							$expr: {
+								s: {
+									[resource]: {
+										$any: {
+											$alias: 'e',
+											$expr: { e: { id: { $in: envVarIdsChunk } } },
+										},
 									},
 								},
 							},
 						},
 					},
-				},
-			}),
-		];
-	},
-);
-
-addEnvHooks(
-	'image_environment_variable',
-	async (
-		args: hooks.HookArgs & {
-			tx: Tx;
+				}),
+			];
 		},
-	) => {
-		if (args.req.body.release_image != null) {
-			return {
-				image_install: {
-					$any: {
-						$alias: 'ii',
-						$expr: {
-							installs__image: {
-								$any: {
-									$alias: 'i',
-									$expr: {
-										i: {
-											release_image: {
-												$any: {
-													$alias: 'ri',
-													$expr: { ri: { id: args.req.body.release_image } },
+	);
+addDeviceServiceEnvHooks('device_service_environment_variable');
+addDeviceServiceEnvHooks('device_service_config_variable');
+
+const addImageEnvHooks = (resource: string) =>
+	addEnvHooks(
+		resource,
+		async (
+			args: hooks.HookArgs & {
+				tx: Tx;
+			},
+		) => {
+			if (args.req.body.release_image != null) {
+				return {
+					image_install: {
+						$any: {
+							$alias: 'ii',
+							$expr: {
+								installs__image: {
+									$any: {
+										$alias: 'i',
+										$expr: {
+											i: {
+												release_image: {
+													$any: {
+														$alias: 'ri',
+														$expr: { ri: { id: args.req.body.release_image } },
+													},
 												},
 											},
 										},
@@ -331,35 +339,37 @@ addEnvHooks(
 							},
 						},
 					},
-				},
-			};
-		}
+				};
+			}
 
-		const envVarIds = await sbvrUtils.getAffectedIds(args);
-		if (envVarIds.length === 0) {
-			return;
-		}
-		return [
-			envVarIds,
-			(envVarIdsChunk) => ({
-				image_install: {
-					$any: {
-						$alias: 'ii',
-						$expr: {
-							installs__image: {
-								$any: {
-									$alias: 'i',
-									$expr: {
-										i: {
-											release_image: {
-												$any: {
-													$alias: 'ri',
-													$expr: {
-														ri: {
-															image_environment_variable: {
-																$any: {
-																	$alias: 'e',
-																	$expr: { e: { id: { $in: envVarIdsChunk } } },
+			const envVarIds = await sbvrUtils.getAffectedIds(args);
+			if (envVarIds.length === 0) {
+				return;
+			}
+			return [
+				envVarIds,
+				(envVarIdsChunk) => ({
+					image_install: {
+						$any: {
+							$alias: 'ii',
+							$expr: {
+								installs__image: {
+									$any: {
+										$alias: 'i',
+										$expr: {
+											i: {
+												release_image: {
+													$any: {
+														$alias: 'ri',
+														$expr: {
+															ri: {
+																[resource]: {
+																	$any: {
+																		$alias: 'e',
+																		$expr: {
+																			e: { id: { $in: envVarIdsChunk } },
+																		},
+																	},
 																},
 															},
 														},
@@ -372,8 +382,9 @@ addEnvHooks(
 							},
 						},
 					},
-				},
-			}),
-		];
-	},
-);
+				}),
+			];
+		},
+	);
+addImageEnvHooks('image_environment_variable');
+addImageEnvHooks('image_config_variable');

@@ -168,7 +168,13 @@ export const renameResourceField = (
 };
 
 export const renameVarResourcesName = (abstractSql: AbstractSqlModel) => {
-	for (const resource of ['device', 'application']) {
+	for (const resource of [
+		'device',
+		'application',
+		'device-installs-application-has-service name',
+		'application-has-service name',
+		'image-is part of-release',
+	]) {
 		renameResourceField(abstractSql, resource, 'config var name', 'name');
 		renameResourceField(abstractSql, resource, 'env var name', 'name');
 	}

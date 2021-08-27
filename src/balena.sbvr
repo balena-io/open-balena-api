@@ -346,9 +346,13 @@ Term: application
 			Term Form: service label
 			Database Table Name: service label
 
-		Fact type: service has name (Auth)
+		Fact type: service has env var name
 			Term Form: service environment variable
 			Database Table Name: service environment variable
+
+		Fact type: service has config var name
+			Term Form: service config variable
+			Database Table Name: service config variable
 
 	Fact type: application has tag key
 		Term Form: application tag
@@ -380,9 +384,13 @@ Term: device
 		Term Form: service install
 		Database Table Name: service install
 
-		Fact type: service install has name (Auth)
+		Fact type: service install has env var name
 			Term Form: device service environment variable
 			Database Table Name: device service environment variable
+
+		Fact type: service install has config var name
+			Term Form: device service config variable
+			Database Table Name: device service config variable
 
 	Fact type: device has tag key
 		Term Form: device tag
@@ -404,9 +412,13 @@ Fact type: image is part of release
 		Term Form: image label
 		Database Table Name: image label
 
-	Fact type: release image has name (Auth)
+	Fact type: release image has env var name
 		Term Form: image environment variable
 		Database Table Name: image environment variable
+
+	Fact type: release image has config var name
+		Term Form: image config variable
+		Database Table Name: image config variable
 
 Fact type: user (Auth) is member of organization
 	Synonymous Form: organization includes user (Auth)
@@ -711,6 +723,12 @@ Fact type: service environment variable has value
 	Necessity: each service environment variable has exactly one value.
 
 
+-- service config variable
+
+Fact type: service config variable has value
+	Necessity: each service config variable has exactly one value.
+
+
 -- image
 
 Fact type: image has start timestamp
@@ -774,10 +792,22 @@ Fact type: image environment variable has value
 	Necessity: each image environment variable has exactly one value.
 
 
+-- image config variable
+
+Fact type: image config variable has value
+	Necessity: each image config variable has exactly one value.
+
+
 -- device service environment variable
 
 Fact type: device service environment variable has value
 	Necessity: each device service environment variable has exactly one value.
+
+
+-- device service config variable
+
+Fact type: device service config variable has value
+	Necessity: each device service config variable has exactly one value.
 
 
 -- application tag

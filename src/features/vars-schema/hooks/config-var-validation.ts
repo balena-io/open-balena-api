@@ -21,6 +21,9 @@ const configVarHook: hooks.Hooks = {
 for (const resource of [
 	'application_config_variable',
 	'device_config_variable',
+	'service_config_variable',
+	'device_service_config_variable',
+	'image_config_variable',
 ]) {
 	for (const method of ['POST', 'PATCH', 'PUT'] as const) {
 		hooks.addPureHook(method, 'resin', resource, configVarHook);
