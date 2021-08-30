@@ -73,37 +73,25 @@ export const renameField = (
 	_.set(relationship, [to, '$'], [to]);
 };
 
+const $renameEnvVarName = (abstractSql: AbstractSqlModel, resource: string) => {
+	renameField(
+		abstractSql,
+		`${resource}-has-env var name`,
+		[...resource.split('-'), 'has'],
+		'env var name',
+		'name',
+	);
+	renameField(
+		abstractSql,
+		`${resource}-has-env var name`,
+		['has'],
+		'env var name',
+		'name',
+	);
+};
 export const renameEnvVarName = (abstractSql: AbstractSqlModel) => {
-	// Patching device environment variable term
-	renameField(
-		abstractSql,
-		'device-has-env var name',
-		['device', 'has'],
-		'env var name',
-		'name',
-	);
-	renameField(
-		abstractSql,
-		'device-has-env var name',
-		['has'],
-		'env var name',
-		'name',
-	);
-	// Patching application environment variable term
-	renameField(
-		abstractSql,
-		'application-has-env var name',
-		['application', 'has'],
-		'env var name',
-		'name',
-	);
-	renameField(
-		abstractSql,
-		'application-has-env var name',
-		['has'],
-		'env var name',
-		'name',
-	);
+	$renameEnvVarName(abstractSql, 'device');
+	$renameEnvVarName(abstractSql, 'application');
 };
 
 const sqlConcatFactory = (

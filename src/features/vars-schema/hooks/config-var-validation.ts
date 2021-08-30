@@ -5,7 +5,7 @@ import {
 	checkEnvVarValueValidity,
 } from '../env-vars';
 
-const envVarHook: hooks.Hooks = {
+const configVarHook: hooks.Hooks = {
 	POSTPARSE: async ({ request }) => {
 		const { name, value } = request.values;
 
@@ -23,6 +23,6 @@ for (const resource of [
 	'device_config_variable',
 ]) {
 	for (const method of ['POST', 'PATCH', 'PUT'] as const) {
-		hooks.addPureHook(method, 'resin', resource, envVarHook);
+		hooks.addPureHook(method, 'resin', resource, configVarHook);
 	}
 }
