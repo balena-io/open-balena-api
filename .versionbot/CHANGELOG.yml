@@ -1,4 +1,15 @@
 - commits:
+    - subject: Deduplicate env var renaming
+      hash: bd9792215cdb9a1039552e0558f31a5cc35b46d4
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.155.2
+  date: 2021-08-30T16:47:51.207Z
+- commits:
     - subject: Update RESIN_OVERRIDE_LOCK description
       hash: cb819368cde77af211912f831393a641cb2274a6
       body: ''
