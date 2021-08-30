@@ -245,3 +245,77 @@ addEnvHooks(
 		};
 	},
 );
+
+addEnvHooks(
+	'image_environment_variable',
+	async (
+		args: hooks.HookArgs & {
+			tx: Tx;
+		},
+	) => {
+		if (args.req.body.release_image != null) {
+			return {
+				image_install: {
+					$any: {
+						$alias: 'ii',
+						$expr: {
+							installs__image: {
+								$any: {
+									$alias: 'i',
+									$expr: {
+										i: {
+											release_image: {
+												$any: {
+													$alias: 'ri',
+													$expr: { ri: { id: args.req.body.release_image } },
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			};
+		}
+
+		const envVarIds = await sbvrUtils.getAffectedIds(args);
+		if (envVarIds.length === 0) {
+			return;
+		}
+		return {
+			image_install: {
+				$any: {
+					$alias: 'ii',
+					$expr: {
+						installs__image: {
+							$any: {
+								$alias: 'i',
+								$expr: {
+									i: {
+										release_image: {
+											$any: {
+												$alias: 'ri',
+												$expr: {
+													ri: {
+														image_environment_variable: {
+															$any: {
+																$alias: 'e',
+																$expr: { e: { id: { $in: envVarIds } } },
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		};
+	},
+);
