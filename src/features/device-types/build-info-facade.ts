@@ -52,12 +52,6 @@ export const getDeviceTypeJson = memoizee(
 		normalizedSlug: string,
 		buildId: string,
 	): Promise<deviceTypesLib.DeviceType | undefined> => {
-		const isIgnored = await fileExists(
-			getImageKey(normalizedSlug, buildId, 'IGNORE'),
-		);
-		if (isIgnored) {
-			return undefined;
-		}
 		const response = await getFile(
 			getImageKey(normalizedSlug, buildId, 'device-type.json'),
 		);
