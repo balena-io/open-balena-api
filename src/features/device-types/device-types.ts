@@ -35,15 +35,6 @@ export class UnknownVersionError extends NotFoundError {
 
 export type DeviceType = deviceTypesLib.DeviceType;
 
-let getInvalidatedOsVersionsByDeviceType: () => Promise<
-	Dictionary<Set<string>>
-> = async () => ({});
-export const setInvalidatedOsVersionsProvider = (
-	provider: typeof getInvalidatedOsVersionsByDeviceType,
-) => {
-	getInvalidatedOsVersionsByDeviceType = provider;
-};
-
 interface DeviceTypeInfo {
 	latest: DeviceType;
 	versions: string[];
@@ -86,27 +77,45 @@ const getFirstValidBuild = async (
 	}
 };
 
+let getOsVersionsByDeviceType: (
+	deviceTypeSlugs: string[],
+) => Promise<Dictionary<string[]>> = async (deviceTypeSlugs: string[]) => {
+	const results: Dictionary<string[]> = {};
+	await Promise.all(
+		deviceTypeSlugs.map(async (slug) => {
+			try {
+				results[slug] = await listFolders(getImageKey(slug));
+			} catch (err) {
+				captureException(
+					err,
+					`Error while retrieving build for device type ${slug}`,
+				);
+			}
+		}),
+	);
+	return results;
+};
+
+export const setOsVersionsProvider = (
+	provider: typeof getOsVersionsByDeviceType,
+) => {
+	getOsVersionsByDeviceType = provider;
+};
+
 async function fetchDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 	const result: Dictionary<DeviceTypeInfo> = {};
 	// TODO: Do we really need this clear?
 	getDeviceTypeJson.clear();
-	const [slugs, invalidatedVersionsByDeviceType] = await Promise.all([
-		listFolders(IMAGE_STORAGE_PREFIX),
-		getInvalidatedOsVersionsByDeviceType(),
-	]);
+	const slugs = await listFolders(IMAGE_STORAGE_PREFIX);
+	const osVersionsBySlug = await getOsVersionsByDeviceType(slugs);
 	await Promise.all(
-		slugs.map(async (slug) => {
+		Object.entries(osVersionsBySlug).map(async ([slug, versions]) => {
 			try {
-				let builds = await listFolders(getImageKey(slug));
-				const invalidatedVersions = invalidatedVersionsByDeviceType[slug];
-				if (invalidatedVersions != null && invalidatedVersions.size > 0) {
-					builds = builds.filter((build) => invalidatedVersions.has(build));
-				}
-				if (_.isEmpty(builds)) {
+				if (!versions.length) {
 					return;
 				}
 
-				const sortedBuilds = sortBuildIds(builds);
+				const sortedBuilds = sortBuildIds(versions);
 				const latestDeviceType = await getFirstValidBuild(slug, sortedBuilds);
 				if (!latestDeviceType) {
 					return;
