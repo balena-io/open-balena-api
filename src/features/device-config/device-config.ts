@@ -122,5 +122,12 @@ export const generateConfig = async (
 	if (rootCA != null) {
 		config.balenaRootCA = rootCA;
 	}
+
+	const developmentMode =
+		osVersion === 'latest' ? undefined : osVersion?.endsWith('.dev');
+	if (developmentMode != null) {
+		config.developmentMode = developmentMode;
+	}
+
 	return config;
 };
