@@ -1,4 +1,27 @@
 - commits:
+    - subject: Add additional naming words
+      hash: 91ad3772e7e996cfdc8ab7661a6e51a29c6ce92e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Chris Crocker-White <chriscw@balena.io>
+        signed-off-by: Chris Crocker-White <chriscw@balena.io>
+      author: Chris Crocker-White
+      nested: []
+    - subject: Sort haiku names
+      hash: 80f94722b1ef8afc4a9bd2d0504d42b2a864c1b2
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Chris Crocker-White <chriscw@balena.io>
+        signed-off-by: Chris Crocker-White <chriscw@balena.io>
+      author: Chris Crocker-White
+      nested: []
+  version: 0.155.4
+  date: 2021-09-02T17:53:11.008Z
+- commits:
     - subject: Inject OS image development mode flag into generated config
       hash: 343c983e4076d0e119392739b13b9644d97b3398
       body: ''
