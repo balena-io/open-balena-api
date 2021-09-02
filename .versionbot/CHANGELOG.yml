@@ -1,4 +1,15 @@
 - commits:
+    - subject: Inject OS image development mode flag into generated config
+      hash: 343c983e4076d0e119392739b13b9644d97b3398
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+      nested: []
+  version: 0.155.3
+  date: 2021-09-02T14:12:10.019Z
+- commits:
     - subject: Deduplicate env var renaming
       hash: bd9792215cdb9a1039552e0558f31a5cc35b46d4
       body: ''
