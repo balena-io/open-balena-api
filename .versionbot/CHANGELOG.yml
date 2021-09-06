@@ -1,4 +1,15 @@
 - commits:
+    - subject: Trigger updates when image env vars change like for other env vars
+      hash: dd4fd60ddca05625e04ab718d26f222aa5a27f95
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.155.5
+  date: 2021-09-06T11:57:00.129Z
+- commits:
     - subject: Add additional naming words
       hash: 91ad3772e7e996cfdc8ab7661a6e51a29c6ce92e
       body: ''
