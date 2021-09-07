@@ -1,4 +1,10 @@
-import { sbvrUtils, hooks, errors, permissions } from '@balena/pinejs';
+import {
+	dbModule,
+	sbvrUtils,
+	hooks,
+	errors,
+	permissions,
+} from '@balena/pinejs';
 import type { FilterObj } from 'pinejs-client-core';
 import * as _ from 'lodash';
 import { ADVISORY_LOCK_NAMESPACES } from '../../../lib/config';
@@ -6,6 +12,17 @@ import { groupByMap } from '../../../lib/utils';
 import type { PickDeferred, Release } from '../../../balena-model';
 
 const { BadRequestError } = errors;
+
+const ADVISORY_LOCK_NAMESPACE_KEY =
+	'release__revision__belongs_to__application';
+dbModule.registerTransactionLockNamespace(
+	ADVISORY_LOCK_NAMESPACE_KEY,
+	ADVISORY_LOCK_NAMESPACES[ADVISORY_LOCK_NAMESPACE_KEY],
+);
+
+const getAdvisoryLockForApp = async (tx: Tx, appId: number) => {
+	await tx.getTxLevelLock(ADVISORY_LOCK_NAMESPACE_KEY, appId);
+};
 
 const preventChangingFinalToDraft = async (
 	args: sbvrUtils.HookArgs & { tx: Tx },
@@ -35,20 +52,6 @@ const preventChangingFinalToDraft = async (
 			'Finalized releases cannot be converted to draft.',
 		);
 	}
-};
-
-const getAdvisoryLockForApp = async (tx: Tx, appId: number) => {
-	if (!Number.isInteger(appId)) {
-		// This should never happen, since Pine has already validated the value,
-		// but double-check it just to be sure what we are passing to the advisory lock.
-		throw new errors.BadRequestError(
-			'Invalid belongs_to__application parameter',
-		);
-	}
-	await tx.executeSql(`SELECT pg_advisory_xact_lock($1, $2);`, [
-		ADVISORY_LOCK_NAMESPACES.release__revision__belongs_to__application,
-		appId,
-	]);
 };
 
 const getNextRevision = async (
