@@ -1,4 +1,17 @@
 - commits:
+    - subject: Support generating named provisioning keys
+      hash: 9f7a0ff8b495b2528ae644e46dcf36e8e1dd409d
+      body: ''
+      footer:
+        Change-Type: minor
+        change-type: minor
+        Signed-off-by: Nitish Agarwal 1592163+nitishagar@users.noreply.github.com
+        signed-off-by: Nitish Agarwal 1592163+nitishagar@users.noreply.github.com
+      author: Nitish Agarwal
+      nested: []
+  version: 0.156.0
+  date: 2021-09-07T11:44:07.846Z
+- commits:
     - subject: Trigger updates when image env vars change like for other env vars
       hash: dd4fd60ddca05625e04ab718d26f222aa5a27f95
       body: ''
