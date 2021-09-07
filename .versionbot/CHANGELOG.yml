@@ -1,4 +1,58 @@
 - commits:
+    - subject: Use native pinejs advisory lock method
+      hash: 9e99d8ec078052ba58bb6e8d93e3769a25e07c99
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Depends-on: 'https://github.com/balena-io/pinejs/pull/495'
+        depends-on: 'https://github.com/balena-io/pinejs/pull/495'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Update pinejs from 14.30.0
+      hash: ca79a6104b5e54ad3a6f84b9c8830688a3d7d3ef
+      body: |
+        Update pinejs from 14.29.0 to 14.30.0
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested:
+        - commits:
+            - subject: >-
+                Add method for getting transaction level advisory locks in
+                Postgresql
+              hash: f1b14b73cccd50fdc0546a1b53696065b39c6e4f
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+              author: Thodoris Greasidis
+              nested: []
+          version: pinejs-14.30.0
+          date: 2021-09-07T12:37:18.173Z
+        - commits:
+            - subject: Update typescript to 4.4
+              hash: be625a7a8b8ac10fb95bfaaecd91ac6d5e27d7ca
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+              author: Thodoris Greasidis
+              nested: []
+          version: pinejs-14.29.1
+          date: 2021-09-07T11:00:20.611Z
+  version: 0.156.1
+  date: 2021-09-07T13:33:20.137Z
+- commits:
     - subject: Support generating named provisioning keys
       hash: 9f7a0ff8b495b2528ae644e46dcf36e8e1dd409d
       body: ''
