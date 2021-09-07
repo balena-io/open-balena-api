@@ -60,7 +60,11 @@ export const createProvisioningApiKey: RequestHandler = async (req, res) => {
 	}
 
 	try {
-		const apiKey = await $createProvisioningApiKey(req, appId);
+		const apiKey = await $createProvisioningApiKey(
+			req,
+			appId,
+			req.body.name ? { name: req.body.name } : {},
+		);
 		res.json(apiKey);
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {

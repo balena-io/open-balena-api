@@ -3,6 +3,9 @@ import { expect } from './test-lib/chai';
 import * as fixtures from './test-lib/fixtures';
 import { supertest, UserObjectParam } from './test-lib/supertest';
 import { version } from './test-lib/versions';
+import { sbvrUtils, permissions } from '@balena/pinejs';
+
+const { api } = sbvrUtils;
 
 describe('create provisioning apikey', function () {
 	before(async function () {
@@ -20,21 +23,32 @@ describe('create provisioning apikey', function () {
 	[
 		{
 			title: `using /api-key/application/:appId/provisioning endpoint`,
-			fn(user: UserObjectParam | undefined, applicationId: number) {
-				return supertest(user).post(
-					`/api-key/application/${applicationId}/provisioning`,
-				);
+			fn(
+				user: UserObjectParam | undefined,
+				applicationId: number,
+				provisioningKeyName?: string,
+			) {
+				return supertest(user)
+					.post(`/api-key/application/${applicationId}/provisioning`)
+					.send({
+						name: provisioningKeyName,
+					});
 			},
 		},
 		{
 			title: 'using the /api-key/v1/ endpoint',
-			fn(user: UserObjectParam | undefined, applicationId: number) {
+			fn(
+				user: UserObjectParam | undefined,
+				applicationId: number,
+				provisioningKeyName?: string,
+			) {
 				return supertest(user)
 					.post(`/api-key/v1/`)
 					.send({
 						actorType: 'application',
 						actorTypeId: applicationId,
 						roles: ['provisioning-api-key'],
+						name: provisioningKeyName,
 					});
 			},
 		},
@@ -54,13 +68,33 @@ describe('create provisioning apikey', function () {
 			});
 
 			it('should be able to create a provisioning key', async function () {
+				const applicationId = this.application.id;
 				const { body: provisioningKey } = await fn(
 					this.user,
-					this.application.id,
+					applicationId,
+					`provision-key-${applicationId}`,
 				).expect(200);
 
 				expect(provisioningKey).to.be.a('string');
 				this.provisioningKey = provisioningKey;
+
+				// check the name assigned
+				const apiKeyResp = await api.resin.get({
+					resource: 'api_key',
+					passthrough: {
+						req: permissions.root,
+					},
+					id: {
+						key: provisioningKey,
+					},
+					options: {
+						$select: 'name',
+					},
+				});
+
+				expect(apiKeyResp).to.have.property('name');
+				expect(apiKeyResp?.name).to.be.a('string');
+				expect(apiKeyResp?.name).to.equal(`provision-key-${applicationId}`);
 			});
 
 			it('then register a device using the provisioning key', async function () {
