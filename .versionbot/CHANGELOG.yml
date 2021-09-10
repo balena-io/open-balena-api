@@ -1,4 +1,21 @@
 - commits:
+    - subject: Stop exporting the deviceTypes.getDeviceTypes() request handler
+      hash: d51036c6e93c6ba097a6525cf4e82e3b06ca86fe
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/h53eF4Ud-6Zq3Vklp1M0D6RSIUZ
+        see: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/h53eF4Ud-6Zq3Vklp1M0D6RSIUZ
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.157.0
+  date: 2021-09-10T12:50:10.789Z
+- commits:
     - subject: Use native pinejs advisory lock method
       hash: 9e99d8ec078052ba58bb6e8d93e3769a25e07c99
       body: ''
