@@ -2,7 +2,7 @@ import * as cacheManager from 'cache-manager';
 import redisStore = require('cache-manager-redis-store');
 import type { Options as MemoizeeOptions } from 'memoizee';
 import primitiveKey = require('memoizee/normalizers/primitive');
-import { REDIS_HOST, REDIS_PORT, version } from '../../lib/config';
+import { REDIS_HOST, REDIS_PORT, SECONDS, version } from '../../lib/config';
 
 export type Defined = string | number | boolean | symbol | bigint | object;
 
@@ -19,6 +19,7 @@ export function multiCacheMemoizee<
 		undefinedAs: Defined;
 		promise: true;
 		primitive: true;
+		/** In milliseconds like memoizee */
 		maxAge: number;
 	} & Pick<MemoizeeOptions<any>, 'preFetch' | 'max' | 'normalizer'>,
 ): T;
@@ -82,7 +83,8 @@ export function multiCacheMemoizee<
 		cacheKey,
 		normalizer,
 		{
-			ttl: maxAge,
+			// ttl is in seconds, so we need to divide by 1000
+			ttl: maxAge / SECONDS,
 			max,
 			refreshThreshold,
 			// Treat everything as cacheable, including `undefined` - the same as memoizee
