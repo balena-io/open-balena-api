@@ -1,4 +1,21 @@
 - commits:
+    - subject: 'multiCache: Fix using milliseconds instead of seconds for the ttl'
+      hash: 8cc031756d22f83fe31ec5ee24bf3c19ed56aa85
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: >-
+          https://github.com/BryanDonovan/node-cache-manager/blob/master/README.md#single-store
+        see: >-
+          https://github.com/BryanDonovan/node-cache-manager/blob/master/README.md#single-store
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.157.1
+  date: 2021-09-10T20:23:12.441Z
+- commits:
     - subject: Stop exporting the deviceTypes.getDeviceTypes() request handler
       hash: d51036c6e93c6ba097a6525cf4e82e3b06ca86fe
       body: ''
