@@ -8,6 +8,7 @@
 		"strict": true,
 		"strictPropertyInitialization": false,
 		"strictFunctionTypes": false,
+		"useUnknownInCatchVariables": false,
 		"noImplicitThis": false,
 		"noUnusedParameters": true,
 		"noUnusedLocals": true,
