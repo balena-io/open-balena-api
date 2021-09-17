@@ -9,6 +9,9 @@ ADD COLUMN IF NOT EXISTS "email" TEXT;
 ALTER TABLE "user"
 ADD COLUMN IF NOT EXISTS "jwt secret" VARCHAR(255) NULL;
 
+ALTER TABLE "application"
+ALTER COLUMN "is of-class" SET DEFAULT 'fleet';
+
 ALTER TABLE "device"
 ALTER COLUMN "api heartbeat state" SET DEFAULT 'unknown';
 

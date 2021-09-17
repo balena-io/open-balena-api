@@ -90,6 +90,9 @@ Term: app name
 Term: build log
 	Concept Type: Text (Type)
 
+Term: class
+	Concept Type: Short Text (Type)
+
 Term: commit
 	Concept Type: Short Text (Type)
 
@@ -302,6 +305,10 @@ Term: application
 	Concept Type: actor (Auth)
 
 	Fact type: application [should track latest release]
+
+	Fact type: application is of class
+		Necessity: each application is of exactly one class.
+		Definition: "fleet" or "block" or "app"
 
 	Fact type: application has env var name
 		Term Form: application environment variable
