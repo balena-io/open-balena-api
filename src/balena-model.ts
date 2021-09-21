@@ -202,6 +202,7 @@ export interface Application {
 	id: number;
 	actor: number;
 	should_track_latest_release: boolean;
+	is_of__class: 'fleet' | 'block' | 'app';
 	organization: { __id: number } | [Organization];
 	app_name: string;
 	slug: string;
@@ -399,6 +400,7 @@ export interface Release {
 	revision: number | null;
 	is_final: boolean;
 	semver: string;
+	version: {};
 }
 
 export interface ReleaseTag {
@@ -469,6 +471,7 @@ export interface MyApplication {
 	id: number;
 	actor: number;
 	should_track_latest_release: boolean;
+	is_of__class: 'fleet' | 'block' | 'app';
 	organization: { __id: number } | [Organization];
 	app_name: string;
 	slug: string;
