@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add support for modelling multi-container host OS apps and blocks
+      hash: 0ad8d982e1d78b6e397378578323b8545d8a69e9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.157.3
+  date: 2021-09-17T15:13:11.471Z
+- commits:
     - subject: Update dependencies
       hash: e13ee6821a0f435978a973de017cef57570caa8f
       body: |
