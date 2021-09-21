@@ -203,9 +203,13 @@ function handleStreamingWrite(
 
 	parser.on('error', close).on('data', (sLog: SupervisorLog) => {
 		const log = supervisor.convertLog(sLog);
-		if (log) {
-			buffer.push(log);
+		if (!log) {
+			return;
 		}
+		if (buffer.length === 0) {
+			schedule();
+		}
+		buffer.push(log);
 		// If we buffer too much or the backend goes down, pause it for back-pressure
 		if (buffer.length >= WRITE_BUFFER_LIMIT || !backend.available) {
 			req.pause();
@@ -222,7 +226,9 @@ function handleStreamingWrite(
 		req.pipe(parser);
 	}
 
-	async function schedule() {
+	let publishScheduled = false;
+
+	async function tryPublish() {
 		try {
 			// Don't flush if the backend is reporting as unavailable
 			if (buffer.length && backend.available) {
@@ -244,18 +250,25 @@ function handleStreamingWrite(
 				// Wait for publishing to complete
 				await Promise.all([publishingToRedis, publishingToLoki]);
 			}
+			publishScheduled = false;
 
-			// If headers were sent, it means the connection is ended
-			if (!res.headersSent || buffer.length) {
-				// If the backend goes down temporarily, ease down the polling
-				const delay = backend.available
-					? STREAM_FLUSH_INTERVAL
-					: BACKEND_UNAVAILABLE_FLUSH_INTERVAL;
-				setTimeout(schedule, delay);
+			// Reschedule publishing if more logs arrived whilst we were in progress
+			if (buffer.length > 0) {
+				schedule();
 			}
 		} catch (err) {
 			handleStoreErrors(req, res, err);
 		}
 	}
-	schedule();
+	function schedule() {
+		if (publishScheduled != null) {
+			return;
+		}
+		// If the backend goes down temporarily, ease down the polling
+		const delay = backend.available
+			? STREAM_FLUSH_INTERVAL
+			: BACKEND_UNAVAILABLE_FLUSH_INTERVAL;
+		setTimeout(tryPublish, delay);
+		publishScheduled = true;
+	}
 }
