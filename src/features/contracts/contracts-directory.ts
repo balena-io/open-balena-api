@@ -14,7 +14,6 @@ import { captureException } from '../../infra/error-handling';
 
 const pipeline = util.promisify(stream.pipeline);
 const exists = util.promisify(fs.exists);
-const mkdir = util.promisify(fs.mkdir);
 
 const CONTRACTS_BASE_DIR = path.join(os.tmpdir(), 'contracts');
 
@@ -96,7 +95,7 @@ const prepareContractDirectory = async (repo: RepositoryInfo) => {
 		`${repo.owner}-${repo.name}`,
 	);
 	if (!(await exists(archiveDir))) {
-		await mkdir(archiveDir, { recursive: true });
+		await fs.promises.mkdir(archiveDir, { recursive: true });
 	}
 
 	return archiveDir;
