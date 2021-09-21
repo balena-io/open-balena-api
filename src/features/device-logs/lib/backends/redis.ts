@@ -1,13 +1,11 @@
 import * as avro from 'avsc';
-import * as Bluebird from 'bluebird';
 import { EventEmitter } from 'events';
 import * as _ from 'lodash';
 import * as redis from 'redis';
-
 import { errors } from '@balena/pinejs';
+import { promisify } from 'util';
 
 import { captureException } from '../../../../infra/error-handling';
-
 import { DAYS, MINUTES, REDIS_HOST, REDIS_PORT } from '../../../../lib/config';
 import type {
 	DeviceLog,
@@ -16,6 +14,22 @@ import type {
 	LogWriteContext,
 	Subscription,
 } from '../struct';
+
+// Add promisified methods to the redis prototypes so we don't need to promisify them each time
+declare module 'redis' {
+	interface RedisClient {
+		lrangeAsync(key: string, start: number, stop: number): Promise<string[]>;
+	}
+	interface Multi {
+		execAsync(): Promise<any[]>;
+	}
+}
+redis.RedisClient.prototype.lrangeAsync = promisify(
+	redis.RedisClient.prototype.lrange,
+);
+redis.Multi.prototype.execAsync = promisify(
+	redis.Multi.prototype.exec_transaction,
+);
 
 const { ServiceUnavailableError, BadRequestError } = errors;
 
@@ -57,9 +71,11 @@ export class RedisBackend implements DeviceLogsBackend {
 			throw new ServiceUnavailableError();
 		}
 		const key = this.getKey(ctx);
-		const payloads = await Bluebird.fromCallback<string[]>((callback) => {
-			this.cmds.lrange(key, count === Infinity ? 0 : -count, -1, callback);
-		});
+		const payloads = await this.cmds.lrangeAsync(
+			key,
+			count === Infinity ? 0 : -count,
+			-1,
+		);
 		return _(payloads).map(this.fromRedisLog).compact().value();
 	}
 
@@ -95,9 +111,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		// Devices with no new logs eventually expire
 		tx.pexpire(key, KEY_EXPIRATION);
 		tx.pexpire(bytesWrittenKey, KEY_EXPIRATION);
-		return await Bluebird.fromCallback((callback) => {
-			tx.exec(callback);
-		});
+		return await tx.execAsync();
 	}
 
 	public subscribe(ctx: LogContext, subscription: Subscription) {
