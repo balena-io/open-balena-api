@@ -1,4 +1,15 @@
 - commits:
+    - subject: Promisify redis methods once for logs rather than wrapping each call
+      hash: 1027d1dfbf2b5464518828624a27d131899de97c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.157.4
+  date: 2021-09-21T15:44:41.428Z
+- commits:
     - subject: Add support for modelling multi-container host OS apps and blocks
       hash: 0ad8d982e1d78b6e397378578323b8545d8a69e9
       body: ''
