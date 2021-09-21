@@ -1,4 +1,15 @@
 - commits:
+    - subject: Promisify the redis prototype rather than each instance individually
+      hash: ee128aee2c06b834c69a97c2b7414f98ceca8668
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.157.5
+  date: 2021-09-21T16:11:11.798Z
+- commits:
     - subject: Promisify redis methods once for logs rather than wrapping each call
       hash: 1027d1dfbf2b5464518828624a27d131899de97c
       body: ''
