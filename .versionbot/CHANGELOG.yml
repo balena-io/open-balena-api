@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix check if publish is already scheduled
+      hash: 767d6013c323383616a3ef41cd597b34c6895632
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.157.7
+  date: 2021-09-22T17:46:55.056Z
+- commits:
     - subject: Only schedule publishing logs when we have some in the buffer
       hash: 861483540cc9a5e0223e0d5d43162fcfcd674440
       body: |
