@@ -261,7 +261,7 @@ function handleStreamingWrite(
 		}
 	}
 	function schedule() {
-		if (publishScheduled != null) {
+		if (publishScheduled !== false) {
 			return;
 		}
 		// If the backend goes down temporarily, ease down the polling
