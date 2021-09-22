@@ -1,4 +1,17 @@
 - commits:
+    - subject: Only schedule publishing logs when we have some in the buffer
+      hash: 861483540cc9a5e0223e0d5d43162fcfcd674440
+      body: |
+        This avoids idle connections from polling for new logs and instead are
+        scheduled automatically once a log comes in
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.157.6
+  date: 2021-09-21T16:21:51.647Z
+- commits:
     - subject: Promisify the redis prototype rather than each instance individually
       hash: ee128aee2c06b834c69a97c2b7414f98ceca8668
       body: ''
