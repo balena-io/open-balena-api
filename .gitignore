@@ -36,6 +36,7 @@ nbproject
 node_modules
 build
 dist
+/.materialized-schema.sql
 
 # Node environment
 config/env
