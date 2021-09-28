@@ -75,6 +75,27 @@ describe('releases', () => {
 			})
 			.expect(201);
 	});
+
+	it('should be able to update the known_issue_list_list of a release', async () => {
+		await supertest(user)
+			.patch(`/${version}/release(${fx.releases.release1.id})`)
+			.send({
+				known_issue_list: 'new issue description',
+			})
+			.expect(200);
+
+		const {
+			body: {
+				d: [release],
+			},
+		} = await supertest(user).get(
+			`/${version}/release(${fx.releases.release1.id})?$select=known_issue_list`,
+		);
+		expect(release).to.have.property(
+			'known_issue_list',
+			'new issue description',
+		);
+	});
 });
 
 const getTopRevision = async (

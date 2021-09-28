@@ -144,6 +144,9 @@ Term: install date
 Term: ip address
 	Concept Type: Short Text (Type)
 
+Term: known issue list
+	Concept Type: Text (Type)
+
 Term: label name
 	Concept Type: Short Text (Type)
 
@@ -672,6 +675,8 @@ Fact type: release has semver patch
 Fact type: release has revision
 	Necessity: each release has at most one revision.
 	Necessity: each release that has a revision, has a revision that is greater than or equal to 0.
+Fact type: release has known issue list
+	Necessity: each release has at most one known issue list.
 
 
 -- service environment variable
