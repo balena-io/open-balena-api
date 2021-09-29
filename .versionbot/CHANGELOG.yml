@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add npm command to generate the sql schema
+      hash: 2c8a6c3328ccb18089057f324491e55a31a8b747
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.157.8
+  date: 2021-09-29T11:53:31.300Z
+- commits:
     - subject: Fix check if publish is already scheduled
       hash: 767d6013c323383616a3ef41cd597b34c6895632
       body: ''
