@@ -155,22 +155,22 @@ interface RequestDevicesOpts extends FixedMethodRequestDevicesOpts {
 // the request will be used to get devices,
 // if it is not passed then("guest" permissions will be used to get the devices.
 // - method is the HTTP method for the request, defaults to 'POST'
-export async function requestDevices(
+async function requestDevices(
 	opts: RequestDevicesOpts & {
 		wait?: true;
 	},
 ): Promise<RequestResponse[]>;
-export async function requestDevices(
+async function requestDevices(
 	opts: RequestDevicesOpts & {
 		wait: false;
 	},
 ): Promise<void>;
 // This override is identical to the main form in order for `postDevices` to be able
 // to call it with the generic form
-export async function requestDevices(
+async function requestDevices(
 	opts: RequestDevicesOpts,
 ): Promise<void | RequestResponse[]>;
-export async function requestDevices({
+async function requestDevices({
 	url,
 	filter,
 	data,
@@ -212,7 +212,9 @@ export async function requestDevices({
 		}
 		throw new NotFoundError('No online device(s) found');
 	}
-	if (method !== 'GET') {
+	// Check for device update permission, except for
+	// internal operation of the platform.
+	if (method !== 'GET' && req !== permissions.root) {
 		await Promise.all(
 			deviceIds.map(async (deviceId) => {
 				const res = (await resinApi.post({
