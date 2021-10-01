@@ -9,6 +9,7 @@ import { version } from './test-lib/versions';
 import sinon = require('sinon');
 import configMock = require('../src/lib/config');
 import * as stateMock from '../src/features/device-heartbeat';
+import { waitFor } from './test-lib/common';
 import * as fixtures from './test-lib/fixtures';
 
 const POLL_MSEC = 2000;
@@ -47,20 +48,6 @@ stateMock.getInstance()['updateDeviceModel'] = function (
 // register the mocks...
 mockery.registerMock('../src/lib/config', configMock);
 mockery.registerMock('../src/lib/device-online-state', stateMock);
-
-const waitFor = async (fn: () => boolean, timeout: number = 10000) => {
-	let testLimit = Math.max(timeout, 50) / 50;
-	let result = fn();
-	while (!result && testLimit > 0) {
-		await Bluebird.delay(50);
-		testLimit--;
-		result = fn();
-	}
-
-	if (!result) {
-		throw new Error('Timeout waiting for result');
-	}
-};
 
 describe('Device State v2', () => {
 	let fx: fixtures.Fixtures;
@@ -187,7 +174,7 @@ describe('Device State v2', () => {
 				const statsEventSpy = sinon.spy();
 				stateMock.getInstance().on('stats', statsEventSpy);
 
-				await waitFor(() => statsEventSpy.callCount >= 3);
+				await waitFor({ checkFn: () => statsEventSpy.callCount >= 3 });
 
 				stateMock.getInstance().off('stats', statsEventSpy);
 			});
@@ -229,7 +216,7 @@ describe('Device State v2', () => {
 							await getStateV2();
 
 							if (heartbeatAfterGet !== DeviceOnlineStates.Unknown) {
-								await waitFor(() => stateChangeEventSpy.called);
+								await waitFor({ checkFn: () => stateChangeEventSpy.called });
 							} else {
 								await Bluebird.delay(1000);
 								expect(stateChangeEventSpy.called).to.be.false;
@@ -263,7 +250,7 @@ describe('Device State v2', () => {
 							stateChangeEventSpy.resetHistory();
 							await Bluebird.delay(devicePollInterval);
 
-							await waitFor(() => stateChangeEventSpy.called);
+							await waitFor({ checkFn: () => stateChangeEventSpy.called });
 
 							expect(tracker.states[getDevice().uuid]).to.equal(
 								DeviceOnlineStates.Timeout,
@@ -286,7 +273,7 @@ describe('Device State v2', () => {
 
 							await getStateV2();
 
-							await waitFor(() => stateChangeEventSpy.called);
+							await waitFor({ checkFn: () => stateChangeEventSpy.called });
 
 							expect(tracker.states[getDevice().uuid]).to.equal(
 								DeviceOnlineStates.Online,
@@ -312,7 +299,7 @@ describe('Device State v2', () => {
 							await Bluebird.delay(devicePollInterval + TIMEOUT_SEC * 1000);
 
 							// it will be called for TIMEOUT and OFFLINE...
-							await waitFor(() => stateChangeEventSpy.calledTwice);
+							await waitFor({ checkFn: () => stateChangeEventSpy.calledTwice });
 
 							expect(tracker.states[getDevice().uuid]).to.equal(
 								DeviceOnlineStates.Offline,

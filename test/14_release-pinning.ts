@@ -1,5 +1,6 @@
 import { expect } from './test-lib/chai';
 
+import { connectDeviceAndWaitForUpdate } from './test-lib/connect-device-and-wait';
 import * as fakeDevice from './test-lib/fake-device';
 import { supertest, UserObjectParam } from './test-lib/supertest';
 import { version } from './test-lib/versions';
@@ -295,6 +296,17 @@ describe(`Tracking latest release`, () => {
 				(si: AnyObject) => si.installs__service[0].service_name,
 			);
 			expect(serviceNamesAfter).to.include('new-untracked-release-service');
+		});
+
+		it('should notify the supervisor when pinning the application to a release pinned', async function () {
+			await connectDeviceAndWaitForUpdate(device3.uuid, version, async () => {
+				await supertest(admin)
+					.patch(`/${version}/application(${application3Id})`)
+					.send({
+						should_be_running__release: app3ReleaseId,
+					})
+					.expect(200);
+			});
 		});
 	});
 });
