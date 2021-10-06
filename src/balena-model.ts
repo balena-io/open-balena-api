@@ -398,6 +398,7 @@ export interface Release {
 	semver_minor: number;
 	semver_patch: number;
 	revision: number | null;
+	known_issue_list: string | null;
 	is_final: boolean;
 	semver: string;
 	version: {};

@@ -176,6 +176,7 @@ const loaders: Dictionary<LoaderFunc> = {
 					'is_invalidated',
 					'is_final',
 					'is_passing_tests',
+					'known_issue_list',
 				),
 			},
 			user,
