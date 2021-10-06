@@ -1,4 +1,18 @@
 - commits:
+    - subject: Add release known_issue property
+      hash: 50e26210f865a772f4b203a4a10b6850d9fdf705
+      body: |
+        Add release known_issue property
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Andrea Rosci <andrear@balena.io>
+        signed-off-by: Andrea Rosci <andrear@balena.io>
+      author: JSReds
+      nested: []
+  version: 0.158.0
+  date: 2021-10-06T11:36:39.175Z
+- commits:
     - subject: 'device-proxy: Skip canAccess check for internal root operations'
       hash: e7686f7c20f23a4babf41ae0326708514325cac4
       body: ''
