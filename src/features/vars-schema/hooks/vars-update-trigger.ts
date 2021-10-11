@@ -5,6 +5,10 @@ import { captureException } from '../../../infra/error-handling';
 
 import { postDevices } from '../../device-proxy/device-proxy';
 
+interface CustomObject {
+	affectedDevices?: number[];
+}
+
 // Env vars hooks
 const addEnvHooks = (
 	resource: string,
@@ -14,46 +18,46 @@ const addEnvHooks = (
 		},
 	) => Promise<Filter | undefined>,
 ): void => {
-	const envVarHook: hooks.Hooks = {
-		PRERUN: async (args) => {
-			try {
-				const filter = await buildFilter(args);
-				if (filter == null) {
-					return;
-				}
-				const devices = await args.api.get({
-					resource: 'device',
-					options: {
-						$select: 'id',
-						$filter: filter,
-					},
-				});
-				args.request.custom.devices = devices.map(({ id }) => id);
-			} catch (err) {
-				captureException(err, `Error building the ${resource} filter`, {
-					req: args.req,
-				});
-				throw err;
-			}
+	const getAffectedDeviceIds = async (
+		args: hooks.HookArgs & {
+			tx: Tx;
 		},
-		POSTRUN: async ({ req, request }) => {
-			const { devices } = request.custom;
+	) => {
+		try {
+			const filter = await buildFilter(args);
+			if (filter == null) {
+				return;
+			}
+			const devices = (await args.api.get({
+				resource: 'device',
+				options: {
+					$select: 'id',
+					$filter: filter,
+				},
+			})) as Array<{ id: number }>;
+			return devices.map(({ id }) => id);
+		} catch (err) {
+			captureException(err, `Error building the ${resource} filter`, {
+				req: args.req,
+			});
+			throw err;
+		}
+	};
+
+	const envVarHook: hooks.Hooks = {
+		POSTRUN: async (args) => {
+			const { req, request } = args;
+			const devices =
+				(request.custom as CustomObject).affectedDevices ??
+				(await getAffectedDeviceIds(args));
 			if (!devices || devices.length === 0) {
 				// If we have no devices affected then no point triggering an update.
 				return;
 			}
-			const filter = { id: { $in: devices } };
-
-			// If we can't find the matching env var to update then we don't ping the devices.
-			// - This should only happen in the case of deleting an application, where we delete all of the env vars at once.
-			if (filter == null) {
-				return;
-			}
-
 			await postDevices({
 				url: '/v1/update',
 				req,
-				filter,
+				filter: { id: { $in: devices } },
 				// Don't wait for the posts to complete,
 				// as they may take a long time and we've already sent the prompt to update.
 				wait: false,
@@ -64,7 +68,13 @@ const addEnvHooks = (
 	hooks.addPureHook('POST', 'resin', resource, envVarHook);
 	hooks.addPureHook('PATCH', 'resin', resource, envVarHook);
 	hooks.addPureHook('PUT', 'resin', resource, envVarHook);
-	hooks.addPureHook('DELETE', 'resin', resource, envVarHook);
+	hooks.addPureHook('DELETE', 'resin', resource, {
+		PRERUN: async (args) => {
+			(args.request.custom as CustomObject).affectedDevices =
+				await getAffectedDeviceIds(args);
+		},
+		...envVarHook,
+	});
 };
 
 const addAppEnvHooks = (resource: string) =>
