@@ -1,4 +1,19 @@
 - commits:
+    - subject: 'vars-update-trigger: Get the affected devices in POSTRUN when possible'
+      hash: b9f2096745dad513350639a879a573d28030e79c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: 'https://github.com/balena-io/balena-api/issues/3338'
+        see: 'https://github.com/balena-io/balena-api/issues/3338'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.158.1
+  date: 2021-10-11T10:55:25.671Z
+- commits:
     - subject: Add release known_issue property
       hash: 50e26210f865a772f4b203a4a10b6850d9fdf705
       body: |
