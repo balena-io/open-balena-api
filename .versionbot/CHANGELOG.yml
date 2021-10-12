@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add an index to optimize overall status computed fact type
+      hash: 092c4be520c63695e242cdadc3b0a6bce027b19a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.159.1
+  date: 2021-10-12T19:57:28.721Z
+- commits:
     - subject: Add a cache for vpn auth requests
       hash: cfe84cd2303a88260f4c6f712f45fe87812796a0
       body: ''
