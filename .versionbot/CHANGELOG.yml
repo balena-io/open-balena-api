@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add a cache for vpn auth requests
+      hash: cfe84cd2303a88260f4c6f712f45fe87812796a0
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.159.0
+  date: 2021-10-12T17:17:44.002Z
+- commits:
     - subject: 'vars-update-trigger: Get the affected devices in POSTRUN when possible'
       hash: b9f2096745dad513350639a879a573d28030e79c
       body: ''
