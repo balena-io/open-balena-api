@@ -86,7 +86,6 @@ export const getCompressedSize = multiCacheMemoizee(
 	},
 	{
 		cacheKey: 'getCompressedSize',
-		undefinedAs: false,
 		promise: true,
 		primitive: true,
 		preFetch: true,
