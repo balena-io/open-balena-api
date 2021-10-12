@@ -101,9 +101,8 @@ ON "image install" ("is provided by-release");
 -- Also optimizes for device state query
 CREATE INDEX IF NOT EXISTS "image_install_image_device_idx"
 ON "image install" ("installs-image", "device");
--- Also optimizes for device state query
-CREATE INDEX IF NOT EXISTS "image_install_device_image_idx"
-ON "image install" ("device", "installs-image");
+
+-- "image install" ("device", "installs-image") exists in an automated unique index
 
 -- "image-is part of-release"."image" is the first part of an automated unique index
 -- Also optimizes device state query
