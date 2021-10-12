@@ -27,7 +27,6 @@ export const checkDeviceExists = multiCacheMemoizee(
 	},
 	{
 		cacheKey: 'checkDeviceExists',
-		undefinedAs: false,
 		promise: true,
 		primitive: true,
 		maxAge: 5 * MINUTES,

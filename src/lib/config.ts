@@ -209,6 +209,10 @@ export const VPN_HOST = requiredVar('VPN_HOST');
 export const VPN_PORT = requiredVar('VPN_PORT');
 export const VPN_SERVICE_API_KEY = requiredVar('VPN_SERVICE_API_KEY');
 export const VPN_GUEST_API_KEY = process.env.VPN_GUEST_API_KEY;
+export const VPN_AUTH_CACHE_TIMEOUT = intVar(
+	'VPN_AUTH_CACHE_TIMEOUT',
+	5 * MINUTES,
+);
 
 export const DEFAULT_SUPERVISOR_POLL_INTERVAL = intVar(
 	'DEFAULT_SUPERVISOR_POLL_INTERVAL',

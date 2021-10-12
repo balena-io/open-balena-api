@@ -1,28 +1,56 @@
 import type { Request, Response } from 'express';
 
-import { sbvrUtils } from '@balena/pinejs';
-
+import * as _ from 'lodash';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 import {
 	captureException,
 	handleHttpErrors,
 	translateError,
 } from '../../infra/error-handling';
-import { once } from 'lodash';
+import { multiCacheMemoizee } from '../../infra/cache';
+import { VPN_AUTH_CACHE_TIMEOUT } from '../../lib/config';
 
 const { api } = sbvrUtils;
 
-const authQuery = once(() =>
-	api.resin.prepare<{ uuid: string }>({
-		resource: 'device',
-		id: {
-			uuid: { '@': 'uuid' },
+const checkAuth = (() => {
+	const authQuery = _.once(() =>
+		api.resin.prepare<{ uuid: string }>({
+			resource: 'device',
+			id: {
+				uuid: { '@': 'uuid' },
+			},
+			options: {
+				$select: 'id',
+			},
+		}),
+	);
+	const cachedProps = ['user', 'apiKey'].map(_.toPath);
+	const $checkAuth = multiCacheMemoizee(
+		async (uuid: string, req: permissions.PermissionReq): Promise<boolean> => {
+			const device = await authQuery()({ uuid }, undefined, { req });
+			return device != null;
 		},
-		options: {
-			$select: 'id',
+		{
+			cacheKey: 'checkAuth',
+			promise: true,
+			primitive: true,
+			maxAge: VPN_AUTH_CACHE_TIMEOUT,
 		},
-	}),
-);
-const clientConnectQuery = once(() =>
+	);
+	return (uuid: string, req: permissions.PermissionReq) => {
+		return $checkAuth(
+			uuid,
+			// Pick only the important props to increase cache hit rate
+			_.pick(
+				req,
+				// @ts-expect-error: lodash typings do not allow a single array of property paths arrays but lodash itself does and it has better performance than property path strings
+				cachedProps,
+			),
+		);
+	};
+})();
+
+const clientConnectQuery = _.once(() =>
 	api.resin.prepare<{ uuid: string }>({
 		method: 'PATCH',
 		resource: 'device',
@@ -34,7 +62,7 @@ const clientConnectQuery = once(() =>
 		},
 	}),
 );
-const clientDisconnectQuery = once(() =>
+const clientDisconnectQuery = _.once(() =>
 	api.resin.prepare<{
 		uuid: string;
 		serviceId: number;
@@ -61,11 +89,7 @@ export const authDevice = async (
 	res: Response,
 ): Promise<void> => {
 	try {
-		const device = await authQuery()(
-			{ uuid: req.params.device_uuid },
-			undefined,
-			{ req },
-		);
+		const device = await checkAuth(req.params.device_uuid, req);
 		// for now, if the api key is able to read the device,
 		// it has vpn access
 		if (device) {
