@@ -1,4 +1,17 @@
 - commits:
+    - subject: Drop duplicate image install index
+      hash: 39108eb8f59cc77ee4a7bd7dfcb9e5b4895a5458
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.159.2
+  date: 2021-10-12T20:26:29.636Z
+- commits:
     - subject: Add an index to optimize overall status computed fact type
       hash: 092c4be520c63695e242cdadc3b0a6bce027b19a
       body: ''
