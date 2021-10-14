@@ -1,5 +1,4 @@
-import { permissions } from '@balena/pinejs';
-import { api } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 import * as _ from 'lodash';
 import { expect } from './test-lib/chai';
 import { version } from './test-lib/versions';
@@ -58,7 +57,7 @@ export const addFakeDeviceTypes = async () => {
 				is_of__cpu_architecture: 1,
 			},
 		].map(async (dt) => {
-			await api.resin.post({
+			await sbvrUtils.api.resin.post({
 				resource: 'device_type',
 				passthrough: {
 					req: permissions.root,

@@ -19,10 +19,9 @@ import {
 	REDIS_HOST,
 	REDIS_PORT,
 } from '../../lib/config';
-import {
-	InternalRequestError,
-	TooManyRequestsError,
-} from '@balena/pinejs/out/sbvr-api/errors';
+import { errors } from '@balena/pinejs';
+
+const { InternalRequestError, TooManyRequestsError } = errors;
 
 const logRedisError = (err: Error) => {
 	// do not log these errors, because this would flood our logs
