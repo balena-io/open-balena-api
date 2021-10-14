@@ -1,4 +1,103 @@
 - commits:
+    - subject: Update dependencies
+      hash: 09e321f1d05961d53932b09190be06e9d764f6af
+      body: |
+        Update pinejs from 14.30.3 to 14.33.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Add the ability to enable caching of api key permissions
+              hash: a2fe4c9061aa20c2bf53693e27876ea5ab897254
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+            - subject: Add the ability to enable caching of user permissions
+              hash: 3e7991469eecbc627defce4664e8c0a34f139fa0
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.33.0
+          date: 2021-10-14T16:30:28.431Z
+        - commits:
+            - subject: >-
+                Allow passing a function as the cache params to enable custom
+                caching
+              hash: 3e790d9961a0d7f666021248668241264b453743
+              body: |
+                This allows using a different cache than the default of memoizee
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.32.0
+          date: 2021-10-14T16:13:19.016Z
+        - commits:
+            - subject: >-
+                Add the postgres pool error handler even when no PG_SCHEMA is
+                specified
+              hash: 6d4a75e69910ab27cb1a8096a30776da4173d6ca
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.31.2
+          date: 2021-10-05T15:23:45.569Z
+        - commits:
+            - subject: More usage of nullish coalescing
+              hash: ef543e12309224e97b126b33d4c78521b2a883a9
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.31.1
+          date: 2021-09-30T15:03:08.673Z
+        - commits:
+            - subject: >-
+                Add support for a `PINEJS_DEBUG` env var that is more strictly
+                checked
+              hash: 4b591eefae812a10f43d98e440d11bbfdded69c0
+              body: >
+                This means we can warn on/ignore invalid values rather than
+                giving a
+
+                potentially surprising result, eg `'0'` being truthy
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.31.0
+          date: 2021-09-29T17:05:19.795Z
+        - commits:
+            - subject: >-
+                Avoid creating a new readOnlyArgs object when args is already
+                read-only
+              hash: e0eed7914ac621a58dc0a78a9a63b00b69076753
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.30.4
+          date: 2021-09-29T14:58:29.987Z
+  version: 0.159.4
+  date: 2021-10-14T17:09:49.592Z
+- commits:
     - subject: Change image install index to only look at download progress existence
       hash: 5c84c2e5c60f09ee2a20fbea17c56ee2c64ee739
       body: ''
