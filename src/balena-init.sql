@@ -173,5 +173,5 @@ CREATE INDEX IF NOT EXISTS "release_belongs_to_app_revision_semver_idx"
 ON "release" ("belongs to-application", "revision", "semver major", "semver minor", "semver patch");
 
 -- Optimize the overall status computed fact type
-CREATE INDEX IF NOT EXISTS "image_install_status_dl_progress_device_idx"
-ON "image install" ("status", "download progress", "device");
+CREATE INDEX IF NOT EXISTS "image_install_status_dl_progress_exists_device_idx"
+ON "image install" ("status", ("download progress" IS NOT NULL), "device");
