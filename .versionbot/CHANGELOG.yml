@@ -1,4 +1,15 @@
 - commits:
+    - subject: Avoid deep imports into pinejs
+      hash: bc0f0ea4f6ec44e39cfbd1816e3af8407a045d8e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.159.5
+  date: 2021-10-14T17:36:08.811Z
+- commits:
     - subject: Update dependencies
       hash: 09e321f1d05961d53932b09190be06e9d764f6af
       body: |
