@@ -1,4 +1,15 @@
 - commits:
+    - subject: Change image install index to only look at download progress existence
+      hash: 5c84c2e5c60f09ee2a20fbea17c56ee2c64ee739
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.159.3
+  date: 2021-10-13T19:19:38.271Z
+- commits:
     - subject: Drop duplicate image install index
       hash: 39108eb8f59cc77ee4a7bd7dfcb9e5b4895a5458
       body: ''
