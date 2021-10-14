@@ -15,8 +15,7 @@ import {
 	RepositoryInfo,
 	synchronizeContracts,
 } from '../src/features/contracts';
-import { api } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
-import { permissions } from '@balena/pinejs';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 import { DeviceType } from './test-lib/device-type';
 
 const contractRepository: RepositoryInfo = {
@@ -25,7 +24,7 @@ const contractRepository: RepositoryInfo = {
 };
 
 const clearDeviceTypeResource = () => {
-	return api.resin.delete({
+	return sbvrUtils.api.resin.delete({
 		resource: 'device_type',
 		passthrough: { req: permissions.root },
 	});
