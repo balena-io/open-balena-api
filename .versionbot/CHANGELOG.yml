@@ -1,4 +1,15 @@
 - commits:
+    - subject: Expose the ability to remove individual entries from the cache
+      hash: 90ad0a018548a58f610859e388d2f50365856d7f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.159.6
+  date: 2021-10-15T12:45:19.730Z
+- commits:
     - subject: Avoid deep imports into pinejs
       hash: bc0f0ea4f6ec44e39cfbd1816e3af8407a045d8e
       body: ''
