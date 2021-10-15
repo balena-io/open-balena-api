@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add caching of `UnauthorizedError`s for the VPN auth cache
+      hash: 81f6eb264dc7f4fcfae58f652eebd5653bd8e7ad
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.159.7
+  date: 2021-10-15T17:04:39.139Z
+- commits:
     - subject: Expose the ability to remove individual entries from the cache
       hash: 90ad0a018548a58f610859e388d2f50365856d7f
       body: ''
