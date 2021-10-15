@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 
 import * as _ from 'lodash';
-import { sbvrUtils, permissions } from '@balena/pinejs';
+import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import {
 	captureException,
 	handleHttpErrors,
@@ -26,9 +26,19 @@ const checkAuth = (() => {
 	);
 	const cachedProps = ['user', 'apiKey'].map(_.toPath);
 	const $checkAuth = multiCacheMemoizee(
-		async (uuid: string, req: permissions.PermissionReq): Promise<boolean> => {
-			const device = await authQuery()({ uuid }, undefined, { req });
-			return device != null;
+		async (uuid: string, req: permissions.PermissionReq): Promise<number> => {
+			try {
+				const device = await authQuery()({ uuid }, undefined, { req });
+				// for now if the api key is able to read the device then it has vpn access
+				return device != null ? 200 : 403;
+			} catch (err) {
+				if (err instanceof errors.UnauthorizedError) {
+					// We handle `UnauthorizedError` specially so that we can cache it as it's a relatively
+					// common case for devices that have been deleted but are still online/trying to connect
+					return 401;
+				}
+				throw err;
+			}
 		},
 		{
 			cacheKey: 'checkAuth',
@@ -89,14 +99,8 @@ export const authDevice = async (
 	res: Response,
 ): Promise<void> => {
 	try {
-		const device = await checkAuth(req.params.device_uuid, req);
-		// for now, if the api key is able to read the device,
-		// it has vpn access
-		if (device) {
-			res.status(200).end();
-		} else {
-			res.status(403).end();
-		}
+		const statusCode = await checkAuth(req.params.device_uuid, req);
+		res.status(statusCode).end();
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
 			return;
