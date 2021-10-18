@@ -3,7 +3,7 @@ import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import cookieSession = require('cookie-session');
-import type { Application, Handler } from 'express';
+import type { Application, Handler, Request } from 'express';
 import type { Server } from 'http';
 import * as _ from 'lodash';
 import * as methodOverride from 'method-override';
@@ -280,6 +280,7 @@ export interface SetupOptions {
 	onLogin?: (
 		user: Pick<DbUser, typeof defaultFindUser$select[number]>,
 	) => PromiseLike<void> | void;
+	onLogWriteStreamInitialized?: (req: Request) => void;
 
 	getNewUserRole?: GetNewUserRoleFunction;
 }
@@ -379,7 +380,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	await options.onInitHooks?.(app);
 
 	const routes = await import('./routes');
-	routes.setup(app, options.onLogin);
+	routes.setup(app, options);
 	await options.onInitRoutes?.(app);
 
 	app.use(Raven.errorHandler());

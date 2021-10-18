@@ -26,6 +26,7 @@ import {
 	STREAM_FLUSH_INTERVAL,
 	WRITE_BUFFER_LIMIT,
 } from './config';
+import { SetupOptions } from '../../..';
 
 const {
 	BadRequestError,
@@ -143,15 +144,20 @@ export const store: RequestHandler = async (req: Request, res: Response) => {
 	}
 };
 
-export async function storeStream(req: Request, res: Response) {
-	const resinApi = api.resin.clone({ passthrough: { req } });
-	try {
-		const ctx = await getWriteContext(resinApi, req);
-		handleStreamingWrite(ctx, req, res);
-	} catch (err) {
-		handleStoreErrors(req, res, err);
-	}
-}
+export const storeStream =
+	(
+		onLogWriteStreamInitialized: SetupOptions['onLogWriteStreamInitialized'],
+	): RequestHandler =>
+	async (req: Request, res: Response) => {
+		const resinApi = api.resin.clone({ passthrough: { req } });
+		try {
+			const ctx = await getWriteContext(resinApi, req);
+			handleStreamingWrite(ctx, req, res);
+			onLogWriteStreamInitialized?.(req);
+		} catch (err) {
+			handleStoreErrors(req, res, err);
+		}
+	};
 
 function handleStoreErrors(req: Request, res: Response, err: Error) {
 	if (handleHttpErrors(req, res, err)) {

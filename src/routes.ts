@@ -16,12 +16,15 @@ import * as deviceProvisioning from './features/device-provisioning';
 import * as deviceProxy from './features/device-proxy';
 import * as vpn from './features/vpn';
 
-export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
+export const setup = (
+	app: Application,
+	{ onLogin, onLogWriteStreamInitialized }: SetupOptions,
+) => {
 	varsSchema.setup(app);
 	auth.setup(app, onLogin);
 	deviceProvisioning.setup(app);
 	deviceState.setup(app);
-	deviceLogs.setup(app);
+	deviceLogs.setup(app, onLogWriteStreamInitialized);
 	dependentDevices.setup(app);
 	deviceProxy.setup(app);
 	deviceConfig.setup(app);
