@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add an `onLogReadStreamInitialized` hook
+      hash: 18442509e8fcf09291bd4643f12764d34f31fabf
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.159.10
+  date: 2021-10-18T14:37:38.962Z
+- commits:
     - subject: Update open-balena-base to 12.2.0
       hash: 5ad6cf706ede64f0022f23eecbe05c5774ad7129
       body: |
