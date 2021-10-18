@@ -1,4 +1,118 @@
 - commits:
+    - subject: Update open-balena-base to 12.2.0
+      hash: 5ad6cf706ede64f0022f23eecbe05c5774ad7129
+      body: |
+        Update open-balena-base from 12.0.2 to 12.2.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 14.18.1 and npm to 6.14.15
+              hash: 613f0a4462227bc8dc2bb16aa91b3306c1c87b16
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-12.2.0
+          date: 2021-10-18T10:48:20.444Z
+        - commits:
+            - subject: >-
+                Simplify config by baking the device UUID into the DNS_TLD if
+                available
+              hash: 140aaf311c000963c51f3304a04221d386209c5a
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Akis Kesoglou
+              nested: []
+            - subject: Fix configuration for non-BoB deployments
+              hash: be5d9722d47b65ca511cfb66ab13ed1f3ddff372
+              body: >
+                The default value on the BALENA_DEVICE_UUID variable forced all
+                code paths that used to run optionally depending on whether
+                deployment was on a balenaOS device to run.
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Akis Kesoglou
+              nested: []
+          version: open-balena-base-12.1.1
+          date: 2021-10-14T11:28:26.606Z
+        - commits:
+            - subject: Auto-configure balenaMachine(bob)
+              hash: efb8da155b7bedec44558dfcd55cb6b535099c01
+              body: >
+                + allows balenaMachine(s)/BoB(s) to automatically configure
+                itself (without bob-cli)
+
+                + auto-configuration requires balena-ca and cert-manager to do
+                the heavy lifting prior
+
+                + corresponding [balena-on-balena
+                PR](https://github.com/balena-io/balena-on-balena/pull/261)
+
+
+                * refactor confd.service to include both root-ca and
+                host-envvars handling
+
+                * add systemd path watcher to restart confd if keys/certs change
+                during runtime
+
+                * store stack configuration available to all services in a
+                persistent/shared volume (/balena)
+
+                * change resolver order to dns => mdns (ipv4) => mdns (ipv6) =>
+                return
+
+                * configure API key and JOSE/JWT key id
+
+                * configure open-balena-vpn (PKI) environment variables
+
+                * configure Sentry DSNs
+
+                * configure API keys/tokens
+
+                * configure proxy and devices SSH keys
+
+                * bundle Git SSH keys
+
+                * refactor environment handling in non-systemd variant
+
+                * deprecate BALENA_ prefixes from confd
+              footer:
+                Change-type: minor
+                change-type: minor
+                Co-authored-by: dfunckt <dfunckt@users.noreply.github.com>
+                co-authored-by: dfunckt <dfunckt@users.noreply.github.com>
+              author: ab77
+              nested: []
+          version: open-balena-base-12.1.0
+          date: 2021-09-24T16:30:37.661Z
+        - commits:
+            - subject: Attempt to load root CA certificate bundle from file
+              hash: 493bb446e99fc7a5b6ecaa4e796942aa65ad03d0
+              body: >
+                * allows dynamic certificate generation and loading within the
+                stack
+
+                * if a (volume|directory) /certs exists, set up a notification
+                to watch
+                  for /certs/ca-bundle.pem and update CA certificates/restart confd
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-12.0.3
+          date: 2021-09-01T21:12:04.483Z
+  version: 0.159.9
+  date: 2021-10-18T13:56:29.114Z
+- commits:
     - subject: Add an `onLogWriteStreamInitialized` hook
       hash: d44bf08a89ae9e0179b60030c915fb9447ce8208
       body: ''
