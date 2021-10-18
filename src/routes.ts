@@ -18,13 +18,21 @@ import * as vpn from './features/vpn';
 
 export const setup = (
 	app: Application,
-	{ onLogin, onLogWriteStreamInitialized }: SetupOptions,
+	{
+		onLogin,
+		onLogWriteStreamInitialized,
+		onLogReadStreamInitialized,
+	}: SetupOptions,
 ) => {
 	varsSchema.setup(app);
 	auth.setup(app, onLogin);
 	deviceProvisioning.setup(app);
 	deviceState.setup(app);
-	deviceLogs.setup(app, onLogWriteStreamInitialized);
+	deviceLogs.setup(
+		app,
+		onLogWriteStreamInitialized,
+		onLogReadStreamInitialized,
+	);
 	dependentDevices.setup(app);
 	deviceProxy.setup(app);
 	deviceConfig.setup(app);

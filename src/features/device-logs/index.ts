@@ -24,8 +24,13 @@ const deviceLogsRateLimiter = createRateLimitMiddleware(
 export const setup = (
 	app: Application,
 	onLogWriteStreamInitialized: SetupOptions['onLogWriteStreamInitialized'],
+	onLogReadStreamInitialized: SetupOptions['onLogReadStreamInitialized'],
 ) => {
-	app.get('/device/v2/:uuid/logs', authorizedMiddleware, read);
+	app.get(
+		'/device/v2/:uuid/logs',
+		authorizedMiddleware,
+		read(onLogReadStreamInitialized),
+	);
 	app.post(
 		'/device/v2/:uuid/logs',
 		deviceLogsRateLimiter('params.uuid'),
