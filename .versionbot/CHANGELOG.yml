@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add an `onLogWriteStreamInitialized` hook
+      hash: d44bf08a89ae9e0179b60030c915fb9447ce8208
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.159.8
+  date: 2021-10-18T13:36:39.219Z
+- commits:
     - subject: Add caching of `UnauthorizedError`s for the VPN auth cache
       hash: 81f6eb264dc7f4fcfae58f652eebd5653bd8e7ad
       body: ''
