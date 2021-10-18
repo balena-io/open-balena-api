@@ -26,6 +26,7 @@ import {
 	STREAM_FLUSH_INTERVAL,
 	WRITE_BUFFER_LIMIT,
 } from './config';
+import { SetupOptions } from '../../..';
 
 const {
 	BadRequestError,
@@ -84,7 +85,7 @@ async function getWriteContext(
 	if (!device) {
 		throw new NotFoundError('No device with uuid ' + uuid);
 	}
-	return {
+	const ctx = {
 		id: device.id,
 		belongs_to__application: device.belongs_to__application.__id,
 		logs_channel: device.logs_channel,
@@ -97,6 +98,9 @@ async function getWriteContext(
 			};
 		}),
 	};
+	await checkWritePermissions(resinApi, ctx);
+	addRetentionLimit(ctx);
+	return ctx;
 }
 
 async function checkWritePermissions(
@@ -119,8 +123,6 @@ export const store: RequestHandler = async (req: Request, res: Response) => {
 	try {
 		const resinApi = api.resin.clone({ passthrough: { req } });
 		const ctx = await getWriteContext(resinApi, req);
-		await checkWritePermissions(resinApi, ctx);
-		addRetentionLimit(ctx);
 		const body: AnySupervisorLog[] = req.body;
 		const logs: DeviceLog[] = supervisor.convertLogs(ctx, body);
 		if (logs.length) {
@@ -142,17 +144,20 @@ export const store: RequestHandler = async (req: Request, res: Response) => {
 	}
 };
 
-export async function storeStream(req: Request, res: Response) {
-	const resinApi = api.resin.clone({ passthrough: { req } });
-	try {
-		const ctx = await getWriteContext(resinApi, req);
-		await checkWritePermissions(resinApi, ctx);
-		addRetentionLimit(ctx);
-		handleStreamingWrite(ctx, req, res);
-	} catch (err) {
-		handleStoreErrors(req, res, err);
-	}
-}
+export const storeStream =
+	(
+		onLogWriteStreamInitialized: SetupOptions['onLogWriteStreamInitialized'],
+	): RequestHandler =>
+	async (req: Request, res: Response) => {
+		const resinApi = api.resin.clone({ passthrough: { req } });
+		try {
+			const ctx = await getWriteContext(resinApi, req);
+			handleStreamingWrite(ctx, req, res);
+			onLogWriteStreamInitialized?.(req);
+		} catch (err) {
+			handleStoreErrors(req, res, err);
+		}
+	};
 
 function handleStoreErrors(req: Request, res: Response, err: Error) {
 	if (handleHttpErrors(req, res, err)) {
