@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { Request, RequestHandler, Response } from 'express';
 import onFinished = require('on-finished');
 
 import { sbvrUtils, errors } from '@balena/pinejs';
@@ -18,29 +18,35 @@ import {
 	NDJSON_CTYPE,
 } from './config';
 import { getNanoTimestamp } from '../../../lib/utils';
+import { SetupOptions } from '../../..';
 
 const { NotFoundError } = errors;
 const { api } = sbvrUtils;
 
-export async function read(req: Request, res: Response) {
-	try {
-		const resinApi = api.resin.clone({ passthrough: { req } });
-		const ctx = await getReadContext(resinApi, req);
-		if (req.query.stream === '1') {
-			addRetentionLimit(ctx);
-			await handleStreamingRead(ctx, req, res);
-		} else {
-			const logs = await getHistory(ctx, req, DEFAULT_HISTORY_LOGS);
-			res.json(logs);
+export const read =
+	(
+		onLogReadStreamInitialized: SetupOptions['onLogReadStreamInitialized'],
+	): RequestHandler =>
+	async (req: Request, res: Response) => {
+		try {
+			const resinApi = api.resin.clone({ passthrough: { req } });
+			const ctx = await getReadContext(resinApi, req);
+			if (req.query.stream === '1') {
+				addRetentionLimit(ctx);
+				await handleStreamingRead(ctx, req, res);
+				onLogReadStreamInitialized?.(req);
+			} else {
+				const logs = await getHistory(ctx, req, DEFAULT_HISTORY_LOGS);
+				res.json(logs);
+			}
+		} catch (err) {
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
+			captureException(err, 'Failed to read device logs', { req });
+			res.status(500).end();
 		}
-	} catch (err) {
-		if (handleHttpErrors(req, res, err)) {
-			return;
-		}
-		captureException(err, 'Failed to read device logs', { req });
-		res.status(500).end();
-	}
-}
+	};
 
 async function handleStreamingRead(
 	ctx: LogContext,
