@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add an index to optimize device api key permissions lookups
+      hash: c12912294eec02eac85aa892f2bc2632b7cbba7a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.159.11
+  date: 2021-10-18T18:27:52.679Z
+- commits:
     - subject: Add an `onLogReadStreamInitialized` hook
       hash: 18442509e8fcf09291bd4643f12764d34f31fabf
       body: ''
