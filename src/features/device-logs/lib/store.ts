@@ -39,68 +39,68 @@ const { api } = sbvrUtils;
 
 const supervisor = new Supervisor();
 
-async function getWriteContext(
-	resinApi: sbvrUtils.PinejsClient,
-	req: Request,
-): Promise<LogWriteContext> {
+async function getWriteContext(req: Request): Promise<LogWriteContext> {
 	const { uuid } = req.params;
-	const device = (await resinApi.get({
-		resource: 'device',
-		id: { uuid },
-		options: {
-			$select: ['id', 'logs_channel', 'belongs_to__application'],
-			$expand: {
-				image_install: {
-					$select: 'id',
-					$expand: {
-						image: {
-							$select: 'id',
-							$expand: { is_a_build_of__service: { $select: 'id' } },
+	return await sbvrUtils.db.readTransaction(async (tx) => {
+		const resinApi = api.resin.clone({ passthrough: { req, tx } });
+		const device = (await resinApi.get({
+			resource: 'device',
+			id: { uuid },
+			options: {
+				$select: ['id', 'logs_channel', 'belongs_to__application'],
+				$expand: {
+					image_install: {
+						$select: 'id',
+						$expand: {
+							image: {
+								$select: 'id',
+								$expand: { is_a_build_of__service: { $select: 'id' } },
+							},
 						},
-					},
-					$filter: {
-						status: { $ne: 'deleted' },
+						$filter: {
+							status: { $ne: 'deleted' },
+						},
 					},
 				},
 			},
-		},
-	})) as
-		| {
-				id: number;
-				logs_channel?: string;
-				belongs_to__application: {
-					__id: number;
-				};
-				image_install: Array<{
+		})) as
+			| {
 					id: number;
-					image: Array<{
+					logs_channel?: string;
+					belongs_to__application: {
+						__id: number;
+					};
+					image_install: Array<{
 						id: number;
-						is_a_build_of__service: Array<{
+						image: Array<{
 							id: number;
+							is_a_build_of__service: Array<{
+								id: number;
+							}>;
 						}>;
 					}>;
-				}>;
-		  }
-		| undefined;
-	if (!device) {
-		throw new NotFoundError('No device with uuid ' + uuid);
-	}
-	const ctx = {
-		id: device.id,
-		belongs_to__application: device.belongs_to__application.__id,
-		logs_channel: device.logs_channel,
-		uuid,
-		images: device.image_install.map((imageInstall) => {
-			const img = imageInstall.image[0];
-			return {
-				id: img.id,
-				serviceId: img.is_a_build_of__service[0]?.id,
-			};
-		}),
-	};
-	await checkWritePermissions(resinApi, ctx);
-	addRetentionLimit(ctx);
-	return ctx;
+			  }
+			| undefined;
+		if (!device) {
+			throw new NotFoundError('No device with uuid ' + uuid);
+		}
+		const ctx = {
+			id: device.id,
+			belongs_to__application: device.belongs_to__application.__id,
+			logs_channel: device.logs_channel,
+			uuid,
+			images: device.image_install.map((imageInstall) => {
+				const img = imageInstall.image[0];
+				return {
+					id: img.id,
+					serviceId: img.is_a_build_of__service[0]?.id,
+				};
+			}),
+		};
+		await checkWritePermissions(resinApi, ctx);
+		addRetentionLimit(ctx);
+		return ctx;
+	});
 }
 
 async function checkWritePermissions(
@@ -121,8 +121,7 @@ async function checkWritePermissions(
 
 export const store: RequestHandler = async (req: Request, res: Response) => {
 	try {
-		const resinApi = api.resin.clone({ passthrough: { req } });
-		const ctx = await getWriteContext(resinApi, req);
+		const ctx = await getWriteContext(req);
 		const body: AnySupervisorLog[] = req.body;
 		const logs: DeviceLog[] = supervisor.convertLogs(ctx, body);
 		if (logs.length) {
@@ -149,9 +148,8 @@ export const storeStream =
 		onLogWriteStreamInitialized: SetupOptions['onLogWriteStreamInitialized'],
 	): RequestHandler =>
 	async (req: Request, res: Response) => {
-		const resinApi = api.resin.clone({ passthrough: { req } });
 		try {
-			const ctx = await getWriteContext(resinApi, req);
+			const ctx = await getWriteContext(req);
 			handleStreamingWrite(ctx, req, res);
 			onLogWriteStreamInitialized?.(req);
 		} catch (err) {

@@ -29,8 +29,7 @@ export const read =
 	): RequestHandler =>
 	async (req: Request, res: Response) => {
 		try {
-			const resinApi = api.resin.clone({ passthrough: { req } });
-			const ctx = await getReadContext(resinApi, req);
+			const ctx = await getReadContext(req);
 			if (req.query.stream === '1') {
 				addRetentionLimit(ctx);
 				await handleStreamingRead(ctx, req, res);
@@ -190,14 +189,12 @@ function getHistory(
 	return getBackend(ctx).history(ctx, count);
 }
 
-async function getReadContext(
-	resinApi: sbvrUtils.PinejsClient,
-	req: Request,
-): Promise<LogContext> {
+async function getReadContext(req: Request): Promise<LogContext> {
 	const { uuid } = req.params;
-	const ctx = (await resinApi.get({
+	const ctx = (await api.resin.get({
 		resource: 'device',
 		id: { uuid },
+		passthrough: { req },
 		options: {
 			$select: ['id', 'logs_channel'],
 		},
