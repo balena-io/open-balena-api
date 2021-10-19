@@ -1,4 +1,15 @@
 - commits:
+    - subject: Move device state functions from `device` export to `deviceState`
+      hash: 92ab21490afcc6db110d34169a9ab4413bfc9998
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.160.0
+  date: 2021-10-19T18:27:07.359Z
+- commits:
     - subject: Run both write log context gathering queries in the same transaction
       hash: 0f76a95226561e98b270542589e01819c3755f6c
       body: ''
