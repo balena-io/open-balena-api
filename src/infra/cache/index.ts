@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import * as cacheManager from 'cache-manager';
 import redisStore = require('cache-manager-redis-store');
 import type { Options as MemoizeeOptions } from 'memoizee';
@@ -5,6 +6,15 @@ import primitiveKey = require('memoizee/normalizers/primitive');
 import { REDIS_HOST, REDIS_PORT, SECONDS, version } from '../../lib/config';
 
 export type Defined = string | number | boolean | symbol | bigint | object;
+
+type MultiCacheMemoizeeOpts<T extends (...args: any[]) => any> = {
+	cacheKey?: string;
+	undefinedAs?: Defined;
+	promise: true;
+	primitive: true;
+	/** In milliseconds like memoizee */
+	maxAge: number;
+} & Pick<MemoizeeOptions<T>, 'preFetch' | 'max' | 'normalizer'>;
 
 export interface MemoizedFn<T extends (...args: any[]) => Promise<any>> {
 	(...args: Parameters<T>): Promise<ResolvableReturnType<T>>;
@@ -19,38 +29,23 @@ export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined | undefined>,
 >(
 	fn: T,
-	opts: {
-		cacheKey?: string;
-		undefinedAs: Defined;
-		promise: true;
-		primitive: true;
-		/** In milliseconds like memoizee */
-		maxAge: number;
-	} & Pick<MemoizeeOptions<T>, 'preFetch' | 'max' | 'normalizer'>,
+	opts: MultiCacheMemoizeeOpts<T> &
+		Required<Pick<MultiCacheMemoizeeOpts<T>, 'undefinedAs'>>,
+	sharedCacheOpts?: Partial<Pick<MultiCacheMemoizeeOpts<T>, 'max' | 'maxAge'>>,
 ): MemoizedFn<T>;
 export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined>,
 >(
 	fn: T,
-	opts: {
-		cacheKey?: string;
-		undefinedAs?: Defined;
-		promise: true;
-		primitive: true;
-		maxAge: number;
-	} & Pick<MemoizeeOptions<T>, 'preFetch' | 'max' | 'normalizer'>,
+	opts: MultiCacheMemoizeeOpts<T>,
+	sharedCacheOpts?: Partial<Pick<MultiCacheMemoizeeOpts<T>, 'max' | 'maxAge'>>,
 ): MemoizedFn<T>;
 export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined | undefined>,
 >(
 	fn: T,
-	opts: {
-		cacheKey?: string;
-		undefinedAs?: Defined;
-		promise: true;
-		primitive: true;
-		maxAge: number;
-	} & Pick<MemoizeeOptions<T>, 'preFetch' | 'max' | 'normalizer'>,
+	opts: MultiCacheMemoizeeOpts<T>,
+	sharedCacheOpts?: Partial<Pick<MultiCacheMemoizeeOpts<T>, 'max' | 'maxAge'>>,
 ): MemoizedFn<T> {
 	const {
 		cacheKey = fn.name,
@@ -67,6 +62,13 @@ export function multiCacheMemoizee<
 	if (remainingKeys.length > 0) {
 		throw new Error(`Unsupported options: ${remainingKeys}`);
 	}
+	const remainingSharedCacheKeys =
+		sharedCacheOpts != null
+			? _.without(Object.keys(sharedCacheOpts), 'max', 'maxAge')
+			: null;
+	if (remainingSharedCacheKeys != null && remainingSharedCacheKeys.length > 0) {
+		throw new Error(`Unsupported shared cache options: ${remainingKeys}`);
+	}
 	if (promise !== true) {
 		throw new Error('Only promise mode memoization is supported');
 	}
@@ -79,27 +81,34 @@ export function multiCacheMemoizee<
 		);
 	}
 
-	let refreshThreshold;
-	if (preFetch != null) {
-		refreshThreshold = maxAge * (preFetch === true ? 0.333 : preFetch);
-	}
-	return multiCache(
-		fn,
-		cacheKey,
-		normalizer,
-		{
-			// ttl is in seconds, so we need to divide by 1000
-			ttl: maxAge / SECONDS,
-			max,
-			refreshThreshold,
-			// Treat everything as cacheable, including `undefined` - the same as memoizee
-			isCacheableValue: () => true,
+	const multiCacheOpts = [opts, _.defaults(sharedCacheOpts, opts)].map(
+		(options): MultiCacheOpt => {
+			let refreshThreshold;
+			if (options.preFetch != null) {
+				refreshThreshold =
+					options.maxAge *
+					(options.preFetch === true ? 0.333 : options.preFetch);
+			}
+			return {
+				// ttl is in seconds, so we need to divide by 1000
+				ttl: options.maxAge / SECONDS,
+				max: options.max,
+				refreshThreshold,
+				// Treat everything as cacheable, including `undefined` - the same as memoizee
+				isCacheableValue: () => true,
+			};
 		},
-		undefinedAs,
 	);
+
+	return multiCache(fn, cacheKey, normalizer, multiCacheOpts, undefinedAs);
 }
 
 const usedCacheKeys: Dictionary<true> = {};
+
+type MultiCacheOpt = Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
+	refreshThreshold?: number;
+} & cacheManager.CacheOptions;
+
 /**
  * @param undefinedAs - The value to use as a proxy for undefined in order to support caches that cannot handle undefined
  */
@@ -107,38 +116,36 @@ function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	fn: T,
 	cacheKey: string,
 	normalizer: NonNullable<MemoizeeOptions<T>['normalizer']>,
-	opts: Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
-		refreshThreshold?: number;
-	} & cacheManager.CacheOptions,
+	opts: MultiCacheOpt[],
 	undefinedAs?: Defined,
 ): MemoizedFn<T>;
 function multiCache<T extends (...args: any[]) => Promise<Defined>>(
 	fn: T,
 	cacheKey: string,
 	normalizer: NonNullable<MemoizeeOptions<T>['normalizer']>,
-	opts: Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
-		refreshThreshold?: number;
-	} & cacheManager.CacheOptions,
+	opts: MultiCacheOpt[],
 	undefinedAs?: undefined,
 ): MemoizedFn<T>;
 function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	fn: T,
 	cacheKey: string,
 	normalizer: NonNullable<MemoizeeOptions<T>['normalizer']>,
-	opts: Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
-		refreshThreshold?: number;
-	} & cacheManager.CacheOptions,
+	opts: MultiCacheOpt[],
 	undefinedAs?: Defined,
 ): MemoizedFn<T> {
 	if (usedCacheKeys[cacheKey] === true) {
 		throw new Error(`Cache key '${cacheKey}' has already been taken`);
 	}
+	if (opts.length === 0) {
+		throw new Error(`No multiCache options provided for '${cacheKey}'`);
+	}
 	usedCacheKeys[cacheKey] = true;
 
-	const { isCacheableValue } = opts;
-	const memoryCache = cacheManager.caching({ ...opts, store: 'memory' });
+	const [baseOpts, sharedOpts] = opts;
+	const { isCacheableValue } = baseOpts;
+	const memoryCache = cacheManager.caching({ ...baseOpts, store: 'memory' });
 	const redisCache = cacheManager.caching({
-		...opts,
+		...(sharedOpts ?? baseOpts),
 		store: redisStore,
 		host: REDIS_HOST,
 		port: REDIS_PORT,
