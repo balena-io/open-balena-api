@@ -113,13 +113,6 @@ import {
 import { proxy as supervisorProxy } from './features/device-proxy/device-proxy';
 import { generateConfig } from './features/device-config/device-config';
 import {
-	filterDeviceConfig,
-	formatImageLocation,
-	getReleaseForDevice,
-	serviceInstallFromImage,
-	setMinPollInterval,
-} from './features/device-state/utils';
-import {
 	DeviceOnlineStates,
 	getPollInterval,
 	getInstance as getDeviceOnlineStateManager,
@@ -234,11 +227,6 @@ export const device = {
 	addVirtualFieldsToModel: deviceAdditions.addToModel,
 	supervisorProxy,
 	generateConfig,
-	filterDeviceConfig,
-	formatImageLocation,
-	getReleaseForDevice,
-	serviceInstallFromImage,
-	setMinPollInterval,
 	getPollInterval,
 	DeviceOnlineStates,
 	getDeviceOnlineStateManager,
