@@ -1,4 +1,15 @@
 - commits:
+    - subject: Run both write log context gathering queries in the same transaction
+      hash: 0f76a95226561e98b270542589e01819c3755f6c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.159.13
+  date: 2021-10-19T18:02:58.679Z
+- commits:
     - subject: Expose the valid state patch fields
       hash: 35378b6102eff26b3017040e03cd4cba75afe7a6
       body: ''
