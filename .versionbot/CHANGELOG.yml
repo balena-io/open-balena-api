@@ -1,4 +1,15 @@
 - commits:
+    - subject: Expose `metricsPatchFields`
+      hash: 2fc53853b49fbd2b9ac85c31e552d210c8e182ee
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.160.2
+  date: 2021-10-19T21:41:28.583Z
+- commits:
     - subject: 'Limit max metrics reporting rate, defaulting to 1 minute'
       hash: 2829ab882e72af696aa4aed0514028ae53524e1d
       body: ''
