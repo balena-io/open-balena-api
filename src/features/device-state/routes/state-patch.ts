@@ -13,7 +13,9 @@ import {
 	ImageInstall,
 	PickDeferred,
 } from '../../../balena-model';
-import { validPatchFields } from '../utils';
+import { metricsPatchFields, validPatchFields } from '../utils';
+import { multiCacheMemoizee } from '../../../infra/cache';
+import { METRICS_MAX_REPORT_INTERVAL } from '../../../lib/config';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -226,6 +228,19 @@ type StatePatchBody = {
 	};
 };
 
+const getLastMetricsReportTime = multiCacheMemoizee(
+	async (_uuid: string, date: number) => {
+		return date;
+	},
+	{
+		cacheKey: 'getLastMetricsReportTime',
+		promise: true,
+		primitive: true,
+		maxAge: METRICS_MAX_REPORT_INTERVAL,
+		normalizer: ([uuid]) => uuid,
+	},
+);
+
 export const statePatch: RequestHandler = async (req, res) => {
 	const { uuid } = req.params;
 	if (!uuid) {
@@ -252,6 +267,15 @@ export const statePatch: RequestHandler = async (req, res) => {
 		apps = local.apps;
 
 		deviceBody = _.pick(local, validPatchFields);
+		const metricsBody = _.pick(local, metricsPatchFields);
+		if (Object.keys(metricsBody).length > 0) {
+			const date = Date.now();
+			const lastMetricsUpdate = await getLastMetricsReportTime(uuid, date);
+			// If we got back the date we passed in then it means we should actually do the report
+			if (lastMetricsUpdate === date) {
+				deviceBody = { ...deviceBody, ...metricsBody };
+			}
+		}
 
 		if (local.name != null) {
 			deviceBody.device_name = local.name;

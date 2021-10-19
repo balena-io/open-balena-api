@@ -114,6 +114,11 @@ export const validPatchFields: Array<Exclude<keyof LocalBody, 'apps'>> = [
 	'api_port',
 	'api_secret',
 	'logs_channel',
+	'cpu_id',
+	'is_undervolted',
+];
+
+export const metricsPatchFields = [
 	'memory_usage',
 	'memory_total',
 	'storage_block_device',
@@ -121,6 +126,4 @@ export const validPatchFields: Array<Exclude<keyof LocalBody, 'apps'>> = [
 	'storage_total',
 	'cpu_temp',
 	'cpu_usage',
-	'cpu_id',
-	'is_undervolted',
-];
+] as const;
