@@ -15,6 +15,7 @@ export {
 	setMinPollInterval,
 	getReleaseForDevice,
 	serviceInstallFromImage,
+	metricsPatchFields,
 	validPatchFields,
 } from './utils';
 
