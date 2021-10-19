@@ -1,4 +1,15 @@
 - commits:
+    - subject: 'Limit max metrics reporting rate, defaulting to 1 minute'
+      hash: 2829ab882e72af696aa4aed0514028ae53524e1d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.160.1
+  date: 2021-10-19T21:24:38.584Z
+- commits:
     - subject: Move device state functions from `device` export to `deviceState`
       hash: 92ab21490afcc6db110d34169a9ab4413bfc9998
       body: ''
