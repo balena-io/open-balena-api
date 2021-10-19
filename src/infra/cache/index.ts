@@ -26,7 +26,7 @@ export function multiCacheMemoizee<
 		primitive: true;
 		/** In milliseconds like memoizee */
 		maxAge: number;
-	} & Pick<MemoizeeOptions<any>, 'preFetch' | 'max' | 'normalizer'>,
+	} & Pick<MemoizeeOptions<T>, 'preFetch' | 'max' | 'normalizer'>,
 ): MemoizedFn<T>;
 export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined>,
@@ -38,7 +38,7 @@ export function multiCacheMemoizee<
 		promise: true;
 		primitive: true;
 		maxAge: number;
-	} & Pick<MemoizeeOptions<any>, 'preFetch' | 'max' | 'normalizer'>,
+	} & Pick<MemoizeeOptions<T>, 'preFetch' | 'max' | 'normalizer'>,
 ): MemoizedFn<T>;
 export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined | undefined>,
@@ -50,7 +50,7 @@ export function multiCacheMemoizee<
 		promise: true;
 		primitive: true;
 		maxAge: number;
-	} & Pick<MemoizeeOptions<any>, 'preFetch' | 'max' | 'normalizer'>,
+	} & Pick<MemoizeeOptions<T>, 'preFetch' | 'max' | 'normalizer'>,
 ): MemoizedFn<T> {
 	const {
 		cacheKey = fn.name,
@@ -106,7 +106,7 @@ const usedCacheKeys: Dictionary<true> = {};
 function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	fn: T,
 	cacheKey: string,
-	normalizer: NonNullable<MemoizeeOptions<any>['normalizer']>,
+	normalizer: NonNullable<MemoizeeOptions<T>['normalizer']>,
 	opts: Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
 		refreshThreshold?: number;
 	} & cacheManager.CacheOptions,
@@ -115,7 +115,7 @@ function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 function multiCache<T extends (...args: any[]) => Promise<Defined>>(
 	fn: T,
 	cacheKey: string,
-	normalizer: NonNullable<MemoizeeOptions<any>['normalizer']>,
+	normalizer: NonNullable<MemoizeeOptions<T>['normalizer']>,
 	opts: Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
 		refreshThreshold?: number;
 	} & cacheManager.CacheOptions,
@@ -124,7 +124,7 @@ function multiCache<T extends (...args: any[]) => Promise<Defined>>(
 function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	fn: T,
 	cacheKey: string,
-	normalizer: NonNullable<MemoizeeOptions<any>['normalizer']>,
+	normalizer: NonNullable<MemoizeeOptions<T>['normalizer']>,
 	opts: Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
 		refreshThreshold?: number;
 	} & cacheManager.CacheOptions,
