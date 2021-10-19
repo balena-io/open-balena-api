@@ -85,17 +85,15 @@ export function multiCacheMemoizee<
 
 	const multiCacheOpts = [opts, { ...opts, ...sharedCacheOpts }].map(
 		(options): MultiCacheOpt => {
-			let refreshThreshold;
-			if (options.preFetch != null) {
-				refreshThreshold =
-					options.maxAge *
-					(options.preFetch === true ? 0.333 : options.preFetch);
-			}
+			// ttl is in seconds, so we need to divide by 1000
+			const ttl = options.maxAge / SECONDS;
 			return {
-				// ttl is in seconds, so we need to divide by 1000
-				ttl: options.maxAge / SECONDS,
+				ttl,
 				max: options.max,
-				refreshThreshold,
+				refreshThreshold:
+					options.preFetch != null
+						? ttl * (options.preFetch === true ? 0.333 : options.preFetch)
+						: undefined,
 				// Treat everything as cacheable, including `undefined` - the same as memoizee
 				isCacheableValue: () => true,
 			};
