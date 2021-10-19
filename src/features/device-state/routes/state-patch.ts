@@ -275,6 +275,8 @@ export const statePatch: RequestHandler = async (req, res) => {
 			if (lastMetricsUpdate === date) {
 				deviceBody = { ...deviceBody, ...metricsBody };
 			}
+			// TODO: If we've got other device body updates to do then still bundle up the metrics update as it adds minimal additional
+			// work if we're updating anyway, it's only if we go from 0 update -> any update that it's beneficial to drop the report
 		}
 
 		if (local.name != null) {
