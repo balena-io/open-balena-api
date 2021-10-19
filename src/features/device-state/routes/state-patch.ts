@@ -13,6 +13,7 @@ import {
 	ImageInstall,
 	PickDeferred,
 } from '../../../balena-model';
+import { validPatchFields } from '../utils';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -167,36 +168,7 @@ const deleteOldGatewayDownloads = async (
 	});
 };
 
-const validPatchFields = [
-	'is_managed_by__device',
-	'should_be_running__release',
-	'device_name',
-	'status',
-	'is_online',
-	'note',
-	'os_version',
-	'os_variant',
-	'supervisor_version',
-	'provisioning_progress',
-	'provisioning_state',
-	'ip_address',
-	'mac_address',
-	'download_progress',
-	'api_port',
-	'api_secret',
-	'logs_channel',
-	'memory_usage',
-	'memory_total',
-	'storage_block_device',
-	'storage_usage',
-	'storage_total',
-	'cpu_temp',
-	'cpu_usage',
-	'cpu_id',
-	'is_undervolted',
-] as const;
-
-type LocalBody = NonNullable<StatePatchBody['local']>;
+export type LocalBody = NonNullable<StatePatchBody['local']>;
 /**
  * These typings should be used as a guide to what should be sent, but cannot be trusted as what actually *is* sent.
  */

@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import * as semver from 'balena-semver';
 
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from '../../lib/config';
+import { LocalBody } from './routes/state-patch';
 
 // Set RESIN_SUPERVISOR_POLL_INTERVAL to a minimum of 10 minutes
 export const setMinPollInterval = (config: AnyObject): void => {
@@ -94,3 +95,32 @@ export const filterDeviceConfig = (
 
 	runHook('deviceConfig', [configVars, osVersion]);
 };
+
+export const validPatchFields: Array<Exclude<keyof LocalBody, 'apps'>> = [
+	'is_managed_by__device',
+	'should_be_running__release',
+	'device_name',
+	'status',
+	'is_online',
+	'note',
+	'os_version',
+	'os_variant',
+	'supervisor_version',
+	'provisioning_progress',
+	'provisioning_state',
+	'ip_address',
+	'mac_address',
+	'download_progress',
+	'api_port',
+	'api_secret',
+	'logs_channel',
+	'memory_usage',
+	'memory_total',
+	'storage_block_device',
+	'storage_usage',
+	'storage_total',
+	'cpu_temp',
+	'cpu_usage',
+	'cpu_id',
+	'is_undervolted',
+];
