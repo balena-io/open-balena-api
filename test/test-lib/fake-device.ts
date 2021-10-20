@@ -51,6 +51,9 @@ export const getState = async <T extends DeviceState>(
 	return state;
 };
 
+export const generateDeviceUuid = () =>
+	randomUUID().replace(/\-/g, '').toLowerCase();
+
 export async function provisionDevice(
 	admin: UserObjectParam,
 	appId: number,
@@ -74,7 +77,7 @@ export async function provisionDevice(
 
 	const deviceType: string = applications.d[0].is_for__device_type[0].slug;
 
-	const deviceUuid = randomUUID().replace(/\-/g, '').toLowerCase();
+	const deviceUuid = generateDeviceUuid();
 	const { body: deviceEntry } = await supertest(admin)
 		.post(`/${version}/device`)
 		.send({
