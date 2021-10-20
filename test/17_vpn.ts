@@ -49,20 +49,27 @@ describe('vpn authentication endpoint', function () {
 
 	describe('given a newly registered device', function () {
 		before(async function () {
-			this.deviceKey = randomstring.generate();
-			this.device = await registerDevice({
-				deviceKey: this.deviceKey,
-			});
+			this.device = await registerDevice();
 		});
 
+		// Keep this succesful authentication first, so that we can test that the caching mechanism is working as expected
 		it('should authorize the device to access the VPN', async function () {
-			await supertest(this.deviceKey)
+			await supertest(this.device.api_key)
 				.get(`/services/vpn/auth/${this.device.uuid}`)
 				.expect(200);
 		});
 
-		// Keep this after the first succesful authentication to test that the caching mechanism is working as expected
-		it('should not authorize the device to access the VPN if a randomstring is used as the deviceKey', async function () {
+		it('should not authorize access when using a device key of a different device', async function () {
+			const device2 = await registerDevice();
+			await supertest(device2.api_key)
+				.get(`/services/vpn/auth/${device2.uuid}`)
+				.expect(200);
+			await supertest(device2.api_key)
+				.get(`/services/vpn/auth/${this.device.uuid}`)
+				.expect(403);
+		});
+
+		it('should not authorize the device to access the VPN if a randomstring is used as the device key', async function () {
 			const nonExistingDeviceKey = randomstring.generate();
 			await supertest(nonExistingDeviceKey)
 				.get(`/services/vpn/auth/${this.device.uuid}`)
@@ -89,12 +96,9 @@ describe('vpn authentication endpoint', function () {
 				uuid: this.uuid,
 				deviceKey: this.deviceKey,
 			});
-			// TODO: This atm fails b/c of https://github.com/balena-io/balena-api/issues/3371
-			await expect(
-				supertest(this.deviceKey)
-					.get(`/services/vpn/auth/${this.uuid}`)
-					.expect(200),
-			).to.be.rejected;
+			await supertest(this.deviceKey)
+				.get(`/services/vpn/auth/${this.uuid}`)
+				.expect(200);
 		});
 	});
 });
