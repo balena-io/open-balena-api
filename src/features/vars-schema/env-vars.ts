@@ -157,6 +157,11 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 				description: 'Define device GPU memory in megabytes.',
 				default: 16,
 			},
+			RESIN_HOST_CONFIG_gpio: {
+				type: 'string',
+				description: 'Set GPIO pins',
+				examples: ['"gpio=19=op,dh","gpio=0-25=a2"'],
+			},
 			BALENA_HOST_CONFIG_hdmi_cvt: {
 				type: 'string',
 				description: 'Define a custom CVT mode for the HDMI',
