@@ -1,4 +1,19 @@
 - commits:
+    - subject: Add tests for the VPN authentication endpoint
+      hash: c3579fbf1677a1458ef80dd30beec9ca6d9852ef
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: 'https://github.com/balena-io/balena-api/issues/3371'
+        see: 'https://github.com/balena-io/balena-api/issues/3371'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.160.3
+  date: 2021-10-20T21:18:46.341Z
+- commits:
     - subject: Expose `metricsPatchFields`
       hash: 2fc53853b49fbd2b9ac85c31e552d210c8e182ee
       body: ''
