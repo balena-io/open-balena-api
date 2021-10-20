@@ -60,6 +60,14 @@ describe('vpn authentication endpoint', function () {
 				.get(`/services/vpn/auth/${this.device.uuid}`)
 				.expect(200);
 		});
+
+		// Keep this after the first succesful authentication to test that the caching mechanism is working as expected
+		it('should not authorize the device to access the VPN if a randomstring is used as the deviceKey', async function () {
+			const nonExistingDeviceKey = randomstring.generate();
+			await supertest(nonExistingDeviceKey)
+				.get(`/services/vpn/auth/${this.device.uuid}`)
+				.expect(401);
+		});
 	});
 
 	describe(`given a token that doesn't match any device api key`, function () {
