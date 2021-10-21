@@ -16,9 +16,10 @@ import {
 	AUTH_RESINOS_REGISTRY_CODE,
 	MINUTES,
 	REGISTRY2_HOST,
+	RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
 	TOKEN_AUTH_BUILDER_TOKEN,
 } from '../../lib/config';
-import type { User as DbUser } from '../../balena-model';
+import type { Image, User as DbUser } from '../../balena-model';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -95,23 +96,35 @@ const grantAllToBuilder = (parsedScopes: Scope[]): Access[] =>
 		};
 	});
 
-const resolveReadAccess = (_req: Request, image?: AnyObject): boolean =>
-	image?.id != null;
+const resolveReadAccess = async (
+	req: Request,
+	imageId?: number,
+): Promise<boolean> => {
+	if (imageId == null) {
+		return false;
+	}
+	const image = await api.resin.get({
+		resource: 'image',
+		id: imageId,
+		passthrough: { req },
+	});
+	return image != null;
+};
 
 const resolveWriteAccess = async (
 	req: Request,
-	image?: AnyObject,
+	imageId?: number,
 ): Promise<boolean> => {
-	if (image?.id == null) {
+	if (imageId == null) {
 		return false;
 	}
 	try {
 		const res = await api.resin.post({
-			url: `image(${image.id})/canAccess`,
+			url: `image(${imageId})/canAccess`,
 			passthrough: { req },
 			body: { action: 'push' },
 		});
-		return res.d?.[0]?.id === image.id;
+		return res.d?.[0]?.id === imageId;
 	} catch (err) {
 		if (!(err instanceof UnauthorizedError)) {
 			captureException(err, 'Failed to resolve registry write access', {
@@ -121,6 +134,32 @@ const resolveWriteAccess = async (
 		return false;
 	}
 };
+
+const resolveImageId = multiCacheMemoizee(
+	async (effectiveName: string): Promise<number | undefined> => {
+		const [image] = (await api.resin.get({
+			resource: 'image',
+			passthrough: { req: permissions.root },
+			options: {
+				$select: ['id'],
+				$filter: {
+					is_stored_at__image_location: {
+						$endswith: effectiveName,
+					},
+				},
+			},
+		})) as Array<Pick<Image, 'id'>>;
+		return image?.id;
+	},
+	{
+		cacheKey: 'resolveImageId',
+		undefinedAs: false,
+		promise: true,
+		primitive: true,
+		maxAge: RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
+		max: 500,
+	},
+);
 
 const resolveAccess = async (
 	req: Request,
@@ -140,22 +179,11 @@ const resolveAccess = async (
 		allowedActions = defaultActions;
 	} else {
 		try {
-			const [image] = await api.resin.get({
-				resource: 'image',
-				passthrough: { req },
-				options: {
-					$select: ['id'],
-					$filter: {
-						is_stored_at__image_location: {
-							$endswith: effectiveName,
-						},
-					},
-				},
-			});
-
-			const hasReadAccess = needsPull && resolveReadAccess(req, image);
-			const hasWriteAccess =
-				(await needsPush) && (await resolveWriteAccess(req, image));
+			const imageId = await resolveImageId(effectiveName);
+			const [hasReadAccess, hasWriteAccess] = await Promise.all([
+				needsPull && resolveReadAccess(req, imageId),
+				needsPush && resolveWriteAccess(req, imageId),
+			]);
 
 			const actions = _.clone(defaultActions);
 			if (hasReadAccess) {
