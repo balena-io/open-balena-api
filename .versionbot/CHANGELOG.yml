@@ -1,4 +1,17 @@
 - commits:
+    - subject: Reworked resource filtering test cases
+      hash: 26b37d1e41b0ffedc02d65ad2fe9aed6188ce240
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: fisehara <harald@balena.io>
+        signed-off-by: fisehara <harald@balena.io>
+      author: fisehara
+      nested: []
+  version: 0.161.3
+  date: 2021-10-21T18:19:26.100Z
+- commits:
     - subject: 'registry: Avoid fetching unused fields in the image access check'
       hash: 9a94de58f25719b1bcd010c42361269ecc45b276
       body: ''
