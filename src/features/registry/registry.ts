@@ -107,6 +107,9 @@ const resolveReadAccess = async (
 		resource: 'image',
 		id: imageId,
 		passthrough: { req },
+		options: {
+			$select: 'id',
+		},
 	});
 	return image != null;
 };
