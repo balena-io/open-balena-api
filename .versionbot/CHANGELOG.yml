@@ -1,4 +1,26 @@
 - commits:
+    - subject: Expose cache timeout config via env vars
+      hash: d67d4bc7b3f7e3cb7e9169f773fb35aa2c731613
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Cache resolution of repository path to image id
+      hash: a1b0ca15e092f0197f35b20561e1fa9b6fbbe666
+      body: |
+        This is a fairly expensive lookup on a string and allows us to cache
+        that expensive lookup and use a less expensive id based lookup with
+        the specific key for each device key that requests access
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.161.1
+  date: 2021-10-21T15:08:15.874Z
+- commits:
     - subject: 'multiCache: Fix using the preFetch option as ms instead of seconds'
       hash: 778454c3d365ea542533adea2cc11ca5f4c24be6
       body: |
