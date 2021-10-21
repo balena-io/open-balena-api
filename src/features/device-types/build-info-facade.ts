@@ -3,13 +3,14 @@ import { multiCacheMemoizee } from '../../infra/cache';
 
 import * as deviceTypesLib from '@resin.io/device-types';
 
-import { FILES_HOST } from '../../lib/config';
+import {
+	BUILD_COMPRESSED_SIZE_CACHE_TIMEOUT,
+	BUILD_PROPERTY_CACHE_TIMEOUT,
+	FILES_HOST,
+} from '../../lib/config';
 import { fileExists, getFile, getFolderSize, getImageKey } from './storage';
 
 export type DeviceType = deviceTypesLib.DeviceType;
-
-const BUILD_PROPERTY_CACHE_EXPIRATION = 10 * 60 * 1000; // 10 mins
-const BUILD_COMPRESSED_SIZE_CACHE_EXPIRATION = 20 * 60 * 1000; // 20 mins
 
 export const getLogoUrl = multiCacheMemoizee(
 	async (
@@ -42,7 +43,7 @@ export const getLogoUrl = multiCacheMemoizee(
 		promise: true,
 		primitive: true,
 		preFetch: true,
-		maxAge: BUILD_PROPERTY_CACHE_EXPIRATION,
+		maxAge: BUILD_PROPERTY_CACHE_TIMEOUT,
 	},
 );
 
@@ -74,7 +75,7 @@ export const getDeviceTypeJson = memoizee(
 		promise: true,
 		primitive: true,
 		preFetch: true,
-		maxAge: BUILD_PROPERTY_CACHE_EXPIRATION,
+		maxAge: BUILD_PROPERTY_CACHE_TIMEOUT,
 	},
 );
 
@@ -89,6 +90,6 @@ export const getCompressedSize = multiCacheMemoizee(
 		promise: true,
 		primitive: true,
 		preFetch: true,
-		maxAge: BUILD_COMPRESSED_SIZE_CACHE_EXPIRATION,
+		maxAge: BUILD_COMPRESSED_SIZE_CACHE_TIMEOUT,
 	},
 );

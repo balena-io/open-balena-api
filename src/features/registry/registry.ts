@@ -16,6 +16,7 @@ import {
 	AUTH_RESINOS_REGISTRY_CODE,
 	MINUTES,
 	REGISTRY2_HOST,
+	RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
 	TOKEN_AUTH_BUILDER_TOKEN,
 } from '../../lib/config';
 import type { Image, User as DbUser } from '../../balena-model';
@@ -155,7 +156,7 @@ const resolveImageId = multiCacheMemoizee(
 		undefinedAs: false,
 		promise: true,
 		primitive: true,
-		maxAge: 5 * MINUTES,
+		maxAge: RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
 		max: 500,
 	},
 );

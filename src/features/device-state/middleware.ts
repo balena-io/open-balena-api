@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { multiCacheMemoizee } from '../../infra/cache';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import { MINUTES } from '../../lib/config';
+import { DEVICE_EXISTS_CACHE_TIMEOUT } from '../../lib/config';
 
 const { api } = sbvrUtils;
 
@@ -29,7 +29,7 @@ export const checkDeviceExists = multiCacheMemoizee(
 		cacheKey: 'checkDeviceExists',
 		promise: true,
 		primitive: true,
-		maxAge: 5 * MINUTES,
+		maxAge: DEVICE_EXISTS_CACHE_TIMEOUT,
 	},
 );
 
