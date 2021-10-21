@@ -95,8 +95,20 @@ const grantAllToBuilder = (parsedScopes: Scope[]): Access[] =>
 		};
 	});
 
-const resolveReadAccess = (_req: Request, imageId?: number): boolean =>
-	imageId != null;
+const resolveReadAccess = async (
+	req: Request,
+	imageId?: number,
+): Promise<boolean> => {
+	if (imageId == null) {
+		return false;
+	}
+	const image = await api.resin.get({
+		resource: 'image',
+		id: imageId,
+		passthrough: { req },
+	});
+	return image != null;
+};
 
 const resolveWriteAccess = async (
 	req: Request,
@@ -122,6 +134,32 @@ const resolveWriteAccess = async (
 	}
 };
 
+const resolveImageId = multiCacheMemoizee(
+	async (effectiveName: string): Promise<number | undefined> => {
+		const [image] = (await api.resin.get({
+			resource: 'image',
+			passthrough: { req: permissions.root },
+			options: {
+				$select: ['id'],
+				$filter: {
+					is_stored_at__image_location: {
+						$endswith: effectiveName,
+					},
+				},
+			},
+		})) as Array<Pick<Image, 'id'>>;
+		return image?.id;
+	},
+	{
+		cacheKey: 'resolveImageId',
+		undefinedAs: false,
+		promise: true,
+		primitive: true,
+		maxAge: 5 * MINUTES,
+		max: 500,
+	},
+);
+
 const resolveAccess = async (
 	req: Request,
 	type: string,
@@ -140,23 +178,11 @@ const resolveAccess = async (
 		allowedActions = defaultActions;
 	} else {
 		try {
-			const [image] = (await api.resin.get({
-				resource: 'image',
-				passthrough: { req },
-				options: {
-					$select: ['id'],
-					$filter: {
-						is_stored_at__image_location: {
-							$endswith: effectiveName,
-						},
-					},
-				},
-			})) as Array<Pick<Image, 'id'>>;
-			const imageId = image?.id;
-
-			const hasReadAccess = needsPull && resolveReadAccess(req, imageId);
-			const hasWriteAccess =
-				(await needsPush) && (await resolveWriteAccess(req, imageId));
+			const imageId = await resolveImageId(effectiveName);
+			const [hasReadAccess, hasWriteAccess] = await Promise.all([
+				needsPull && resolveReadAccess(req, imageId),
+				needsPush && resolveWriteAccess(req, imageId),
+			]);
 
 			const actions = _.clone(defaultActions);
 			if (hasReadAccess) {
