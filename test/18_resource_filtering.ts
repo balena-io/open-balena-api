@@ -1,7 +1,6 @@
 import { expect } from './test-lib/chai';
 import * as Bluebird from 'bluebird';
-import { supertest, UserObjectParam } from './test-lib/supertest';
-import { version } from './test-lib/versions';
+import { UserObjectParam } from './test-lib/supertest';
 import { pineTest } from './test-lib/pinetest';
 
 import * as fixtures from './test-lib/fixtures';
@@ -24,7 +23,9 @@ describe('Resource Filtering', () => {
 			},
 		});
 
-		let response = await pineUser
+		const {
+			body: [devicetype],
+		} = await pineUser
 			.get({
 				resource: 'device_type',
 				options: {
@@ -41,14 +42,13 @@ describe('Resource Filtering', () => {
 					app_name: `appapp${i}`,
 					slug: `admin/test-app-${i}`,
 					organization: 1,
-					is_for__device_type: response.body[0].id,
+					is_for__device_type: devicetype.id,
 				},
 			});
-			// console.log(JSON.stringify(resp.body, null, 2));
 			await Bluebird.delay(100);
 		}
 
-		response = await pineUser
+		const { body: apps } = await pineUser
 			.get({
 				resource: 'application',
 				options: {
@@ -60,7 +60,7 @@ describe('Resource Filtering', () => {
 			})
 			.expect(200);
 
-		testTimes = response.body;
+		testTimes = apps;
 	});
 
 	after(async () => {
@@ -70,10 +70,18 @@ describe('Resource Filtering', () => {
 
 	describe('Date field filters on created_at', () => {
 		it('Should see all applications ', async () => {
-			const { body } = await supertest(user)
-				.get(`/${version}/application`)
+			const { body: apps } = await pineUser
+				.get({
+					resource: 'application',
+					options: {
+						$select: ['id', 'created_at'],
+						$orderby: {
+							created_at: 'asc',
+						},
+					},
+				})
 				.expect(200);
-			expect(body.d).to.be.an('array').to.have.lengthOf(applicationCount);
+			expect(apps).to.be.an('array').to.have.lengthOf(applicationCount);
 		});
 
 		it('Should filter applications with created_at greater than first', async () => {
