@@ -18,7 +18,7 @@ import {
 	REGISTRY2_HOST,
 	TOKEN_AUTH_BUILDER_TOKEN,
 } from '../../lib/config';
-import type { User as DbUser } from '../../balena-model';
+import type { Image, User as DbUser } from '../../balena-model';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -95,23 +95,23 @@ const grantAllToBuilder = (parsedScopes: Scope[]): Access[] =>
 		};
 	});
 
-const resolveReadAccess = (_req: Request, image?: AnyObject): boolean =>
-	image?.id != null;
+const resolveReadAccess = (_req: Request, imageId?: number): boolean =>
+	imageId != null;
 
 const resolveWriteAccess = async (
 	req: Request,
-	image?: AnyObject,
+	imageId?: number,
 ): Promise<boolean> => {
-	if (image?.id == null) {
+	if (imageId == null) {
 		return false;
 	}
 	try {
 		const res = await api.resin.post({
-			url: `image(${image.id})/canAccess`,
+			url: `image(${imageId})/canAccess`,
 			passthrough: { req },
 			body: { action: 'push' },
 		});
-		return res.d?.[0]?.id === image.id;
+		return res.d?.[0]?.id === imageId;
 	} catch (err) {
 		if (!(err instanceof UnauthorizedError)) {
 			captureException(err, 'Failed to resolve registry write access', {
@@ -140,7 +140,7 @@ const resolveAccess = async (
 		allowedActions = defaultActions;
 	} else {
 		try {
-			const [image] = await api.resin.get({
+			const [image] = (await api.resin.get({
 				resource: 'image',
 				passthrough: { req },
 				options: {
@@ -151,11 +151,12 @@ const resolveAccess = async (
 						},
 					},
 				},
-			});
+			})) as Array<Pick<Image, 'id'>>;
+			const imageId = image?.id;
 
-			const hasReadAccess = needsPull && resolveReadAccess(req, image);
+			const hasReadAccess = needsPull && resolveReadAccess(req, imageId);
 			const hasWriteAccess =
-				(await needsPush) && (await resolveWriteAccess(req, image));
+				(await needsPush) && (await resolveWriteAccess(req, imageId));
 
 			const actions = _.clone(defaultActions);
 			if (hasReadAccess) {
