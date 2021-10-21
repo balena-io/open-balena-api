@@ -24,8 +24,7 @@ const checkAuth = (() => {
 			},
 		}),
 	);
-	const cachedProps = ['user', 'apiKey'].map(_.toPath);
-	const $checkAuth = multiCacheMemoizee(
+	return multiCacheMemoizee(
 		async (uuid: string, req: permissions.PermissionReq): Promise<number> => {
 			try {
 				const device = await authQuery()({ uuid }, undefined, { req });
@@ -45,19 +44,17 @@ const checkAuth = (() => {
 			promise: true,
 			primitive: true,
 			maxAge: VPN_AUTH_CACHE_TIMEOUT,
+			normalizer: ([uuid, req]) => {
+				const userOrApiKey =
+					req.user?.permissions != null
+						? req.user
+						: req.apiKey?.permissions != null
+						? req.apiKey
+						: null;
+				return `${uuid}$${userOrApiKey?.actor}$${userOrApiKey?.permissions}`;
+			},
 		},
 	);
-	return (uuid: string, req: permissions.PermissionReq) => {
-		return $checkAuth(
-			uuid,
-			// Pick only the important props to increase cache hit rate
-			_.pick(
-				req,
-				// @ts-expect-error: lodash typings do not allow a single array of property paths arrays but lodash itself does and it has better performance than property path strings
-				cachedProps,
-			),
-		);
-	};
 })();
 
 const clientConnectQuery = _.once(() =>
