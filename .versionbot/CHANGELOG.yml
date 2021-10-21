@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'registry: Avoid fetching unused fields in the image access check'
+      hash: 9a94de58f25719b1bcd010c42361269ecc45b276
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.161.2
+  date: 2021-10-21T17:04:18.732Z
+- commits:
     - subject: Expose cache timeout config via env vars
       hash: d67d4bc7b3f7e3cb7e9169f773fb35aa2c731613
       body: ''
