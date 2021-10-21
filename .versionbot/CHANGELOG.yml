@@ -1,4 +1,39 @@
 - commits:
+    - subject: 'multiCache: Fix using the preFetch option as ms instead of seconds'
+      hash: 778454c3d365ea542533adea2cc11ca5f4c24be6
+      body: |
+        As found in cache-manager's docs:
+        If the remaining TTL is less than refreshThreshold,
+        the system will spawn a background worker to
+        update the value...
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: >-
+          https://github.com/BryanDonovan/node-cache-manager/blob/b3aa1d59885d5a011fd02f8c197c78f4f6235dde/test/multi_caching.unit.js#L1133
+        see: >-
+          https://github.com/BryanDonovan/node-cache-manager/blob/b3aa1d59885d5a011fd02f8c197c78f4f6235dde/test/multi_caching.unit.js#L1133
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: 'mutliCache: Support separate configuration for the shared cache'
+      hash: 790d771c9f6dfbadd2d91a335db7aee8f5524a25
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/d3SVFlAr20-rnIZM1ChWR4QGMGI
+        see: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/d3SVFlAr20-rnIZM1ChWR4QGMGI
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.161.0
+  date: 2021-10-21T13:19:28.824Z
+- commits:
     - subject: Fix VPN authentication caching edge cases
       hash: e1ddb8db090192b79531206662dfc3cb195b1661
       body: ''
