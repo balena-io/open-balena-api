@@ -1,4 +1,29 @@
 - commits:
+    - subject: Fix VPN authentication caching edge cases
+      hash: e1ddb8db090192b79531206662dfc3cb195b1661
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: 'https://github.com/balena-io/balena-api/issues/3371'
+        see: 'https://github.com/balena-io/balena-api/issues/3371'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Test VPN subsequent authentication caching edge case
+      hash: 5eaf06da0c0c13ded16a15d8122f64dc775a140b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.160.5
+  date: 2021-10-21T11:10:59.332Z
+- commits:
     - subject: Adding tests for datetime filters
       hash: a49809ab96289c4bfa243b715d961e49c0ea8c0b
       body: |
