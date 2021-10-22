@@ -1,4 +1,17 @@
 - commits:
+    - subject: Also write device metrics data if we're writing other device data
+      hash: 1b50c1aab66d2eb4c1d2c36030545406846a7243
+      body: |
+        Omitting the metrics data is only useful if it avoids the write
+        altogether, so if we're writing anyway we might as well include it
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.161.4
+  date: 2021-10-22T13:21:24.438Z
+- commits:
     - subject: Reworked resource filtering test cases
       hash: 26b37d1e41b0ffedc02d65ad2fe9aed6188ce240
       body: ''
