@@ -263,20 +263,24 @@ export const statePatch: RequestHandler = async (req, res) => {
 		| (Pick<LocalBody, typeof validPatchFields[number]> & {
 				is_running__release?: number | null;
 		  });
+	let metricsBody:
+		| undefined
+		| Pick<LocalBody, typeof metricsPatchFields[number]>;
 	if (local != null) {
 		apps = local.apps;
 
 		deviceBody = _.pick(local, validPatchFields);
-		const metricsBody = _.pick(local, metricsPatchFields);
+		metricsBody = _.pick(local, metricsPatchFields);
 		if (Object.keys(metricsBody).length > 0) {
 			const date = Date.now();
 			const lastMetricsUpdate = await getLastMetricsReportTime(uuid, date);
 			// If we got back the date we passed in then it means we should actually do the report
 			if (lastMetricsUpdate === date) {
+				// If we should force a metrics update then merge the two together and clear `metricsBody` so
+				// that we don't try to merge it again later
 				deviceBody = { ...deviceBody, ...metricsBody };
+				metricsBody = undefined;
 			}
-			// TODO: If we've got other device body updates to do then still bundle up the metrics update as it adds minimal additional
-			// work if we're updating anyway, it's only if we go from 0 update -> any update that it's beneficial to drop the report
 		}
 
 		if (local.name != null) {
@@ -347,6 +351,8 @@ export const statePatch: RequestHandler = async (req, res) => {
 			const waitPromises: Array<PromiseLike<any>> = [];
 
 			if (!_.isEmpty(deviceBody)) {
+				// If we're updating anyway then ensure the metrics data is included
+				deviceBody = { ...deviceBody, ...metricsBody };
 				waitPromises.push(
 					resinApiTx.patch({
 						resource: 'device',
