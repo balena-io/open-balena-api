@@ -1,9 +1,11 @@
 import { VPN_SERVICE_API_KEY } from '../src/lib/config';
 import { expect } from './test-lib/chai';
 import * as fixtures from './test-lib/fixtures';
+import { generateDeviceUuid } from './test-lib/fake-device';
 import { supertest, UserObjectParam } from './test-lib/supertest';
 import { version } from './test-lib/versions';
 import { sbvrUtils, permissions } from '@balena/pinejs';
+import { DateString } from '../src/balena-model';
 
 const { api } = sbvrUtils;
 
@@ -13,6 +15,7 @@ describe('create provisioning apikey', function () {
 		this.loadedFixtures = fx;
 		this.user = fx.users.admin;
 		this.application = fx.applications.app1;
+		this.secondApplication = fx.applications.app2;
 	});
 
 	after(async function () {
@@ -28,12 +31,14 @@ describe('create provisioning apikey', function () {
 				applicationId: number,
 				provisioningKeyName?: string,
 				provisioningKeyDescription?: string,
+				provisioningKeyExpiryDate?: DateString,
 			) {
 				return supertest(user)
 					.post(`/api-key/application/${applicationId}/provisioning`)
 					.send({
 						name: provisioningKeyName,
 						description: provisioningKeyDescription,
+						expiryDate: provisioningKeyExpiryDate,
 					});
 			},
 		},
@@ -44,6 +49,7 @@ describe('create provisioning apikey', function () {
 				applicationId: number,
 				provisioningKeyName?: string,
 				provisioningKeyDescription?: string,
+				provisioningKeyExpiryDate?: DateString,
 			) {
 				return supertest(user)
 					.post(`/api-key/v1/`)
@@ -53,6 +59,7 @@ describe('create provisioning apikey', function () {
 						roles: ['provisioning-api-key'],
 						name: provisioningKeyName,
 						description: provisioningKeyDescription,
+						expiryDate: provisioningKeyExpiryDate,
 					});
 			},
 		},
@@ -107,6 +114,85 @@ describe('create provisioning apikey', function () {
 				);
 			});
 
+			it('should be able to create a provisioning key with a valid expiry date', async function () {
+				const applicationId = this.application.id;
+				const tomorrowDate = new Date(Date.now() + 86400000); // one day in future
+				const { body: provisioningKey } = await fn(
+					this.user,
+					applicationId,
+					`provision-key-${applicationId}-with-expiry`,
+					`Sample key for application-${applicationId} description.`,
+					tomorrowDate.toISOString(),
+				).expect(200);
+
+				expect(provisioningKey).to.be.a('string');
+				this.provisioningKey = provisioningKey;
+
+				// check the name assigned
+				const apiKeyResp = await api.resin.get({
+					resource: 'api_key',
+					passthrough: {
+						req: permissions.root,
+					},
+					id: {
+						key: provisioningKey,
+					},
+					options: {
+						$select: ['name', 'description', 'expiry_date'],
+					},
+				});
+
+				expect(apiKeyResp).to.have.property(
+					'name',
+					`provision-key-${applicationId}-with-expiry`,
+				);
+				expect(apiKeyResp).to.have.property(
+					'description',
+					`Sample key for application-${applicationId} description.`,
+				);
+
+				expect(apiKeyResp).to.have.property('expiry_date');
+				expect(apiKeyResp!.expiry_date.getTime()).to.equal(
+					tomorrowDate.getTime(),
+				);
+			});
+
+			it('should not be able to create a provisioning key with a in-valid expiry date', async function () {
+				const applicationId = this.application.id;
+				const invalidDate = 'INVALID_DATE';
+				await fn(
+					this.user,
+					applicationId,
+					`provision-key-${applicationId}-with-expiry`,
+					`Sample key for application-${applicationId} description.`,
+					invalidDate,
+				).expect(400, '"Key expiry date should be a valid date"');
+			});
+
+			it('should not be able to register a device with an expired provisioning key', async function () {
+				const applicationId = this.application.id;
+				const yesterdayDate = new Date(Date.now() - 86400000); // one day in past
+				const { body: provisioningKey } = await fn(
+					this.user,
+					applicationId,
+					`provision-key-${applicationId}-expired`,
+					`Sample key for application-${applicationId} description.`,
+					yesterdayDate.toISOString(),
+				).expect(200);
+
+				expect(provisioningKey).to.be.a('string');
+
+				await supertest()
+					.post(`/device/register?apikey=${provisioningKey}`)
+					.send({
+						user: this.user.id,
+						application: this.application.id,
+						device_type: 'raspberry-pi',
+						uuid,
+					})
+					.expect(401);
+			});
+
 			it('then register a device using the provisioning key', async function () {
 				const { body: device } = await supertest()
 					.post(`/device/register?apikey=${this.provisioningKey}`)
@@ -121,6 +207,45 @@ describe('create provisioning apikey', function () {
 				expect(device).to.have.property('id').that.is.a('number');
 				expect(device).to.have.property('uuid', uuid);
 				expect(device).to.have.property('api_key').that.is.a('string');
+			});
+
+			it('should be able to register a device after updating the expiry date for provisioning key', async function () {
+				const applicationId = this.secondApplication.id;
+				const yesterdayDate = new Date(Date.now() - 86400000); // one day in past
+				const { body: provisioningKey } = await fn(
+					this.user,
+					applicationId,
+					`provision-key-${applicationId}-expired`,
+					`Sample key for application-${applicationId} description.`,
+					yesterdayDate.toISOString(),
+				).expect(200);
+
+				expect(provisioningKey).to.be.a('string');
+
+				// patch existing key with a future expiry date
+				const tomorrowDate = new Date(Date.now() + 86400000); // one day in future
+				await api.resin.patch({
+					resource: 'api_key',
+					passthrough: {
+						req: permissions.root,
+					},
+					id: {
+						key: provisioningKey,
+					},
+					body: {
+						expiry_date: tomorrowDate,
+					},
+				});
+
+				await supertest()
+					.post(`/device/register?apikey=${provisioningKey}`)
+					.send({
+						user: this.user.id,
+						application: applicationId,
+						device_type: 'intel-nuc',
+						uuid: generateDeviceUuid(),
+					})
+					.expect(201);
 			});
 		});
 	});
