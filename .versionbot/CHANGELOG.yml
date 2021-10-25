@@ -1,4 +1,15 @@
 - commits:
+    - subject: Allow configuring the trust proxy setting via an env var
+      hash: 7a8c44ae7a39a2cf5e46f361e70ad28ecbe05943
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.161.6
+  date: 2021-10-25T13:41:10.072Z
+- commits:
     - subject: Run all queries for a token request within a single transaction
       hash: 7310410a534e7cb5c337bb2bcbd4b5b5a12a25bf
       body: ''
