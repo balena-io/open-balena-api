@@ -246,3 +246,22 @@ export const VPN_AUTH_CACHE_TIMEOUT = intVar(
 	'VPN_AUTH_CACHE_TIMEOUT',
 	5 * MINUTES,
 );
+
+const { TRUST_PROXY: trustProxy = 'true' } = process.env;
+let trustProxyValue;
+if (trustProxy === 'true') {
+	// If it's 'true' enable it
+	trustProxyValue = true;
+} else if (trustProxy.includes('.') || trustProxy.includes(':')) {
+	// If it looks like an ip use as-is
+	trustProxyValue = trustProxy;
+} else {
+	const trustProxyNum = parseInt(trustProxy, 10);
+	if (Number.isFinite(trustProxyNum)) {
+		// If it's a number use the number
+		trustProxyValue = trustProxyNum;
+	} else {
+		throw new Error(`Invalid value for 'TRUST_PROXY' of '${trustProxy}'`);
+	}
+}
+export const TRUST_PROXY = trustProxyValue;
