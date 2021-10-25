@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add HOST_CONFIG_gpio config definition for config.txt backend
+      hash: f7b9d3f3f7f38da78763d438f8b07fa64e71c353
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Christina Wang <christina@balena.io>
+        signed-off-by: Christina Wang <christina@balena.io>
+      author: Christina Wang
+      nested: []
+  version: 0.161.9
+  date: 2021-10-25T20:52:09.625Z
+- commits:
     - subject: Add a cache for fetching the device logs write context
       hash: 70d6b687a8880c4f77a068d8d2ef50b58bf2ab4a
       body: ''
