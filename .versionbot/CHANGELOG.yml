@@ -1,4 +1,25 @@
 - commits:
+    - subject: 'Check logs for write permissions earlier, avoiding work on failure'
+      hash: 0f89933a06d906806039058e8d6e04fd7e31fa9c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: 'Improve types for device logs, catching an issue reading from loki'
+      hash: 615d7a11113923e4fbb65ecd1f8967ce7ba7e949
+      body: |
+        Loki used the belongs_to__application as part of it's key but it would
+        have been undefined previously
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.161.7
+  date: 2021-10-25T15:25:49.443Z
+- commits:
     - subject: Allow configuring the trust proxy setting via an env var
       hash: 7a8c44ae7a39a2cf5e46f361e70ad28ecbe05943
       body: ''
