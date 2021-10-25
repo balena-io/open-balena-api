@@ -83,7 +83,8 @@ async function getWriteContext(req: Request): Promise<LogWriteContext> {
 		if (!device) {
 			throw new NotFoundError('No device with uuid ' + uuid);
 		}
-		const ctx = {
+		await checkWritePermissions(resinApi, device);
+		return addRetentionLimit<LogWriteContext>({
 			id: device.id,
 			belongs_to__application: device.belongs_to__application!.__id,
 			logs_channel: device.logs_channel,
@@ -95,9 +96,7 @@ async function getWriteContext(req: Request): Promise<LogWriteContext> {
 					serviceId: img.is_a_build_of__service[0]?.id,
 				};
 			}),
-		};
-		await checkWritePermissions(resinApi, ctx);
-		return addRetentionLimit<LogWriteContext>(ctx);
+		});
 	});
 }
 
