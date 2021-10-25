@@ -19,6 +19,7 @@ import {
 } from './config';
 import { getNanoTimestamp } from '../../../lib/utils';
 import { SetupOptions } from '../../..';
+import { Device, PickDeferred } from '../../../balena-model';
 
 const { NotFoundError } = errors;
 const { api } = sbvrUtils;
@@ -31,7 +32,6 @@ export const read =
 		try {
 			const ctx = await getReadContext(req);
 			if (req.query.stream === '1') {
-				addRetentionLimit(ctx);
 				await handleStreamingRead(ctx, req, res);
 				onLogReadStreamInitialized?.(req);
 			} else {
@@ -191,18 +191,21 @@ function getHistory(
 
 async function getReadContext(req: Request): Promise<LogContext> {
 	const { uuid } = req.params;
-	const ctx = (await api.resin.get({
+	const device = (await api.resin.get({
 		resource: 'device',
 		id: { uuid },
 		passthrough: { req },
 		options: {
-			$select: ['id', 'logs_channel'],
+			$select: ['id', 'belongs_to__application'],
 		},
-	})) as LogContext;
+	})) as PickDeferred<Device, 'id' | 'belongs_to__application'>;
 
-	if (!ctx) {
+	if (!device) {
 		throw new NotFoundError('No device with uuid ' + uuid);
 	}
-	ctx.uuid = uuid;
-	return ctx;
+	return addRetentionLimit({
+		id: device.id,
+		belongs_to__application: device.belongs_to__application!.__id,
+		uuid,
+	});
 }

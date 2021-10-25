@@ -27,6 +27,7 @@ import {
 	WRITE_BUFFER_LIMIT,
 } from './config';
 import { SetupOptions } from '../../..';
+import { Device, PickDeferred } from '../../../balena-model';
 
 const {
 	BadRequestError,
@@ -64,12 +65,10 @@ async function getWriteContext(req: Request): Promise<LogWriteContext> {
 				},
 			},
 		})) as
-			| {
-					id: number;
-					logs_channel?: string;
-					belongs_to__application: {
-						__id: number;
-					};
+			| (PickDeferred<
+					Device,
+					'id' | 'logs_channel' | 'belongs_to__application'
+			  > & {
 					image_install: Array<{
 						id: number;
 						image: Array<{
@@ -79,14 +78,14 @@ async function getWriteContext(req: Request): Promise<LogWriteContext> {
 							}>;
 						}>;
 					}>;
-			  }
+			  })
 			| undefined;
 		if (!device) {
 			throw new NotFoundError('No device with uuid ' + uuid);
 		}
 		const ctx = {
 			id: device.id,
-			belongs_to__application: device.belongs_to__application.__id,
+			belongs_to__application: device.belongs_to__application!.__id,
 			logs_channel: device.logs_channel,
 			uuid,
 			images: device.image_install.map((imageInstall) => {
@@ -98,14 +97,13 @@ async function getWriteContext(req: Request): Promise<LogWriteContext> {
 			}),
 		};
 		await checkWritePermissions(resinApi, ctx);
-		addRetentionLimit(ctx);
-		return ctx;
+		return addRetentionLimit<LogWriteContext>(ctx);
 	});
 }
 
 async function checkWritePermissions(
 	resinApi: sbvrUtils.PinejsClient,
-	ctx: LogWriteContext,
+	ctx: { id: number },
 ): Promise<void> {
 	const allowedDevices = (await resinApi.post({
 		resource: 'device',

@@ -2,11 +2,11 @@ export interface LogContext {
 	id: number;
 	uuid: string;
 	belongs_to__application: number;
-	logs_channel?: string;
-	retention_limit?: number;
+	retention_limit: number;
 }
 
 export interface LogWriteContext extends LogContext {
+	logs_channel: string | null;
 	images: Array<{
 		id: number;
 		serviceId: number;

@@ -24,8 +24,13 @@ const loki = new LokiBackend();
 export const shouldPublishToLoki = () =>
 	LOKI_HOST && LOKI_WRITE_PCT > Math.random() * 100;
 
-export function addRetentionLimit(ctx: LogContext) {
-	ctx.retention_limit = DEFAULT_RETENTION_LIMIT;
+export function addRetentionLimit<T extends LogContext>(
+	ctx: Omit<T, 'retention_limit'>,
+): T {
+	return {
+		...ctx,
+		retention_limit: DEFAULT_RETENTION_LIMIT,
+	} as T;
 }
 
 export function getBackend(_ctx: LogContext): DeviceLogsBackend {
