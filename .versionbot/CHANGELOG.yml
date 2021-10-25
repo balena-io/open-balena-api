@@ -1,4 +1,15 @@
 - commits:
+    - subject: Run all queries for a token request within a single transaction
+      hash: 7310410a534e7cb5c337bb2bcbd4b5b5a12a25bf
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.161.5
+  date: 2021-10-25T13:03:23.133Z
+- commits:
     - subject: Also write device metrics data if we're writing other device data
       hash: 1b50c1aab66d2eb4c1d2c36030545406846a7243
       body: |
