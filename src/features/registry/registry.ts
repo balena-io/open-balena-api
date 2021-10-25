@@ -98,7 +98,8 @@ const grantAllToBuilder = (parsedScopes: Scope[]): Access[] =>
 
 const resolveReadAccess = async (
 	req: Request,
-	imageId?: number,
+	imageId: number | undefined,
+	tx: Tx,
 ): Promise<boolean> => {
 	if (imageId == null) {
 		return false;
@@ -106,7 +107,7 @@ const resolveReadAccess = async (
 	const image = await api.resin.get({
 		resource: 'image',
 		id: imageId,
-		passthrough: { req },
+		passthrough: { req, tx },
 		options: {
 			$select: 'id',
 		},
@@ -116,7 +117,8 @@ const resolveReadAccess = async (
 
 const resolveWriteAccess = async (
 	req: Request,
-	imageId?: number,
+	imageId: number | undefined,
+	tx: Tx,
 ): Promise<boolean> => {
 	if (imageId == null) {
 		return false;
@@ -124,7 +126,7 @@ const resolveWriteAccess = async (
 	try {
 		const res = await api.resin.post({
 			url: `image(${imageId})/canAccess`,
-			passthrough: { req },
+			passthrough: { req, tx },
 			body: { action: 'push' },
 		});
 		return res.d?.[0]?.id === imageId;
@@ -139,10 +141,10 @@ const resolveWriteAccess = async (
 };
 
 const resolveImageId = multiCacheMemoizee(
-	async (effectiveName: string): Promise<number | undefined> => {
+	async (effectiveName: string, tx: Tx): Promise<number | undefined> => {
 		const [image] = (await api.resin.get({
 			resource: 'image',
-			passthrough: { req: permissions.root },
+			passthrough: { req: permissions.root, tx },
 			options: {
 				$select: ['id'],
 				$filter: {
@@ -161,6 +163,7 @@ const resolveImageId = multiCacheMemoizee(
 		primitive: true,
 		maxAge: RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
 		max: 500,
+		normalizer: ([effectiveName]) => effectiveName,
 	},
 );
 
@@ -171,6 +174,7 @@ const resolveAccess = async (
 	effectiveName: string,
 	requestedActions: string[],
 	defaultActions: string[] = [],
+	tx: Tx,
 ): Promise<Access> => {
 	let allowedActions;
 	// Do as few queries as possible
@@ -182,10 +186,10 @@ const resolveAccess = async (
 		allowedActions = defaultActions;
 	} else {
 		try {
-			const imageId = await resolveImageId(effectiveName);
+			const imageId = await resolveImageId(effectiveName, tx);
 			const [hasReadAccess, hasWriteAccess] = await Promise.all([
-				needsPull && resolveReadAccess(req, imageId),
-				needsPush && resolveWriteAccess(req, imageId),
+				needsPull && resolveReadAccess(req, imageId, tx),
+				needsPush && resolveWriteAccess(req, imageId, tx),
 			]);
 
 			const actions = _.clone(defaultActions);
@@ -214,6 +218,7 @@ const resolveAccess = async (
 const authorizeRequest = async (
 	req: Request,
 	scopes: string[],
+	tx: Tx,
 ): Promise<Access[]> => {
 	const parsedScopes: Scope[] = _(scopes)
 		.map((scope) => parseScope(req, scope))
@@ -267,12 +272,20 @@ const authorizeRequest = async (
 						name,
 						effectiveName,
 						requestedActions,
+						undefined,
+						tx,
 					);
 				} else {
 					// request for legacy public-read appName/commit image
-					return await resolveAccess(req, type, name, name, requestedActions, [
-						'pull',
-					]);
+					return await resolveAccess(
+						req,
+						type,
+						name,
+						name,
+						requestedActions,
+						['pull'],
+						tx,
+					);
 				}
 			}
 		}),
@@ -314,10 +327,13 @@ export const token: RequestHandler = async (req, res) => {
 			scopes = [];
 		}
 
-		const [sub, access] = await Promise.all([
-			getSubject(req),
-			authorizeRequest(req, scopes),
-		]);
+		const [sub, access] = await sbvrUtils.db.readTransaction(
+			async (tx) =>
+				await Promise.all([
+					getSubject(req, tx),
+					authorizeRequest(req, scopes, tx),
+				]),
+		);
 		res.json({
 			token: generateToken(sub, REGISTRY2_HOST, access!),
 		});
@@ -330,13 +346,17 @@ export const token: RequestHandler = async (req, res) => {
 };
 
 const $getSubject = multiCacheMemoizee(
-	async (apiKey: string, subject?: string): Promise<string | undefined> => {
+	async (
+		apiKey: string,
+		subject: string | undefined,
+		tx: Tx,
+	): Promise<string | undefined> => {
 		if (subject) {
 			try {
 				// Try to resolve as a device api key first, using the passed in subject
 				const device = await api.resin.get({
 					resource: 'device',
-					passthrough: { req: permissions.root },
+					passthrough: { req: permissions.root, tx },
 					id: {
 						// uuids are passed as `d_${uuid}`
 						uuid: subject.replace(/^d_/, ''),
@@ -407,11 +427,15 @@ const $getSubject = multiCacheMemoizee(
 		promise: true,
 		maxAge: 5 * MINUTES,
 		primitive: true,
+		normalizer: ([apiKey, subject]) => `${apiKey}\u0001${subject}`,
 	},
 );
-const getSubject = async (req: Request): Promise<undefined | string> => {
+const getSubject = async (
+	req: Request,
+	tx: Tx,
+): Promise<undefined | string> => {
 	if (req.apiKey != null && !_.isEmpty(req.apiKey.permissions)) {
-		return await $getSubject(req.apiKey.key, req.params.subject);
+		return await $getSubject(req.apiKey.key, req.params.subject, tx);
 	} else if (req.user) {
 		// If there's no api key then try to use the username from the JWT
 		return req.user.username;
