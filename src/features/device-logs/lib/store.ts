@@ -7,7 +7,7 @@ import type {
 } from './struct';
 
 import onFinished = require('on-finished');
-import { sbvrUtils, errors } from '@balena/pinejs';
+import { sbvrUtils, errors, permissions } from '@balena/pinejs';
 import { Supervisor } from './supervisor';
 import { createGunzip } from 'zlib';
 import * as ndjson from 'ndjson';
@@ -28,6 +28,8 @@ import {
 } from './config';
 import { SetupOptions } from '../../..';
 import { Device, PickDeferred } from '../../../balena-model';
+import { multiCacheMemoizee } from '../../../infra/cache';
+import { DEVICE_LOGS_WRITE_CONTEXT_CACHE_TIMEOUT } from '../../../lib/config';
 
 const {
 	BadRequestError,
@@ -40,65 +42,90 @@ const { api } = sbvrUtils;
 
 const supervisor = new Supervisor();
 
-async function getWriteContext(req: Request): Promise<LogWriteContext> {
-	const { uuid } = req.params;
-	return await sbvrUtils.db.readTransaction(async (tx) => {
-		const resinApi = api.resin.clone({ passthrough: { req, tx } });
-		const device = (await resinApi.get({
-			resource: 'device',
-			id: { uuid },
-			options: {
-				$select: ['id', 'logs_channel', 'belongs_to__application'],
-				$expand: {
-					image_install: {
-						$select: 'id',
+const getWriteContext = (() => {
+	const $getWriteContext = multiCacheMemoizee(
+		async (
+			uuid: string,
+			req: permissions.PermissionReq,
+		): Promise<LogWriteContext> => {
+			return await sbvrUtils.db.readTransaction(async (tx) => {
+				const resinApi = api.resin.clone({ passthrough: { req, tx } });
+				const device = (await resinApi.get({
+					resource: 'device',
+					id: { uuid },
+					options: {
+						$select: ['id', 'logs_channel', 'belongs_to__application'],
 						$expand: {
-							image: {
+							image_install: {
 								$select: 'id',
-								$expand: { is_a_build_of__service: { $select: 'id' } },
+								$expand: {
+									image: {
+										$select: 'id',
+										$expand: { is_a_build_of__service: { $select: 'id' } },
+									},
+								},
+								$filter: {
+									status: { $ne: 'deleted' },
+								},
 							},
 						},
-						$filter: {
-							status: { $ne: 'deleted' },
-						},
 					},
-				},
-			},
-		})) as
-			| (PickDeferred<
-					Device,
-					'id' | 'logs_channel' | 'belongs_to__application'
-			  > & {
-					image_install: Array<{
-						id: number;
-						image: Array<{
-							id: number;
-							is_a_build_of__service: Array<{
+				})) as
+					| (PickDeferred<
+							Device,
+							'id' | 'logs_channel' | 'belongs_to__application'
+					  > & {
+							image_install: Array<{
 								id: number;
+								image: Array<{
+									id: number;
+									is_a_build_of__service: Array<{
+										id: number;
+									}>;
+								}>;
 							}>;
-						}>;
-					}>;
-			  })
-			| undefined;
-		if (!device) {
-			throw new NotFoundError('No device with uuid ' + uuid);
-		}
-		await checkWritePermissions(resinApi, device);
-		return addRetentionLimit<LogWriteContext>({
-			id: device.id,
-			belongs_to__application: device.belongs_to__application!.__id,
-			logs_channel: device.logs_channel,
-			uuid,
-			images: device.image_install.map((imageInstall) => {
-				const img = imageInstall.image[0];
-				return {
-					id: img.id,
-					serviceId: img.is_a_build_of__service[0]?.id,
-				};
-			}),
-		});
-	});
-}
+					  })
+					| undefined;
+				if (!device) {
+					throw new NotFoundError('No device with uuid ' + uuid);
+				}
+				await checkWritePermissions(resinApi, device);
+				return addRetentionLimit<LogWriteContext>({
+					id: device.id,
+					belongs_to__application: device.belongs_to__application!.__id,
+					logs_channel: device.logs_channel,
+					uuid,
+					images: device.image_install.map((imageInstall) => {
+						const img = imageInstall.image[0];
+						return {
+							id: img.id,
+							serviceId: img.is_a_build_of__service[0]?.id,
+						};
+					}),
+				});
+			});
+		},
+		{
+			cacheKey: 'getWriteContext',
+			promise: true,
+			primitive: true,
+			maxAge: DEVICE_LOGS_WRITE_CONTEXT_CACHE_TIMEOUT,
+			normalizer: ([uuid, req]) => {
+				const userOrApiKey =
+					req.user?.permissions != null
+						? req.user
+						: req.apiKey?.permissions != null
+						? req.apiKey
+						: null;
+				return `${uuid}$${userOrApiKey?.actor}$${userOrApiKey?.permissions}`;
+			},
+		},
+	);
+	return async (req: Request) => {
+		const { uuid } = req.params;
+		return await $getWriteContext(uuid, req);
+	};
+})();
 
 async function checkWritePermissions(
 	resinApi: sbvrUtils.PinejsClient,
