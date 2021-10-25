@@ -1,15 +1,15 @@
 export interface LogContext {
-	id: number;
-	uuid: string;
-	belongs_to__application: number;
-	retention_limit: number;
+	readonly id: number;
+	readonly uuid: string;
+	readonly belongs_to__application: number;
+	readonly retention_limit: number;
 }
 
 export interface LogWriteContext extends LogContext {
-	logs_channel: string | null;
-	images: Array<{
-		id: number;
-		serviceId: number;
+	readonly logs_channel: string | null;
+	readonly images: ReadonlyArray<{
+		readonly id: number;
+		readonly serviceId: number;
 	}>;
 }
 
