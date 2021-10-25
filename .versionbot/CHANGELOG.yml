@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add a cache for fetching the device logs write context
+      hash: 70d6b687a8880c4f77a068d8d2ef50b58bf2ab4a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.161.8
+  date: 2021-10-25T15:54:39.435Z
+- commits:
     - subject: 'Check logs for write permissions earlier, avoiding work on failure'
       hash: 0f89933a06d906806039058e8d6e04fd7e31fa9c
       body: ''
