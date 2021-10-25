@@ -5,7 +5,8 @@ import * as _ from 'lodash';
 import config = require('./config');
 import { apiRoot } from './src/balena';
 import { version } from './package.json';
-import * as fs from 'fs';
+import { promises as fs } from 'fs';
+import { TRUST_PROXY } from './src/lib/config';
 
 export const EXPOSED_API_VERSION = 'v6';
 
@@ -207,16 +208,13 @@ async function createSuperuser() {
 }
 
 export const app = express();
-app.enable('trust proxy');
+app.set('trust proxy', TRUST_PROXY);
 
 const init = async () => {
 	try {
 		const generateConfig = (process.env.GENERATE_CONFIG || '').trim();
 		if (generateConfig.length > 0) {
-			await fs.promises.writeFile(
-				generateConfig,
-				JSON.stringify(config, null, '\t'),
-			);
+			await fs.writeFile(generateConfig, JSON.stringify(config, null, '\t'));
 			process.exit();
 		}
 
