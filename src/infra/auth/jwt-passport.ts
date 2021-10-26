@@ -150,7 +150,9 @@ export const middleware: RequestHandler = (req, res, next) => {
 					twoFactorRequired: true;
 				};
 			} else {
-				req.user = auth;
+				req.user = auth as User & {
+					twoFactorRequired: false;
+				};
 			}
 			next();
 		},
