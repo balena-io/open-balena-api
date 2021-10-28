@@ -43,29 +43,38 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 		'Text',
 	];
 
-	abstractSql.tables['release'].fields.push({
-		fieldName: 'version',
-		dataType: 'JSON',
-		required: true,
-		computed: oneLineTrimSqlConcat`{
-			"raw": "${semverField}${[
-			'Cast',
+	const rawVersionField = oneLineTrimSqlConcat`${semverField}${[
+		'Cast',
+		[
+			'Case',
 			[
-				'Case',
-				[
-					'When',
-					['NotExists', revisionField],
-					oneLineTrimSqlConcat`-${createdAtTimestampNode}`,
-				],
-				[
-					'When',
-					['GreaterThan', revisionField, ['Number', 0]],
-					oneLineTrimSqlConcat`+rev${revisionField}`,
-				],
-				['Else', ['EmbeddedText', '']],
+				'When',
+				['NotExists', revisionField],
+				oneLineTrimSqlConcat`-${createdAtTimestampNode}`,
 			],
-			'Text',
-		]}",
+			[
+				'When',
+				['GreaterThan', revisionField, ['Number', 0]],
+				oneLineTrimSqlConcat`+rev${revisionField}`,
+			],
+			['Else', ['EmbeddedText', '']],
+		],
+		'Text',
+	]}`;
+
+	abstractSql.tables['release'].fields.push(
+		{
+			fieldName: 'raw version',
+			dataType: 'Short Text',
+			required: true,
+			computed: rawVersionField,
+		},
+		{
+			fieldName: 'version',
+			dataType: 'JSON',
+			required: true,
+			computed: oneLineTrimSqlConcat`{
+			"raw": "${rawVersionField}",
 			"major": ${majorField},
 			"minor": ${minorField},
 			"patch": ${patchField},
@@ -92,14 +101,15 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 				'Text',
 			]}],
 			"version": "${semverField}${[
-			'Cast',
-			[
-				'Case',
-				['When', isFinal, ['EmbeddedText', '']],
-				['Else', oneLineTrimSqlConcat`-${createdAtTimestampNode}`],
-			],
-			'Text',
-		]}"
+				'Cast',
+				[
+					'Case',
+					['When', isFinal, ['EmbeddedText', '']],
+					['Else', oneLineTrimSqlConcat`-${createdAtTimestampNode}`],
+				],
+				'Text',
+			]}"
 		}`,
-	});
+		},
+	);
 };
