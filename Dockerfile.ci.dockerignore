@@ -1,0 +1,5 @@
+FROM balena/open-balena-base:v12.2.0
+
+COPY . /usr/src/app
+
+RUN npm test
