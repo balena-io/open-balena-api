@@ -1,3 +1,4 @@
+import { errors } from '@balena/pinejs';
 import type { RequestHandler } from 'express';
 
 import { getUser } from '../../infra/auth/auth';
@@ -99,6 +100,10 @@ export const createNamedUserApiKey: RequestHandler = async (req, res) => {
 	}
 
 	try {
+		if (req.user == null) {
+			throw new errors.BadRequestError('Must use user auth');
+		}
+
 		const apiKey = await $createNamedUserApiKey(req, req.user.id, {
 			name,
 			description,

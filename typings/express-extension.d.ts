@@ -2,6 +2,10 @@
 
 // tslint:disable-next-line:no-namespace
 declare namespace Express {
+	type ApiUser = import('../src/infra/auth/jwt-passport').User;
+
+	// tslint:disable-next-line:no-empty-interface
+	interface User extends ApiUser {}
 	export interface Request {
 		prefetchApiKey?: Resolvable<ApiKey>;
 

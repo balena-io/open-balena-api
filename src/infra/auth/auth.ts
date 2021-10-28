@@ -183,7 +183,7 @@ export function getUser(
 export async function getUser(
 	req: hooks.HookReq & Pick<Request, 'user' | 'creds'>,
 	required = true,
-): Promise<User | undefined> {
+): Promise<Express.User | undefined> {
 	await retrieveAPIKey(req);
 	// This shouldn't happen but it does for some internal PineJS requests
 	if (req.user && !req.creds) {
