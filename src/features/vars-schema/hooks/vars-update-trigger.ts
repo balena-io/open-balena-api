@@ -46,7 +46,7 @@ const addEnvHooks = (
 
 	const envVarHook: hooks.Hooks = {
 		POSTRUN: async (args) => {
-			const { req, request } = args;
+			const { req, request, tx } = args;
 			const devices =
 				(request.custom as CustomObject).affectedDevices ??
 				(await getAffectedDeviceIds(args));
@@ -54,13 +54,18 @@ const addEnvHooks = (
 				// If we have no devices affected then no point triggering an update.
 				return;
 			}
-			await postDevices({
-				url: '/v1/update',
-				req,
-				filter: { id: { $in: devices } },
-				// Don't wait for the posts to complete,
-				// as they may take a long time and we've already sent the prompt to update.
-				wait: false,
+			// Send the update requests only after the tx is committed
+			tx.on('end', async () => {
+				try {
+					await postDevices({
+						url: '/v1/update',
+						req,
+						filter: { id: { $in: devices } },
+						wait: false,
+					});
+				} catch (err) {
+					captureException(err, 'Error notifying device updates');
+				}
 			});
 		},
 	};
