@@ -2,4 +2,4 @@ FROM balena/open-balena-base:v12.2.0
 
 COPY . /usr/src/app
 
-CMD /bin/bash -c "npm test"
+RUN npm test
