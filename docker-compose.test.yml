@@ -1,0 +1,10 @@
+version: '2.1'
+
+services:
+  sut:
+    image: balena/open-balena-api-ci-test
+    build:
+      context: .
+      dockerfile: Dockerfile.ci
+    networks:
+      - internal

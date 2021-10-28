@@ -5,4 +5,4 @@ RUN npm ci --unsafe-perm && npm cache clean --force
 
 COPY . /usr/src/app
 
-CMD /bin/bash -c "set -ex; npm test"
+CMD /bin/bash -c "npm test"
