@@ -5,6 +5,8 @@ import type {
 	AbstractSqlModel,
 	ConcatenateNode,
 	Definition,
+	Relationship,
+	RelationshipInternalNode,
 	TextTypeNodes,
 } from '@balena/abstract-sql-compiler';
 
@@ -40,6 +42,73 @@ export const aliasTable = (
 		abstractSqlModel.relationships[resourceName],
 	);
 };
+
+const $aliasRelationships = (
+	relationships: Relationship,
+	resourceRegex: RegExp,
+	toResourceName: string,
+	inAliasingScope = false,
+) => {
+	if (Array.isArray(relationships.$) && relationships.$.length === 2) {
+		const mapping = relationships.$;
+		if (resourceRegex.test(mapping[1]![0])) {
+			mapping[1]![0] = mapping[1]![0].replace(
+				resourceRegex,
+				`$1${toResourceName}$3`,
+			);
+			if (resourceRegex.test(mapping[0])) {
+				mapping[0] = mapping[0].replace(resourceRegex, `$1${toResourceName}$3`);
+			}
+
+			relationships.$ = mapping;
+		}
+		if (inAliasingScope && resourceRegex.test(mapping[1]![1])) {
+			mapping[1]![1] = mapping[1]![1].replace(
+				resourceRegex,
+				`$1${toResourceName}$3`,
+			);
+		}
+	}
+	_.forEach(relationships, (relationshipOrMapping, key) => {
+		if (key === '$') {
+			return;
+		}
+		let relationship = relationshipOrMapping as Relationship;
+		const parentRelationships = relationships as RelationshipInternalNode;
+
+		let startedAliasing = false;
+		if (resourceRegex.test(key)) {
+			relationship = _.cloneDeep(relationship);
+			const aliasedKey = key.replace(resourceRegex, `$1${toResourceName}$3`);
+
+			parentRelationships[aliasedKey] = relationship;
+			// When have previously aliased the root of the current relation subtree,
+			// remove unneeded references to the original resource, to completely replace it.
+			if (inAliasingScope) {
+				delete parentRelationships[key];
+			}
+			startedAliasing = true;
+		}
+
+		$aliasRelationships(
+			relationship,
+			resourceRegex,
+			toResourceName,
+			inAliasingScope || startedAliasing,
+		);
+	});
+};
+
+export const aliasRelationships = (
+	relationships: Relationship,
+	resourceName: string,
+	toResourceName: string,
+) =>
+	$aliasRelationships(
+		relationships,
+		new RegExp(`(^|-)(${resourceName})(-|$)`, 'g'),
+		toResourceName,
+	);
 
 export const renameField = (
 	abstractSqlModel: AbstractSqlModel,
