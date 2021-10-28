@@ -8,3 +8,7 @@ docker:
       dockerfile: Dockerfile
       docker_repo: balena/open-balena-api
       publish: true
+    - path: .
+      dockerfile: Dockerfile.ci
+      docker_repo: balena/open-balena-api-ci-test
+      publish: false
