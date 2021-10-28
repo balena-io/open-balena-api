@@ -1,4 +1,21 @@
 - commits:
+    - subject: Stop using docker layer caching on circleCI
+      hash: 1eb468ad95b4982d78f348dcd8f5cf4a0e841ca4
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/rksMXFxgAs7JqhltZz7Cvh-i5id
+        see: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/rksMXFxgAs7JqhltZz7Cvh-i5id
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.161.10
+  date: 2021-10-28T11:07:11.296Z
+- commits:
     - subject: Add HOST_CONFIG_gpio config definition for config.txt backend
       hash: f7b9d3f3f7f38da78763d438f8b07fa64e71c353
       body: ''
