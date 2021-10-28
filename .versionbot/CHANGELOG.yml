@@ -1,4 +1,19 @@
 - commits:
+    - subject: Add a generic relationship aliasing helper
+      hash: 3dbf68dc33860da6994065522a16c049ac2f69b1
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: 'https://github.com/balena-io/balena-api/issues/3150'
+        see: 'https://github.com/balena-io/balena-api/issues/3150'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.162.0
+  date: 2021-10-28T17:14:44.653Z
+- commits:
     - subject: Update dependencies
       hash: 6180704784114b8007a66fa3879d8258b3bc12be
       body: |
