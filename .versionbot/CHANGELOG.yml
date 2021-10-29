@@ -1,4 +1,15 @@
 - commits:
+    - subject: Run `requestDevices` queries within a single transaction context
+      hash: ce56bd7be72a7023145dd181f8f7ac86634a8479
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.162.2
+  date: 2021-10-29T15:01:40.610Z
+- commits:
     - subject: Ensure the tx is committed before sending device update notifications
       hash: e53c86d36ea15813dab6a005fa08e80c99b18584
       body: ''
