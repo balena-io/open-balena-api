@@ -1,4 +1,15 @@
 - commits:
+    - subject: Ensure the tx is committed before sending device update notifications
+      hash: e53c86d36ea15813dab6a005fa08e80c99b18584
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.162.1
+  date: 2021-10-29T14:37:58.579Z
+- commits:
     - subject: Add a generic relationship aliasing helper
       hash: 3dbf68dc33860da6994065522a16c049ac2f69b1
       body: ''
