@@ -185,68 +185,70 @@ async function requestDevices({
 	if (!['PUT', 'PATCH', 'POST', 'HEAD', 'DELETE', 'GET'].includes(method)) {
 		throw new BadRequestError(`Invalid method '${method}'`);
 	}
-	const resinApi = api.resin.clone({
-		passthrough: { req },
-	});
-	const deviceIds = (
-		(await resinApi.get({
-			resource: 'device',
-			options: {
-				$select: 'id',
-				$filter: {
-					$and: [
-						{
-							is_connected_to_vpn: true,
-							vpn_address: { $ne: null },
-						},
-						filter,
-					],
+	const devices = await sbvrUtils.db.readTransaction(async (tx) => {
+		const resinApi = api.resin.clone({
+			passthrough: { req, tx },
+		});
+		const deviceIds = (
+			(await resinApi.get({
+				resource: 'device',
+				options: {
+					$select: 'id',
+					$filter: {
+						$and: [
+							{
+								is_connected_to_vpn: true,
+								vpn_address: { $ne: null },
+							},
+							filter,
+						],
+					},
 				},
-			},
-		})) as Array<Pick<Device, 'id'>>
-	).map(({ id }) => id);
-	if (deviceIds.length === 0) {
-		if (!wait) {
-			// Don't throw an error if it's a fire/forget
-			return;
+			})) as Array<Pick<Device, 'id'>>
+		).map(({ id }) => id);
+		if (deviceIds.length === 0) {
+			if (!wait) {
+				// Don't throw an error if it's a fire/forget
+				return [];
+			}
+			throw new NotFoundError('No online device(s) found');
 		}
-		throw new NotFoundError('No online device(s) found');
-	}
-	// Check for device update permission, except for
-	// internal operation of the platform.
-	if (method !== 'GET' && req !== permissions.root) {
-		await Promise.all(
-			deviceIds.map(async (deviceId) => {
-				const res = (await resinApi.post({
-					url: `device(${deviceId})/canAccess`,
-					body: { action: 'update' },
-				})) as { d?: Array<{ id: number }> };
+		// Check for device update permission, except for
+		// internal operation of the platform.
+		if (method !== 'GET' && req !== permissions.root) {
+			await Promise.all(
+				deviceIds.map(async (deviceId) => {
+					const res = (await resinApi.post({
+						url: `device(${deviceId})/canAccess`,
+						body: { action: 'update' },
+					})) as { d?: Array<{ id: number }> };
 
-				if (res?.d?.[0]?.id !== deviceId) {
-					throw new errors.ForbiddenError();
-				}
-			}),
-		);
-	}
-	// And now fetch device data with full privs
-	const devices = await api.resin.get({
-		resource: 'device',
-		passthrough: { req: permissions.root },
-		options: {
-			$select: ['api_port', 'api_secret', 'uuid'],
-			$expand: {
-				is_managed_by__service_instance: { $select: 'ip_address' },
-			},
-			$filter: {
-				id: { $in: deviceIds },
-				is_managed_by__service_instance: {
-					$any: {
-						$alias: 'si',
-						$expr: { si: { ip_address: { $ne: null } } },
+					if (res?.d?.[0]?.id !== deviceId) {
+						throw new errors.ForbiddenError();
+					}
+				}),
+			);
+		}
+		// And now fetch device data with full privs
+		return await api.resin.get({
+			resource: 'device',
+			passthrough: { req: permissions.root, tx },
+			options: {
+				$select: ['api_port', 'api_secret', 'uuid'],
+				$expand: {
+					is_managed_by__service_instance: { $select: 'ip_address' },
+				},
+				$filter: {
+					id: { $in: deviceIds },
+					is_managed_by__service_instance: {
+						$any: {
+							$alias: 'si',
+							$expr: { si: { ip_address: { $ne: null } } },
+						},
 					},
 				},
 			},
-		},
+		});
 	});
 
 	// We add a delay between each notification so that we do not in essence
