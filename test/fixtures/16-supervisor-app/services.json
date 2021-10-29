@@ -1,7 +1,7 @@
 {
 	"service1": {
 		"service_name": "service1",
-		"application": "public_app",
+		"application": "amd64_supervisor_app",
 		"user": "admin"
 	},
 	"service2": {
@@ -16,7 +16,7 @@
 	},
 	"service4": {
 		"service_name": "service4",
-		"application": "public_pi_app",
+		"application": "armv7hf_supervisor_app",
 		"user": "admin"
 	}
 }

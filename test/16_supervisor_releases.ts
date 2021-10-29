@@ -15,10 +15,7 @@ describe('Devices running supervisor releases', () => {
 		const fx = await fixtures.load('16-supervisor-app');
 		ctx.fixtures = fx;
 		ctx.admin = fx.users.admin;
-		ctx.public_app = fx.applications.public_app;
 		ctx.deviceApp = fx.applications.app1;
-		ctx.public_pi_app = fx.applications.public_pi_app;
-		ctx.host_app = fx.applications.host_app;
 		ctx.supervisorReleases = ctx.fixtures['releases'];
 		device = await fakeDevice.provisionDevice(ctx.admin, ctx.deviceApp.id);
 		device2 = await fakeDevice.provisionDevice(ctx.admin, ctx.deviceApp.id);
@@ -41,15 +38,21 @@ describe('Devices running supervisor releases', () => {
 				})
 				.expect(200);
 
-			const res = await supertest(ctx.admin).get(
-				`/${version}/device(${device.id})`,
+			const {
+				body: {
+					d: [deviceInfo],
+				},
+			} = await supertest(ctx.admin).get(
+				`/${version}/device(${device.id})?$select=should_be_managed_by__release,supervisor_version`,
 			);
+			expect(deviceInfo).to.have.property('should_be_managed_by__release').that
+				.is.not.null;
 			const nativeSupervisorRes = await supertest(ctx.admin).get(
-				`/${version}/release(${res.body.d[0].should_be_managed_by__release.__id})?$select=release_version`,
+				`/${version}/release(${deviceInfo.should_be_managed_by__release.__id})?$select=release_version`,
 			);
 			expect(nativeSupervisorRes.body)
 				.to.have.nested.property('d[0].release_version')
-				.that.equals(`v${res.body.d[0].supervisor_version}`);
+				.that.equals(`v${deviceInfo.supervisor_version}`);
 		});
 
 		it('should be set to a non-null supervisor release after state endpoint PATCH', async () => {

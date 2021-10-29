@@ -63,7 +63,16 @@ export const postInit = async () => {
 	await import('./device-type');
 
 	const { user, org } = await loadAdminUserAndOrganization();
+	const balenaOsFx = await fixtures.load('00-balena_os');
 	fixtures.setDefaultFixtures('users', { admin: Promise.resolve(user) });
-	fixtures.setDefaultFixtures('organizations', { admin: Promise.resolve(org) });
+	fixtures.setDefaultFixtures('organizations', {
+		admin: Promise.resolve(org),
+		...Object.fromEntries(
+			Object.entries(balenaOsFx.organizations).map(([key, value]) => [
+				key,
+				Promise.resolve(value),
+			]),
+		),
+	});
 	await import('../00_init');
 };

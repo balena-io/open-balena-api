@@ -12,14 +12,14 @@
 		"app_name": "test-device-type",
 		"organization": "balena_os"
 	},
-	"public_pi_app": {
+	"armv7hf_supervisor_app": {
 		"user": "admin",
 		"device_type": "raspberrypi3",
 		"is_public": true,
 		"app_name": "armv7hf-supervisor",
 		"organization": "balena_os"
 	},
-	"public_app": {
+	"amd64_supervisor_app": {
 		"user": "admin",
 		"device_type": "intel-nuc",
 		"is_public": true,

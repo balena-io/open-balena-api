@@ -149,6 +149,10 @@ async function getSupervisorReleaseResource(
 					$any: {
 						$alias: 'a',
 						$expr: {
+							$and: [
+								{ a: { slug: { $startswith: 'balena_os/' } } },
+								{ a: { slug: { $endswith: '-supervisor' } } },
+							],
 							a: {
 								is_public: true,
 								is_host: false,
