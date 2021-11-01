@@ -1,7 +1,7 @@
 const numWorkers = process.env.NUM_WORKERS || require('os').cpus().length;
 if (numWorkers > 1) {
 	const cluster = require('cluster');
-	if (cluster.isMaster) {
+	if (cluster.isPrimary) {
 		// Setup the RateLimiterCluster store on the master worker
 		const { RateLimiterClusterMaster } = require('rate-limiter-flexible');
 		// tslint:disable-next-line:no-unused-expression-chai
@@ -27,7 +27,7 @@ require('fast-boot2').start({
 });
 
 // Set the desired es version for downstream modules that support it
-require('@balena/es-version').set('es2020');
+require('@balena/es-version').set('es2021');
 
 // Support `require()` of *.ts files
 process.env.TS_NODE_CACHE_DIRECTORY = '.ts-node';
