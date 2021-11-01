@@ -1,4 +1,4 @@
-import { isMaster } from 'cluster';
+import cluster = require('cluster');
 import type { Request, Response, RequestHandler } from 'express';
 import * as _ from 'lodash';
 import {
@@ -55,7 +55,7 @@ export const createRateLimiter = (
 	}
 
 	let insuranceLimiter;
-	if (isMaster) {
+	if (cluster.isPrimary) {
 		insuranceLimiter = new RateLimiterMemory({
 			...opts,
 			keyPrefix: `api:ratelimiting:memory:${keyScope}`,
