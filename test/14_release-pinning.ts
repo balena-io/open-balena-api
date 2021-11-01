@@ -24,7 +24,7 @@ describe(`Tracking latest release`, () => {
 	let device3: fakeDevice.Device;
 
 	before(async () => {
-		fx = await fixtures.load('13-release-pinning');
+		fx = await fixtures.load('14-release-pinning');
 
 		admin = fx.users.admin;
 		applicationId = fx.applications.app1.id;
