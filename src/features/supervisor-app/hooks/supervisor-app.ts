@@ -1,12 +1,12 @@
 import * as semver from 'balena-semver';
 import * as _ from 'lodash';
-
 import {
 	sbvrUtils,
 	hooks,
 	permissions,
 	errors as pinejsErrors,
 } from '@balena/pinejs';
+import type { Release } from '../../../balena-model';
 
 const { BadRequestError } = pinejsErrors;
 
@@ -48,14 +48,49 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			// Ensure that we don't ever downgrade the supervisor
 			// from its current version
 			const ids = await sbvrUtils.getAffectedIds(args);
-			await checkSupervisorReleaseUpgrades(
-				args.api,
-				ids,
-				args.request.custom.supervisorRelease,
-			);
+			await Promise.all([
+				// TODO: Drop the release version requirement in a follow-up PR after the initial change gets deployed
+				checkSupervisorReleaseHasReleaseVersion(
+					args.api,
+					ids,
+					args.request.custom.supervisorRelease,
+				),
+				checkSupervisorReleaseUpgrades(
+					args.api,
+					ids,
+					args.request.custom.supervisorRelease,
+				),
+			]);
 		}
 	},
 });
+
+async function checkSupervisorReleaseHasReleaseVersion(
+	api: sbvrUtils.PinejsClient,
+	deviceIds: number[],
+	newSupervisorReleaseId: number,
+) {
+	if (deviceIds.length === 0) {
+		return;
+	}
+
+	const newSupervisorRelease = await api.get({
+		resource: 'release',
+		id: newSupervisorReleaseId,
+		options: {
+			$select: 'id',
+			$filter: {
+				release_version: { $ne: null },
+			},
+		},
+	});
+
+	if (newSupervisorRelease == null) {
+		throw new BadRequestError(
+			`Supervisor release with ID ${newSupervisorReleaseId} does not exist or has no release version`,
+		);
+	}
+}
 
 async function checkSupervisorReleaseUpgrades(
 	api: sbvrUtils.PinejsClient,
@@ -80,7 +115,7 @@ async function checkSupervisorReleaseUpgrades(
 		resource: 'release',
 		id: newSupervisorReleaseId,
 		options: {
-			$select: 'release_version',
+			$select: 'raw_version',
 			$filter: {
 				is_invalidated: false,
 			},
@@ -93,12 +128,12 @@ async function checkSupervisorReleaseUpgrades(
 		);
 	}
 
-	const newSupervisorVersion = newSupervisorRelease.release_version;
+	const newSupervisorVersion = newSupervisorRelease.raw_version;
 
 	const releases = await api.get({
 		resource: 'release',
 		options: {
-			$select: 'release_version',
+			$select: 'raw_version',
 			$filter: {
 				should_manage__device: {
 					$any: {
@@ -117,7 +152,7 @@ async function checkSupervisorReleaseUpgrades(
 	});
 
 	for (const release of releases) {
-		const oldVersion = release.release_version;
+		const oldVersion = release.raw_version;
 		if (semver.lt(newSupervisorVersion, oldVersion)) {
 			throw new BadRequestError(
 				`Attempt to downgrade supervisor, which is not allowed`,
@@ -131,16 +166,18 @@ async function getSupervisorReleaseResource(
 	supervisorVersion: string,
 	archId: string,
 ) {
-	return await api.get({
+	return (await api.get({
 		resource: 'release',
 		options: {
-			$select: ['id', 'release_version'],
-			// technically this is in violation of semver, but is required until logstreams go away
-			$orderby: { release_version: 'desc' },
 			$top: 1,
+			$select: 'id',
 			$filter: {
+				semver: supervisorVersion,
+				// Continue requiring a release_version so that we can rollback if needed.
+				// TODO: Drop this in a follow-up PR after this gets deployed
 				$or: [
 					{ release_version: `v${supervisorVersion}` },
+					// technically this is in violation of semver, but is required until logstreams go away
 					{ release_version: `v${supervisorVersion}_logstream` },
 					{ release_version: `v${supervisorVersion}_logstream2` },
 				],
@@ -180,8 +217,9 @@ async function getSupervisorReleaseResource(
 					},
 				},
 			},
+			$orderby: [{ release_version: 'desc' }, { revision: 'desc' }],
 		},
-	});
+	})) as Array<Pick<Release, 'id'>>;
 }
 
 async function setSupervisorReleaseResource(

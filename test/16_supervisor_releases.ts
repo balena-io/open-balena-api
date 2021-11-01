@@ -171,14 +171,40 @@ describe('Devices running supervisor releases', () => {
 				.that.is.not.null;
 		});
 
-		it('should not allow upgrading to a release without a release version', async () => {
-			const patch = {
-				should_be_managed_by__release: ctx.supervisorReleases['no_version'].id,
-			};
+		it('should not allow upgrading to a release with a 0.0.0 semver', async () => {
+			const supervisorReleaseId = ctx.supervisorReleases['no_semver'].id;
 			await supertest(ctx.admin)
 				.patch(`/${version}/device(${device.id})`)
-				.send(patch)
+				.send({
+					should_be_managed_by__release: supervisorReleaseId,
+				})
+				.expect(400, '"Attempt to downgrade supervisor, which is not allowed"');
+		});
+
+		it('should not allow upgrading to a release without a release version', async () => {
+			const supervisorReleaseId =
+				ctx.supervisorReleases['no_release_version'].id;
+			await supertest(ctx.admin)
+				.patch(`/${version}/device(${device.id})`)
+				.send({
+					should_be_managed_by__release: supervisorReleaseId,
+				})
 				.expect(400);
+		});
+
+		it('should not allow upgrading to a release without any version', async () => {
+			const supervisorReleaseId = ctx.supervisorReleases['no_version'].id;
+			const { body } = await supertest(ctx.admin)
+				.patch(`/${version}/device(${device.id})`)
+				.send({
+					should_be_managed_by__release: supervisorReleaseId,
+				})
+				.expect(400);
+			expect(body).to.be.oneOf([
+				'Attempt to downgrade supervisor, which is not allowed',
+				// TODO: Drop this in a follow-up PR after this gets deployed
+				`Supervisor release with ID ${supervisorReleaseId} does not exist or has no release version`,
+			]);
 		});
 
 		it('should not allow upgrading to a different architecture', async () => {
@@ -257,6 +283,19 @@ describe('Devices running supervisor releases', () => {
 				.patch(`/${version}/device(${device.id})`)
 				.send(patch)
 				.expect(400);
+		});
+
+		it('should allow upgrading to a release with both a semver & a release version', async () => {
+			expect(ctx.supervisorReleases['8.1.2']).to.have.property(
+				'release_version',
+				'v8.1.2',
+			);
+			await supertest(ctx.admin)
+				.patch(`/${version}/device(${device.id})`)
+				.send({
+					should_be_managed_by__release: ctx.supervisorReleases['8.1.2'].id,
+				})
+				.expect(200);
 		});
 	});
 });
