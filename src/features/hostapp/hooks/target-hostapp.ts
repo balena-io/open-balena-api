@@ -318,7 +318,7 @@ async function checkHostappReleaseUpgrades(
 		);
 	}
 
-	// TODO: this validation should eventually use release_version, not tags
+	// TODO: this validation should eventually use release_version or raw_version, not tags
 	const newHostappVersion = newHostappRelease.release_tag[0].value;
 
 	const releases = (await api.get({

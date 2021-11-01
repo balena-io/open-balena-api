@@ -161,7 +161,7 @@ describe('Devices running supervisor releases', () => {
 			await supertest(ctx.admin)
 				.patch(`/${version}/device(${device.id})`)
 				.send({
-					supervisor_version: '8.1.1',
+					supervisor_version: '8.0.1',
 				})
 				.expect(200);
 			const { body } = await supertest(ctx.admin)
@@ -172,24 +172,14 @@ describe('Devices running supervisor releases', () => {
 		});
 
 		it('should not allow upgrading to a release with a 0.0.0 semver', async () => {
-			const supervisorReleaseId = ctx.supervisorReleases['no_semver'].id;
+			const supervisorReleaseId =
+				ctx.supervisorReleases['only_release_version'].id;
 			await supertest(ctx.admin)
 				.patch(`/${version}/device(${device.id})`)
 				.send({
 					should_be_managed_by__release: supervisorReleaseId,
 				})
 				.expect(400, '"Attempt to downgrade supervisor, which is not allowed"');
-		});
-
-		it('should not allow upgrading to a release without a release version', async () => {
-			const supervisorReleaseId =
-				ctx.supervisorReleases['no_release_version'].id;
-			await supertest(ctx.admin)
-				.patch(`/${version}/device(${device.id})`)
-				.send({
-					should_be_managed_by__release: supervisorReleaseId,
-				})
-				.expect(400);
 		});
 
 		it('should not allow upgrading to a release without any version', async () => {
@@ -209,7 +199,8 @@ describe('Devices running supervisor releases', () => {
 
 		it('should not allow upgrading to a different architecture', async () => {
 			const patch = {
-				should_be_managed_by__release: ctx.supervisorReleases['12.1.1'].id,
+				should_be_managed_by__release:
+					ctx.supervisorReleases['12.1.1_armv7hf'].id,
 			};
 			await supertest(ctx.admin)
 				.patch(`/${version}/device(${device.id})`)
@@ -294,6 +285,20 @@ describe('Devices running supervisor releases', () => {
 				.patch(`/${version}/device(${device.id})`)
 				.send({
 					should_be_managed_by__release: ctx.supervisorReleases['8.1.2'].id,
+				})
+				.expect(200);
+		});
+
+		it('should allow upgrading to a release with a semver & no release version', async () => {
+			expect(ctx.supervisorReleases['12.1.1_amd64']).to.have.property(
+				'release_version',
+				null,
+			);
+			await supertest(ctx.admin)
+				.patch(`/${version}/device(${device.id})`)
+				.send({
+					should_be_managed_by__release:
+						ctx.supervisorReleases['12.1.1_amd64'].id,
 				})
 				.expect(200);
 		});

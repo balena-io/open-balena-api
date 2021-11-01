@@ -58,7 +58,14 @@
 	"image9": {
 		"user": "admin",
 		"service": "service4",
-		"releases": [ "12.1.1" ],
+		"releases": [ "12.1.1_armv7hf" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image10": {
+		"user": "admin",
+		"service": "service4",
+		"releases": [ "12.1.1_amd64" ],
 		"project_type": "Dockerfile.template",
 		"status": "success"
 	}
