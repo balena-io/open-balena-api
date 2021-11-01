@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix the inconsistent numeric prefix of release pinning fixtures
+      hash: 4715b2b410d90f3f0803ec13d407c84006e08ca0
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.164.2
+  date: 2021-11-01T18:11:59.598Z
+- commits:
     - subject: Fix cluster typings
       hash: 06c211c79c1d879e0c4dd059b32b258ee478ae46
       body: ''
