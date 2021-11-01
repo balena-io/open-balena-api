@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix cluster typings
+      hash: 06c211c79c1d879e0c4dd059b32b258ee478ae46
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.164.1
+  date: 2021-11-01T15:44:36.031Z
+- commits:
     - subject: Update open-balena-base to 13.0.0
       hash: a0a72162491cd20a49ed3ade1a21c1b12333c819
       body: |
