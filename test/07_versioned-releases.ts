@@ -135,14 +135,16 @@ const expectReleaseVersion = (release: Release) => {
 		semver_patch,
 	} = release;
 	const createdAtTimestamp = +new Date(created_at);
-	const json = {
-		raw: `${semver}${
-			revision == null
-				? `-${createdAtTimestamp}`
-				: revision > 0
-				? `+rev${revision}`
-				: ''
-		}`,
+	const rawVersion = `${semver}${
+		revision == null
+			? `-${createdAtTimestamp}`
+			: revision > 0
+			? `+rev${revision}`
+			: ''
+	}`;
+	expect(release).to.have.deep.property('raw_version', rawVersion);
+	const jsonVersion = {
+		raw: rawVersion,
 		major: semver_major,
 		minor: semver_minor,
 		patch: semver_patch,
@@ -150,7 +152,7 @@ const expectReleaseVersion = (release: Release) => {
 		build: revision != null && revision > 0 ? [`rev${revision}`] : [],
 		version: `${semver}${revision == null ? `-${createdAtTimestamp}` : ''}`,
 	};
-	expect(release).to.have.deep.property('version', json);
+	expect(release).to.have.deep.property('version', jsonVersion);
 };
 
 /** must be more than 3 */
@@ -292,6 +294,7 @@ describe('versioning releases', () => {
 						'is_final',
 						'is_finalized_at__date',
 						'created_at',
+						'raw_version',
 						'version',
 					],
 				},
@@ -516,6 +519,8 @@ describe('versioning releases', () => {
 						);
 					}
 
+					newReleases.forEach(expectReleaseVersion);
+
 					const revisions = _.sortBy(
 						newReleases.map((r) => r.revision),
 						(rev) => rev,
@@ -676,6 +681,7 @@ describe('draft releases', () => {
 						'revision',
 						'is_final',
 						'created_at',
+						'raw_version',
 						'version',
 					],
 				},

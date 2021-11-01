@@ -401,6 +401,7 @@ export interface Release {
 	known_issue_list: string | null;
 	is_final: boolean;
 	semver: string;
+	raw_version: string;
 	version: {};
 }
 
