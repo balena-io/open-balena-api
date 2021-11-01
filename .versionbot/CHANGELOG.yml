@@ -1,4 +1,19 @@
 - commits:
+    - subject: Add a raw_version computed term to the release resource
+      hash: 58316e167808bcda9b902b70608a50bd2ef815e5
+      body: ''
+      footer:
+        Resolves: '#812'
+        resolves: '#812'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.163.0
+  date: 2021-10-29T16:46:52.183Z
+- commits:
     - subject: Run `requestDevices` queries within a single transaction context
       hash: ce56bd7be72a7023145dd181f8f7ac86634a8479
       body: ''
