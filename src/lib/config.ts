@@ -20,6 +20,7 @@ remote {{VPN_DETAILS}}
 resolv-retry infinite
 
 remote-cert-tls server
+tls-version-min 1.2
 ca /etc/openvpn/ca.crt
 auth-user-pass /var/volatile/vpn-auth
 auth-retry none
