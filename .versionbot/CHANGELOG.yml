@@ -1,4 +1,15 @@
 - commits:
+    - subject: Avoid unnecessary conversions of buffers to strings in redis based logs
+      hash: 7d6d350146326f68d518d228f77d091566b3649d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.164.3
+  date: 2021-11-02T11:27:18.851Z
+- commits:
     - subject: Fix the inconsistent numeric prefix of release pinning fixtures
       hash: 4715b2b410d90f3f0803ec13d407c84006e08ca0
       body: ''
