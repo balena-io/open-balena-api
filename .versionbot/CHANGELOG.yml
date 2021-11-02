@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update dependencies
+      hash: 687f90362c08d237686a57c6900ccdbaa80eff4c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.164.4
+  date: 2021-11-02T14:46:50.232Z
+- commits:
     - subject: Avoid unnecessary conversions of buffers to strings in redis based logs
       hash: 7d6d350146326f68d518d228f77d091566b3649d
       body: ''
