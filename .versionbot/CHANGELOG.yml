@@ -1,4 +1,22 @@
 - commits:
+    - subject: Infer device supervisor releases only from balena_os supervisor apps
+      hash: 9e688feacdeb95567f92bba54c9479e098e01a58
+      body: |
+        The cloud API has a rule which enforces this
+        restriction, which means that a PATCH of a device's
+        supervisor_version could fail if this code returned
+        a release of a different public app that has the same
+        release_version.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.164.5
+  date: 2021-11-03T02:34:28.701Z
+- commits:
     - subject: Update dependencies
       hash: 687f90362c08d237686a57c6900ccdbaa80eff4c
       body: ''
