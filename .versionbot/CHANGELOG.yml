@@ -1,4 +1,19 @@
 - commits:
+    - subject: Change the supervisor releases to require & use the semver field
+      hash: 5572b3d451ad3098952a561a4a6bab5b7aaeab8d
+      body: ''
+      footer:
+        Connects-to: '#881'
+        connects-to: '#881'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.165.0
+  date: 2021-11-03T18:06:54.328Z
+- commits:
     - subject: Infer device supervisor releases only from balena_os supervisor apps
       hash: 9e688feacdeb95567f92bba54c9479e098e01a58
       body: |
