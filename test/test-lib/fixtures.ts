@@ -64,9 +64,10 @@ const loaders: Dictionary<LoaderFunc> = {
 		if (user == null) {
 			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
 		}
-		const org = await fixtures.organizations['admin'];
+		const targetOrgHandle = jsonData.organization ?? 'admin';
+		const org = await fixtures.organizations[targetOrgHandle];
 		if (org == null) {
-			logErrorAndThrow('Could not find admin org');
+			logErrorAndThrow(`Could not find ${targetOrgHandle} org`);
 		}
 
 		if (jsonData.depends_on__application != null) {
@@ -124,6 +125,13 @@ const loaders: Dictionary<LoaderFunc> = {
 			user,
 		});
 	},
+	organizations: async (jsonData) => {
+		return await api.resin.post({
+			resource: 'organization',
+			passthrough: { req: permissions.root },
+			body: jsonData,
+		});
+	},
 	service_environment_variables: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.user];
 		if (user == null) {
@@ -173,6 +181,7 @@ const loaders: Dictionary<LoaderFunc> = {
 					'composition',
 					'source',
 					'release_version',
+					'semver',
 					'is_invalidated',
 					'is_final',
 					'is_passing_tests',
