@@ -1,4 +1,18 @@
 - commits:
+    - subject: >-
+        Revert "Avoid unnecessary conversions of buffers to strings in redis
+        based logs"
+      hash: 55b14d144856f182edc47812bd5e81e08193da36
+      body: |
+        This reverts commit 7d6d350146326f68d518d228f77d091566b3649d.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.165.1
+  date: 2021-11-04T17:57:53.677Z
+- commits:
     - subject: Change the supervisor releases to require & use the semver field
       hash: 5572b3d451ad3098952a561a4a6bab5b7aaeab8d
       body: ''
