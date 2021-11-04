@@ -36,6 +36,7 @@ const { ServiceUnavailableError, BadRequestError } = errors;
 // Expire after 30 days of inactivity
 const KEY_EXPIRATION = 30 * DAYS;
 const VERSION = 1;
+const BUFFER_ENCODING = 'binary';
 
 const schema = avro.Type.forSchema({
 	name: 'log',
@@ -70,8 +71,7 @@ export class RedisBackend implements DeviceLogsBackend {
 			throw new ServiceUnavailableError();
 		}
 		const key = this.getKey(ctx);
-		// @ts-expect-error: We enabled returning buffers but the typings don't recognize that
-		const payloads: Buffer[] = await this.cmds.lrangeAsync(
+		const payloads = await this.cmds.lrangeAsync(
 			key,
 			count === Infinity ? 0 : -count,
 			-1,
@@ -97,14 +97,12 @@ export class RedisBackend implements DeviceLogsBackend {
 		// Create a Redis transaction
 		const tx = this.cmds.multi();
 		// Add the logs to the List structure
-		// @ts-expect-error: We're passing a buffer instead of a string which is fine but not in the typings
 		tx.rpush(key, redisLogs);
 		// Trim it to the retention limit
 		tx.ltrim(key, -limit, -1);
 		// Publish each log using Redis PubSub
 		let bytesWritten = 0;
 		for (const rLog of redisLogs) {
-			// @ts-expect-error: We're passing a buffer instead of a string which is fine but not in the typings
 			tx.publish(key, rLog);
 			bytesWritten += rLog.length;
 		}
@@ -141,7 +139,6 @@ export class RedisBackend implements DeviceLogsBackend {
 			port: REDIS_PORT,
 			retry_strategy: () => 500,
 			enable_offline_queue: false,
-			return_buffers: true,
 		});
 		// If not handled will crash the process
 		client.on(
@@ -161,16 +158,16 @@ export class RedisBackend implements DeviceLogsBackend {
 		return `device:${ctx.id}:${suffix}`;
 	}
 
-	private handleMessage(key: string, payload: Buffer) {
+	private handleMessage(key: string, payload: string) {
 		const log = this.fromRedisLog(payload);
 		if (log) {
 			this.subscriptions.emit(key, log);
 		}
 	}
 
-	private fromRedisLog(payload: Buffer): DeviceLog | undefined {
+	private fromRedisLog(payload: string): DeviceLog | undefined {
 		try {
-			const log = schema.fromBuffer(payload);
+			const log = schema.fromBuffer(Buffer.from(payload, BUFFER_ENCODING));
 			if (log.version !== VERSION) {
 				throw new Error(
 					`Invalid Redis serialization version: ${JSON.stringify(log)}`,
@@ -186,9 +183,9 @@ export class RedisBackend implements DeviceLogsBackend {
 		}
 	}
 
-	private toRedisLog(log: DeviceLog): Buffer {
+	private toRedisLog(log: DeviceLog): string {
 		try {
-			return schema.toBuffer(log);
+			return schema.toBuffer(log).toString(BUFFER_ENCODING);
 		} catch (err) {
 			// Rethrow with a type of error that will end up as status 400
 			throw new BadRequestError(err);
