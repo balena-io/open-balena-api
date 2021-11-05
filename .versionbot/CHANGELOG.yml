@@ -1,4 +1,19 @@
 - commits:
+    - subject: Stop requiring a release version for the supervisor releases
+      hash: d3b53e96ea40fc832baed825f0d406d4dbca1ff7
+      body: ''
+      footer:
+        Connects-to: '#881'
+        connects-to: '#881'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.166.0
+  date: 2021-11-05T12:30:48.441Z
+- commits:
     - subject: >-
         Revert "Avoid unnecessary conversions of buffers to strings in redis
         based logs"
