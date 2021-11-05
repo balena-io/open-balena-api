@@ -1,4 +1,15 @@
 - commits:
+    - subject: Avoid starting a transaction if there's no updates for device-state
+      hash: 7f23468f0c1b230647a18761e61aa5bfe6638037
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.166.1
+  date: 2021-11-05T15:04:08.672Z
+- commits:
     - subject: Stop requiring a release version for the supervisor releases
       hash: d3b53e96ea40fc832baed825f0d406d4dbca1ff7
       body: ''
