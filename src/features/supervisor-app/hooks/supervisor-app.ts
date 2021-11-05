@@ -48,49 +48,14 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			// Ensure that we don't ever downgrade the supervisor
 			// from its current version
 			const ids = await sbvrUtils.getAffectedIds(args);
-			await Promise.all([
-				// TODO: Drop the release version requirement in a follow-up PR after the initial change gets deployed
-				checkSupervisorReleaseHasReleaseVersion(
-					args.api,
-					ids,
-					args.request.custom.supervisorRelease,
-				),
-				checkSupervisorReleaseUpgrades(
-					args.api,
-					ids,
-					args.request.custom.supervisorRelease,
-				),
-			]);
+			await checkSupervisorReleaseUpgrades(
+				args.api,
+				ids,
+				args.request.custom.supervisorRelease,
+			);
 		}
 	},
 });
-
-async function checkSupervisorReleaseHasReleaseVersion(
-	api: sbvrUtils.PinejsClient,
-	deviceIds: number[],
-	newSupervisorReleaseId: number,
-) {
-	if (deviceIds.length === 0) {
-		return;
-	}
-
-	const newSupervisorRelease = await api.get({
-		resource: 'release',
-		id: newSupervisorReleaseId,
-		options: {
-			$select: 'id',
-			$filter: {
-				release_version: { $ne: null },
-			},
-		},
-	});
-
-	if (newSupervisorRelease == null) {
-		throw new BadRequestError(
-			`Supervisor release with ID ${newSupervisorReleaseId} does not exist or has no release version`,
-		);
-	}
-}
 
 async function checkSupervisorReleaseUpgrades(
 	api: sbvrUtils.PinejsClient,
@@ -173,14 +138,6 @@ async function getSupervisorReleaseResource(
 			$select: 'id',
 			$filter: {
 				semver: supervisorVersion,
-				// Continue requiring a release_version so that we can rollback if needed.
-				// TODO: Drop this in a follow-up PR after this gets deployed
-				$or: [
-					{ release_version: `v${supervisorVersion}` },
-					// technically this is in violation of semver, but is required until logstreams go away
-					{ release_version: `v${supervisorVersion}_logstream` },
-					{ release_version: `v${supervisorVersion}_logstream2` },
-				],
 				status: 'success',
 				belongs_to__application: {
 					$any: {
@@ -217,7 +174,7 @@ async function getSupervisorReleaseResource(
 					},
 				},
 			},
-			$orderby: [{ release_version: 'desc' }, { revision: 'desc' }],
+			$orderby: { revision: 'desc' },
 		},
 	})) as Array<Pick<Release, 'id'>>;
 }

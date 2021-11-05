@@ -165,7 +165,22 @@ const loaders: Dictionary<LoaderFunc> = {
 			logErrorAndThrow(`Could not find application: ${jsonData.application}`);
 		}
 
-		return await createResource({
+		if (jsonData.revision > 1) {
+			// TODO: Add support for any
+			throw new Error('Fixtures do not support using release revision > 1');
+		}
+		if (jsonData.revision > 0) {
+			const lowerRevRelease = await fixtures.releases[jsonData.semver];
+			if (lowerRevRelease == null) {
+				throw new Error(
+					`Could not find release fixture ${jsonData.semver} with revision ${
+						jsonData.revision - 1
+					} to wait for.`,
+				);
+			}
+		}
+
+		const release = await createResource({
 			resource: 'release',
 			body: {
 				belongs_to__application: application.id,
@@ -190,6 +205,14 @@ const loaders: Dictionary<LoaderFunc> = {
 			},
 			user,
 		});
+
+		if (jsonData.revision != null && jsonData.revision !== release.revision) {
+			throw new Error(
+				`Fixture loader failed to properly set revision ${jsonData.revision} to release with semver ${jsonData.semver}`,
+			);
+		}
+
+		return release;
 	},
 	release_tags: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.user];

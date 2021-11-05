@@ -322,7 +322,7 @@ describe('versioning releases', () => {
 			.expect(400);
 	});
 
-	it('should confirm that invalidating a release allows reuse of version', async () => {
+	it('should confirm that invalidating a release allows reuse of a release version', async () => {
 		await supertest(user)
 			.patch(`/${version}/release(${release1.id})`)
 			.send({

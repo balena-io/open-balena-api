@@ -19,6 +19,7 @@
 		"application": "amd64_supervisor_app",
 		"release_version": "v6.0.1",
 		"semver": "6.0.1",
+		"revision": 0,
 		"status": "success",
 		"source": "cloud",
 		"composition": {
@@ -34,6 +35,7 @@
 		"application": "amd64_supervisor_app",
 		"release_version": "v6.0.1_logstream",
 		"semver": "6.0.1",
+		"revision": 1,
 		"status": "success",
 		"source": "cloud",
 		"composition": {
@@ -77,7 +79,6 @@
 	"8.1.1": {
 		"user": "admin",
 		"application": "amd64_supervisor_app",
-		"release_version": "v8.1.1",
 		"semver": "8.1.1",
 		"status": "success",
 		"source": "cloud",
@@ -105,10 +106,9 @@
 			}
 		}
 	},
-	"12.1.1": {
+	"12.1.1_armv7hf": {
 		"user": "admin",
 		"application": "armv7hf_supervisor_app",
-		"release_version": "v12.1.1",
 		"semver": "12.1.1",
 		"status": "success",
 		"source": "cloud",
@@ -117,6 +117,21 @@
 			"services": {
 				"image8": {
 					"build": "./image9/"
+				}
+			}
+		}
+	},
+	"12.1.1_amd64": {
+		"user": "admin",
+		"application": "amd64_supervisor_app",
+		"semver": "12.1.1",
+		"status": "success",
+		"source": "cloud",
+		"is_invalidated": false,
+		"composition": {
+			"services": {
+				"image8": {
+					"build": "./image10/"
 				}
 			}
 		}
@@ -135,25 +150,10 @@
 			}
 		}
 	},
-	"no_semver": {
+	"only_release_version": {
 		"user": "admin",
 		"application": "armv7hf_supervisor_app",
 		"release_version": "v12.0.0",
-		"status": "success",
-		"source": "cloud",
-		"is_invalidated": false,
-		"composition": {
-			"services": {
-				"image8": {
-					"build": "./image8/"
-				}
-			}
-		}
-	},
-	"no_release_version": {
-		"user": "admin",
-		"application": "armv7hf_supervisor_app",
-		"semver": "12.0.1",
 		"status": "success",
 		"source": "cloud",
 		"is_invalidated": false,
