@@ -9,6 +9,7 @@ import {
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils';
 import {
+	Device,
 	GatewayDownload,
 	ImageInstall,
 	PickDeferred,
@@ -16,6 +17,7 @@ import {
 import { metricsPatchFields, validPatchFields } from '../utils';
 import { multiCacheMemoizee } from '../../../infra/cache';
 import { METRICS_MAX_REPORT_INTERVAL } from '../../../lib/config';
+import { PinejsClient } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -247,8 +249,6 @@ export const statePatch: RequestHandler = async (req, res) => {
 		return res.status(400).end();
 	}
 
-	const custom: AnyObject = {}; // shove custom values here to make them available to the hooks
-
 	const values = req.body;
 	// firstly we need to extract all fields which should be sent to the device
 	// resource which is everything but the service entries
@@ -257,20 +257,19 @@ export const statePatch: RequestHandler = async (req, res) => {
 	// device name
 	const { local, dependent } = values as StatePatchBody;
 
-	let apps: LocalBody['apps'];
-	let deviceBody:
-		| undefined
-		| (Pick<LocalBody, typeof validPatchFields[number]> & {
-				is_running__release?: number | null;
-		  });
-	let metricsBody:
-		| undefined
-		| Pick<LocalBody, typeof metricsPatchFields[number]>;
-	if (local != null) {
-		apps = local.apps;
+	const updateFns: Array<
+		(resinApiTx: PinejsClient, device: Pick<Device, 'id'>) => Promise<void>
+	> = [];
 
-		deviceBody = _.pick(local, validPatchFields);
-		metricsBody = _.pick(local, metricsPatchFields);
+	if (local != null) {
+		const { apps } = local;
+
+		let deviceBody:
+			| Pick<LocalBody, typeof validPatchFields[number]> & {
+					is_running__release?: number | null;
+			  } = _.pick(local, validPatchFields);
+		let metricsBody: Pick<LocalBody, typeof metricsPatchFields[number]> =
+			_.pick(local, metricsPatchFields);
 		if (Object.keys(metricsBody).length > 0) {
 			const date = Date.now();
 			const lastMetricsUpdate = await getLastMetricsReportTime(uuid, date);
@@ -279,57 +278,38 @@ export const statePatch: RequestHandler = async (req, res) => {
 				// If we should force a metrics update then merge the two together and clear `metricsBody` so
 				// that we don't try to merge it again later
 				deviceBody = { ...deviceBody, ...metricsBody };
-				metricsBody = undefined;
+				metricsBody = {};
 			}
 		}
 
 		if (local.name != null) {
 			deviceBody.device_name = local.name;
 		}
-	}
 
-	// forward the public ip address if the request is from the supervisor.
-	if (req.apiKey != null) {
-		custom.ipAddress = getIP(req);
-	}
-
-	try {
-		await sbvrUtils.db.transaction(async (tx) => {
-			const resinApiTx = api.resin.clone({ passthrough: { req, custom, tx } });
-
-			const device = await resinApiTx.get({
-				resource: 'device',
-				id: { uuid },
-				options: {
-					$select: 'id',
-				},
-			});
-
-			if (device == null) {
-				throw new UnauthorizedError();
-			}
-
-			if (local != null) {
-				if (local.is_on__commit === null) {
-					deviceBody!.is_running__release = null;
-				} else if (local.is_on__commit !== undefined) {
-					const [release] = await resinApiTx.get({
-						resource: 'release',
-						options: {
-							$select: 'id',
-							$filter: {
-								commit: local.is_on__commit,
-								status: 'success',
-								belongs_to__application: {
-									$any: {
-										$alias: 'a',
-										$expr: {
-											a: {
-												owns__device: {
-													$any: {
-														$alias: 'd',
-														$expr: {
-															d: { uuid },
+		if (local.is_on__commit !== undefined || !_.isEmpty(deviceBody)) {
+			updateFns.push(async (resinApiTx, device) => {
+				if (local != null) {
+					if (local.is_on__commit === null) {
+						deviceBody!.is_running__release = null;
+					} else if (local.is_on__commit !== undefined) {
+						const [release] = await resinApiTx.get({
+							resource: 'release',
+							options: {
+								$select: 'id',
+								$filter: {
+									commit: local.is_on__commit,
+									status: 'success',
+									belongs_to__application: {
+										$any: {
+											$alias: 'a',
+											$expr: {
+												a: {
+													owns__device: {
+														$any: {
+															$alias: 'd',
+															$expr: {
+																d: { uuid },
+															},
 														},
 													},
 												},
@@ -338,34 +318,32 @@ export const statePatch: RequestHandler = async (req, res) => {
 									},
 								},
 							},
-						},
-					});
+						});
 
-					if (release != null) {
-						// Only set the running release if it's valid, otherwise just silently ignore it
-						deviceBody!.is_running__release = release.id;
+						if (release != null) {
+							// Only set the running release if it's valid, otherwise just silently ignore it
+							deviceBody!.is_running__release = release.id;
+						}
 					}
 				}
-			}
 
-			const waitPromises: Array<PromiseLike<any>> = [];
-
-			if (!_.isEmpty(deviceBody)) {
-				// If we're updating anyway then ensure the metrics data is included
-				deviceBody = { ...deviceBody, ...metricsBody };
-				waitPromises.push(
-					resinApiTx.patch({
+				if (!_.isEmpty(deviceBody)) {
+					// If we're updating anyway then ensure the metrics data is included
+					deviceBody = { ...deviceBody, ...metricsBody };
+					await resinApiTx.patch({
 						resource: 'device',
 						id: device.id,
 						options: {
 							$filter: { $not: deviceBody },
 						},
 						body: deviceBody,
-					}),
-				);
-			}
+					});
+				}
+			});
+		}
 
-			if (apps != null) {
+		if (apps != null) {
+			updateFns.push(async (resinApiTx, device) => {
 				const imgInstalls = _.flatMap(apps, (app) =>
 					_.map(app.services, (svc, imageIdStr) => {
 						const imageId = parseInt(imageIdStr, 10);
@@ -392,101 +370,120 @@ export const statePatch: RequestHandler = async (req, res) => {
 				const imageIds = imgInstalls.map(({ imageId }) => imageId);
 
 				if (imageIds.length > 0) {
-					waitPromises.push(
-						(async () => {
-							const existingImgInstalls = (await resinApiTx.get({
-								resource: 'image_install',
-								options: {
-									$select: ['id', 'installs__image'],
-									$filter: {
-										device: device.id,
-										installs__image: { $in: imageIds },
-									},
-								},
-							})) as Array<
-								PickDeferred<ImageInstall, 'id' | 'installs__image'>
-							>;
-							const existingImgInstallsByImage = _.keyBy(
-								existingImgInstalls,
-								({ installs__image }) => installs__image.__id,
-							);
+					const existingImgInstalls = (await resinApiTx.get({
+						resource: 'image_install',
+						options: {
+							$select: ['id', 'installs__image'],
+							$filter: {
+								device: device.id,
+								installs__image: { $in: imageIds },
+							},
+						},
+					})) as Array<PickDeferred<ImageInstall, 'id' | 'installs__image'>>;
+					const existingImgInstallsByImage = _.keyBy(
+						existingImgInstalls,
+						({ installs__image }) => installs__image.__id,
+					);
 
-							await Promise.all(
-								imgInstalls.map(async (imgInstall) => {
-									await upsertImageInstall(
-										resinApiTx,
-										existingImgInstallsByImage[imgInstall.imageId],
-										imgInstall,
-										device.id,
-									);
-								}),
+					await Promise.all(
+						imgInstalls.map(async (imgInstall) => {
+							await upsertImageInstall(
+								resinApiTx,
+								existingImgInstallsByImage[imgInstall.imageId],
+								imgInstall,
+								device.id,
 							);
-						})(),
+						}),
 					);
 				}
 
-				waitPromises.push(
-					deleteOldImageInstalls(resinApiTx, device.id, imageIds),
+				await deleteOldImageInstalls(resinApiTx, device.id, imageIds);
+			});
+		}
+	}
+
+	if (dependent?.apps != null) {
+		updateFns.push(async (resinApiTx, device) => {
+			// Handle dependent devices if necessary
+			const gatewayDownloads = _.flatMap(dependent.apps, ({ images }) =>
+				_.map(images, ({ status, download_progress }, imageIdStr) => {
+					const imageId = parseInt(imageIdStr, 10);
+					if (!Number.isFinite(imageId)) {
+						throw new BadRequestError('Invalid image ID value in request');
+					}
+
+					return {
+						imageId,
+						status,
+						downloadProgress: download_progress,
+					};
+				}),
+			);
+			const imageIds = gatewayDownloads.map(({ imageId }) => imageId);
+
+			if (imageIds.length > 0) {
+				const existingGatewayDownloads = (await resinApiTx.get({
+					resource: 'gateway_download',
+					options: {
+						$select: ['id', 'image'],
+						$filter: {
+							is_downloaded_by__device: device.id,
+							image: { $in: imageIds },
+						},
+					},
+				})) as Array<PickDeferred<GatewayDownload, 'id' | 'image'>>;
+				const existingGatewayDownloadsByImage = _.keyBy(
+					existingGatewayDownloads,
+					({ image }) => image.__id,
 				);
-			}
 
-			if (dependent?.apps != null) {
-				// Handle dependent devices if necessary
-				const gatewayDownloads = _.flatMap(dependent.apps, ({ images }) =>
-					_.map(images, ({ status, download_progress }, imageIdStr) => {
-						const imageId = parseInt(imageIdStr, 10);
-						if (!Number.isFinite(imageId)) {
-							throw new BadRequestError('Invalid image ID value in request');
-						}
-
-						return {
-							imageId,
-							status,
-							downloadProgress: download_progress,
-						};
+				await Promise.all(
+					gatewayDownloads.map(async (gatewayDownload) => {
+						await upsertGatewayDownload(
+							resinApiTx,
+							existingGatewayDownloadsByImage[gatewayDownload.imageId],
+							device.id,
+							gatewayDownload,
+						);
 					}),
 				);
-				const imageIds = gatewayDownloads.map(({ imageId }) => imageId);
-
-				if (imageIds.length > 0) {
-					waitPromises.push(
-						(async () => {
-							const existingGatewayDownloads = (await resinApiTx.get({
-								resource: 'gateway_download',
-								options: {
-									$select: ['id', 'image'],
-									$filter: {
-										is_downloaded_by__device: device.id,
-										image: { $in: imageIds },
-									},
-								},
-							})) as Array<PickDeferred<GatewayDownload, 'id' | 'image'>>;
-							const existingGatewayDownloadsByImage = _.keyBy(
-								existingGatewayDownloads,
-								({ image }) => image.__id,
-							);
-
-							await Promise.all(
-								gatewayDownloads.map(async (gatewayDownload) => {
-									await upsertGatewayDownload(
-										resinApiTx,
-										existingGatewayDownloadsByImage[gatewayDownload.imageId],
-										device.id,
-										gatewayDownload,
-									);
-								}),
-							);
-						})(),
-					);
-				}
-
-				waitPromises.push(
-					deleteOldGatewayDownloads(resinApiTx, device.id, imageIds),
-				);
 			}
 
-			await Promise.all(waitPromises);
+			await deleteOldGatewayDownloads(resinApiTx, device.id, imageIds);
 		});
+	}
+
+	try {
+		if (updateFns.length > 0) {
+			// Only enter the transaction/do work if there's any updating to be done
+
+			const custom: AnyObject = {}; // shove custom values here to make them available to the hooks
+			// forward the public ip address if the request is from the supervisor.
+			if (req.apiKey != null) {
+				custom.ipAddress = getIP(req);
+			}
+			await sbvrUtils.db.transaction(async (tx) => {
+				const resinApiTx = api.resin.clone({
+					passthrough: { req, custom, tx },
+				});
+
+				const device = (await resinApiTx.get({
+					resource: 'device',
+					id: { uuid },
+					options: {
+						$select: 'id',
+					},
+				})) as Pick<Device, 'id'>;
+
+				if (device == null) {
+					throw new UnauthorizedError();
+				}
+
+				await Promise.all(
+					updateFns.map((updateFn) => updateFn(resinApiTx, device)),
+				);
+			});
+		}
 
 		res.status(200).end();
 	} catch (err) {
