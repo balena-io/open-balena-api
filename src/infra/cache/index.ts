@@ -84,7 +84,7 @@ export function multiCacheMemoizee<
 	}
 
 	const multiCacheOpts = [opts, { ...opts, ...sharedCacheOpts }].map(
-		(options): MultiCacheOpt => {
+		(options): MultiStoreOpt => {
 			// ttl is in seconds, so we need to divide by 1000
 			const ttl = options.maxAge / SECONDS;
 			return {
@@ -105,7 +105,7 @@ export function multiCacheMemoizee<
 
 const usedCacheKeys: Dictionary<true> = {};
 
-type MultiCacheOpt = Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
+type MultiStoreOpt = Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
 	refreshThreshold?: number;
 } & cacheManager.CacheOptions;
 
@@ -116,23 +116,62 @@ function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	fn: T,
 	cacheKey: string,
 	normalizer: NonNullable<MemoizeeOptions<T>['normalizer']>,
-	opts: MultiCacheOpt[],
+	opts: MultiStoreOpt[],
 	undefinedAs?: Defined,
 ): MemoizedFn<T>;
 function multiCache<T extends (...args: any[]) => Promise<Defined>>(
 	fn: T,
 	cacheKey: string,
 	normalizer: NonNullable<MemoizeeOptions<T>['normalizer']>,
-	opts: MultiCacheOpt[],
+	opts: MultiStoreOpt[],
 	undefinedAs?: undefined,
 ): MemoizedFn<T>;
 function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	fn: T,
 	cacheKey: string,
 	normalizer: NonNullable<MemoizeeOptions<T>['normalizer']>,
-	opts: MultiCacheOpt[],
+	opts: MultiStoreOpt[],
 	undefinedAs?: Defined,
 ): MemoizedFn<T> {
+	if (opts.length === 0) {
+		throw new Error(`No multiCache options provided for '${cacheKey}'`);
+	}
+
+	const cache = createMultiLevelStore(cacheKey, opts);
+
+	const getKey = (...args: Parameters<T>) => {
+		return normalizer(args);
+	};
+	const memoizedFn = async (...args: Parameters<T>) => {
+		const key = getKey(...args);
+		const valueFromCache = await cache.wrap(key, async () => {
+			const valueToCache = await fn(...args);
+			// Some caches (eg redis) cannot handle caching undefined/null so we convert it to the `undefinedAs` proxy value
+			// which will be used when storing in the cache and then convert it back to undefined when retrieving from the cache
+			return valueToCache === undefined ? undefinedAs : valueToCache;
+		});
+		return valueFromCache === undefinedAs ? undefined : valueFromCache;
+	};
+
+	memoizedFn.delete = async (...args: Parameters<T>) => {
+		const key = getKey(...args);
+		await cache.delete(key);
+	};
+
+	// We need to cast because the `undefinedAs` handling makes typescript think we've reintroduced undefined
+	// but we've only reintroduced it if it was previously undefined
+	return memoizedFn as MemoizedFn<T>;
+}
+
+export function createMultiLevelStore<T extends Defined>(
+	cacheKey: string,
+	opts: MultiStoreOpt[],
+): {
+	get: (key: string) => Promise<T | undefined>;
+	set: (key: string, value: T) => Promise<void>;
+	delete: (key: string) => Promise<void>;
+	wrap: (key: string, fn: () => T) => Promise<T>;
+} {
 	if (usedCacheKeys[cacheKey] === true) {
 		throw new Error(`Cache key '${cacheKey}' has already been taken`);
 	}
@@ -156,33 +195,30 @@ function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	const cache = cacheManager.multiCaching([memoryCache, redisCache]);
 
 	let keyPrefix: string;
-	const getKey = (...args: Parameters<T>) => {
+	const getKey = (key: string) => {
 		// We include the version so that we get automatic invalidation on updates which might change the memoized fn behavior,
 		// we also calculate the keyPrefix lazily so that the version has a chance to be set as otherwise the memoized function
 		// creation can happen before the version has been initialized
-		keyPrefix ??= `cache$${version}$${cacheKey}$`;
-		return `${keyPrefix}${normalizer(args)}`;
-	};
-	const memoizedFn = async (...args: Parameters<T>) => {
-		const key = getKey(...args);
-		const valueFromCache = await cache.wrap<ResolvableReturnType<T>>(
-			key,
-			async () => {
-				const valueToCache = await fn(...args);
-				// Some caches (eg redis) cannot handle caching undefined/null so we convert it to the `undefinedAs` proxy value
-				// which will be used when storing in the cache and then convert it back to undefined when retrieving from the cache
-				return valueToCache === undefined ? undefinedAs : valueToCache;
-			},
-		);
-		return valueFromCache === undefinedAs ? undefined : valueFromCache;
+		keyPrefix ??= `cache$${version}$${key}$`;
+		return `${keyPrefix}${key}`;
 	};
 
-	memoizedFn.delete = async (...args: Parameters<T>) => {
-		const key = getKey(...args);
-		await cache.del(key);
+	return {
+		get: async (key) => {
+			const fullKey = getKey(key);
+			return await cache.get(fullKey);
+		},
+		set: async (key, value) => {
+			const fullKey = getKey(key);
+			await cache.set(fullKey, value);
+		},
+		delete: async (key) => {
+			const fullKey = getKey(key);
+			await cache.del(fullKey);
+		},
+		wrap: async (key, fn) => {
+			const fullKey = getKey(key);
+			return await cache.wrap(fullKey, fn);
+		},
 	};
-
-	// We need to cast because the `undefinedAs` handling makes typescript think we've reintroduced undefined
-	// but we've only reintroduced it if it was previously undefined
-	return memoizedFn as MemoizedFn<T>;
 }
