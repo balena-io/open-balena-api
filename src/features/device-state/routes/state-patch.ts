@@ -15,7 +15,7 @@ import {
 	PickDeferred,
 } from '../../../balena-model';
 import { metricsPatchFields, validPatchFields } from '../utils';
-import { multiCacheMemoizee } from '../../../infra/cache';
+import { createMultiLevelStore } from '../../../infra/cache';
 import { METRICS_MAX_REPORT_INTERVAL } from '../../../lib/config';
 import { PinejsClient } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
 
@@ -230,17 +230,13 @@ type StatePatchBody = {
 	};
 };
 
-const getLastMetricsReportTime = multiCacheMemoizee(
-	async (_uuid: string, date: number) => {
-		return date;
-	},
-	{
-		cacheKey: 'getLastMetricsReportTime',
-		promise: true,
-		primitive: true,
-		maxAge: METRICS_MAX_REPORT_INTERVAL,
-		normalizer: ([uuid]) => uuid,
-	},
+const lastMetricsReportTime = createMultiLevelStore<true>(
+	'lastMetricsReportTime',
+	[
+		{
+			ttl: METRICS_MAX_REPORT_INTERVAL,
+		},
+	],
 );
 
 const deviceQuery = _.once(() =>
@@ -313,10 +309,11 @@ export const statePatch: RequestHandler = async (req, res) => {
 		let metricsBody: Pick<LocalBody, typeof metricsPatchFields[number]> =
 			_.pick(local, metricsPatchFields);
 		if (Object.keys(metricsBody).length > 0) {
-			const date = Date.now();
-			const lastMetricsUpdate = await getLastMetricsReportTime(uuid, date);
-			// If we got back the date we passed in then it means we should actually do the report
-			if (lastMetricsUpdate === date) {
+			const lastMetricsUpdate = await lastMetricsReportTime.get(uuid);
+			// If the entry has expired then it means we should actually do the report
+			if (lastMetricsUpdate == null) {
+				// And we add a new entry
+				await lastMetricsReportTime.set(uuid, true);
 				// If we should force a metrics update then merge the two together and clear `metricsBody` so
 				// that we don't try to merge it again later
 				deviceBody = { ...deviceBody, ...metricsBody };
