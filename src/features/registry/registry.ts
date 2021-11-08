@@ -4,7 +4,7 @@
 import type { Request, RequestHandler } from 'express';
 import * as jsonwebtoken from 'jsonwebtoken';
 import * as _ from 'lodash';
-import { multiCacheMemoizee } from '../../infra/cache';
+import { multiCacheMemoizee, reqPermissionNormalizer } from '../../infra/cache';
 import { randomUUID } from 'crypto';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
@@ -120,13 +120,7 @@ const resolveReadAccess = (() => {
 			primitive: true,
 			maxAge: RESOLVE_IMAGE_READ_ACCESS_CACHE_TIMEOUT,
 			normalizer: ([imageId, req]) => {
-				const userOrApiKey =
-					req.user?.permissions != null
-						? req.user
-						: req.apiKey?.permissions != null
-						? req.apiKey
-						: null;
-				return `${imageId}$${userOrApiKey?.actor}$${userOrApiKey?.permissions}`;
+				return `${imageId}$${reqPermissionNormalizer(req)}`;
 			},
 		},
 	);

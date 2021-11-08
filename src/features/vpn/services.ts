@@ -7,7 +7,7 @@ import {
 	handleHttpErrors,
 	translateError,
 } from '../../infra/error-handling';
-import { multiCacheMemoizee } from '../../infra/cache';
+import { multiCacheMemoizee, reqPermissionNormalizer } from '../../infra/cache';
 import { VPN_AUTH_CACHE_TIMEOUT } from '../../lib/config';
 
 const { api } = sbvrUtils;
@@ -45,13 +45,7 @@ const checkAuth = (() => {
 			primitive: true,
 			maxAge: VPN_AUTH_CACHE_TIMEOUT,
 			normalizer: ([uuid, req]) => {
-				const userOrApiKey =
-					req.user?.permissions != null
-						? req.user
-						: req.apiKey?.permissions != null
-						? req.apiKey
-						: null;
-				return `${uuid}$${userOrApiKey?.actor}$${userOrApiKey?.permissions}`;
+				return `${uuid}$${reqPermissionNormalizer(req)}`;
 			},
 		},
 	);
