@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'state-patch: Prepare the device & release pine queries'
+      hash: 271fb5c2802540ce02272a5ef70f91c54755b31e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.166.2
+  date: 2021-11-05T22:32:46.085Z
+- commits:
     - subject: Avoid starting a transaction if there's no updates for device-state
       hash: 7f23468f0c1b230647a18761e61aa5bfe6638037
       body: ''
