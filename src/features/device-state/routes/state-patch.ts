@@ -243,6 +243,48 @@ const getLastMetricsReportTime = multiCacheMemoizee(
 	},
 );
 
+const deviceQuery = _.once(() =>
+	api.resin.prepare<{ uuid: string }>({
+		resource: 'device',
+		id: {
+			uuid: { '@': 'uuid' },
+		},
+		options: {
+			$select: 'id',
+		},
+	}),
+);
+
+const releaseOfDeviceQuery = _.once(() =>
+	api.resin.prepare<{ uuid: string; commit: string }>({
+		resource: 'release',
+		options: {
+			$select: 'id',
+			$filter: {
+				commit: { '@': 'commit' },
+				status: 'success',
+				belongs_to__application: {
+					$any: {
+						$alias: 'a',
+						$expr: {
+							a: {
+								owns__device: {
+									$any: {
+										$alias: 'd',
+										$expr: {
+											d: { '@': 'uuid' },
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}),
+);
+
 export const statePatch: RequestHandler = async (req, res) => {
 	const { uuid } = req.params;
 	if (!uuid) {
@@ -292,34 +334,11 @@ export const statePatch: RequestHandler = async (req, res) => {
 					if (local.is_on__commit === null) {
 						deviceBody!.is_running__release = null;
 					} else if (local.is_on__commit !== undefined) {
-						const [release] = await resinApiTx.get({
-							resource: 'release',
-							options: {
-								$select: 'id',
-								$filter: {
-									commit: local.is_on__commit,
-									status: 'success',
-									belongs_to__application: {
-										$any: {
-											$alias: 'a',
-											$expr: {
-												a: {
-													owns__device: {
-														$any: {
-															$alias: 'd',
-															$expr: {
-																d: { uuid },
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						});
-
+						const [release] = await releaseOfDeviceQuery()(
+							{ commit: local.is_on__commit, uuid },
+							undefined,
+							resinApiTx.passthrough,
+						);
 						if (release != null) {
 							// Only set the running release if it's valid, otherwise just silently ignore it
 							deviceBody!.is_running__release = release.id;
@@ -467,14 +486,11 @@ export const statePatch: RequestHandler = async (req, res) => {
 					passthrough: { req, custom, tx },
 				});
 
-				const device = (await resinApiTx.get({
-					resource: 'device',
-					id: { uuid },
-					options: {
-						$select: 'id',
-					},
-				})) as Pick<Device, 'id'>;
-
+				const device = (await deviceQuery()(
+					{ uuid },
+					undefined,
+					resinApiTx.passthrough,
+				)) as Pick<Device, 'id'>;
 				if (device == null) {
 					throw new UnauthorizedError();
 				}
