@@ -46,7 +46,7 @@ export function createMultiLevelStore<T extends Defined>(
 		// We include the version so that we get automatic invalidation on updates which might change the memoized fn behavior,
 		// we also calculate the keyPrefix lazily so that the version has a chance to be set as otherwise the memoized function
 		// creation can happen before the version has been initialized
-		keyPrefix ??= `cache$${version}$${key}$`;
+		keyPrefix ??= `cache$${version}$${cacheKey}$`;
 		return `${keyPrefix}${key}`;
 	};
 
