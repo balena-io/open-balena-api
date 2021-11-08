@@ -1,4 +1,23 @@
 - commits:
+    - subject: Use the multi-level store for saving the last metrics report time
+      hash: f64663a5bd80b585cc02ec7ccd9cbf1fd145f00c
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Split the underlying multi-level store from the multi-level memoization
+      hash: f6f1e47158fd0aa4b015a3c732d88b8b08585d6a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.166.3
+  date: 2021-11-08T17:49:09.960Z
+- commits:
     - subject: 'state-patch: Prepare the device & release pine queries'
       hash: 271fb5c2802540ce02272a5ef70f91c54755b31e
       body: ''
