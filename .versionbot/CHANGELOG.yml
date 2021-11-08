@@ -1,4 +1,15 @@
 - commits:
+    - subject: Enforce minimum TLS v1.2 (OpenVPN)
+      hash: d6d46b2e455bd3f9b57804a9103f76149f543a85
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: ab77
+      nested: []
+  version: 0.167.0
+  date: 2021-11-08T19:41:16.827Z
+- commits:
     - subject: Use the multi-level store for saving the last metrics report time
       hash: f64663a5bd80b585cc02ec7ccd9cbf1fd145f00c
       body: ''
