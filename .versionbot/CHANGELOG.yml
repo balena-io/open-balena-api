@@ -1,4 +1,17 @@
 - commits:
+    - subject: Refactor the state patch tests to use the expectResourceToMatch helper
+      hash: 7888fae5eab0db50ef784d8441ef38385e84b804
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.168.4
+  date: 2021-11-09T22:11:17.580Z
+- commits:
     - subject: Add device state endpoint tests for updating the running release
       hash: 95a580591485749d9fa1d02cf6137558740bea64
       body: ''
