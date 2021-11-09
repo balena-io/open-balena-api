@@ -15,7 +15,7 @@ import type {
 } from '../../../balena-model';
 import { metricsPatchFields, validPatchFields } from '../utils';
 import { createMultiLevelStore } from '../../../infra/cache';
-import { METRICS_MAX_REPORT_INTERVAL } from '../../../lib/config';
+import { METRICS_MAX_REPORT_INTERVAL_SECONDS } from '../../../lib/config';
 import { PinejsClient } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
 import type { ResolveDeviceInfoCustomObject } from '../middleware';
 
@@ -234,7 +234,7 @@ const lastMetricsReportTime = createMultiLevelStore<true>(
 	'lastMetricsReportTime',
 	[
 		{
-			ttl: METRICS_MAX_REPORT_INTERVAL,
+			ttl: METRICS_MAX_REPORT_INTERVAL_SECONDS,
 		},
 	],
 );
