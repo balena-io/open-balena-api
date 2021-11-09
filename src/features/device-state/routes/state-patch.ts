@@ -8,8 +8,7 @@ import {
 } from '../../../infra/error-handling';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils';
-import {
-	Device,
+import type {
 	GatewayDownload,
 	ImageInstall,
 	PickDeferred,
@@ -18,6 +17,7 @@ import { metricsPatchFields, validPatchFields } from '../utils';
 import { createMultiLevelStore } from '../../../infra/cache';
 import { METRICS_MAX_REPORT_INTERVAL } from '../../../lib/config';
 import { PinejsClient } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
+import type { ResolveDeviceInfoCustomObject } from '../middleware';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -239,18 +239,6 @@ const lastMetricsReportTime = createMultiLevelStore<true>(
 	],
 );
 
-const deviceQuery = _.once(() =>
-	api.resin.prepare<{ uuid: string }>({
-		resource: 'device',
-		id: {
-			uuid: { '@': 'uuid' },
-		},
-		options: {
-			$select: 'id',
-		},
-	}),
-);
-
 const releaseOfDeviceQuery = _.once(() =>
 	api.resin.prepare<{ uuid: string; commit: string }>({
 		resource: 'release',
@@ -286,6 +274,12 @@ export const statePatch: RequestHandler = async (req, res) => {
 	if (!uuid) {
 		return res.status(400).end();
 	}
+	const { resolvedDevice: device } =
+		req.custom as ResolveDeviceInfoCustomObject;
+	if (device == null) {
+		// We are supposed to have already checked this.
+		throw new UnauthorizedError();
+	}
 
 	const values = req.body;
 	// firstly we need to extract all fields which should be sent to the device
@@ -295,9 +289,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 	// device name
 	const { local, dependent } = values as StatePatchBody;
 
-	const updateFns: Array<
-		(resinApiTx: PinejsClient, device: Pick<Device, 'id'>) => Promise<void>
-	> = [];
+	const updateFns: Array<(resinApiTx: PinejsClient) => Promise<void>> = [];
 
 	if (local != null) {
 		const { apps } = local;
@@ -326,7 +318,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 		}
 
 		if (local.is_on__commit !== undefined || !_.isEmpty(deviceBody)) {
-			updateFns.push(async (resinApiTx, device) => {
+			updateFns.push(async (resinApiTx) => {
 				if (local != null) {
 					if (local.is_on__commit === null) {
 						deviceBody!.is_running__release = null;
@@ -359,7 +351,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 		}
 
 		if (apps != null) {
-			updateFns.push(async (resinApiTx, device) => {
+			updateFns.push(async (resinApiTx) => {
 				const imgInstalls = _.flatMap(apps, (app) =>
 					_.map(app.services, (svc, imageIdStr) => {
 						const imageId = parseInt(imageIdStr, 10);
@@ -419,7 +411,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 	}
 
 	if (dependent?.apps != null) {
-		updateFns.push(async (resinApiTx, device) => {
+		updateFns.push(async (resinApiTx) => {
 			// Handle dependent devices if necessary
 			const gatewayDownloads = _.flatMap(dependent.apps, ({ images }) =>
 				_.map(images, ({ status, download_progress }, imageIdStr) => {
@@ -483,18 +475,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 					passthrough: { req, custom, tx },
 				});
 
-				const device = (await deviceQuery()(
-					{ uuid },
-					undefined,
-					resinApiTx.passthrough,
-				)) as Pick<Device, 'id'>;
-				if (device == null) {
-					throw new UnauthorizedError();
-				}
-
-				await Promise.all(
-					updateFns.map((updateFn) => updateFn(resinApiTx, device)),
-				);
+				await Promise.all(updateFns.map((updateFn) => updateFn(resinApiTx)));
 			});
 		}
 

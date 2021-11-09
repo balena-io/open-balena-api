@@ -82,7 +82,7 @@ import {
 	assignUserRole,
 } from './infra/auth/permissions';
 import { createScopedAccessToken, createJwt } from './infra/auth/jwt';
-import { gracefullyDenyDeletedDevices } from './features/device-state/middleware';
+import { resolveOrGracefullyDenyDevices } from './features/device-state/middleware';
 import {
 	authenticatedMiddleware,
 	authorizedMiddleware,
@@ -198,7 +198,7 @@ export const middleware = {
 	authenticated: authenticatedMiddleware,
 	authorized: authorizedMiddleware,
 	apiKeyMiddleware,
-	gracefullyDenyDeletedDevices,
+	resolveOrGracefullyDenyDevices,
 	identify: identifyMiddleware,
 	permissionRequired: permissionRequiredMiddleware,
 	loginRateLimiter,

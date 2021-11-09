@@ -4,7 +4,7 @@ import type StrictEventEmitter from 'strict-event-emitter-types';
 import { EventEmitter } from 'events';
 import { apiKeyMiddleware } from '../../infra/auth';
 
-import { gracefullyDenyDeletedDevices } from './middleware';
+import { resolveOrGracefullyDenyDevices } from './middleware';
 import { stateV2 } from './routes/state';
 import { statePatch } from './routes/state-patch';
 
@@ -22,13 +22,13 @@ export {
 export const setup = (app: Application) => {
 	app.get(
 		'/device/v2/:uuid/state',
-		gracefullyDenyDeletedDevices,
+		resolveOrGracefullyDenyDevices,
 		apiKeyMiddleware,
 		stateV2,
 	);
 	app.patch(
 		'/device/v2/:uuid/state',
-		gracefullyDenyDeletedDevices,
+		resolveOrGracefullyDenyDevices,
 		apiKeyMiddleware,
 		statePatch,
 	);
