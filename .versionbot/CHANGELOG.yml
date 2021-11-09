@@ -1,4 +1,15 @@
 - commits:
+    - subject: Use seconds for ttl not ms
+      hash: 4e4d9c90a1a9d7491159134adeb3b30a3ead025f
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.168.1
+  date: 2021-11-09T18:49:47.529Z
+- commits:
     - subject: 'device-state: Combine the deleted check with the device id resolution'
       hash: 6842b6843551545a97d0b5ba8c905d863af520f7
       body: ''
