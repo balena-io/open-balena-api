@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix release resolving query
+      hash: 1d6476603794d35ea23ee81266a1e8376149c5c5
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.168.2
+  date: 2021-11-09T21:19:56.855Z
+- commits:
     - subject: Use seconds for ttl not ms
       hash: 4e4d9c90a1a9d7491159134adeb3b30a3ead025f
       body: ''
