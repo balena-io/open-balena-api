@@ -1,5 +1,7 @@
 import { supertest, UserObjectParam } from '../test-lib/supertest';
-import { version } from '../test-lib/versions';
+import { expect } from './chai';
+import { version } from './versions';
+import type { PineTest } from './pinetest';
 
 interface MockReleaseParams {
 	belongs_to__application: number;
@@ -76,4 +78,35 @@ export const addImageToRelease = async (
 			is_part_of__release: releaseId,
 		})
 		.expect(201);
+};
+
+export const expectResourceToMatch = async (
+	pineUser: PineTest,
+	resource: string,
+	id: number | AnyObject,
+	expectations: Dictionary<
+		| null
+		| string
+		| number
+		| boolean
+		| ((chaiPropertyAssetion: Chai.Assertion) => void)
+	>,
+) => {
+	const { body: result } = await pineUser
+		.get({
+			resource,
+			id,
+			options: {
+				$select: Object.keys(expectations),
+			},
+		})
+		.expect(200);
+	Object.entries(expectations).forEach(([key, valueOrAssetion]) => {
+		if (typeof valueOrAssetion === 'function') {
+			valueOrAssetion(expect(result).to.have.property(key));
+		} else {
+			expect(result).to.have.property(key, valueOrAssetion);
+		}
+	});
+	return result;
 };
