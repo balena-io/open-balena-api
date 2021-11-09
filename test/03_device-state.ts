@@ -5,12 +5,14 @@ import * as mockery from 'mockery';
 import * as fakeDevice from './test-lib/fake-device';
 import { supertest, UserObjectParam } from './test-lib/supertest';
 import { version } from './test-lib/versions';
+import { pineTest } from './test-lib/pinetest';
 
 import sinon = require('sinon');
 import configMock = require('../src/lib/config');
 import * as stateMock from '../src/features/device-heartbeat';
 import { waitFor } from './test-lib/common';
 import * as fixtures from './test-lib/fixtures';
+import { expectResourceToMatch } from './test-lib/api-helpers';
 
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
@@ -326,6 +328,7 @@ describe('Device State v2', () => {
 describe('Device State v2 patch', function () {
 	let fx: fixtures.Fixtures;
 	let admin: UserObjectParam;
+	let pineUser: typeof pineTest;
 	let applicationId: number;
 	let release1: AnyObject;
 	let release2: AnyObject;
@@ -338,6 +341,9 @@ describe('Device State v2 patch', function () {
 		applicationId = fx.applications.app1.id;
 		release1 = fx.releases.release1;
 		release2 = fx.releases.release2;
+		pineUser = pineTest.clone({
+			passthrough: { user: admin },
+		});
 
 		// create a new device in this test application...
 		device = await fakeDevice.provisionDevice(
@@ -381,20 +387,11 @@ describe('Device State v2 patch', function () {
 
 		await device.patchStateV2(devicePatchBody);
 
-		const {
-			body: {
-				d: [updatedDevice],
-			},
-		} = await supertest(admin)
-			.get(`/${version}/device(${device.id})`)
-			.expect(200);
-
-		Object.keys(devicePatchBody.local).forEach(
-			(field: keyof typeof devicePatchBody['local']) => {
-				expect(updatedDevice[field], field).to.equal(
-					devicePatchBody.local[field],
-				);
-			},
+		await expectResourceToMatch(
+			pineUser,
+			'device',
+			device.id,
+			devicePatchBody.local,
 		);
 	});
 
@@ -408,18 +405,12 @@ describe('Device State v2 patch', function () {
 
 			await device.patchStateV2(devicePatchBody);
 
-			const {
-				body: {
-					d: [updatedDevice],
-				},
-			} = await supertest(admin)
-				.get(`/${version}/device(${device.id})?$select=is_running__release`)
-				.expect(200);
-
-			expect(updatedDevice).to.have.nested.property(
-				'is_running__release.__id',
-				r.id,
-			);
+			await expectResourceToMatch(pineUser, 'device', device.id, {
+				is_running__release: (chaiPropertyAssetion) =>
+					chaiPropertyAssetion.that.is
+						.an('object')
+						.that.has.property('__id', r.id),
+			});
 		}
 	});
 });
