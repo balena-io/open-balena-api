@@ -327,6 +327,8 @@ describe('Device State v2 patch', function () {
 	let fx: fixtures.Fixtures;
 	let admin: UserObjectParam;
 	let applicationId: number;
+	let release1: AnyObject;
+	let release2: AnyObject;
 	let device: fakeDevice.Device;
 
 	before(async () => {
@@ -334,6 +336,8 @@ describe('Device State v2 patch', function () {
 
 		admin = fx.users.admin;
 		applicationId = fx.applications.app1.id;
+		release1 = fx.releases.release1;
+		release2 = fx.releases.release2;
 
 		// create a new device in this test application...
 		device = await fakeDevice.provisionDevice(
@@ -392,5 +396,30 @@ describe('Device State v2 patch', function () {
 				);
 			},
 		);
+	});
+
+	it('should save the updated running release of the device state', async () => {
+		for (const r of [release1, release2]) {
+			const devicePatchBody = {
+				local: {
+					is_on__commit: r.commit,
+				},
+			};
+
+			await device.patchStateV2(devicePatchBody);
+
+			const {
+				body: {
+					d: [updatedDevice],
+				},
+			} = await supertest(admin)
+				.get(`/${version}/device(${device.id})?$select=is_running__release`)
+				.expect(200);
+
+			expect(updatedDevice).to.have.nested.property(
+				'is_running__release.__id',
+				r.id,
+			);
+		}
 	});
 });
