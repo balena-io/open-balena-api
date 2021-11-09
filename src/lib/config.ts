@@ -221,9 +221,8 @@ export const HIDE_UNVERSIONED_ENDPOINT = boolVar(
 	true,
 );
 
-export const METRICS_MAX_REPORT_INTERVAL = intVar(
-	'METRICS_MAX_REPORT_INTERVAL',
-	1 * MINUTES,
+export const METRICS_MAX_REPORT_INTERVAL_SECONDS = Math.round(
+	intVar('METRICS_MAX_REPORT_INTERVAL', 1 * MINUTES) / 1000,
 );
 
 // Cache timeouts
