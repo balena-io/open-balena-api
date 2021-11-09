@@ -1,4 +1,21 @@
 - commits:
+    - subject: 'device-state: Combine the deleted check with the device id resolution'
+      hash: 6842b6843551545a97d0b5ba8c905d863af520f7
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/MJ9Zlq2OkoZHB9Am_rHPJTO5rzx
+        see: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/MJ9Zlq2OkoZHB9Am_rHPJTO5rzx
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.168.0
+  date: 2021-11-08T21:27:59.042Z
+- commits:
     - subject: 'cache/multi-level-store: Fix not using the store cacheKey'
       hash: 42de4d180b088561719f7a85fc6c2479903cd269
       body: ''
