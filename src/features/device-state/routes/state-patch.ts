@@ -256,7 +256,7 @@ const releaseOfDeviceQuery = _.once(() =>
 									$any: {
 										$alias: 'd',
 										$expr: {
-											d: { '@': 'uuid' },
+											d: { uuid: { '@': 'uuid' } },
 										},
 									},
 								},
