@@ -1,4 +1,21 @@
 - commits:
+    - subject: Add device state endpoint tests for updating the running release
+      hash: 95a580591485749d9fa1d02cf6137558740bea64
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: >-
+          https://www.flowdock.com/app/rulemotion/resin-devops/threads/TTHT6enQtVTnv8Jvi9zGUKJARLd
+        see: >-
+          https://www.flowdock.com/app/rulemotion/resin-devops/threads/TTHT6enQtVTnv8Jvi9zGUKJARLd
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.168.3
+  date: 2021-11-09T21:53:31.143Z
+- commits:
     - subject: Fix release resolving query
       hash: 1d6476603794d35ea23ee81266a1e8376149c5c5
       body: ''
