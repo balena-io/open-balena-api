@@ -37,7 +37,8 @@ export function createMultiLevelStore<T extends Defined>(
 		host: REDIS_HOST,
 		port: REDIS_PORT,
 		// redis cannot cache undefined/null values whilst others can, so we explicitly mark those as uncacheable
-		isCacheableValue: (v) => v != null && isCacheableValue?.(v) === true,
+		isCacheableValue: (v) =>
+			v != null && (isCacheableValue == null || isCacheableValue(v) === true),
 	});
 	const cache = cacheManager.multiCaching([memoryCache, redisCache]);
 
