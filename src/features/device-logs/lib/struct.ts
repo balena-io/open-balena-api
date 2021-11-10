@@ -7,10 +7,6 @@ export interface LogContext {
 
 export interface LogWriteContext extends LogContext {
 	readonly logs_channel: string | null;
-	readonly images: ReadonlyArray<{
-		readonly id: number;
-		readonly serviceId: number;
-	}>;
 }
 
 // This is the format we store and that we output to consumers
@@ -46,9 +42,6 @@ export interface OldSupervisorLog {
 	is_stderr?: boolean;
 	image_id?: number;
 }
-
-// Create a type that contain both possible sets of fields
-export type AnySupervisorLog = OldSupervisorLog | SupervisorLog;
 
 export type Subscription = (log: DeviceLog) => void;
 

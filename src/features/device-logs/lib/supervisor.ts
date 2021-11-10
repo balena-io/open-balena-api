@@ -2,22 +2,14 @@ import * as _ from 'lodash';
 
 import { errors } from '@balena/pinejs';
 
-import type {
-	AnySupervisorLog,
-	DeviceLog,
-	LogWriteContext,
-	OldSupervisorLog,
-	SupervisorLog,
-} from './struct';
+import type { DeviceLog, OldSupervisorLog, SupervisorLog } from './struct';
 import { getNanoTimestamp } from '../../../lib/utils';
+import { BadRequestError } from '@balena/pinejs/out/sbvr-api/errors';
 
 const MAX_LOGS_PER_BATCH = 10;
 
 export class Supervisor {
-	public convertLogs(
-		ctx: LogWriteContext,
-		logs: AnySupervisorLog[],
-	): DeviceLog[] {
+	public convertLogs(logs: SupervisorLog[]): DeviceLog[] {
 		if (logs.length > MAX_LOGS_PER_BATCH) {
 			throw new errors.BadRequestError(
 				`Batches cannot include more than ${MAX_LOGS_PER_BATCH} logs`,
@@ -25,19 +17,18 @@ export class Supervisor {
 		}
 		return _(logs)
 			.map((log) => {
-				return this.convertAnyLog(ctx, log);
+				return this.convertAnyLog(log);
 			})
 			.compact()
 			.value();
 	}
 
-	private convertAnyLog(
-		ctx: LogWriteContext,
-		log: AnySupervisorLog,
-	): DeviceLog | undefined {
-		return this.isOldLog(log)
-			? this.convertOldLog(ctx, log)
-			: this.convertLog(log);
+	private convertAnyLog(log: SupervisorLog): DeviceLog | undefined {
+		if (this.isOldLog(log)) {
+			// Old format supervisor logs are no longer supported
+			throw new BadRequestError();
+		}
+		return this.convertLog(log);
 	}
 
 	public convertLog(log: SupervisorLog): DeviceLog | undefined {
@@ -56,45 +47,8 @@ export class Supervisor {
 		};
 	}
 
-	private isOldLog(log: AnySupervisorLog): log is OldSupervisorLog {
+	private isOldLog(log: any): log is OldSupervisorLog {
 		const old: OldSupervisorLog = log;
 		return !!(old.is_stderr || old.is_system || old.image_id);
-	}
-
-	private convertOldLog(
-		ctx: LogWriteContext,
-		log: OldSupervisorLog,
-	): DeviceLog | undefined {
-		let serviceId: number | undefined;
-		if (log.image_id) {
-			serviceId = this.getServiceId(ctx, log);
-			// Filter out (ignore) logs where we didn't find the image install
-			if (!serviceId) {
-				return;
-			}
-		}
-		return {
-			nanoTimestamp: getNanoTimestamp(),
-			createdAt: Date.now(),
-			timestamp:
-				typeof log.timestamp === 'number'
-					? log.timestamp
-					: Date.parse(log.timestamp),
-			isSystem: log.is_system === true,
-			isStdErr: log.is_stderr === true,
-			message: log.message,
-			serviceId,
-		};
-	}
-
-	private getServiceId(
-		ctx: LogWriteContext,
-		log: OldSupervisorLog,
-	): number | undefined {
-		for (const img of ctx.images) {
-			if (img.id === log.image_id) {
-				return img.serviceId;
-			}
-		}
 	}
 }

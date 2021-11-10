@@ -1,10 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express';
-import type {
-	AnySupervisorLog,
-	DeviceLog,
-	LogWriteContext,
-	SupervisorLog,
-} from './struct';
+import type { DeviceLog, LogWriteContext, SupervisorLog } from './struct';
 
 import onFinished = require('on-finished');
 import { sbvrUtils, errors, permissions } from '@balena/pinejs';
@@ -55,36 +50,12 @@ const getWriteContext = (() => {
 					id: { uuid },
 					options: {
 						$select: ['id', 'logs_channel', 'belongs_to__application'],
-						$expand: {
-							image_install: {
-								$select: 'id',
-								$expand: {
-									image: {
-										$select: 'id',
-										$expand: { is_a_build_of__service: { $select: 'id' } },
-									},
-								},
-								$filter: {
-									status: { $ne: 'deleted' },
-								},
-							},
-						},
 					},
 				})) as
-					| (PickDeferred<
+					| PickDeferred<
 							Device,
 							'id' | 'logs_channel' | 'belongs_to__application'
-					  > & {
-							image_install: Array<{
-								id: number;
-								image: Array<{
-									id: number;
-									is_a_build_of__service: Array<{
-										id: number;
-									}>;
-								}>;
-							}>;
-					  })
+					  >
 					| undefined;
 				if (!device) {
 					throw new NotFoundError('No device with uuid ' + uuid);
@@ -95,13 +66,6 @@ const getWriteContext = (() => {
 					belongs_to__application: device.belongs_to__application!.__id,
 					logs_channel: device.logs_channel,
 					uuid,
-					images: device.image_install.map((imageInstall) => {
-						const img = imageInstall.image[0];
-						return {
-							id: img.id,
-							serviceId: img.is_a_build_of__service[0]?.id,
-						};
-					}),
 				});
 			});
 		},
@@ -145,10 +109,10 @@ async function checkWritePermissions(
 
 export const store: RequestHandler = async (req: Request, res: Response) => {
 	try {
-		const ctx = await getWriteContext(req);
-		const body: AnySupervisorLog[] = req.body;
-		const logs: DeviceLog[] = supervisor.convertLogs(ctx, body);
+		const body: SupervisorLog[] = req.body;
+		const logs: DeviceLog[] = supervisor.convertLogs(body);
 		if (logs.length) {
+			const ctx = await getWriteContext(req);
 			// start publishing to both backends
 			await Promise.all([
 				getBackend(ctx).publish(ctx, logs),

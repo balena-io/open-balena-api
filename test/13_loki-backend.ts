@@ -24,7 +24,6 @@ const createContext = (extra = {}): LogWriteContext => {
 		belongs_to__application: 1,
 		retention_limit: 100,
 		logs_channel: null,
-		images: [],
 		...extra,
 	};
 };
