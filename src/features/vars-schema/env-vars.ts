@@ -233,6 +233,8 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			'srd3-tx2',
 			'jetson-nano',
 			'jetson-nano-emmc',
+			'jetson-nano-2gb-devkit',
+			'floyd-nano',
 			'jn30b-nano',
 			'photon-nano',
 			'jetson-tx2-nx-devkit',
