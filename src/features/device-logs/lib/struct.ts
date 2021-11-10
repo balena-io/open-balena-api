@@ -7,10 +7,6 @@ export interface LogContext {
 
 export interface LogWriteContext extends LogContext {
 	readonly logs_channel: string | null;
-	readonly images: ReadonlyArray<{
-		readonly id: number;
-		readonly serviceId: number;
-	}>;
 }
 
 // This is the format we store and that we output to consumers
@@ -40,14 +36,12 @@ export interface SupervisorLog {
 // This is the format we get from old supervisors
 export interface OldSupervisorLog {
 	message: string;
-	timestamp: number;
+	// Old supervisors can send a timestamp like "2021-11-10T17:50:45.913242000Z"
+	timestamp: number | string;
 	is_system?: boolean;
 	is_stderr?: boolean;
 	image_id?: number;
 }
-
-// Create a type that contain both possible sets of fields
-export type AnySupervisorLog = OldSupervisorLog | SupervisorLog;
 
 export type Subscription = (log: DeviceLog) => void;
 
