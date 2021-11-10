@@ -1,4 +1,18 @@
 - commits:
+    - subject: Explicitly remove support for old supervisor log format
+      hash: eae3444f7f664cafccb012bfcb09495fbc4755c3
+      body: |
+        It has been broken since August 2018 so this just formalizes that
+        removed support and removes unnecessary work that was being done in an
+        attempt to maintain support
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.168.7
+  date: 2021-11-10T18:38:57.299Z
+- commits:
     - subject: Add test for device-state metrics patch cross-instance throttling
       hash: 06e5f0c672bf7ae93303b936a6c8a876e78e8521
       body: ''
