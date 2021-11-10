@@ -1,18 +1,26 @@
-import { expect } from './test-lib/chai';
-
 import * as Bluebird from 'bluebird';
 import * as mockery from 'mockery';
+import { RedisClient } from 'redis';
+import * as sinon from 'sinon';
+import { promisify } from 'util';
+import { expect } from './test-lib/chai';
 import * as fakeDevice from './test-lib/fake-device';
 import { supertest, UserObjectParam } from './test-lib/supertest';
 import { version } from './test-lib/versions';
 import { pineTest } from './test-lib/pinetest';
-
-import sinon = require('sinon');
-import configMock = require('../src/lib/config');
+import * as configMock from '../src/lib/config';
 import * as stateMock from '../src/features/device-heartbeat';
 import { waitFor } from './test-lib/common';
 import * as fixtures from './test-lib/fixtures';
 import { expectResourceToMatch } from './test-lib/api-helpers';
+import { version as packageJsonVersion } from '../package.json';
+
+const promisifiedRedis = (redis: RedisClient) => ({
+	// Need the cast b/c TS can't figure the typings of the overloads
+	del: promisify(redis.del).bind(redis) as (key: string) => Promise<number>,
+	set: promisify(redis.set).bind(redis),
+	get: promisify(redis.get).bind(redis),
+});
 
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
@@ -32,11 +40,11 @@ class StateTracker {
 
 const tracker = new StateTracker();
 
-// mock the value for the default poll interval...
-(configMock as AnyObject)['DEFAULT_SUPERVISOR_POLL_INTERVAL'] = POLL_MSEC;
+// @ts-expect-error mock the value for the default poll interval...
+configMock['DEFAULT_SUPERVISOR_POLL_INTERVAL'] = POLL_MSEC;
 
-// mock the value for the timeout grace period...
-(configMock as AnyObject)['API_HEARTBEAT_STATE_TIMEOUT_SECONDS'] = TIMEOUT_SEC;
+// @ts-expect-error mock the value for the timeout grace period...
+configMock['API_HEARTBEAT_STATE_TIMEOUT_SECONDS'] = TIMEOUT_SEC;
 
 const updateDeviceModel = stateMock.getInstance()['updateDeviceModel'];
 stateMock.getInstance()['updateDeviceModel'] = function (
@@ -333,6 +341,9 @@ describe('Device State v2 patch', function () {
 	let release1: AnyObject;
 	let release2: AnyObject;
 	let device: fakeDevice.Device;
+	let redisClient: ReturnType<typeof promisifiedRedis>;
+	const getMetricsRecentlyUpdatedCacheKey = (uuid: string) =>
+		`cache$${packageJsonVersion}$lastMetricsReportTime$${uuid}`;
 
 	before(async () => {
 		fx = await fixtures.load('03-device-state');
@@ -351,6 +362,13 @@ describe('Device State v2 patch', function () {
 			applicationId,
 			'balenaOS 2.42.0+rev1',
 			'9.11.1',
+		);
+
+		redisClient = promisifiedRedis(
+			new RedisClient({
+				host: configMock.REDIS_HOST,
+				port: configMock.REDIS_PORT,
+			}),
 		);
 	});
 
@@ -374,14 +392,62 @@ describe('Device State v2 patch', function () {
 				download_progress: null,
 				api_port: 48484,
 				cpu_usage: 34,
+				cpu_temp: 56,
 				memory_usage: 1000, // 1GB in MiB
 				memory_total: 4000, // 4GB in MiB
 				storage_block_device: '/dev/mmcblk0',
 				storage_usage: 1000, // 1GB in MiB
 				storage_total: 64000, // 64GB in MiB
-				cpu_temp: 56,
 				is_undervolted: true,
 				cpu_id: 'some CPU string',
+			},
+		};
+
+		await device.patchStateV2(devicePatchBody);
+
+		await expectResourceToMatch(
+			pineUser,
+			'device',
+			device.id,
+			devicePatchBody.local,
+		);
+	});
+
+	it('should set the metrics throttling key in redis', async () => {
+		expect(
+			await redisClient.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
+		).to.equal('true');
+	});
+
+	it('should throttle metrics only device state updates', async () => {
+		const devicePatchBody = {
+			local: {
+				cpu_usage: 90,
+				cpu_temp: 90,
+			},
+		};
+
+		await device.patchStateV2(devicePatchBody);
+		await Bluebird.delay(200);
+
+		await expectResourceToMatch(pineUser, 'device', device.id, {
+			cpu_usage: 34,
+			cpu_temp: 56,
+		});
+	});
+
+	it('should clear the throttling key from redis after the throttling window passes', async () => {
+		await Bluebird.delay(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
+		expect(
+			await redisClient.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
+		).to.be.null;
+	});
+
+	it('should apply metrics only device state updates when outside the throttling window', async () => {
+		const devicePatchBody = {
+			local: {
+				cpu_usage: 20,
+				cpu_temp: 20,
 			},
 		};
 
