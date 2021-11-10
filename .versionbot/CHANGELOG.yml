@@ -1,4 +1,21 @@
 - commits:
+    - subject: Add test for device-state metrics patch cross-instance throttling
+      hash: 06e5f0c672bf7ae93303b936a6c8a876e78e8521
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/C6fBwAEV4_5hboglJfhzI6F3LyL
+        see: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/C6fBwAEV4_5hboglJfhzI6F3LyL
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.168.6
+  date: 2021-11-10T17:39:39.752Z
+- commits:
     - subject: Fix cross-instance metrics throttling
       hash: ddda047f8c3f21d442e087c71400d5594094ac79
       body: ''
