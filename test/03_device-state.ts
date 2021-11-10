@@ -419,7 +419,7 @@ describe('Device State v2 patch', function () {
 		).to.equal('true');
 	});
 
-	it('should throttle metrics only device state updates', async () => {
+	it('should throttle metrics-only device state updates [same-instance]', async () => {
 		const devicePatchBody = {
 			local: {
 				cpu_usage: 90,
@@ -443,7 +443,7 @@ describe('Device State v2 patch', function () {
 		).to.be.null;
 	});
 
-	it('should apply metrics only device state updates when outside the throttling window', async () => {
+	it('should apply metrics-only device state updates when outside the throttling window', async () => {
 		const devicePatchBody = {
 			local: {
 				cpu_usage: 20,
@@ -459,6 +459,37 @@ describe('Device State v2 patch', function () {
 			device.id,
 			devicePatchBody.local,
 		);
+	});
+
+	it('should throttle metrics-only device state updates [cross-instance]', async () => {
+		// Wait for the local cache to expire
+		await Bluebird.delay(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
+		// confirm that even the redis cache has expired
+		expect(
+			await redisClient.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
+		).to.be.null;
+		// emulate the creation of a throttling key in redis from a different instance
+		await redisClient.set(
+			getMetricsRecentlyUpdatedCacheKey(device.uuid),
+			'true',
+		);
+		expect(
+			await redisClient.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
+		).to.equal('true');
+
+		const devicePatchBody = {
+			local: {
+				cpu_usage: 90,
+				cpu_temp: 90,
+			},
+		};
+
+		await device.patchStateV2(devicePatchBody);
+
+		await expectResourceToMatch(pineUser, 'device', device.id, {
+			cpu_usage: 20,
+			cpu_temp: 20,
+		});
 	});
 
 	it('should save the updated running release of the device state', async () => {
