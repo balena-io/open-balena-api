@@ -76,7 +76,10 @@ export class Supervisor {
 		return {
 			nanoTimestamp: getNanoTimestamp(),
 			createdAt: Date.now(),
-			timestamp: log.timestamp,
+			timestamp:
+				typeof log.timestamp === 'number'
+					? log.timestamp
+					: Date.parse(log.timestamp),
 			isSystem: log.is_system === true,
 			isStdErr: log.is_stderr === true,
 			message: log.message,

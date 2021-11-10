@@ -40,7 +40,8 @@ export interface SupervisorLog {
 // This is the format we get from old supervisors
 export interface OldSupervisorLog {
 	message: string;
-	timestamp: number;
+	// Old supervisors can send a timestamp like "2021-11-10T17:50:45.913242000Z"
+	timestamp: number | string;
 	is_system?: boolean;
 	is_stderr?: boolean;
 	image_id?: number;
