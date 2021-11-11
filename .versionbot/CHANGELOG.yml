@@ -1,4 +1,15 @@
 - commits:
+    - subject: Report redis buffer conversion errors to sentry
+      hash: 7002fd7c77dfdd5ae565c461f03621efdc05dd99
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.168.9
+  date: 2021-11-11T15:10:09.868Z
+- commits:
     - subject: 'var-schema: Extend custom DTB support to include Jetson Nano 2GB Devkit'
       hash: 66efdb7032a19036ab8b97e6cf85944f8f340605
       body: |
