@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add a cache for resolving image read access
+      hash: ea25f5e8c2bdf69ba21d7f8a426331b692b4e827
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.169.1
+  date: 2021-11-11T19:15:47.041Z
+- commits:
     - subject: Remove the cache for device write context as it's no longer beneficial
       hash: 67612963f5bef3e8a2f99b2c8edba5a40c849098
       body: |
