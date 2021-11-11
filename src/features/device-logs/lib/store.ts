@@ -2,7 +2,7 @@ import type { Request, RequestHandler, Response } from 'express';
 import type { DeviceLog, LogWriteContext, SupervisorLog } from './struct';
 
 import onFinished = require('on-finished');
-import { sbvrUtils, errors, permissions } from '@balena/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 import { Supervisor } from './supervisor';
 import { createGunzip } from 'zlib';
 import * as ndjson from 'ndjson';
@@ -23,8 +23,6 @@ import {
 } from './config';
 import { SetupOptions } from '../../..';
 import { Device, PickDeferred } from '../../../balena-model';
-import { multiCacheMemoizee } from '../../../infra/cache';
-import { DEVICE_LOGS_WRITE_CONTEXT_CACHE_TIMEOUT } from '../../../lib/config';
 
 const {
 	BadRequestError,
@@ -37,59 +35,31 @@ const { api } = sbvrUtils;
 
 const supervisor = new Supervisor();
 
-const getWriteContext = (() => {
-	const $getWriteContext = multiCacheMemoizee(
-		async (
-			uuid: string,
-			req: permissions.PermissionReq,
-		): Promise<LogWriteContext> => {
-			return await sbvrUtils.db.readTransaction(async (tx) => {
-				const resinApi = api.resin.clone({ passthrough: { req, tx } });
-				const device = (await resinApi.get({
-					resource: 'device',
-					id: { uuid },
-					options: {
-						$select: ['id', 'logs_channel', 'belongs_to__application'],
-					},
-				})) as
-					| PickDeferred<
-							Device,
-							'id' | 'logs_channel' | 'belongs_to__application'
-					  >
-					| undefined;
-				if (!device) {
-					throw new NotFoundError('No device with uuid ' + uuid);
-				}
-				await checkWritePermissions(resinApi, device);
-				return addRetentionLimit<LogWriteContext>({
-					id: device.id,
-					belongs_to__application: device.belongs_to__application!.__id,
-					logs_channel: device.logs_channel,
-					uuid,
-				});
-			});
-		},
-		{
-			cacheKey: 'getWriteContext',
-			promise: true,
-			primitive: true,
-			maxAge: DEVICE_LOGS_WRITE_CONTEXT_CACHE_TIMEOUT,
-			normalizer: ([uuid, req]) => {
-				const userOrApiKey =
-					req.user?.permissions != null
-						? req.user
-						: req.apiKey?.permissions != null
-						? req.apiKey
-						: null;
-				return `${uuid}$${userOrApiKey?.actor}$${userOrApiKey?.permissions}`;
+const getWriteContext = async (req: Request): Promise<LogWriteContext> => {
+	const { uuid } = req.params;
+	return await sbvrUtils.db.readTransaction(async (tx) => {
+		const resinApi = api.resin.clone({ passthrough: { req, tx } });
+		const device = (await resinApi.get({
+			resource: 'device',
+			id: { uuid },
+			options: {
+				$select: ['id', 'logs_channel', 'belongs_to__application'],
 			},
-		},
-	);
-	return async (req: Request) => {
-		const { uuid } = req.params;
-		return await $getWriteContext(uuid, req);
-	};
-})();
+		})) as
+			| PickDeferred<Device, 'id' | 'logs_channel' | 'belongs_to__application'>
+			| undefined;
+		if (!device) {
+			throw new NotFoundError('No device with uuid ' + uuid);
+		}
+		await checkWritePermissions(resinApi, device);
+		return addRetentionLimit<LogWriteContext>({
+			id: device.id,
+			belongs_to__application: device.belongs_to__application!.__id,
+			logs_channel: device.logs_channel,
+			uuid,
+		});
+	});
+};
 
 async function checkWritePermissions(
 	resinApi: sbvrUtils.PinejsClient,
