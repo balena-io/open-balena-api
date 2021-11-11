@@ -17,6 +17,7 @@ import {
 	MINUTES,
 	REGISTRY2_HOST,
 	RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
+	RESOLVE_IMAGE_READ_ACCESS_CACHE_TIMEOUT,
 	TOKEN_AUTH_BUILDER_TOKEN,
 } from '../../lib/config';
 import type { Image, User as DbUser } from '../../balena-model';
@@ -96,24 +97,50 @@ const grantAllToBuilder = (parsedScopes: Scope[]): Access[] =>
 		};
 	});
 
-const resolveReadAccess = async (
-	req: Request,
-	imageId: number | undefined,
-	tx: Tx,
-): Promise<boolean> => {
-	if (imageId == null) {
-		return false;
-	}
-	const image = await api.resin.get({
-		resource: 'image',
-		id: imageId,
-		passthrough: { req, tx },
-		options: {
-			$select: 'id',
+const resolveReadAccess = (() => {
+	const $resolveReadAccess = multiCacheMemoizee(
+		async (
+			imageId: number,
+			req: permissions.PermissionReq,
+			tx: Tx,
+		): Promise<boolean> => {
+			const image = await api.resin.get({
+				resource: 'image',
+				id: imageId,
+				passthrough: { req, tx },
+				options: {
+					$select: 'id',
+				},
+			});
+			return image != null;
 		},
-	});
-	return image != null;
-};
+		{
+			cacheKey: 'resolveReadAccess',
+			promise: true,
+			primitive: true,
+			maxAge: RESOLVE_IMAGE_READ_ACCESS_CACHE_TIMEOUT,
+			normalizer: ([imageId, req]) => {
+				const userOrApiKey =
+					req.user?.permissions != null
+						? req.user
+						: req.apiKey?.permissions != null
+						? req.apiKey
+						: null;
+				return `${imageId}$${userOrApiKey?.actor}$${userOrApiKey?.permissions}`;
+			},
+		},
+	);
+	return async (
+		req: Request,
+		imageId: number | undefined,
+		tx: Tx,
+	): Promise<boolean> => {
+		if (imageId == null) {
+			return false;
+		}
+		return await $resolveReadAccess(imageId, req, tx);
+	};
+})();
 
 const resolveWriteAccess = async (
 	req: Request,
