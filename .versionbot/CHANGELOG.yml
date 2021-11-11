@@ -1,4 +1,18 @@
 - commits:
+    - subject: 'var-schema: Extend custom DTB support to include Jetson Nano 2GB Devkit'
+      hash: 66efdb7032a19036ab8b97e6cf85944f8f340605
+      body: |
+        ... and the community supported Floyd Nano.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Alexandru Costache <alexandru@balena.io>
+        signed-off-by: Alexandru Costache <alexandru@balena.io>
+      author: Alexandru Costache
+      nested: []
+  version: 0.168.8
+  date: 2021-11-11T09:18:17.984Z
+- commits:
     - subject: Explicitly remove support for old supervisor log format
       hash: eae3444f7f664cafccb012bfcb09495fbc4755c3
       body: |
