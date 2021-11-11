@@ -187,8 +187,8 @@ export class RedisBackend implements DeviceLogsBackend {
 		try {
 			return schema.toBuffer(log).toString(BUFFER_ENCODING);
 		} catch (err) {
-			// Rethrow with a type of error that will end up as status 400
-			throw new BadRequestError(err);
+			captureException(err, 'Failed to convert log to redis buffer');
+			throw new BadRequestError();
 		}
 	}
 }
