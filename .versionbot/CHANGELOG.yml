@@ -1,4 +1,18 @@
 - commits:
+    - subject: Remove the cache for device write context as it's no longer beneficial
+      hash: 67612963f5bef3e8a2f99b2c8edba5a40c849098
+      body: |
+        Since reducing the query it is now fast enough (from ~130ms to ~1ms)
+        that the trade off for memory usage for the cache along with argument
+        normalization like does not work out in its favor any more
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.169.0
+  date: 2021-11-11T15:50:07.402Z
+- commits:
     - subject: Report redis buffer conversion errors to sentry
       hash: 7002fd7c77dfdd5ae565c461f03621efdc05dd99
       body: ''
