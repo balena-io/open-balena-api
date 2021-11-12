@@ -399,6 +399,7 @@ export interface Release {
 	semver_patch: number;
 	revision: number | null;
 	known_issue_list: string | null;
+	note: string | null;
 	is_final: boolean;
 	semver: string;
 	raw_version: string;

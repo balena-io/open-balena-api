@@ -677,6 +677,8 @@ Fact type: release has revision
 	Necessity: each release that has a revision, has a revision that is greater than or equal to 0.
 Fact type: release has known issue list
 	Necessity: each release has at most one known issue list.
+Fact type: release has note
+	Necessity: each release has at most one note.
 
 
 -- service environment variable

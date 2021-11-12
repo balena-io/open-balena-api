@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 import type { Release } from '../src/balena-model';
+import { expectResourceToMatch } from './test-lib/api-helpers';
 import * as fixtures from './test-lib/fixtures';
 import { expect } from './test-lib/chai';
 import { supertest, UserObjectParam } from './test-lib/supertest';
@@ -12,6 +13,7 @@ describe('releases', () => {
 	let fx: fixtures.Fixtures;
 	let user: UserObjectParam;
 	let newRelease: AnyObject;
+	let pineUser: typeof pineTest;
 
 	before(async () => {
 		fx = await fixtures.load('07-releases');
@@ -24,6 +26,9 @@ describe('releases', () => {
 			source: 'test',
 			start_timestamp: Date.now(),
 		};
+		pineUser = pineTest.clone({
+			passthrough: { user },
+		});
 	});
 	after(async () => {
 		await fixtures.clean(fx);
@@ -95,6 +100,26 @@ describe('releases', () => {
 			'known_issue_list',
 			'new issue description',
 		);
+	});
+
+	it('should be able to set the notes of a release', async () => {
+		await expectResourceToMatch(pineUser, 'release', fx.releases.release1.id, {
+			note: null,
+		});
+
+		await pineUser
+			.patch({
+				resource: 'release',
+				id: fx.releases.release1.id,
+				body: {
+					note: 'This is a note!',
+				},
+			})
+			.expect(200);
+
+		await expectResourceToMatch(pineUser, 'release', fx.releases.release1.id, {
+			note: 'This is a note!',
+		});
 	});
 });
 
