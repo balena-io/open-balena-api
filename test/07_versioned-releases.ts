@@ -352,6 +352,7 @@ describe('versioning releases', () => {
 			.patch(`/${version}/release(${release1.id})`)
 			.send({
 				is_invalidated: true,
+				invalidation_reason: 'For testing purposes.',
 			})
 			.expect(200);
 		await supertest(user)

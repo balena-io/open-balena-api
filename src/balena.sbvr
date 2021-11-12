@@ -141,6 +141,9 @@ Term: image size
 Term: install date
 	Concept Type: Date Time (Type)
 
+Term: invalidation reason
+	Concept Type: Text (Type)
+
 Term: ip address
 	Concept Type: Short Text (Type)
 
@@ -679,6 +682,9 @@ Fact type: release has known issue list
 	Necessity: each release has at most one known issue list.
 Fact type: release has note
 	Necessity: each release has at most one note.
+Fact type: release has invalidation reason
+	Necessity: each release has at most one invalidation reason.
+	Necessity: each release that has an invalidation reason, is invalidated.
 
 
 -- service environment variable

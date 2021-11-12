@@ -400,6 +400,7 @@ export interface Release {
 	revision: number | null;
 	known_issue_list: string | null;
 	note: string | null;
+	invalidation_reason: string | null;
 	is_final: boolean;
 	semver: string;
 	raw_version: string;
