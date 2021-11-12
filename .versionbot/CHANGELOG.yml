@@ -1,4 +1,23 @@
 - commits:
+    - subject: Add a note field to the release resource
+      hash: 725b39ee551d0c35bd8e13fa56e766620a5acc59
+      body: ''
+      footer:
+        Resolves: '#763'
+        resolves: '#763'
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://jel.ly.fish/improvement-release-invalidation-feeds-f227c7d1-44d6-41f1-8e11-1adb20be7858
+        see: >-
+          https://jel.ly.fish/improvement-release-invalidation-feeds-f227c7d1-44d6-41f1-8e11-1adb20be7858
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.170.0
+  date: 2021-11-12T14:05:37.432Z
+- commits:
     - subject: Add a cache for resolving image read access
       hash: ea25f5e8c2bdf69ba21d7f8a426331b692b4e827
       body: ''
