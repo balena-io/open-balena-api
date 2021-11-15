@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'cache: Abstract the req permissions key normalizer'
+      hash: 0c77ba419f8f5d23eb8780b484f5cdb67ddc5af2
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.172.1
+  date: 2021-11-15T23:32:17.127Z
+- commits:
     - subject: Add the ability to disable the in-memory cache for multi-level stores
       hash: 6c7a2a5a55f218b2c647dd0c6b313f2f6150acc9
       body: ''
