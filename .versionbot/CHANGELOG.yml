@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add the ability to disable the in-memory cache for multi-level stores
+      hash: 6c7a2a5a55f218b2c647dd0c6b313f2f6150acc9
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.172.0
+  date: 2021-11-15T13:44:01.029Z
+- commits:
     - subject: Add an invalidation reason to the release resource
       hash: 2301cdd76ccec31b74abada5f162c402e0834ea5
       body: ''
