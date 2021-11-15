@@ -232,11 +232,9 @@ type StatePatchBody = {
 
 const lastMetricsReportTime = createMultiLevelStore<true>(
 	'lastMetricsReportTime',
-	[
-		{
-			ttl: METRICS_MAX_REPORT_INTERVAL_SECONDS,
-		},
-	],
+	{
+		ttl: METRICS_MAX_REPORT_INTERVAL_SECONDS,
+	},
 );
 
 const releaseOfDeviceQuery = _.once(() =>

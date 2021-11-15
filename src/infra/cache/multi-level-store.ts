@@ -8,11 +8,17 @@ const usedCacheKeys: Dictionary<true> = {};
 
 export type MultiStoreOpt = Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
 	refreshThreshold?: number;
-} & cacheManager.CacheOptions;
+};
 
 export function createMultiLevelStore<T extends Defined>(
 	cacheKey: string,
-	opts: MultiStoreOpt[],
+	opts:
+		| (MultiStoreOpt & cacheManager.CacheOptions)
+		| {
+				default: MultiStoreOpt & cacheManager.CacheOptions;
+				local?: MultiStoreOpt | false;
+				global?: MultiStoreOpt;
+		  },
 ): {
 	get: (key: string) => Promise<T | undefined>;
 	set: (key: string, value: T) => Promise<void>;
@@ -22,17 +28,20 @@ export function createMultiLevelStore<T extends Defined>(
 	if (usedCacheKeys[cacheKey] === true) {
 		throw new Error(`Cache key '${cacheKey}' has already been taken`);
 	}
-	if (opts.length === 0) {
-		throw new Error(`No multiCache options provided for '${cacheKey}'`);
-	}
 	usedCacheKeys[cacheKey] = true;
 
-	const [baseOpts, redisOpts] = opts;
+	if (!('default' in opts)) {
+		opts = { default: opts };
+	}
+	const { default: baseOpts, local, global } = opts;
 	const { isCacheableValue } = baseOpts;
-	const memoryCache = cacheManager.caching({ ...baseOpts, store: 'memory' });
+	const memoryCache =
+		local === false
+			? undefined
+			: cacheManager.caching({ ...baseOpts, ...local, store: 'memory' });
 	const redisCache = cacheManager.caching({
 		...baseOpts,
-		...redisOpts,
+		...global,
 		store: redisStore,
 		host: REDIS_HOST,
 		port: REDIS_PORT,
@@ -40,7 +49,9 @@ export function createMultiLevelStore<T extends Defined>(
 		isCacheableValue: (v) =>
 			v != null && (isCacheableValue == null || isCacheableValue(v) === true),
 	});
-	const cache = cacheManager.multiCaching([memoryCache, redisCache]);
+	const cache = memoryCache
+		? cacheManager.multiCaching([memoryCache, redisCache])
+		: redisCache;
 
 	let keyPrefix: string;
 	const getKey = (key: string) => {
