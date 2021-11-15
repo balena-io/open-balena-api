@@ -80,22 +80,26 @@ export function multiCacheMemoizee<
 		);
 	}
 
-	const multiCacheOpts = [opts, { ...opts, ...sharedCacheOpts }].map(
-		(options): MultiStoreOpt => {
-			// ttl is in seconds, so we need to divide by 1000
-			const ttl = options.maxAge / SECONDS;
-			return {
-				ttl,
-				max: options.max,
-				refreshThreshold:
-					options.preFetch != null
-						? ttl * (options.preFetch === true ? 0.333 : options.preFetch)
-						: undefined,
-				// Treat everything as cacheable, including `undefined` - the same as memoizee
-				isCacheableValue: () => true,
-			};
-		},
-	);
+	const convertToMultiStoreOpts = (
+		options: MultiCacheMemoizeeOpts<T>,
+	): MultiStoreOpt => {
+		// ttl is in seconds, so we need to divide by 1000
+		const ttl = options.maxAge / SECONDS;
+		return {
+			ttl,
+			max: options.max,
+			refreshThreshold:
+				options.preFetch != null
+					? ttl * (options.preFetch === true ? 0.333 : options.preFetch)
+					: undefined,
+			// Treat everything as cacheable, including `undefined` - the same as memoizee
+		};
+	};
+
+	const multiCacheOpts: Parameters<typeof createMultiLevelStore>[1] = {
+		default: { ...convertToMultiStoreOpts(opts), isCacheableValue: () => true },
+		global: convertToMultiStoreOpts({ ...opts, ...sharedCacheOpts }),
+	};
 
 	return multiCache(fn, cacheKey, normalizer, multiCacheOpts, undefinedAs);
 }
@@ -107,27 +111,23 @@ function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	fn: T,
 	cacheKey: string,
 	normalizer: NonNullable<MemoizeeOptions<T>['normalizer']>,
-	opts: MultiStoreOpt[],
+	opts: Parameters<typeof createMultiLevelStore>[1],
 	undefinedAs?: Defined,
 ): MemoizedFn<T>;
 function multiCache<T extends (...args: any[]) => Promise<Defined>>(
 	fn: T,
 	cacheKey: string,
 	normalizer: NonNullable<MemoizeeOptions<T>['normalizer']>,
-	opts: MultiStoreOpt[],
+	opts: Parameters<typeof createMultiLevelStore>[1],
 	undefinedAs?: undefined,
 ): MemoizedFn<T>;
 function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 	fn: T,
 	cacheKey: string,
 	normalizer: NonNullable<MemoizeeOptions<T>['normalizer']>,
-	opts: MultiStoreOpt[],
+	opts: Parameters<typeof createMultiLevelStore>[1],
 	undefinedAs?: Defined,
 ): MemoizedFn<T> {
-	if (opts.length === 0) {
-		throw new Error(`No multiCache options provided for '${cacheKey}'`);
-	}
-
 	const cache = createMultiLevelStore(cacheKey, opts);
 
 	const getKey = (...args: Parameters<T>) => {
