@@ -1,4 +1,42 @@
 - commits:
+    - subject: Allow specifying databaseOptions for pinejs init
+      hash: a5fba66661bf4daa27d4a3edc34680c38968183d
+      body: |
+        Update pinejs from 14.33.2 to 14.34.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: >-
+                Allow specifying a replica to use for read-only postgres
+                requests
+              hash: 511d2be3b77e59231f68785faa7165062627665c
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.34.0
+          date: 2021-11-16T12:14:40.355Z
+        - commits:
+            - subject: >-
+                Use the env pool settings as defaults only if not explicitly
+                provided
+              hash: 304a12ea7b5f46469ddd08ba3b8448006eda13a0
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.33.3
+          date: 2021-11-15T18:49:38.211Z
+  version: 0.172.2
+  date: 2021-11-16T13:48:13.585Z
+- commits:
     - subject: 'cache: Abstract the req permissions key normalizer'
       hash: 0c77ba419f8f5d23eb8780b484f5cdb67ddc5af2
       body: ''
