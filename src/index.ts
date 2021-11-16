@@ -255,6 +255,7 @@ export type SetupFunction = (app: Application) => void | PromiseLike<void>;
 
 export interface SetupOptions {
 	config: Parameters<typeof pine.init>[1]; // must be absolute or relative to `process.cwd()`
+	databaseOptions?: Parameters<typeof pine.init>[2];
 	version: string; // this will be reported along with exceptions to Sentry and is also used for caching
 	skipHttpsPaths?: string[]; // a list of paths which should be exempt from https redirection
 
@@ -358,7 +359,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	await setupMiddleware(app);
 	await options.onInitMiddleware?.(app);
 
-	await pine.init(app, options.config);
+	await pine.init(app, options.config, options.databaseOptions);
 	await options.onInitModel?.(app);
 
 	if (options.getNewUserRole) {
