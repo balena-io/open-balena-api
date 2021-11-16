@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add the option for a read-only redis endpoint for reading device logs
+      hash: bf528bccfd460c815b5768dea36155f2f145993b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.172.3
+  date: 2021-11-16T17:27:02.517Z
+- commits:
     - subject: Allow specifying databaseOptions for pinejs init
       hash: a5fba66661bf4daa27d4a3edc34680c38968183d
       body: |
