@@ -8,7 +8,7 @@ import {
 	RateLimiterRedis,
 	RateLimiterRes,
 } from 'rate-limiter-flexible';
-import * as redis from 'redis';
+import * as Redis from 'ioredis';
 
 import { captureException, handleHttpErrors } from '../error-handling';
 
@@ -34,7 +34,9 @@ const logRedisError = (err: Error) => {
  Retry to connect to the redis server every 200 ms. To allow recovering
  in case the redis server goes offline and comes online again.
 */
-const redisRetryStrategy: redis.RetryStrategy = _.constant(200);
+const redisRetryStrategy: NonNullable<
+	ConstructorParameters<typeof Redis>[0]
+>['retryStrategy'] = _.constant(200);
 
 const usedKeyScopes: Dictionary<true> = {};
 
@@ -72,11 +74,11 @@ export const createRateLimiter = (
 		return insuranceLimiter;
 	}
 
-	const client = redis.createClient({
+	const client = new Redis({
 		host: REDIS_HOST,
 		port: REDIS_PORT,
-		retry_strategy: redisRetryStrategy,
-		enable_offline_queue: false,
+		retryStrategy: redisRetryStrategy,
+		enableOfflineQueue: false,
 	});
 
 	// we need to bind to this error handler otherwise a redis error would kill
