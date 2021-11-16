@@ -1,4 +1,31 @@
 - commits:
+    - subject: Switch to ioredis for the multi-level-store client
+      hash: 6717a6b0d0fb4fe4f3cfd0a97cf6dafc8031d5b8
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Switch to ioredis for the scheduler client
+      hash: a79e02d8fee96551afcb995988975fbaf1fc9e65
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Switch to ioredis for the rate-limiting client
+      hash: f10465648b525bd82ed0ad5d8929c6e91ba376c5
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.172.4
+  date: 2021-11-16T22:48:24.527Z
+- commits:
     - subject: Add the option for a read-only redis endpoint for reading device logs
       hash: bf528bccfd460c815b5768dea36155f2f145993b
       body: ''
