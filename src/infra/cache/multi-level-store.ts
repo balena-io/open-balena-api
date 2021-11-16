@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import * as cacheManager from 'cache-manager';
-import redisStore = require('cache-manager-redis-store');
+import redisStore = require('cache-manager-ioredis');
 import { REDIS_HOST, REDIS_PORT, version } from '../../lib/config';
 import { Defined } from '.';
 
