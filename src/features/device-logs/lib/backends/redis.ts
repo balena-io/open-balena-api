@@ -6,7 +6,14 @@ import { errors } from '@balena/pinejs';
 import { promisify } from 'util';
 
 import { captureException } from '../../../../infra/error-handling';
-import { DAYS, MINUTES, REDIS_HOST, REDIS_PORT } from '../../../../lib/config';
+import {
+	DAYS,
+	MINUTES,
+	REDIS_HOST,
+	REDIS_PORT,
+	REDIS_RO_HOST,
+	REDIS_RO_PORT,
+} from '../../../../lib/config';
 import type {
 	DeviceLog,
 	DeviceLogsBackend,
@@ -52,15 +59,34 @@ const schema = avro.Type.forSchema({
 	],
 });
 
+const createClient = ({ readOnly = false } = {}) => {
+	const client = redis.createClient({
+		host: readOnly ? REDIS_RO_HOST : REDIS_HOST,
+		port: readOnly ? REDIS_RO_PORT : REDIS_PORT,
+		retry_strategy: () => 500,
+		enable_offline_queue: false,
+	});
+	// If not handled will crash the process
+	client.on(
+		'error',
+		_.throttle((err: Error) => {
+			captureException(err, 'Redis error');
+		}, 5 * MINUTES),
+	);
+	return client;
+};
+
 export class RedisBackend implements DeviceLogsBackend {
 	private cmds: redis.RedisClient;
+	private roCmds: redis.RedisClient;
 	private pubSub: redis.RedisClient;
 	private subscriptions: EventEmitter;
 
 	constructor() {
-		this.cmds = this.createClient();
+		this.cmds = createClient();
+		this.roCmds = createClient({ readOnly: true });
 		// This connection goes into "subscriber mode" and cannot be reused for commands
-		this.pubSub = this.createClient();
+		this.pubSub = createClient({ readOnly: true });
 		this.pubSub.on('message', this.handleMessage.bind(this));
 
 		this.subscriptions = new EventEmitter();
@@ -71,7 +97,7 @@ export class RedisBackend implements DeviceLogsBackend {
 			throw new ServiceUnavailableError();
 		}
 		const key = this.getKey(ctx);
-		const payloads = await this.cmds.lrangeAsync(
+		const payloads = await this.roCmds.lrangeAsync(
 			key,
 			count === Infinity ? 0 : -count,
 			-1,
@@ -133,25 +159,10 @@ export class RedisBackend implements DeviceLogsBackend {
 		}
 	}
 
-	private createClient() {
-		const client = redis.createClient({
-			host: REDIS_HOST,
-			port: REDIS_PORT,
-			retry_strategy: () => 500,
-			enable_offline_queue: false,
-		});
-		// If not handled will crash the process
-		client.on(
-			'error',
-			_.throttle((err: Error) => {
-				captureException(err, 'Redis error');
-			}, 5 * MINUTES),
-		);
-		return client;
-	}
-
 	private get connected() {
-		return this.cmds.connected && this.pubSub.connected;
+		return (
+			this.cmds.connected && this.roCmds.connected && this.pubSub.connected
+		);
 	}
 
 	private getKey(ctx: LogContext, suffix = 'logs') {
