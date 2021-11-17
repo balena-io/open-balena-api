@@ -55,6 +55,7 @@ const client = new Redis({
 	port: REDIS_PORT,
 	retryStrategy: redisRetryStrategy,
 	enableOfflineQueue: false,
+	enableAutoPipelining: true,
 });
 
 // If not handled will crash the process

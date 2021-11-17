@@ -79,6 +79,7 @@ export const createRateLimiter = (
 		port: REDIS_PORT,
 		retryStrategy: redisRetryStrategy,
 		enableOfflineQueue: false,
+		enableAutoPipelining: true,
 	});
 
 	// we need to bind to this error handler otherwise a redis error would kill
