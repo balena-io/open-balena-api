@@ -1,4 +1,15 @@
 - commits:
+    - subject: Enable auto pipelining for ioredis
+      hash: 7e6e134f1cb9a73667fad0bb72fae7101811c5e0
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.172.6
+  date: 2021-11-17T01:04:55.171Z
+- commits:
     - subject: Switch to ioredis for the device-heartbeat client
       hash: 03453a5380334f1e3fcfdb2dcecc681b1c7f1944
       body: ''
