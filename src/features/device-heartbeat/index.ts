@@ -195,6 +195,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		this.redis = new Redis({
 			host: REDIS_HOST,
 			port: REDIS_PORT,
+			enableAutoPipelining: true,
 		});
 
 		// initialise the RedisSMQ object using our Redis client...
