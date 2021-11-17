@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update typescript to 4.5.2
+      hash: 9b26bba93cc0e1f807564723670e629ecdb4b70d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.172.7
+  date: 2021-11-17T23:29:48.952Z
+- commits:
     - subject: Enable auto pipelining for ioredis
       hash: 7e6e134f1cb9a73667fad0bb72fae7101811c5e0
       body: ''
