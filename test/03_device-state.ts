@@ -1,8 +1,7 @@
 import * as Bluebird from 'bluebird';
 import * as mockery from 'mockery';
-import { RedisClient } from 'redis';
+import * as Redis from 'ioredis';
 import * as sinon from 'sinon';
-import { promisify } from 'util';
 import { expect } from './test-lib/chai';
 import * as fakeDevice from './test-lib/fake-device';
 import { supertest, UserObjectParam } from './test-lib/supertest';
@@ -14,13 +13,6 @@ import { waitFor } from './test-lib/common';
 import * as fixtures from './test-lib/fixtures';
 import { expectResourceToMatch } from './test-lib/api-helpers';
 import { version as packageJsonVersion } from '../package.json';
-
-const promisifiedRedis = (redis: RedisClient) => ({
-	// Need the cast b/c TS can't figure the typings of the overloads
-	del: promisify(redis.del).bind(redis) as (key: string) => Promise<number>,
-	set: promisify(redis.set).bind(redis),
-	get: promisify(redis.get).bind(redis),
-});
 
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
@@ -341,7 +333,7 @@ describe('Device State v2 patch', function () {
 	let release1: AnyObject;
 	let release2: AnyObject;
 	let device: fakeDevice.Device;
-	let redisClient: ReturnType<typeof promisifiedRedis>;
+	let redisClient: InstanceType<typeof Redis>;
 	const getMetricsRecentlyUpdatedCacheKey = (uuid: string) =>
 		`cache$${packageJsonVersion}$lastMetricsReportTime$${uuid}`;
 
@@ -364,12 +356,10 @@ describe('Device State v2 patch', function () {
 			'9.11.1',
 		);
 
-		redisClient = promisifiedRedis(
-			new RedisClient({
-				host: configMock.REDIS_HOST,
-				port: configMock.REDIS_PORT,
-			}),
-		);
+		redisClient = new Redis({
+			host: configMock.REDIS_HOST,
+			port: configMock.REDIS_PORT,
+		});
 	});
 
 	after(async () => {
