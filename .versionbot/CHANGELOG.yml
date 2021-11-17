@@ -1,4 +1,15 @@
 - commits:
+    - subject: Switch to ioredis for the device-heartbeat client
+      hash: 03453a5380334f1e3fcfdb2dcecc681b1c7f1944
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.172.5
+  date: 2021-11-17T00:53:17.476Z
+- commits:
     - subject: Switch to ioredis for the multi-level-store client
       hash: 6717a6b0d0fb4fe4f3cfd0a97cf6dafc8031d5b8
       body: ''
