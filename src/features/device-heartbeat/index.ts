@@ -2,7 +2,7 @@ import * as Bluebird from 'bluebird';
 import * as events from 'eventemitter3';
 import * as _ from 'lodash';
 import * as RedisSMQ from 'rsmq';
-import { RedisClient } from 'redis';
+import * as Redis from 'ioredis';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
@@ -18,26 +18,6 @@ import {
 	REDIS_HOST,
 	REDIS_PORT,
 } from '../../lib/config';
-import { promisify } from 'util';
-
-// Add promisified methods to the redis prototypes so we don't need to promisify them each time
-declare module 'redis' {
-	interface RedisClient {
-		getAsync(key: string): Promise<string | null>;
-		setAsync(key: string, value: string): Promise<unknown>;
-		setAsync(
-			key: string,
-			value: string,
-			expires: 'EX',
-			expiresInSec: number,
-		): Promise<unknown>;
-	}
-	interface Multi {
-		execAsync(): Promise<any[]>;
-	}
-}
-RedisClient.prototype.getAsync = promisify(RedisClient.prototype.get);
-RedisClient.prototype.setAsync = promisify(RedisClient.prototype.set);
 
 const { api } = sbvrUtils;
 
@@ -200,7 +180,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 
 	private isConsuming: boolean = false;
 	private rsmq: RedisSMQ;
-	private redis: RedisClient;
+	private redis: InstanceType<typeof Redis>;
 
 	public constructor() {
 		super();
@@ -212,14 +192,15 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		}
 
 		// create a new Redis client...
-		this.redis = new RedisClient({
+		this.redis = new Redis({
 			host: REDIS_HOST,
 			port: REDIS_PORT,
 		});
 
 		// initialise the RedisSMQ object using our Redis client...
 		this.rsmq = new RedisSMQ({
-			client: this.redis,
+			host: REDIS_HOST,
+			port: REDIS_PORT,
 			ns: DeviceOnlineStateManager.REDIS_NAMESPACE,
 		});
 
@@ -381,7 +362,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		delay: number, // in seconds
 	) {
 		// remove the old queued state...
-		const value = await this.redis.getAsync(
+		const value = await this.redis.get(
 			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
 		);
 
@@ -409,7 +390,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 			delay,
 		});
 
-		await this.redis.setAsync(
+		await this.redis.set(
 			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
 			JSON.stringify({
 				id: newId,
