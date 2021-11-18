@@ -17,47 +17,26 @@ const redisRetryStrategy: NonNullable<
 	ConstructorParameters<typeof Redis>[0]
 >['retryStrategy'] = _.constant(200);
 
-export const redis = new Redis({
-	host: REDIS_HOST,
-	port: REDIS_PORT,
-	retryStrategy: redisRetryStrategy,
-	enableOfflineQueue: false,
-	enableAutoPipelining: true,
-}).on(
-	// If not handled will crash the process
-	'error',
-	_.throttle((err: Error) => {
-		captureException(err, 'Redis error');
-	}, 5 * MINUTES),
-);
-
-export const redisRO = new Redis({
-	host: REDIS_RO_HOST,
-	port: REDIS_RO_PORT,
-	retryStrategy: redisRetryStrategy,
-	enableOfflineQueue: false,
-	enableAutoPipelining: true,
-}).on(
-	// If not handled will crash the process
-	'error',
-	_.throttle((err: Error) => {
-		captureException(err, 'Redis ro error');
-	}, 5 * MINUTES),
-);
-
-export const newSubscribeInstance = () => {
+export const createIsolatedRedis = ({ readOnly = false } = {}) => {
 	return new Redis({
-		host: REDIS_RO_HOST,
-		port: REDIS_RO_PORT,
+		host: readOnly ? REDIS_RO_HOST : REDIS_HOST,
+		port: readOnly ? REDIS_RO_PORT : REDIS_PORT,
 		retryStrategy: redisRetryStrategy,
-		autoResubscribe: true,
 		enableOfflineQueue: false,
 		enableAutoPipelining: true,
 	}).on(
 		// If not handled will crash the process
 		'error',
 		_.throttle((err: Error) => {
-			captureException(err, 'Redis ro error');
+			captureException(err, 'Redis error');
 		}, 5 * MINUTES),
 	);
+};
+
+export const redis = createIsolatedRedis();
+
+export const redisRO = createIsolatedRedis({ readOnly: true });
+
+export const newSubscribeInstance = () => {
+	return createIsolatedRedis({ readOnly: true });
 };

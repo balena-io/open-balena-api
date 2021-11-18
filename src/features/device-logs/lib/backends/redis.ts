@@ -11,7 +11,13 @@ import type {
 	LogWriteContext,
 	Subscription,
 } from '../struct';
-import { newSubscribeInstance, redisRO, redis } from '../../../../infra/redis';
+import {
+	newSubscribeInstance,
+	createIsolatedRedis,
+} from '../../../../infra/redis';
+
+const redis = createIsolatedRedis();
+const redisRO = createIsolatedRedis({ readOnly: true });
 
 const { ServiceUnavailableError, BadRequestError } = errors;
 
