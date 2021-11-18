@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'device-config: Make typings stricter'
+      hash: d40e014a5273f982f05cb2d1213bf946d6a1b4d9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.172.9
+  date: 2021-11-18T15:46:49.816Z
+- commits:
     - subject: Switch to using a single shared ioredis client
       hash: c3e253e217ace55fb942d9553ab5162205cf5ca4
       body: ''
