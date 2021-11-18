@@ -21,7 +21,7 @@ import type {
 	LogWriteContext,
 	Subscription,
 } from '../struct';
-import { redisRO } from '../../../../infra/redis';
+import { newSubscribeInstance, redisRO } from '../../../../infra/redis';
 
 // Add promisified methods to the redis prototypes so we don't need to promisify them each time
 declare module 'redis' {
@@ -79,13 +79,13 @@ const createClient = ({ readOnly = false } = {}) => {
 
 export class RedisBackend implements DeviceLogsBackend {
 	private cmds: redis.RedisClient;
-	private pubSub: redis.RedisClient;
+	private pubSub: ReturnType<typeof newSubscribeInstance>;
 	private subscriptions: EventEmitter;
 
 	constructor() {
 		this.cmds = createClient();
 		// This connection goes into "subscriber mode" and cannot be reused for commands
-		this.pubSub = createClient({ readOnly: true });
+		this.pubSub = newSubscribeInstance();
 		this.pubSub.on('message', this.handleMessage.bind(this));
 
 		this.subscriptions = new EventEmitter();
@@ -160,7 +160,9 @@ export class RedisBackend implements DeviceLogsBackend {
 
 	private get connected() {
 		return (
-			this.cmds.connected && this.pubSub.connected && redisRO.status === 'ready'
+			this.cmds.connected &&
+			this.pubSub.status === 'ready' &&
+			redisRO.status === 'ready'
 		);
 	}
 
