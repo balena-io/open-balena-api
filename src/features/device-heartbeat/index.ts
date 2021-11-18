@@ -2,7 +2,6 @@ import * as Bluebird from 'bluebird';
 import * as events from 'eventemitter3';
 import * as _ from 'lodash';
 import * as RedisSMQ from 'rsmq';
-import * as Redis from 'ioredis';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
@@ -18,6 +17,7 @@ import {
 	REDIS_HOST,
 	REDIS_PORT,
 } from '../../lib/config';
+import { redis, redisRO } from '../../infra/redis';
 
 const { api } = sbvrUtils;
 
@@ -180,7 +180,6 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 
 	private isConsuming: boolean = false;
 	private rsmq: RedisSMQ;
-	private redis: InstanceType<typeof Redis>;
 
 	public constructor() {
 		super();
@@ -190,13 +189,6 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		if (!this.featureIsEnabled) {
 			return;
 		}
-
-		// create a new Redis client...
-		this.redis = new Redis({
-			host: REDIS_HOST,
-			port: REDIS_PORT,
-			enableAutoPipelining: true,
-		});
 
 		// initialise the RedisSMQ object using our Redis client...
 		this.rsmq = new RedisSMQ({
@@ -363,7 +355,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		delay: number, // in seconds
 	) {
 		// remove the old queued state...
-		const value = await this.redis.get(
+		const value = await redisRO.get(
 			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
 		);
 
@@ -391,7 +383,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 			delay,
 		});
 
-		await this.redis.set(
+		await redis.set(
 			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
 			JSON.stringify({
 				id: newId,

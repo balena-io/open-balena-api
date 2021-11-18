@@ -1,6 +1,5 @@
 import * as Bluebird from 'bluebird';
 import * as mockery from 'mockery';
-import * as Redis from 'ioredis';
 import * as sinon from 'sinon';
 import { expect } from './test-lib/chai';
 import * as fakeDevice from './test-lib/fake-device';
@@ -13,6 +12,7 @@ import { waitFor } from './test-lib/common';
 import * as fixtures from './test-lib/fixtures';
 import { expectResourceToMatch } from './test-lib/api-helpers';
 import { version as packageJsonVersion } from '../package.json';
+import { redis, redisRO } from '../src/infra/redis';
 
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
@@ -333,7 +333,6 @@ describe('Device State v2 patch', function () {
 	let release1: AnyObject;
 	let release2: AnyObject;
 	let device: fakeDevice.Device;
-	let redisClient: InstanceType<typeof Redis>;
 	const getMetricsRecentlyUpdatedCacheKey = (uuid: string) =>
 		`cache$${packageJsonVersion}$lastMetricsReportTime$${uuid}`;
 
@@ -355,11 +354,6 @@ describe('Device State v2 patch', function () {
 			'balenaOS 2.42.0+rev1',
 			'9.11.1',
 		);
-
-		redisClient = new Redis({
-			host: configMock.REDIS_HOST,
-			port: configMock.REDIS_PORT,
-		});
 	});
 
 	after(async () => {
@@ -405,7 +399,7 @@ describe('Device State v2 patch', function () {
 
 	it('should set the metrics throttling key in redis', async () => {
 		expect(
-			await redisClient.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
+			await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
 		).to.equal('true');
 	});
 
@@ -428,9 +422,8 @@ describe('Device State v2 patch', function () {
 
 	it('should clear the throttling key from redis after the throttling window passes', async () => {
 		await Bluebird.delay(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
-		expect(
-			await redisClient.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
-		).to.be.null;
+		expect(await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid))).to
+			.be.null;
 	});
 
 	it('should apply metrics-only device state updates when outside the throttling window', async () => {
@@ -455,16 +448,12 @@ describe('Device State v2 patch', function () {
 		// Wait for the local cache to expire
 		await Bluebird.delay(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
 		// confirm that even the redis cache has expired
-		expect(
-			await redisClient.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
-		).to.be.null;
+		expect(await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid))).to
+			.be.null;
 		// emulate the creation of a throttling key in redis from a different instance
-		await redisClient.set(
-			getMetricsRecentlyUpdatedCacheKey(device.uuid),
-			'true',
-		);
+		await redis.set(getMetricsRecentlyUpdatedCacheKey(device.uuid), 'true');
 		expect(
-			await redisClient.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
+			await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
 		).to.equal('true');
 
 		const devicePatchBody = {
