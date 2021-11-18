@@ -33,7 +33,7 @@ import {
 // `osVersion == null` means assume "latest"
 export const generateConfig = async (
 	req: Request,
-	app: AnyObject,
+	app: deviceConfig.GenerateOptions['application'],
 	deviceType: DeviceType,
 	osVersion?: string,
 ) => {
@@ -93,7 +93,7 @@ export const generateConfig = async (
 
 	const config = deviceConfig.generate(
 		{
-			application: app as deviceConfig.GenerateOptions['application'],
+			application: app,
 			deviceType: deviceType.slug,
 			user,
 			apiKey,
