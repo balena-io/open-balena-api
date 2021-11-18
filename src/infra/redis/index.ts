@@ -44,3 +44,20 @@ export const redisRO = new Redis({
 		captureException(err, 'Redis ro error');
 	}, 5 * MINUTES),
 );
+
+export const newSubscribeInstance = () => {
+	return new Redis({
+		host: REDIS_RO_HOST,
+		port: REDIS_RO_PORT,
+		retryStrategy: redisRetryStrategy,
+		autoResubscribe: true,
+		enableOfflineQueue: false,
+		enableAutoPipelining: true,
+	}).on(
+		// If not handled will crash the process
+		'error',
+		_.throttle((err: Error) => {
+			captureException(err, 'Redis ro error');
+		}, 5 * MINUTES),
+	);
+};
