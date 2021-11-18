@@ -1,4 +1,31 @@
 - commits:
+    - subject: Use the shared read-write redis instance for device logs
+      hash: a3c23f9638f29ea87598a3c4f33782f29d0b4abe
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Use ioredis for the device logs pub/sub redis instance
+      hash: 8cd70a056cf30e002fab5b7743f25fbe28d08bcd
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Use the shared read-only redis instance for device logs
+      hash: e74e68c35be68216e77ffd85647ed489a40d05f4
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.172.10
+  date: 2021-11-18T16:20:44.315Z
+- commits:
     - subject: 'device-config: Make typings stricter'
       hash: d40e014a5273f982f05cb2d1213bf946d6a1b4d9
       body: ''
