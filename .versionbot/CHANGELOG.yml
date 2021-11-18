@@ -1,4 +1,15 @@
 - commits:
+    - subject: Use isolated ioredis instances for device logs
+      hash: 28d9e76964b1ad0f94e073ee620e2ebc209dc107
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.172.11
+  date: 2021-11-18T19:58:53.630Z
+- commits:
     - subject: Use the shared read-write redis instance for device logs
       hash: a3c23f9638f29ea87598a3c4f33782f29d0b4abe
       body: ''
