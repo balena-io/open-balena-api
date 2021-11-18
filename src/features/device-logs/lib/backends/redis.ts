@@ -1,19 +1,9 @@
 import * as avro from 'avsc';
 import { EventEmitter } from 'events';
 import * as _ from 'lodash';
-import * as redis from 'redis';
 import { errors } from '@balena/pinejs';
-import { promisify } from 'util';
-
 import { captureException } from '../../../../infra/error-handling';
-import {
-	DAYS,
-	MINUTES,
-	REDIS_HOST,
-	REDIS_PORT,
-	REDIS_RO_HOST,
-	REDIS_RO_PORT,
-} from '../../../../lib/config';
+import { DAYS } from '../../../../lib/config';
 import type {
 	DeviceLog,
 	DeviceLogsBackend,
@@ -21,23 +11,7 @@ import type {
 	LogWriteContext,
 	Subscription,
 } from '../struct';
-import { newSubscribeInstance, redisRO } from '../../../../infra/redis';
-
-// Add promisified methods to the redis prototypes so we don't need to promisify them each time
-declare module 'redis' {
-	interface RedisClient {
-		lrangeAsync(key: string, start: number, stop: number): Promise<string[]>;
-	}
-	interface Multi {
-		execAsync(): Promise<any[]>;
-	}
-}
-redis.RedisClient.prototype.lrangeAsync = promisify(
-	redis.RedisClient.prototype.lrange,
-);
-redis.Multi.prototype.execAsync = promisify(
-	redis.Multi.prototype.exec_transaction,
-);
+import { newSubscribeInstance, redisRO, redis } from '../../../../infra/redis';
 
 const { ServiceUnavailableError, BadRequestError } = errors;
 
@@ -60,30 +34,11 @@ const schema = avro.Type.forSchema({
 	],
 });
 
-const createClient = ({ readOnly = false } = {}) => {
-	const client = redis.createClient({
-		host: readOnly ? REDIS_RO_HOST : REDIS_HOST,
-		port: readOnly ? REDIS_RO_PORT : REDIS_PORT,
-		retry_strategy: () => 500,
-		enable_offline_queue: false,
-	});
-	// If not handled will crash the process
-	client.on(
-		'error',
-		_.throttle((err: Error) => {
-			captureException(err, 'Redis error');
-		}, 5 * MINUTES),
-	);
-	return client;
-};
-
 export class RedisBackend implements DeviceLogsBackend {
-	private cmds: redis.RedisClient;
 	private pubSub: ReturnType<typeof newSubscribeInstance>;
 	private subscriptions: EventEmitter;
 
 	constructor() {
-		this.cmds = createClient();
 		// This connection goes into "subscriber mode" and cannot be reused for commands
 		this.pubSub = newSubscribeInstance();
 		this.pubSub.on('message', this.handleMessage.bind(this));
@@ -105,8 +60,7 @@ export class RedisBackend implements DeviceLogsBackend {
 	}
 
 	public get available(): boolean {
-		// should_buffer is there but missing from the official typings
-		return !this.cmds.should_buffer;
+		return this.connected;
 	}
 
 	public async publish(ctx: LogWriteContext, logs: DeviceLog[]): Promise<any> {
@@ -120,7 +74,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		const key = this.getKey(ctx);
 		const bytesWrittenKey = this.getKey(ctx, 'logBytesWritten');
 		// Create a Redis transaction
-		const tx = this.cmds.multi();
+		const tx = redis.multi();
 		// Add the logs to the List structure
 		tx.rpush(key, redisLogs);
 		// Trim it to the retention limit
@@ -136,7 +90,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		// Devices with no new logs eventually expire
 		tx.pexpire(key, KEY_EXPIRATION);
 		tx.pexpire(bytesWrittenKey, KEY_EXPIRATION);
-		return await tx.execAsync();
+		return await tx.exec();
 	}
 
 	public subscribe(ctx: LogContext, subscription: Subscription) {
@@ -160,7 +114,7 @@ export class RedisBackend implements DeviceLogsBackend {
 
 	private get connected() {
 		return (
-			this.cmds.connected &&
+			redis.status === 'ready' &&
 			this.pubSub.status === 'ready' &&
 			redisRO.status === 'ready'
 		);
