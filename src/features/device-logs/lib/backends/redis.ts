@@ -1,4 +1,5 @@
 import * as avro from 'avsc';
+import { stripIndent } from 'common-tags';
 import { EventEmitter } from 'events';
 import * as _ from 'lodash';
 import { errors } from '@balena/pinejs';
@@ -40,6 +41,38 @@ const schema = avro.Type.forSchema({
 	],
 });
 
+declare module 'ioredis' {
+	interface Commands {
+		publishLogs(
+			logsKey: string,
+			bytesWrittenKey: string,
+			...args: [...logs: string[], bytesWritten: number, limit: number]
+		): Promise<void>;
+	}
+}
+
+redis.defineCommand('publishLogs', {
+	lua: stripIndent`
+		-- Last arg should be the retention limit
+		local limit = table.remove(ARGV)
+		-- Second last arg should be the bytes total
+		local bytesWritten = table.remove(ARGV)
+		-- Add the logs to the List structure
+		redis.call("rpush", KEYS[1], unpack(ARGV))
+		-- Trim it to the retention limit
+		redis.call("ltrim", KEYS[1], -limit, -1)
+		-- Publish each log using Redis PubSub
+		for i = 1, #ARGV do
+			redis.call("publish", KEYS[1], ARGV[i]);
+		end
+		-- Increment log bytes written total
+		redis.call("incrby", KEYS[2], bytesWritten);
+		-- Devices with no new logs eventually expire
+		redis.call("pexpire", KEYS[1], ${KEY_EXPIRATION});
+		redis.call("pexpire", KEYS[2], ${KEY_EXPIRATION});`,
+	numberOfKeys: 2,
+});
+
 export class RedisBackend implements DeviceLogsBackend {
 	private pubSub: ReturnType<typeof newSubscribeInstance>;
 	private subscriptions: EventEmitter;
@@ -69,34 +102,29 @@ export class RedisBackend implements DeviceLogsBackend {
 		return this.connected;
 	}
 
-	public async publish(ctx: LogWriteContext, logs: DeviceLog[]): Promise<any> {
+	public async publish(ctx: LogWriteContext, logs: DeviceLog[]): Promise<void> {
 		if (!this.connected) {
 			throw new ServiceUnavailableError();
 		}
 		// Immediately map the logs as they are synchronously cleared
 		const redisLogs = logs.map(this.toRedisLog, this);
 
-		const limit = ctx.retention_limit || 0;
+		const limit = ctx.retention_limit;
 		const key = this.getKey(ctx);
 		const bytesWrittenKey = this.getKey(ctx, 'logBytesWritten');
-		// Create a Redis transaction
-		const tx = redis.multi();
-		// Add the logs to the List structure
-		tx.rpush(key, redisLogs);
-		// Trim it to the retention limit
-		tx.ltrim(key, -limit, -1);
-		// Publish each log using Redis PubSub
+
 		let bytesWritten = 0;
 		for (const rLog of redisLogs) {
-			tx.publish(key, rLog);
 			bytesWritten += rLog.length;
 		}
-		// Increment log bytes written total
-		tx.incrby(bytesWrittenKey, bytesWritten);
-		// Devices with no new logs eventually expire
-		tx.pexpire(key, KEY_EXPIRATION);
-		tx.pexpire(bytesWrittenKey, KEY_EXPIRATION);
-		return await tx.exec();
+
+		await redis.publishLogs(
+			key,
+			bytesWrittenKey,
+			...redisLogs,
+			bytesWritten,
+			limit,
+		);
 	}
 
 	public subscribe(ctx: LogContext, subscription: Subscription) {
