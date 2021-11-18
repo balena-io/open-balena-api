@@ -1,4 +1,15 @@
 - commits:
+    - subject: Switch to using a single shared ioredis client
+      hash: c3e253e217ace55fb942d9553ab5162205cf5ca4
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.172.8
+  date: 2021-11-18T13:54:28.191Z
+- commits:
     - subject: Update typescript to 4.5.2
       hash: 9b26bba93cc0e1f807564723670e629ecdb4b70d
       body: ''
