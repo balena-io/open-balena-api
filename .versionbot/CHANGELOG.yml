@@ -1,4 +1,15 @@
 - commits:
+    - subject: Use a predefined script for publishing device logs
+      hash: 7838ea36da45c85525cbb3180e71d03813b9bc52
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.172.12
+  date: 2021-11-18T21:15:46.172Z
+- commits:
     - subject: Use isolated ioredis instances for device logs
       hash: 28d9e76964b1ad0f94e073ee620e2ebc209dc107
       body: ''
