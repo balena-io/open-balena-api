@@ -151,6 +151,7 @@ export type { DeviceType } from './features/device-types/device-types';
 
 export { DefaultApplicationType } from './features/application-types/application-types';
 export * as request from './infra/request-promise';
+export * as redis from './infra/redis';
 export * as scheduler from './infra/scheduler';
 export * as cache from './infra/cache';
 export * as config from './lib/config';

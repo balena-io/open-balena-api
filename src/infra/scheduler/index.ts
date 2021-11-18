@@ -19,10 +19,9 @@
 
 import * as _ from 'lodash';
 import * as schedule from 'node-schedule';
-import * as Redis from 'ioredis';
 import * as Redlock from 'redlock';
-import { MINUTES, REDIS_HOST, REDIS_PORT } from '../../lib/config';
 import { captureException } from '../error-handling';
+import { redis, redisRO } from '../redis';
 
 export { Job } from 'node-schedule';
 
@@ -42,31 +41,7 @@ const JOB_LOCK_PREFIX = 'api:jobs:execute:';
 const JOB_INFO_PREFIX = 'api:jobs:info:';
 const JOB_DEFAULT_TTL = 5000;
 
-/*
- Retry to connect to the redis server every 200 ms. To allow recovering
- in case the redis server goes offline and comes online again.
-*/
-const redisRetryStrategy: NonNullable<
-	ConstructorParameters<typeof Redis>[0]
->['retryStrategy'] = _.constant(200);
-
-const client = new Redis({
-	host: REDIS_HOST,
-	port: REDIS_PORT,
-	retryStrategy: redisRetryStrategy,
-	enableOfflineQueue: false,
-	enableAutoPipelining: true,
-});
-
-// If not handled will crash the process
-client.on(
-	'error',
-	_.throttle((err: Error) => {
-		captureException(err, 'Redis error');
-	}, 5 * MINUTES),
-);
-
-const locker = new Redlock([client], {
+const locker = new Redlock([redis], {
 	retryCount: 2,
 	retryDelay: 50,
 	retryJitter: 50,
@@ -77,7 +52,7 @@ const checkJobShouldExecute = async (
 	job: schedule.Job,
 	fireDate: Date,
 ): Promise<boolean> => {
-	const value = await client.get(jobInfoKey);
+	const value = await redisRO.get(jobInfoKey);
 
 	if (value == null) {
 		updateJobInfoExecute(jobInfoKey, job);
@@ -96,7 +71,7 @@ const updateJobInfoExecute = async (jobInfoKey: string, job: schedule.Job) => {
 		nextInvocation: job.nextInvocation().getTime(),
 	};
 	const serializedJobInfo = JSON.stringify(jobInfo);
-	await client.set(jobInfoKey, serializedJobInfo);
+	await redis.set(jobInfoKey, serializedJobInfo);
 };
 
 export const scheduleJob = (

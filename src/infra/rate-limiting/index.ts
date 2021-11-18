@@ -8,35 +8,12 @@ import {
 	RateLimiterRedis,
 	RateLimiterRes,
 } from 'rate-limiter-flexible';
-import * as Redis from 'ioredis';
-
 import { captureException, handleHttpErrors } from '../error-handling';
-
-import {
-	MINUTES,
-	RATE_LIMIT_FACTOR,
-	RATE_LIMIT_MEMORY_BACKEND,
-	REDIS_HOST,
-	REDIS_PORT,
-} from '../../lib/config';
+import { RATE_LIMIT_FACTOR, RATE_LIMIT_MEMORY_BACKEND } from '../../lib/config';
 import { errors } from '@balena/pinejs';
+import { redis } from '../redis';
 
 const { InternalRequestError, TooManyRequestsError } = errors;
-
-const logRedisError = (err: Error) => {
-	// do not log these errors, because this would flood our logs
-	// when redis is offline
-	// these errors are throttle see below
-	captureException(err, 'Error: Redis service communication failed ');
-};
-
-/*
- Retry to connect to the redis server every 200 ms. To allow recovering
- in case the redis server goes offline and comes online again.
-*/
-const redisRetryStrategy: NonNullable<
-	ConstructorParameters<typeof Redis>[0]
->['retryStrategy'] = _.constant(200);
 
 const usedKeyScopes: Dictionary<true> = {};
 
@@ -74,22 +51,10 @@ export const createRateLimiter = (
 		return insuranceLimiter;
 	}
 
-	const client = new Redis({
-		host: REDIS_HOST,
-		port: REDIS_PORT,
-		retryStrategy: redisRetryStrategy,
-		enableOfflineQueue: false,
-		enableAutoPipelining: true,
-	});
-
-	// we need to bind to this error handler otherwise a redis error would kill
-	// the whole process
-	client.on('error', _.throttle(logRedisError, 5 * MINUTES));
-
 	const rateLimiter = new RateLimiterRedis({
 		...opts,
 		keyPrefix: `api:ratelimiting:redis:${keyScope}`,
-		storeClient: client,
+		storeClient: redis,
 		insuranceLimiter,
 	});
 
