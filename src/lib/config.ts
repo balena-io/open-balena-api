@@ -190,10 +190,27 @@ export const RATE_LIMIT_FACTOR = intVar('RATE_LIMIT_FACTOR', 1);
 export const RATE_LIMIT_MEMORY_BACKEND = optionalVar(
 	'RATE_LIMIT_MEMORY_BACKEND',
 );
-export const REDIS_HOST = requiredVar('REDIS_HOST');
-export const REDIS_PORT = intVar('REDIS_PORT');
-export const REDIS_RO_HOST = optionalVar('REDIS_RO_HOST', REDIS_HOST);
-export const REDIS_RO_PORT = intVar('REDIS_RO_PORT', REDIS_PORT);
+const redisHost = requiredVar('REDIS_HOST');
+const redisPort = intVar('REDIS_PORT');
+const redisRoHost = optionalVar('REDIS_RO_HOST', redisHost);
+const redisRoPort = intVar('REDIS_RO_PORT', redisPort);
+const redisLogsHost = optionalVar('REDIS_LOGS_HOST');
+const redisLogsPort = intVar('REDIS_LOGS_PORT', undefined);
+export const REDIS = {
+	general: {
+		host: redisHost,
+		port: redisPort,
+		roHost: redisRoHost,
+		roPort: redisRoPort,
+	},
+	logs: {
+		host: redisLogsHost ?? redisHost,
+		port: redisLogsPort ?? redisPort,
+		roHost: optionalVar('REDIS_LOGS_RO_HOST') ?? redisLogsHost ?? redisRoHost,
+		roPort:
+			intVar('REDIS_LOGS_RO_PORT', undefined) ?? redisLogsPort ?? redisRoPort,
+	},
+};
 export const LOKI_HOST = optionalVar('LOKI_HOST');
 export const LOKI_PORT = intVar('LOKI_PORT', 9095);
 // control the percent of logs written to Loki while scaling up

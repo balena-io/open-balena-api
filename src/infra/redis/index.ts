@@ -1,12 +1,6 @@
 import * as _ from 'lodash';
 import * as Redis from 'ioredis';
-import {
-	MINUTES,
-	REDIS_HOST,
-	REDIS_PORT,
-	REDIS_RO_HOST,
-	REDIS_RO_PORT,
-} from '../../lib/config';
+import { MINUTES, REDIS } from '../../lib/config';
 import { captureException } from '../error-handling';
 
 /*
@@ -17,10 +11,14 @@ const redisRetryStrategy: NonNullable<
 	ConstructorParameters<typeof Redis>[0]
 >['retryStrategy'] = _.constant(200);
 
-export const createIsolatedRedis = ({ readOnly = false } = {}) => {
+export const createIsolatedRedis = ({
+	readOnly = false,
+	instance = 'general',
+}: { readOnly?: boolean; instance?: keyof typeof REDIS } = {}) => {
+	const r = REDIS[instance];
 	return new Redis({
-		host: readOnly ? REDIS_RO_HOST : REDIS_HOST,
-		port: readOnly ? REDIS_RO_PORT : REDIS_PORT,
+		host: readOnly ? r.roHost : r.host,
+		port: readOnly ? r.roPort : r.port,
 		retryStrategy: redisRetryStrategy,
 		enableOfflineQueue: false,
 		enableAutoPipelining: true,
