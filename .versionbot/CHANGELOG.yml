@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add support for a separate redis instance for device logs
+      hash: c1e596c5d3af7d79d8e45e37bd96a7b07fe3d54e
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.173.0
+  date: 2021-11-19T13:16:05.260Z
+- commits:
     - subject: Use a predefined script for publishing device logs
       hash: 7838ea36da45c85525cbb3180e71d03813b9bc52
       body: ''
