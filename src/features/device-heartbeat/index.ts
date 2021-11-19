@@ -14,8 +14,7 @@ import {
 	API_HEARTBEAT_STATE_ENABLED,
 	API_HEARTBEAT_STATE_TIMEOUT_SECONDS,
 	DEFAULT_SUPERVISOR_POLL_INTERVAL,
-	REDIS_HOST,
-	REDIS_PORT,
+	REDIS,
 } from '../../lib/config';
 import { redis, redisRO } from '../../infra/redis';
 
@@ -192,8 +191,8 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 
 		// initialise the RedisSMQ object using our Redis client...
 		this.rsmq = new RedisSMQ({
-			host: REDIS_HOST,
-			port: REDIS_PORT,
+			host: REDIS.general.host,
+			port: REDIS.general.port,
 			ns: DeviceOnlineStateManager.REDIS_NAMESPACE,
 		});
 

@@ -17,8 +17,8 @@ import {
 	createIsolatedRedis,
 } from '../../../../infra/redis';
 
-const redis = createIsolatedRedis();
-const redisRO = createIsolatedRedis({ readOnly: true });
+const redis = createIsolatedRedis({ instance: 'logs' });
+const redisRO = createIsolatedRedis({ instance: 'logs', readOnly: true });
 
 const { ServiceUnavailableError, BadRequestError } = errors;
 
