@@ -22,6 +22,7 @@ export const createIsolatedRedis = ({
 		retryStrategy: redisRetryStrategy,
 		enableOfflineQueue: false,
 		enableAutoPipelining: true,
+		keepAlive: 0,
 	}).on(
 		// If not handled will crash the process
 		'error',
