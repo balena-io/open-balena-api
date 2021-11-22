@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
-import type { Filter } from 'pinejs-client-core';
+import type { Filter, FilterObj } from 'pinejs-client-core';
 import type {
 	Device,
 	PickDeferred,
@@ -10,10 +10,21 @@ import type {
 
 const createReleaseServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,
-	deviceIds: number[],
+	deviceFilterOrIds: number[] | FilterObj,
 	releaseFilter: Filter,
 ): Promise<void> => {
-	if (deviceIds.length === 0) {
+	const deviceIds = Array.isArray(deviceFilterOrIds)
+		? deviceFilterOrIds
+		: (
+				(await api.get({
+					resource: 'device',
+					options: {
+						$select: 'id',
+						$filter: deviceFilterOrIds,
+					},
+				})) as Array<Pick<Device, 'id'>>
+		  ).map(({ id }) => id);
+	if (deviceFilterOrIds.length === 0) {
 		return;
 	}
 
@@ -59,7 +70,17 @@ const createReleaseServiceInstalls = async (
 		options: {
 			$select: ['device', 'installs__service'],
 			$filter: {
-				device: { $in: deviceIds },
+				// Pass the device filters instead of IDs, since a using $in errors with `code: '08P01'` for more than 66k IDs.
+				device: Array.isArray(deviceFilterOrIds)
+					? { $in: deviceFilterOrIds }
+					: {
+							$any: {
+								$alias: 'd',
+								$expr: {
+									d: deviceFilterOrIds,
+								},
+							},
+					  },
 				installs__service: { $in: serviceIds },
 			},
 		},
@@ -151,21 +172,13 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 			request.values.should_be_running__release != null &&
 			affectedIds.length !== 0
 		) {
-			// Ensure that every device of the app we've just pinned, that is not itself pinned, has the necessary service install entries
-			const devices = (await api.get({
-				resource: 'device',
-				options: {
-					$select: 'id',
-					$filter: {
-						belongs_to__application: { $in: affectedIds },
-						should_be_running__release: null,
-					},
-				},
-			})) as Array<Pick<Device, 'id'>>;
-
+			// Ensure that every device of the app we've just pinned, that is not itself pinned, has the necessary service install entries.
 			await createReleaseServiceInstalls(
 				api,
-				devices.map(({ id }) => id),
+				{
+					belongs_to__application: { $in: affectedIds },
+					should_be_running__release: null,
+				},
 				{
 					id: request.values.should_be_running__release,
 				},
