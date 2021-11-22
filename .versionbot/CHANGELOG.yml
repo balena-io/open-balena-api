@@ -1,4 +1,15 @@
 - commits:
+    - subject: Enable keepalive for ioredis
+      hash: 7fe06b3b07634841c2a351b7e73b689da6c7559a
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.173.2
+  date: 2021-11-22T17:56:09.357Z
+- commits:
     - subject: Fix service installs query when changing target release of huge fleets
       hash: 449a23a1c5db14550b09ea31776d74bdad076aa3
       body: ''
