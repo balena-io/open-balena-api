@@ -14,14 +14,19 @@ const redisRetryStrategy: NonNullable<
 export const createIsolatedRedis = ({
 	readOnly = false,
 	instance = 'general',
-}: { readOnly?: boolean; instance?: keyof typeof REDIS } = {}) => {
+	enableAutoPipelining = true,
+}: {
+	readOnly?: boolean;
+	instance?: keyof typeof REDIS;
+	enableAutoPipelining?: boolean;
+} = {}) => {
 	const r = REDIS[instance];
 	return new Redis({
 		host: readOnly ? r.roHost : r.host,
 		port: readOnly ? r.roPort : r.port,
 		retryStrategy: redisRetryStrategy,
 		enableOfflineQueue: false,
-		enableAutoPipelining: true,
+		enableAutoPipelining,
 		keepAlive: 0,
 	}).on(
 		// If not handled will crash the process
@@ -37,5 +42,5 @@ export const redis = createIsolatedRedis();
 export const redisRO = createIsolatedRedis({ readOnly: true });
 
 export const newSubscribeInstance = () => {
-	return createIsolatedRedis({ readOnly: true });
+	return createIsolatedRedis({ readOnly: true, enableAutoPipelining: false });
 };
