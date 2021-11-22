@@ -1,4 +1,15 @@
 - commits:
+    - subject: Disable auto pipelining in subscriber mode as it makes no sense there
+      hash: b2bc4e01ae61274f4d0dadac0c7acba3821e2427
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.173.3
+  date: 2021-11-22T19:45:15.240Z
+- commits:
     - subject: Enable keepalive for ioredis
       hash: 7fe06b3b07634841c2a351b7e73b689da6c7559a
       body: ''
