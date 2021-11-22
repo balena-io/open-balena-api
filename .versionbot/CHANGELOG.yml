@@ -1,4 +1,19 @@
 - commits:
+    - subject: Fix service installs query when changing target release of huge fleets
+      hash: 449a23a1c5db14550b09ea31776d74bdad076aa3
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: 'https://github.com/balena-io/balena-api/issues/3445'
+        see: 'https://github.com/balena-io/balena-api/issues/3445'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.173.1
+  date: 2021-11-22T13:40:44.913Z
+- commits:
     - subject: Add support for a separate redis instance for device logs
       hash: c1e596c5d3af7d79d8e45e37bd96a7b07fe3d54e
       body: ''
