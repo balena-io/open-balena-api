@@ -1,4 +1,17 @@
 - commits:
+    - subject: Expose the RPi family config vars to Pi Zero 2W
+      hash: 374d6c48b28710fd64ac2ca49fe62fd82316990d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Alexandru Costche <alexandru@balena.io>
+        signed-off-by: Alexandru Costche <alexandru@balena.io>
+      author: Alexandru Costache
+      nested: []
+  version: 0.173.6
+  date: 2021-11-23T12:24:02.754Z
+- commits:
     - subject: Fix ioredis subscriptions
       hash: e6c69105766994dc83b0cf9c21afa8b3b3610876
       body: ''
