@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix ioredis subscriptions
+      hash: e6c69105766994dc83b0cf9c21afa8b3b3610876
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.173.5
+  date: 2021-11-23T11:43:07.024Z
+- commits:
     - subject: Revert to node redis for subscribing to logs
       hash: 6dba1de0b16769d6bcf68a850836424c33d83ece
       body: ''
