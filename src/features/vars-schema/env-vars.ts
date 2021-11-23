@@ -122,6 +122,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 		capableDeviceTypes: [
 			'fincm3',
 			'npe-x500-m3',
+			'raspberrypi0-2w-64',
 			'raspberry-pi',
 			'raspberry-pi2',
 			'raspberrypi3',
