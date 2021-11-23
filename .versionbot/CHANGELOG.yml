@@ -1,4 +1,15 @@
 - commits:
+    - subject: Revert to node redis for subscribing to logs
+      hash: 6dba1de0b16769d6bcf68a850836424c33d83ece
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.173.4
+  date: 2021-11-23T11:21:20.010Z
+- commits:
     - subject: Disable auto pipelining in subscriber mode as it makes no sense there
       hash: b2bc4e01ae61274f4d0dadac0c7acba3821e2427
       body: ''
