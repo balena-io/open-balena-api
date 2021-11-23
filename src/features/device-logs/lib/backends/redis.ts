@@ -2,12 +2,9 @@ import * as avro from 'avsc';
 import { stripIndent } from 'common-tags';
 import { EventEmitter } from 'events';
 import * as _ from 'lodash';
-import * as nodeRedis from 'redis';
 import { errors } from '@balena/pinejs';
-import { promisify } from 'util';
-
 import { captureException } from '../../../../infra/error-handling';
-import { DAYS, MINUTES, REDIS } from '../../../../lib/config';
+import { DAYS } from '../../../../lib/config';
 import type {
 	DeviceLog,
 	DeviceLogsBackend,
@@ -15,17 +12,13 @@ import type {
 	LogWriteContext,
 	Subscription,
 } from '../struct';
-import { createIsolatedRedis } from '../../../../infra/redis';
+import {
+	newSubscribeInstance,
+	createIsolatedRedis,
+} from '../../../../infra/redis';
 
 const redis = createIsolatedRedis({ instance: 'logs' });
 const redisRO = createIsolatedRedis({ instance: 'logs', readOnly: true });
-
-nodeRedis.RedisClient.prototype.lrangeAsync = promisify(
-	nodeRedis.RedisClient.prototype.lrange,
-);
-nodeRedis.Multi.prototype.execAsync = promisify(
-	nodeRedis.Multi.prototype.exec_transaction,
-);
 
 const { ServiceUnavailableError, BadRequestError } = errors;
 
@@ -47,23 +40,6 @@ const schema = avro.Type.forSchema({
 		{ name: 'message', type: 'string' },
 	],
 });
-
-const createClient = ({ readOnly = false } = {}) => {
-	const client = nodeRedis.createClient({
-		host: readOnly ? REDIS.logs.roHost : REDIS.logs.host,
-		port: readOnly ? REDIS.logs.roPort : REDIS.logs.port,
-		retry_strategy: () => 500,
-		enable_offline_queue: false,
-	});
-	// If not handled will crash the process
-	client.on(
-		'error',
-		_.throttle((err: Error) => {
-			captureException(err, 'Redis error');
-		}, 5 * MINUTES),
-	);
-	return client;
-};
 
 declare module 'ioredis' {
 	interface Commands {
@@ -98,12 +74,12 @@ redis.defineCommand('publishLogs', {
 });
 
 export class RedisBackend implements DeviceLogsBackend {
-	private pubSub: nodeRedis.RedisClient;
+	private pubSub: ReturnType<typeof newSubscribeInstance>;
 	private subscriptions: EventEmitter;
 
 	constructor() {
 		// This connection goes into "subscriber mode" and cannot be reused for commands
-		this.pubSub = createClient({ readOnly: true });
+		this.pubSub = newSubscribeInstance({ instance: 'logs' });
 		this.pubSub.on('message', this.handleMessage.bind(this));
 
 		this.subscriptions = new EventEmitter();
@@ -173,7 +149,7 @@ export class RedisBackend implements DeviceLogsBackend {
 	private get connected() {
 		return (
 			redis.status === 'ready' &&
-			this.pubSub.connected &&
+			this.pubSub.status === 'ready' &&
 			redisRO.status === 'ready'
 		);
 	}

@@ -41,6 +41,14 @@ export const redis = createIsolatedRedis();
 
 export const redisRO = createIsolatedRedis({ readOnly: true });
 
-export const newSubscribeInstance = () => {
-	return createIsolatedRedis({ readOnly: true, enableAutoPipelining: false });
+export const newSubscribeInstance = ({
+	instance = 'general',
+}: {
+	instance?: keyof typeof REDIS;
+} = {}) => {
+	return createIsolatedRedis({
+		instance,
+		readOnly: true,
+		enableAutoPipelining: false,
+	});
 };
