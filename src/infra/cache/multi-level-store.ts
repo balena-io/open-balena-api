@@ -10,6 +10,12 @@ export type MultiStoreOpt = Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
 	refreshThreshold?: number;
 };
 
+/**
+ * @param useVersion
+ * Do not use the api version as part of the cache key, this disables automatic invalidation on
+ * version updates and so anything that may change the result needs to be manually invalidated,
+ * eg by changing the cacheKey
+ */
 export function createMultiLevelStore<T extends Defined>(
 	cacheKey: string,
 	opts:
@@ -19,6 +25,7 @@ export function createMultiLevelStore<T extends Defined>(
 				local?: MultiStoreOpt | false;
 				global?: MultiStoreOpt;
 		  },
+	useVersion = true,
 ): {
 	get: (key: string) => Promise<T | undefined>;
 	set: (key: string, value: T) => Promise<void>;
@@ -58,7 +65,7 @@ export function createMultiLevelStore<T extends Defined>(
 		// We include the version so that we get automatic invalidation on updates which might change the memoized fn behavior,
 		// we also calculate the keyPrefix lazily so that the version has a chance to be set as otherwise the memoized function
 		// creation can happen before the version has been initialized
-		keyPrefix ??= `cache$${version}$${cacheKey}$`;
+		keyPrefix ??= `cache$${useVersion ? version : ''}$${cacheKey}$`;
 		return `${keyPrefix}${key}`;
 	};
 
