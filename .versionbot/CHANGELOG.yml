@@ -1,4 +1,18 @@
 - commits:
+    - subject: Allow device api keys to query their state as root
+      hash: c43d2a91eec5799c548e9107e45aa06df646cf26
+      body: |
+        This omits all the permissions checks and results in a more efficient
+        query but with the downside that it requires us to manually check that
+        this is a safe operation to allow
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.173.8
+  date: 2021-11-25T18:56:03.734Z
+- commits:
     - subject: Use manual cache invalidation for the metrics update throttling
       hash: 8657d133675b4f115ddca15dea77a7b76614194d
       body: ''
