@@ -11,7 +11,6 @@ import * as stateMock from '../src/features/device-heartbeat';
 import { waitFor } from './test-lib/common';
 import * as fixtures from './test-lib/fixtures';
 import { expectResourceToMatch } from './test-lib/api-helpers';
-import { version as packageJsonVersion } from '../package.json';
 import { redis, redisRO } from '../src/infra/redis';
 
 const POLL_MSEC = 2000;
@@ -334,7 +333,7 @@ describe('Device State v2 patch', function () {
 	let release2: AnyObject;
 	let device: fakeDevice.Device;
 	const getMetricsRecentlyUpdatedCacheKey = (uuid: string) =>
-		`cache$${packageJsonVersion}$lastMetricsReportTime$${uuid}`;
+		`cache$$lastMetricsReportTime$${uuid}`;
 
 	before(async () => {
 		fx = await fixtures.load('03-device-state');
@@ -398,9 +397,11 @@ describe('Device State v2 patch', function () {
 	});
 
 	it('should set the metrics throttling key in redis', async () => {
-		expect(
-			await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
-		).to.equal('true');
+		const cachedValue = await redisRO.get(
+			getMetricsRecentlyUpdatedCacheKey(device.uuid),
+		);
+		expect(cachedValue).to.be.a('string');
+		expect(cachedValue?.startsWith('1')).to.be.true;
 	});
 
 	it('should throttle metrics-only device state updates [same-instance]', async () => {
@@ -450,11 +451,12 @@ describe('Device State v2 patch', function () {
 		// confirm that even the redis cache has expired
 		expect(await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid))).to
 			.be.null;
+		const now = `${Date.now()}`;
 		// emulate the creation of a throttling key in redis from a different instance
-		await redis.set(getMetricsRecentlyUpdatedCacheKey(device.uuid), 'true');
+		await redis.set(getMetricsRecentlyUpdatedCacheKey(device.uuid), now);
 		expect(
 			await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
-		).to.equal('true');
+		).to.equal(now);
 
 		const devicePatchBody = {
 			local: {

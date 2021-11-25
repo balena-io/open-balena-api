@@ -230,12 +230,31 @@ type StatePatchBody = {
 	};
 };
 
-const lastMetricsReportTime = createMultiLevelStore<true>(
-	'lastMetricsReportTime',
-	{
-		ttl: METRICS_MAX_REPORT_INTERVAL_SECONDS,
-	},
-);
+const shouldMetricsUpdate = (() => {
+	const lastMetricsReportTime = createMultiLevelStore<number>(
+		'lastMetricsReportTime',
+		{
+			ttl: METRICS_MAX_REPORT_INTERVAL_SECONDS,
+		},
+		false,
+	);
+	const METRICS_MAX_REPORT_INTERVAL =
+		METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000;
+	return async (uuid: string) => {
+		const lastMetricsUpdate = await lastMetricsReportTime.get(uuid);
+		const now = Date.now();
+		// If the entry has expired then it means we should actually do the report
+		if (
+			lastMetricsUpdate == null ||
+			lastMetricsUpdate + METRICS_MAX_REPORT_INTERVAL < now
+		) {
+			// And we add a new entry
+			await lastMetricsReportTime.set(uuid, now);
+			return true;
+		}
+		return false;
+	};
+})();
 
 const releaseOfDeviceQuery = _.once(() =>
 	api.resin.prepare<{ uuid: string; commit: string }>({
@@ -298,17 +317,14 @@ export const statePatch: RequestHandler = async (req, res) => {
 			  } = _.pick(local, validPatchFields);
 		let metricsBody: Pick<LocalBody, typeof metricsPatchFields[number]> =
 			_.pick(local, metricsPatchFields);
-		if (Object.keys(metricsBody).length > 0) {
-			const lastMetricsUpdate = await lastMetricsReportTime.get(uuid);
-			// If the entry has expired then it means we should actually do the report
-			if (lastMetricsUpdate == null) {
-				// And we add a new entry
-				await lastMetricsReportTime.set(uuid, true);
-				// If we should force a metrics update then merge the two together and clear `metricsBody` so
-				// that we don't try to merge it again later
-				deviceBody = { ...deviceBody, ...metricsBody };
-				metricsBody = {};
-			}
+		if (
+			Object.keys(metricsBody).length > 0 &&
+			(await shouldMetricsUpdate(uuid))
+		) {
+			// If we should force a metrics update then merge the two together and clear `metricsBody` so
+			// that we don't try to merge it again later
+			deviceBody = { ...deviceBody, ...metricsBody };
+			metricsBody = {};
 		}
 
 		if (local.name != null) {
