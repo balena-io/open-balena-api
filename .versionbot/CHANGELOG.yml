@@ -1,4 +1,25 @@
 - commits:
+    - subject: Use manual cache invalidation for the metrics update throttling
+      hash: 8657d133675b4f115ddca15dea77a7b76614194d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Add an option to disable cache invalidation based upon version
+      hash: 7b3797f6d4ef371417a9565bce8d7cb1783ae64e
+      body: |
+        This allows certain caches to handle cache invalidation manually and
+        therefore persist across versions
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.173.7
+  date: 2021-11-25T15:42:22.883Z
+- commits:
     - subject: Expose the RPi family config vars to Pi Zero 2W
       hash: 374d6c48b28710fd64ac2ca49fe62fd82316990d
       body: ''
