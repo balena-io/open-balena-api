@@ -93,7 +93,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 
 	'resin.service.read?application/canAccess()',
 
-	'resin.service_install.read?installs__service/canAccess()',
+	'resin.service_install.read?installs__service/canAccess() or device/canAccess()',
 	...writePerms(
 		'resin.service_install',
 		`installs__service/any(s:s/${applicationControlsDevice})`,
