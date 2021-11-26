@@ -1,4 +1,15 @@
 - commits:
+    - subject: Added Loki environment variables to confd
+      hash: 31fa31116c5aa46036ef54109c4e420d3bd62ddf
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Robbe Haesendonck
+      nested: []
+  version: 0.174.0
+  date: 2021-11-26T15:23:57.517Z
+- commits:
     - subject: Allow device api keys to query their state as root
       hash: c43d2a91eec5799c548e9107e45aa06df646cf26
       body: |
