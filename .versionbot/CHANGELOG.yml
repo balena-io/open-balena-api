@@ -1,4 +1,17 @@
 - commits:
+    - subject: Test that devices self-pinning have new service installs created
+      hash: 2c83e3c36f0c54da524386a2d1f0db0ee9aa3d76
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.174.1
+  date: 2021-11-29T23:48:18.338Z
+- commits:
     - subject: Added Loki environment variables to confd
       hash: 31fa31116c5aa46036ef54109c4e420d3bd62ddf
       body: ''
