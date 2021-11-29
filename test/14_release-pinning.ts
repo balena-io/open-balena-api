@@ -22,6 +22,7 @@ describe(`Tracking latest release`, () => {
 	let device: fakeDevice.Device;
 	let device2: fakeDevice.Device;
 	let device3: fakeDevice.Device;
+	let device4: fakeDevice.Device;
 
 	before(async () => {
 		fx = await fixtures.load('14-release-pinning');
@@ -35,6 +36,7 @@ describe(`Tracking latest release`, () => {
 		device = await fakeDevice.provisionDevice(admin, applicationId);
 		device2 = await fakeDevice.provisionDevice(admin, application2Id);
 		device3 = await fakeDevice.provisionDevice(admin, application3Id);
+		device4 = await fakeDevice.provisionDevice(admin, application3Id);
 	});
 
 	after(async () => {
@@ -249,6 +251,56 @@ describe(`Tracking latest release`, () => {
 					end_timestamp: Date.now(),
 				})
 				.expect(200);
+		});
+
+		it('should add any new service installs of the new release when a device is self-pinned to it', async function () {
+			const {
+				body: { d: serviceInstallsBefore },
+			} = await supertest(admin)
+				.get(
+					`/${version}/service_install?$select=id&$expand=installs__service($select=service_name)&$filter=device eq ${device4.id}`,
+				)
+				.expect(200);
+
+			expect(serviceInstallsBefore).to.be.an('array');
+			const serviceNamesBefore = serviceInstallsBefore.map(
+				(si: AnyObject) => si.installs__service[0].service_name,
+			);
+			expect(serviceNamesBefore).to.not.include(
+				'new-untracked-release-service',
+			);
+
+			await supertest(device4)
+				.patch(`/${version}/device(${device4.id})`)
+				.send({
+					should_be_running__release: app3ReleaseId,
+				})
+				.expect(200);
+
+			const {
+				body: { d: serviceInstallsAfter },
+			} = await supertest(admin)
+				.get(
+					`/${version}/service_install?$select=id&$expand=installs__service($select=service_name)&$filter=device eq ${device4.id}`,
+				)
+				.expect(200);
+
+			expect(serviceInstallsAfter).to.be.an('array');
+			const serviceNamesAfter = serviceInstallsAfter.map(
+				(si: AnyObject) => si.installs__service[0].service_name,
+			);
+			expect(serviceNamesAfter).to.include('new-untracked-release-service');
+		});
+
+		it('should notify the supervisor when a device is self-pinned to a release', async function () {
+			await connectDeviceAndWaitForUpdate(device4.uuid, version, async () => {
+				await supertest(device4)
+					.patch(`/${version}/device(${device4.id})`)
+					.send({
+						should_be_running__release: app3ReleaseId,
+					})
+					.expect(200);
+			});
 		});
 
 		it('should not update the target release', async function () {
