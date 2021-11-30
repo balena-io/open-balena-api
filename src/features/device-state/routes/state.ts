@@ -120,11 +120,18 @@ function buildAppFromRelease(
 		}
 	}
 
+	const serviceInstallsByServiceId = _.keyBy(
+		device.service_install as AnyObject[],
+		(si) => si.service[0].id,
+	);
 	(release.contains__image as AnyObject[]).forEach((ipr) => {
 		// extract the per-image information
 		const image = ipr.image[0];
 
-		const si = serviceInstallFromImage(device, image);
+		const si =
+			image?.is_a_build_of__service != null
+				? serviceInstallsByServiceId[image.is_a_build_of__service.__id]
+				: null;
 		if (si == null) {
 			throw new Error(
 				`Could not find service install for device: '${
