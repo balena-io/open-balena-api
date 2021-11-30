@@ -144,11 +144,16 @@ function buildAppFromRelease(
 		const svc = si.service[0];
 
 		const environment: Dictionary<string> = {};
-		varListInsert(ipr.image_environment_variable, environment);
-		varListInsert(application.application_environment_variable, environment);
-		varListInsert(svc.service_environment_variable, environment);
-		varListInsert(device.device_environment_variable, environment);
-		varListInsert(si.device_service_environment_variable, environment);
+		varListInsert(
+			[
+				...ipr.image_environment_variable,
+				...application.application_environment_variable,
+				...svc.service_environment_variable,
+				...device.device_environment_variable,
+				...si.device_service_environment_variable,
+			],
+			environment,
+		);
 
 		const labels: Dictionary<string> = {};
 		[...ipr.image_label, ...svc.service_label].forEach(
