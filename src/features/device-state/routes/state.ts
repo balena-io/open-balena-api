@@ -24,10 +24,10 @@ export type EnvVarList = Array<{ name: string; value: string }>;
 export const varListInsert = (
 	varList: EnvVarList,
 	obj: Dictionary<string>,
-	filterFn: (name: string) => boolean = () => true,
+	filterFn?: (name: string) => boolean,
 ) => {
 	varList.forEach(({ name, value }) => {
-		if (filterFn(name)) {
+		if (filterFn?.(name) !== false) {
 			obj[name] = value;
 		}
 	});
