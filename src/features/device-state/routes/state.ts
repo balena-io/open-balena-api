@@ -157,7 +157,7 @@ function buildAppFromRelease(
 			},
 		);
 
-		_.each(ConfigurationVarsToLabels, (labelName, confName) => {
+		ConfigurationVarsToLabels.forEach(([labelName, confName]) => {
 			if (confName in config && !(labelName in labels)) {
 				labels[labelName] = config[confName];
 			}
@@ -207,10 +207,10 @@ function buildAppFromRelease(
 
 // These 2 config vars below are mapped to labels if missing for backwards-compatibility
 // See: https://github.com/resin-io/hq/issues/1340
-const ConfigurationVarsToLabels = {
+const ConfigurationVarsToLabels = Object.entries({
 	RESIN_SUPERVISOR_UPDATE_STRATEGY: 'io.resin.update.strategy',
 	RESIN_SUPERVISOR_HANDOVER_TIMEOUT: 'io.resin.update.handover-timeout',
-};
+});
 
 const releaseExpand = {
 	$select: ['id', 'commit', 'composition'],
