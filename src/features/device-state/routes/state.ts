@@ -249,7 +249,7 @@ const stateQuery = _.once(() =>
 				},
 				should_be_running__release: releaseExpand,
 				service_install: {
-					$select: ['id'],
+					$select: 'service',
 					$expand: {
 						service: {
 							$select: ['id', 'service_name'],
@@ -301,12 +301,9 @@ const stateQuery = _.once(() =>
 					$select: ['uuid', 'device_name', 'belongs_to__application'],
 					$expand: {
 						service_install: {
-							$select: ['id'],
 							$top: 1,
+							$select: 'service',
 							$expand: {
-								device_service_environment_variable: {
-									$select: ['name', 'value'],
-								},
 								service: {
 									$select: ['id'],
 									$expand: {
@@ -314,6 +311,9 @@ const stateQuery = _.once(() =>
 											$select: ['name', 'value'],
 										},
 									},
+								},
+								device_service_environment_variable: {
+									$select: ['name', 'value'],
 								},
 							},
 						},
