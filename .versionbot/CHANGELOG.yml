@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix test
+      hash: de6e927121a497b809915c1e498de8a5efb23430
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.176.1
+  date: 2021-12-01T19:11:50.551Z
+- commits:
     - subject: Remove querying device state as root as it's no longer beneficial
       hash: 16d3d9e7cf6d15c140ee0b17c6e92aad68e3af67
       body: ''
