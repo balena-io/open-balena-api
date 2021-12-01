@@ -73,14 +73,17 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			// they're for the previous application.
 			const { movedDevices } = args.request.custom;
 			if (movedDevices != null && movedDevices.length > 0) {
+				const body = {
+					status: 'deleted',
+					download_progress: null,
+				};
 				await args.api.patch({
 					resource: 'image_install',
-					body: {
-						status: 'deleted',
-					},
+					body,
 					options: {
 						$filter: {
 							device: { $in: movedDevices },
+							$not: body,
 						},
 					},
 				});

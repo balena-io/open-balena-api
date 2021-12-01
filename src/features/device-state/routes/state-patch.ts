@@ -85,7 +85,7 @@ const deleteOldImageInstalls = async (
 		passthrough: { req: permissions.root },
 	});
 
-	const body = { status: 'deleted' };
+	const body = { status: 'deleted', download_progress: null };
 	const filter: Filter = {
 		device: deviceId,
 	};
@@ -152,7 +152,7 @@ const deleteOldGatewayDownloads = async (
 	deviceId: number,
 	imageIds: number[],
 ): Promise<void> => {
-	const body = { status: 'deleted' };
+	const body = { status: 'deleted', download_progress: null };
 	const filter: Filter = {
 		is_downloaded_by__device: deviceId,
 	};
