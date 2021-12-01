@@ -1,4 +1,15 @@
 - commits:
+    - subject: Set download progress to null when marking image installs as deleted
+      hash: 2fe960767768a837645e0f7293ee4fc4dfd2b73b
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.175.0
+  date: 2021-12-01T15:45:06.924Z
+- commits:
     - subject: Allow devices to access services they have service installs for
       hash: e3c325980208bbf0cd5aa0657acb44d1e7ab9123
       body: |
