@@ -1,4 +1,39 @@
 - commits:
+    - subject: Allow devices to access services they have service installs for
+      hash: e3c325980208bbf0cd5aa0657acb44d1e7ab9123
+      body: |
+        This allows pine to optimize the permissions
+        check for the device state endpoint.
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/vQ8zyst61JYAgZxvXEiCctJlmZx
+        see: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/vQ8zyst61JYAgZxvXEiCctJlmZx
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Limit device access to service installs to those of accessible devices
+      hash: 1a57595feffb1d175d2910ce983c06cdc34d0d13
+      body: |
+        This also limits read access to device service
+        env vars to the ones of accessible devices.
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/vQ8zyst61JYAgZxvXEiCctJlmZx
+        see: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/vQ8zyst61JYAgZxvXEiCctJlmZx
+        Signed-off-by: Thodoris Greasidis thodoris@balena.io
+        signed-off-by: Thodoris Greasidis thodoris@balena.io
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.174.2
+  date: 2021-11-30T00:13:47.413Z
+- commits:
     - subject: Test that devices self-pinning have new service installs created
       hash: 2c83e3c36f0c54da524386a2d1f0db0ee9aa3d76
       body: ''
