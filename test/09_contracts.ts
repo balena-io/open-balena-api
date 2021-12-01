@@ -44,7 +44,7 @@ const compareContractsToDb = async ({
 		.map((x: { slug: string }) => x.slug)
 		.sort();
 
-	expect(fromContracts).to.equal(fromDb);
+	expect(fromContracts).to.deep.equal(fromDb);
 };
 
 describe('contracts', () => {
@@ -157,7 +157,7 @@ describe('contracts', () => {
 		it('should write the set contract data to the DB', async () => {
 			mockRepo(contractRepository, 'base-contracts');
 			await synchronizeContracts([contractRepository]);
-			Promise.all(
+			await Promise.all(
 				[
 					{ contract: 'hw.device-type', db: 'device_type' },
 					{ contract: 'arch.sw', db: 'cpu_architecture' },
