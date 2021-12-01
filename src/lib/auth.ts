@@ -19,7 +19,6 @@ export const writePerms = (resource: string, filter: string): string[] => [
 const matchesActor = 'actor eq @__ACTOR_ID';
 const matchesUser = `user/any(u:u/${matchesActor})`;
 const ownsDevice = `owns__device/any(d:d/${matchesActor})`;
-const applicationControlsDevice = `application/any(a:a/${ownsDevice} or a/depends_on__application/any(da:da/${ownsDevice}))`;
 
 export const ROLES: {
 	[roleName: string]: string[];
@@ -91,12 +90,12 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	`resin.device.create?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
 	`resin.device.update?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
 
-	'resin.service.read?application/canAccess()',
+	'resin.service.read?application/canAccess() or service_install/canAccess()',
 
-	'resin.service_install.read?installs__service/canAccess()',
+	'resin.service_install.read?device/canAccess()',
 	...writePerms(
 		'resin.service_install',
-		`installs__service/any(s:s/${applicationControlsDevice})`,
+		`device/any(d:d/${matchesActor} or d/belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice})))`,
 	),
 
 	'resin.service_environment_variable.read?service/canAccess()',
