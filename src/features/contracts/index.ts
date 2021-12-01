@@ -238,7 +238,7 @@ export const synchronizeContracts = async (contractRepos: RepositoryInfo[]) => {
 	}
 };
 
-export const startContractSynchronization = _.once(async () => {
+export const startContractSynchronization = _.once(() => {
 	const contractRepos = getContractRepos();
 
 	// Schedule to run every 5 minutes

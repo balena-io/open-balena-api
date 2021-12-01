@@ -101,7 +101,7 @@ describe('loki backend', () => {
 		const incomingLog = await new Bluebird(async (resolve) => {
 			loki.subscribe(ctx, resolve);
 			await Bluebird.delay(100); // wait for the subscription to connect
-			loki.publish(ctx, [_.clone(log)]);
+			await loki.publish(ctx, [_.clone(log)]);
 		}).timeout(5000, 'Subscription did not receive log');
 		expect(incomingLog).to.deep.equal(incomingLog);
 	});
