@@ -55,7 +55,7 @@ const checkJobShouldExecute = async (
 	const value = await redisRO.get(jobInfoKey);
 
 	if (value == null) {
-		updateJobInfoExecute(jobInfoKey, job);
+		await updateJobInfoExecute(jobInfoKey, job);
 		return true;
 	}
 	const jobInfo: JobInfo = JSON.parse(value);

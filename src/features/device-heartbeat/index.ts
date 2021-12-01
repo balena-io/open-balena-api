@@ -417,7 +417,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 					return;
 				}
 
-				this.captureEventFor(uuid, pollInterval / 1000);
+				await this.captureEventFor(uuid, pollInterval / 1000);
 			} catch (err) {
 				captureException(
 					err,
