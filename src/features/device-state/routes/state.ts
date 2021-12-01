@@ -13,9 +13,8 @@ import {
 	serviceInstallFromImage,
 	setMinPollInterval,
 } from '../utils';
-import { sbvrUtils, errors, dbModule, permissions } from '@balena/pinejs';
+import { sbvrUtils, errors, dbModule } from '@balena/pinejs';
 import { events } from '..';
-import { isApiKeyWithRole } from '../../api-keys/lib';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -330,44 +329,6 @@ const stateQuery = _.once(() =>
 	}),
 );
 
-/**
- * We can allow device keys to query state as root because it's a controlled query
- * and we know that if they can access this device they can access its state
- */
-const canQueryStateAsRoot = (() => {
-	const authQuery = _.once(() =>
-		api.resin.prepare<{ uuid: string }>({
-			resource: 'device',
-			id: {
-				uuid: { '@': 'uuid' },
-			},
-			options: {
-				$select: 'id',
-			},
-		}),
-	);
-	return async ({
-		uuid,
-		req,
-		tx,
-	}: {
-		uuid: string;
-		req: permissions.PermissionReq;
-		tx: Tx;
-	}) => {
-		if (typeof req.apiKey?.key !== 'string') {
-			return false;
-		}
-		// Must be a device key
-		if (!(await isApiKeyWithRole(req.apiKey.key, 'device-api-key'))) {
-			return false;
-		}
-		// And must have access to the device
-		const device = await authQuery()({ uuid }, undefined, { req, tx });
-		return device != null;
-	};
-})();
-
 const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 	const device = await getDevice(req, uuid);
 	const config = getConfig(device);
@@ -420,18 +381,9 @@ export const setReadTransaction = (
 };
 
 const getDevice = async (req: Request, uuid: string) => {
-	const device = await readTransaction(async (tx) => {
-		if (await canQueryStateAsRoot({ uuid, req, tx })) {
-			return await stateQuery()({ uuid }, undefined, {
-				req: permissions.root,
-				tx,
-			});
-		}
-		return await stateQuery()({ uuid }, undefined, {
-			req,
-			tx,
-		});
-	});
+	const device = await readTransaction((tx) =>
+		stateQuery()({ uuid }, undefined, { req, tx }),
+	);
 
 	if (!device) {
 		throw new UnauthorizedError();
