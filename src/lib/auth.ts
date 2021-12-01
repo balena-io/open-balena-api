@@ -67,7 +67,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.device_type.read?describes__device/canAccess()',
 	`resin.device.read?${matchesActor}`,
 	`resin.device.update?${matchesActor}`,
-	'resin.application.read?owns__device/canAccess() or depends_on__application/any(a:a/owns__device/canAccess()) or ((is_host eq true or is_public eq true) and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
+	'resin.application.read?owns__device/canAccess() or depends_on__application/canAccess(1) or ((is_host eq true or is_public eq true) and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
 	'resin.application_tag.read?application/canAccess()',
 	'resin.device_config_variable.read?device/canAccess()',
 	`resin.device_config_variable.create?device/any(d:d/${matchesActor})`,
@@ -86,7 +86,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.application_environment_variable.read?application/canAccess()',
 
 	// Dependent device permissions
-	`resin.device.read?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
+	`resin.device.read?is_managed_by__device/canAccess(1) or belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
 	`resin.device.create?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
 	`resin.device.update?belongs_to__application/any(a:a/depends_on__application/any(da:da/${ownsDevice}))`,
 
