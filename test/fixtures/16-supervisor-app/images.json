@@ -1,28 +1,28 @@
 {
 	"image1": {
 		"user": "admin",
-		"service": "service1",
+		"service": "amd64_supervisor_app_service1",
 		"releases": [ "5.0.1" ],
 		"project_type": "Dockerfile.template",
 		"status": "success"
 	},
 	"image2": {
 		"user": "admin",
-		"service": "service1",
+		"service": "amd64_supervisor_app_service1",
 		"releases": [ "6.0.1_logstream" ],
 		"project_type": "Dockerfile.template",
 		"status": "success"
 	},
 	"image3": {
 		"user": "admin",
-		"service": "service1",
+		"service": "amd64_supervisor_app_service1",
 		"releases": [ "7.0.1" ],
 		"project_type": "Dockerfile.template",
 		"status": "success"
 	},
 	"image4": {
 		"user": "admin",
-		"service": "service1",
+		"service": "amd64_supervisor_app_service1",
 		"releases": [ "8.0.1" ],
 		"project_type": "Dockerfile.template",
 		"status": "success"
@@ -43,29 +43,43 @@
 	},
 	"image7": {
 		"user": "admin",
-		"service": "service1",
+		"service": "amd64_supervisor_app_service1",
 		"releases": [ "8.1.1" ],
 		"project_type": "Dockerfile.template",
 		"status": "success"
 	},
 	"image8": {
 		"user": "admin",
-		"service": "service1",
+		"service": "amd64_supervisor_app_service1",
 		"releases": [ "8.1.2" ],
 		"project_type": "Dockerfile.template",
 		"status": "success"
 	},
 	"image9": {
 		"user": "admin",
-		"service": "service4",
+		"service": "armv7hf_supervisor_app_service1",
 		"releases": [ "12.1.1_armv7hf" ],
 		"project_type": "Dockerfile.template",
 		"status": "success"
 	},
 	"image10": {
 		"user": "admin",
-		"service": "service4",
+		"service": "amd64_supervisor_app_service1",
 		"releases": [ "12.1.1_amd64" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image11": {
+		"user": "admin",
+		"service": "amd64_supervisor_app_service2",
+		"releases": [ "12.10.15_amd64" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image12": {
+		"user": "admin",
+		"service": "amd64_supervisor_app_service2",
+		"releases": [ "12.11.0_amd64" ],
 		"project_type": "Dockerfile.template",
 		"status": "success"
 	}

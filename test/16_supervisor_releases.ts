@@ -1,11 +1,14 @@
 import { expect } from './test-lib/chai';
 import * as fixtures from './test-lib/fixtures';
 import * as fakeDevice from './test-lib/fake-device';
+import { pineTest } from './test-lib/pinetest';
 import { supertest } from './test-lib/supertest';
 import { version } from './test-lib/versions';
 
 describe('Devices running supervisor releases', () => {
 	const ctx: AnyObject = {};
+	let pineUser: typeof pineTest;
+	let pineDevice: typeof pineTest;
 	let device: fakeDevice.Device;
 	let device2: fakeDevice.Device;
 	let device3: fakeDevice.Device;
@@ -15,12 +18,24 @@ describe('Devices running supervisor releases', () => {
 		const fx = await fixtures.load('16-supervisor-app');
 		ctx.fixtures = fx;
 		ctx.admin = fx.users.admin;
+		pineUser = pineTest.clone({
+			passthrough: {
+				user: ctx.admin,
+			},
+		});
 		ctx.deviceApp = fx.applications.app1;
+		ctx.amd64SupervisorApp = fx.applications.amd64_supervisor_app;
 		ctx.supervisorReleases = ctx.fixtures['releases'];
 		device = await fakeDevice.provisionDevice(ctx.admin, ctx.deviceApp.id);
 		device2 = await fakeDevice.provisionDevice(ctx.admin, ctx.deviceApp.id);
 		device3 = await fakeDevice.provisionDevice(ctx.admin, ctx.deviceApp.id);
 		device4 = await fakeDevice.provisionDevice(ctx.admin, ctx.deviceApp.id);
+		device4 = await fakeDevice.provisionDevice(ctx.admin, ctx.deviceApp.id);
+		pineDevice = pineTest.clone({
+			passthrough: {
+				user: device.token,
+			},
+		});
 	});
 
 	after(async () => {
@@ -29,59 +44,132 @@ describe('Devices running supervisor releases', () => {
 	});
 
 	describe('Devices running supervisor releases', () => {
-		it('should be provisioned with a non-null supervisor release after device PATCH', async () => {
-			await supertest(ctx.admin)
-				.patch(`/${version}/device(${device.id})`)
-				.send({
-					os_version: '2.38.0+rev1',
-					supervisor_version: '5.0.1',
+		it(`should not have a supervisor service install before the supervisor version gets reported`, async () => {
+			const { body: serviceInstalls } = await pineUser
+				.get({
+					resource: 'service_install',
+					options: {
+						$filter: {
+							device: device.id,
+							installs__service: {
+								$any: {
+									$alias: 'is',
+									$expr: {
+										is: {
+											application: { $ne: ctx.deviceApp.id },
+										},
+									},
+								},
+							},
+						},
+					},
 				})
 				.expect(200);
-
-			const {
-				body: {
-					d: [deviceInfo],
-				},
-			} = await supertest(ctx.admin).get(
-				`/${version}/device(${device.id})?$select=should_be_managed_by__release,supervisor_version`,
-			);
-			expect(deviceInfo).to.have.property('should_be_managed_by__release').that
-				.is.not.null;
-			const nativeSupervisorRes = await supertest(ctx.admin).get(
-				`/${version}/release(${deviceInfo.should_be_managed_by__release.__id})?$select=release_version`,
-			);
-			expect(nativeSupervisorRes.body)
-				.to.have.nested.property('d[0].release_version')
-				.that.equals(`v${deviceInfo.supervisor_version}`);
+			expect(serviceInstalls).to.have.lengthOf(0);
 		});
 
-		it('should be set to a non-null supervisor release after state endpoint PATCH', async () => {
-			await device2.patchStateV2({
-				local: {
-					api_port: 48484,
-					api_secret: 'somesecret',
-					os_version: '2.38.0+rev1',
-					os_variant: 'dev',
-					supervisor_version: '5.0.1',
-					provisioning_progress: null,
-					provisioning_state: '',
-					status: 'Idle',
-					logs_channel: null,
-					update_failed: false,
-					update_pending: false,
-					update_downloaded: false,
-				},
+		(
+			[
+				[
+					'device PATCH',
+					() => device,
+					() =>
+						supertest(ctx.admin)
+							.patch(`/${version}/device(${device.id})`)
+							.send({
+								os_version: '2.38.0+rev1',
+								supervisor_version: '5.0.1',
+							})
+							.expect(200),
+				],
+				[
+					'state endpoint PATCH',
+					() => device2,
+					() =>
+						device2.patchStateV2({
+							local: {
+								api_port: 48484,
+								api_secret: 'somesecret',
+								os_version: '2.38.0+rev1',
+								os_variant: 'dev',
+								supervisor_version: '5.0.1',
+								provisioning_progress: null,
+								provisioning_state: '',
+								status: 'Idle',
+								logs_channel: null,
+								update_failed: false,
+								update_pending: false,
+								update_downloaded: false,
+							},
+						}),
+				],
+			] as const
+		).forEach(([titlePart, getDevice, updateDevice]) => {
+			it(`should set the device to a non-null supervisor release after ${titlePart}`, async () => {
+				await updateDevice();
+
+				const { body: deviceInfo } = await pineUser
+					.get({
+						resource: 'device',
+						id: getDevice().id,
+						options: {
+							$select: ['supervisor_version', 'should_be_managed_by__release'],
+						},
+					})
+					.expect(200);
+				const { body: nativeSupervisorRelease } = await pineUser
+					.get({
+						resource: 'release',
+						id: deviceInfo.should_be_managed_by__release.__id,
+						options: {
+							$select: ['id', 'release_version'],
+						},
+					})
+					.expect(200);
+				expect(nativeSupervisorRelease).to.have.property(
+					'release_version',
+					`v${deviceInfo.supervisor_version}`,
+				);
+				expect(nativeSupervisorRelease).to.have.property(
+					'id',
+					ctx.supervisorReleases['5.0.1'].id,
+				);
 			});
 
-			const res = await supertest(ctx.admin).get(
-				`/${version}/device(${device2.id})`,
-			);
-			const nativeSupervisorRes = await supertest(ctx.admin).get(
-				`/${version}/release(${res.body.d[0].should_be_managed_by__release.__id})?$select=release_version`,
-			);
-			expect(nativeSupervisorRes.body)
-				.to.have.nested.property('d[0].release_version')
-				.that.equals(`v${res.body.d[0].supervisor_version}`);
+			it(`should create a service install for the supervisor release after ${titlePart}`, async () => {
+				const { body: serviceInstalls } = await pineUser
+					.get({
+						resource: 'service_install',
+						options: {
+							$expand: {
+								installs__service: {
+									$select: ['id', 'service_name'],
+								},
+							},
+							$filter: {
+								device: getDevice().id,
+								installs__service: {
+									$any: {
+										$alias: 'is',
+										$expr: {
+											is: {
+												application: ctx.amd64SupervisorApp.id,
+											},
+										},
+									},
+								},
+							},
+						},
+					})
+					.expect(200);
+				expect(serviceInstalls).to.have.lengthOf(1);
+				const [service] = serviceInstalls[0].installs__service;
+				expect(service).to.have.property(
+					'id',
+					ctx.fixtures.services.amd64_supervisor_app_service1.id,
+				);
+				expect(service).to.have.property('service_name', 'main');
+			});
 		});
 
 		it('should allow upgrading to a logstream version', async () => {
@@ -301,6 +389,127 @@ describe('Devices running supervisor releases', () => {
 						ctx.supervisorReleases['12.1.1_amd64'].id,
 				})
 				.expect(200);
+		});
+
+		describe('new supervisor service name', function () {
+			// Documenting that we didn't implement this, since updating the should_be_managed_by__release field is the supported way
+			it(`should not create an extra supervisor service install when patching a new supervisor version`, async () => {
+				await device3.patchStateV2({
+					local: {
+						api_port: 48484,
+						api_secret: 'somesecret',
+						os_version: '2.85.14+rev1',
+						os_variant: 'dev',
+						supervisor_version: '12.11.0',
+						provisioning_progress: null,
+						provisioning_state: '',
+						status: 'Idle',
+						logs_channel: null,
+						update_failed: false,
+						update_pending: false,
+						update_downloaded: false,
+					},
+				});
+
+				const { body: serviceInstalls } = await pineUser
+					.get({
+						resource: 'service_install',
+						options: {
+							$expand: {
+								installs__service: {
+									$select: ['id', 'service_name'],
+								},
+							},
+							$filter: {
+								device: device3.id,
+								installs__service: {
+									$any: {
+										$alias: 'is',
+										$expr: {
+											is: {
+												application: ctx.amd64SupervisorApp.id,
+											},
+										},
+									},
+								},
+							},
+						},
+					})
+					.expect(200);
+				expect(serviceInstalls).to.have.lengthOf(1);
+				const [service] = serviceInstalls[0].installs__service;
+				expect(service).to.have.property(
+					'id',
+					ctx.fixtures.services.amd64_supervisor_app_service1.id,
+				);
+				expect(service).to.have.property('service_name', 'main');
+			});
+
+			(
+				[
+					['device', () => pineDevice, () => device],
+					['user', () => pineUser, () => device2],
+				] as const
+			).forEach(([titlePart, getPineTestInstance, getDevice]) => {
+				it(`should create an extra supervisor service install after updating the target supervisor release using a ${titlePart} api key`, async () => {
+					// Similarly to how the HUP script does it
+					// See: https://github.com/balena-os/balenahup/blob/d38eba01aebf4c4eb8425cb50a4dc9b948decc46/upgrade-2.x.sh#L229
+					await getPineTestInstance()
+						.patch({
+							resource: 'device',
+							id: { uuid: getDevice().uuid },
+							body: {
+								should_be_managed_by__release:
+									ctx.fixtures.releases['12.11.0_amd64'].id,
+							},
+						})
+						.expect(200);
+
+					const { body: serviceInstalls } = await pineUser
+						.get<AnyObject[]>({
+							resource: 'service_install',
+							options: {
+								$expand: {
+									installs__service: {
+										$select: ['id', 'service_name'],
+									},
+								},
+								$filter: {
+									device: getDevice().id,
+									installs__service: {
+										$any: {
+											$alias: 'is',
+											$expr: {
+												is: {
+													application: ctx.amd64SupervisorApp.id,
+												},
+											},
+										},
+									},
+								},
+								$orderby: { created_at: 'asc' },
+							},
+						})
+						.expect(200);
+					expect(serviceInstalls).to.have.lengthOf(2);
+					const [oldService, newService] = serviceInstalls.map(
+						(si) => si.installs__service[0],
+					);
+					expect(oldService).to.have.property(
+						'id',
+						ctx.fixtures.services.amd64_supervisor_app_service1.id,
+					);
+					expect(oldService).to.have.property('service_name', 'main');
+					expect(newService).to.have.property(
+						'id',
+						ctx.fixtures.services.amd64_supervisor_app_service2.id,
+					);
+					expect(newService).to.have.property(
+						'service_name',
+						'balena-supervisor',
+					);
+				});
+			});
 		});
 	});
 });

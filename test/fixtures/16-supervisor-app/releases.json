@@ -136,6 +136,34 @@
 			}
 		}
 	},
+	"12.10.15_amd64": {
+		"user": "admin",
+		"application": "amd64_supervisor_app",
+		"semver": "12.10.15",
+		"status": "success",
+		"source": "cloud",
+		"composition": {
+			"services": {
+				"image11": {
+					"build": "./image11/"
+				}
+			}
+		}
+	},
+	"12.11.0_amd64": {
+		"user": "admin",
+		"application": "amd64_supervisor_app",
+		"semver": "12.11.0",
+		"status": "success",
+		"source": "cloud",
+		"composition": {
+			"services": {
+				"image12": {
+					"build": "./image12/"
+				}
+			}
+		}
+	},
 	"no_version": {
 		"user": "admin",
 		"application": "armv7hf_supervisor_app",
