@@ -1,6 +1,6 @@
 {
-	"service1": {
-		"service_name": "service1",
+	"amd64_supervisor_app_service1": {
+		"service_name": "main",
 		"application": "amd64_supervisor_app",
 		"user": "admin"
 	},
@@ -10,13 +10,18 @@
 		"user": "admin"
 	},
 	"service3": {
-		"service_name": "service3",
+		"service_name": "main",
 		"application": "host_app",
 		"user": "admin"
 	},
-	"service4": {
-		"service_name": "service4",
+	"armv7hf_supervisor_app_service1": {
+		"service_name": "main",
 		"application": "armv7hf_supervisor_app",
+		"user": "admin"
+	},
+	"amd64_supervisor_app_service2": {
+		"service_name": "balena-supervisor",
+		"application": "amd64_supervisor_app",
 		"user": "admin"
 	}
 }
