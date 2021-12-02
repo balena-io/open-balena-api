@@ -1,4 +1,20 @@
 - commits:
+    - subject: Test updating device supervisor to a release with different service name
+      hash: b0829f0b5fba73977a24f23763c8a6ed607fa314
+      body: |
+        This was already fixed as a side-effect of #874.
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: 'https://github.com/balena-io/open-balena-api/pull/874'
+        see: 'https://github.com/balena-io/open-balena-api/pull/874'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.176.2
+  date: 2021-12-02T14:19:02.928Z
+- commits:
     - subject: Fix test
       hash: de6e927121a497b809915c1e498de8a5efb23430
       body: ''
