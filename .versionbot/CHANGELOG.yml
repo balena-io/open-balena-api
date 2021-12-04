@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'device-state: Drop unused device config filtering implementation'
+      hash: b6cf8fb925fa6985de13ee6a2fafcbe98dd6d389
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.176.3
+  date: 2021-12-03T23:29:08.442Z
+- commits:
     - subject: Test updating device supervisor to a release with different service name
       hash: b0829f0b5fba73977a24f23763c8a6ed607fa314
       body: |
