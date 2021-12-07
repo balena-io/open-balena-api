@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add comment
+      hash: 2f093bbef2f9ffa84251a462f88f670a29845fbb
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.177.1
+  date: 2021-12-07T19:12:48.433Z
+- commits:
     - subject: Fix treating DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS as ms
       hash: 3db4cda65278f172ab4bf9e7dc4e0815ab7fae25
       body: ''
