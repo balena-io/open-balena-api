@@ -235,7 +235,7 @@ type StatePatchBody = {
 	};
 };
 
-const shouldMetricsUpdate = (() => {
+const shouldUpdateMetrics = (() => {
 	const lastMetricsReportTime = createMultiLevelStore<number>(
 		'lastMetricsReportTime',
 		{
@@ -375,7 +375,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 			_.pick(local, metricsPatchFields);
 		if (
 			Object.keys(metricsBody).length > 0 &&
-			(await shouldMetricsUpdate(uuid))
+			(await shouldUpdateMetrics(uuid))
 		) {
 			// If we should force a metrics update then merge the two together and clear `metricsBody` so
 			// that we don't try to merge it again later
