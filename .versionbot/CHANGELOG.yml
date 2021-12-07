@@ -1,4 +1,23 @@
 - commits:
+    - subject: Fix treating DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS as ms
+      hash: 3db4cda65278f172ab4bf9e7dc4e0815ab7fae25
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Switch to METRICS_MAX_REPORT_INTERVAL_SECONDS as it must be in seconds
+      hash: 24f03db4916a4b35cce6652aa2e41845d497c5b7
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.177.0
+  date: 2021-12-07T17:55:17.389Z
+- commits:
     - subject: Add throttling for image install updates
       hash: 31925c219956a7edc8a8b03e0fd934ec176a7570
       body: ''
