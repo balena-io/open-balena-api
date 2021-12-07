@@ -15,7 +15,10 @@ import type {
 } from '../../../balena-model';
 import { metricsPatchFields, validPatchFields } from '../utils';
 import { createMultiLevelStore } from '../../../infra/cache';
-import { METRICS_MAX_REPORT_INTERVAL_SECONDS } from '../../../lib/config';
+import {
+	DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
+	METRICS_MAX_REPORT_INTERVAL_SECONDS,
+} from '../../../lib/config';
 import { PinejsClient } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
 import type { ResolveDeviceInfoCustomObject } from '../middleware';
 
@@ -33,8 +36,8 @@ const upsertImageInstall = async (
 	}: {
 		imageId: number;
 		releaseId: number;
-		status: unknown;
-		downloadProgress: unknown;
+		status: string;
+		downloadProgress: number;
 	},
 	deviceId: number,
 ): Promise<void> => {
@@ -54,23 +57,25 @@ const upsertImageInstall = async (
 		});
 	} else {
 		// we need to update the current image install
-		const body: AnyObject = {
+		const body: ImageInstallUpdateBody = {
 			status,
 			is_provided_by__release: releaseId,
 		};
 		if (downloadProgress !== undefined) {
 			body.download_progress = downloadProgress;
 		}
-		await resinApi.patch({
-			resource: 'image_install',
-			id: imgInstall.id,
-			body,
-			options: {
-				$filter: {
-					$not: body,
+		if (await shouldUpdateImageInstall(imageId, body)) {
+			await resinApi.patch({
+				resource: 'image_install',
+				id: imgInstall.id,
+				body,
+				options: {
+					$filter: {
+						$not: body,
+					},
 				},
-			},
-		});
+			});
+		}
 	}
 };
 
@@ -250,6 +255,57 @@ const shouldMetricsUpdate = (() => {
 		) {
 			// And we add a new entry
 			await lastMetricsReportTime.set(uuid, now);
+			return true;
+		}
+		return false;
+	};
+})();
+
+type ImageInstallUpdateBody = {
+	status: string;
+	is_provided_by__release: number;
+	download_progress?: number;
+};
+const shouldUpdateImageInstall = (() => {
+	const lastImageInstallReport = createMultiLevelStore<
+		ImageInstallUpdateBody & { updateTime: number }
+	>(
+		'lastImageInstallReport',
+		{
+			ttl: DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
+		},
+		false,
+	);
+	const DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL =
+		DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS * 1000;
+	return async (imageId: number, body: ImageInstallUpdateBody) => {
+		const key = `${imageId}`;
+		const lastReport = await lastImageInstallReport.get(key);
+		const now = Date.now();
+		if (
+			lastReport == null ||
+			// If the entry has expired then it means we should actually do the report
+			lastReport.updateTime + DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL < now ||
+			// Or if the status has changed
+			lastReport.status !== body.status ||
+			// Or if the release has changed
+			lastReport.is_provided_by__release !== body.is_provided_by__release ||
+			// Or if the download progress has hit a milestone...
+			// From not downloading to downloading
+			(lastReport.download_progress == null &&
+				body.download_progress != null) ||
+			// From downloading to not downloading
+			(lastReport.download_progress != null &&
+				body.download_progress == null) ||
+			// Hits 100%
+			body.download_progress === 100
+		) {
+			// And we add a new entry
+			await lastImageInstallReport.set(key, {
+				download_progress: lastReport?.download_progress,
+				...body,
+				updateTime: now,
+			});
 			return true;
 		}
 		return false;
