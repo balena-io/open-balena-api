@@ -302,6 +302,7 @@ const shouldUpdateImageInstall = (() => {
 		) {
 			// And we add a new entry
 			await lastImageInstallReport.set(key, {
+				// Keep the last reported download progress if the current report doesn't include it
 				download_progress: lastReport?.download_progress,
 				...body,
 				updateTime: now,
