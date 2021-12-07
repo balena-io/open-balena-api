@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add throttling for image install updates
+      hash: 31925c219956a7edc8a8b03e0fd934ec176a7570
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.176.5
+  date: 2021-12-07T16:22:51.395Z
+- commits:
     - subject: Update dependencies
       hash: dcb4c48c90b43f58fcb6fa33231f86f25c458693
       body: |
