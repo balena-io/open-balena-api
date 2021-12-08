@@ -163,9 +163,15 @@ export const getContracts = async (type: string): Promise<Contract[]> => {
 
 	const contracts = await Promise.all(
 		contractFiles.map(async (file) => {
-			const contract = JSON.parse(
-				await fs.promises.readFile(file, { encoding: 'utf8' }),
-			);
+			let contract;
+			try {
+				contract = JSON.parse(
+					await fs.promises.readFile(file, { encoding: 'utf8' }),
+				);
+			} catch (err) {
+				err.message = `Failed to parse contract '${file}': ${err.message}`;
+				throw err;
+			}
 
 			contract.assets = await normalizeAssets(file, contract.assets);
 			return contract;
