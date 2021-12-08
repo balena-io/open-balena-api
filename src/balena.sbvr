@@ -824,8 +824,7 @@ Rule: It is necessary that each application that owns a release1 that has a revi
 Rule: It is necessary that each release that should be running on a device, has a status that is equal to "success" and belongs to an application1 that the device belongs to.
 Rule: It is necessary that each release that should be running on an application, has a status that is equal to "success" and belongs to the application.
 Rule: It is necessary that each release that contains at least 2 images, belongs to an application that has an application type that supports multicontainer.
-Rule: It is necessary that each release that should operate a device, has a status that is equal to "success".
-Rule: It is necessary that each release that should operate a device that is of a device type, belongs to an application that is host and is for the device type.
+Rule: It is necessary that each release that should operate a device that is of a device type, has a status that is equal to "success" and belongs to an application that is host and is for the device type.
 -- native supervisor release rules, separated for legibility
 Rule: It is necessary that each release that should manage a device, has a status that is equal to "success" and has a semver major that is greater than 0 or has a semver minor that is greater than 0 or has a semver patch that is greater than 0.
 Rule: It is necessary that each release that should manage a device, belongs to an application that is public and is not host.

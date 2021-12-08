@@ -152,7 +152,7 @@ describe('target hostapps', () => {
 			.send({ should_be_operated_by__release: raspberryPiHostappReleaseId })
 			.expect(
 				400,
-				'"It is necessary that each release that should operate a device that is of a device type, belongs to an application that is host and is for the device type."',
+				'"It is necessary that each release that should operate a device that is of a device type, has a status that is equal to \\"success\\" and belongs to an application that is host and is for the device type."',
 			);
 	});
 
