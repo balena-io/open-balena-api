@@ -1,4 +1,21 @@
 - commits:
+    - subject: 'state-patch: Fix image update throttling key'
+      hash: f8032c884e94017cb58ad8a69111d9cc8f6a2420
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/7fkH0NIPNMznHYqqN4rx3f59SSk
+        see: >-
+          https://www.flowdock.com/app/rulemotion/resin-tech/threads/7fkH0NIPNMznHYqqN4rx3f59SSk
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.178.1
+  date: 2021-12-08T15:03:36.667Z
+- commits:
     - subject: Limit changing the app DT only to ones of the same cpu architecture
       hash: 4d9a10dbe4a5310bf807479812a0171db1bbdf2b
       body: ''
