@@ -1,4 +1,19 @@
 - commits:
+    - subject: Limit changing the app DT only to ones of the same cpu architecture
+      hash: 4d9a10dbe4a5310bf807479812a0171db1bbdf2b
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: 'https://github.com/balena-io/balena-api/issues/3463'
+        see: 'https://github.com/balena-io/balena-api/issues/3463'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.178.0
+  date: 2021-12-08T14:28:16.692Z
+- commits:
     - subject: Add info about the contract that failed to parse when throwing an error
       hash: a4c8f91265fe03351695d6813d8a0fc6c1af43e0
       body: ''
