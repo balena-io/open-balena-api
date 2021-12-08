@@ -64,7 +64,7 @@ const upsertImageInstall = async (
 		if (downloadProgress !== undefined) {
 			body.download_progress = downloadProgress;
 		}
-		if (await shouldUpdateImageInstall(imageId, body)) {
+		if (await shouldUpdateImageInstall(imgInstall.id, body)) {
 			await resinApi.patch({
 				resource: 'image_install',
 				id: imgInstall.id,
@@ -270,7 +270,7 @@ const shouldUpdateImageInstall = (() => {
 	const lastImageInstallReport = createMultiLevelStore<
 		ImageInstallUpdateBody & { updateTime: number }
 	>(
-		'lastImageInstallReport',
+		'lastImageInstallUpdate',
 		{
 			ttl: DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
 		},
@@ -278,8 +278,8 @@ const shouldUpdateImageInstall = (() => {
 	);
 	const DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL =
 		DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS * 1000;
-	return async (imageId: number, body: ImageInstallUpdateBody) => {
-		const key = `${imageId}`;
+	return async (imageInstallId: number, body: ImageInstallUpdateBody) => {
+		const key = `${imageInstallId}`;
 		const lastReport = await lastImageInstallReport.get(key);
 		const now = Date.now();
 		if (
