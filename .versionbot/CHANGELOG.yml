@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add info about the contract that failed to parse when throwing an error
+      hash: a4c8f91265fe03351695d6813d8a0fc6c1af43e0
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.177.2
+  date: 2021-12-08T11:14:09.157Z
+- commits:
     - subject: Add comment
       hash: 2f093bbef2f9ffa84251a462f88f670a29845fbb
       body: ''
