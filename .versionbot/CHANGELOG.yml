@@ -1,4 +1,17 @@
 - commits:
+    - subject: Optimize the "device operated by same device type hostApp" rule
+      hash: 97b2cec0900f77108ac9c8429432679bb965a434
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.178.3
+  date: 2021-12-10T22:33:11.811Z
+- commits:
     - subject: Update open-balena-base to 13.0.3
       hash: 040cf423b2e180461c0d4aad417109cded4a2021
       body: |
