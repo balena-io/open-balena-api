@@ -1,4 +1,18 @@
 - commits:
+    - subject: 'patch: Add required_reboot properties to config variables'
+      hash: c8ca80a78986f79f647e4fa8f62ad17821ed040b
+      body: |
+        1. Added required_reboot and warning message properties to the schema
+        2. Default to false and empty string respectively
+        3. Warning message needs to be decided
+      footer:
+        Signed-off-by: Vipul Gupta (@vipulgupta2048) <vipul@balena.io>
+        signed-off-by: Vipul Gupta (@vipulgupta2048) <vipul@balena.io>
+      author: Vipul Gupta (@vipulgupta2048)
+      nested: []
+  version: 0.178.4
+  date: 2021-12-13T18:41:04.744Z
+- commits:
     - subject: Optimize the "device operated by same device type hostApp" rule
       hash: 97b2cec0900f77108ac9c8429432679bb965a434
       body: ''
