@@ -16,6 +16,11 @@ const addReservedPrefixes = (array: string[]) => {
 	);
 };
 
+type ConfigVarDefinition = JSONSchema6Definition & {
+	will_reboot?: boolean;
+	warning?: string;
+};
+
 // Config variables that are allowed to be set externally
 // Note that this list will be mutated by the cloud API to add
 // extra variables as for cloud-only features.
@@ -56,7 +61,7 @@ export const INVALID_NEWLINE_REGEX = /\r|\n/;
 // Note that this list will be mutated by the cloud API to add
 // extra variables as for cloud-only features.
 export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
-	[k: string]: JSONSchema6Definition;
+	[k: string]: ConfigVarDefinition;
 } = {
 	RESIN_SUPERVISOR_CONNECTIVITY_CHECK: {
 		enum: ['false', 'true'],
@@ -84,6 +89,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		enum: ['false', 'true'],
 		description:
 			'Enable persistent logging. Only supported by supervisor versions >= v7.15.0.',
+		will_reboot: true,
 		default: 'false',
 	},
 	RESIN_SUPERVISOR_INSTANT_UPDATE_TRIGGER: {
@@ -105,6 +111,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		description:
 			'Define the PNG image to be used for the boot splash screen. Only supported by supervisor versions >= v12.3.0.',
 		maxLength: 13400, // ~10KB base64 encoded image
+		will_reboot: true,
 	},
 	BALENA_SUPERVISOR_HARDWARE_METRICS: {
 		enum: ['false', 'true'],
@@ -116,7 +123,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 
 export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 	capableDeviceTypes: string[];
-	properties: Dictionary<JSONSchema6Definition>;
+	properties: Dictionary<ConfigVarDefinition>;
 }> = [
 	{
 		capableDeviceTypes: [
@@ -136,60 +143,71 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			RESIN_HOST_CONFIG_disable_splash: {
 				enum: ['0', '1'],
 				description: 'Enable / Disable the rainbow splash screen',
+				will_reboot: true,
 				default: '1',
 			},
 			RESIN_HOST_CONFIG_dtparam: {
 				type: 'string',
 				description: 'Define DT parameters',
+				will_reboot: true,
 				default: '"i2c_arm=on","spi=on","audio=on"',
 			},
 			RESIN_HOST_CONFIG_dtoverlay: {
 				type: 'string',
 				description: 'Define DT overlays',
+				will_reboot: true,
 				examples: ['"i2c-rtc,ds1307","lirc-rpi"'],
 			},
 			RESIN_HOST_CONFIG_enable_uart: {
 				enum: ['0', '1'],
 				description: 'Enable / Disable UART',
+				will_reboot: true,
 				default: '1',
 			},
 			RESIN_HOST_CONFIG_gpu_mem: {
 				type: 'integer',
 				description: 'Define device GPU memory in megabytes.',
+				will_reboot: true,
 				default: 16,
 			},
 			RESIN_HOST_CONFIG_gpio: {
 				type: 'string',
 				description: 'Set GPIO pins',
+				will_reboot: true,
 				examples: ['"gpio=19=op,dh","gpio=0-25=a2"'],
 			},
 			BALENA_HOST_CONFIG_hdmi_cvt: {
 				type: 'string',
 				description: 'Define a custom CVT mode for the HDMI',
+				will_reboot: true,
 				examples: ['480 360 60 1 0 0 0'],
 			},
 			BALENA_HOST_CONFIG_hdmi_force_hotplug: {
 				type: 'integer',
 				enum: [0, 1],
 				description: 'Force the HDMI hotplug signal',
+				will_reboot: true,
 				default: 0,
 			},
 			BALENA_HOST_CONFIG_hdmi_group: {
 				type: 'integer',
 				description: 'Define the HDMI output group',
 				examples: [2],
+				will_reboot: true,
 				default: 0,
 			},
 			BALENA_HOST_CONFIG_hdmi_mode: {
 				type: 'integer',
 				description: 'Define the HDMI output format',
 				examples: [87],
+				will_reboot: true,
 				default: 1,
 			},
 			BALENA_HOST_CONFIG_display_rotate: {
 				type: 'string',
 				description: 'Define the rotation or flip of the display',
 				examples: ['1', '0x10000'],
+				will_reboot: true,
 				default: '0',
 			},
 		},
@@ -218,6 +236,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 				],
 				description:
 					'Define the ODMDATA configuration. Only supported by supervisor versions >= v11.13.0.',
+				will_reboot: true,
 				default: 2,
 			},
 		},
@@ -246,6 +265,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 				type: 'string',
 				description:
 					'Define the file name of the DTB to be used. Only supported by supervisor versions >= v11.14.2.',
+				will_reboot: true,
 			},
 		},
 	},
@@ -257,6 +277,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 				description:
 					'Define SSDT overlays. Only supported by supervisor versions >= v10.9.2.',
 				examples: ['"spidev1.0","spidev1.1"'],
+				will_reboot: true,
 			},
 		},
 	},
