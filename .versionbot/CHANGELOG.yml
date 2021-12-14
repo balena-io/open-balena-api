@@ -1,4 +1,20 @@
 - commits:
+    - subject: Extend the supervisor application rule to also check the slug
+      hash: a7213a77021d3cbda7f9ee671409987de03795f0
+      body: |
+        The Cloud API already had this rule and the
+        supervisor release inference code already
+        uses the same filter.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.179.0
+  date: 2021-12-14T11:58:53.466Z
+- commits:
     - subject: 'patch: Add required_reboot properties to config variables'
       hash: c8ca80a78986f79f647e4fa8f62ad17821ed040b
       body: |
