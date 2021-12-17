@@ -64,8 +64,9 @@ CREATE INDEX IF NOT EXISTS "device_device_type_idx"
 ON "device" ("is of-device type");
 CREATE INDEX IF NOT EXISTS "device_is_running_release_idx"
 ON "device" ("is running-release");
-CREATE INDEX IF NOT EXISTS "device_should_be_running_release_idx"
-ON "device" ("should be running-release");
+-- Also optimizes should be running succesful release rule
+CREATE INDEX IF NOT EXISTS "device_should_be_running_release_application_idx"
+ON "device" ("should be running-release", "belongs to-application");
 CREATE INDEX IF NOT EXISTS "device_should_be_operated_by_release_idx"
 ON "device" ("should be operated by-release");
 -- Also optimizes the supervisor cpu arch should match device cpu arch rule
@@ -165,9 +166,9 @@ ON "device" ("id", "actor", "is managed by-device");
 CREATE INDEX IF NOT EXISTS "image_is_stored_at_image_location_idx"
 ON "image" USING GIN ("is stored at-image location" gin_trgm_ops);
 
--- Optimization for device state query
-CREATE INDEX IF NOT EXISTS "release_id_belongs_to_app_idx"
-ON "release" ("id", "belongs to-application");
+-- Optimization for device state query and device should be running successful release rule
+CREATE INDEX IF NOT EXISTS "release_id_belongs_to_app_status_idx"
+ON "release" ("id", "belongs to-application", "status");
 
 -- Optimization for the app-semver-revision uniqueness rule and for computing the next revision
 CREATE INDEX IF NOT EXISTS "release_belongs_to_app_revision_semver_idx"
