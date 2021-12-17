@@ -180,3 +180,7 @@ ON "image install" ("status", ("download progress" IS NOT NULL), "device");
 -- Optimizes device api key permission lookups that check both the device actor and application, particularly noticeable for the device state endpoint
 CREATE INDEX IF NOT EXISTS "device_application_actor_idx"
 ON "device" ("belongs to-application", "actor");
+
+-- Optimizes supervisor app rule
+CREATE INDEX "application_slug_public_host_idx"
+ON "application" ("slug" varchar_pattern_ops, "is public", "is host");
