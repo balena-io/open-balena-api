@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add index to optimize supervisor app rule
+      hash: cefdaa48cf1b4aea523828f4f59975d9f52db9bc
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.179.4
+  date: 2021-12-17T16:25:33.040Z
+- commits:
     - subject: Add index to optimize supervisor/device cpu arch rule
       hash: cafaf44cac4d38fd754c465b7d44f67dc54af850
       body: ''
