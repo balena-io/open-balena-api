@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add index to optimize supervisor/device cpu arch rule
+      hash: cafaf44cac4d38fd754c465b7d44f67dc54af850
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.179.3
+  date: 2021-12-17T15:18:48.745Z
+- commits:
     - subject: Trim .versionbot/CHANGELOG.yml so that it's < 1MB
       hash: 148bfe6e72d8e68a40c6aa61f9b1e1ef394a1598
       body: ''
