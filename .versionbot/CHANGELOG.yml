@@ -1,4 +1,15 @@
 - commits:
+    - subject: Trim .versionbot/CHANGELOG.yml so that it's < 1MB
+      hash: 148bfe6e72d8e68a40c6aa61f9b1e1ef394a1598
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.179.2
+  date: 2021-12-17T14:07:28.736Z
+- commits:
     - subject: Rephrase multicontainer rule to start from the application type
       hash: f3819a94530b459ed880e6507c0ff9636517ef84
       body: |
