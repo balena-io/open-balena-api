@@ -1,4 +1,15 @@
 - commits:
+    - subject: Create service install when pinning supervisor on device creation
+      hash: af0f2f7cfce2400639ade4c3a84c9b96ee423e54
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.179.6
+  date: 2021-12-20T18:11:38.720Z
+- commits:
     - subject: Add index to optimize should be running successful release rule
       hash: 1313f7ecb6e87033cd155f5c4f42d76849ff2741
       body: ''
