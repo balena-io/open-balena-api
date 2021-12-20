@@ -267,11 +267,29 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	},
 });
 
+hooks.addPureHook('POST', 'resin', 'device', {
+	POSTRUN: async ({ request, api, tx, result: deviceId }) => {
+		// Don't try to add service installs if the device wasn't created
+		if (deviceId == null) {
+			return;
+		}
+
+		const rootApi = api.clone({ passthrough: { tx, req: permissions.root } });
+
+		// Create supervisor service installs when the supervisor is pinned on device creation
+		if (request.values.should_be_managed_by__release != null) {
+			await createReleaseServiceInstalls(rootApi, [deviceId], {
+				id: request.values.should_be_managed_by__release,
+			});
+		}
+	},
+});
+
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	POSTRUN: async ({ api, request }) => {
 		const affectedIds = request.affectedIds!;
 
-		// Create supervisor service installs when the supervisor is pinned
+		// Create supervisor service installs when the supervisor is pinned on device update
 		if (
 			request.values.should_be_managed_by__release != null &&
 			affectedIds.length !== 0
