@@ -1,4 +1,15 @@
 - commits:
+    - subject: Accept “developmentMode” image config option as a request parameter
+      hash: fdb9f92a1424e6a8f7970f02236515a7c7591674
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+      nested: []
+  version: 0.179.7
+  date: 2021-12-21T12:13:18.631Z
+- commits:
     - subject: Create service install when pinning supervisor on device creation
       hash: af0f2f7cfce2400639ade4c3a84c9b96ee423e54
       body: ''
