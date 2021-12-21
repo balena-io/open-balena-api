@@ -141,8 +141,9 @@ export const generateConfig = async (
 		config.balenaRootCA = rootCA;
 	}
 
-	const developmentMode =
-		req.param('developmentMode') || osVersion?.endsWith('.dev').toString();
+	const developmentMode = (
+		req.param('developmentMode') ?? osVersion?.endsWith('.dev')
+	)?.toString();
 	if (['true', 'on', '1'].includes(developmentMode || '')) {
 		config.developmentMode = true;
 	}
