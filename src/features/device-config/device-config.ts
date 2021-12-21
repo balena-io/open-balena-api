@@ -142,9 +142,9 @@ export const generateConfig = async (
 	}
 
 	const developmentMode =
-		osVersion === 'latest' ? undefined : osVersion?.endsWith('.dev');
-	if (developmentMode != null) {
-		config.developmentMode = developmentMode;
+		req.param('developmentMode') || osVersion?.endsWith('.dev').toString();
+	if (['true', 'on', '1'].includes(developmentMode || '')) {
+		config.developmentMode = true;
 	}
 
 	return config;
