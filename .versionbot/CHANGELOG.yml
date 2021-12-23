@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update dependencies
+      hash: 925a9d2f968e698a6dffbe760e2e1550b361d856
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.179.9
+  date: 2021-12-23T18:57:01.917Z
+- commits:
     - subject: Make image config “developmentMode” option work in POST body
       hash: b959729b826fe81ec6c60b15712d9165523e1a6d
       body: ''
