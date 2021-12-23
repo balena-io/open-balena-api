@@ -230,17 +230,35 @@ async function getOSReleaseResource(
 						},
 					},
 					{
-						release_tag: {
-							$any: {
-								$alias: 'rt',
-								$expr: {
-									rt: {
-										value: normalizeVariant(osVariant),
-										tag_key: 'variant',
+						$or: [
+							{
+								release_tag: {
+									$any: {
+										$alias: 'rt',
+										$expr: {
+											rt: {
+												value: normalizeVariant(osVariant),
+												tag_key: 'variant',
+											},
+										},
 									},
 								},
 							},
-						},
+							{
+								$not: {
+									release_tag: {
+										$any: {
+											$alias: 'rt',
+											$expr: {
+												rt: {
+													tag_key: 'variant',
+												},
+											},
+										},
+									},
+								},
+							},
+						],
 					},
 				],
 			},

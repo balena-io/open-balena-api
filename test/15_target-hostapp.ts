@@ -11,6 +11,7 @@ describe('target hostapps', () => {
 	let admin: UserObjectParam;
 	let applicationId: number;
 	let device: fakeDevice.Device;
+	let device2: fakeDevice.Device;
 	let preprovisionedDevice: fakeDevice.Device;
 	let esrDevice: fakeDevice.Device;
 	let noMatchDevice: fakeDevice.Device;
@@ -20,12 +21,14 @@ describe('target hostapps', () => {
 	let upgradeReleaseId: number;
 	let esrHostappReleaseId: number;
 	let invalidatedReleaseId: number;
+	let unifiedHostAppReleaseId: number;
 
 	before(async () => {
 		fx = await fixtures.load('15-target-hostapps');
 		admin = fx.users.admin;
 		applicationId = fx.applications['user-app1'].id;
 		device = await fakeDevice.provisionDevice(admin, applicationId);
+		device2 = await fakeDevice.provisionDevice(admin, applicationId);
 		preprovisionedDevice = await fakeDevice.provisionDevice(
 			admin,
 			applicationId,
@@ -41,12 +44,14 @@ describe('target hostapps', () => {
 		upgradeReleaseId = fx.releases.release2.id;
 		esrHostappReleaseId = fx.releases.release3.id;
 		invalidatedReleaseId = fx.releases.release5.id;
+		unifiedHostAppReleaseId = fx.releases.unifiedRelease.id;
 	});
 
 	after(async () => {
 		await fixtures.clean({
 			devices: [
 				device,
+				device2,
 				esrDevice,
 				noMatchDevice,
 				invalidatedReleaseDevice,
@@ -56,7 +61,7 @@ describe('target hostapps', () => {
 		await fixtures.clean(fx);
 	});
 
-	it('should provision with a linked hostapp (using PATCH)', async () => {
+	it('should provision with a linked prod hostapp (using PATCH)', async () => {
 		const devicePatchBody = {
 			local: {
 				os_version: 'balenaOS 2.50.0+rev1',
@@ -74,6 +79,27 @@ describe('target hostapps', () => {
 		expect(body.d[0]['should_be_operated_by__release']).to.be.not.null;
 		expect(body.d[0]['should_be_operated_by__release'].__id).to.equal(
 			prodNucHostappReleaseId,
+		);
+	});
+
+	it('should provision with a linked unified hostapp (using PATCH)', async () => {
+		const devicePatchBody = {
+			local: {
+				os_version: 'balenaOS 2.88.4',
+				os_variant: 'prod',
+			},
+		};
+
+		await device2.patchStateV2(devicePatchBody);
+		const { body } = await supertest(admin)
+			.get(
+				`/${version}/device(${device2.id})?$select=should_be_operated_by__release`,
+			)
+			.expect(200);
+		expect(body.d[0]).to.not.be.undefined;
+		expect(body.d[0]['should_be_operated_by__release']).to.be.not.null;
+		expect(body.d[0]['should_be_operated_by__release'].__id).to.equal(
+			unifiedHostAppReleaseId,
 		);
 	});
 
@@ -101,7 +127,7 @@ describe('target hostapps', () => {
 		});
 	});
 
-	it('should provision with a linked hostapp (using POST)', async () => {
+	it('should provision with a linked prod hostapp (using POST)', async () => {
 		const devicePostBody = {
 			belongs_to__application: applicationId,
 			device_type: 'intel-nuc',
@@ -122,6 +148,33 @@ describe('target hostapps', () => {
 		expect(body.d[0]['should_be_operated_by__release']).to.be.not.null;
 		expect(body.d[0]['should_be_operated_by__release'].__id).to.equal(
 			prodNucHostappReleaseId,
+		);
+		await fixtures.clean({
+			devices: [res.body],
+		});
+	});
+
+	it('should provision with a linked unified hostapp (using POST)', async () => {
+		const devicePostBody = {
+			belongs_to__application: applicationId,
+			device_type: 'intel-nuc',
+			os_version: 'balenaOS 2.88.4',
+			os_variant: 'prod',
+		};
+
+		const res = await supertest(admin)
+			.post(`/${version}/device`)
+			.send(devicePostBody)
+			.expect(201);
+		const { body } = await supertest(admin)
+			.get(
+				`/${version}/device(${res.body.id})?$select=should_be_operated_by__release`,
+			)
+			.expect(200);
+		expect(body.d[0]).to.not.be.undefined;
+		expect(body.d[0]['should_be_operated_by__release']).to.be.not.null;
+		expect(body.d[0]['should_be_operated_by__release'].__id).to.equal(
+			unifiedHostAppReleaseId,
 		);
 		await fixtures.clean({
 			devices: [res.body],
