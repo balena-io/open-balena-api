@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as Bluebird from 'bluebird';
 import { fetchContractsLocally, getContracts } from './contracts-directory';
-import { sbvrUtils, permissions } from '@balena/pinejs';
+import { sbvrUtils, permissions, types } from '@balena/pinejs';
 import {
 	CONTRACTS_PRIVATE_REPO_BRANCH,
 	CONTRACTS_PRIVATE_REPO_NAME,
@@ -70,6 +70,10 @@ type FieldsMap = {
 			resource: string;
 			uniqueKey: string;
 		};
+		isReferencedBy?: {
+			resource: string;
+			naturalKeyPart: string;
+		};
 	};
 };
 
@@ -111,8 +115,8 @@ const mapModel = async (
 				const [entry] = await rootApi.get({
 					resource: mapper.refersTo.resource,
 					options: {
+						$select: 'id',
 						$filter: { [mapper.refersTo.uniqueKey]: contractValue },
-						$select: ['id'],
 					},
 				});
 
@@ -130,42 +134,120 @@ const mapModel = async (
 	return mappedModel;
 };
 
+const getReversePropMapEntries = (map: SyncSetting['map']) =>
+	Object.entries(map).filter(
+		(
+			entry,
+		): entry is [
+			string,
+			types.RequiredField<FieldsMap[string], 'isReferencedBy'>,
+		] => entry[1].isReferencedBy != null,
+	);
+
 const upsertEntries = async (
-	newData: any[],
-	existingData: Set<string | number | boolean>,
-	resource: string,
-	uniqueField: string,
 	rootApi: sbvrUtils.PinejsClient,
+	{ resource, uniqueKey, map }: SyncSetting,
+	reversePropMapEntries: ReturnType<typeof getReversePropMapEntries>,
+	existingData: Map<string | number | boolean, AnyObject>,
+	newData: Array<Promise<AnyObject>>,
 ) => {
 	await Bluebird.map(
 		newData,
-		async (entry: any) => {
+		async (fullEntry) => {
+			// Has only the fields that the DB's resource has (primitives & FK),
+			// by removing the ReverseNavigationResource properties.
+			const entryFieldData = Object.fromEntries(
+				Object.entries(fullEntry).filter(
+					([key]) => map[key]?.isReferencedBy == null,
+				),
+			);
+
 			const entryQuery =
-				'contract' in entry && entry.contract != null
-					? { ...entry, contract: JSON.stringify(entry.contract) }
-					: entry;
+				'contract' in entryFieldData && entryFieldData.contract != null
+					? {
+							...entryFieldData,
+							contract: JSON.stringify(entryFieldData.contract),
+					  }
+					: entryFieldData;
 			try {
-				if (existingData.has(entry[uniqueField])) {
-					return await rootApi.patch({
+				const uniqueFieldValue = entryFieldData[uniqueKey];
+				let existingEntry = existingData.get(uniqueFieldValue);
+				if (existingEntry != null) {
+					await rootApi.patch({
 						resource,
-						body: entry,
+						id: existingEntry.id,
+						body: entryFieldData,
 						options: {
 							$filter: {
-								[uniqueField]: entry[uniqueField],
 								$not: entryQuery,
 							},
 						},
 					});
+				} else {
+					existingEntry = await rootApi.post({
+						resource,
+						body: entryFieldData,
+						options: { returnResource: reversePropMapEntries.length > 0 },
+					});
 				}
+				// upsert reverse navigation resources defined inline in the contract
+				for (const [propKey, { isReferencedBy }] of reversePropMapEntries) {
+					const existingUniqueValues = existingEntry[propKey]?.map(
+						(e: AnyObject) => e[isReferencedBy.naturalKeyPart],
+					);
+					const associatedValues = fullEntry[propKey] as unknown[];
+					for (const associatedValue of associatedValues) {
+						let targetUniqueValue: unknown;
+						let extraProperties: AnyObject | undefined;
+						if (
+							associatedValue != null &&
+							typeof associatedValue === 'object' &&
+							!(associatedValue instanceof Date)
+						) {
+							extraProperties = _.omit(
+								associatedValue as AnyObject,
+								isReferencedBy.naturalKeyPart,
+							);
+							targetUniqueValue =
+								extraProperties[isReferencedBy.naturalKeyPart];
+						} else {
+							targetUniqueValue = associatedValue;
+						}
 
-				await rootApi.post({
-					resource,
-					body: entry,
-					options: { returnResource: false },
-				});
+						const naturalKey = {
+							[resource]: existingEntry.id,
+							[isReferencedBy.naturalKeyPart]: targetUniqueValue,
+						};
+
+						if (!existingUniqueValues?.includes(targetUniqueValue)) {
+							await rootApi.post({
+								resource: isReferencedBy.resource,
+								body: {
+									...extraProperties,
+									...naturalKey,
+								},
+								options: { returnResource: false },
+							});
+						} else if (
+							extraProperties != null &&
+							Object.keys(extraProperties).length > 0
+						) {
+							await rootApi.patch({
+								resource: isReferencedBy.resource,
+								id: naturalKey,
+								body: extraProperties,
+								options: {
+									$filter: {
+										$not: extraProperties,
+									},
+								},
+							});
+						}
+					}
+				}
 			} catch (err) {
 				console.error(
-					`Failed to synchronize ${entry[uniqueField]}, skipping...`,
+					`Failed to synchronize ${fullEntry[uniqueKey]}, skipping...`,
 					err.message,
 				);
 			}
@@ -192,21 +274,37 @@ const syncContractsToDb = async (
 		mapModel(contract, typeMap, rootApi),
 	);
 
-	const existingEntries = (await rootApi.get({
-		resource: typeMap.resource,
-		options: { $select: [typeMap.uniqueKey] },
-	})) as Array<{ [k in typeof typeMap.uniqueKey]: any }>;
+	const reversePropMapEntries = getReversePropMapEntries(typeMap.map);
+	const $expand = reversePropMapEntries.map(
+		([
+			key,
+			{
+				isReferencedBy: { naturalKeyPart },
+			},
+		]) => ({ [key]: { $select: naturalKeyPart } }),
+	);
 
-	const existingKeys = new Set(
-		existingEntries.map((existingEntry) => existingEntry[typeMap.uniqueKey]),
+	const existingEntries = await rootApi.get({
+		resource: typeMap.resource,
+		options: {
+			$select: ['id', typeMap.uniqueKey],
+			...($expand.length > 0 && { $expand }),
+		},
+	});
+
+	const existingData = new Map(
+		existingEntries.map((existingEntry) => [
+			existingEntry[typeMap.uniqueKey],
+			existingEntry,
+		]),
 	);
 
 	await upsertEntries(
-		mappedModel,
-		existingKeys,
-		typeMap.resource,
-		typeMap.uniqueKey,
 		rootApi,
+		typeMap,
+		reversePropMapEntries,
+		existingData,
+		mappedModel,
 	);
 };
 

@@ -76,6 +76,13 @@ async function onInitHooks() {
 						uniqueKey: 'slug',
 					},
 				},
+				device_type_alias: {
+					contractField: 'aliases',
+					isReferencedBy: {
+						resource: 'device_type_alias',
+						naturalKeyPart: 'is_referenced_by__alias',
+					},
+				},
 				belongs_to__device_family: {
 					contractField: 'data.family',
 					refersTo: {

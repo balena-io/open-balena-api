@@ -79,6 +79,29 @@ const normalizeAssets = async (
 	return normalizedAssets;
 };
 
+const normalizeContract = async (
+	contractFilepath: string,
+	contract: Contract,
+) => {
+	try {
+		contract.aliases ??= [];
+		if (
+			Array.isArray(contract.aliases) &&
+			!contract.aliases.includes(contract.slug)
+		) {
+			contract.aliases.push(contract.slug);
+		}
+
+		contract.assets = await normalizeAssets(contractFilepath, contract.assets);
+	} catch (err) {
+		captureException(
+			err,
+			`Failed to normalize contract on path ${contractFilepath}, skipping contract`,
+		);
+	}
+	return contract;
+};
+
 const getArchiveLinkForRepo = (repo: RepositoryInfo) => {
 	return `https://api.github.com/repos/${repo.owner}/${repo.name}/tarball/${
 		repo.branch ?? ''
@@ -173,8 +196,7 @@ export const getContracts = async (type: string): Promise<Contract[]> => {
 				throw err;
 			}
 
-			contract.assets = await normalizeAssets(file, contract.assets);
-			return contract;
+			return await normalizeContract(file, contract);
 		}),
 	);
 

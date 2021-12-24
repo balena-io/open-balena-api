@@ -469,6 +469,14 @@ export interface UserHasPublicKey {
 	title: string;
 }
 
+export interface DeviceTypeAlias {
+	created_at: DateString;
+	modified_at: DateString;
+	device_type: { __id: number } | [DeviceType];
+	is_referenced_by__alias: string;
+	id: number;
+}
+
 export interface MyApplication {
 	created_at: DateString;
 	modified_at: DateString;
