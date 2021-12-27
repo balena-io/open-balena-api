@@ -1,4 +1,21 @@
 - commits:
+    - subject: 'target-hostapp: Add support for detecting unified OS releases'
+      hash: 92af60ea35df8facc86045cbde8f67841f5491ad
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: >-
+          https://jel.ly.fish/improvement-combine-os-variants-0d96399a-660b-4d38-adca-f661378cb86e
+        see: >-
+          https://jel.ly.fish/improvement-combine-os-variants-0d96399a-660b-4d38-adca-f661378cb86e
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.180.0
+  date: 2021-12-23T19:11:18.034Z
+- commits:
     - subject: Update dependencies
       hash: 925a9d2f968e698a6dffbe760e2e1550b361d856
       body: ''
