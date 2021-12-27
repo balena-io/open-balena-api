@@ -82,5 +82,11 @@
 		"release": "release6",
 		"tag_key": "version",
 		"value": "2.53.0+rev1"
+	},
+	"unifiedReleaseTag-version": {
+		"user": "admin",
+		"release": "unifiedRelease",
+		"tag_key": "version",
+		"value": "2.88.4"
 	}
 }

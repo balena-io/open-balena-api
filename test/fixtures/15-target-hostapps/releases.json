@@ -49,5 +49,13 @@
 		"status": "success",
 		"is_invalidated": true,
 		"user": "admin"
+	},
+	"unifiedRelease": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"is_invalidated": true,
+		"user": "admin"
 	}
 }
