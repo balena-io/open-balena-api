@@ -98,7 +98,11 @@ import {
 	updateOrInsertModel,
 	getOrInsertModelId,
 } from './infra/pinejs-client-helpers';
-import { loginRateLimiter, normalizeHandle } from './features/auth';
+import {
+	loginRateLimiter,
+	normalizeHandle,
+	refreshToken,
+} from './features/auth';
 import { getIP, getIPv4, isValidInteger, throttledForEach } from './lib/utils';
 import {
 	createRateLimitMiddleware,
@@ -189,6 +193,8 @@ export const auth = {
 	getUserIDFromCreds,
 	registryAuth,
 	normalizeHandle,
+	/** @deprecated Will be removed in a future version */
+	refreshToken,
 };
 export const rateLimiting = {
 	createRateLimitMiddleware,
