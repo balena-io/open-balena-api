@@ -1,4 +1,19 @@
 - commits:
+    - subject: Add /user/v1/refresh-token GET & POST endpoints
+      hash: ddb358ee2e3ee25cb80bb80559f48b1eec8f2e18
+      body: ''
+      footer:
+        Resolves: '#575'
+        resolves: '#575'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.181.0
+  date: 2021-12-28T12:32:05.787Z
+- commits:
     - subject: 'target-hostapp: Add support for detecting unified OS releases'
       hash: 92af60ea35df8facc86045cbde8f67841f5491ad
       body: ''
