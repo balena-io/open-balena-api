@@ -6,12 +6,19 @@ import {
 	createRateLimiter,
 	createRateLimitMiddleware,
 } from '../../infra/rate-limiting';
-import { apiKeyMiddleware, authorizedMiddleware } from '../../infra/auth';
+import {
+	apiKeyMiddleware,
+	authorizedMiddleware,
+	authenticatedMiddleware,
+	permissionRequiredMiddleware,
+} from '../../infra/auth';
 import { login } from './login';
 import { getUserPublicKeys } from './public-keys';
+import { refreshToken } from './refresh-token';
 import { whoami } from './whoami';
 
 export * from './handles';
+export { refreshToken };
 
 // Rate limit for unauthenticated access
 export const loginRateLimiter = createRateLimitMiddleware(
@@ -31,5 +38,18 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 		'/auth/v1/public-keys/:username',
 		apiKeyMiddleware,
 		getUserPublicKeys,
+	);
+
+	app.get(
+		'/user/v1/refresh-token',
+		authenticatedMiddleware,
+		permissionRequiredMiddleware('auth.create_token'),
+		refreshToken,
+	);
+	app.post(
+		'/user/v1/refresh-token',
+		authenticatedMiddleware,
+		permissionRequiredMiddleware('auth.create_token'),
+		refreshToken,
 	);
 };
