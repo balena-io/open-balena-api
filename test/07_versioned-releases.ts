@@ -1,5 +1,4 @@
 import { randomUUID } from 'crypto';
-import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 import type { Release } from '../src/balena-model';
 import { expectResourceToMatch } from './test-lib/api-helpers';
@@ -8,6 +7,7 @@ import { expect } from './test-lib/chai';
 import { supertest, UserObjectParam } from './test-lib/supertest';
 import { version } from './test-lib/versions';
 import { pineTest } from './test-lib/pinetest';
+import { setTimeout } from 'timers/promises';
 
 describe('releases', () => {
 	let fx: fixtures.Fixtures;
@@ -398,7 +398,7 @@ describe('versioning releases', () => {
 		);
 		const newReleases = await Promise.all(
 			_.times(RELEASE_FINALIZATION_TEST_CONCURENCY).map(async () => {
-				await Bluebird.delay(
+				await setTimeout(
 					Math.random() * RELEASE_FINALIZATION_CONCURENCY_DELAY_FACTOR,
 				);
 				return (
@@ -501,7 +501,7 @@ describe('versioning releases', () => {
 	makeMarkAsFinalTest('concurrently', async (newDraftReleases) => {
 		await Promise.all(
 			newDraftReleases.map(async (r) => {
-				await Bluebird.delay(
+				await setTimeout(
 					Math.random() * RELEASE_FINALIZATION_CONCURENCY_DELAY_FACTOR,
 				);
 				await pineUser
@@ -634,7 +634,7 @@ describe('versioning releases', () => {
 		async (versionAReleasesToChangeSemver) => {
 			await Promise.all(
 				versionAReleasesToChangeSemver.map(async (r) => {
-					await Bluebird.delay(
+					await setTimeout(
 						Math.random() * RELEASE_FINALIZATION_CONCURENCY_DELAY_FACTOR,
 					);
 					await pineUser

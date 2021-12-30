@@ -4,6 +4,7 @@ import { expect } from './test-lib/chai';
 import { LokiBackend } from '../src/features/device-logs/lib/backends/loki';
 import { getNanoTimestamp } from '../src/lib/utils';
 import { LogWriteContext } from '../src/features/device-logs/lib/struct';
+import { setTimeout } from 'timers/promises';
 
 const createLog = (extra = {}) => {
 	return {
@@ -100,7 +101,7 @@ describe('loki backend', () => {
 		const log = createLog();
 		const incomingLog = await new Bluebird(async (resolve) => {
 			loki.subscribe(ctx, resolve);
-			await Bluebird.delay(100); // wait for the subscription to connect
+			await setTimeout(100); // wait for the subscription to connect
 			await loki.publish(ctx, [_.clone(log)]);
 		}).timeout(5000, 'Subscription did not receive log');
 		expect(incomingLog).to.deep.equal(incomingLog);
@@ -118,7 +119,7 @@ describe('loki backend', () => {
 				}
 			});
 			// let time pass after subscription so multiple logs with different times can be published
-			await Bluebird.delay(100);
+			await setTimeout(100);
 			const now = getNanoTimestamp();
 			const logs = [
 				createLog({ nanoTimestamp: now - 4n }),

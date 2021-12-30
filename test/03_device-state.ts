@@ -1,4 +1,3 @@
-import * as Bluebird from 'bluebird';
 import * as mockery from 'mockery';
 import * as sinon from 'sinon';
 import { expect } from './test-lib/chai';
@@ -12,6 +11,7 @@ import { waitFor } from './test-lib/common';
 import * as fixtures from './test-lib/fixtures';
 import { expectResourceToMatch } from './test-lib/api-helpers';
 import { redis, redisRO } from '../src/infra/redis';
+import { setTimeout } from 'timers/promises';
 
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
@@ -219,7 +219,7 @@ describe('Device State v2', () => {
 							if (heartbeatAfterGet !== DeviceOnlineStates.Unknown) {
 								await waitFor({ checkFn: () => stateChangeEventSpy.called });
 							} else {
-								await Bluebird.delay(1000);
+								await setTimeout(1000);
 								expect(stateChangeEventSpy.called).to.be.false;
 							}
 
@@ -249,7 +249,7 @@ describe('Device State v2', () => {
 							devicePollInterval / 1000
 						} seconds`, async () => {
 							stateChangeEventSpy.resetHistory();
-							await Bluebird.delay(devicePollInterval);
+							await setTimeout(devicePollInterval);
 
 							await waitFor({ checkFn: () => stateChangeEventSpy.called });
 
@@ -297,7 +297,7 @@ describe('Device State v2', () => {
 						} seconds`, async () => {
 							stateChangeEventSpy.resetHistory();
 
-							await Bluebird.delay(devicePollInterval + TIMEOUT_SEC * 1000);
+							await setTimeout(devicePollInterval + TIMEOUT_SEC * 1000);
 
 							// it will be called for TIMEOUT and OFFLINE...
 							await waitFor({ checkFn: () => stateChangeEventSpy.calledTwice });
@@ -413,7 +413,7 @@ describe('Device State v2 patch', function () {
 		};
 
 		await device.patchStateV2(devicePatchBody);
-		await Bluebird.delay(200);
+		await setTimeout(200);
 
 		await expectResourceToMatch(pineUser, 'device', device.id, {
 			cpu_usage: 34,
@@ -422,7 +422,7 @@ describe('Device State v2 patch', function () {
 	});
 
 	it('should clear the throttling key from redis after the throttling window passes', async () => {
-		await Bluebird.delay(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
+		await setTimeout(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
 		expect(await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid))).to
 			.be.null;
 	});
@@ -447,7 +447,7 @@ describe('Device State v2 patch', function () {
 
 	it('should throttle metrics-only device state updates [cross-instance]', async () => {
 		// Wait for the local cache to expire
-		await Bluebird.delay(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
+		await setTimeout(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
 		// confirm that even the redis cache has expired
 		expect(await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid))).to
 			.be.null;

@@ -1,11 +1,11 @@
 import { expect } from './test-lib/chai';
-import * as Bluebird from 'bluebird';
 import { UserObjectParam } from './test-lib/supertest';
 import { pineTest } from './test-lib/pinetest';
 
 import * as fixtures from './test-lib/fixtures';
 import * as _ from 'lodash';
 import { Application } from '../src/balena-model';
+import { setTimeout } from 'timers/promises';
 
 describe('Resource Filtering', () => {
 	let fx: fixtures.Fixtures;
@@ -45,7 +45,7 @@ describe('Resource Filtering', () => {
 					is_for__device_type: devicetype.id,
 				},
 			});
-			await Bluebird.delay(100);
+			await setTimeout(100);
 		}
 
 		const { body: apps } = await pineUser

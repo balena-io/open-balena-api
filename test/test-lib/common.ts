@@ -1,4 +1,4 @@
-import * as Bluebird from 'bluebird';
+import { setTimeout } from 'timers/promises';
 import { TypedError } from 'typed-error';
 
 type PredicateFunction = () => Resolvable<boolean>;
@@ -27,7 +27,7 @@ export async function waitFor({
 }) {
 	for (let i = 1; i <= maxCount; i++) {
 		console.log(`⌚  Waiting (${i}/${maxCount})...`);
-		await Bluebird.delay(delayMs);
+		await setTimeout(delayMs);
 
 		if (await checkFn()) {
 			return;

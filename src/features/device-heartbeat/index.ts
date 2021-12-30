@@ -1,4 +1,3 @@
-import * as Bluebird from 'bluebird';
 import * as events from 'eventemitter3';
 import * as _ from 'lodash';
 import * as RedisSMQ from 'rsmq';
@@ -17,6 +16,7 @@ import {
 	REDIS,
 } from '../../lib/config';
 import { redis, redisRO } from '../../infra/redis';
+import { setTimeout } from 'timers/promises';
 
 const { api } = sbvrUtils;
 
@@ -212,7 +212,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 	}
 
 	private async setupQueueStatsEmitter(interval: number) {
-		setTimeout(async () => {
+		setTimeout(interval, undefined, { ref: false }).then(async () => {
 			try {
 				const startAt = Date.now();
 				const queueAttributes = await this.rsmq.getQueueAttributesAsync({
@@ -236,7 +236,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 			} finally {
 				this.setupQueueStatsEmitter(interval);
 			}
-		}, interval).unref();
+		});
 	}
 
 	private async updateDeviceModel(
@@ -293,7 +293,7 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 			.then(async (msg) => {
 				if (!('id' in msg)) {
 					// no messages to consume, wait a second...
-					return Bluebird.delay(1000);
+					return await setTimeout(1000);
 				}
 
 				const { id, message } = msg;

@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import * as Bluebird from 'bluebird';
 import { EventEmitter } from 'events';
 
 import {
@@ -44,6 +43,7 @@ import {
 	updateLokiPushDurationHistogram,
 	incrementPublishCallTotal,
 } from './metrics';
+import { setTimeout } from 'timers/promises';
 
 const { BadRequestError } = errors;
 
@@ -83,7 +83,7 @@ function backoff<T extends (...args: any[]) => any>(
 				return await fn(...args);
 			} catch (err) {
 				if (retryIf(err)) {
-					await Bluebird.delay(nextBackoff);
+					await setTimeout(nextBackoff);
 					// fibonacci
 					nextBackoff = nextBackoff + prevBackoff;
 					prevBackoff = nextBackoff - prevBackoff;
