@@ -1,4 +1,15 @@
 - commits:
+    - subject: Use timers/promises instead of Bluebird.delay
+      hash: d6968a5cba010783938258e9fedf9e1e0089f450
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.181.1
+  date: 2021-12-30T14:31:27.193Z
+- commits:
     - subject: Add /user/v1/refresh-token GET & POST endpoints
       hash: ddb358ee2e3ee25cb80bb80559f48b1eec8f2e18
       body: ''
