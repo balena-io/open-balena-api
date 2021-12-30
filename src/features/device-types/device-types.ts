@@ -1,5 +1,4 @@
 import * as arraySort from 'array-sort';
-import * as Bluebird from 'bluebird';
 import * as _ from 'lodash';
 
 import * as deviceTypesLib from '@resin.io/device-types';
@@ -17,6 +16,7 @@ import {
 } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
 import { withRetries } from '../../lib/utils';
+import { setTimeout } from 'timers/promises';
 
 const { BadRequestError, NotFoundError } = errors;
 export type { NotFoundError };
@@ -126,7 +126,7 @@ let deviceTypesCache:
 
 async function scheduleFetchDeviceTypes() {
 	try {
-		await Bluebird.delay(DEVICE_TYPES_CACHE_EXPIRATION);
+		await setTimeout(DEVICE_TYPES_CACHE_EXPIRATION);
 		await fetchDeviceTypesAndReschedule();
 	} catch (err) {
 		captureException(err, 'Failed to re-fetch device types');
