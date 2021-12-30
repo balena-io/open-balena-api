@@ -1,4 +1,15 @@
 - commits:
+    - subject: Convert a missed Bluebird.delay
+      hash: d11734f432f847d6217f9d4e42dc84dc4a5a1967
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.181.2
+  date: 2021-12-30T15:03:16.813Z
+- commits:
     - subject: Use timers/promises instead of Bluebird.delay
       hash: d6968a5cba010783938258e9fedf9e1e0089f450
       body: ''
