@@ -3,7 +3,7 @@ import type { Request } from 'express';
 import * as ipaddr from 'ipaddr.js';
 import * as fs from 'fs';
 import { promisify } from 'util';
-import { delay } from 'bluebird';
+import { setTimeout } from 'timers/promises';
 
 // process.hrtime() will give nanos, but it is from an unknown relative time, not epoch.
 // This approach calculates the difference and adds to get the current nano time.
@@ -79,7 +79,7 @@ export const throttledForEach = async <T, U>(
 		// We do not wait for each individual fn, we just throttle the calling of them
 		promises.push(fn(item));
 		// Delay by the throttle rate before we continue to the next item
-		await delay(delayMS);
+		await setTimeout(delayMS);
 	}
 	// We return the results of the iterator so the caller can await them as necessary
 	return await Promise.all(promises);
@@ -97,7 +97,7 @@ export const withRetries = async <T>(
 			throw err;
 		}
 
-		await delay(delayDuration);
+		await setTimeout(delayDuration);
 		return await withRetries(func, delayDuration, retries - 1);
 	}
 };
