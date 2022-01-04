@@ -300,7 +300,6 @@ export async function setup(app: Application, options: SetupOptions) {
 		res.status(204);
 		// Remove some automatically added headers, we want the response to be as small as possible
 		res.removeHeader('ETag');
-		res.removeHeader('Date');
 		res.end();
 	});
 
