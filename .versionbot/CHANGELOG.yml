@@ -1,4 +1,15 @@
 - commits:
+    - subject: 'minor: Add BALENA_HOST_EXTLINUX_isolcpu'
+      hash: 80b87f72e640d7afcd64d2aff6f7e07e58d0a0e2
+      body: ''
+      footer:
+        Signed-off-by: Vipul Gupta (@vipulgupta2048) <vipul@balena.io>
+        signed-off-by: Vipul Gupta (@vipulgupta2048) <vipul@balena.io>
+      author: Vipul Gupta (@vipulgupta2048)
+      nested: []
+  version: 0.182.0
+  date: 2022-01-04T09:09:50.948Z
+- commits:
     - subject: Convert a missed Bluebird.delay
       hash: d11734f432f847d6217f9d4e42dc84dc4a5a1967
       body: ''
