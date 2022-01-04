@@ -267,6 +267,13 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 					'Define the file name of the DTB to be used. Only supported by supervisor versions >= v11.14.2.',
 				will_reboot: true,
 			},
+			RESIN_HOST_EXTLINUX_isolcpus: {
+				type: 'string',
+				description:
+					'Allows to isolate CPU cores from the kernel scheduler by specifying CPU cores in the system starting from 0. Only supported by supervisor versions >= v7.25.0',
+				examples: ['0,2,3'],
+				will_reboot: true,
+			},
 		},
 	},
 	{
