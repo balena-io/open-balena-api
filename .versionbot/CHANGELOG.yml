@@ -1,4 +1,15 @@
 - commits:
+    - subject: Add date header to /connectivity-check as balenaOS 2.88 requires it
+      hash: 284cc9d793a64c7d7a622941934524b5cfeb2f16
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.183.0
+  date: 2022-01-04T15:54:02.016Z
+- commits:
     - subject: 'minor: Add BALENA_HOST_EXTLINUX_isolcpu'
       hash: 80b87f72e640d7afcd64d2aff6f7e07e58d0a0e2
       body: ''
