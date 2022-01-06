@@ -136,7 +136,6 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 
 ROLES['device-api-key'] = [
 	...DEVICE_API_KEY_PERMISSIONS,
-	'resin.user.read',
 	'resin.user__has__public_key.read',
 ];
 
