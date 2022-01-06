@@ -1,4 +1,15 @@
 - commits:
+    - subject: Only grant access to user info when necessary for resolving public keys
+      hash: 93e6bca4fab9651d83954003ba4bc5811a273f5e
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.184.0
+  date: 2022-01-06T12:12:56.754Z
+- commits:
     - subject: Add date header to /connectivity-check as balenaOS 2.88 requires it
       hash: 284cc9d793a64c7d7a622941934524b5cfeb2f16
       body: ''
