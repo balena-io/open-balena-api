@@ -10,7 +10,10 @@ import {
 	translateError,
 } from '../../infra/error-handling';
 
-import { createDeviceApiKey } from '../api-keys/lib';
+import {
+	augmentReqApiKeyPermissions,
+	createDeviceApiKey,
+} from '../api-keys/lib';
 import { checkInt } from '../../lib/utils';
 
 const { BadRequestError, ConflictError } = errors;
@@ -50,14 +53,12 @@ export const register: RequestHandler = async (req, res) => {
 		} = req.body;
 		const deviceApiKey = req.body.api_key ?? randomstring.generate();
 
-		// Temporarily give the ability to fetch the device we create and create an api key for it,
-		// but clone to make sure it isn't propagated elsewhere
-		req = _.clone(req);
-		req.apiKey = _.cloneDeep(req.apiKey);
-		if (req.apiKey?.permissions != null) {
-			req.apiKey.permissions.push('resin.device.read');
-			req.apiKey.permissions.push('resin.device.create-device-api-key');
-		}
+		// Temporarily augment the api key with the ability to fetch the device we create and create an api key for it
+		req = augmentReqApiKeyPermissions(
+			req,
+			'resin.device.read',
+			'resin.device.create-device-api-key',
+		);
 
 		const response = await sbvrUtils.db.transaction(async (tx) => {
 			const device = await api.resin.post({

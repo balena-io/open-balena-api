@@ -258,3 +258,19 @@ export const isApiKeyWithRole = async (
 	});
 	return role != null;
 };
+
+/**
+ * Temporarily augments the request's api key with the specified permissions.
+ * This will not have any effect if the request is not using an api key
+ */
+export const augmentReqApiKeyPermissions = <
+	T extends permissions.PermissionReq,
+>(
+	req: T,
+	...extraPermissions: string[]
+): T => {
+	const augmentedReq = _.clone(req);
+	augmentedReq.apiKey = _.cloneDeep(augmentedReq.apiKey);
+	augmentedReq.apiKey?.permissions?.push(...extraPermissions);
+	return augmentedReq;
+};
