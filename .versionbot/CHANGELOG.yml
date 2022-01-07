@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add a fasttest-stop npm script that stops the fasttest containers
+      hash: ff0fcc6ce0d1702d47a3ee344e8a74875400bbad
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.184.1
+  date: 2022-01-07T09:42:36.681Z
+- commits:
     - subject: Only grant access to user info when necessary for resolving public keys
       hash: 93e6bca4fab9651d83954003ba4bc5811a273f5e
       body: ''
