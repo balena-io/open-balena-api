@@ -16,15 +16,21 @@ import {
 	synchronizeContracts,
 } from '../src/features/contracts';
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import { DeviceType } from './test-lib/device-type';
+import { pineTest } from './test-lib/pinetest';
+import type { DeviceType, DeviceTypeAlias } from '../src/balena-model';
 
 const contractRepository: RepositoryInfo = {
 	owner: 'balena-io',
 	name: 'contracts',
 };
 
-const clearDeviceTypeResource = () => {
-	return sbvrUtils.api.resin.delete({
+const clearDeviceTypeResource = async () => {
+	await sbvrUtils.api.resin.delete({
+		resource: 'device_type_alias',
+		passthrough: { req: permissions.root },
+	});
+
+	await sbvrUtils.api.resin.delete({
 		resource: 'device_type',
 		passthrough: { req: permissions.root },
 	});
@@ -107,6 +113,9 @@ describe('contracts', () => {
 			]);
 
 			const contracts = await getContracts('hw.device-type');
+			const rpiContract = contracts.find(
+				(contract) => contract.slug === 'raspberry-pi',
+			);
 			const rpi3Contract = contracts.find(
 				(contract) => contract.slug === 'raspberrypi3',
 			);
@@ -123,6 +132,15 @@ describe('contracts', () => {
 			expect(otherDtContract?.assets?.logo).to.exist;
 			expect(otherDtContract?.assets?.logo.url).to.equal(
 				'https://balena.io/logo.png',
+			);
+
+			expect(rpi3Contract?.aliases).to.deep.equal(
+				['raspberrypi3'],
+				'Should use the slug as an alias when there are none',
+			);
+			expect(rpiContract?.aliases?.slice().sort()).to.deep.equal(
+				['raspberry-pi', 'raspberrypi'],
+				'Should include the slug in the list of aliases',
 			);
 		});
 
@@ -180,15 +198,36 @@ describe('contracts', () => {
 				(dbDeviceType) => dbDeviceType.slug === 'fincm3',
 			);
 
-			const dbDeviceTypes: DeviceType[] = (
-				await supertest().get(`/${version}/device_type`).expect(200)
-			).body.d;
+			const { body: dbDeviceTypes } = await pineTest
+				.get<
+					Array<
+						DeviceType & {
+							device_type_alias: Array<
+								Pick<DeviceTypeAlias, 'is_referenced_by__alias'>
+							>;
+						}
+					>
+				>({
+					resource: 'device_type',
+					options: {
+						$select: ['slug', 'name', 'contract'],
+						$expand: {
+							device_type_alias: {
+								$select: 'is_referenced_by__alias',
+							},
+						},
+					},
+				})
+				.expect(200);
 
 			const newDt = dbDeviceTypes.find(
 				(dbDeviceType) => dbDeviceType.slug === 'new-dt',
 			);
 			const finDt = dbDeviceTypes.find(
 				(dbDeviceType) => dbDeviceType.slug === 'fincm3',
+			);
+			const rpiDt = dbDeviceTypes.find(
+				(dbDeviceType) => dbDeviceType.slug === 'raspberry-pi',
 			);
 
 			expect(dbDeviceTypes).to.have.length(14);
@@ -198,6 +237,11 @@ describe('contracts', () => {
 				'contract',
 				JSON.parse(JSON.stringify(finDtContract)),
 			);
+
+			expect(rpiDt).to.have.property('device_type_alias').that.is.an('array');
+			expect(
+				rpiDt!.device_type_alias.map((a) => a.is_referenced_by__alias).sort(),
+			).to.deep.equal(['raspberry-pi', 'raspberrypi']);
 		});
 	});
 });

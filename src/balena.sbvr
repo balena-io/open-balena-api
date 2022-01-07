@@ -74,6 +74,8 @@ Fact type: api key has description
 Vocabulary: balena
 
 -- Primitive terms (in AZ order)
+Term: alias
+	Concept Type: Short Text (Type)
 
 Term: api heartbeat state
 	Concept Type: Short Text (Type)
@@ -613,6 +615,12 @@ Fact type: device type has contract
 Fact type: device type belongs to device family
 	Synonymous form: device family has device type
 	Necessity: each device type belongs to at most one device family
+
+Fact type: device type is referenced by alias
+	Synonymous form: alias references device type
+	Term Form: device type alias
+	Database Table Name: device type alias
+	Necessity: each alias references exactly one device type
 
 -- cpu architecture
 
