@@ -15,6 +15,7 @@ external=''
 test_versions=''
 test_files=''
 teardown=0
+stop=0
 extra_env=''
 extra_args=''
 
@@ -24,6 +25,9 @@ while [[ $# -gt 0 ]]; do
 	case $key in
 		--teardown)
 			teardown=1
+		;;
+		--stop)
+			stop=1
 		;;
 		--long-stack)
 			extra_env="${extra_env} --env BLUEBIRD_LONG_STACK_TRACES=1"
@@ -50,6 +54,12 @@ if [[ $teardown -eq 1 ]]; then
 	echo 'Tearing down test environment...'
 	teardown $IMAGE_NAME $db_id $redis_id $loki_id $api_id
 	rm "$CONFIG_FILE" 2>/dev/null || true
+	exit 0
+fi
+
+if [[ $stop -eq 1 ]]; then
+	echo 'Stopping test environment containers...'
+	docker stop $api_id $db_id $redis_id $loki_id 2>/dev/null || true
 	exit 0
 fi
 

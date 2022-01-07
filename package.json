@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "fasttest": "IMAGE_NAME=test-open-balena-api-fast ./automation/fasttest.sh",
+    "fasttest-stop": "IMAGE_NAME=test-open-balena-api-fast ./automation/fasttest.sh --stop",
     "fasttest-cleanup": "IMAGE_NAME=test-open-balena-api-fast ./automation/fasttest.sh --teardown",
     "materialize-config": "npm run fasttest -- --generate-config .materialized-config.json",
     "generate-model-schema": "npm run materialize-config && npx @balena/pinejs compile .materialized-config.json .materialized-schema.sql",
