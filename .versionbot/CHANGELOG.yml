@@ -1,4 +1,19 @@
 - commits:
+    - subject: Add device type aliases as part of the model & sync from contracts
+      hash: 8c738e592c6c56b514a03b9711478642d76d8ab8
+      body: ''
+      footer:
+        Resolves: '#863'
+        resolves: '#863'
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.185.0
+  date: 2022-01-07T09:51:18.025Z
+- commits:
     - subject: Add a fasttest-stop npm script that stops the fasttest containers
       hash: ff0fcc6ce0d1702d47a3ee344e8a74875400bbad
       body: ''
