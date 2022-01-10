@@ -112,7 +112,7 @@ import {
 import {
 	getAccessibleDeviceTypes,
 	findBySlug,
-	getDeviceTypeIdBySlug,
+	getDeviceTypeBySlug,
 } from './features/device-types/device-types';
 import { proxy as supervisorProxy } from './features/device-proxy/device-proxy';
 import { generateConfig } from './features/device-config/device-config';
@@ -244,7 +244,7 @@ export const release = {
 export const deviceTypes = {
 	getAccessibleDeviceTypes,
 	findBySlug,
-	getDeviceTypeIdBySlug,
+	getDeviceTypeBySlug,
 };
 export const contracts = {
 	setSyncSettings,

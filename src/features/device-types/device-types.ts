@@ -292,7 +292,7 @@ export interface ImageVersions {
 	latest: string;
 }
 
-export const getDeviceTypeIdBySlug = async (
+export const getDeviceTypeBySlug = async (
 	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
 ): Promise<{ id: number; slug: string } | undefined> => {
