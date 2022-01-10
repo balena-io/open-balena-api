@@ -40,7 +40,6 @@ interface DeviceTypeInfo {
 	versions: string[];
 }
 
-const SPECIAL_SLUGS = ['edge'];
 const DEVICE_TYPES_CACHE_EXPIRATION = 5 * 60 * 1000; // 5 mins
 
 function sortBuildIds(ids: string[]): string[] {
@@ -254,25 +253,6 @@ export const findBySlug = async (
 	return deviceType;
 };
 
-const normalizeDeviceType = async (
-	resinApi: sbvrUtils.PinejsClient,
-	slug: string,
-): Promise<string> => {
-	if (SPECIAL_SLUGS.includes(slug)) {
-		return slug;
-	}
-
-	const deviceTypes = await getAccessibleDeviceTypes(resinApi);
-	const normalizedSlug = await deviceTypesLib.normalizeDeviceType(
-		deviceTypes,
-		slug,
-	);
-	if (normalizedSlug == null) {
-		throw new UnknownDeviceTypeError(slug);
-	}
-	return normalizedSlug;
-};
-
 export const getImageSize = async (
 	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
@@ -316,7 +296,7 @@ export const getDeviceTypeIdBySlug = async (
 	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
 ): Promise<{ id: number; slug: string } | undefined> => {
-	const deviceType = await normalizeDeviceType(resinApi, slug);
+	const deviceType = (await findBySlug(resinApi, slug)).slug;
 
 	const dt = (await resinApi.get({
 		resource: 'device_type',
