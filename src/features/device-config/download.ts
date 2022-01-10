@@ -61,11 +61,11 @@ export const downloadImageConfig: RequestHandler = async (req, res) => {
 		const resinApi = api.resin.clone({ passthrough: { req } });
 
 		const app = await getApp(req);
-		const deviceType = await findBySlug(
+		const deviceTypeJson = await findBySlug(
 			resinApi,
 			deviceTypeSlug || app.is_for__device_type[0].slug,
 		);
-		const config = await generateConfig(req, app, deviceType, osVersion);
+		const config = await generateConfig(req, app, deviceTypeJson, osVersion);
 
 		res.json(config);
 	} catch (err) {
