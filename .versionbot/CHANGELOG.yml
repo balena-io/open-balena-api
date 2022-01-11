@@ -1,4 +1,27 @@
 - commits:
+    - subject: Stop relying on the @resin.io/device-types module
+      hash: 43a6d11c0164addb6c1b44037dd887779b78ec73
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Rely only on the model for resolving device type aliases
+      hash: 173c8d214324d38aa0ed1bc05c5b0b49d79cc137
+      body: ''
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.187.0
+  date: 2022-01-11T21:05:30.086Z
+- commits:
     - subject: Rename the exported DeviceType type to DeviceTypeJson
       hash: 90439db4de840603ac3e5312b7c088d0dcaf6766
       body: ''
