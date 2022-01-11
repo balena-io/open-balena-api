@@ -6,6 +6,7 @@ export interface DeviceTypeJson {
 
 	arch: string;
 	state?: string;
+	private?: boolean;
 
 	isDependent?: boolean;
 	instructions?: string[] | DeviceTypeInstructions;
