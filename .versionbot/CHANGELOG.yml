@@ -1,4 +1,17 @@
 - commits:
+    - subject: Add missing `private` property to the DeviceTypeJson type
+      hash: 538071a2a404949746582c6d56e6120ec18da0f5
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.187.1
+  date: 2022-01-11T21:53:54.087Z
+- commits:
     - subject: Stop relying on the @resin.io/device-types module
       hash: 43a6d11c0164addb6c1b44037dd887779b78ec73
       body: ''
