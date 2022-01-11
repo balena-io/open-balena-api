@@ -112,7 +112,7 @@ import {
 import {
 	getAccessibleDeviceTypes,
 	findBySlug,
-	getDeviceTypeIdBySlug,
+	getDeviceTypeBySlug,
 } from './features/device-types/device-types';
 import { proxy as supervisorProxy } from './features/device-proxy/device-proxy';
 import { generateConfig } from './features/device-config/device-config';
@@ -151,7 +151,7 @@ export * as tags from './features/tags/validation';
 export type { Creds, User } from './infra/auth/jwt-passport';
 export type { Access } from './features/registry/registry';
 export type { ApplicationType } from './features/application-types/application-types';
-export type { DeviceType } from './features/device-types/device-types';
+export type { DeviceTypeJson } from './features/device-types/device-types';
 
 export { DefaultApplicationType } from './features/application-types/application-types';
 export * as request from './infra/request-promise';
@@ -244,7 +244,7 @@ export const release = {
 export const deviceTypes = {
 	getAccessibleDeviceTypes,
 	findBySlug,
-	getDeviceTypeIdBySlug,
+	getDeviceTypeBySlug,
 };
 export const contracts = {
 	setSyncSettings,

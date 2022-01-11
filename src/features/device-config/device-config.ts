@@ -15,7 +15,7 @@ import {
 	createProvisioningApiKey,
 	createUserApiKey,
 } from '../api-keys/lib';
-import type { DeviceType } from '../device-types/device-types';
+import type { DeviceTypeJson } from '../device-types/device-types';
 
 const { BadRequestError } = errors;
 
@@ -34,7 +34,7 @@ import {
 export const generateConfig = async (
 	req: Request,
 	app: deviceConfig.GenerateOptions['application'],
-	deviceType: DeviceType,
+	deviceType: DeviceTypeJson,
 	osVersion?: string,
 ) => {
 	const userPromise = getUser(req);

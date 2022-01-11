@@ -1,7 +1,7 @@
 import * as memoizee from 'memoizee';
 import { multiCacheMemoizee } from '../../infra/cache';
 
-import * as deviceTypesLib from '@resin.io/device-types';
+import type { DeviceType as DeviceTypeJson } from '@resin.io/device-types';
 
 import {
 	BUILD_COMPRESSED_SIZE_CACHE_TIMEOUT,
@@ -9,8 +9,6 @@ import {
 	FILES_HOST,
 } from '../../lib/config';
 import { fileExists, getFile, getFolderSize, getImageKey } from './storage';
-
-export type DeviceType = deviceTypesLib.DeviceType;
 
 export const getLogoUrl = multiCacheMemoizee(
 	async (
@@ -52,7 +50,7 @@ export const getDeviceTypeJson = memoizee(
 	async (
 		normalizedSlug: string,
 		buildId: string,
-	): Promise<deviceTypesLib.DeviceType | undefined> => {
+	): Promise<DeviceTypeJson | undefined> => {
 		const isIgnored = await fileExists(
 			getImageKey(normalizedSlug, buildId, 'IGNORE'),
 		);
@@ -64,7 +62,7 @@ export const getDeviceTypeJson = memoizee(
 		);
 		const deviceType =
 			response && response.Body
-				? (JSON.parse(response.Body.toString()) as DeviceType)
+				? (JSON.parse(response.Body.toString()) as DeviceTypeJson)
 				: undefined;
 		if (deviceType) {
 			deviceType.buildId = buildId;

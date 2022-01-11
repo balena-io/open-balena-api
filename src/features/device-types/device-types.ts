@@ -33,10 +33,10 @@ export class UnknownVersionError extends NotFoundError {
 	}
 }
 
-export type DeviceType = deviceTypesLib.DeviceType;
+export type DeviceTypeJson = deviceTypesLib.DeviceType;
 
 interface DeviceTypeInfo {
-	latest: DeviceType;
+	latest: DeviceTypeJson;
 	versions: string[];
 }
 
@@ -55,9 +55,9 @@ function sortBuildIds(ids: string[]): string[] {
 const getFirstValidBuild = async (
 	slug: string,
 	versions: string[],
-): Promise<DeviceType | undefined> => {
+): Promise<DeviceTypeJson | undefined> => {
 	for (const buildId of versions) {
-		let deviceType: DeviceType | undefined;
+		let deviceType: DeviceTypeJson | undefined;
 		try {
 			deviceType = await getDeviceTypeJson(slug, buildId);
 		} catch (err) {
@@ -229,7 +229,7 @@ const getAllDeviceTypes = async () => {
 
 export const getAccessibleDeviceTypes = async (
 	resinApi: sbvrUtils.PinejsClient,
-): Promise<DeviceType[]> => {
+): Promise<DeviceTypeJson[]> => {
 	const [deviceTypes, accessibleDeviceTypes] = await Promise.all([
 		getAllDeviceTypes(),
 		getAccessibleSlugs(resinApi),
@@ -244,7 +244,7 @@ export const getAccessibleDeviceTypes = async (
 export const findBySlug = async (
 	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
-): Promise<DeviceType> => {
+): Promise<DeviceTypeJson> => {
 	const deviceTypes = await getAccessibleDeviceTypes(resinApi);
 	const deviceType = await deviceTypesLib.findBySlug(deviceTypes, slug);
 	if (deviceType == null) {
@@ -292,7 +292,7 @@ export interface ImageVersions {
 	latest: string;
 }
 
-export const getDeviceTypeIdBySlug = async (
+export const getDeviceTypeBySlug = async (
 	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
 ): Promise<{ id: number; slug: string } | undefined> => {
