@@ -1,4 +1,27 @@
 - commits:
+    - subject: 'features/device-types: Remove the special case for the "edge" DT'
+      hash: f6802175989c760493b6aa2355de8d507ecfc655
+      body: |
+        It seems that atm it's not needed & on top of
+        that, the "edge" has been discontinued for
+        some time now. Other than that and
+        returning just the slug, the
+        `normalizeDeviceType` was literally the
+        same as `findBySlug`.
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: >-
+          https://github.com/balena-io-modules/resin-device-types/blob/3888375f38000b38dc7842b2540b3db3dc753d43/index.coffee#L10
+        see: >-
+          https://github.com/balena-io-modules/resin-device-types/blob/3888375f38000b38dc7842b2540b3db3dc753d43/index.coffee#L10
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.185.1
+  date: 2022-01-10T17:34:29.370Z
+- commits:
     - subject: Add device type aliases as part of the model & sync from contracts
       hash: 8c738e592c6c56b514a03b9711478642d76d8ab8
       body: ''
