@@ -1,10 +1,9 @@
 import * as arraySort from 'array-sort';
 import * as _ from 'lodash';
 
-import * as deviceTypesLib from '@resin.io/device-types';
+import type { DeviceType as DeviceTypeJson } from '@resin.io/device-types';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
-import type { ODataOptions } from 'pinejs-client-core';
 const { InternalRequestError } = errors;
 
 import { captureException } from '../../infra/error-handling';
@@ -33,7 +32,7 @@ export class UnknownVersionError extends NotFoundError {
 	}
 }
 
-export type DeviceTypeJson = deviceTypesLib.DeviceType;
+export type { DeviceTypeJson };
 
 interface DeviceTypeInfo {
 	latest: DeviceTypeJson;
@@ -167,46 +166,49 @@ async function getDeviceTypes(): Promise<Dictionary<DeviceTypeInfo>> {
 }
 
 /**
- * Performs access controls for slugs against the database
+ * Resolves a device type by slug or alias & performs access control for DTs against the database.
  * @param resinApi The pinejs client
- * @param slugs The slugs to check, these cannot be aliases.
+ * @param slug The slug or alias to check.
  */
-const getAccessibleSlugs = async (
+export const getDeviceTypeBySlug = async (
 	resinApi: sbvrUtils.PinejsClient,
-	slugs?: string[],
-): Promise<string[]> => {
-	const options: ODataOptions = {
-		$select: ['slug'],
-	};
-	if (slugs) {
-		options['$filter'] = {
-			slug: { $in: slugs },
-		};
-	}
-	const accessibleDeviceTypes = (await resinApi.get({
+	slug: string,
+): Promise<{ id: number; slug: string }> => {
+	const [dt] = (await resinApi.get({
 		resource: 'device_type',
-		options,
-	})) as Array<{ slug: string }>;
-	return _.map(accessibleDeviceTypes, 'slug');
+		options: {
+			$top: 1,
+			$select: ['id', 'slug'],
+			$filter: {
+				device_type_alias: {
+					$any: {
+						$alias: 'dta',
+						$expr: {
+							dta: {
+								is_referenced_by__alias: slug,
+							},
+						},
+					},
+				},
+			},
+		},
+	})) as [{ id: number; slug: string }] | [];
+
+	if (dt == null) {
+		throw new UnknownDeviceTypeError(slug);
+	}
+
+	return dt;
 };
 
 const findDeviceTypeInfoBySlug = async (
 	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
 ): Promise<DeviceTypeInfo> => {
+	const deviceTypeResource = await getDeviceTypeBySlug(resinApi, slug);
 	const deviceTypeInfos = await getDeviceTypes();
-	// the slug can be an alias,
-	// since the Dictionary also has props for the aliases
-	const deviceTypeInfo = deviceTypeInfos[slug];
-	if (!deviceTypeInfo || !deviceTypeInfo.latest) {
-		throw new UnknownDeviceTypeError(slug);
-	}
-
-	const [accessibleSlug] = await getAccessibleSlugs(resinApi, [
-		deviceTypeInfo.latest.slug,
-	]);
-	if (accessibleSlug !== deviceTypeInfo.latest.slug) {
-		// We cannot access the device type
+	const deviceTypeInfo = deviceTypeInfos[deviceTypeResource.slug];
+	if (deviceTypeInfo?.latest == null) {
 		throw new UnknownDeviceTypeError(slug);
 	}
 	return deviceTypeInfo;
@@ -219,6 +221,7 @@ export const validateSlug = (slug?: string) => {
 	return slug;
 };
 
+/** @deprecated */
 const getAllDeviceTypes = async () => {
 	const dtInfo = await getDeviceTypes();
 	return _.uniqBy(
@@ -227,31 +230,32 @@ const getAllDeviceTypes = async () => {
 	);
 };
 
+/** @deprecated */
 export const getAccessibleDeviceTypes = async (
 	resinApi: sbvrUtils.PinejsClient,
 ): Promise<DeviceTypeJson[]> => {
 	const [deviceTypes, accessibleDeviceTypes] = await Promise.all([
 		getAllDeviceTypes(),
-		getAccessibleSlugs(resinApi),
+		resinApi.get({
+			resource: 'device_type',
+			options: {
+				$select: 'slug',
+			},
+		}) as Promise<Array<{ slug: string }>>,
 	]);
 
-	const accessSet = new Set(accessibleDeviceTypes);
+	const accessSet = new Set(accessibleDeviceTypes.map((dt) => dt.slug));
 	return deviceTypes.filter((deviceType) => {
 		return accessSet.has(deviceType.slug);
 	});
 };
 
+/** @deprecated Use the getDeviceTypeBySlug unless you need the device-type.json contents. */
 export const findBySlug = async (
 	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
-): Promise<DeviceTypeJson> => {
-	const deviceTypes = await getAccessibleDeviceTypes(resinApi);
-	const deviceType = await deviceTypesLib.findBySlug(deviceTypes, slug);
-	if (deviceType == null) {
-		throw new UnknownDeviceTypeError(slug);
-	}
-	return deviceType;
-};
+): Promise<DeviceTypeJson> =>
+	(await findDeviceTypeInfoBySlug(resinApi, slug)).latest;
 
 export const getImageSize = async (
 	resinApi: sbvrUtils.PinejsClient,
@@ -291,25 +295,6 @@ export interface ImageVersions {
 	versions: string[];
 	latest: string;
 }
-
-export const getDeviceTypeBySlug = async (
-	resinApi: sbvrUtils.PinejsClient,
-	slug: string,
-): Promise<{ id: number; slug: string } | undefined> => {
-	const deviceType = (await findBySlug(resinApi, slug)).slug;
-
-	const dt = (await resinApi.get({
-		resource: 'device_type',
-		id: {
-			slug: deviceType,
-		},
-		options: {
-			$select: ['id', 'slug'],
-		},
-	})) as { id: number; slug: string } | undefined;
-
-	return dt;
-};
 
 export const getImageVersions = async (
 	resinApi: sbvrUtils.PinejsClient,

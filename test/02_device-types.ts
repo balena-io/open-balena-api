@@ -5,90 +5,99 @@ import { version } from './test-lib/versions';
 
 import { supertest } from './test-lib/supertest';
 // All of these test device types are not part of the contracts, so we have to include them manually until we stop syncing with S3.
-export const addFakeDeviceTypes = async () => {
-	await Promise.all(
-		[
-			{
-				id: 991,
-				slug: 'dt-with-ignored-release',
-				name: 'dt-with-ignored-release',
-				is_of__cpu_architecture: 1,
-			},
-			{
-				id: 992,
-				slug: 'dt-with-403-ignore-file-release',
-				name: 'dt-with-403-ignore-file-release',
-				is_of__cpu_architecture: 1,
-			},
-			{
-				id: 993,
-				slug: 'dt-with-empty-device-type-json-release',
-				name: 'dt-with-empty-device-type-json-release',
-				is_of__cpu_architecture: 1,
-			},
-			{
-				id: 994,
-				slug: 'dt-with-404-device-type-json-release',
-				name: 'dt-with-404-device-type-json-release',
-				is_of__cpu_architecture: 1,
-			},
-			{
-				id: 995,
-				slug: 'dt-with-500-ignore-file-release',
-				name: 'dt-with-500-ignore-file-release',
-				is_of__cpu_architecture: 1,
-			},
-			{
-				id: 996,
-				slug: 'dt-with-500-device-type-json-release',
-				name: 'dt-with-500-device-type-json-release',
-				is_of__cpu_architecture: 1,
-			},
-			{
-				id: 997,
-				slug: 'dt-with-no-valid-releases',
-				name: 'dt-with-no-valid-releases',
-				is_of__cpu_architecture: 1,
-			},
-			{
-				id: 998,
-				slug: 'dt-with-failing-listing',
-				name: 'dt-with-failing-listing',
-				is_of__cpu_architecture: 1,
-			},
-		].map(async (dt) => {
-			await sbvrUtils.api.resin.post({
-				resource: 'device_type',
-				passthrough: {
-					req: permissions.root,
-				},
-				options: { returnResource: false },
-				body: dt,
-			});
-		}),
-	);
-};
+const addFakeDeviceTypes = () => {
+	let fakeDeviceTypeIds: number[];
 
-describe('device type endpoints', () => {
-	describe('device type resource', () => {
-		it('should succeed to return a result', async () => {
-			const res = await supertest().get(`/${version}/device_type`).expect(200);
-			expect(res.body.d).to.be.an('array');
-			res.body.d.forEach((deviceType: any) => {
-				expect(deviceType).to.be.an('object');
-				expect(deviceType).to.have.property('slug').that.is.a('string');
-				expect(deviceType).to.have.property('name').that.is.a('string');
-			});
-
-			expect(res.body.d).to.have.property('length', 13);
+	before(async () => {
+		const rootApi = sbvrUtils.api.resin.clone({
+			passthrough: {
+				req: permissions.root,
+			},
 		});
+
+		fakeDeviceTypeIds = await Promise.all(
+			[
+				'dt-with-ignored-release',
+				'dt-with-403-ignore-file-release',
+				'dt-with-empty-device-type-json-release',
+				'dt-with-404-device-type-json-release',
+				'dt-with-500-ignore-file-release',
+				'dt-with-500-device-type-json-release',
+				'dt-with-no-valid-releases',
+			].map(async (slug, i) => {
+				const deviceType = await rootApi.post({
+					resource: 'device_type',
+					body: {
+						id: 990 + i,
+						slug,
+						name: slug,
+						is_of__cpu_architecture: 1,
+					},
+				});
+
+				await Promise.all(
+					[slug, `${slug}-alias`].map(async (alias) => {
+						await rootApi.post({
+							resource: 'device_type_alias',
+							options: { returnResource: false },
+							body: {
+								device_type: deviceType.id,
+								is_referenced_by__alias: alias,
+							},
+						});
+					}),
+				);
+
+				return deviceType.id;
+			}),
+		);
 	});
 
-	describe('/device-types/v1', () => {
-		before(async () => {
-			await addFakeDeviceTypes();
+	after(async () => {
+		const rootApi = sbvrUtils.api.resin.clone({
+			passthrough: {
+				req: permissions.root,
+			},
 		});
 
+		await rootApi.delete({
+			resource: 'device_type_alias',
+			options: {
+				$filter: {
+					device_type: { $in: fakeDeviceTypeIds },
+				},
+			},
+		});
+
+		await rootApi.delete({
+			resource: 'device_type',
+			options: {
+				$filter: {
+					id: { $in: fakeDeviceTypeIds },
+				},
+			},
+		});
+	});
+};
+
+describe('device type resource', () => {
+	it('should succeed to return a result', async () => {
+		const res = await supertest().get(`/${version}/device_type`).expect(200);
+		expect(res.body.d).to.be.an('array');
+		res.body.d.forEach((deviceType: any) => {
+			expect(deviceType).to.be.an('object');
+			expect(deviceType).to.have.property('slug').that.is.a('string');
+			expect(deviceType).to.have.property('name').that.is.a('string');
+		});
+
+		expect(res.body.d).to.have.property('length', 13);
+	});
+});
+
+describe('device type endpoints', () => {
+	addFakeDeviceTypes();
+
+	describe('/device-types/v1', () => {
 		it('should succeed to return a result', async () => {
 			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
