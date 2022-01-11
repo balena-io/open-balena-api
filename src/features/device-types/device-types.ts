@@ -1,7 +1,7 @@
 import * as arraySort from 'array-sort';
 import * as _ from 'lodash';
 
-import type { DeviceType as DeviceTypeJson } from '@resin.io/device-types';
+import type { DeviceTypeJson } from './device-type-json';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 const { InternalRequestError } = errors;
@@ -31,8 +31,6 @@ export class UnknownVersionError extends NotFoundError {
 		super(`Device ${slug} not found for ${buildId} version`);
 	}
 }
-
-export type { DeviceTypeJson };
 
 interface DeviceTypeInfo {
 	latest: DeviceTypeJson;

@@ -2,7 +2,6 @@ import type { Request } from 'express';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 
-import type { Option as DeviceTypeOption } from '@resin.io/device-types';
 import { errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 import * as deviceConfig from 'balena-device-config';
@@ -15,7 +14,7 @@ import {
 	createProvisioningApiKey,
 	createUserApiKey,
 } from '../api-keys/lib';
-import type { DeviceTypeJson } from '../device-types/device-types';
+import type { DeviceTypeJson } from '../device-types/device-type-json';
 
 const { BadRequestError } = errors;
 
@@ -122,7 +121,7 @@ export const generateConfig = async (
 	);
 
 	_(deviceType.options!)
-		.flatMap((opt): DeviceTypeOption[] | DeviceTypeOption => {
+		.flatMap((opt) => {
 			if ('isGroup' in opt && opt.isGroup) {
 				if (['network', 'advanced'].includes(opt.name)) {
 					// already handled above

@@ -31,7 +31,6 @@
     "@balena/es-version": "^1.0.1",
     "@balena/node-metrics-gatherer": "5.7.5",
     "@balena/pinejs": "^14.37.0",
-    "@resin.io/device-types": "^10.5.0",
     "@types/basic-auth": "^1.1.3",
     "@types/bluebird": "^3.5.36",
     "@types/cache-manager": "^3.4.2",
