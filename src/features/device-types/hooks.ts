@@ -1,6 +1,6 @@
 import { sbvrUtils, hooks, errors } from '@balena/pinejs';
 import { captureException } from '../../infra/error-handling';
-import { getDeviceTypeBySlug, UnknownDeviceTypeError } from './device-types';
+import { getDeviceTypeBySlug } from './device-types';
 
 const { BadRequestError, ConflictError } = errors;
 
@@ -12,9 +12,6 @@ export const resolveDeviceType = async (
 	if (request.values.device_type != null && request.values[fkValue] == null) {
 		// translate device_type to is_for__device_type
 		const dtBySlug = await getDeviceTypeBySlug(api, request.values.device_type);
-		if (!dtBySlug) {
-			throw new UnknownDeviceTypeError(request.values.device_type);
-		}
 		request.values[fkValue] = dtBySlug.id;
 	}
 

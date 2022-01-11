@@ -1,7 +1,7 @@
 import * as memoizee from 'memoizee';
 import { multiCacheMemoizee } from '../../infra/cache';
 
-import type { DeviceType as DeviceTypeJson } from '@resin.io/device-types';
+import type { DeviceTypeJson } from './device-type-json';
 
 import {
 	BUILD_COMPRESSED_SIZE_CACHE_TIMEOUT,
