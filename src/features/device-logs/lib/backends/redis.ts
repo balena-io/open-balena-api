@@ -155,7 +155,7 @@ export class RedisBackend implements DeviceLogsBackend {
 	}
 
 	private getKey(ctx: LogContext, suffix = 'logs') {
-		return `device:${ctx.id}:${suffix}`;
+		return `{device:${ctx.id}}:${suffix}`;
 	}
 
 	private handleMessage(key: string, payload: string) {
