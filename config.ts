@@ -8,7 +8,8 @@ export = {
 			username: 'guest',
 			password: ' ',
 			permissions: [
-				'resin.device_type.read',
+				// The "1 eq 1" is necessary so that we can do "device_type/canAccess()"
+				'resin.device_type.read?1 eq 1',
 				'resin.device_type_alias.read',
 				'resin.cpu_architecture.read',
 				'resin.device_family.read',
