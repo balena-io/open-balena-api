@@ -1,7 +1,7 @@
 [Unit]
 Description=open-balena-api
-Requires=confd.service balena-root-ca.service
-After=confd.service balena-root-ca.service
+Requires=confd.service
+After=confd.service
 
 [Service]
 StandardOutput=journal+console
