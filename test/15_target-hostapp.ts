@@ -76,8 +76,8 @@ describe('target hostapps', () => {
 			)
 			.expect(200);
 		expect(body.d[0]).to.not.be.undefined;
-		expect(body.d[0]['should_be_operated_by__release']).to.be.not.null;
-		expect(body.d[0]['should_be_operated_by__release'].__id).to.equal(
+		expect(body.d[0]).to.have.nested.property(
+			'should_be_operated_by__release.__id',
 			prodNucHostappReleaseId,
 		);
 	});
@@ -97,87 +97,130 @@ describe('target hostapps', () => {
 			)
 			.expect(200);
 		expect(body.d[0]).to.not.be.undefined;
-		expect(body.d[0]['should_be_operated_by__release']).to.be.not.null;
-		expect(body.d[0]['should_be_operated_by__release'].__id).to.equal(
+		expect(body.d[0]).to.have.nested.property(
+			'should_be_operated_by__release.__id',
 			unifiedHostAppReleaseId,
 		);
 	});
 
-	it('should provision WITHOUT a linked hostapp (using POST)', async () => {
-		const devicePostBody = {
-			belongs_to__application: applicationId,
-			device_type: 'raspberrypi3',
-			os_version: 'balenaOS 2.99.0+rev1',
-			os_variant: 'prod',
-		};
-
-		const res = await supertest(admin)
-			.post(`/${version}/device`)
-			.send(devicePostBody)
-			.expect(201);
-		const { body } = await supertest(admin)
-			.get(
-				`/${version}/device(${res.body.id})?$select=should_be_operated_by__release`,
-			)
-			.expect(200);
-		expect(body.d[0]).to.not.be.undefined;
-		expect(body.d[0]['should_be_operated_by__release']).to.be.null;
-		await fixtures.clean({
-			devices: [res.body],
+	(
+		[
+			[
+				'POST device resource',
+				async (devicePostBody: AnyObject) =>
+					await supertest(admin)
+						.post(`/${version}/device`)
+						.send(devicePostBody)
+						.expect(201),
+			],
+			[
+				'POST /device/register',
+				async ({
+					belongs_to__application,
+					...restDevicePostBody
+				}: AnyObject) => {
+					const { body: provisioningKey } = await supertest(admin)
+						.post(`/api-key/application/${applicationId}/provisioning`)
+						.expect(200);
+					const uuid =
+						'f716a3e020bd444b885cb394453917520c3cf82e69654f84be0d33e31a0e15';
+					return await await supertest()
+						.post(`/device/register?apikey=${provisioningKey}`)
+						.send({
+							user: admin.id,
+							application: belongs_to__application,
+							uuid,
+							...restDevicePostBody,
+						})
+						.expect(201);
+				},
+			],
+		] as const
+	).forEach(([titlePart, provisionFn]) => {
+		it(`should provision WITHOUT a linked hostapp when not providing a version (using ${titlePart})`, async () => {
+			const res = await provisionFn({
+				belongs_to__application: applicationId,
+				device_type: 'raspberrypi3',
+			});
+			const { body } = await supertest(admin)
+				.get(
+					`/${version}/device(${res.body.id})?$select=should_be_operated_by__release`,
+				)
+				.expect(200);
+			expect(body.d[0]).to.not.be.undefined;
+			expect(body.d[0]).to.have.property(
+				'should_be_operated_by__release',
+				null,
+			);
+			await fixtures.clean({
+				devices: [res.body],
+			});
 		});
-	});
 
-	it('should provision with a linked prod hostapp (using POST)', async () => {
-		const devicePostBody = {
-			belongs_to__application: applicationId,
-			device_type: 'intel-nuc',
-			os_version: 'balenaOS 2.50.0+rev1',
-			os_variant: 'prod',
-		};
-
-		const res = await supertest(admin)
-			.post(`/${version}/device`)
-			.send(devicePostBody)
-			.expect(201);
-		const { body } = await supertest(admin)
-			.get(
-				`/${version}/device(${res.body.id})?$select=should_be_operated_by__release`,
-			)
-			.expect(200);
-		expect(body.d[0]).to.not.be.undefined;
-		expect(body.d[0]['should_be_operated_by__release']).to.be.not.null;
-		expect(body.d[0]['should_be_operated_by__release'].__id).to.equal(
-			prodNucHostappReleaseId,
-		);
-		await fixtures.clean({
-			devices: [res.body],
+		it(`should provision WITHOUT a linked hostapp when the version is not found (using ${titlePart})`, async () => {
+			const res = await provisionFn({
+				belongs_to__application: applicationId,
+				device_type: 'raspberrypi3',
+				os_version: 'balenaOS 2.99.0+rev1',
+				os_variant: 'prod',
+			});
+			const { body } = await supertest(admin)
+				.get(
+					`/${version}/device(${res.body.id})?$select=should_be_operated_by__release`,
+				)
+				.expect(200);
+			expect(body.d[0]).to.not.be.undefined;
+			expect(body.d[0]).to.have.property(
+				'should_be_operated_by__release',
+				null,
+			);
+			await fixtures.clean({
+				devices: [res.body],
+			});
 		});
-	});
 
-	it('should provision with a linked unified hostapp (using POST)', async () => {
-		const devicePostBody = {
-			belongs_to__application: applicationId,
-			device_type: 'intel-nuc',
-			os_version: 'balenaOS 2.88.4',
-			os_variant: 'prod',
-		};
+		it(`should provision with a linked prod hostapp (using ${titlePart})`, async () => {
+			const res = await provisionFn({
+				belongs_to__application: applicationId,
+				device_type: 'intel-nuc',
+				os_version: 'balenaOS 2.50.0+rev1',
+				os_variant: 'prod',
+			});
+			const { body } = await supertest(admin)
+				.get(
+					`/${version}/device(${res.body.id})?$select=should_be_operated_by__release`,
+				)
+				.expect(200);
+			expect(body.d[0]).to.not.be.undefined;
+			expect(body.d[0]).to.have.nested.property(
+				'should_be_operated_by__release.__id',
+				prodNucHostappReleaseId,
+			);
+			await fixtures.clean({
+				devices: [res.body],
+			});
+		});
 
-		const res = await supertest(admin)
-			.post(`/${version}/device`)
-			.send(devicePostBody)
-			.expect(201);
-		const { body } = await supertest(admin)
-			.get(
-				`/${version}/device(${res.body.id})?$select=should_be_operated_by__release`,
-			)
-			.expect(200);
-		expect(body.d[0]).to.not.be.undefined;
-		expect(body.d[0]['should_be_operated_by__release']).to.be.not.null;
-		expect(body.d[0]['should_be_operated_by__release'].__id).to.equal(
-			unifiedHostAppReleaseId,
-		);
-		await fixtures.clean({
-			devices: [res.body],
+		it(`should provision with a linked unified hostapp (using ${titlePart})`, async () => {
+			const res = await provisionFn({
+				belongs_to__application: applicationId,
+				device_type: 'intel-nuc',
+				os_version: 'balenaOS 2.88.4',
+				os_variant: 'prod',
+			});
+			const { body } = await supertest(admin)
+				.get(
+					`/${version}/device(${res.body.id})?$select=should_be_operated_by__release`,
+				)
+				.expect(200);
+			expect(body.d[0]).to.not.be.undefined;
+			expect(body.d[0]).to.have.nested.property(
+				'should_be_operated_by__release.__id',
+				unifiedHostAppReleaseId,
+			);
+			await fixtures.clean({
+				devices: [res.body],
+			});
 		});
 	});
 
@@ -196,7 +239,8 @@ describe('target hostapps', () => {
 			)
 			.expect(200);
 		expect(body.d[0]).to.not.be.undefined;
-		expect(body.d[0]['should_be_operated_by__release']).to.be.not.null;
+		expect(body.d[0]).to.have.property('should_be_operated_by__release').that.is
+			.not.null;
 	});
 
 	it('should fail to PATCH intel-nuc device to raspberrypi3 hostapp', async () => {
@@ -238,7 +282,7 @@ describe('target hostapps', () => {
 				`/${version}/device(${preprovisionedDevice.id})?$select=should_be_operated_by__release`,
 			)
 			.expect(200);
-		expect(body.d[0]['should_be_operated_by__release']).to.be.null;
+		expect(body.d[0]).to.have.property('should_be_operated_by__release', null);
 
 		await supertest(admin)
 			.patch(`/${version}/device(${preprovisionedDevice.id})`)
@@ -291,7 +335,7 @@ describe('target hostapps', () => {
 			)
 			.expect(200);
 		expect(body.d[0]).to.not.be.undefined;
-		expect(body.d[0]['should_be_operated_by__release']).to.be.null;
+		expect(body.d[0]).to.have.property('should_be_operated_by__release', null);
 		expect(body.d[0]['os_version']).to.be.not.null;
 		expect(body.d[0]['os_variant']).to.be.not.null;
 	});
