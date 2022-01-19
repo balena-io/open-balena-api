@@ -11,7 +11,7 @@ import {
 	formatImageLocation,
 	getReleaseForDevice,
 	serviceInstallFromImage,
-	setMinPollInterval,
+	setDefaultConfigVariables,
 } from '../utils';
 import { sbvrUtils, errors, dbModule } from '@balena/pinejs';
 import { events } from '..';
@@ -406,7 +406,7 @@ const getConfig = (device: AnyObject) => {
 	// override with device-specific values...
 	varListInsert(device.device_config_variable, config, rejectUiConfig);
 	filterDeviceConfig(config, device.os_version);
-	setMinPollInterval(config);
+	setDefaultConfigVariables(config);
 
 	return config;
 };

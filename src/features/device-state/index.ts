@@ -12,7 +12,8 @@ export { setReadTransaction } from './routes/state';
 export {
 	filterDeviceConfig,
 	formatImageLocation,
-	setMinPollInterval,
+	addDefaultConfigVariableFn,
+	setDefaultConfigVariables,
 	getReleaseForDevice,
 	serviceInstallFromImage,
 	metricsPatchFields,

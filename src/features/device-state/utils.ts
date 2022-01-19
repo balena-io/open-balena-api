@@ -5,15 +5,26 @@ import * as semver from 'balena-semver';
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from '../../lib/config';
 import { LocalBody } from './routes/state-patch';
 
-// Set RESIN_SUPERVISOR_POLL_INTERVAL to a minimum of 10 minutes
-export const setMinPollInterval = (config: AnyObject): void => {
-	const pollInterval =
-		config.RESIN_SUPERVISOR_POLL_INTERVAL == null
-			? 0
-			: parseInt(config.RESIN_SUPERVISOR_POLL_INTERVAL, 10);
-	// Multicontainer supervisor requires the poll interval to be a string
-	config.RESIN_SUPERVISOR_POLL_INTERVAL =
-		'' + Math.max(pollInterval, DEFAULT_SUPERVISOR_POLL_INTERVAL);
+const defaultConfigVariableFns: Array<(config: Dictionary<string>) => void> = [
+	function setMinPollInterval(config) {
+		const pollInterval =
+			config.RESIN_SUPERVISOR_POLL_INTERVAL == null
+				? 0
+				: parseInt(config.RESIN_SUPERVISOR_POLL_INTERVAL, 10);
+		// Multicontainer supervisor requires the poll interval to be a string
+		config.RESIN_SUPERVISOR_POLL_INTERVAL =
+			'' + Math.max(pollInterval, DEFAULT_SUPERVISOR_POLL_INTERVAL);
+	},
+];
+export const addDefaultConfigVariableFn = (
+	fn: typeof defaultConfigVariableFns[number],
+) => {
+	defaultConfigVariableFns.push(fn);
+};
+export const setDefaultConfigVariables = (config: Dictionary<string>): void => {
+	for (const fn of defaultConfigVariableFns) {
+		fn(config);
+	}
 };
 
 export const getReleaseForDevice = (
