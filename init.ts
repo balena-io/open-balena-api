@@ -6,7 +6,7 @@ import config = require('./config');
 import { apiRoot } from './src/balena';
 import { version } from './package.json';
 import { promises as fs } from 'fs';
-import { TRUST_PROXY } from './src/lib/config';
+import { TRUST_PROXY, PORT } from './src/lib/config';
 
 export const EXPOSED_API_VERSION = 'v6';
 
@@ -245,7 +245,7 @@ const init = async () => {
 			onInitHooks,
 		});
 		await createSuperuser();
-		await startServer(process.env.PORT || 1337);
+		await startServer(PORT);
 		if (doRunTests) {
 			console.log('Running tests...');
 			await doRunTests.postInit();

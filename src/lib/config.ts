@@ -112,6 +112,7 @@ export enum ADVISORY_LOCK_NAMESPACES {
 }
 
 export const API_HOST = requiredVar('API_HOST');
+export const PORT = intVar('PORT', 1337);
 export const API_HEARTBEAT_STATE_ENABLED = intVar(
 	'API_HEARTBEAT_STATE_ENABLED',
 	1, // 1 = enabled, 0 = disabled
@@ -228,7 +229,7 @@ export const TOKEN_AUTH_JWT_ALGO = requiredVar('TOKEN_AUTH_JWT_ALGO');
 export const VPN_HOST = requiredVar('VPN_HOST');
 export const VPN_PORT = requiredVar('VPN_PORT');
 export const VPN_SERVICE_API_KEY = requiredVar('VPN_SERVICE_API_KEY');
-export const VPN_GUEST_API_KEY = process.env.VPN_GUEST_API_KEY;
+export const VPN_GUEST_API_KEY = optionalVar('VPN_GUEST_API_KEY');
 
 export const DEFAULT_SUPERVISOR_POLL_INTERVAL = intVar(
 	'DEFAULT_SUPERVISOR_POLL_INTERVAL',
