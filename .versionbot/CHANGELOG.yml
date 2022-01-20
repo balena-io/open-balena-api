@@ -1,4 +1,22 @@
 - commits:
+    - subject: 'target-hostapp: Inline the hook definitions to increase readability'
+      hash: 2b125d8e868d48729ac6ce28441a6a38e4a67bb0
+      body: |
+        I guess we were re-using them in more than
+        one places, but that's no longer the case and
+        since it's the Nth time I get lost in the file b/c
+        of this, I decided to at last make this humble
+        PR.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.188.1
+  date: 2022-01-20T12:35:04.957Z
+- commits:
     - subject: Add a more generic mechanism for default state config variables
       hash: 9faee15e8747b4dfbcc15aa959f65996ff4990de
       body: ''
