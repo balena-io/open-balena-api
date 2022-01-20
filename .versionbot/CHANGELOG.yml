@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix supervisor & hostApp being set on device outside of the transaction
+      hash: e9976ed219bc29a1cfec1b54e9dd8653699aedcd
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.188.4
+  date: 2022-01-20T16:22:17.320Z
+- commits:
     - subject: Update dependencies
       hash: 6afd40a4755984138f67d79948abc8e2e2d80749
       body: |
