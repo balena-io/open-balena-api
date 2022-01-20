@@ -62,7 +62,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
  * When a device checks in with it's initial OS version, set the corresponding should_be_operated_by__release resource
  * using its current reported version.
  */
-const hostappHook: hooks.Hooks = {
+hooks.addPureHook('PATCH', 'resin', 'device', {
 	async PRERUN(args) {
 		if (
 			args.request.values.os_version != null &&
@@ -77,9 +77,9 @@ const hostappHook: hooks.Hooks = {
 			);
 		}
 	},
-};
+});
 
-const postHostappHook: hooks.Hooks = {
+hooks.addPureHook('POST', 'resin', 'device', {
 	async POSTPARSE(args) {
 		if (
 			args.request.values.os_version != null &&
@@ -116,10 +116,7 @@ const postHostappHook: hooks.Hooks = {
 			}
 		}
 	},
-};
-
-hooks.addPureHook('POST', 'resin', 'device', postHostappHook);
-hooks.addPureHook('PATCH', 'resin', 'device', hostappHook);
+});
 
 async function setOSReleaseResource(
 	api: sbvrUtils.PinejsClient,
