@@ -1,4 +1,15 @@
 - commits:
+    - subject: Use the config module instead of direct process.env access
+      hash: 176af8aaac55073950888720d3c8dfb42308ea63
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.188.2
+  date: 2022-01-20T14:56:51.572Z
+- commits:
     - subject: 'target-hostapp: Inline the hook definitions to increase readability'
       hash: 2b125d8e868d48729ac6ce28441a6a38e4a67bb0
       body: |
