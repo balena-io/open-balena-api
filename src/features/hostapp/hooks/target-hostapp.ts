@@ -154,6 +154,7 @@ async function setOSReleaseResource(
 	const rootApi = api.clone({
 		passthrough: {
 			req: permissions.root,
+			tx: api.passthrough.tx,
 		},
 	});
 
