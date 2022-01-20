@@ -12,6 +12,7 @@ import {
 
 import { isValidInteger } from '../../lib/utils';
 import { Device } from '../../balena-model';
+import { getDeviceTypeBySlug } from '../device-types/device-types';
 
 const { BadRequestError } = errors;
 const { api } = sbvrUtils;
@@ -129,6 +130,10 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 				);
 				// Remove the devices we're going to provision so we can avoid trying to patch them
 				_.pull(online_dependent_devices, toBeProvisioned);
+				const deviceType = await getDeviceTypeBySlug(
+					resinApiTx,
+					dependent_device_type,
+				);
 				await Promise.all([
 					...toBeProvisioned.map(async (localId) => {
 						// Provision new dependent devices
@@ -138,7 +143,7 @@ export const receiveOnlineDependentDevices: RequestHandler = async (
 								uuid: randomstring.generate({ length: 62, charset: 'hex' }),
 								belongs_to__user: user,
 								belongs_to__application: dependent_app,
-								device_type: dependent_device_type,
+								is_of__device_type: deviceType.id,
 								local_id: localId,
 								logs_channel: randomstring.generate({
 									length: 62,

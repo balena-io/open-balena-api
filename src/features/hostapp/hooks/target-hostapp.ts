@@ -85,8 +85,8 @@ hooks.addPureHook('POST', 'resin', 'device', {
 			args.request.values.os_version != null &&
 			args.request.values.os_variant != null
 		) {
-			let deviceType = args.request.values.is_of__device_type;
-			if (!deviceType) {
+			let deviceTypeId = args.request.values.is_of__device_type;
+			if (!deviceTypeId) {
 				const [dt] = await args.api.get({
 					resource: 'device_type',
 					options: {
@@ -99,14 +99,14 @@ hooks.addPureHook('POST', 'resin', 'device', {
 				if (!dt) {
 					return;
 				}
-				deviceType = dt.id;
+				deviceTypeId = dt.id;
 			}
 
 			const hostappRelease = await getOSReleaseResource(
 				args.api,
 				args.request.values.os_version,
 				args.request.values.os_variant,
-				deviceType,
+				deviceTypeId,
 			);
 			// since this is a POST, we _know_ the device is being created and has no current/target state, so we can
 			// just append the target after determining which it is (like a preloaded app)

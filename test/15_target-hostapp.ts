@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import * as fixtures from './test-lib/fixtures';
 import * as fakeDevice from './test-lib/fake-device';
 import { expect } from './test-lib/chai';
+import { pineTest } from './test-lib/pinetest';
 
 import { supertest, UserObjectParam } from './test-lib/supertest';
 import { version } from './test-lib/versions';
@@ -106,12 +107,35 @@ describe('target hostapps', () => {
 	(
 		[
 			[
-				'POST device resource',
+				'POST device resource using device_type slug',
 				async (devicePostBody: AnyObject) =>
 					await supertest(admin)
 						.post(`/${version}/device`)
 						.send(devicePostBody)
 						.expect(201),
+			],
+			[
+				'POST device resource using is_of__device_type',
+				async ({ device_type, ...devicePostBody }: AnyObject) => {
+					return await supertest(admin)
+						.post(`/${version}/device`)
+						.send({
+							...devicePostBody,
+							is_of__device_type: (
+								await pineTest
+									.get({
+										resource: 'device_type',
+										passthrough: { user: admin },
+										id: { slug: device_type },
+										options: {
+											$select: 'id',
+										},
+									})
+									.expect(200)
+							).body.id,
+						})
+						.expect(201);
+				},
 			],
 			[
 				'POST /device/register',
