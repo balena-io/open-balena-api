@@ -3,6 +3,10 @@ import * as Bluebird from 'bluebird';
 import { assert } from 'chai';
 import * as _ from 'lodash';
 import * as mockery from 'mockery';
+import {
+	IMAGE_STORAGE_ACCESS_KEY,
+	IMAGE_STORAGE_SECRET_KEY,
+} from '../../src/lib/config';
 
 import $getObjectMocks = require('../fixtures/s3/getObject.json');
 import listObjectsV2Mocks = require('../fixtures/s3/listObjectsV2.json');
@@ -61,11 +65,11 @@ interface UnauthenticatedRequestParams {
 class S3Mock {
 	constructor(params: AWS.S3.Types.ClientConfiguration) {
 		assert(
-			params.accessKeyId === process.env.IMAGE_STORAGE_ACCESS_KEY,
+			params.accessKeyId === IMAGE_STORAGE_ACCESS_KEY,
 			'S3 access key not matching',
 		);
 		assert(
-			params.secretAccessKey === process.env.IMAGE_STORAGE_SECRET_KEY,
+			params.secretAccessKey === IMAGE_STORAGE_SECRET_KEY,
 			'S3 secret key not matching',
 		);
 	}
