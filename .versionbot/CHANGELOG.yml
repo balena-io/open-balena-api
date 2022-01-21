@@ -1,4 +1,17 @@
 - commits:
+    - subject: Fix hostApp release linking on /device/register endpoint
+      hash: 89c98d9a54ad011f039975fd324d22d7c2fc6c01
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Bart Versluijs
+      nested: []
+  version: 0.188.6
+  date: 2022-01-21T13:38:14.125Z
+- commits:
     - subject: Remove 'balena-root-ca.service' dependency
       hash: e601d77472ec5a0a2234977080cab62414d5b42b
       body: ''
