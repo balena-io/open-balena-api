@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove 'balena-root-ca.service' dependency
+      hash: e601d77472ec5a0a2234977080cab62414d5b42b
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Bart Versluijs
+      nested: []
+  version: 0.188.5
+  date: 2022-01-21T13:23:27.931Z
+- commits:
     - subject: Fix supervisor & hostApp being set on device outside of the transaction
       hash: e9976ed219bc29a1cfec1b54e9dd8653699aedcd
       body: ''
