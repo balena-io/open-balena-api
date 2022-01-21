@@ -1,4 +1,29 @@
 - commits:
+    - subject: Test that /device/register sets the target hostApp
+      hash: da2cba755e6f384a09e0feac6cb5a1dbabc8ddb9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: 'https://github.com/balena-io/open-balena-api/pull/928'
+        see: 'https://github.com/balena-io/open-balena-api/pull/928'
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Fix hostApp release linking on /device/register endpoint
+      hash: 06dcf2502bd345047a520ce21001d8ad18589fa2
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Bart Versluijs
+      nested: []
+  version: 0.188.7
+  date: 2022-01-21T16:30:41.859Z
+- commits:
     - subject: Fix hostApp release linking on /device/register endpoint
       hash: 89c98d9a54ad011f039975fd324d22d7c2fc6c01
       body: ''
