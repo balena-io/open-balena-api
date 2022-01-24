@@ -1,4 +1,29 @@
 - commits:
+    - subject: Update PineJS
+      hash: 24cd23687ff687ff415cffe2ee92a9d7bc48d87c
+      body: |
+        Update pinejs from 14.38.1 to 14.38.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+      nested:
+        - commits:
+            - subject: >-
+                Fix permissions using `canAccess` that would fail if target
+                resource specified no filter
+              hash: bf09090fdfb374d9a182f8441e6138dce285bda1
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Akis Kesoglou
+              nested: []
+          version: pinejs-14.38.2
+          date: 2022-01-24T16:01:46.930Z
+  version: 0.188.8
+  date: 2022-01-24T16:20:30.785Z
+- commits:
     - subject: Test that /device/register sets the target hostApp
       hash: da2cba755e6f384a09e0feac6cb5a1dbabc8ddb9
       body: ''
