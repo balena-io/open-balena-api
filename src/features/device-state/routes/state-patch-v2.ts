@@ -38,7 +38,7 @@ const upsertImageInstall = async (
 		imageId: number;
 		releaseId: number;
 		status: string;
-		downloadProgress: number;
+		downloadProgress?: number;
 	},
 	deviceId: number,
 ): Promise<void> => {
@@ -217,7 +217,7 @@ type StatePatchV2Body = {
 		is_on__commit?: string | null;
 		apps?: Array<{
 			services?: {
-				[serviceId: string]: {
+				[imageId: string]: {
 					releaseId: number;
 					status: string;
 					download_progress: number;
