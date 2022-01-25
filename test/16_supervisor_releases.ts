@@ -97,6 +97,7 @@ describe('Devices running supervisor releases', () => {
 								provisioning_state: '',
 								status: 'Idle',
 								logs_channel: null,
+								// @ts-expect-error the supervisor can send these but we don't expect them so they should be ignored
 								update_failed: false,
 								update_pending: false,
 								update_downloaded: false,
@@ -201,6 +202,7 @@ describe('Devices running supervisor releases', () => {
 					provisioning_state: '',
 					status: 'Idle',
 					logs_channel: null,
+					// @ts-expect-error the supervisor can send these but we don't expect them so they should be ignored
 					update_failed: false,
 					update_pending: false,
 					update_downloaded: false,
@@ -405,7 +407,7 @@ describe('Devices running supervisor releases', () => {
 						provisioning_state: '',
 						status: 'Idle',
 						logs_channel: null,
-						update_failed: false,
+						// @ts-expect-error the supervisor can send these but we don't expect them so they should be ignored						update_failed: false,
 						update_pending: false,
 						update_downloaded: false,
 					},

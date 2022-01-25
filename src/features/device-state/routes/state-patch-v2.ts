@@ -6,7 +6,7 @@ import {
 	captureException,
 	handleHttpErrors,
 } from '../../../infra/error-handling';
-import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils';
 import type {
 	GatewayDownload,
@@ -15,100 +15,16 @@ import type {
 } from '../../../balena-model';
 import {
 	shouldUpdateMetrics,
-	shouldUpdateImageInstall,
 	metricsPatchFields,
 	v2ValidPatchFields,
-	ImageInstallUpdateBody,
+	upsertImageInstall,
+	deleteOldImageInstalls,
 } from '../state-patch-utils';
 import { PinejsClient } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
 import type { ResolveDeviceInfoCustomObject } from '../middleware';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
-
-const upsertImageInstall = async (
-	resinApi: sbvrUtils.PinejsClient,
-	imgInstall: Pick<ImageInstall, 'id'>,
-	{
-		imageId,
-		releaseId,
-		status,
-		downloadProgress,
-	}: {
-		imageId: number;
-		releaseId: number;
-		status: string;
-		downloadProgress?: number;
-	},
-	deviceId: number,
-): Promise<void> => {
-	if (imgInstall == null) {
-		// we need to create it with a POST
-		await resinApi.post({
-			resource: 'image_install',
-			body: {
-				device: deviceId,
-				installs__image: imageId,
-				install_date: new Date(),
-				status,
-				download_progress: downloadProgress,
-				is_provided_by__release: releaseId,
-			},
-			options: { returnResource: false },
-		});
-	} else {
-		// we need to update the current image install
-		const body: ImageInstallUpdateBody = {
-			status,
-			is_provided_by__release: releaseId,
-		};
-		if (downloadProgress !== undefined) {
-			body.download_progress = downloadProgress;
-		}
-		if (await shouldUpdateImageInstall(imgInstall.id, body)) {
-			await resinApi.patch({
-				resource: 'image_install',
-				id: imgInstall.id,
-				body,
-				options: {
-					$filter: {
-						$not: body,
-					},
-				},
-			});
-		}
-	}
-};
-
-const deleteOldImageInstalls = async (
-	resinApi: sbvrUtils.PinejsClient,
-	deviceId: number,
-	imageIds: number[],
-): Promise<void> => {
-	// Get access to a root api, as images shouldn't be allowed to change
-	// the service_install values
-	const rootApi = resinApi.clone({
-		passthrough: { req: permissions.root },
-	});
-
-	const body = { status: 'deleted', download_progress: null };
-	const filter: Filter = {
-		device: deviceId,
-	};
-	if (imageIds.length !== 0) {
-		filter.$not = [body, { image: { $in: imageIds } }];
-	} else {
-		filter.$not = body;
-	}
-
-	await rootApi.patch({
-		resource: 'image_install',
-		body,
-		options: {
-			$filter: filter,
-		},
-	});
-};
 
 const upsertGatewayDownload = async (
 	resinApi: sbvrUtils.PinejsClient,
@@ -178,11 +94,11 @@ const deleteOldGatewayDownloads = async (
 	});
 };
 
-export type LocalBody = NonNullable<StatePatchV2Body['local']>;
+type LocalBody = NonNullable<StatePatchV2Body['local']>;
 /**
  * These typings should be used as a guide to what should be sent, but cannot be trusted as what actually *is* sent.
  */
-type StatePatchV2Body = {
+export type StatePatchV2Body = {
 	local?: {
 		is_managed_by__device?: number;
 		should_be_running__release?: number;
@@ -197,14 +113,14 @@ type StatePatchV2Body = {
 		os_version?: string;
 		os_variant?: string;
 		supervisor_version?: string;
-		provisioning_progress?: number;
-		provisioning_state?: string;
+		provisioning_progress?: number | null;
+		provisioning_state?: string | null;
 		ip_address?: string;
 		mac_address?: string;
-		download_progress?: number;
+		download_progress?: number | null;
 		api_port?: number;
 		api_secret?: string;
-		logs_channel?: string;
+		logs_channel?: string | null;
 		memory_usage?: number;
 		memory_total?: number;
 		storage_block_device?: string;
@@ -213,14 +129,14 @@ type StatePatchV2Body = {
 		cpu_temp?: number;
 		cpu_usage?: number;
 		cpu_id?: string;
-		is_undervolted?: string;
+		is_undervolted?: boolean;
 		is_on__commit?: string | null;
 		apps?: Array<{
 			services?: {
 				[imageId: string]: {
 					releaseId: number;
 					status: string;
-					download_progress: number;
+					download_progress?: number | null;
 				};
 			};
 		}>;
