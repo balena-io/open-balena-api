@@ -1,4 +1,15 @@
 - commits:
+    - subject: Improve state-patch-v2 typings
+      hash: 1341a1423940d359cfc2b8a081d70b6e6352e769
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.188.10
+  date: 2022-01-25T18:31:08.018Z
+- commits:
     - subject: Improve state-patch typings
       hash: b823e6d43645239b25ef893f4cf414b404f2a574
       body: ''
