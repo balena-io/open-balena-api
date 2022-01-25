@@ -130,7 +130,7 @@ import {
 } from './features/vars-schema/env-vars';
 import * as baseAuth from './lib/auth';
 // TODO: This should not be exported
-import { varListInsert } from './features/device-state/routes/state';
+import { varListInsert } from './features/device-state/state-get-utils';
 import {
 	GetUrlFunction,
 	setupRequestLogging,

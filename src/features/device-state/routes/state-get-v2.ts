@@ -9,30 +9,19 @@ import {
 import {
 	filterDeviceConfig,
 	formatImageLocation,
+	readTransaction,
 	getReleaseForDevice,
 	serviceInstallFromImage,
 	setDefaultConfigVariables,
-} from '../utils';
-import { sbvrUtils, errors, dbModule } from '@balena/pinejs';
+	rejectUiConfig,
+	varListInsert,
+	ConfigurationVarsToLabels,
+} from '../state-get-utils';
+import { sbvrUtils, errors } from '@balena/pinejs';
 import { events } from '..';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
-
-export type EnvVarList = Array<{ name: string; value: string }>;
-export const varListInsert = (
-	varList: EnvVarList,
-	obj: Dictionary<string>,
-	filterFn: (name: string) => boolean = () => true,
-) => {
-	varList.forEach(({ name, value }) => {
-		if (filterFn(name)) {
-			obj[name] = value;
-		}
-	});
-};
-export const rejectUiConfig = (name: string) =>
-	!/^(BALENA|RESIN)_UI/.test(name);
 
 type CompositionService = AnyObject;
 type LocalStateApp = StateV2['local']['apps'][string];
@@ -196,13 +185,6 @@ function buildAppFromRelease(
 		volumes: composition?.volumes || {},
 	};
 }
-
-// These 2 config vars below are mapped to labels if missing for backwards-compatibility
-// See: https://github.com/resin-io/hq/issues/1340
-const ConfigurationVarsToLabels = {
-	RESIN_SUPERVISOR_UPDATE_STRATEGY: 'io.resin.update.strategy',
-	RESIN_SUPERVISOR_HANDOVER_TIMEOUT: 'io.resin.update.handover-timeout',
-};
 
 const releaseExpand = {
 	$select: ['id', 'commit', 'composition'],
@@ -369,15 +351,6 @@ export const stateV2: RequestHandler = async (req, res) => {
 		captureException(err, 'Error getting device state', { req });
 		res.status(500).end();
 	}
-};
-
-let readTransaction: dbModule.Database['readTransaction'] = (
-	...args: Parameters<dbModule.Database['readTransaction']>
-) => sbvrUtils.db.readTransaction!(...args);
-export const setReadTransaction = (
-	$readTransaction: dbModule.Database['readTransaction'],
-) => {
-	readTransaction = $readTransaction;
 };
 
 const getDevice = async (req: Request, uuid: string) => {

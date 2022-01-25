@@ -1,9 +1,7 @@
 import * as _ from 'lodash';
-
 import * as semver from 'balena-semver';
-
+import { sbvrUtils, dbModule } from '@balena/pinejs';
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from '../../lib/config';
-import { LocalBody } from './routes/state-patch';
 
 const defaultConfigVariableFns: Array<(config: Dictionary<string>) => void> = [
 	function setMinPollInterval(config) {
@@ -76,34 +74,37 @@ export const filterDeviceConfig = (
 	}
 };
 
-export const validPatchFields: Array<Exclude<keyof LocalBody, 'apps'>> = [
-	'is_managed_by__device',
-	'should_be_running__release',
-	'device_name',
-	'status',
-	'is_online',
-	'note',
-	'os_version',
-	'os_variant',
-	'supervisor_version',
-	'provisioning_progress',
-	'provisioning_state',
-	'ip_address',
-	'mac_address',
-	'download_progress',
-	'api_port',
-	'api_secret',
-	'logs_channel',
-	'cpu_id',
-	'is_undervolted',
-];
+let $readTransaction: dbModule.Database['readTransaction'] = (
+	...args: Parameters<dbModule.Database['readTransaction']>
+) => sbvrUtils.db.readTransaction!(...args);
+export const setReadTransaction = (
+	newReadTransaction: dbModule.Database['readTransaction'],
+) => {
+	$readTransaction = newReadTransaction;
+};
+export const readTransaction: dbModule.Database['readTransaction'] = (
+	...args: Parameters<dbModule.Database['readTransaction']>
+) => $readTransaction(...args);
 
-export const metricsPatchFields = [
-	'memory_usage',
-	'memory_total',
-	'storage_block_device',
-	'storage_usage',
-	'storage_total',
-	'cpu_temp',
-	'cpu_usage',
-] as const;
+export const rejectUiConfig = (name: string) =>
+	!/^(BALENA|RESIN)_UI/.test(name);
+
+export type EnvVarList = Array<{ name: string; value: string }>;
+export const varListInsert = (
+	varList: EnvVarList,
+	obj: Dictionary<string>,
+	filterFn: (name: string) => boolean = () => true,
+) => {
+	varList.forEach(({ name, value }) => {
+		if (filterFn(name)) {
+			obj[name] = value;
+		}
+	});
+};
+
+// These 2 config vars below are mapped to labels if missing for backwards-compatibility
+// See: https://github.com/resin-io/hq/issues/1340
+export const ConfigurationVarsToLabels = {
+	RESIN_SUPERVISOR_UPDATE_STRATEGY: 'io.resin.update.strategy',
+	RESIN_SUPERVISOR_HANDOVER_TIMEOUT: 'io.resin.update.handover-timeout',
+};

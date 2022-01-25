@@ -13,12 +13,13 @@ import type {
 	ImageInstall,
 	PickDeferred,
 } from '../../../balena-model';
-import { metricsPatchFields, validPatchFields } from '../utils';
-import { createMultiLevelStore } from '../../../infra/cache';
 import {
-	DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
-	METRICS_MAX_REPORT_INTERVAL_SECONDS,
-} from '../../../lib/config';
+	shouldUpdateMetrics,
+	shouldUpdateImageInstall,
+	metricsPatchFields,
+	v2ValidPatchFields,
+	ImageInstallUpdateBody,
+} from '../state-patch-utils';
 import { PinejsClient } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
 import type { ResolveDeviceInfoCustomObject } from '../middleware';
 
@@ -37,7 +38,7 @@ const upsertImageInstall = async (
 		imageId: number;
 		releaseId: number;
 		status: string;
-		downloadProgress: number;
+		downloadProgress?: number;
 	},
 	deviceId: number,
 ): Promise<void> => {
@@ -177,11 +178,11 @@ const deleteOldGatewayDownloads = async (
 	});
 };
 
-export type LocalBody = NonNullable<StatePatchBody['local']>;
+export type LocalBody = NonNullable<StatePatchV2Body['local']>;
 /**
  * These typings should be used as a guide to what should be sent, but cannot be trusted as what actually *is* sent.
  */
-type StatePatchBody = {
+type StatePatchV2Body = {
 	local?: {
 		is_managed_by__device?: number;
 		should_be_running__release?: number;
@@ -216,7 +217,7 @@ type StatePatchBody = {
 		is_on__commit?: string | null;
 		apps?: Array<{
 			services?: {
-				[serviceId: string]: {
+				[imageId: string]: {
 					releaseId: number;
 					status: string;
 					download_progress: number;
@@ -234,84 +235,6 @@ type StatePatchBody = {
 		};
 	};
 };
-
-const shouldUpdateMetrics = (() => {
-	const lastMetricsReportTime = createMultiLevelStore<number>(
-		'lastMetricsReportTime',
-		{
-			ttl: METRICS_MAX_REPORT_INTERVAL_SECONDS,
-		},
-		false,
-	);
-	const METRICS_MAX_REPORT_INTERVAL =
-		METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000;
-	return async (uuid: string) => {
-		const lastMetricsUpdate = await lastMetricsReportTime.get(uuid);
-		const now = Date.now();
-		// If the entry has expired then it means we should actually do the report
-		if (
-			lastMetricsUpdate == null ||
-			lastMetricsUpdate + METRICS_MAX_REPORT_INTERVAL < now
-		) {
-			// And we add a new entry
-			await lastMetricsReportTime.set(uuid, now);
-			return true;
-		}
-		return false;
-	};
-})();
-
-type ImageInstallUpdateBody = {
-	status: string;
-	is_provided_by__release: number;
-	download_progress?: number;
-};
-const shouldUpdateImageInstall = (() => {
-	const lastImageInstallReport = createMultiLevelStore<
-		ImageInstallUpdateBody & { updateTime: number }
-	>(
-		'lastImageInstallUpdate',
-		{
-			ttl: DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
-		},
-		false,
-	);
-	const DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL =
-		DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS * 1000;
-	return async (imageInstallId: number, body: ImageInstallUpdateBody) => {
-		const key = `${imageInstallId}`;
-		const lastReport = await lastImageInstallReport.get(key);
-		const now = Date.now();
-		if (
-			lastReport == null ||
-			// If the entry has expired then it means we should actually do the report
-			lastReport.updateTime + DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL < now ||
-			// Or if the status has changed
-			lastReport.status !== body.status ||
-			// Or if the release has changed
-			lastReport.is_provided_by__release !== body.is_provided_by__release ||
-			// Or if the download progress has hit a milestone...
-			// From not downloading to downloading
-			(lastReport.download_progress == null &&
-				body.download_progress != null) ||
-			// From downloading to not downloading
-			(lastReport.download_progress != null &&
-				body.download_progress == null) ||
-			// Hits 100%
-			body.download_progress === 100
-		) {
-			// And we add a new entry
-			await lastImageInstallReport.set(key, {
-				// Keep the last reported download progress if the current report doesn't include it
-				download_progress: lastReport?.download_progress,
-				...body,
-				updateTime: now,
-			});
-			return true;
-		}
-		return false;
-	};
-})();
 
 const releaseOfDeviceQuery = _.once(() =>
 	api.resin.prepare<{ uuid: string; commit: string }>({
@@ -343,7 +266,7 @@ const releaseOfDeviceQuery = _.once(() =>
 	}),
 );
 
-export const statePatch: RequestHandler = async (req, res) => {
+export const statePatchV2: RequestHandler = async (req, res) => {
 	const { uuid } = req.params;
 	if (!uuid) {
 		return res.status(400).end();
@@ -361,7 +284,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 
 	// Every field that is passed to the endpoint is the same, except
 	// device name
-	const { local, dependent } = values as StatePatchBody;
+	const { local, dependent } = values as StatePatchV2Body;
 
 	const updateFns: Array<(resinApiTx: PinejsClient) => Promise<void>> = [];
 
@@ -369,9 +292,9 @@ export const statePatch: RequestHandler = async (req, res) => {
 		const { apps } = local;
 
 		let deviceBody:
-			| Pick<LocalBody, typeof validPatchFields[number]> & {
+			| Pick<LocalBody, typeof v2ValidPatchFields[number]> & {
 					is_running__release?: number | null;
-			  } = _.pick(local, validPatchFields);
+			  } = _.pick(local, v2ValidPatchFields);
 		let metricsBody: Pick<LocalBody, typeof metricsPatchFields[number]> =
 			_.pick(local, metricsPatchFields);
 		if (
