@@ -5,10 +5,10 @@ import { EventEmitter } from 'events';
 import { apiKeyMiddleware } from '../../infra/auth';
 
 import { resolveOrGracefullyDenyDevices } from './middleware';
-import { stateV2 } from './routes/state';
-import { statePatch } from './routes/state-patch';
+import { stateV2 } from './routes/state-get-v2';
+import { statePatchV2 } from './routes/state-patch-v2';
 
-export { setReadTransaction } from './routes/state';
+export { setReadTransaction } from './routes/state-get-v2';
 export {
 	filterDeviceConfig,
 	formatImageLocation,
@@ -17,7 +17,7 @@ export {
 	getReleaseForDevice,
 	serviceInstallFromImage,
 	metricsPatchFields,
-	validPatchFields,
+	v2ValidPatchFields as validPatchFields,
 } from './utils';
 
 export const setup = (app: Application) => {
@@ -31,7 +31,7 @@ export const setup = (app: Application) => {
 		'/device/v2/:uuid/state',
 		resolveOrGracefullyDenyDevices,
 		apiKeyMiddleware,
-		statePatch,
+		statePatchV2,
 	);
 };
 

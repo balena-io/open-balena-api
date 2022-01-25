@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import * as semver from 'balena-semver';
 
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from '../../lib/config';
-import { LocalBody } from './routes/state-patch';
+import { LocalBody } from './routes/state-patch-v2';
 
 const defaultConfigVariableFns: Array<(config: Dictionary<string>) => void> = [
 	function setMinPollInterval(config) {
@@ -76,7 +76,7 @@ export const filterDeviceConfig = (
 	}
 };
 
-export const validPatchFields: Array<Exclude<keyof LocalBody, 'apps'>> = [
+export const v2ValidPatchFields: Array<Exclude<keyof LocalBody, 'apps'>> = [
 	'is_managed_by__device',
 	'should_be_running__release',
 	'device_name',

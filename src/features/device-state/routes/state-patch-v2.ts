@@ -13,7 +13,7 @@ import type {
 	ImageInstall,
 	PickDeferred,
 } from '../../../balena-model';
-import { metricsPatchFields, validPatchFields } from '../utils';
+import { metricsPatchFields, v2ValidPatchFields } from '../utils';
 import { createMultiLevelStore } from '../../../infra/cache';
 import {
 	DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
@@ -177,11 +177,11 @@ const deleteOldGatewayDownloads = async (
 	});
 };
 
-export type LocalBody = NonNullable<StatePatchBody['local']>;
+export type LocalBody = NonNullable<StatePatchV2Body['local']>;
 /**
  * These typings should be used as a guide to what should be sent, but cannot be trusted as what actually *is* sent.
  */
-type StatePatchBody = {
+type StatePatchV2Body = {
 	local?: {
 		is_managed_by__device?: number;
 		should_be_running__release?: number;
@@ -343,7 +343,7 @@ const releaseOfDeviceQuery = _.once(() =>
 	}),
 );
 
-export const statePatch: RequestHandler = async (req, res) => {
+export const statePatchV2: RequestHandler = async (req, res) => {
 	const { uuid } = req.params;
 	if (!uuid) {
 		return res.status(400).end();
@@ -361,7 +361,7 @@ export const statePatch: RequestHandler = async (req, res) => {
 
 	// Every field that is passed to the endpoint is the same, except
 	// device name
-	const { local, dependent } = values as StatePatchBody;
+	const { local, dependent } = values as StatePatchV2Body;
 
 	const updateFns: Array<(resinApiTx: PinejsClient) => Promise<void>> = [];
 
@@ -369,9 +369,9 @@ export const statePatch: RequestHandler = async (req, res) => {
 		const { apps } = local;
 
 		let deviceBody:
-			| Pick<LocalBody, typeof validPatchFields[number]> & {
+			| Pick<LocalBody, typeof v2ValidPatchFields[number]> & {
 					is_running__release?: number | null;
-			  } = _.pick(local, validPatchFields);
+			  } = _.pick(local, v2ValidPatchFields);
 		let metricsBody: Pick<LocalBody, typeof metricsPatchFields[number]> =
 			_.pick(local, metricsPatchFields);
 		if (
