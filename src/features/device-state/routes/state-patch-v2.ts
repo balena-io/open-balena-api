@@ -38,7 +38,7 @@ const upsertImageInstall = async (
 		imageId: number;
 		releaseId: number;
 		status: string;
-		downloadProgress?: number;
+		downloadProgress?: number | null;
 	},
 	deviceId: number,
 ): Promise<void> => {
@@ -178,11 +178,11 @@ const deleteOldGatewayDownloads = async (
 	});
 };
 
-export type LocalBody = NonNullable<StatePatchV2Body['local']>;
+type LocalBody = NonNullable<StatePatchV2Body['local']>;
 /**
  * These typings should be used as a guide to what should be sent, but cannot be trusted as what actually *is* sent.
  */
-type StatePatchV2Body = {
+export type StatePatchV2Body = {
 	local?: {
 		is_managed_by__device?: number;
 		should_be_running__release?: number;
@@ -197,14 +197,14 @@ type StatePatchV2Body = {
 		os_version?: string;
 		os_variant?: string;
 		supervisor_version?: string;
-		provisioning_progress?: number;
-		provisioning_state?: string;
+		provisioning_progress?: number | null;
+		provisioning_state?: string | null;
 		ip_address?: string;
 		mac_address?: string;
-		download_progress?: number;
+		download_progress?: number | null;
 		api_port?: number;
 		api_secret?: string;
-		logs_channel?: string;
+		logs_channel?: string | null;
 		memory_usage?: number;
 		memory_total?: number;
 		storage_block_device?: string;
@@ -213,14 +213,14 @@ type StatePatchV2Body = {
 		cpu_temp?: number;
 		cpu_usage?: number;
 		cpu_id?: string;
-		is_undervolted?: string;
+		is_undervolted?: boolean;
 		is_on__commit?: string | null;
 		apps?: Array<{
 			services?: {
 				[imageId: string]: {
 					releaseId: number;
 					status: string;
-					download_progress: number;
+					download_progress?: number | null;
 				};
 			};
 		}>;

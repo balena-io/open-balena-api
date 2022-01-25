@@ -1,11 +1,13 @@
-import { LocalBody } from './routes/state-patch-v2';
+import { StatePatchV2Body } from './routes/state-patch-v2';
 import {
 	DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
 	METRICS_MAX_REPORT_INTERVAL_SECONDS,
 } from '../../lib/config';
 import { createMultiLevelStore } from '../../infra/cache';
 
-export const v2ValidPatchFields: Array<Exclude<keyof LocalBody, 'apps'>> = [
+export const v2ValidPatchFields: Array<
+	Exclude<keyof NonNullable<StatePatchV2Body['local']>, 'apps'>
+> = [
 	'is_managed_by__device',
 	'should_be_running__release',
 	'device_name',
@@ -66,7 +68,7 @@ export const shouldUpdateMetrics = (() => {
 export type ImageInstallUpdateBody = {
 	status: string;
 	is_provided_by__release: number;
-	download_progress?: number;
+	download_progress?: number | null;
 };
 export const shouldUpdateImageInstall = (() => {
 	const lastImageInstallReport = createMultiLevelStore<
