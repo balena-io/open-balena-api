@@ -4,42 +4,14 @@ import { randomUUID } from 'crypto';
 
 import { supertest, UserObjectParam } from './supertest';
 import { version } from './versions';
+import { StateV2 } from '../../src/features/device-state/routes/state-get-v2';
+import { StatePatchV2Body } from '../../src/features/device-state/routes/state-patch-v2';
 
-interface DeviceStateApp {
-	name: string;
-	commit: string;
-	releaseId: number;
-	services: _.Dictionary<{
-		image: string;
-		volumes: string[];
-		imageId: number;
-		serviceName: string;
-		running: boolean;
-		environment: _.Dictionary<string>;
-		labels: _.Dictionary<string>;
-	}>;
-	volumes: _.Dictionary<_.Dictionary<string>>;
-	networks: _.Dictionary<AnyObject>;
-}
-
-export interface DeviceState {
-	local: {
-		name?: string;
-		supervisor_version?: string;
-		config: _.Dictionary<string>;
-		apps: _.Dictionary<DeviceStateApp>;
-	};
-	dependent: {
-		apps: _.Dictionary<DeviceStateApp>;
-		devices: AnyObject;
-	};
-}
-
-export const getState = async <T extends DeviceState>(
+export async function getState(
 	user: UserObjectParam,
 	deviceUuid: string,
 	stateVersion: 'v2' = 'v2',
-): Promise<T> => {
+): Promise<StateV2> {
 	const { body: state } = await supertest(user)
 		.get(`/device/${stateVersion}/${deviceUuid}/state`)
 		.expect(200);
@@ -49,7 +21,7 @@ export const getState = async <T extends DeviceState>(
 	expect(state.local).to.have.property('config');
 
 	return state;
-};
+}
 
 export const generateDeviceUuid = () =>
 	randomUUID().replace(/\-/g, '').toLowerCase();
@@ -57,8 +29,8 @@ export const generateDeviceUuid = () =>
 export async function provisionDevice(
 	admin: UserObjectParam,
 	appId: number,
-	osVersion: string | null = null,
-	supervisorVersion: string | null = null,
+	osVersion?: string,
+	supervisorVersion?: string,
 ) {
 	const { body: applications } = await supertest(admin)
 		.get(`/${version}/application(${appId})?$expand=is_for__device_type`)
@@ -93,10 +65,10 @@ export async function provisionDevice(
 			uuid: string;
 		}),
 		token: randomstring.generate(16),
-		getStateV2: async (): Promise<DeviceState> => {
+		getStateV2: async (): Promise<StateV2> => {
 			return await getState(device, device.uuid);
 		},
-		patchStateV2: async (devicePatchBody: AnyObject) => {
+		patchStateV2: async (devicePatchBody: StatePatchV2Body) => {
 			await supertest(device)
 				.patch(`/device/v2/${device.uuid}/state`)
 				.send(devicePatchBody)
@@ -121,7 +93,9 @@ export async function provisionDevice(
 	const { body: provisionedDevice } = await supertest(admin)
 		.get(`/${version}/device(uuid='${deviceUuid}')?$select=supervisor_version`)
 		.expect(200);
-	expect(provisionedDevice.d[0].supervisor_version).to.equal(supervisorVersion);
+	expect(provisionedDevice.d[0].supervisor_version).to.equal(
+		supervisorVersion ?? null,
+	);
 
 	return device;
 }

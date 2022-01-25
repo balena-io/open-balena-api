@@ -25,7 +25,7 @@ const { api } = sbvrUtils;
 
 type CompositionService = AnyObject;
 type LocalStateApp = StateV2['local']['apps'][string];
-type StateV2 = {
+export type StateV2 = {
 	local: {
 		name: string;
 		config: {
