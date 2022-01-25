@@ -1,4 +1,39 @@
 - commits:
+    - subject: Improve state-patch typings
+      hash: b823e6d43645239b25ef893f4cf414b404f2a574
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move generic state-patch code to state-patch-utils
+      hash: 1b165dc2b932e72999a390101b8d6c82e937db2d
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Move generic state-get code to state-get-utils
+      hash: 4ea9b108fbe24d1402d0c4c7753d7af7f496ba00
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Separate state-patch and state-get utils
+      hash: ca137c68875c4c2630c1d1ce804652365a1aded8
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.188.9
+  date: 2022-01-25T17:35:54.040Z
+- commits:
     - subject: Update PineJS
       hash: 24cd23687ff687ff415cffe2ee92a9d7bc48d87c
       body: |
