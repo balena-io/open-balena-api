@@ -1,9 +1,12 @@
+import type { Filter } from 'pinejs-client-core';
+import type { ImageInstall } from '../../balena-model';
 import { StatePatchV2Body } from './routes/state-patch-v2';
 import {
 	DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
 	METRICS_MAX_REPORT_INTERVAL_SECONDS,
 } from '../../lib/config';
 import { createMultiLevelStore } from '../../infra/cache';
+import { permissions, sbvrUtils } from '@balena/pinejs';
 
 export const v2ValidPatchFields: Array<
 	Exclude<keyof NonNullable<StatePatchV2Body['local']>, 'apps'>
@@ -70,7 +73,7 @@ export type ImageInstallUpdateBody = {
 	is_provided_by__release: number;
 	download_progress?: number | null;
 };
-export const shouldUpdateImageInstall = (() => {
+const shouldUpdateImageInstall = (() => {
 	const lastImageInstallReport = createMultiLevelStore<
 		ImageInstallUpdateBody & { updateTime: number }
 	>(
@@ -116,3 +119,87 @@ export const shouldUpdateImageInstall = (() => {
 		return false;
 	};
 })();
+
+export const upsertImageInstall = async (
+	resinApi: sbvrUtils.PinejsClient,
+	imgInstall: Pick<ImageInstall, 'id'>,
+	{
+		imageId,
+		releaseId,
+		status,
+		downloadProgress,
+	}: {
+		imageId: number;
+		releaseId: number;
+		status: string;
+		downloadProgress?: number | null;
+	},
+	deviceId: number,
+): Promise<void> => {
+	if (imgInstall == null) {
+		// we need to create it with a POST
+		await resinApi.post({
+			resource: 'image_install',
+			body: {
+				device: deviceId,
+				installs__image: imageId,
+				install_date: new Date(),
+				status,
+				download_progress: downloadProgress,
+				is_provided_by__release: releaseId,
+			},
+			options: { returnResource: false },
+		});
+	} else {
+		// we need to update the current image install
+		const body: ImageInstallUpdateBody = {
+			status,
+			is_provided_by__release: releaseId,
+		};
+		if (downloadProgress !== undefined) {
+			body.download_progress = downloadProgress;
+		}
+		if (await shouldUpdateImageInstall(imgInstall.id, body)) {
+			await resinApi.patch({
+				resource: 'image_install',
+				id: imgInstall.id,
+				body,
+				options: {
+					$filter: {
+						$not: body,
+					},
+				},
+			});
+		}
+	}
+};
+
+export const deleteOldImageInstalls = async (
+	resinApi: sbvrUtils.PinejsClient,
+	deviceId: number,
+	imageIds: number[],
+): Promise<void> => {
+	// Get access to a root api, as images shouldn't be allowed to change
+	// the service_install values
+	const rootApi = resinApi.clone({
+		passthrough: { req: permissions.root },
+	});
+
+	const body = { status: 'deleted', download_progress: null };
+	const filter: Filter = {
+		device: deviceId,
+	};
+	if (imageIds.length !== 0) {
+		filter.$not = [body, { image: { $in: imageIds } }];
+	} else {
+		filter.$not = body;
+	}
+
+	await rootApi.patch({
+		resource: 'image_install',
+		body,
+		options: {
+			$filter: filter,
+		},
+	});
+};

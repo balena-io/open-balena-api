@@ -6,7 +6,7 @@ import {
 	captureException,
 	handleHttpErrors,
 } from '../../../infra/error-handling';
-import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils';
 import type {
 	GatewayDownload,
@@ -15,100 +15,16 @@ import type {
 } from '../../../balena-model';
 import {
 	shouldUpdateMetrics,
-	shouldUpdateImageInstall,
 	metricsPatchFields,
 	v2ValidPatchFields,
-	ImageInstallUpdateBody,
+	upsertImageInstall,
+	deleteOldImageInstalls,
 } from '../state-patch-utils';
 import { PinejsClient } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
 import type { ResolveDeviceInfoCustomObject } from '../middleware';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
-
-const upsertImageInstall = async (
-	resinApi: sbvrUtils.PinejsClient,
-	imgInstall: Pick<ImageInstall, 'id'>,
-	{
-		imageId,
-		releaseId,
-		status,
-		downloadProgress,
-	}: {
-		imageId: number;
-		releaseId: number;
-		status: string;
-		downloadProgress?: number | null;
-	},
-	deviceId: number,
-): Promise<void> => {
-	if (imgInstall == null) {
-		// we need to create it with a POST
-		await resinApi.post({
-			resource: 'image_install',
-			body: {
-				device: deviceId,
-				installs__image: imageId,
-				install_date: new Date(),
-				status,
-				download_progress: downloadProgress,
-				is_provided_by__release: releaseId,
-			},
-			options: { returnResource: false },
-		});
-	} else {
-		// we need to update the current image install
-		const body: ImageInstallUpdateBody = {
-			status,
-			is_provided_by__release: releaseId,
-		};
-		if (downloadProgress !== undefined) {
-			body.download_progress = downloadProgress;
-		}
-		if (await shouldUpdateImageInstall(imgInstall.id, body)) {
-			await resinApi.patch({
-				resource: 'image_install',
-				id: imgInstall.id,
-				body,
-				options: {
-					$filter: {
-						$not: body,
-					},
-				},
-			});
-		}
-	}
-};
-
-const deleteOldImageInstalls = async (
-	resinApi: sbvrUtils.PinejsClient,
-	deviceId: number,
-	imageIds: number[],
-): Promise<void> => {
-	// Get access to a root api, as images shouldn't be allowed to change
-	// the service_install values
-	const rootApi = resinApi.clone({
-		passthrough: { req: permissions.root },
-	});
-
-	const body = { status: 'deleted', download_progress: null };
-	const filter: Filter = {
-		device: deviceId,
-	};
-	if (imageIds.length !== 0) {
-		filter.$not = [body, { image: { $in: imageIds } }];
-	} else {
-		filter.$not = body;
-	}
-
-	await rootApi.patch({
-		resource: 'image_install',
-		body,
-		options: {
-			$filter: filter,
-		},
-	});
-};
 
 const upsertGatewayDownload = async (
 	resinApi: sbvrUtils.PinejsClient,
