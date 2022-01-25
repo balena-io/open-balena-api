@@ -12,7 +12,7 @@ import {
 	getReleaseForDevice,
 	serviceInstallFromImage,
 	setDefaultConfigVariables,
-} from '../utils';
+} from '../state-get-utils';
 import { sbvrUtils, errors, dbModule } from '@balena/pinejs';
 import { events } from '..';
 

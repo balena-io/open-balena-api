@@ -13,7 +13,7 @@ import type {
 	ImageInstall,
 	PickDeferred,
 } from '../../../balena-model';
-import { metricsPatchFields, v2ValidPatchFields } from '../utils';
+import { metricsPatchFields, v2ValidPatchFields } from '../state-patch-utils';
 import { createMultiLevelStore } from '../../../infra/cache';
 import {
 	DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,

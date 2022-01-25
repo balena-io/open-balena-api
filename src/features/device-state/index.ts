@@ -16,9 +16,11 @@ export {
 	setDefaultConfigVariables,
 	getReleaseForDevice,
 	serviceInstallFromImage,
+} from './state-get-utils';
+export {
 	metricsPatchFields,
 	v2ValidPatchFields as validPatchFields,
-} from './utils';
+} from './state-patch-utils';
 
 export const setup = (app: Application) => {
 	app.get(
