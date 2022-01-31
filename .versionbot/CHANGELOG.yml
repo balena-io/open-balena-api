@@ -1,4 +1,16 @@
 - commits:
+    - subject: Re-throw the original error on unrecognized ratelimiting consume errors
+      hash: 5b612b6f86d4c89d28d04f4d9478b1829408c1a6
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.189.0
+  title: Re-throw the original error on unrecognized ratelimiting consume errors
+  date: 2022-01-31T18:11:28.100Z
+- commits:
     - subject: Add `penalty` method to created rate limiters
       hash: 16a9cc4ebbecc7a51e6971da45f261d89b0ed780
       body: ""
