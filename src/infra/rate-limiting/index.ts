@@ -78,6 +78,9 @@ export const createRateLimiter = (
 				}
 			}
 		},
+		penalty: async (...args: Parameters<RateLimiterRedis['penalty']>) => {
+			return await rateLimiter.penalty(...args);
+		},
 		delete: async (...args: Parameters<RateLimiterRedis['delete']>) => {
 			return await rateLimiter.delete(...args);
 		},
