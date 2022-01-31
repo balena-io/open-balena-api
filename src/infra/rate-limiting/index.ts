@@ -13,7 +13,7 @@ import { RATE_LIMIT_FACTOR, RATE_LIMIT_MEMORY_BACKEND } from '../../lib/config';
 import { errors } from '@balena/pinejs';
 import { redis } from '../redis';
 
-const { InternalRequestError, TooManyRequestsError } = errors;
+const { TooManyRequestsError } = errors;
 
 const usedKeyScopes: Dictionary<true> = {};
 
@@ -73,9 +73,8 @@ export const createRateLimiter = (
 						undefined,
 						headers,
 					);
-				} else {
-					throw new InternalRequestError();
 				}
+				throw e;
 			}
 		},
 		penalty: async (...args: Parameters<RateLimiterRedis['penalty']>) => {
