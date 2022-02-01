@@ -104,15 +104,34 @@ const resolveReadAccess = (() => {
 			req: permissions.PermissionReq,
 			tx: Tx,
 		): Promise<boolean> => {
-			const image = await api.resin.get({
-				resource: 'image',
-				id: imageId,
+			// This is a performance optimization impactful when using device API key permissions,
+			// in which case emitting the OR checks for the dependent & public device access
+			// in a nested subquery didn't perform as well.
+			// TODO: Should be converted back to a simple GET to the image resource once
+			// the performance of that query improves.
+			const [applicationWithImage] = await api.resin.get({
+				resource: 'application',
 				passthrough: { req, tx },
 				options: {
+					$top: 1,
 					$select: 'id',
+					$filter: {
+						owns__release: {
+							$any: {
+								$alias: 'r',
+								$expr: {
+									r: {
+										release_image: {
+											image: imageId,
+										},
+									},
+								},
+							},
+						},
+					},
 				},
 			});
-			return image != null;
+			return applicationWithImage != null;
 		},
 		{
 			cacheKey: 'resolveReadAccess',
