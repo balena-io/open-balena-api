@@ -1,4 +1,28 @@
 - commits:
+    - subject: "registry: Optimize the image read access query"
+      hash: 5ffa8c26a0a402da290507e951172a36dfead95e
+      body: |
+        This assumes that all clients that can access
+        an image, also have access to the application
+        it belongs to. The speed gains for device
+        authorizations are b/c of how canAccess()
+        permissions are applied & how PG is able to
+        run the complex application read permission
+        on the top level of the query rather than when
+        nested 4 into level of `EXISTS (SELECT 1)`.
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://www.flowdock.com/app/rulemotion/resin-tech/threads/r3LYaoRuOrnS3yzurTsrfEHerL1
+        see: https://www.flowdock.com/app/rulemotion/resin-tech/threads/r3LYaoRuOrnS3yzurTsrfEHerL1
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.189.1
+  title: "registry: Optimize the image read access query"
+  date: 2022-02-01T17:51:35.549Z
+- commits:
     - subject: Re-throw the original error on unrecognized ratelimiting consume errors
       hash: 5b612b6f86d4c89d28d04f4d9478b1829408c1a6
       body: ""
