@@ -32,7 +32,7 @@ while [[ $# -gt 0 ]]; do
 			extra_env="${extra_env} --env DEBUG=1"
 		;;
 		--profile)
-			extra_args="${extra_args} --inspect-brk=0.0.0.0"
+			extra_args="${extra_args} --inspect=0.0.0.0:9229"
 		;;
 		--generate-config)
 			echo "Generating config as $1"
@@ -107,4 +107,5 @@ else
 	echo "Running versions:$test_versions"
 fi
 
-docker exec ${extra_env} --env TEST_VERSIONS="$test_versions" --env TEST_FILES="$test_files" -it $api_id ./node_modules/.bin/mocha --bail ${extra_args}
+docker exec $api_id npm rebuild
+docker exec ${extra_env} --env TEST_VERSIONS="$test_versions" --env TEST_FILES="$test_files" -it $api_id ./node_modules/.bin/mocha --inspect=0.0.0.0:9229 --bail ${extra_args}
