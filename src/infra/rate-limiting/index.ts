@@ -99,9 +99,13 @@ export type RateLimitKeyFn = (
 ) => Resolvable<string>;
 export type RateLimitKey = string | RateLimitKeyFn;
 
+export type RateLimitMiddleware = (
+	...args: Parameters<RequestHandler>
+) => Promise<string | undefined>;
+
 export type PartialRateLimitMiddleware = (
 	field?: RateLimitKey,
-) => RequestHandler;
+) => RateLimitMiddleware;
 
 export const createRateLimitMiddleware = (
 	rateLimiter: ReturnType<typeof createRateLimiter>,
@@ -109,11 +113,13 @@ export const createRateLimitMiddleware = (
 ): PartialRateLimitMiddleware =>
 	_.partial($createRateLimitMiddleware, rateLimiter, keyOpts);
 
-// If 'field' is set, the middleware will apply the rate limit to requests
-// that originate from the same IP *and* have the same 'field'.
-//
-// If 'field' is not set, the rate limit will be applied to *all* requests
-// originating from a particular IP.
+/**
+ * If 'field' is set, the middleware will apply the rate limit to requests
+ * that originate from the same IP *and* have the same 'field'.
+ *
+ * If 'field' is not set, the rate limit will be applied to *all* requests
+ * originating from a particular IP.
+ */
 const $createRateLimitMiddleware = (
 	rateLimiter: ReturnType<typeof createRateLimiter>,
 	{
@@ -121,7 +127,7 @@ const $createRateLimitMiddleware = (
 		allowReset = true,
 	}: { ignoreIP?: boolean; allowReset?: boolean } = {},
 	field?: RateLimitKey,
-): RequestHandler => {
+): RateLimitMiddleware => {
 	let fieldFn: RateLimitKeyFn;
 	if (field != null) {
 		if (typeof field === 'function') {
@@ -159,6 +165,7 @@ const $createRateLimitMiddleware = (
 			await rateLimiter.consume(key);
 			addReset(req, key);
 			next();
+			return key;
 		} catch (err) {
 			if (handleHttpErrors(req, res, err)) {
 				return;
