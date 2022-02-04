@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove unnecessary import
+      hash: 62ccfa0cf4a906d844fc0b88f968db9552cae422
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.189.2
+  title: "'Remove unnecessary import'"
+  date: 2022-02-04T18:52:05.166Z
+- commits:
     - subject: "registry: Optimize the image read access query"
       hash: 5ffa8c26a0a402da290507e951172a36dfead95e
       body: |
