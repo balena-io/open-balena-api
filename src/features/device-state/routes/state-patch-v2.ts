@@ -20,7 +20,6 @@ import {
 	upsertImageInstall,
 	deleteOldImageInstalls,
 } from '../state-patch-utils';
-import { PinejsClient } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
 import type { ResolveDeviceInfoCustomObject } from '../middleware';
 
 const { BadRequestError, UnauthorizedError } = errors;
@@ -202,7 +201,9 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 	// device name
 	const { local, dependent } = values as StatePatchV2Body;
 
-	const updateFns: Array<(resinApiTx: PinejsClient) => Promise<void>> = [];
+	const updateFns: Array<
+		(resinApiTx: sbvrUtils.PinejsClient) => Promise<void>
+	> = [];
 
 	if (local != null) {
 		const { apps } = local;
