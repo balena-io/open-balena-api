@@ -14,6 +14,7 @@ import {
 	augmentReqApiKeyPermissions,
 	createDeviceApiKey,
 } from '../api-keys/lib';
+import { getDeviceTypeBySlug } from '../device-types/device-types';
 import { checkInt } from '../../lib/utils';
 
 const { BadRequestError, ConflictError } = errors;
@@ -31,8 +32,8 @@ export const register: RequestHandler = async (req, res) => {
 			throw new BadRequestError('Application ID must be a valid integer');
 		}
 
-		const deviceType = req.body.device_type;
-		if (deviceType == null) {
+		const deviceTypeSlug = req.body.device_type;
+		if (deviceTypeSlug == null) {
 			throw new BadRequestError('Device type must be specified');
 		}
 
@@ -68,13 +69,14 @@ export const register: RequestHandler = async (req, res) => {
 		);
 
 		const response = await sbvrUtils.db.transaction(async (tx) => {
-			const device = await api.resin.post({
+			const resinApiTx = api.resin.clone({ passthrough: { req, tx } });
+			const deviceType = await getDeviceTypeBySlug(resinApiTx, deviceTypeSlug);
+			const device = await resinApiTx.post({
 				resource: 'device',
-				passthrough: { req, tx },
 				body: {
 					belongs_to__user: userId,
 					belongs_to__application: applicationId,
-					device_type: deviceType,
+					is_of__device_type: deviceType.id,
 					supervisor_version: supervisorVersion,
 					os_version: osVersion,
 					os_variant: osVariant,
