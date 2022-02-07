@@ -1,4 +1,27 @@
 - commits:
+    - subject: Return the ratelimiting key used from the ratelimit middleware
+      hash: 61d4cd6250df0f4045ca49d5f862708863aa204a
+      body: |
+        This means it can be used downstream for things like penalties
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Stop using the v5 app's & device's device_type property internally
+      hash: 22032b557cb655c32df23152e4de483c643bd878
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.189.3
+  title: "'Return the ratelimiting key used from the ratelimit middleware'"
+  date: 2022-02-07T15:35:04.397Z
+- commits:
     - subject: Remove unnecessary import
       hash: 62ccfa0cf4a906d844fc0b88f968db9552cae422
       body: ""
