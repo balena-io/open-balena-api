@@ -1,4 +1,123 @@
 - commits:
+    - subject: Update dependencies
+      hash: c1d328c27e9fd284c9bbcc853488f5d60a61c21c
+      body: |
+        Update @balena/pinejs from 14.38.2 to 14.39.1
+        Update pinejs-client-supertest from 1.3.2 to 1.3.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Use native version of Bluebird.using
+              hash: e6b8afc15a6c9cecf93798acee84d2b853db95f4
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: Use native version of Bluebird.try
+              hash: e2c3f0a20ec1a65070cb414beba3bd3d4ce2a87b
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: Use native version of Bluebird.timeout
+              hash: 9543900125b94033ed4f620a32a02f9d548df34e
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: Use native version of Bluebird.fromCallback
+              hash: fbacfd634fe90b9d00e716ef686dd7bff95e6c85
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: Use native version of Bluebird.delay
+              hash: be3349af3fdf027a64da71c5783503cb8d11e1de
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: Use native version of Bluebird.mapSeries
+              hash: 0d74ecb2229d99a77e4e59e4b1e7947adedb7c67
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.39.1
+          title: "'Remove bluebird'"
+          date: 2022-02-08T13:06:59.206Z
+        - commits:
+            - subject: Add the ability to set the maxLifetimeSeconds for the postgres pool
+              hash: 460bc36df6fd9349d2e5c5d8f502ee53037db172
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.39.0
+          title: "'Add the ability to set the maxLifetimeSeconds for the postgres pool'"
+          date: 2022-02-07T17:51:38.126Z
+        - commits:
+            - subject: Update dependencies
+              hash: 88c9d877e6a0a4edd337f4d33971a5d57789d933
+              body: |
+                Update @balena/abstract-sql-compiler from 7.17.0 to 7.17.1
+                Update pinejs-client-core from 6.9.6 to 6.10.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Avoid the operation type optimization for HAVING clauses
+                      hash: 3fcf08bc02c21d9f49b78787ed516fa9a403f021
+                      body: >
+                        Since it's possible for them to behave in a way that
+                        violates the
+
+                        safety checks we'll disable them until we can add specific checks
+
+                        for the HAVING clause
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-7.17.1
+                  date: 2022-01-24T17:36:32.056Z
+                - commits:
+                    - subject: Add optional retry logic to client
+                      hash: d5496ebe73a0db28ac1c123575e80c9d25367d48
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Paul Jonathan Zoulin
+                  version: pinejs-client-js-6.10.0
+                  date: 2022-01-24T19:05:04.020Z
+          version: pinejs-14.38.3
+          title: "'Update dependencies'"
+          date: 2022-02-07T17:41:12.092Z
+  version: 0.189.4
+  title: "'Update dependencies'"
+  date: 2022-02-09T00:04:02.360Z
+- commits:
     - subject: Return the ratelimiting key used from the ratelimit middleware
       hash: 61d4cd6250df0f4045ca49d5f862708863aa204a
       body: |
