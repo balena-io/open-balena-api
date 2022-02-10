@@ -1,4 +1,17 @@
 - commits:
+    - subject: add database name env variable
+      hash: 9589ea0fa504995cb456fb27499bb1fcfe3dd7b6
+      body: |
+        Makes the database name configurable, with "resin" being the default
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: GoodOldJack12
+      nested: []
+  version: 0.190.0
+  title: "'Add database name env variable'"
+  date: 2022-02-10T08:55:50.445Z
+- commits:
     - subject: Update dependencies
       hash: c1d328c27e9fd284c9bbcc853488f5d60a61c21c
       body: |
