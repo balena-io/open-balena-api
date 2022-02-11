@@ -94,6 +94,22 @@ const $createApiKey = async (
 	return apiKey;
 };
 
+const getKeyMetadata = (reqBody: { name?: any; description?: any }) => {
+	const { name, description } = reqBody;
+
+	if (name != null && typeof name !== 'string') {
+		throw new errors.BadRequestError('Key name should be a string value');
+	}
+
+	if (description != null && typeof description !== 'string') {
+		throw new errors.BadRequestError(
+			'Key description should be a string value',
+		);
+	}
+
+	return { name, description };
+};
+
 export const createApiKey = async (
 	actorType: string,
 	roleName: string,
@@ -102,6 +118,15 @@ export const createApiKey = async (
 	options: ApiKeyOptions = {},
 ): Promise<string> => {
 	options.apiKey ??= randomstring.generate();
+	const { name, description } = getKeyMetadata(req.body);
+
+	if (!options.name) {
+		options.name = name;
+	}
+	if (!options.description) {
+		options.description = description;
+	}
+
 	if (options.tx != null) {
 		return await $createApiKey(
 			actorType,

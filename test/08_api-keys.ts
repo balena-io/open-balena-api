@@ -27,11 +27,13 @@ describe('create provisioning apikey', function () {
 				user: UserObjectParam | undefined,
 				applicationId: number,
 				provisioningKeyName?: string,
+				provisioningKeyDescription?: string,
 			) {
 				return supertest(user)
 					.post(`/api-key/application/${applicationId}/provisioning`)
 					.send({
 						name: provisioningKeyName,
+						description: provisioningKeyDescription,
 					});
 			},
 		},
@@ -41,6 +43,7 @@ describe('create provisioning apikey', function () {
 				user: UserObjectParam | undefined,
 				applicationId: number,
 				provisioningKeyName?: string,
+				provisioningKeyDescription?: string,
 			) {
 				return supertest(user)
 					.post(`/api-key/v1/`)
@@ -49,6 +52,7 @@ describe('create provisioning apikey', function () {
 						actorTypeId: applicationId,
 						roles: ['provisioning-api-key'],
 						name: provisioningKeyName,
+						description: provisioningKeyDescription,
 					});
 			},
 		},
@@ -73,6 +77,7 @@ describe('create provisioning apikey', function () {
 					this.user,
 					applicationId,
 					`provision-key-${applicationId}`,
+					`Sample key for application-${applicationId} description.`,
 				).expect(200);
 
 				expect(provisioningKey).to.be.a('string');
@@ -88,13 +93,18 @@ describe('create provisioning apikey', function () {
 						key: provisioningKey,
 					},
 					options: {
-						$select: 'name',
+						$select: ['name', 'description'],
 					},
 				});
 
-				expect(apiKeyResp).to.have.property('name');
-				expect(apiKeyResp?.name).to.be.a('string');
-				expect(apiKeyResp?.name).to.equal(`provision-key-${applicationId}`);
+				expect(apiKeyResp).to.have.property(
+					'name',
+					`provision-key-${applicationId}`,
+				);
+				expect(apiKeyResp).to.have.property(
+					'description',
+					`Sample key for application-${applicationId} description.`,
+				);
 			});
 
 			it('then register a device using the provisioning key', async function () {
@@ -179,6 +189,67 @@ describe('create device apikey', function () {
 
 				expect(deviceApiKey).to.be.a('string');
 				expect(deviceApiKey).to.equal(apiKey);
+			});
+
+			it('should create an apikey with only the key-name passed in the body', async function () {
+				const { body: deviceApiKey } = await fn(this.user, this.device.id, {
+					name: `SampleDeviceKey${i}`,
+				}).expect(200);
+
+				expect(deviceApiKey).to.be.a('string');
+				expect(deviceApiKey).to.not.be.empty;
+
+				// check the name:description assigned
+				const apiKeyResp = await api.resin.get({
+					resource: 'api_key',
+					passthrough: {
+						req: permissions.root,
+					},
+					id: {
+						key: deviceApiKey,
+					},
+					options: {
+						$select: ['name'],
+					},
+				});
+
+				expect(apiKeyResp).to.have.property('name', `SampleDeviceKey${i}`);
+			});
+
+			it('should create an apikey with the key-name and key-description passed in the body', async function () {
+				const { body: deviceApiKey } = await fn(this.user, this.device.id, {
+					name: `SampleDeviceKey${i}`,
+					description: `Sample key ${i} description.`,
+				}).expect(200);
+
+				expect(deviceApiKey).to.be.a('string');
+				expect(deviceApiKey).to.not.be.empty;
+
+				// check the name:description assigned
+				const apiKeyResp = await api.resin.get({
+					resource: 'api_key',
+					passthrough: {
+						req: permissions.root,
+					},
+					id: {
+						key: deviceApiKey,
+					},
+					options: {
+						$select: ['name', 'description'],
+					},
+				});
+
+				expect(apiKeyResp).to.have.property('name', `SampleDeviceKey${i}`);
+				expect(apiKeyResp).to.have.property(
+					'description',
+					`Sample key ${i} description.`,
+				);
+			});
+
+			it('should return BadRequest for an apikey create request where the key name is not string', async function () {
+				await fn(this.user, this.device.id, {
+					name: 123,
+				}).expect(400, '"Key name should be a string value"');
 			});
 
 			it('should not allow unauthorized requests', async function () {

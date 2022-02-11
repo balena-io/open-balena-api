@@ -61,11 +61,7 @@ export const createProvisioningApiKey: RequestHandler = async (req, res) => {
 	}
 
 	try {
-		const apiKey = await $createProvisioningApiKey(
-			req,
-			appId,
-			req.body.name ? { name: req.body.name } : {},
-		);
+		const apiKey = await $createProvisioningApiKey(req, appId);
 		res.json(apiKey);
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
@@ -94,20 +90,16 @@ export const createUserApiKey: RequestHandler = async (req, res) => {
 };
 
 export const createNamedUserApiKey: RequestHandler = async (req, res) => {
-	const { name, description } = req.body;
-	if (!name) {
-		return res.status(400).send('API keys require a name');
-	}
-
 	try {
+		if (!req.body.name) {
+			throw new errors.BadRequestError('API keys require a name');
+		}
+
 		if (req.user == null) {
 			throw new errors.BadRequestError('Must use user auth');
 		}
 
-		const apiKey = await $createNamedUserApiKey(req, req.user.id, {
-			name,
-			description,
-		});
+		const apiKey = await $createNamedUserApiKey(req, req.user.id);
 		res.json(apiKey);
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
