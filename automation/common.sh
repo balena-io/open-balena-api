@@ -104,11 +104,5 @@ setup () {
 	docker exec $api_id /bin/sh -c 'npm ci && npm run lint' &
 	pid=$!
 
-	# mitigate a race-condition related to systemd not having started
-	# listening to its dbus socket.
-	echo "Waiting for systemd..."
-	sleep 2
-
-	docker exec $api_id /bin/sh -c 'systemctl disable open-balena-api && systemctl stop open-balena-api'
 	wait $pid
 }
