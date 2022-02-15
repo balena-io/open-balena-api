@@ -1,4 +1,4 @@
-import * as balenaToken from './balena-token';
+import * as jsonwebtoken from 'jsonwebtoken';
 import * as fixtures from './fixtures';
 import { supertest, UserObjectParam } from './supertest';
 import { version } from './versions';
@@ -41,7 +41,7 @@ const loadAdminUserAndOrganization = async () => {
 			.expect(200)
 	).text;
 
-	const user = (await balenaToken.parse(token)) as UserObjectParam;
+	const user = (await jsonwebtoken.decode(token)) as UserObjectParam;
 	user.token = token;
 	user.actor = (
 		await supertest(user).get(`/${version}/user(${user.id})`).expect(200)
