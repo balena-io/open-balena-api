@@ -1,4 +1,18 @@
 - commits:
+    - subject: Drop resin-token & temp from dev dependencies
+      hash: 1432b2df436f62a88b90afba6ee95bbe0f1d5eb1
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.191.1
+  title: "'Drop resin-token & temp from dev dependencies'"
+  date: 2022-02-15T22:22:16.751Z
+- commits:
     - subject: Support generating named device keys.
       hash: aaf2aaa27ccf65159fc7e03b3279f5eb8cea5e11
       body: ""
