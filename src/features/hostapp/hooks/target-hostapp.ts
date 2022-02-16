@@ -5,8 +5,8 @@ import {
 	errors as pinejsErrors,
 } from '@balena/pinejs';
 import * as semver from 'balena-semver';
-import * as _ from 'lodash';
 import { Device, ReleaseTag, PickDeferred } from '../../../balena-model';
+import { groupByMap } from '../../../lib/utils';
 const { BadRequestError } = pinejsErrors;
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
@@ -126,11 +126,11 @@ async function setOSReleaseResource(
 		return;
 	}
 
-	const devicesByDeviceType = _.groupBy(devices, (d) => {
-		return d.is_of__device_type.__id;
-	});
-
-	if (Object.keys(devicesByDeviceType).length === 0) {
+	const devicesByDeviceTypeId = groupByMap(
+		devices,
+		(d) => d.is_of__device_type.__id,
+	);
+	if (devicesByDeviceTypeId.size === 0) {
 		return;
 	}
 
@@ -142,32 +142,34 @@ async function setOSReleaseResource(
 	});
 
 	return Promise.all(
-		_.map(devicesByDeviceType, async (affectedDevices, deviceType) => {
-			const affectedDeviceIds = affectedDevices.map((d) => d.id);
+		Array.from(devicesByDeviceTypeId.entries()).map(
+			async ([deviceTypeId, affectedDevices]) => {
+				const affectedDeviceIds = affectedDevices.map((d) => d.id);
 
-			const [osRelease] = await getOSReleaseResource(
-				api,
-				osVersion,
-				osVariant,
-				deviceType,
-			);
+				const [osRelease] = await getOSReleaseResource(
+					api,
+					osVersion,
+					osVariant,
+					deviceTypeId,
+				);
 
-			if (osRelease == null) {
-				return;
-			}
+				if (osRelease == null) {
+					return;
+				}
 
-			await rootApi.patch({
-				resource: 'device',
-				options: {
-					$filter: {
-						id: { $in: affectedDeviceIds },
+				await rootApi.patch({
+					resource: 'device',
+					options: {
+						$filter: {
+							id: { $in: affectedDeviceIds },
+						},
 					},
-				},
-				body: {
-					should_be_operated_by__release: osRelease.id,
-				},
-			});
-		}),
+					body: {
+						should_be_operated_by__release: osRelease.id,
+					},
+				});
+			},
+		),
 	);
 }
 
@@ -175,7 +177,7 @@ async function getOSReleaseResource(
 	api: sbvrUtils.PinejsClient,
 	osVersion: string,
 	osVariant: string,
-	deviceTypeId: string,
+	deviceTypeId: number,
 ) {
 	return await api.get({
 		resource: 'release',
