@@ -47,7 +47,7 @@ export async function provisionDevice(
 		.with.lengthOf(1);
 	expect(applications.d[0].is_for__device_type[0]).to.have.property('slug');
 
-	const deviceType: string = applications.d[0].is_for__device_type[0].slug;
+	const deviceTypeId: string = applications.d[0].is_for__device_type[0].id;
 
 	const deviceUuid = generateDeviceUuid();
 	const { body: deviceEntry } = await supertest(admin)
@@ -55,7 +55,7 @@ export async function provisionDevice(
 		.send({
 			belongs_to__application: appId,
 			uuid: deviceUuid,
-			device_type: deviceType,
+			is_of__device_type: deviceTypeId,
 		})
 		.expect(201);
 

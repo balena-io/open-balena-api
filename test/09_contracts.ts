@@ -64,6 +64,9 @@ describe('contracts', () => {
 
 		mockRepo(contractRepository, 'base-contracts', true);
 		await synchronizeContracts([contractRepository]);
+		// Reload the device-type fixtures, since after
+		// synchronizeContracts() the DB IDs have changed.
+		(await import('./test-lib/device-type')).loadDefaultFixtures();
 	});
 
 	beforeEach(async () => {

@@ -6,7 +6,6 @@ import './features/cascade-delete/hooks';
 import './features/dependent-devices/hooks';
 import './features/devices/hooks';
 import './features/device-urls/hooks';
-import './features/device-types/hooks';
 import './features/hostapp/hooks';
 import './features/organizations/hooks';
 import './features/supervisor-app/hooks';

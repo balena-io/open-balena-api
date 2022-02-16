@@ -60,7 +60,7 @@ const loadAdminUserAndOrganization = async () => {
 
 export const postInit = async () => {
 	await synchronizeContracts(getContractRepos());
-	await import('./device-type');
+	(await import('./device-type')).loadDefaultFixtures();
 
 	const { user, org } = await loadAdminUserAndOrganization();
 	const balenaOsFx = await fixtures.load('00-balena_os');
