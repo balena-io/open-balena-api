@@ -107,15 +107,7 @@ describe('target hostapps', () => {
 	(
 		[
 			[
-				'POST device resource using device_type slug',
-				async (devicePostBody: AnyObject) =>
-					await supertest(admin)
-						.post(`/${version}/device`)
-						.send(devicePostBody)
-						.expect(201),
-			],
-			[
-				'POST device resource using is_of__device_type',
+				'POST device resource',
 				async ({ device_type, ...devicePostBody }: AnyObject) => {
 					return await supertest(admin)
 						.post(`/${version}/device`)

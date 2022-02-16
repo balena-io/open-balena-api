@@ -85,7 +85,6 @@ const loaders: Dictionary<LoaderFunc> = {
 		const body = _.pick(
 			jsonData,
 			'app_name',
-			'device_type',
 			'depends_on__application',
 			'should_track_latest_release',
 			'application_type',
@@ -94,11 +93,14 @@ const loaders: Dictionary<LoaderFunc> = {
 			'uuid',
 		);
 
+		const deviceType = await fixtures.deviceTypes[jsonData.device_type];
+
 		return await createResource({
 			resource: 'application',
 			body: {
 				...body,
 				organization: org.id,
+				is_for__device_type: deviceType.id,
 			},
 			user,
 		});
@@ -326,14 +328,14 @@ const loaders: Dictionary<LoaderFunc> = {
 			);
 		}
 
+		const deviceType = await fixtures.deviceTypes[jsonData.device_type];
+
 		return await createResource({
 			resource: 'device',
 			body: {
 				belongs_to__application: application.id,
 				belongs_to__user: user.id,
-				is_of__device_type: (
-					await fixtures.deviceTypes[jsonData.device_type]
-				).id,
+				is_of__device_type: deviceType.id,
 				..._.pick(
 					jsonData,
 					'custom_latitude',

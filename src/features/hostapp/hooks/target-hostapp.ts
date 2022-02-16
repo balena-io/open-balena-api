@@ -5,8 +5,8 @@ import {
 	errors as pinejsErrors,
 } from '@balena/pinejs';
 import * as semver from 'balena-semver';
-import * as _ from 'lodash';
 import { Device, ReleaseTag, PickDeferred } from '../../../balena-model';
+import { groupByMap } from '../../../lib/utils';
 const { BadRequestError } = pinejsErrors;
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
@@ -80,39 +80,22 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 });
 
 hooks.addPureHook('POST', 'resin', 'device', {
-	async POSTPARSE(args) {
+	async POSTPARSE({ request, api }) {
 		if (
-			args.request.values.os_version != null &&
-			args.request.values.os_variant != null
+			request.values.os_version != null &&
+			request.values.os_variant != null &&
+			request.values.is_of__device_type != null
 		) {
-			let deviceTypeId = args.request.values.is_of__device_type;
-			if (!deviceTypeId) {
-				const [dt] = await args.api.get({
-					resource: 'device_type',
-					options: {
-						$select: 'id',
-						$filter: {
-							slug: args.request.values.device_type,
-						},
-					},
-				});
-				if (!dt) {
-					return;
-				}
-				deviceTypeId = dt.id;
-			}
-
-			const hostappRelease = await getOSReleaseResource(
-				args.api,
-				args.request.values.os_version,
-				args.request.values.os_variant,
-				deviceTypeId,
+			const [hostappRelease] = await getOSReleaseResource(
+				api,
+				request.values.os_version,
+				request.values.os_variant,
+				request.values.is_of__device_type,
 			);
 			// since this is a POST, we _know_ the device is being created and has no current/target state, so we can
 			// just append the target after determining which it is (like a preloaded app)
-			if (hostappRelease && hostappRelease.length > 0) {
-				args.request.values.should_be_operated_by__release =
-					hostappRelease[0].id;
+			if (hostappRelease != null) {
+				request.values.should_be_operated_by__release = hostappRelease.id;
 			}
 		}
 	},
@@ -143,11 +126,11 @@ async function setOSReleaseResource(
 		return;
 	}
 
-	const devicesByDeviceType = _.groupBy(devices, (d) => {
-		return d.is_of__device_type.__id;
-	});
-
-	if (Object.keys(devicesByDeviceType).length === 0) {
+	const devicesByDeviceTypeId = groupByMap(
+		devices,
+		(d) => d.is_of__device_type.__id,
+	);
+	if (devicesByDeviceTypeId.size === 0) {
 		return;
 	}
 
@@ -159,32 +142,34 @@ async function setOSReleaseResource(
 	});
 
 	return Promise.all(
-		_.map(devicesByDeviceType, async (affectedDevices, deviceType) => {
-			const affectedDeviceIds = affectedDevices.map((d) => d.id);
+		Array.from(devicesByDeviceTypeId.entries()).map(
+			async ([deviceTypeId, affectedDevices]) => {
+				const affectedDeviceIds = affectedDevices.map((d) => d.id);
 
-			const [osRelease] = await getOSReleaseResource(
-				api,
-				osVersion,
-				osVariant,
-				deviceType,
-			);
+				const [osRelease] = await getOSReleaseResource(
+					api,
+					osVersion,
+					osVariant,
+					deviceTypeId,
+				);
 
-			if (osRelease == null) {
-				return;
-			}
+				if (osRelease == null) {
+					return;
+				}
 
-			await rootApi.patch({
-				resource: 'device',
-				options: {
-					$filter: {
-						id: { $in: affectedDeviceIds },
+				await rootApi.patch({
+					resource: 'device',
+					options: {
+						$filter: {
+							id: { $in: affectedDeviceIds },
+						},
 					},
-				},
-				body: {
-					should_be_operated_by__release: osRelease.id,
-				},
-			});
-		}),
+					body: {
+						should_be_operated_by__release: osRelease.id,
+					},
+				});
+			},
+		),
 	);
 }
 
@@ -192,7 +177,7 @@ async function getOSReleaseResource(
 	api: sbvrUtils.PinejsClient,
 	osVersion: string,
 	osVariant: string,
-	deviceTypeId: string,
+	deviceTypeId: number,
 ) {
 	return await api.get({
 		resource: 'release',
