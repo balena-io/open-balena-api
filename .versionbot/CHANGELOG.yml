@@ -1,4 +1,28 @@
 - commits:
+    - subject: "target-hostapp: Fix getOSReleaseResource parameter type"
+      hash: 5948b90b1e056f9c6a64857cd5c53d9c51f79ae6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Stop accepting the application&device device_type POST parameter
+      hash: 45dc71dfd02aeedfc2035ef81168e5336b14b980
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://jel.ly.fish/55d814fc-d378-44ef-b9d9-17b42b81138f
+        see: https://jel.ly.fish/55d814fc-d378-44ef-b9d9-17b42b81138f
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.192.0
+  title: "'Stop accepting the application&device device_type POST parameter'"
+  date: 2022-02-16T11:55:18.081Z
+- commits:
     - subject: Drop resin-token & temp from dev dependencies
       hash: 1432b2df436f62a88b90afba6ee95bbe0f1d5eb1
       body: ""
