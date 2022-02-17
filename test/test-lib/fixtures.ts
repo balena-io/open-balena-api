@@ -6,7 +6,7 @@ import * as path from 'path';
 import { randomUUID } from 'crypto';
 
 import { Headers } from 'request';
-import { API_HOST } from '../../src/lib/config';
+import { API_HOST, PORT } from '../../src/lib/config';
 import { requestAsync } from '../../src/infra/request-promise';
 import { version } from './versions';
 
@@ -40,7 +40,7 @@ const createResource = async (args: {
 	}
 
 	const [response, responseBody] = await requestAsync({
-		url: `http://${API_HOST}/${version}/${resource}`,
+		url: `http://${API_HOST}:${PORT}/${version}/${resource}`,
 		headers,
 		method,
 		json: true,

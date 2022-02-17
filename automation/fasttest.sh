@@ -12,7 +12,6 @@ api_id=$(sed -n "4{p;q;}" "$CONFIG_FILE" 2>/dev/null) || true
 
 
 external=''
-test_versions=''
 test_files=''
 teardown=0
 stop=0
@@ -45,7 +44,7 @@ while [[ $# -gt 0 ]]; do
 			shift
 		;;
 		*)
-			test_files="$test_files $key"
+			test_files="$test_files --spec ./test/*$key*"
 		;;
 	esac
 done
@@ -111,10 +110,5 @@ if [[ -z "$test_files" ]]; then
 else
 	echo "Running tests:$test_files"
 fi
-if [[ -z "$test_versions" ]]; then
-	echo "Running all versions"
-else
-	echo "Running versions:$test_versions"
-fi
 
-docker exec ${extra_env} --env TEST_VERSIONS="$test_versions" --env TEST_FILES="$test_files" -it $api_id ./node_modules/.bin/mocha --bail ${extra_args}
+docker exec ${extra_env} -it $api_id ./node_modules/.bin/mocha $test_files --bail ${extra_args}

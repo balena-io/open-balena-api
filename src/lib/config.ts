@@ -1,6 +1,6 @@
 export let version: string;
 export function setVersion(v: typeof version) {
-	if (version !== undefined) {
+	if (version !== undefined && version !== v) {
 		throw new Error(
 			`Can only set version once, trying to replace '${version}' with '${v}'`,
 		);

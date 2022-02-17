@@ -74,5 +74,4 @@ export const postInit = async () => {
 			]),
 		),
 	});
-	await import('../00_init');
 };
