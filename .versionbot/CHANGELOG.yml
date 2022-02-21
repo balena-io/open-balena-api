@@ -1,4 +1,16 @@
 - commits:
+    - subject: Handle missing img install statuses in device state reporting
+      hash: 3cce41d1addaa1d4793bb21a0ee9514a27b130b3
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.192.1
+  title: "'Handle missing img install statuses in device state reporting'"
+  date: 2022-02-21T16:16:33.576Z
+- commits:
     - subject: "target-hostapp: Fix getOSReleaseResource parameter type"
       hash: 5948b90b1e056f9c6a64857cd5c53d9c51f79ae6
       body: ""
