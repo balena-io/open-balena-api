@@ -69,7 +69,7 @@ export const shouldUpdateMetrics = (() => {
 })();
 
 export type ImageInstallUpdateBody = {
-	status: string;
+	status?: string;
 	is_provided_by__release: number;
 	download_progress?: number | null;
 };
@@ -131,7 +131,7 @@ export const upsertImageInstall = async (
 	}: {
 		imageId: number;
 		releaseId: number;
-		status: string;
+		status?: string;
 		downloadProgress?: number | null;
 	},
 	deviceId: number,
@@ -153,9 +153,11 @@ export const upsertImageInstall = async (
 	} else {
 		// we need to update the current image install
 		const body: ImageInstallUpdateBody = {
-			status,
 			is_provided_by__release: releaseId,
 		};
+		if (status !== undefined) {
+			body.status = status;
+		}
 		if (downloadProgress !== undefined) {
 			body.download_progress = downloadProgress;
 		}
