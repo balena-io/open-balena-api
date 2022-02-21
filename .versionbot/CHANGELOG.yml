@@ -1,4 +1,18 @@
 - commits:
+    - subject: Fix generate-model-schema npm script for npm v8
+      hash: 21b734492d609f841dc098ee0037eeb633ddec41
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.192.4
+  title: "'Fix generate-model-schema npm script for npm v8'"
+  date: 2022-02-21T18:23:00.185Z
+- commits:
     - subject: Update open-balena-base to 13.1.0
       hash: d8e8cb8af0e46fdf799c354bbb6f19e228221325
       body: |
