@@ -1,4 +1,20 @@
 - commits:
+    - subject: "device-provisioning: Report conflict errors"
+      hash: c27d52f611fe6b13c1723cae7e57d65b7ad94646
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://www.flowdock.com/app/rulemotion/resin-tech/threads/J2_KZRnF_efphHHTpDN_vvA3nWv
+        see: https://www.flowdock.com/app/rulemotion/resin-tech/threads/J2_KZRnF_efphHHTpDN_vvA3nWv
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.192.2
+  title: "'device-provisioning: Report conflict errors'"
+  date: 2022-02-21T16:31:42.570Z
+- commits:
     - subject: Handle missing img install statuses in device state reporting
       hash: 3cce41d1addaa1d4793bb21a0ee9514a27b130b3
       body: ""
