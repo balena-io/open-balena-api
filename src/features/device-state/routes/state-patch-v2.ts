@@ -134,7 +134,7 @@ export type StatePatchV2Body = {
 			services?: {
 				[imageId: string]: {
 					releaseId: number;
-					status: string;
+					status?: string;
 					download_progress?: number | null;
 				};
 			};
