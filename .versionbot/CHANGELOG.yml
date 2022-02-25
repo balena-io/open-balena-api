@@ -1,4 +1,16 @@
 - commits:
+    - subject: Make `virtual_address` optional for `/services/vpn/client-connect`
+      hash: 55c34ab880ac59c73a5ce1eba0b03d0b323ec5b9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.192.5
+  title: "'Make  optional for '"
+  date: 2022-02-25T12:30:36.760Z
+- commits:
     - subject: Fix generate-model-schema npm script for npm v8
       hash: 21b734492d609f841dc098ee0037eeb633ddec41
       body: ""
