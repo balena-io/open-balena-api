@@ -105,15 +105,7 @@ export const clientConnect = async (
 	res: Response,
 ): Promise<void> => {
 	const body = req.body || {};
-	if (!body.common_name) {
-		res.status(400).end();
-		return;
-	}
-	if (!body.virtual_address) {
-		res.status(400).end();
-		return;
-	}
-	if (!body.service_id) {
+	if (!body.common_name || !body.service_id) {
 		res.status(400).end();
 		return;
 	}
@@ -122,7 +114,7 @@ export const clientConnect = async (
 		await clientConnectQuery()(
 			{ uuid: body.common_name },
 			{
-				vpn_address: body.virtual_address,
+				vpn_address: body.virtual_address || null,
 				is_managed_by__service_instance: body.service_id,
 			},
 			{ req },
