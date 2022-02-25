@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update dependencies
+      hash: 6d05a7546995c7d3e750d0d6f7776b950c81e19b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.192.6
+  title: "'Update dependencies'"
+  date: 2022-02-25T13:07:41.923Z
+- commits:
     - subject: Make `virtual_address` optional for `/services/vpn/client-connect`
       hash: 55c34ab880ac59c73a5ce1eba0b03d0b323ec5b9
       body: ""
