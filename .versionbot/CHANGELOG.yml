@@ -1,4 +1,16 @@
 - commits:
+    - subject: Ignore reported vpn_address
+      hash: 135ad46c965ca00f09381b4345adfb3938b5841c
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.193.0
+  title: "'Ignore reported vpn_address'"
+  date: 2022-02-25T15:38:40.348Z
+- commits:
     - subject: Update dependencies
       hash: 6d05a7546995c7d3e750d0d6f7776b950c81e19b
       body: ""
