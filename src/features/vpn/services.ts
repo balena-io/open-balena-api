@@ -81,7 +81,6 @@ const clientDisconnectQuery = _.once(() =>
 		},
 		body: {
 			is_connected_to_vpn: false,
-			vpn_address: null,
 		},
 	}),
 );
@@ -114,7 +113,6 @@ export const clientConnect = async (
 		await clientConnectQuery()(
 			{ uuid: body.common_name },
 			{
-				vpn_address: body.virtual_address || null,
 				is_managed_by__service_instance: body.service_id,
 			},
 			{ req },

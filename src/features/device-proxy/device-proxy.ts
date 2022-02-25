@@ -198,7 +198,6 @@ async function requestDevices({
 						$and: [
 							{
 								is_connected_to_vpn: true,
-								vpn_address: { $ne: null },
 							},
 							filter,
 						],
