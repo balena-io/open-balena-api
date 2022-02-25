@@ -100,6 +100,11 @@ export const register: RequestHandler = async (req, res) => {
 
 		res.status(201).json(response);
 	} catch (err) {
+		if (err instanceof ConflictError) {
+			captureException(err, 'Conflict error while registering device', {
+				req,
+			});
+		}
 		if (err instanceof ConflictError && err.message.includes('uuid')) {
 			// WORKAROUND: balena-supervisor >= v4.2.0 < v11.4.14 rely on the specific error message rather than a 409
 			// so we convert the error here to ensure they can continue to work, this should be removed once we drop

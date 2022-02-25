@@ -1,4 +1,123 @@
 - commits:
+    - subject: Make `virtual_address` optional for `/services/vpn/client-connect`
+      hash: 55c34ab880ac59c73a5ce1eba0b03d0b323ec5b9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.192.5
+  title: "'Make  optional for '"
+  date: 2022-02-25T12:30:36.760Z
+- commits:
+    - subject: Fix generate-model-schema npm script for npm v8
+      hash: 21b734492d609f841dc098ee0037eeb633ddec41
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.192.4
+  title: "'Fix generate-model-schema npm script for npm v8'"
+  date: 2022-02-21T18:23:00.185Z
+- commits:
+    - subject: Update open-balena-base to 13.1.0
+      hash: d8e8cb8af0e46fdf799c354bbb6f19e228221325
+      body: |
+        Update open-balena-base from 13.0.4 to 13.1.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 16.14.0 and npm to 8.5.1
+              hash: 96344108de1f79799132f47ad59643658590d582
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.1.0
+          title: "'Update nodejs to 16.14.0 and npm to 8.5.1'"
+          date: 2022-02-21T16:05:34.829Z
+        - commits:
+            - subject: Avoid cryptic names and rename bcr to registry-proxy
+              hash: c3d6787df9412883b8706f6edf7db80ed885b71f
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-13.0.7
+          title: "'Avoid cryptic names and rename bcr to registry-proxy'"
+          date: 2022-02-16T16:48:08.416Z
+        - commits:
+            - subject: Add new balena container registry (bcr) host
+              hash: 67769b8c23c562120aeee32ce38e3f80519370cb
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-13.0.6
+          title: "'Add new balena container registry (bcr) host'"
+          date: 2022-02-15T19:56:44.683Z
+        - commits:
+            - subject: Refactor ROOT_CA handling/resolution
+              hash: 2c26140eab961b5f6eac6e69fabfed3f35175dbf
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-13.0.5
+          title: Refactor ROOT_CA handling
+          date: 2022-02-01T20:10:39.392Z
+  version: 0.192.3
+  title: "'Update open-balena-base to 13.1.0'"
+  date: 2022-02-21T16:44:50.563Z
+- commits:
+    - subject: "device-provisioning: Report conflict errors"
+      hash: c27d52f611fe6b13c1723cae7e57d65b7ad94646
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://www.flowdock.com/app/rulemotion/resin-tech/threads/J2_KZRnF_efphHHTpDN_vvA3nWv
+        see: https://www.flowdock.com/app/rulemotion/resin-tech/threads/J2_KZRnF_efphHHTpDN_vvA3nWv
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.192.2
+  title: "'device-provisioning: Report conflict errors'"
+  date: 2022-02-21T16:31:42.570Z
+- commits:
+    - subject: Handle missing img install statuses in device state reporting
+      hash: 3cce41d1addaa1d4793bb21a0ee9514a27b130b3
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.192.1
+  title: "'Handle missing img install statuses in device state reporting'"
+  date: 2022-02-21T16:16:33.576Z
+- commits:
     - subject: "target-hostapp: Fix getOSReleaseResource parameter type"
       hash: 5948b90b1e056f9c6a64857cd5c53d9c51f79ae6
       body: ""

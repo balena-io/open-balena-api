@@ -1,7 +1,7 @@
 {
   "name": "@balena/open-balena-api",
   "description": "Internet of things, Made Simple",
-  "version": "0.192.0",
+  "version": "0.192.5",
   "license": "AGPL-3.0",
   "repository": {
     "type": "git",
@@ -16,7 +16,7 @@
     "fasttest-stop": "IMAGE_NAME=test-open-balena-api-fast ./automation/fasttest.sh --stop",
     "fasttest-cleanup": "IMAGE_NAME=test-open-balena-api-fast ./automation/fasttest.sh --teardown",
     "materialize-config": "npm run fasttest -- --generate-config .materialized-config.json",
-    "generate-model-schema": "npm run materialize-config && npx @balena/pinejs compile .materialized-config.json .materialized-schema.sql",
+    "generate-model-schema": "npm run materialize-config && npx -p @balena/pinejs abstract-sql-compiler compile .materialized-config.json .materialized-schema.sql",
     "generate-model-types": "npm run materialize-config && echo '/**\n * This file is auto-generated with `npm run generate-model-types`\n */\n' > src/balena-model.ts && npx abstract-sql-compiler generate-types .materialized-config.json >> src/balena-model.ts",
     "build": "npm run clean && tsc --project ./tsconfig.build.json && copyup \"src/**/*.sbvr\" \"src/**/*.sql\" dist/",
     "clean": "rimraf dist/",
@@ -146,6 +146,6 @@
     "_": "index.js"
   },
   "versionist": {
-    "publishedAt": "2022-02-16T11:55:18.516Z"
+    "publishedAt": "2022-02-25T12:30:37.220Z"
   }
 }
