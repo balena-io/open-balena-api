@@ -57,14 +57,15 @@ export const generateConfig = async (
 
 		// Checking both req.body and req.query given both GET and POST support
 		// Ref: https://github.com/balena-io/balena-api/blob/master/src/routes/applications.ts#L95
-		const keyName: string | undefined =
+		apiKeyOptions.name =
 			req.body.provisioningKeyName ??
 			req.query.provisioningKeyName ??
-			undefined;
+			'Automatically generated provisioning key';
 
-		if (typeof keyName === 'string') {
-			apiKeyOptions.name = keyName;
-		}
+		apiKeyOptions.description =
+			req.body.provisioningKeyDescription ??
+			req.query.provisioningKeyDescription ??
+			'Automatically generated for an image download or config file generation';
 
 		return await createProvisioningApiKey(req, app.id, apiKeyOptions);
 	})();
