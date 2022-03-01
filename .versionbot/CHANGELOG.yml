@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add missing awaits
+      hash: 2e5a46cfb6bd6e703140fd274f24ce5eb3857c72
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.193.5
+  title: "'Add missing awaits'"
+  date: 2022-03-01T23:54:45.838Z
+- commits:
     - subject: Remove unused binding
       hash: cb80aa7112eb1ef63d1d652a6db053e4001c8648
       body: ""
