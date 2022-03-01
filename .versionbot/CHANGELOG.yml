@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove unused binding
+      hash: cb80aa7112eb1ef63d1d652a6db053e4001c8648
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.193.4
+  title: "'Remove unused binding'"
+  date: 2022-03-01T23:44:53.211Z
+- commits:
     - subject: Update dependencies
       hash: c4b2a5bdfddfb5281fae12a77a0f1d709e79b77a
       body: ""
