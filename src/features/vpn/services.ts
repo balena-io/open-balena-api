@@ -103,20 +103,38 @@ export const clientConnect = async (
 	req: Request,
 	res: Response,
 ): Promise<void> => {
-	const body = req.body || {};
-	if (!body.common_name || !body.service_id) {
+	const { uuids, serviceId, common_name, service_id } = req.body || {};
+	if ((!uuids || !serviceId) && (!common_name || !service_id)) {
 		res.status(400).end();
 		return;
 	}
 
 	try {
-		await clientConnectQuery()(
-			{ uuid: body.common_name },
-			{
-				is_managed_by__service_instance: body.service_id,
-			},
-			{ req },
-		);
+		if (uuids && serviceId) {
+			api.resin.patch({
+				resource: 'device',
+				passthrough: {
+					req,
+				},
+				options: {
+					$filter: {
+						uuid: { $in: uuids },
+					},
+				},
+				body: {
+					is_connected_to_vpn: true,
+					is_managed_by__service_instance: serviceId,
+				},
+			});
+		} else {
+			await clientConnectQuery()(
+				{ uuid: common_name },
+				{
+					is_managed_by__service_instance: service_id,
+				},
+				{ req },
+			);
+		}
 		res.status(200).end();
 	} catch (err) {
 		captureException(err, 'Error with vpn client connect', { req });
@@ -131,22 +149,38 @@ export const clientDisconnect = async (
 	req: Request,
 	res: Response,
 ): Promise<void> => {
-	const body = req.body || {};
-	if (!body.common_name) {
-		res.status(400).end();
-		return;
-	}
-	if (!body.service_id) {
+	const { uuids, serviceId, common_name, service_id } = req.body || {};
+	if ((!uuids || !serviceId) && (!common_name || !service_id)) {
 		res.status(400).end();
 		return;
 	}
 
 	try {
-		await clientDisconnectQuery()(
-			{ uuid: body.common_name, serviceId: body.service_id },
-			undefined,
-			{ req },
-		);
+		if (uuids && serviceId) {
+			api.resin.patch({
+				resource: 'device',
+				id: {
+					uuid: { '@': 'uuid' },
+				},
+				passthrough: { req },
+				options: {
+					$filter: {
+						uuid: { $in: uuids },
+						// Only disconnect if still managed by this vpn
+						is_managed_by__service_instance: serviceId,
+					},
+				},
+				body: {
+					is_connected_to_vpn: false,
+				},
+			});
+		} else {
+			await clientDisconnectQuery()(
+				{ uuid: common_name, serviceId: service_id },
+				undefined,
+				{ req },
+			);
+		}
 		res.status(200).end();
 	} catch (err) {
 		captureException(err, 'Error with vpn client disconnect', { req });
