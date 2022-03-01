@@ -104,7 +104,10 @@ export const clientConnect = async (
 	res: Response,
 ): Promise<void> => {
 	const { uuids, serviceId, common_name, service_id } = req.body || {};
-	if ((!uuids || !serviceId) && (!common_name || !service_id)) {
+	if (
+		(!uuids || uuids.length === 0 || !serviceId) &&
+		(!common_name || !service_id)
+	) {
 		res.status(400).end();
 		return;
 	}
@@ -150,7 +153,10 @@ export const clientDisconnect = async (
 	res: Response,
 ): Promise<void> => {
 	const { uuids, serviceId, common_name, service_id } = req.body || {};
-	if ((!uuids || !serviceId) && (!common_name || !service_id)) {
+	if (
+		(!uuids || uuids.length === 0 || !serviceId) &&
+		(!common_name || !service_id)
+	) {
 		res.status(400).end();
 		return;
 	}
