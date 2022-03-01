@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update dependencies
+      hash: c4b2a5bdfddfb5281fae12a77a0f1d709e79b77a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.193.3
+  title: "'Update dependencies'"
+  date: 2022-03-01T17:29:56.424Z
+- commits:
     - subject: Ensure at least one device is being updated for batch vpn updates
       hash: ca0ce1d37f700129948f34c40d66935791a6b906
       body: ""
