@@ -1,4 +1,16 @@
 - commits:
+    - subject: Ensure at least one device is being updated for batch vpn updates
+      hash: ca0ce1d37f700129948f34c40d66935791a6b906
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.193.2
+  title: "'Ensure at least one device is being updated for batch vpn updates'"
+  date: 2022-03-01T17:14:18.793Z
+- commits:
     - subject: Add support for reporting multiple connecting/disconnecting VPN clients
       hash: e3958965c575979b1c208e82eeedd6fdaffd58d6
       body: ""
