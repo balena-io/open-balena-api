@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add support for reporting multiple connecting/disconnecting VPN clients
+      hash: e3958965c575979b1c208e82eeedd6fdaffd58d6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.193.1
+  title: "'Add support for reporting multiple connecting/disconnecting VPN clients'"
+  date: 2022-03-01T14:51:55.418Z
+- commits:
     - subject: Ignore reported vpn_address
       hash: 135ad46c965ca00f09381b4345adfb3938b5841c
       body: ""
