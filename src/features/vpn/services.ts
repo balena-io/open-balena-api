@@ -165,9 +165,6 @@ export const clientDisconnect = async (
 		if (uuids && serviceId) {
 			api.resin.patch({
 				resource: 'device',
-				id: {
-					uuid: { '@': 'uuid' },
-				},
 				passthrough: { req },
 				options: {
 					$filter: {
