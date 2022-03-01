@@ -114,7 +114,7 @@ export const clientConnect = async (
 
 	try {
 		if (uuids && serviceId) {
-			api.resin.patch({
+			await api.resin.patch({
 				resource: 'device',
 				passthrough: {
 					req,
@@ -163,7 +163,7 @@ export const clientDisconnect = async (
 
 	try {
 		if (uuids && serviceId) {
-			api.resin.patch({
+			await api.resin.patch({
 				resource: 'device',
 				passthrough: { req },
 				options: {
