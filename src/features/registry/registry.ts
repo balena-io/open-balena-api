@@ -17,6 +17,7 @@ import {
 	MINUTES,
 	REGISTRY2_HOST,
 	RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
+	RESOLVE_IMAGE_LOCATION_CACHE_TIMEOUT,
 	RESOLVE_IMAGE_READ_ACCESS_CACHE_TIMEOUT,
 	TOKEN_AUTH_BUILDER_TOKEN,
 } from '../../lib/config';
@@ -32,12 +33,27 @@ const TOKEN_EXPIRY_MINUTES = 240; // 4 hours
 const RESINOS_REPOSITORY = 'resin/resinos';
 const SUPERVISOR_REPOSITORIES = /^resin\/(?:[a-zA-Z0-9]+-)+supervisor$/;
 
+// match v2/randomhash image
 const NEW_REGISTRY_REGEX = /(^(\d+)\/[\d\-]+$|^(v2\/[a-z0-9]+)(-[0-9]+)?)/;
+
+/*
+ * Group 1: application slug (org/app)
+ * Group 2: org name
+ * Group 3: app name
+ * Optional:
+ * - Group 4: semver or commit
+ * - Group 5: service name
+ */
+const APP_RELEASE_REGEX =
+	/^(([a-z0-9_-]+)\/([a-z0-9_-]+))(?:\/([a-z0-9_\.-]+))?(?:\/([a-z0-9_-]+))?$/;
+
+const TARGET_RELEASE_KEYWORDS = [`latest`, `current`, `default`, `pinned`];
 
 // This regex parses a scope of the form
 // 		repository:<image>:<permissions>
 // 	where <image> can be
 // 		<appname>/<commit>
+// 		<org>/<app>/<semver|commit>/<service>
 // 		<appID>/<buildId>
 // 		v2/<hash>
 // 		resin/resinos (and related "standard" image names)
@@ -48,12 +64,13 @@ const NEW_REGISTRY_REGEX = /(^(\d+)\/[\d\-]+$|^(v2\/[a-z0-9]+)(-[0-9]+)?)/;
 // 		push
 // 		push,pull
 const SCOPE_PARSE_REGEX =
-	/^([a-z]+):([a-z0-9_-]+\/[a-z0-9_-]+|\d+\/[\d\-]+|v2\/[a-z0-9]+-[0-9]+)(?::[a-z0-9]+|@sha256:[a-f0-9]+)?:((?:push|pull|,)+)$/;
+	/^([a-z]+):([a-z0-9_-]+\/[a-z0-9_-]+(?:\/[a-z0-9_\.-]+)?(?:\/[a-z0-9_-]+)?|\d+\/[\d\-]+|v2\/[a-z0-9]+-[0-9]+)(?::[a-z0-9]+|@sha256:[a-f0-9]+)?:((?:push|pull|,)+)$/;
 
 export interface Access {
 	name: string;
 	type: string;
 	actions: string[];
+	alias?: string;
 }
 type Scope = [Access['type'], Access['name'], Access['actions']];
 
@@ -207,6 +224,124 @@ const resolveImageId = multiCacheMemoizee(
 	},
 );
 
+const resolveImageLocation = multiCacheMemoizee(
+	async (
+		applicationSlug: string,
+		releaseHashOrVersion: string | undefined,
+		serviceName: string | undefined,
+		req: permissions.PermissionReq,
+		tx: Tx,
+	): Promise<string | undefined> => {
+		try {
+			const [image] = await api.resin.get({
+				resource: 'image',
+				passthrough: { req, tx },
+				options: {
+					$top: 1,
+					$select: 'is_stored_at__image_location',
+					$filter: {
+						release_image: {
+							$any: {
+								$alias: 'ri',
+								$expr: {
+									ri: {
+										is_part_of__release: {
+											$any: {
+												$alias: 'ipor',
+												$expr: {
+													ipor: {
+														status: 'success',
+														belongs_to__application: {
+															$any: {
+																$alias: 'bta',
+																$expr: {
+																	bta: {
+																		slug: applicationSlug,
+																	},
+																},
+															},
+														},
+														...(releaseHashOrVersion == null && {
+															should_be_running_on__application: {
+																$any: {
+																	$alias: 'sbroa',
+																	$expr: {
+																		sbroa: {
+																			slug: applicationSlug,
+																		},
+																	},
+																},
+															},
+														}),
+													},
+													...(releaseHashOrVersion != null && {
+														$or: [
+															{ ipor: { commit: releaseHashOrVersion } },
+															{
+																// if there are multiple revisions of a final release
+																// match the semver and sort by revision to return the latest
+																ipor: {
+																	semver: releaseHashOrVersion,
+																	is_final: true,
+																},
+															},
+															{
+																// raw version can match draft releases (0.0.0-123456789)
+																// or final releases with no revisions (0.0.0)
+																ipor: {
+																	raw_version: releaseHashOrVersion,
+																	is_final: false,
+																},
+															},
+														],
+													}),
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+						status: 'success',
+						...(serviceName != null && {
+							is_a_build_of__service: {
+								$any: {
+									$alias: 'iabos',
+									$expr: {
+										iabos: {
+											service_name: serviceName,
+										},
+									},
+								},
+							},
+						}),
+					},
+					$orderby: [
+						'release_image/is_part_of__release/revision desc',
+						'id asc',
+					],
+				},
+			});
+			return image?.is_stored_at__image_location;
+		} catch (err) {
+			// Ignore errors
+		}
+	},
+	{
+		cacheKey: 'resolveImageLocation',
+		undefinedAs: false,
+		promise: true,
+		primitive: true,
+		maxAge: RESOLVE_IMAGE_LOCATION_CACHE_TIMEOUT,
+		max: 500,
+		normalizer: ([applicationSlug, releaseHashOrVersion, serviceName, req]) => {
+			return `${applicationSlug}${releaseHashOrVersion}${serviceName}${reqPermissionNormalizer(
+				req,
+			)}`;
+		},
+	},
+);
+
 const resolveAccess = async (
 	req: Request,
 	type: string,
@@ -214,6 +349,7 @@ const resolveAccess = async (
 	effectiveName: string,
 	requestedActions: string[],
 	defaultActions: string[] = [],
+	alias: string | undefined,
 	tx: Tx,
 ): Promise<Access> => {
 	let allowedActions;
@@ -252,6 +388,7 @@ const resolveAccess = async (
 		name,
 		type,
 		actions: _.intersection(requestedActions, allowedActions),
+		...(alias != null ? { alias } : {}),
 	};
 };
 
@@ -284,7 +421,9 @@ const authorizeRequest = async (
 					name,
 					actions: _.intersection(requestedActions, allowedActions),
 				};
-			} else if (SUPERVISOR_REPOSITORIES.test(name)) {
+			}
+
+			if (SUPERVISOR_REPOSITORIES.test(name)) {
 				let allowedActions = ['pull'];
 				if (
 					AUTH_RESINOS_REGISTRY_CODE != null &&
@@ -297,37 +436,101 @@ const authorizeRequest = async (
 					name,
 					actions: _.intersection(requestedActions, allowedActions),
 				};
-			} else {
-				const match = name.match(NEW_REGISTRY_REGEX);
-				if (match != null) {
-					// request for new-style, authenticated v2/randomhash image
-					let effectiveName = name;
-					if (match[4] != null) {
-						// This is a multistage image, use the root image name
-						effectiveName = match[3];
-					}
+			}
+
+			let match = name.match(NEW_REGISTRY_REGEX);
+			if (match != null) {
+				// request for new-style, authenticated v2/randomhash image
+				let effectiveName = name;
+				if (match[4] != null) {
+					// This is a multistage image, use the root image name
+					effectiveName = match[3];
+				}
+				return await resolveAccess(
+					req,
+					type,
+					name,
+					effectiveName,
+					requestedActions,
+					undefined,
+					undefined,
+					tx,
+				);
+			}
+
+			// match <org>/<app>/<semver|commit>/<service> where <semver|commit> and <service> are optional
+			match = name.match(APP_RELEASE_REGEX);
+			if (match != null && match.length > 3) {
+				// request for read-only application (blocks) releases
+				let alias;
+
+				const applicationSlug = match[1];
+				let semverOrCommit = match[4] || undefined;
+				const serviceName = match[5];
+
+				// allow keywords like 'latest' and 'current' to return the target release for the application
+				if (
+					semverOrCommit != null &&
+					TARGET_RELEASE_KEYWORDS.includes(semverOrCommit)
+				) {
+					semverOrCommit = undefined;
+				}
+
+				const imageLocation = await resolveImageLocation(
+					applicationSlug,
+					semverOrCommit,
+					serviceName,
+					req,
+					tx,
+				);
+
+				if (imageLocation != null) {
+					// set alias to the requested name, and use the real image location for the name
+					alias = name;
+					name = imageLocation.split('/').slice(1).join('/');
+
+					// only allow pull
+					const allowedActions = ['pull'];
+
 					return await resolveAccess(
 						req,
 						type,
 						name,
-						effectiveName,
-						requestedActions,
-						undefined,
+						name,
+						_.intersection(requestedActions, allowedActions),
+						['pull'],
+						alias,
 						tx,
 					);
 				} else {
-					// request for legacy public-read appName/commit image
-					return await resolveAccess(
-						req,
-						type,
-						name,
-						name,
-						requestedActions,
-						['pull'],
-						tx,
-					);
+					// avoid falling back to legacy format if a semver/commit was provided
+					if (semverOrCommit != null) {
+						return {
+							name,
+							type,
+							actions: [],
+						};
+					}
 				}
 			}
+
+			// Requests for <org>/<app> may also get here if it failed
+			// to resolve to an image location above.
+			// But that's okay because we wll be granting permissions to a repo that
+			// doesn't exist, and we don't want to break the legacy <app>/<commit> format
+			// in this PR.
+
+			// request for legacy public-read appName/commit image
+			return await resolveAccess(
+				req,
+				type,
+				name,
+				name,
+				requestedActions,
+				['pull'],
+				undefined,
+				tx,
+			);
 		}),
 	);
 };
