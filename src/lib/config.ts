@@ -67,6 +67,14 @@ export function optionalVar(
 	return process.env[varName] || defaultValue;
 }
 
+export const checkInt = (s: string) => {
+	const i = parseInt(s, 10);
+	if (!Number.isFinite(i)) {
+		return;
+	}
+	return i;
+};
+
 export function intVar(varName: string): number;
 export function intVar<R>(varName: string, defaultValue: R): number | R;
 export function intVar<R>(varName: string, defaultValue?: R): number | R {
@@ -78,8 +86,9 @@ export function intVar<R>(varName: string, defaultValue?: R): number | R {
 	if (s == null) {
 		return defaultValue!;
 	}
-	const i = parseInt(s, 10);
-	if (!Number.isFinite(i)) {
+
+	const i = checkInt(s);
+	if (i === undefined) {
 		throw new Error(`${varName} must be a valid number if set`);
 	}
 	return i;
@@ -191,12 +200,40 @@ export const RATE_LIMIT_FACTOR = intVar('RATE_LIMIT_FACTOR', 1);
 export const RATE_LIMIT_MEMORY_BACKEND = optionalVar(
 	'RATE_LIMIT_MEMORY_BACKEND',
 );
-const redisHost = requiredVar('REDIS_HOST');
-const redisPort = intVar('REDIS_PORT');
-const redisRoHost = optionalVar('REDIS_RO_HOST', redisHost);
-const redisRoPort = intVar('REDIS_RO_PORT', redisPort);
-const redisLogsHost = optionalVar('REDIS_LOGS_HOST');
-const redisLogsPort = intVar('REDIS_LOGS_PORT', undefined);
+
+// Split `${host}:${port}` pairs, with a fallback to separate `${prefix}_HOST`/`${prefix}_PORT` pairs
+const splitHostPort = (prefix: string): [string, number] => {
+	const [host, maybePort] = requiredVar(`${prefix}_HOST`).split(':');
+	const port = checkInt(maybePort) ?? intVar(`${prefix}_PORT`);
+	return [host, port];
+};
+const optionalSplitHostPort = <
+	T extends string | undefined,
+	U extends number | undefined,
+>(
+	prefix: string,
+	defaultHost: T,
+	defaultPort: U,
+): [string | undefined | T, number | U] => {
+	const [host, maybePort] = optionalVar(
+		`${prefix}_HOST`,
+		defaultHost ?? '',
+	).split(':');
+	const port = checkInt(maybePort) ?? intVar(`${prefix}_PORT`, defaultPort);
+	return [host === '' ? undefined : host, port];
+};
+const [redisHost, redisPort] = splitHostPort('REDIS');
+const [redisRoHost, redisRoPort] = optionalSplitHostPort(
+	'REDIS_RO',
+	redisHost,
+	redisPort,
+);
+const [redisLogsHost, redisLogsPort] = optionalSplitHostPort(
+	'REDIS_LOGS',
+	undefined,
+	undefined,
+);
+
 export const REDIS = {
 	general: {
 		host: redisHost,
