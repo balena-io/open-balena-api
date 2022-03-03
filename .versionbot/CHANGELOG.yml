@@ -1,4 +1,16 @@
 - commits:
+    - subject: Drop support for legacy reporting single vpn client connect/disconnects
+      hash: 979dd8158d7f6ec4adb26d8b09ef464f0b1d54f5
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.194.0
+  title: "'Drop support for legacy reporting single vpn client connect/disconnects'"
+  date: 2022-03-03T17:03:18.771Z
+- commits:
     - subject: Add missing awaits
       hash: 2e5a46cfb6bd6e703140fd274f24ce5eb3857c72
       body: ""
