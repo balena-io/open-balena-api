@@ -28,9 +28,8 @@ export const connectDeviceAndWaitForUpdate = async (
 		.post('/services/vpn/client-connect')
 		.query({ apikey: VPN_SERVICE_API_KEY })
 		.send({
-			common_name: uuid,
-			virtual_address: '10.10.10.1',
-			service_id: serviceId,
+			uuids: [uuid],
+			serviceId,
 		})
 		.expect(200);
 
