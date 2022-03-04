@@ -1,4 +1,16 @@
 - commits:
+    - subject: Only accept redis host vars in `${host}:${port}` pairs
+      hash: 1b22eba33f6dbd0cbf99fad7dd82974a8baebf18
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.195.0
+  title: "'Only accept redis host vars in  pairs'"
+  date: 2022-03-04T17:40:38.984Z
+- commits:
     - subject: Also support a single `${host}:${port}` var for `REDIS_LOGS_RO_HOST`
       hash: d4bd8f7a2daff2ea6fa92d34bccf02f5f30c54d8
       body: ""
