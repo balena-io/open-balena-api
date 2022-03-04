@@ -202,36 +202,44 @@ export const RATE_LIMIT_MEMORY_BACKEND = optionalVar(
 );
 
 // Split `${host}:${port}` pairs, with a fallback to separate `${prefix}_HOST`/`${prefix}_PORT` pairs
-const splitHostPort = (prefix: string): [string, number] => {
-	const [host, maybePort] = requiredVar(`${prefix}_HOST`).split(':');
-	const port = checkInt(maybePort) ?? intVar(`${prefix}_PORT`);
-	return [host, port];
-};
-const optionalSplitHostPort = (
-	prefix: string,
+function splitHostPort(varName: string): [string, number];
+function splitHostPort(
+	varName: string,
 	defaultHost: string,
 	defaultPort: number,
-): [string, number] => {
-	const [host, maybePort] = optionalVar(
-		`${prefix}_HOST`,
-		defaultHost ?? '',
-	).split(':');
-	const port = checkInt(maybePort) ?? intVar(`${prefix}_PORT`, defaultPort);
+): [string, number];
+function splitHostPort(
+	varName: string,
+	defaultHost?: string,
+	defaultPort?: number,
+): [string, number] {
+	const hostPair = optionalVar(varName);
+	if (hostPair == null) {
+		if (defaultHost == null || defaultPort == null) {
+			throw new Error(`Missing environment variable: ${varName}`);
+		}
+		return [defaultHost, defaultPort];
+	}
+	const [host, maybePort] = hostPair.split(':');
+	const port = checkInt(maybePort);
+	if (port == null) {
+		throw new Error(`Invalid port for '${varName}': ${maybePort}`);
+	}
 	return [host, port];
-};
-const [redisHost, redisPort] = splitHostPort('REDIS');
-const [redisRoHost, redisRoPort] = optionalSplitHostPort(
-	'REDIS_RO',
+}
+const [redisHost, redisPort] = splitHostPort('REDIS_HOST');
+const [redisRoHost, redisRoPort] = splitHostPort(
+	'REDIS_RO_HOST',
 	redisHost,
 	redisPort,
 );
-const [redisLogsHost, redisLogsPort] = optionalSplitHostPort(
-	'REDIS_LOGS',
+const [redisLogsHost, redisLogsPort] = splitHostPort(
+	'REDIS_LOGS_HOST',
 	redisHost,
 	redisPort,
 );
-const [redisLogsRoHost, redisLogsRoPort] = optionalSplitHostPort(
-	'REDIS_LOGS_RO',
+const [redisLogsRoHost, redisLogsRoPort] = splitHostPort(
+	'REDIS_LOGS_RO_HOST',
 	redisLogsHost,
 	redisLogsPort,
 );
