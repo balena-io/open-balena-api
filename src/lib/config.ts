@@ -207,20 +207,17 @@ const splitHostPort = (prefix: string): [string, number] => {
 	const port = checkInt(maybePort) ?? intVar(`${prefix}_PORT`);
 	return [host, port];
 };
-const optionalSplitHostPort = <
-	T extends string | undefined,
-	U extends number | undefined,
->(
+const optionalSplitHostPort = (
 	prefix: string,
-	defaultHost: T,
-	defaultPort: U,
-): [string | undefined | T, number | U] => {
+	defaultHost: string,
+	defaultPort: number,
+): [string, number] => {
 	const [host, maybePort] = optionalVar(
 		`${prefix}_HOST`,
 		defaultHost ?? '',
 	).split(':');
 	const port = checkInt(maybePort) ?? intVar(`${prefix}_PORT`, defaultPort);
-	return [host === '' ? undefined : host, port];
+	return [host, port];
 };
 const [redisHost, redisPort] = splitHostPort('REDIS');
 const [redisRoHost, redisRoPort] = optionalSplitHostPort(
@@ -230,8 +227,13 @@ const [redisRoHost, redisRoPort] = optionalSplitHostPort(
 );
 const [redisLogsHost, redisLogsPort] = optionalSplitHostPort(
 	'REDIS_LOGS',
-	undefined,
-	undefined,
+	redisHost,
+	redisPort,
+);
+const [redisLogsRoHost, redisLogsRoPort] = optionalSplitHostPort(
+	'REDIS_LOGS_RO',
+	redisLogsHost,
+	redisLogsPort,
 );
 
 export const REDIS = {
@@ -242,11 +244,10 @@ export const REDIS = {
 		roPort: redisRoPort,
 	},
 	logs: {
-		host: redisLogsHost ?? redisHost,
-		port: redisLogsPort ?? redisPort,
-		roHost: optionalVar('REDIS_LOGS_RO_HOST') ?? redisLogsHost ?? redisRoHost,
-		roPort:
-			intVar('REDIS_LOGS_RO_PORT', undefined) ?? redisLogsPort ?? redisRoPort,
+		host: redisLogsHost,
+		port: redisLogsPort,
+		roHost: redisLogsRoHost,
+		roPort: redisLogsRoPort,
 	},
 };
 export const LOKI_HOST = optionalVar('LOKI_HOST');
