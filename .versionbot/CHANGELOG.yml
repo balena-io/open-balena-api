@@ -1,4 +1,16 @@
 - commits:
+    - subject: Also support a single `${host}:${port}` var for `REDIS_LOGS_RO_HOST`
+      hash: d4bd8f7a2daff2ea6fa92d34bccf02f5f30c54d8
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.194.2
+  title: "'Also support a single  var for '"
+  date: 2022-03-04T16:30:12.633Z
+- commits:
     - subject: Allow specifying redis hosts as a single `${host}:${port}` var
       hash: 31bdc9410eb630a4a0459ea3593bc12a852a2400
       body: |
