@@ -33,4 +33,6 @@ require('@balena/es-version').set('es2021');
 process.env.TS_NODE_CACHE_DIRECTORY = '.ts-node';
 require('ts-node/register/transpile-only');
 
-require('./init.ts');
+const { init } = require('./init.ts');
+
+init();

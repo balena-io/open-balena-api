@@ -217,27 +217,20 @@ async function createSuperuser() {
 export const app = express();
 app.set('trust proxy', TRUST_PROXY);
 
-const init = async () => {
+export const init = async (configParamter?: any) => {
 	try {
 		const generateConfig = (process.env.GENERATE_CONFIG || '').trim();
 		if (generateConfig.length > 0) {
-			await fs.writeFile(generateConfig, JSON.stringify(config, null, '\t'));
+			await fs.writeFile(
+				generateConfig,
+				JSON.stringify(configParamter ?? config, null, '\t'),
+			);
 			process.exit();
 		}
 
-		const doRunTests =
-			(process.env.RUN_TESTS || '').trim() === '1'
-				? await import('./test/test-lib/init-tests')
-				: undefined;
-
-		// we have to load some mocks before the app starts...
-		if (doRunTests) {
-			console.log('Loading mocks...');
-			await doRunTests.preInit();
-		}
 		const { setup } = await import('./src');
 		const { startServer } = await setup(app, {
-			config,
+			config: configParamter ?? config,
 			version,
 			getUrl,
 			onInitMiddleware,
@@ -245,14 +238,9 @@ const init = async () => {
 			onInitHooks,
 		});
 		await createSuperuser();
-		await startServer(PORT);
-		if (doRunTests) {
-			console.log('Running tests...');
-			await doRunTests.postInit();
-		}
+		return await startServer(PORT);
 	} catch (err) {
 		console.error('Failed to initialize:', err);
 		process.exit(1);
 	}
 };
-init();
