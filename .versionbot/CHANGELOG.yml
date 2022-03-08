@@ -1,4 +1,16 @@
 - commits:
+    - subject: Ensure the device logs buffer cannot be larger than the retention limit
+      hash: d505fc4a6ea3d3e95a4c1bff47f0c51fadb82e5c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.195.1
+  title: "'Ensure the device logs buffer cannot be larger than the retention limit'"
+  date: 2022-03-08T16:44:11.564Z
+- commits:
     - subject: Only accept redis host vars in `${host}:${port}` pairs
       hash: 1b22eba33f6dbd0cbf99fad7dd82974a8baebf18
       body: ""
