@@ -193,6 +193,11 @@ function handleStreamingWrite(
 		try {
 			// Don't flush if the backend is reporting as unavailable
 			if (buffer.length && backend.available) {
+				const limit = ctx.retention_limit;
+				if (buffer.length > limit) {
+					// Ensure the buffer cannot be larger than the retention limit
+					buffer.splice(0, buffer.length - limit);
+				}
 				// Even if the connection was closed, still flush the buffer
 				const publishingToRedis = backend.publish(ctx, buffer);
 				const publishingToLoki = shouldPublishToLoki()

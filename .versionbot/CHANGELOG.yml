@@ -1,4 +1,149 @@
 - commits:
+    - subject: Ensure the device logs buffer cannot be larger than the retention limit
+      hash: d505fc4a6ea3d3e95a4c1bff47f0c51fadb82e5c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.195.1
+  title: "'Ensure the device logs buffer cannot be larger than the retention limit'"
+  date: 2022-03-08T16:44:11.564Z
+- commits:
+    - subject: Only accept redis host vars in `${host}:${port}` pairs
+      hash: 1b22eba33f6dbd0cbf99fad7dd82974a8baebf18
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.195.0
+  title: "'Only accept redis host vars in  pairs'"
+  date: 2022-03-04T17:40:38.984Z
+- commits:
+    - subject: Also support a single `${host}:${port}` var for `REDIS_LOGS_RO_HOST`
+      hash: d4bd8f7a2daff2ea6fa92d34bccf02f5f30c54d8
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.194.2
+  title: "'Also support a single  var for '"
+  date: 2022-03-04T16:30:12.633Z
+- commits:
+    - subject: Allow specifying redis hosts as a single `${host}:${port}` var
+      hash: 31bdc9410eb630a4a0459ea3593bc12a852a2400
+      body: |
+        Rather than having to specify the host/port separately
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.194.1
+  title: "'Allow specifying redis hosts as a single  var'"
+  date: 2022-03-03T17:23:16.995Z
+- commits:
+    - subject: Drop support for legacy reporting single vpn client connect/disconnects
+      hash: 979dd8158d7f6ec4adb26d8b09ef464f0b1d54f5
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.194.0
+  title: "'Drop support for legacy reporting single vpn client connect/disconnects'"
+  date: 2022-03-03T17:03:18.771Z
+- commits:
+    - subject: Add missing awaits
+      hash: 2e5a46cfb6bd6e703140fd274f24ce5eb3857c72
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.193.5
+  title: "'Add missing awaits'"
+  date: 2022-03-01T23:54:45.838Z
+- commits:
+    - subject: Remove unused binding
+      hash: cb80aa7112eb1ef63d1d652a6db053e4001c8648
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.193.4
+  title: "'Remove unused binding'"
+  date: 2022-03-01T23:44:53.211Z
+- commits:
+    - subject: Update dependencies
+      hash: c4b2a5bdfddfb5281fae12a77a0f1d709e79b77a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.193.3
+  title: "'Update dependencies'"
+  date: 2022-03-01T17:29:56.424Z
+- commits:
+    - subject: Ensure at least one device is being updated for batch vpn updates
+      hash: ca0ce1d37f700129948f34c40d66935791a6b906
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.193.2
+  title: "'Ensure at least one device is being updated for batch vpn updates'"
+  date: 2022-03-01T17:14:18.793Z
+- commits:
+    - subject: Add support for reporting multiple connecting/disconnecting VPN clients
+      hash: e3958965c575979b1c208e82eeedd6fdaffd58d6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.193.1
+  title: "'Add support for reporting multiple connecting/disconnecting VPN clients'"
+  date: 2022-03-01T14:51:55.418Z
+- commits:
+    - subject: Ignore reported vpn_address
+      hash: 135ad46c965ca00f09381b4345adfb3938b5841c
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.193.0
+  title: "'Ignore reported vpn_address'"
+  date: 2022-02-25T15:38:40.348Z
+- commits:
+    - subject: Update dependencies
+      hash: 6d05a7546995c7d3e750d0d6f7776b950c81e19b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.192.6
+  title: "'Update dependencies'"
+  date: 2022-02-25T13:07:41.923Z
+- commits:
     - subject: Make `virtual_address` optional for `/services/vpn/client-connect`
       hash: 55c34ab880ac59c73a5ce1eba0b03d0b323ec5b9
       body: ""

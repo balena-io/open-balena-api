@@ -51,40 +51,6 @@ const checkAuth = (() => {
 	);
 })();
 
-const clientConnectQuery = _.once(() =>
-	api.resin.prepare<{ uuid: string }>({
-		method: 'PATCH',
-		resource: 'device',
-		id: {
-			uuid: { '@': 'uuid' },
-		},
-		body: {
-			is_connected_to_vpn: true,
-		},
-	}),
-);
-const clientDisconnectQuery = _.once(() =>
-	api.resin.prepare<{
-		uuid: string;
-		serviceId: number;
-	}>({
-		method: 'PATCH',
-		resource: 'device',
-		id: {
-			uuid: { '@': 'uuid' },
-		},
-		options: {
-			$filter: {
-				// Only disconnect if still managed by this vpn
-				is_managed_by__service_instance: { '@': 'serviceId' },
-			},
-		},
-		body: {
-			is_connected_to_vpn: false,
-			vpn_address: null,
-		},
-	}),
-);
 export const authDevice = async (
 	req: Request,
 	res: Response,
@@ -104,21 +70,28 @@ export const clientConnect = async (
 	req: Request,
 	res: Response,
 ): Promise<void> => {
-	const body = req.body || {};
-	if (!body.common_name || !body.service_id) {
+	const { uuids, serviceId } = req.body || {};
+	if (!uuids || uuids.length === 0 || !serviceId) {
 		res.status(400).end();
 		return;
 	}
 
 	try {
-		await clientConnectQuery()(
-			{ uuid: body.common_name },
-			{
-				vpn_address: body.virtual_address || null,
-				is_managed_by__service_instance: body.service_id,
+		await api.resin.patch({
+			resource: 'device',
+			passthrough: {
+				req,
 			},
-			{ req },
-		);
+			options: {
+				$filter: {
+					uuid: { $in: uuids },
+				},
+			},
+			body: {
+				is_connected_to_vpn: true,
+				is_managed_by__service_instance: serviceId,
+			},
+		});
 		res.status(200).end();
 	} catch (err) {
 		captureException(err, 'Error with vpn client connect', { req });
@@ -133,22 +106,27 @@ export const clientDisconnect = async (
 	req: Request,
 	res: Response,
 ): Promise<void> => {
-	const body = req.body || {};
-	if (!body.common_name) {
-		res.status(400).end();
-		return;
-	}
-	if (!body.service_id) {
+	const { uuids, serviceId } = req.body || {};
+	if (!uuids || uuids.length === 0 || !serviceId) {
 		res.status(400).end();
 		return;
 	}
 
 	try {
-		await clientDisconnectQuery()(
-			{ uuid: body.common_name, serviceId: body.service_id },
-			undefined,
-			{ req },
-		);
+		await api.resin.patch({
+			resource: 'device',
+			passthrough: { req },
+			options: {
+				$filter: {
+					uuid: { $in: uuids },
+					// Only disconnect if still managed by this vpn
+					is_managed_by__service_instance: serviceId,
+				},
+			},
+			body: {
+				is_connected_to_vpn: false,
+			},
+		});
 		res.status(200).end();
 	} catch (err) {
 		captureException(err, 'Error with vpn client disconnect', { req });

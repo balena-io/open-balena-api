@@ -67,6 +67,14 @@ export function optionalVar(
 	return process.env[varName] || defaultValue;
 }
 
+export const checkInt = (s: string) => {
+	const i = parseInt(s, 10);
+	if (!Number.isFinite(i)) {
+		return;
+	}
+	return i;
+};
+
 export function intVar(varName: string): number;
 export function intVar<R>(varName: string, defaultValue: R): number | R;
 export function intVar<R>(varName: string, defaultValue?: R): number | R {
@@ -78,8 +86,9 @@ export function intVar<R>(varName: string, defaultValue?: R): number | R {
 	if (s == null) {
 		return defaultValue!;
 	}
-	const i = parseInt(s, 10);
-	if (!Number.isFinite(i)) {
+
+	const i = checkInt(s);
+	if (i === undefined) {
 		throw new Error(`${varName} must be a valid number if set`);
 	}
 	return i;
@@ -191,12 +200,50 @@ export const RATE_LIMIT_FACTOR = intVar('RATE_LIMIT_FACTOR', 1);
 export const RATE_LIMIT_MEMORY_BACKEND = optionalVar(
 	'RATE_LIMIT_MEMORY_BACKEND',
 );
-const redisHost = requiredVar('REDIS_HOST');
-const redisPort = intVar('REDIS_PORT');
-const redisRoHost = optionalVar('REDIS_RO_HOST', redisHost);
-const redisRoPort = intVar('REDIS_RO_PORT', redisPort);
-const redisLogsHost = optionalVar('REDIS_LOGS_HOST');
-const redisLogsPort = intVar('REDIS_LOGS_PORT', undefined);
+
+// Split `${host}:${port}` pairs, with a fallback to separate `${prefix}_HOST`/`${prefix}_PORT` pairs
+function splitHostPort(varName: string): [string, number];
+function splitHostPort(
+	varName: string,
+	defaultHost: string,
+	defaultPort: number,
+): [string, number];
+function splitHostPort(
+	varName: string,
+	defaultHost?: string,
+	defaultPort?: number,
+): [string, number] {
+	const hostPair = optionalVar(varName);
+	if (hostPair == null) {
+		if (defaultHost == null || defaultPort == null) {
+			throw new Error(`Missing environment variable: ${varName}`);
+		}
+		return [defaultHost, defaultPort];
+	}
+	const [host, maybePort] = hostPair.split(':');
+	const port = checkInt(maybePort);
+	if (port == null) {
+		throw new Error(`Invalid port for '${varName}': ${maybePort}`);
+	}
+	return [host, port];
+}
+const [redisHost, redisPort] = splitHostPort('REDIS_HOST');
+const [redisRoHost, redisRoPort] = splitHostPort(
+	'REDIS_RO_HOST',
+	redisHost,
+	redisPort,
+);
+const [redisLogsHost, redisLogsPort] = splitHostPort(
+	'REDIS_LOGS_HOST',
+	redisHost,
+	redisPort,
+);
+const [redisLogsRoHost, redisLogsRoPort] = splitHostPort(
+	'REDIS_LOGS_RO_HOST',
+	redisLogsHost,
+	redisLogsPort,
+);
+
 export const REDIS = {
 	general: {
 		host: redisHost,
@@ -205,11 +252,10 @@ export const REDIS = {
 		roPort: redisRoPort,
 	},
 	logs: {
-		host: redisLogsHost ?? redisHost,
-		port: redisLogsPort ?? redisPort,
-		roHost: optionalVar('REDIS_LOGS_RO_HOST') ?? redisLogsHost ?? redisRoHost,
-		roPort:
-			intVar('REDIS_LOGS_RO_PORT', undefined) ?? redisLogsPort ?? redisRoPort,
+		host: redisLogsHost,
+		port: redisLogsPort,
+		roHost: redisLogsRoHost,
+		roPort: redisLogsRoPort,
 	},
 };
 export const LOKI_HOST = optionalVar('LOKI_HOST');
