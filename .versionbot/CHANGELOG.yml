@@ -1,4 +1,18 @@
 - commits:
+    - subject: Refactor release versioning tests to be less release_version focused
+      hash: e81084074870bcc979ec5876661522e93783307b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.195.2
+  title: "'Refactor release versioning tests to be less release_version focused'"
+  date: 2022-03-11T16:07:51.951Z
+- commits:
     - subject: Ensure the device logs buffer cannot be larger than the retention limit
       hash: d505fc4a6ea3d3e95a4c1bff47f0c51fadb82e5c
       body: ""
