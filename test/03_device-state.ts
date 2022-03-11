@@ -422,7 +422,9 @@ describe('Device State v2 patch', function () {
 	});
 
 	it('should clear the throttling key from redis after the throttling window passes', async () => {
-		await setTimeout(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
+		await setTimeout(
+			(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS + 1) * 1000,
+		);
 		expect(await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid))).to
 			.be.null;
 	});
@@ -447,7 +449,9 @@ describe('Device State v2 patch', function () {
 
 	it('should throttle metrics-only device state updates [cross-instance]', async () => {
 		// Wait for the local cache to expire
-		await setTimeout(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
+		await setTimeout(
+			(configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS + 1) * 1000,
+		);
 		// confirm that even the redis cache has expired
 		expect(await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid))).to
 			.be.null;
