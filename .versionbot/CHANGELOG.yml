@@ -1,4 +1,41 @@
 - commits:
+    - subject: "registry: Only resolve releases with one service"
+      hash: 86b68dea2c03a24658489c90afe42049565a5667
+      body: |
+        For the intial release we are not supporting applications with multiple
+        services as the intended use is blocks.
+
+        These changes will reject requests with a value for service following
+        the commit|semver.
+
+        It will also reject images at the DB query if the release has multiple
+        release images.
+
+        Revert this commit to restore support for multiple services.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Kyle Harding <kyle@balena.io>
+        signed-off-by: Kyle Harding <kyle@balena.io>
+      author: Kyle Harding
+      nested: []
+    - subject: "registry: Enable auth requests to resolve scope aliases"
+      hash: cbd6956e03381e7a9da9c37982c5d50ca921376b
+      body: |
+        We can leverage the existing API registry auth features
+        to resolve org/app/release requests to the v2/randomhash format
+        and return the JWT with the real repo path and the requested alias.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Kyle Harding <kyle@balena.io>
+        signed-off-by: Kyle Harding <kyle@balena.io>
+      author: Kyle Harding
+      nested: []
+  version: 0.196.0
+  title: "'Enable registry auth requests to resolve image aliases'"
+  date: 2022-03-11T18:21:51.218Z
+- commits:
     - subject: Refactor release versioning tests to be less release_version focused
       hash: e81084074870bcc979ec5876661522e93783307b
       body: ""
