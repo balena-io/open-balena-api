@@ -250,6 +250,8 @@ const resolveImageLocation = multiCacheMemoizee(
 												$alias: 'ipor',
 												$expr: {
 													ipor: {
+														// for now only return releases with one image (service)
+														release_image: { $count: { $eq: 1 } },
 														status: 'success',
 														belongs_to__application: {
 															$any: {
@@ -467,6 +469,15 @@ const authorizeRequest = async (
 				const applicationSlug = match[1];
 				let semverOrCommit = match[4] || undefined;
 				const serviceName = match[5];
+
+				// For now remove support for releases with multiple services
+				if (serviceName != null) {
+					return {
+						name,
+						type,
+						actions: [],
+					};
+				}
 
 				// allow keywords like 'latest' and 'current' to return the target release for the application
 				if (
