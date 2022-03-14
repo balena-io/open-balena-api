@@ -8,6 +8,8 @@ import type {
 	Relationship,
 	RelationshipInternalNode,
 	TextTypeNodes,
+	BooleanTypeNodes,
+	UnknownTypeNodes,
 } from '@balena/abstract-sql-compiler';
 
 import { sbvrUtils } from '@balena/pinejs';
@@ -197,3 +199,47 @@ const sqlConcatFactory = (
 export const oneLineTrimSqlConcat = sqlConcatFactory((node) =>
 	typeof node === 'string' ? node.replace(/\s*\n\s*/g, '') : node,
 );
+
+export const splitStringParts = (field: UnknownTypeNodes, separator = '.') =>
+	oneLineTrimSqlConcat`"${[
+		'Replace',
+		field,
+		['EmbeddedText', separator],
+		['EmbeddedText', '","'],
+	]}"`;
+
+export const joinTextParts = (
+	prefix: string,
+	[showPartA, partAValue]: [BooleanTypeNodes, UnknownTypeNodes],
+	separator: string,
+	[showPartB, partBValue]: [BooleanTypeNodes, UnknownTypeNodes],
+): ReturnType<typeof oneLineTrimSqlConcat> =>
+	oneLineTrimSqlConcat`${[
+		'Cast',
+		[
+			'Case',
+			['When', showPartA, oneLineTrimSqlConcat`${prefix}${partAValue}`],
+			['Else', ['EmbeddedText', '']],
+		],
+		'Text',
+	]}${[
+		'Cast',
+		[
+			'Case',
+			[
+				'When',
+				showPartB,
+				oneLineTrimSqlConcat`${[
+					'Cast',
+					[
+						'Case',
+						['When', showPartA, ['EmbeddedText', separator]],
+						['Else', ['EmbeddedText', prefix]],
+					],
+					'Text',
+				]}${partBValue}`,
+			],
+			['Else', ['EmbeddedText', '']],
+		],
+		'Text',
+	]}`;

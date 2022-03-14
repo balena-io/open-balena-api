@@ -649,6 +649,45 @@ describe('versioning releases', () => {
 			);
 		},
 	);
+
+	['1.2.3-beta1', '1.2.3+build1', '1.2.3-beta1.fixed+build1'].forEach(
+		(semver) => {
+			it(`should not support POSTing semvers including pre-release or build parts: ${semver}`, async () => {
+				await pineUser
+					.post({
+						resource: 'release',
+						body: {
+							...newReleaseBody,
+							commit: randomUUID(),
+							semver,
+						},
+					})
+					.expect(400, '"Invalid semver format"');
+			});
+
+			it(`should not support PATCHing semvers including pre-release or build parts: ${semver}`, async () => {
+				const { body: release } = await pineUser
+					.post({
+						resource: 'release',
+						body: {
+							...newReleaseBody,
+							commit: randomUUID(),
+						},
+					})
+					.expect(201);
+
+				await pineUser
+					.patch({
+						resource: 'release',
+						id: release.id,
+						body: {
+							semver,
+						},
+					})
+					.expect(400, '"Invalid semver format"');
+			});
+		},
+	);
 });
 
 describe('draft releases', () => {

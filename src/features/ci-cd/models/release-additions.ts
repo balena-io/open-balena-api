@@ -1,20 +1,48 @@
 import type {
 	AbstractSqlModel,
+	BooleanTypeNodes,
 	CastNode,
 	ReferencedFieldNode,
 	ExistsNode,
+	NotExistsNode,
 } from '@balena/abstract-sql-compiler';
-import { oneLineTrimSqlConcat } from '../../../abstract-sql-utils';
+import {
+	joinTextParts,
+	oneLineTrimSqlConcat,
+	splitStringParts,
+} from '../../../abstract-sql-utils';
 
 export const addToModel = (abstractSql: AbstractSqlModel) => {
-	const [revisionField, majorField, minorField, patchField] = [
+	const [
+		revisionField,
+		majorField,
+		minorField,
+		patchField,
+		prereleaseField,
+		buildField,
+	] = [
 		'revision',
 		'semver major',
 		'semver minor',
 		'semver patch',
+		'semver prerelease',
+		'semver build',
 	].map((field): ReferencedFieldNode => ['ReferencedField', 'release', field]);
 
+	const hasPrerelease: BooleanTypeNodes = [
+		'NotEquals',
+		prereleaseField,
+		['EmbeddedText', ''],
+	];
+	const hasBuild: BooleanTypeNodes = [
+		'NotEquals',
+		buildField,
+		['EmbeddedText', ''],
+	];
+	const isDraft: NotExistsNode = ['NotExists', revisionField];
 	const isFinal: ExistsNode = ['Exists', revisionField];
+	const revN = oneLineTrimSqlConcat`rev${revisionField}`;
+
 	abstractSql.tables['release'].fields.push({
 		fieldName: 'is final',
 		dataType: 'Boolean',
@@ -22,7 +50,24 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 		computed: isFinal,
 	});
 
-	const semverField = oneLineTrimSqlConcat`${majorField}.${minorField}.${patchField}`;
+	const versionCore = oneLineTrimSqlConcat`${majorField}.${minorField}.${patchField}`;
+	const semverField = oneLineTrimSqlConcat`${versionCore}${[
+		'Cast',
+		[
+			'Case',
+			['When', hasPrerelease, oneLineTrimSqlConcat`-${prereleaseField}`],
+			['Else', ['EmbeddedText', '']],
+		],
+		'Text',
+	]}${[
+		'Cast',
+		[
+			'Case',
+			['When', hasBuild, oneLineTrimSqlConcat`+${buildField}`],
+			['Else', ['EmbeddedText', '']],
+		],
+		'Text',
+	]}`;
 	abstractSql.tables['release'].fields.push({
 		fieldName: 'semver',
 		dataType: 'Short Text',
@@ -43,24 +88,32 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 		'Text',
 	];
 
-	const rawVersionField = oneLineTrimSqlConcat`${semverField}${[
-		'Cast',
+	const versionCoreAndPrerelease = oneLineTrimSqlConcat`${versionCore}${joinTextParts(
+		'-',
+		[hasPrerelease, prereleaseField],
+		'.',
+		[isDraft, createdAtTimestampNode],
+	)}`;
+
+	const hasNotAlreadyInBuildPositiveRevision: BooleanTypeNodes = [
+		'And',
+		['GreaterThan', revisionField, ['Number', 0]],
 		[
-			'Case',
+			'Not',
 			[
-				'When',
-				['NotExists', revisionField],
-				oneLineTrimSqlConcat`-${createdAtTimestampNode}`,
+				'Like',
+				oneLineTrimSqlConcat`.${buildField}.`,
+				oneLineTrimSqlConcat`%.${revN}.%`,
 			],
-			[
-				'When',
-				['GreaterThan', revisionField, ['Number', 0]],
-				oneLineTrimSqlConcat`+rev${revisionField}`,
-			],
-			['Else', ['EmbeddedText', '']],
 		],
-		'Text',
-	]}`;
+	];
+
+	const rawVersionField = oneLineTrimSqlConcat`${versionCoreAndPrerelease}${joinTextParts(
+		'+',
+		[hasBuild, buildField],
+		'.',
+		[hasNotAlreadyInBuildPositiveRevision, revN],
+	)}`;
 
 	abstractSql.tables['release'].fields.push(
 		{
@@ -78,37 +131,17 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 			"major": ${majorField},
 			"minor": ${minorField},
 			"patch": ${patchField},
-			"prerelease": [${[
-				'Cast',
-				[
-					'Case',
-					['When', isFinal, ['EmbeddedText', '']],
-					['Else', createdAtTimestampNode],
-				],
-				'Text',
-			]}],
-			"build": [${[
-				'Cast',
-				[
-					'Case',
-					[
-						'When',
-						['GreaterThan', revisionField, ['Number', 0]],
-						oneLineTrimSqlConcat`"rev${revisionField}"`,
-					],
-					['Else', ['EmbeddedText', '']],
-				],
-				'Text',
-			]}],
-			"version": "${semverField}${[
-				'Cast',
-				[
-					'Case',
-					['When', isFinal, ['EmbeddedText', '']],
-					['Else', oneLineTrimSqlConcat`-${createdAtTimestampNode}`],
-				],
-				'Text',
-			]}"
+			"prerelease": [${joinTextParts(
+				'',
+				[hasPrerelease, splitStringParts(prereleaseField)],
+				',',
+				[isDraft, createdAtTimestampNode],
+			)}],
+			"build": [${joinTextParts('', [hasBuild, splitStringParts(buildField)], ',', [
+				hasNotAlreadyInBuildPositiveRevision,
+				oneLineTrimSqlConcat`"${revN}"`,
+			])}],
+			"version": "${versionCoreAndPrerelease}"
 		}`,
 		},
 	);
