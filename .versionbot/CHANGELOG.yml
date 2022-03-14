@@ -1,4 +1,16 @@
 - commits:
+    - subject: "patch: Update configuration variable descriptions"
+      hash: 0fe81516a09b6d139c904b04e543d56024cce4bd
+      body: ""
+      footer:
+        Signed-off-by: Vipul Gupta (@vipulgupta2048) <vipul@balena.io>
+        signed-off-by: Vipul Gupta (@vipulgupta2048) <vipul@balena.io>
+      author: Vipul Gupta (@vipulgupta2048)
+      nested: []
+  version: 0.196.1
+  title: "'Update configuration variable descriptions'"
+  date: 2022-03-14T11:29:04.222Z
+- commits:
     - subject: "registry: Only resolve releases with one service"
       hash: 86b68dea2c03a24658489c90afe42049565a5667
       body: |
