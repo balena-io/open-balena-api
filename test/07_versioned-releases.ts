@@ -198,6 +198,7 @@ describe('versioning releases', () => {
 	let newReleaseBody: AnyObject;
 	let pineUser: typeof pineTest;
 	let topRevision: number;
+	const testReleaseVersion = 'v10.1.1';
 
 	before(async () => {
 		fx = await fixtures.load('07-releases');
@@ -211,7 +212,6 @@ describe('versioning releases', () => {
 			belongs_to__application: fx.applications.app1.id,
 			commit: 'test-commit',
 			status: 'success',
-			release_version: 'v10.1.1',
 			composition: {},
 			source: 'test',
 			start_timestamp: Date.now(),
@@ -241,7 +241,7 @@ describe('versioning releases', () => {
 		});
 	});
 
-	it('should succeed in PATCHing a release version', async () => {
+	it('should succeed in PATCHing a release_version', async () => {
 		const releaseVersion = 'v1.2.3';
 		await supertest(user)
 			.patch(`/${version}/release(${release1.id})`)
@@ -257,7 +257,7 @@ describe('versioning releases', () => {
 			.that.equals(releaseVersion);
 	});
 
-	it('should fail to PATCH a duplicate release version', async () => {
+	it('should fail to PATCH a duplicate release_version', async () => {
 		const releaseVersion = 'v1.2.3';
 		await supertest(user)
 			.patch(`/${version}/release(${release2.id})`)
@@ -267,7 +267,7 @@ describe('versioning releases', () => {
 			.expect(400);
 	});
 
-	it('should succeed in PATCHing a null release version', async () => {
+	it('should succeed in PATCHing a null release_version', async () => {
 		await supertest(user)
 			.patch(`/${version}/release(${release2.id})`)
 			.send({
@@ -276,7 +276,7 @@ describe('versioning releases', () => {
 			.expect(200);
 	});
 
-	it('should confirm that a new release can be created with version', async () => {
+	it('should confirm that a new release can be created with a release_version', async () => {
 		topRevision = await getTopRevision(
 			pineUser,
 			fx.applications.app1.id,
@@ -284,12 +284,12 @@ describe('versioning releases', () => {
 		);
 		const { body } = await supertest(user)
 			.post(`/${version}/release`)
-			.send(newReleaseBody)
+			.send({
+				...newReleaseBody,
+				release_version: testReleaseVersion,
+			})
 			.expect(201);
-		expect(body).to.have.property(
-			'release_version',
-			newReleaseBody.release_version,
-		);
+		expect(body).to.have.property('release_version', testReleaseVersion);
 		newRelease = body;
 	});
 
@@ -340,14 +340,17 @@ describe('versioning releases', () => {
 		expectReleaseVersion(freshlyGetRelease);
 	});
 
-	it('should disallow creating a new release with used version', async () => {
+	it('should disallow creating a new release with used release_version', async () => {
 		await supertest(user)
 			.post(`/${version}/release`)
-			.send(newReleaseBody)
+			.send({
+				...newReleaseBody,
+				release_version: testReleaseVersion,
+			})
 			.expect(400);
 	});
 
-	it('should confirm that invalidating a release allows reuse of a release version', async () => {
+	it('should confirm that invalidating a release allows reuse of a release_version', async () => {
 		await supertest(user)
 			.patch(`/${version}/release(${release1.id})`)
 			.send({
@@ -375,7 +378,6 @@ describe('versioning releases', () => {
 							body: {
 								...newReleaseBody,
 								commit: randomUUID(),
-								release_version: undefined,
 								semver: '0.2.0',
 							},
 						})
@@ -408,7 +410,6 @@ describe('versioning releases', () => {
 							body: {
 								...newReleaseBody,
 								commit: randomUUID(),
-								release_version: undefined,
 								semver: '0.0.0',
 							},
 						})
@@ -449,7 +450,6 @@ describe('versioning releases', () => {
 								body: {
 									...newReleaseBody,
 									commit: randomUUID(),
-									release_version: undefined,
 									semver: '0.0.0',
 									is_final: false,
 								},
@@ -536,7 +536,6 @@ describe('versioning releases', () => {
 										body: {
 											...newReleaseBody,
 											commit: randomUUID(),
-											release_version: undefined,
 											semver,
 										},
 									})
