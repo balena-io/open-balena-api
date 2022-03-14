@@ -70,7 +70,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 	},
 	RESIN_SUPERVISOR_LOG_CONTROL: {
 		enum: ['false', 'true'],
-		description: 'Enable / Disable logs from being sent to balena',
+		description: 'Enable / Disable logs from being sent to balena API',
 		default: 'true',
 	},
 	RESIN_SUPERVISOR_POLL_INTERVAL: {
@@ -82,7 +82,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 	},
 	RESIN_SUPERVISOR_VPN_CONTROL: {
 		enum: ['false', 'true'],
-		description: 'Enable / Disable VPN',
+		description: 'Enable / Disable VPN service on device',
 		default: 'true',
 	},
 	RESIN_SUPERVISOR_PERSISTENT_LOGGING: {
@@ -102,7 +102,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		type: 'integer',
 		enum: [0, 1],
 		description:
-			'Override the update lock if your app is stuck in an invalid state under an update lock',
+			'Override existing update lock(s) if your app is stuck in an invalid state under an update lock',
 		default: 0,
 	},
 	BALENA_HOST_SPLASH_IMAGE: {
@@ -111,6 +111,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		description:
 			'Define the PNG image to be used for the boot splash screen. Only supported by supervisor versions >= v12.3.0.',
 		maxLength: 13400, // ~10KB base64 encoded image
+		default: '/boot/splash/balena-logo-default.png',
 		will_reboot: true,
 	},
 	BALENA_SUPERVISOR_HARDWARE_METRICS: {
@@ -142,13 +143,14 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 		properties: {
 			RESIN_HOST_CONFIG_disable_splash: {
 				enum: ['0', '1'],
-				description: 'Enable / Disable the rainbow splash screen',
+				description:
+					'Enable / Disable the splash screen to display image on boot.',
 				will_reboot: true,
 				default: '1',
 			},
 			RESIN_HOST_CONFIG_dtparam: {
 				type: 'string',
-				description: 'Define DT parameters',
+				description: 'Define DT parameters for the default overlay.',
 				will_reboot: true,
 				default: '"i2c_arm=on","spi=on","audio=on"',
 			},
@@ -172,7 +174,8 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			},
 			RESIN_HOST_CONFIG_gpio: {
 				type: 'string',
-				description: 'Set GPIO pins',
+				description:
+					'Allows GPIO pins to be set to specific modes and values at boot time.',
 				will_reboot: true,
 				examples: ['"gpio=19=op,dh","gpio=0-25=a2"'],
 			},
@@ -235,7 +238,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 					{ const: 6, title: 'Configuration #6' },
 				],
 				description:
-					'Define the ODMDATA configuration. Only supported by supervisor versions >= v11.13.0.',
+					'Define the ODMDATA configuration to configure UPHY lanes. Only supported by supervisor versions >= v11.13.0',
 				will_reboot: true,
 				default: 2,
 			},
@@ -264,7 +267,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			RESIN_HOST_EXTLINUX_fdt: {
 				type: 'string',
 				description:
-					'Define the file name of the DTB to be used. Only supported by supervisor versions >= v11.14.2.',
+					'Define the file name of the DTB to be used. Only supported by supervisor versions >= v11.14.2',
 				will_reboot: true,
 			},
 			RESIN_HOST_EXTLINUX_isolcpus: {
