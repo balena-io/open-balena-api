@@ -1,4 +1,47 @@
 - commits:
+    - subject: Fix random name generator
+      hash: a5ffed1ef196d98ff9920ca108c633305b217fd5
+      body: |
+        Adjectives after 'mean' were not being selected.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Chris Crocker-White <chriscw@balena.io>
+        signed-off-by: Chris Crocker-White <chriscw@balena.io>
+      author: Chris Crocker-White
+      nested: []
+  version: 0.197.1
+  title: "'Fix random name generator'"
+  date: 2022-03-15T23:54:18.749Z
+- commits:
+    - subject: Add default name and description for new keys (also backfill for
+        existing provisioning keys)
+      hash: 7eac02cef802086fa22df59cc4724ffb2fbb477e
+      body: ""
+      footer:
+        Change-Type: minor
+        change-type: minor
+        Signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+        signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+      author: Nitish Agarwal
+      nested: []
+  version: 0.197.0
+  title: "'Add default name and description for provisioning key (and backfill the
+    same)'"
+  date: 2022-03-14T14:56:46.616Z
+- commits:
+    - subject: "patch: Update configuration variable descriptions"
+      hash: 0fe81516a09b6d139c904b04e543d56024cce4bd
+      body: ""
+      footer:
+        Signed-off-by: Vipul Gupta (@vipulgupta2048) <vipul@balena.io>
+        signed-off-by: Vipul Gupta (@vipulgupta2048) <vipul@balena.io>
+      author: Vipul Gupta (@vipulgupta2048)
+      nested: []
+  version: 0.196.1
+  title: "'Update configuration variable descriptions'"
+  date: 2022-03-14T11:29:04.222Z
+- commits:
     - subject: "registry: Only resolve releases with one service"
       hash: 86b68dea2c03a24658489c90afe42049565a5667
       body: |
