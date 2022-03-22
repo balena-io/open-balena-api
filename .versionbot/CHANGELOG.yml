@@ -1,4 +1,17 @@
 - commits:
+    - subject: Remove unused redis port vars
+      hash: aa06f1cb563c6769eb17026b51b1b1ad71f30bdf
+      body: |
+        They're now specified as `${host}:${port}` pairs in the redis host vars
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.197.3
+  title: "'Remove unused redis port vars'"
+  date: 2022-03-22T10:38:23.402Z
+- commits:
     - subject: Update open-balena-base to 13.2.1
       hash: 7fb5146f083598b59a72038f8cb538ff45857fa5
       body: |
