@@ -201,7 +201,7 @@ export const RATE_LIMIT_MEMORY_BACKEND = optionalVar(
 	'RATE_LIMIT_MEMORY_BACKEND',
 );
 
-// Split `${host}:${port}` pairs, with a fallback to separate `${prefix}_HOST`/`${prefix}_PORT` pairs
+// Split `${host}:${port}` pairs
 function splitHostPort(varName: string): [string, number];
 function splitHostPort(
 	varName: string,
