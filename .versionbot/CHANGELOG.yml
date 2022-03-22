@@ -1,4 +1,16 @@
 - commits:
+    - subject: "CircleCI: Use small instances (we only need 1 core)"
+      hash: 91cfa3f5767a67bbbbda3606fbe325792175d96c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.197.4
+  title: "'CircleCI: Use small instances (we only need 1 core)'"
+  date: 2022-03-22T14:54:44.036Z
+- commits:
     - subject: Remove unused redis port vars
       hash: aa06f1cb563c6769eb17026b51b1b1ad71f30bdf
       body: |
