@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add v3 state-patch endpoint
+      hash: 8adaf395550ba4c5be3722520a1337fd68af77d2
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.199.0
+  title: "'v3 state patch endpoint'"
+  date: 2022-03-23T19:18:58.026Z
+- commits:
     - subject: Add v3 state-get endpoint
       hash: b90218ce560c101794b2f1ed774491009769105e
       body: ""
