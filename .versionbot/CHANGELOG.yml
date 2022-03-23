@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add v3 state-get endpoint
+      hash: b90218ce560c101794b2f1ed774491009769105e
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.198.0
+  title: "'v3 state endpoint'"
+  date: 2022-03-23T18:05:06.613Z
+- commits:
     - subject: Use our standard redis options for the multi-level-store
       hash: 9be5ce5b58810ce70b7156a42a097be99728c7f9
       body: ""
