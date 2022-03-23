@@ -8,6 +8,7 @@ import { resolveOrGracefullyDenyDevices } from './middleware';
 import { stateV2 } from './routes/state-get-v2';
 import { stateV3 } from './routes/state-get-v3';
 import { statePatchV2 } from './routes/state-patch-v2';
+import { statePatchV3 } from './routes/state-patch-v3';
 
 export {
 	setReadTransaction,
@@ -20,7 +21,8 @@ export {
 } from './state-get-utils';
 export {
 	metricsPatchFields,
-	v2ValidPatchFields as validPatchFields,
+	v2ValidPatchFields,
+	v3ValidPatchFields,
 } from './state-patch-utils';
 
 export const setup = (app: Application) => {
@@ -42,6 +44,7 @@ export const setup = (app: Application) => {
 		apiKeyMiddleware,
 		statePatchV2,
 	);
+	app.patch('/device/v3/state', apiKeyMiddleware, statePatchV3);
 };
 
 export interface Events {
