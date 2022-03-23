@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use our standard redis options for the multi-level-store
+      hash: 9be5ce5b58810ce70b7156a42a097be99728c7f9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.197.5
+  title: "'Use our standard redis options for the multi-level-store'"
+  date: 2022-03-23T16:12:02.440Z
+- commits:
     - subject: "CircleCI: Use small instances (we only need 1 core)"
       hash: 91cfa3f5767a67bbbbda3606fbe325792175d96c
       body: ""
