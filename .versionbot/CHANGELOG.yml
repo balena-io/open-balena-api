@@ -1,4 +1,102 @@
 - commits:
+    - subject: Add v3 state-patch endpoint
+      hash: 8adaf395550ba4c5be3722520a1337fd68af77d2
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.199.0
+  title: "'v3 state patch endpoint'"
+  date: 2022-03-23T19:18:58.026Z
+- commits:
+    - subject: Add v3 state-get endpoint
+      hash: b90218ce560c101794b2f1ed774491009769105e
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.198.0
+  title: "'v3 state endpoint'"
+  date: 2022-03-23T18:05:06.613Z
+- commits:
+    - subject: Use our standard redis options for the multi-level-store
+      hash: 9be5ce5b58810ce70b7156a42a097be99728c7f9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.197.5
+  title: "'Use our standard redis options for the multi-level-store'"
+  date: 2022-03-23T16:12:02.440Z
+- commits:
+    - subject: "CircleCI: Use small instances (we only need 1 core)"
+      hash: 91cfa3f5767a67bbbbda3606fbe325792175d96c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.197.4
+  title: "'CircleCI: Use small instances (we only need 1 core)'"
+  date: 2022-03-22T14:54:44.036Z
+- commits:
+    - subject: Remove unused redis port vars
+      hash: aa06f1cb563c6769eb17026b51b1b1ad71f30bdf
+      body: |
+        They're now specified as `${host}:${port}` pairs in the redis host vars
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.197.3
+  title: "'Remove unused redis port vars'"
+  date: 2022-03-22T10:38:23.402Z
+- commits:
+    - subject: Update open-balena-base to 13.2.1
+      hash: 7fb5146f083598b59a72038f8cb538ff45857fa5
+      body: |
+        Update open-balena-base from 13.1.0 to 13.2.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 16.14.2 and npm to 8.5.5
+              hash: 165c44a52b291b9c335d3fe139d82ff0c99a5e96
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.2.1
+          title: "'Update nodejs to 16.14.2 and npm to 8.5.5'"
+          date: 2022-03-21T14:38:46.073Z
+        - commits:
+            - subject: Consistent SENTRY environment names
+              hash: 6677d1a2cc99657dc9070f2b392d39eddfe72a08
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: ab77
+              nested: []
+          version: open-balena-base-13.2.0
+          title: "'Consistent SENTRY environment names'"
+          date: 2022-02-22T23:30:35.932Z
+  version: 0.197.2
+  title: "'Update open-balena-base to 13.2.1'"
+  date: 2022-03-21T16:07:52.495Z
+- commits:
     - subject: Fix random name generator
       hash: a5ffed1ef196d98ff9920ca108c633305b217fd5
       body: |

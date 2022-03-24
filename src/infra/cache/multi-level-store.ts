@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
 import * as cacheManager from 'cache-manager';
 import redisStore = require('cache-manager-ioredis');
-import { REDIS, version } from '../../lib/config';
+import { version } from '../../lib/config';
 import { Defined } from '.';
+import { getRedisOptions } from '../redis/config';
 
 const usedCacheKeys: Dictionary<true> = {};
 
@@ -50,8 +51,7 @@ export function createMultiLevelStore<T extends Defined>(
 		...baseOpts,
 		...global,
 		store: redisStore,
-		host: REDIS.general.host,
-		port: REDIS.general.port,
+		...getRedisOptions(),
 		// redis cannot cache undefined/null values whilst others can, so we explicitly mark those as uncacheable
 		isCacheableValue: (v) =>
 			v != null && (isCacheableValue == null || isCacheableValue(v) === true),

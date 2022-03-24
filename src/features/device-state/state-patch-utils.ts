@@ -1,6 +1,7 @@
 import type { Filter } from 'pinejs-client-core';
 import type { ImageInstall } from '../../balena-model';
 import { StatePatchV2Body } from './routes/state-patch-v2';
+import { StatePatchV3Body } from './routes/state-patch-v3';
 import {
 	DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
 	METRICS_MAX_REPORT_INTERVAL_SECONDS,
@@ -8,15 +9,12 @@ import {
 import { createMultiLevelStore } from '../../infra/cache';
 import { permissions, sbvrUtils } from '@balena/pinejs';
 
-export const v2ValidPatchFields: Array<
-	Exclude<keyof NonNullable<StatePatchV2Body['local']>, 'apps'>
+export const v3ValidPatchFields: Array<
+	Exclude<keyof StatePatchV3Body[string], 'apps'>
 > = [
 	'is_managed_by__device',
-	'should_be_running__release',
-	'device_name',
 	'status',
 	'is_online',
-	'note',
 	'os_version',
 	'os_variant',
 	'supervisor_version',
@@ -24,12 +22,21 @@ export const v2ValidPatchFields: Array<
 	'provisioning_state',
 	'ip_address',
 	'mac_address',
-	'download_progress',
 	'api_port',
 	'api_secret',
 	'logs_channel',
 	'cpu_id',
 	'is_undervolted',
+];
+
+export const v2ValidPatchFields: Array<
+	Exclude<keyof NonNullable<StatePatchV2Body['local']>, 'apps'>
+> = [
+	...v3ValidPatchFields,
+	'should_be_running__release',
+	'device_name',
+	'note',
+	'download_progress',
 ];
 
 export const metricsPatchFields = [

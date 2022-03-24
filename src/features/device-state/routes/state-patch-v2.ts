@@ -228,7 +228,10 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 			deviceBody.device_name = local.name;
 		}
 
-		if (local.is_on__commit !== undefined || !_.isEmpty(deviceBody)) {
+		if (
+			local.is_on__commit !== undefined ||
+			Object.keys(deviceBody).length > 0
+		) {
 			updateFns.push(async (resinApiTx) => {
 				if (local != null) {
 					if (local.is_on__commit === null) {
@@ -246,7 +249,7 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 					}
 				}
 
-				if (!_.isEmpty(deviceBody)) {
+				if (Object.keys(deviceBody).length > 0) {
 					// If we're updating anyway then ensure the metrics data is included
 					deviceBody = { ...deviceBody, ...metricsBody };
 					await resinApiTx.patch({
