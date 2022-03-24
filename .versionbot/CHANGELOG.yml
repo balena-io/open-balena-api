@@ -1,4 +1,26 @@
 - commits:
+    - subject: Add support for using a redis cluster for device logs
+      hash: eb82a8ca1e482e73f114517b3c2ce191f3e0d531
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+    - subject: Use a hash tag for redis logs keys
+      hash: 0aa485e25ae47a497f933798c6106f42808cbb52
+      body: |
+        This allows specifying the part of the key to use for redis hashing to
+        ensure that related logs keys are grouped together
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.200.0
+  title: "'Add support for using a redis cluster for device logs'"
+  date: 2022-03-24T10:49:12.644Z
+- commits:
     - subject: Add v3 state-patch endpoint
       hash: 8adaf395550ba4c5be3722520a1337fd68af77d2
       body: ""
