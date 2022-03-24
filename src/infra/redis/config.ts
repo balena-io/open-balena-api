@@ -16,15 +16,37 @@ export const getRedisOptions = ({
 	readOnly?: boolean;
 	instance?: keyof typeof REDIS;
 	enableAutoPipelining?: boolean;
-} = {}): Redis.RedisOptions => {
+} = {}):
+	| {
+			nodes: Redis.ClusterNode[];
+			options: Redis.ClusterOptions;
+	  }
+	| Redis.RedisOptions => {
 	const r = REDIS[instance];
 
-	return {
-		host: readOnly ? r.roHost : r.host,
-		port: readOnly ? r.roPort : r.port,
+	const redisOptions = {
 		retryStrategy: redisRetryStrategy,
 		enableOfflineQueue: false,
 		enableAutoPipelining,
 		keepAlive: 0,
 	};
+
+	if (r.isCluster) {
+		return {
+			// We ignore the read-only separation in cluster mode as it'll automatically redirect
+			// reads to the replicas so there's no need for manual splitting
+			nodes: r.hosts,
+			options: {
+				clusterRetryStrategy: redisRetryStrategy,
+				enableOfflineQueue: false,
+				scaleReads: 'slave',
+				redisOptions,
+			},
+		};
+	} else {
+		return {
+			...(readOnly ? r.roHost : r.host),
+			...redisOptions,
+		};
+	}
 };

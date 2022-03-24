@@ -201,62 +201,95 @@ export const RATE_LIMIT_MEMORY_BACKEND = optionalVar(
 	'RATE_LIMIT_MEMORY_BACKEND',
 );
 
+type HostPort = { host: string; port: number };
 // Split `${host}:${port}` pairs
-function splitHostPort(varName: string): [string, number];
-function splitHostPort(
+const splitHostPort = (
 	varName: string,
-	defaultHost: string,
-	defaultPort: number,
-): [string, number];
-function splitHostPort(
-	varName: string,
-	defaultHost?: string,
-	defaultPort?: number,
-): [string, number] {
-	const hostPair = optionalVar(varName);
-	if (hostPair == null) {
-		if (defaultHost == null || defaultPort == null) {
+	defaultHosts?: HostPort[],
+): HostPort[] => {
+	const hostPairs = optionalVar(varName);
+	if (hostPairs == null) {
+		if (defaultHosts == null) {
 			throw new Error(`Missing environment variable: ${varName}`);
 		}
-		return [defaultHost, defaultPort];
+		return defaultHosts;
 	}
-	const [host, maybePort] = hostPair.split(':');
-	const port = checkInt(maybePort);
-	if (port == null) {
-		throw new Error(`Invalid port for '${varName}': ${maybePort}`);
+	return hostPairs.split(',').map((hostPair): HostPort => {
+		const [host, maybePort] = hostPair.split(':');
+		const port = checkInt(maybePort);
+		if (port == null) {
+			throw new Error(`Invalid port for '${varName}': ${maybePort}`);
+		}
+		return { host, port };
+	});
+};
+type RedisOpts =
+	| {
+			isCluster: true;
+			hosts: HostPort[];
+	  }
+	| {
+			isCluster: false;
+			host: HostPort;
+			roHost: HostPort;
+	  };
+function redisOpts(prefix: string): RedisOpts;
+function redisOpts(
+	prefix: string,
+	defaultHosts: HostPort[],
+	defaultIsCluster: boolean,
+): RedisOpts;
+function redisOpts(
+	prefix: string,
+	defaultHosts?: HostPort[],
+	defaultIsCluster?: boolean,
+): RedisOpts {
+	const hostVarName = `${prefix}_HOST`;
+	const roHostVarName = `${prefix}_RO_HOST`;
+	const isCluster = boolVar(`${prefix}_IS_CLUSTER`, defaultIsCluster);
+	const hosts = splitHostPort(hostVarName, defaultHosts);
+	if (isCluster == null) {
+		throw new Error(`Missing env: '${prefix}_IS_CLUSTER'`);
 	}
-	return [host, port];
+	if (isCluster) {
+		const roHost = process.env[roHostVarName];
+		if (roHost != null && roHost !== '') {
+			throw new Error(
+				`'${prefix}_RO_HOST' must be empty when in cluster mode `,
+			);
+		}
+		return {
+			isCluster,
+			hosts,
+		};
+	}
+	if (hosts.length > 1) {
+		throw new Error(
+			`'${hostVarName}' must contain only one entry when not in cluster mode`,
+		);
+	}
+	const roHosts = splitHostPort(roHostVarName, hosts);
+	if (roHosts.length > 1) {
+		throw new Error(`'${roHostVarName}' must contain at most one entry`);
+	}
+	return {
+		isCluster,
+		host: hosts[0],
+		roHost: roHosts[0],
+	};
 }
-const [redisHost, redisPort] = splitHostPort('REDIS_HOST');
-const [redisRoHost, redisRoPort] = splitHostPort(
-	'REDIS_RO_HOST',
-	redisHost,
-	redisPort,
-);
-const [redisLogsHost, redisLogsPort] = splitHostPort(
-	'REDIS_LOGS_HOST',
-	redisHost,
-	redisPort,
-);
-const [redisLogsRoHost, redisLogsRoPort] = splitHostPort(
-	'REDIS_LOGS_RO_HOST',
-	redisLogsHost,
-	redisLogsPort,
-);
+const generalRedis = redisOpts('REDIS');
+
+if (generalRedis.isCluster) {
+	// TODO: This is due to RSMQ
+	throw new Error(
+		'Cluster mode is not supported for the general redis instance',
+	);
+}
 
 export const REDIS = {
-	general: {
-		host: redisHost,
-		port: redisPort,
-		roHost: redisRoHost,
-		roPort: redisRoPort,
-	},
-	logs: {
-		host: redisLogsHost,
-		port: redisLogsPort,
-		roHost: redisLogsRoHost,
-		roPort: redisLogsRoPort,
-	},
+	general: generalRedis,
+	logs: redisOpts('REDIS_LOGS', [generalRedis.host], generalRedis.isCluster),
 };
 export const LOKI_HOST = optionalVar('LOKI_HOST');
 export const LOKI_PORT = intVar('LOKI_PORT', 9095);

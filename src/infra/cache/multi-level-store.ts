@@ -47,15 +47,27 @@ export function createMultiLevelStore<T extends Defined>(
 		local === false
 			? undefined
 			: cacheManager.caching({ ...baseOpts, ...local, store: 'memory' });
-	const redisCache = cacheManager.caching({
+
+	let cacheOpts: cacheManager.StoreConfig & cacheManager.CacheOptions = {
 		...baseOpts,
 		...global,
 		store: redisStore,
-		...getRedisOptions(),
-		// redis cannot cache undefined/null values whilst others can, so we explicitly mark those as uncacheable
 		isCacheableValue: (v) =>
+			// redis cannot cache undefined/null values whilst others can, so we explicitly mark those as uncacheable
 			v != null && (isCacheableValue == null || isCacheableValue(v) === true),
-	});
+	};
+	const redisOpts = getRedisOptions();
+
+	if ('nodes' in redisOpts) {
+		// @ts-expect-error: This shouldn't really need to be passed here but due to a quirk of cache-manager-ioredis it expects
+		// all the store opts to be stored on the created redis instance
+		redisOpts.options.isCacheableValue = cacheOpts.isCacheableValue;
+		cacheOpts.clusterConfig = redisOpts;
+	} else {
+		cacheOpts = { ...cacheOpts, ...redisOpts };
+	}
+
+	const redisCache = cacheManager.caching(cacheOpts);
 	const cache = memoryCache
 		? cacheManager.multiCaching([memoryCache, redisCache])
 		: redisCache;
