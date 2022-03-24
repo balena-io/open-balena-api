@@ -1,4 +1,16 @@
 - commits:
+    - subject: Switch from raven to @sentry/node for error reporting
+      hash: 895a5c28971eb5979ae900863d505d9cc330a7eb
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.201.0
+  title: "'Switch from raven to @sentry/node for error reporting'"
+  date: 2022-03-24T16:39:33.788Z
+- commits:
     - subject: Add support for using a redis cluster for device logs
       hash: eb82a8ca1e482e73f114517b3c2ce191f3e0d531
       body: ""
