@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 import * as methodOverride from 'method-override';
 import * as passport from 'passport';
 import * as path from 'path';
-import * as Raven from 'raven';
+import * as Sentry from '@sentry/node';
 
 import * as pine from '@balena/pinejs';
 
@@ -304,11 +304,11 @@ export async function setup(app: Application, options: SetupOptions) {
 	});
 
 	if (SENTRY_DSN != null) {
-		Raven.config(SENTRY_DSN, {
-			captureUnhandledRejections: true,
+		Sentry.init({
+			dsn: SENTRY_DSN,
 			release: options.version,
 			environment: NODE_ENV,
-		}).install();
+		});
 	}
 
 	// redirect to https if needed, except for requests to
@@ -379,7 +379,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	routes.setup(app, options);
 	await options.onInitRoutes?.(app);
 
-	app.use(Raven.errorHandler());
+	app.use(Sentry.Handlers.errorHandler());
 
 	// start consuming the API heartbeat state queue...
 	getDeviceOnlineStateManager().start();
