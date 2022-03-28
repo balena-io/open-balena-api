@@ -13,16 +13,18 @@ import {
 } from '../../../infra/error-handling';
 import {
 	addRetentionLimit,
-	BACKEND_UNAVAILABLE_FLUSH_INTERVAL,
 	getBackend,
 	getLokiBackend,
 	NDJSON_CTYPE,
 	shouldPublishToLoki,
-	STREAM_FLUSH_INTERVAL,
-	WRITE_BUFFER_LIMIT,
 } from './config';
 import { SetupOptions } from '../../..';
 import { Device, PickDeferred } from '../../../balena-model';
+import {
+	LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL,
+	LOGS_STREAM_FLUSH_INTERVAL,
+	LOGS_WRITE_BUFFER_LIMIT,
+} from '../../../lib/config';
 
 const {
 	BadRequestError,
@@ -172,7 +174,7 @@ function handleStreamingWrite(
 		}
 		buffer.push(log);
 		// If we buffer too much or the backend goes down, pause it for back-pressure
-		if (buffer.length >= WRITE_BUFFER_LIMIT || !backend.available) {
+		if (buffer.length >= LOGS_WRITE_BUFFER_LIMIT || !backend.available) {
 			req.pause();
 		}
 	});
@@ -232,8 +234,8 @@ function handleStreamingWrite(
 		}
 		// If the backend goes down temporarily, ease down the polling
 		const delay = backend.available
-			? STREAM_FLUSH_INTERVAL
-			: BACKEND_UNAVAILABLE_FLUSH_INTERVAL;
+			? LOGS_STREAM_FLUSH_INTERVAL
+			: LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL;
 		setTimeout(tryPublish, delay);
 		publishScheduled = true;
 	}
