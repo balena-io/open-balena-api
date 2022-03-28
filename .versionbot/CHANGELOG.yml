@@ -1,4 +1,16 @@
 - commits:
+    - subject: Allow configuring some log storage settings
+      hash: bff7e300c419b545fb951231b5f1105c0a19c6ca
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.201.1
+  title: "'Allow configuring some log storage settings'"
+  date: 2022-03-28T10:17:11.966Z
+- commits:
     - subject: Switch from raven to @sentry/node for error reporting
       hash: 895a5c28971eb5979ae900863d505d9cc330a7eb
       body: ""
