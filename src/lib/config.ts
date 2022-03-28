@@ -295,6 +295,18 @@ export const LOKI_HOST = optionalVar('LOKI_HOST');
 export const LOKI_PORT = intVar('LOKI_PORT', 9095);
 // control the percent of logs written to Loki while scaling up
 export const LOKI_WRITE_PCT = intVar('LOKI_WRITE_PCT', 0);
+
+// Logs write config
+export const LOGS_STREAM_FLUSH_INTERVAL = intVar(
+	'LOGS_STREAM_FLUSH_INTERVAL',
+	500,
+);
+export const LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL = intVar(
+	'LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL',
+	5000,
+);
+export const LOGS_WRITE_BUFFER_LIMIT = intVar('LOGS_WRITE_BUFFER_LIMIT', 50);
+
 export const REGISTRY2_HOST = requiredVar('REGISTRY2_HOST');
 export const SENTRY_DSN = optionalVar('SENTRY_DSN');
 export const SUPERUSER_EMAIL = optionalVar('SUPERUSER_EMAIL', '');
