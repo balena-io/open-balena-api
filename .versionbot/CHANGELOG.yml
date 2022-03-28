@@ -1,4 +1,33 @@
 - commits:
+    - subject: Bump minimist from 1.2.5 to 1.2.6
+      hash: 707c0ae51fed2e8bb72aa4e197c9a0ba76a55763
+      body: >
+        Bumps [minimist](https://github.com/substack/minimist) from 1.2.5 to
+        1.2.6.
+
+        - [Release notes](https://github.com/substack/minimist/releases)
+
+        - [Commits](https://github.com/substack/minimist/compare/1.2.5...1.2.6)
+
+
+        ---
+
+        updated-dependencies:
+
+        - dependency-name: minimist
+          dependency-type: indirect
+        ...
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: dependabot[bot] <support@github.com>
+        signed-off-by: dependabot[bot] <support@github.com>
+      author: dependabot[bot]
+      nested: []
+  version: 0.201.2
+  title: "'Bump minimist from 1.2.5 to 1.2.6'"
+  date: 2022-03-28T18:36:01.715Z
+- commits:
     - subject: Allow configuring some log storage settings
       hash: bff7e300c419b545fb951231b5f1105c0a19c6ca
       body: ""
