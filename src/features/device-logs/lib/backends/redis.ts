@@ -111,7 +111,7 @@ export class RedisBackend implements DeviceLogsBackend {
 	private subscriptions: EventEmitter;
 	private subscriptionHeartbeats: {
 		[key: string]: ReturnType<typeof setInterval>;
-	};
+	} = {};
 
 	constructor() {
 		// This connection goes into "subscriber mode" and cannot be reused for commands
