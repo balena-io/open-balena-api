@@ -106,17 +106,17 @@ redis.defineCommand('decrSubscribers', {
 	numberOfKeys: 1,
 });
 
+// This connection goes into "subscriber mode" and cannot be reused for commands
+const pubSub = newSubscribeInstance({ instance: 'logs' });
+
 export class RedisBackend implements DeviceLogsBackend {
-	private pubSub: ReturnType<typeof newSubscribeInstance>;
 	private subscriptions: EventEmitter;
 	private subscriptionHeartbeats: {
 		[key: string]: ReturnType<typeof setInterval>;
 	} = {};
 
 	constructor() {
-		// This connection goes into "subscriber mode" and cannot be reused for commands
-		this.pubSub = newSubscribeInstance({ instance: 'logs' });
-		this.pubSub.on('message', this.handleMessage.bind(this));
+		pubSub.on('message', this.handleMessage.bind(this));
 
 		this.subscriptions = new EventEmitter();
 	}
@@ -172,7 +172,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		const key = this.getKey(ctx);
 		if (!this.subscriptions.listenerCount(key)) {
 			const subscribersKey = this.getKey(ctx, 'subscribers');
-			this.pubSub.subscribe(key);
+			pubSub.subscribe(key);
 			// Increment the subscribers counter to recognize we've subscribed
 			redis.incrSubscribers(subscribersKey);
 			// Start a heartbeat to ensure the subscribers counter stays alive whilst we're subscribed
@@ -199,14 +199,14 @@ export class RedisBackend implements DeviceLogsBackend {
 					);
 				}
 			});
-			this.pubSub.unsubscribe(key);
+			pubSub.unsubscribe(key);
 		}
 	}
 
 	private get connected() {
 		return (
 			redis.status === 'ready' &&
-			this.pubSub.status === 'ready' &&
+			pubSub.status === 'ready' &&
 			redisRO.status === 'ready'
 		);
 	}
