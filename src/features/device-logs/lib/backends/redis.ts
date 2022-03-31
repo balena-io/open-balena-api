@@ -16,6 +16,10 @@ import {
 	newSubscribeInstance,
 	createIsolatedRedis,
 } from '../../../../infra/redis';
+import {
+	SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS,
+	SUBSCRIPTION_EXPIRY_SECONDS,
+} from '../config';
 
 const redis = createIsolatedRedis({ instance: 'logs' });
 const redisRO = createIsolatedRedis({ instance: 'logs', readOnly: true });
@@ -46,8 +50,11 @@ declare module 'ioredis' {
 		publishLogs(
 			logsKey: string,
 			bytesWrittenKey: string,
+			subscribersKey: string,
 			...args: [...logs: string[], bytesWritten: number, limit: number]
 		): Promise<void>;
+		incrSubscribers(subscribersKey: string): Promise<void>;
+		decrSubscribers(subscribersKey: string): Promise<number>;
 	}
 }
 
@@ -61,21 +68,50 @@ redis.defineCommand('publishLogs', {
 		redis.call("rpush", KEYS[1], unpack(ARGV))
 		-- Trim it to the retention limit
 		redis.call("ltrim", KEYS[1], -limit, -1)
-		-- Publish each log using Redis PubSub
-		for i = 1, #ARGV do
-			redis.call("publish", KEYS[1], ARGV[i]);
+		local subCount = redis.call("get", KEYS[3])
+		if subCount ~= false and subCount > 0 then
+			-- Check there are active subscribers before publishing logs using Redis PubSub, avoiding wasted work
+			for i = 1, #ARGV do
+				redis.call("publish", KEYS[1], ARGV[i]);
+			end
 		end
 		-- Increment log bytes written total
 		redis.call("incrby", KEYS[2], bytesWritten);
 		-- Devices with no new logs eventually expire
 		redis.call("pexpire", KEYS[1], ${KEY_EXPIRATION});
 		redis.call("pexpire", KEYS[2], ${KEY_EXPIRATION});`,
-	numberOfKeys: 2,
+	numberOfKeys: 3,
+});
+
+redis.defineCommand('incrSubscribers', {
+	lua: stripIndent`
+		-- Increment subscribers
+		redis.call("incr", KEYS[1]);
+		-- And set expiry
+		redis.call("expire",KEYS[1],${SUBSCRIPTION_EXPIRY_SECONDS})`,
+	numberOfKeys: 1,
+});
+redis.defineCommand('decrSubscribers', {
+	lua: stripIndent`
+		-- Decrement subscribers
+		local current = redis.call("decr", KEYS[1]);
+		if current <= 0
+			-- If we were the last subscriber then remove the key altogether
+			-- this also handles the symptoms in the potential case where we
+			-- decrement below 0, albeit not the cause
+			redis.call("del", KEYS[1]);
+		end
+		-- Return the count so it's possible to log hitting < 0
+		return current`,
+	numberOfKeys: 1,
 });
 
 export class RedisBackend implements DeviceLogsBackend {
 	private pubSub: ReturnType<typeof newSubscribeInstance>;
 	private subscriptions: EventEmitter;
+	private subscriptionHeartbeats: {
+		[key: string]: ReturnType<typeof setInterval>;
+	};
 
 	constructor() {
 		// This connection goes into "subscriber mode" and cannot be reused for commands
@@ -112,6 +148,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		const limit = ctx.retention_limit;
 		const key = this.getKey(ctx);
 		const bytesWrittenKey = this.getKey(ctx, 'logBytesWritten');
+		const subscribersKey = this.getKey(ctx, 'subscribers');
 
 		let bytesWritten = 0;
 		for (const rLog of redisLogs) {
@@ -121,6 +158,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		await redis.publishLogs(
 			key,
 			bytesWrittenKey,
+			subscribersKey,
 			...redisLogs,
 			bytesWritten,
 			limit,
@@ -133,7 +171,14 @@ export class RedisBackend implements DeviceLogsBackend {
 		}
 		const key = this.getKey(ctx);
 		if (!this.subscriptions.listenerCount(key)) {
+			const subscribersKey = this.getKey(ctx, 'subscribers');
 			this.pubSub.subscribe(key);
+			// Increment the subscribers counter to recognize we've subscribed
+			redis.incrSubscribers(subscribersKey);
+			// Start a heartbeat to ensure the subscribers counter stays alive whilst we're subscribed
+			this.subscriptionHeartbeats[key] = setInterval(() => {
+				redis.expire(subscribersKey, SUBSCRIPTION_EXPIRY_SECONDS);
+			}, SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS);
 		}
 		this.subscriptions.on(key, subscription);
 	}
@@ -142,6 +187,18 @@ export class RedisBackend implements DeviceLogsBackend {
 		const key = this.getKey(ctx);
 		this.subscriptions.removeListener(key, subscription);
 		if (!this.subscriptions.listenerCount(key)) {
+			const subscribersKey = this.getKey(ctx, 'subscribers');
+			// Clear the heartbeat
+			clearInterval(this.subscriptionHeartbeats[key]);
+			// And decrement the subscribers counter
+			redis.decrSubscribers(subscribersKey).then((n) => {
+				if (n < 0) {
+					captureException(
+						new Error(),
+						`Decremented logs subscribers below 0, n: '${n}', uuid: '${ctx.uuid}'`,
+					);
+				}
+			});
 			this.pubSub.unsubscribe(key);
 		}
 	}
