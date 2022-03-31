@@ -1,4 +1,38 @@
 - commits:
+    - subject: Only publish logs to redis subscribers if there are any
+      hash: 00393277e4a0b618101e41d61ced675a72c64288
+      body: |
+        The idea of this is that if we can avoid issuing the PUBLISH calls for
+        logs when there are no active subscribers then we can save a lot of
+        work for redis, particularly when there are many nodes. The problem is
+        that there's no (safe) way to get the number of current subscribers,
+        you can query for current subscribers but it'll only return subscribers
+        that are connected to the current node and as it is possible to
+        subscribe to any node that means that no subscribers on the current
+        node is not the same as no subscribers. The solution used here is to
+        increment a subscribers count key when a given API instance first
+        subscribes to a given device's logs and then decrement it when
+        unsubscribing. The problem with that is that if we experience a
+        crash/redeploy/etc the subscribers count could end up being permanently
+        > 0, we handle that here by adding an expiry time when incrementing the
+        subscribers count and using a heartbeat whilst the subscription is
+        active to ensure that the subscribers count does not expire whilst we
+        have an actively subscribed instance but it will expire if the instance
+        that incremented it disappears for whatever reason. This does mean that
+        if we get regular connects/disconnects for certain logs then it means
+        the subscriber count for that log would never expire but the
+        expectation is that should be rare enough that the small extra load
+        from that is minimal and still better than having no subscriber count
+        mechanism.
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.202.0
+  title: "'Only publish logs to redis subscribers if there are any'"
+  date: 2022-03-31T12:41:02.243Z
+- commits:
     - subject: Bump minimist from 1.2.5 to 1.2.6
       hash: 707c0ae51fed2e8bb72aa4e197c9a0ba76a55763
       body: >
