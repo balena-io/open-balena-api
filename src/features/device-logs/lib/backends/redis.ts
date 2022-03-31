@@ -69,7 +69,7 @@ redis.defineCommand('publishLogs', {
 		-- Trim it to the retention limit
 		redis.call("ltrim", KEYS[1], -limit, -1)
 		local subCount = redis.call("get", KEYS[3])
-		if subCount ~= false and subCount > 0 then
+		if subCount ~= false and tonumber(subCount) > 0 then
 			-- Check there are active subscribers before publishing logs using Redis PubSub, avoiding wasted work
 			for i = 1, #ARGV do
 				redis.call("publish", KEYS[1], ARGV[i]);
