@@ -4,7 +4,11 @@ import { EventEmitter } from 'events';
 import * as _ from 'lodash';
 import { errors } from '@balena/pinejs';
 import { captureException } from '../../../../infra/error-handling';
-import { DAYS } from '../../../../lib/config';
+import {
+	DAYS,
+	LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS,
+	LOGS_SUBSCRIPTION_EXPIRY_SECONDS,
+} from '../../../../lib/config';
 import type {
 	DeviceLog,
 	DeviceLogsBackend,
@@ -16,10 +20,6 @@ import {
 	newSubscribeInstance,
 	createIsolatedRedis,
 } from '../../../../infra/redis';
-import {
-	SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS,
-	SUBSCRIPTION_EXPIRY_SECONDS,
-} from '../config';
 
 const redis = createIsolatedRedis({ instance: 'logs' });
 const redisRO = createIsolatedRedis({ instance: 'logs', readOnly: true });
@@ -88,7 +88,7 @@ redis.defineCommand('incrSubscribers', {
 		-- Increment subscribers
 		redis.call("incr", KEYS[1]);
 		-- And set expiry
-		redis.call("expire",KEYS[1],${SUBSCRIPTION_EXPIRY_SECONDS})`,
+		redis.call("expire", KEYS[1], ${LOGS_SUBSCRIPTION_EXPIRY_SECONDS})`,
 	numberOfKeys: 1,
 });
 redis.defineCommand('decrSubscribers', {
@@ -177,8 +177,8 @@ export class RedisBackend implements DeviceLogsBackend {
 			redis.incrSubscribers(subscribersKey);
 			// Start a heartbeat to ensure the subscribers counter stays alive whilst we're subscribed
 			this.subscriptionHeartbeats[key] = setInterval(() => {
-				redis.expire(subscribersKey, SUBSCRIPTION_EXPIRY_SECONDS);
-			}, SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS);
+				redis.expire(subscribersKey, LOGS_SUBSCRIPTION_EXPIRY_SECONDS);
+			}, LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS);
 		}
 		this.subscriptions.on(key, subscription);
 	}

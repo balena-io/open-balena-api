@@ -296,6 +296,18 @@ export const LOKI_PORT = intVar('LOKI_PORT', 9095);
 // control the percent of logs written to Loki while scaling up
 export const LOKI_WRITE_PCT = intVar('LOKI_WRITE_PCT', 0);
 
+export const NDJSON_CTYPE = 'application/x-ndjson';
+
+// Logs read config
+export const LOGS_HEARTBEAT_INTERVAL = 58000;
+export const LOGS_DEFAULT_HISTORY_COUNT = 1000;
+export const LOGS_DEFAULT_SUBSCRIPTION_COUNT = 0;
+export const LOGS_SUBSCRIPTION_EXPIRY_SECONDS = 60 * 60;
+export const LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS =
+	LOGS_SUBSCRIPTION_EXPIRY_SECONDS / 2;
+
+export const LOGS_DEFAULT_RETENTION_LIMIT = 1000;
+
 // Logs write config
 export const LOGS_STREAM_FLUSH_INTERVAL = intVar(
 	'LOGS_STREAM_FLUSH_INTERVAL',

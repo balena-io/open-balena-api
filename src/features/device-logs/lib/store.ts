@@ -15,7 +15,6 @@ import {
 	addRetentionLimit,
 	getBackend,
 	getLokiBackend,
-	NDJSON_CTYPE,
 	shouldPublishToLoki,
 } from './config';
 import { SetupOptions } from '../../..';
@@ -24,6 +23,7 @@ import {
 	LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL,
 	LOGS_STREAM_FLUSH_INTERVAL,
 	LOGS_WRITE_BUFFER_LIMIT,
+	NDJSON_CTYPE,
 } from '../../../lib/config';
 
 const {
