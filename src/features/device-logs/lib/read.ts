@@ -110,7 +110,7 @@ async function handleStreamingRead(
 	function close() {
 		if (state !== StreamState.Closed) {
 			state = StreamState.Closed;
-			getBackend(ctx).unsubscribe(ctx, onLog);
+			getBackend().unsubscribe(ctx, onLog);
 		}
 	}
 
@@ -118,7 +118,7 @@ async function handleStreamingRead(
 	onFinished(res, close);
 
 	// Subscribe in parallel so we don't miss logs in between
-	getBackend(ctx).subscribe(ctx, onLog);
+	getBackend().subscribe(ctx, onLog);
 	try {
 		const logs = await getHistory(ctx, req, DEFAULT_SUBSCRIPTION_LOGS);
 
@@ -186,7 +186,7 @@ function getHistory(
 	}
 
 	// TODO: Implement `?since` filter here too in the next phase
-	return getBackend(ctx).history(ctx, count);
+	return getBackend().history(ctx, count);
 }
 
 async function getReadContext(req: Request): Promise<LogContext> {
