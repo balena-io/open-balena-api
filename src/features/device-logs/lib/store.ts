@@ -15,7 +15,6 @@ import {
 	addRetentionLimit,
 	getBackend,
 	getLokiBackend,
-	NDJSON_CTYPE,
 	shouldPublishToLoki,
 } from './config';
 import { SetupOptions } from '../../..';
@@ -24,6 +23,7 @@ import {
 	LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL,
 	LOGS_STREAM_FLUSH_INTERVAL,
 	LOGS_WRITE_BUFFER_LIMIT,
+	NDJSON_CTYPE,
 } from '../../../lib/config';
 
 const {
@@ -87,7 +87,7 @@ export const store: RequestHandler = async (req: Request, res: Response) => {
 			const ctx = await getWriteContext(req);
 			// start publishing to both backends
 			await Promise.all([
-				getBackend(ctx).publish(ctx, logs),
+				getBackend().publish(ctx, logs),
 				shouldPublishToLoki()
 					? getLokiBackend()
 							.publish(ctx, logs)
@@ -136,7 +136,7 @@ function handleStreamingWrite(
 		);
 	}
 
-	const backend = getBackend(ctx);
+	const backend = getBackend();
 	// If the backend is down, reject right away, don't take in new connections
 	if (!backend.available) {
 		throw new ServiceUnavailableError('The logs storage is unavailable');

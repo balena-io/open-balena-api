@@ -4,7 +4,11 @@ import { EventEmitter } from 'events';
 import * as _ from 'lodash';
 import { errors } from '@balena/pinejs';
 import { captureException } from '../../../../infra/error-handling';
-import { DAYS } from '../../../../lib/config';
+import {
+	DAYS,
+	LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS,
+	LOGS_SUBSCRIPTION_EXPIRY_SECONDS,
+} from '../../../../lib/config';
 import type {
 	DeviceLog,
 	DeviceLogsBackend,
@@ -16,10 +20,6 @@ import {
 	newSubscribeInstance,
 	createIsolatedRedis,
 } from '../../../../infra/redis';
-import {
-	SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS,
-	SUBSCRIPTION_EXPIRY_SECONDS,
-} from '../config';
 
 const redis = createIsolatedRedis({ instance: 'logs' });
 const redisRO = createIsolatedRedis({ instance: 'logs', readOnly: true });
@@ -69,7 +69,7 @@ redis.defineCommand('publishLogs', {
 		-- Trim it to the retention limit
 		redis.call("ltrim", KEYS[1], -limit, -1)
 		local subCount = redis.call("get", KEYS[3])
-		if subCount ~= false and subCount > 0 then
+		if subCount ~= false and tonumber(subCount) > 0 then
 			-- Check there are active subscribers before publishing logs using Redis PubSub, avoiding wasted work
 			for i = 1, #ARGV do
 				redis.call("publish", KEYS[1], ARGV[i]);
@@ -88,7 +88,7 @@ redis.defineCommand('incrSubscribers', {
 		-- Increment subscribers
 		redis.call("incr", KEYS[1]);
 		-- And set expiry
-		redis.call("expire",KEYS[1],${SUBSCRIPTION_EXPIRY_SECONDS})`,
+		redis.call("expire", KEYS[1], ${LOGS_SUBSCRIPTION_EXPIRY_SECONDS})`,
 	numberOfKeys: 1,
 });
 redis.defineCommand('decrSubscribers', {
@@ -106,17 +106,17 @@ redis.defineCommand('decrSubscribers', {
 	numberOfKeys: 1,
 });
 
+// This connection goes into "subscriber mode" and cannot be reused for commands
+const pubSub = newSubscribeInstance({ instance: 'logs' });
+
 export class RedisBackend implements DeviceLogsBackend {
-	private pubSub: ReturnType<typeof newSubscribeInstance>;
 	private subscriptions: EventEmitter;
 	private subscriptionHeartbeats: {
 		[key: string]: ReturnType<typeof setInterval>;
-	};
+	} = {};
 
 	constructor() {
-		// This connection goes into "subscriber mode" and cannot be reused for commands
-		this.pubSub = newSubscribeInstance({ instance: 'logs' });
-		this.pubSub.on('message', this.handleMessage.bind(this));
+		pubSub.on('message', this.handleMessage.bind(this));
 
 		this.subscriptions = new EventEmitter();
 	}
@@ -172,13 +172,13 @@ export class RedisBackend implements DeviceLogsBackend {
 		const key = this.getKey(ctx);
 		if (!this.subscriptions.listenerCount(key)) {
 			const subscribersKey = this.getKey(ctx, 'subscribers');
-			this.pubSub.subscribe(key);
+			pubSub.subscribe(key);
 			// Increment the subscribers counter to recognize we've subscribed
 			redis.incrSubscribers(subscribersKey);
 			// Start a heartbeat to ensure the subscribers counter stays alive whilst we're subscribed
 			this.subscriptionHeartbeats[key] = setInterval(() => {
-				redis.expire(subscribersKey, SUBSCRIPTION_EXPIRY_SECONDS);
-			}, SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS);
+				redis.expire(subscribersKey, LOGS_SUBSCRIPTION_EXPIRY_SECONDS);
+			}, LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS);
 		}
 		this.subscriptions.on(key, subscription);
 	}
@@ -199,14 +199,14 @@ export class RedisBackend implements DeviceLogsBackend {
 					);
 				}
 			});
-			this.pubSub.unsubscribe(key);
+			pubSub.unsubscribe(key);
 		}
 	}
 
 	private get connected() {
 		return (
 			redis.status === 'ready' &&
-			this.pubSub.status === 'ready' &&
+			pubSub.status === 'ready' &&
 			redisRO.status === 'ready'
 		);
 	}
