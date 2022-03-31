@@ -1,4 +1,25 @@
 - commits:
+    - subject: Ensure `subscriptionHeartbeats` is initialized
+      hash: 65f4fc29b9971135c61f7fb85156a41956a6a654
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Lazy load device backends
+      hash: 68bc40b0f8ac9fdfb1246f233f967c56d826e2b5
+      body: |
+        This avoids potentially unnecessary memory usage
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.202.1
+  title: "'Logging fixes'"
+  date: 2022-03-31T15:26:47.283Z
+- commits:
     - subject: Only publish logs to redis subscribers if there are any
       hash: 00393277e4a0b618101e41d61ced675a72c64288
       body: |
