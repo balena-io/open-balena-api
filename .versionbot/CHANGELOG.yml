@@ -1,4 +1,16 @@
 - commits:
+    - subject: Optimize check for active subscribers
+      hash: f5cd019ca407a734d68fa95cbbcfa100a5fc97df
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.202.2
+  title: "'Optimize check for active subscribers'"
+  date: 2022-04-01T10:40:21.681Z
+- commits:
     - subject: Ensure `subscriptionHeartbeats` is initialized
       hash: 65f4fc29b9971135c61f7fb85156a41956a6a654
       body: ""
