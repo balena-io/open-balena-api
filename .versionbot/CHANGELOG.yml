@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix lua syntax
+      hash: e273c04bce24b7abdeb3314a2e33429c7bc3cd3c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.202.3
+  title: "'Fix lua syntax'"
+  date: 2022-04-04T13:48:47.281Z
+- commits:
     - subject: Optimize check for active subscribers
       hash: f5cd019ca407a734d68fa95cbbcfa100a5fc97df
       body: ""
