@@ -96,7 +96,7 @@ redis.defineCommand('decrSubscribers', {
 	lua: stripIndent`
 		-- Decrement subscribers
 		local current = redis.call("decr", KEYS[1]);
-		if current <= 0
+		if current <= 0 then
 			-- If we were the last subscriber then remove the key altogether
 			-- this also handles the symptoms in the potential case where we
 			-- decrement below 0, albeit not the cause
