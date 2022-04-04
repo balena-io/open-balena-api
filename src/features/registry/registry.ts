@@ -97,22 +97,43 @@ const parseScope = (req: Request, scope: string): Scope | undefined => {
 	return;
 };
 
-const grantAllToBuilder = (parsedScopes: Scope[]): Access[] =>
-	parsedScopes.map((scope) => {
-		const [type, name, requestedActions] = scope;
-		let allowedActions = ['pull', 'push'];
-		if (name === RESINOS_REPOSITORY) {
-			allowedActions = ['pull'];
-		}
-		if (SUPERVISOR_REPOSITORIES.test(name)) {
-			allowedActions = ['pull'];
-		}
-		return {
-			type,
-			name,
-			actions: _.intersection(requestedActions, allowedActions),
-		};
-	});
+const grantAllToBuilder = async (
+	req: Request,
+	parsedScopes: Scope[],
+	tx: Tx,
+): Promise<Access[]> => {
+	return await Promise.all(
+		parsedScopes.map(async (scope) => {
+			const [type, name, requestedActions] = scope;
+			let allowedActions = ['pull', 'push'];
+			if (name === RESINOS_REPOSITORY) {
+				allowedActions = ['pull'];
+			}
+			if (SUPERVISOR_REPOSITORIES.test(name)) {
+				allowedActions = ['pull'];
+			}
+
+			const resolvedName = await resolveName(req, name, tx);
+
+			if (resolvedName != null) {
+				allowedActions = ['pull'];
+
+				return {
+					type,
+					name: resolvedName,
+					actions: _.intersection(requestedActions, allowedActions),
+					alias: name,
+				};
+			}
+
+			return {
+				type,
+				name,
+				actions: _.intersection(requestedActions, allowedActions),
+			};
+		}),
+	);
+};
 
 const resolveReadAccess = (() => {
 	const $resolveReadAccess = multiCacheMemoizee(
@@ -344,6 +365,44 @@ const resolveImageLocation = multiCacheMemoizee(
 	},
 );
 
+// return true image path if request is in the format <org>/<app>/<semver|commit>/<service>
+const resolveName = async (
+	req: Request,
+	alias: string,
+	tx: Tx,
+): Promise<string | undefined> => {
+	// match <org>/<app>/<semver|commit>/<service> where <semver|commit> and <service> are optional
+	const match = alias.match(APP_RELEASE_REGEX);
+	if (match != null && match.length > 3) {
+		const applicationSlug = match[1];
+		let semverOrCommit = match[4] || undefined;
+		const serviceName = match[5];
+
+		// For now remove support for releases with multiple services
+		if (serviceName != null) {
+			return;
+		}
+
+		// allow keywords like 'latest' and 'current' to return the target release for the application
+		if (
+			semverOrCommit != null &&
+			TARGET_RELEASE_KEYWORDS.includes(semverOrCommit)
+		) {
+			semverOrCommit = undefined;
+		}
+
+		const imageLocation = await resolveImageLocation(
+			applicationSlug,
+			semverOrCommit,
+			serviceName,
+			req,
+			tx,
+		);
+
+		return imageLocation?.split('/').slice(1).join('/');
+	}
+};
+
 const resolveAccess = async (
 	req: Request,
 	type: string,
@@ -405,7 +464,7 @@ const authorizeRequest = async (
 		.value();
 
 	if (req.params['apikey'] === TOKEN_AUTH_BUILDER_TOKEN) {
-		return grantAllToBuilder(parsedScopes);
+		return await grantAllToBuilder(req, parsedScopes, tx);
 	}
 
 	return await Promise.all(
@@ -440,7 +499,7 @@ const authorizeRequest = async (
 				};
 			}
 
-			let match = name.match(NEW_REGISTRY_REGEX);
+			const match = name.match(NEW_REGISTRY_REGEX);
 			if (match != null) {
 				// request for new-style, authenticated v2/randomhash image
 				let effectiveName = name;
@@ -460,76 +519,24 @@ const authorizeRequest = async (
 				);
 			}
 
-			// match <org>/<app>/<semver|commit>/<service> where <semver|commit> and <service> are optional
-			match = name.match(APP_RELEASE_REGEX);
-			if (match != null && match.length > 3) {
-				// request for read-only application (blocks) releases
-				let alias;
+			const resolvedName = await resolveName(req, name, tx);
 
-				const applicationSlug = match[1];
-				let semverOrCommit = match[4] || undefined;
-				const serviceName = match[5];
+			// request for read-only application (blocks) releases
+			if (resolvedName != null) {
+				// only allow pull
+				const allowedActions = ['pull'];
 
-				// For now remove support for releases with multiple services
-				if (serviceName != null) {
-					return {
-						name,
-						type,
-						actions: [],
-					};
-				}
-
-				// allow keywords like 'latest' and 'current' to return the target release for the application
-				if (
-					semverOrCommit != null &&
-					TARGET_RELEASE_KEYWORDS.includes(semverOrCommit)
-				) {
-					semverOrCommit = undefined;
-				}
-
-				const imageLocation = await resolveImageLocation(
-					applicationSlug,
-					semverOrCommit,
-					serviceName,
+				return await resolveAccess(
 					req,
+					type,
+					resolvedName,
+					resolvedName,
+					_.intersection(requestedActions, allowedActions),
+					['pull'],
+					name,
 					tx,
 				);
-
-				if (imageLocation != null) {
-					// set alias to the requested name, and use the real image location for the name
-					alias = name;
-					name = imageLocation.split('/').slice(1).join('/');
-
-					// only allow pull
-					const allowedActions = ['pull'];
-
-					return await resolveAccess(
-						req,
-						type,
-						name,
-						name,
-						_.intersection(requestedActions, allowedActions),
-						['pull'],
-						alias,
-						tx,
-					);
-				} else {
-					// avoid falling back to legacy format if a semver/commit was provided
-					if (semverOrCommit != null) {
-						return {
-							name,
-							type,
-							actions: [],
-						};
-					}
-				}
 			}
-
-			// Requests for <org>/<app> may also get here if it failed
-			// to resolve to an image location above.
-			// But that's okay because we wll be granting permissions to a repo that
-			// doesn't exist, and we don't want to break the legacy <app>/<commit> format
-			// in this PR.
 
 			// request for legacy public-read appName/commit image
 			return await resolveAccess(
