@@ -20,6 +20,7 @@ import {
 	newSubscribeInstance,
 	createIsolatedRedis,
 } from '../../../../infra/redis';
+import { Result } from 'ioredis';
 
 const redis = createIsolatedRedis({ instance: 'logs' });
 const redisRO = createIsolatedRedis({ instance: 'logs', readOnly: true });
@@ -46,15 +47,15 @@ const schema = avro.Type.forSchema({
 });
 
 declare module 'ioredis' {
-	interface Commands {
+	interface RedisCommander<Context> {
 		publishLogs(
 			logsKey: string,
 			bytesWrittenKey: string,
 			subscribersKey: string,
 			...args: [...logs: string[], bytesWritten: number, limit: number]
-		): Promise<void>;
-		incrSubscribers(subscribersKey: string): Promise<void>;
-		decrSubscribers(subscribersKey: string): Promise<number>;
+		): Result<void, Context>;
+		incrSubscribers(subscribersKey: string): Result<void, Context>;
+		decrSubscribers(subscribersKey: string): Result<number, Context>;
 	}
 }
 

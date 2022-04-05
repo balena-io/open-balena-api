@@ -41,6 +41,16 @@ const JOB_LOCK_PREFIX = 'api:jobs:execute:';
 const JOB_INFO_PREFIX = 'api:jobs:info:';
 const JOB_DEFAULT_TTL = 5000;
 
+declare module 'ioredis' {
+	interface RedisCommander<Context> {
+		// This overload exists specifically to retain compatibility to `redlock`
+		eval(
+			args: Array<string | number>,
+			callback?: (err: Error | null, res: any) => void,
+		): any;
+	}
+}
+
 const locker = new Redlock([redis], {
 	retryCount: 2,
 	retryDelay: 50,
