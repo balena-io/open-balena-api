@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import * as Redis from 'ioredis';
+import Redis from 'ioredis';
 import { MINUTES, REDIS } from '../../lib/config';
 import { captureException } from '../error-handling';
 import { getRedisOptions } from './config';
