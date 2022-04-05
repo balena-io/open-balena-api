@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix hiding unversioned endpoint
+      hash: 03069e3409eb6d0e1b5b05a7c6c1432cac82c818
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.202.4
+  title: "'Fix hiding unversioned endpoint'"
+  date: 2022-04-05T12:04:55.065Z
+- commits:
     - subject: Fix lua syntax
       hash: e273c04bce24b7abdeb3314a2e33429c7bc3cd3c
       body: ""
