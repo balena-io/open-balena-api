@@ -1,4 +1,16 @@
 - commits:
+    - subject: Avoid deprecated `req.param` calls for downloading device config
+      hash: 015d6c545a76e771657ccddfb2c3c240e19b543e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.202.5
+  title: "'Avoid deprecated  calls for downloading device config'"
+  date: 2022-04-05T14:16:00.764Z
+- commits:
     - subject: Fix hiding unversioned endpoint
       hash: 03069e3409eb6d0e1b5b05a7c6c1432cac82c818
       body: ""
