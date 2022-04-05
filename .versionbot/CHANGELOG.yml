@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update dependencies
+      hash: 29675d45a4193e0696993979cc98c77aea87fb9b
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.203.0
+  title: "'Update dependencies'"
+  date: 2022-04-05T15:51:50.143Z
+- commits:
     - subject: Avoid deprecated `req.param` calls for downloading device config
       hash: 015d6c545a76e771657ccddfb2c3c240e19b543e
       body: ""
