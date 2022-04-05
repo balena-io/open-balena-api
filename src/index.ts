@@ -145,6 +145,7 @@ import { addToModel as addUserHasDirectAccessToApplicationToModel } from './feat
 import { getApplicationSlug } from './features/applications';
 import * as deviceAdditions from './features/devices/models/device-additions';
 import { addToModel as addReleaseAdditionsToModel } from './features/ci-cd/models/release-additions';
+import { apiRoot } from './balena';
 
 export * as tags from './features/tags/validation';
 
@@ -353,7 +354,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	});
 
 	if (HIDE_UNVERSIONED_ENDPOINT) {
-		app.use('/resin', (_req, res) => {
+		app.use(`/${apiRoot}/*`, (_req, res) => {
 			res.status(404).end();
 		});
 	}
