@@ -1,5 +1,31 @@
 - commits:
     - subject: Update dependencies
+      hash: 900f20f48d1fa4b4884805429b1d793c0d42c6da
+      body: |
+        Update @balena/node-metrics-gatherer from 6.0.0 to 6.0.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Add missing await
+              hash: 97ed30f9cc16c2350e3c0233d5024e8a70db9431
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Josh Bowling <josh@balena.io>
+                signed-off-by: Josh Bowling <josh@balena.io>
+              author: Josh Bowling
+          version: node-metrics-gatherer-6.0.1
+          title: "'Add missing await'"
+          date: 2022-04-06T02:08:06.136Z
+  version: 0.203.1
+  title: "'Update dependencies'"
+  date: 2022-04-06T11:59:37.971Z
+- commits:
+    - subject: Update dependencies
       hash: 29675d45a4193e0696993979cc98c77aea87fb9b
       body: ""
       footer:
