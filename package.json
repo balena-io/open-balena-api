@@ -29,7 +29,7 @@
   "dependencies": {
     "@balena/abstract-sql-compiler": "^7.19.0",
     "@balena/es-version": "^1.0.1",
-    "@balena/node-metrics-gatherer": "^6.0.0",
+    "@balena/node-metrics-gatherer": "^6.0.1",
     "@balena/pinejs": "^14.41.1",
     "@sentry/node": "^6.19.4",
     "@types/basic-auth": "^1.1.3",
@@ -59,7 +59,7 @@
     "@types/validator": "^13.7.2",
     "array-sort": "^1.0.0",
     "avsc": "^5.7.4",
-    "aws-sdk": "^2.1107.0",
+    "aws-sdk": "^2.1108.0",
     "balena-device-config": "^6.2.0",
     "balena-semver": "^2.3.0",
     "basic-auth": "^2.0.1",
