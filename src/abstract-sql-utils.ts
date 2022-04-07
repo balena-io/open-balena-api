@@ -3,11 +3,15 @@ import * as _ from 'lodash';
 
 import type {
 	AbstractSqlModel,
+	CastNode,
 	ConcatenateNode,
+	ConcatenateWithSeparatorNode,
 	Definition,
 	Relationship,
 	RelationshipInternalNode,
 	TextTypeNodes,
+	BooleanTypeNodes,
+	UnknownTypeNodes,
 } from '@balena/abstract-sql-compiler';
 
 import { sbvrUtils } from '@balena/pinejs';
@@ -197,3 +201,60 @@ const sqlConcatFactory = (
 export const oneLineTrimSqlConcat = sqlConcatFactory((node) =>
 	typeof node === 'string' ? node.replace(/\s*\n\s*/g, '') : node,
 );
+
+export const splitStringParts = (field: UnknownTypeNodes, separator = '.') =>
+	oneLineTrimSqlConcat`"${[
+		'Replace',
+		field,
+		['EmbeddedText', separator],
+		['EmbeddedText', '","'],
+	]}"`;
+
+export const joinTextParts = (
+	separator: string,
+	...parts: Array<[showPart: BooleanTypeNodes, partValue: UnknownTypeNodes]>
+): ConcatenateWithSeparatorNode => {
+	if (parts.length < 2) {
+		throw new Error('joinTextParts requires at least two parts to join');
+	}
+	return [
+		'ConcatenateWithSeparator',
+		['EmbeddedText', separator],
+		...parts.map(
+			([showPart, partValue]): CastNode => [
+				'Cast',
+				['Case', ['When', showPart, partValue], ['Else', ['Null']]],
+				'Text',
+			],
+		),
+	];
+};
+
+export const joinTextPartsAndPrefix = (
+	prefix: string,
+	separator: string,
+	...parts: Array<[showPart: BooleanTypeNodes, partValue: UnknownTypeNodes]>
+): ConcatenateNode | ConcatenateWithSeparatorNode => {
+	const joinedParts = joinTextParts(separator, ...parts);
+	if (prefix === '') {
+		return joinedParts;
+	}
+
+	return [
+		'Concatenate',
+		[
+			'Cast',
+			[
+				'Case',
+				[
+					'When',
+					['Or', ...parts.map(([showPart]) => showPart)],
+					['EmbeddedText', prefix],
+				],
+				['Else', ['EmbeddedText', '']],
+			],
+			'Text',
+		],
+		joinedParts,
+	];
+};
