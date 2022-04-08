@@ -1,4 +1,24 @@
 - commits:
+    - subject: Add release variant & support all valid semver values in releases
+      hash: 2d01d7dfac4db25b5aeea5a256ca0da09661d6ba
+      body: ""
+      footer:
+        Resolves: "#827"
+        resolves: "#827"
+        Change-type: minor
+        change-type: minor
+        HQ: https://github.com/balena-io/balena-api/issues/3291
+        hq: https://github.com/balena-io/balena-api/issues/3291
+        See: https://jel.ly.fish/product-improvement-draft-releases-and-release-versioning-d0391f45-c2f9-4f4e-b964-1a7e9023a3f4
+        see: https://jel.ly.fish/product-improvement-draft-releases-and-release-versioning-d0391f45-c2f9-4f4e-b964-1a7e9023a3f4
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.204.0
+  title: "'Add release variant & support all valid semver values in releases'"
+  date: 2022-04-08T16:08:26.219Z
+- commits:
     - subject: Update dependencies
       hash: 900f20f48d1fa4b4884805429b1d793c0d42c6da
       body: |
