@@ -13,7 +13,7 @@ describe('target fleets', () => {
 	let pineUser: typeof pineTest;
 
 	before(async () => {
-		fx = await fixtures.load('17-fleets');
+		fx = await fixtures.load('20-fleets');
 		user = fx.users.admin;
 		app1 = fx.applications.app1;
 		device1 = fx.devices.device1;
