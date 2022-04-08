@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -a
+
+[[ -f /etc/docker.env ]] && source /etc/docker.env
+
+curl -I --fail localhost/ping || exit $?
+
+if [[ -s ${NODE_EXTRA_CA_CERTS} ]]; then
+    true | openssl s_client \
+      -connect "${API_HOST}:443" \
+      -CAfile "${NODE_EXTRA_CA_CERTS}"
+else
+    true | openssl s_client -connect "${API_HOST}:443"
+fi
