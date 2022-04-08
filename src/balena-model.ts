@@ -397,6 +397,9 @@ export interface Release {
 	semver_major: number;
 	semver_minor: number;
 	semver_patch: number;
+	semver_prerelease: string;
+	semver_build: string;
+	variant: string;
 	revision: number | null;
 	known_issue_list: string | null;
 	note: string | null;

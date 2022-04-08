@@ -19,7 +19,10 @@ ALTER TABLE "release"
 ALTER COLUMN "is passing tests" SET DEFAULT 1,
 ALTER COLUMN "semver major" SET DEFAULT 0,
 ALTER COLUMN "semver minor" SET DEFAULT 0,
-ALTER COLUMN "semver patch" SET DEFAULT 0;
+ALTER COLUMN "semver patch" SET DEFAULT 0,
+ALTER COLUMN "semver prerelease" SET DEFAULT '',
+ALTER COLUMN "semver build" SET DEFAULT '',
+ALTER COLUMN "variant" SET DEFAULT '';
 
 -------------------------------
 -- Start foreign key indexes --
@@ -172,7 +175,9 @@ ON "release" ("id", "belongs to-application", "status");
 
 -- Optimization for the app-semver-revision uniqueness rule and for computing the next revision
 CREATE INDEX IF NOT EXISTS "release_belongs_to_app_revision_semver_idx"
-ON "release" ("belongs to-application", "revision", "semver major", "semver minor", "semver patch");
+ON "release" ("belongs to-application", "revision", "semver major", "semver minor", "semver patch"); -- TODO: Drop this in a follow-up PR.
+CREATE INDEX IF NOT EXISTS "release_belongs_to_app_revision_semver_prerelease_variant_idx"
+ON "release" ("belongs to-application", "revision", "semver major", "semver minor", "semver patch", "semver prerelease", "variant");
 
 -- Optimize the overall status computed fact type
 CREATE INDEX IF NOT EXISTS "image_install_status_dl_progress_exists_device_idx"
