@@ -3,10 +3,20 @@ import {
 	apiKeyMiddleware,
 	permissionRequiredMiddleware,
 } from '../../infra/auth';
-import { authDevice, clientConnect, clientDisconnect } from './services';
+import {
+	authDevice,
+	clientConnect,
+	clientDisconnect,
+	denyDeletedDevices,
+} from './services';
 
 export const setup = (app: Application) => {
-	app.get('/services/vpn/auth/:device_uuid', apiKeyMiddleware, authDevice);
+	app.get(
+		'/services/vpn/auth/:uuid',
+		denyDeletedDevices,
+		apiKeyMiddleware,
+		authDevice,
+	);
 	app.post(
 		'/services/vpn/client-connect',
 		apiKeyMiddleware,

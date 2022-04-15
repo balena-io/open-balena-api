@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { Request, RequestHandler, Response } from 'express';
 
 import * as _ from 'lodash';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
@@ -9,6 +9,7 @@ import {
 } from '../../infra/error-handling';
 import { multiCacheMemoizee, reqPermissionNormalizer } from '../../infra/cache';
 import { VPN_AUTH_CACHE_TIMEOUT } from '../../lib/config';
+import { checkDeviceExists } from '../device-state/middleware';
 
 const { api } = sbvrUtils;
 
@@ -51,12 +52,26 @@ const checkAuth = (() => {
 	);
 })();
 
+/**
+ * A middleware to return 401 for deleted devices and avoid doing any additional work.
+ * This shares the deleted device cache with device-state
+ */
+export const denyDeletedDevices: RequestHandler = async (req, res, next) => {
+	const device = await checkDeviceExists(req.params.uuid);
+	if (device == null) {
+		// Deny deleted devices
+		res.status(401).end();
+		return;
+	}
+	next();
+};
+
 export const authDevice = async (
 	req: Request,
 	res: Response,
 ): Promise<void> => {
 	try {
-		const statusCode = await checkAuth(req.params.device_uuid, req);
+		const statusCode = await checkAuth(req.params.uuid, req);
 		res.status(statusCode).end();
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
