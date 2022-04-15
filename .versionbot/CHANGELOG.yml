@@ -1,4 +1,19 @@
 - commits:
+    - subject: Add an early check to quickly deny deleted devices access to the VPN
+      hash: 5d5df29d63fa17e4856258b87f8314a0a5640d83
+      body: |
+        This avoids unnecessary work when checking for a device that has
+        already been deleted and will allow legitimate VPN auth requests to be
+        served more quickly
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.205.0
+  title: "'Add an early check to quickly deny deleted devices access to the VPN'"
+  date: 2022-04-15T16:57:20.034Z
+- commits:
     - subject: Update open-balena-base to 13.2.3 Update open-balena-base from 13.2.1
         to 13.2.3
       hash: e3bf3ab287bd118bf01cc2c0443f0774f99aa573
