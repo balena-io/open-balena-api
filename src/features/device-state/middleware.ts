@@ -23,15 +23,15 @@ const checkDeviceExistsQuery = _.once(() =>
 );
 export const checkDeviceExists = multiCacheMemoizee(
 	async (uuid: string) => {
-		return (await checkDeviceExistsQuery()({ uuid })) as Pick<
-			Device,
-			typeof $select
-		>;
+		return (await checkDeviceExistsQuery()({ uuid })) as
+			| Pick<Device, typeof $select>
+			| undefined;
 	},
 	{
 		cacheKey: 'checkDeviceExists',
 		promise: true,
 		primitive: true,
+		undefinedAs: false,
 		maxAge: DEVICE_EXISTS_CACHE_TIMEOUT,
 	},
 );
