@@ -1,4 +1,26 @@
 - commits:
+    - subject: Clear the device existence cache entry when registering a device
+      hash: badc429a3847072068353ca13e4d9d0d43b68207
+      body: |
+        This avoids a delay in case it tried to communicate with the API
+        before registering
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Correctly cache devices that have been deleted
+      hash: 8b15bb5dfac45fcac49c944cb3b5489aa74c2219
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.205.1
+  title: "'Correctly cache devices that have been deleted'"
+  date: 2022-04-18T17:25:11.564Z
+- commits:
     - subject: Add an early check to quickly deny deleted devices access to the VPN
       hash: 5d5df29d63fa17e4856258b87f8314a0a5640d83
       body: |
