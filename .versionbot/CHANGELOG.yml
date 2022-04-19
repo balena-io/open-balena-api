@@ -1,4 +1,20 @@
 - commits:
+    - subject: Consider devices with heartbeats to be out of the pre-provisioning state
+      hash: e736279f3e2cbccc95a1a904d081d9a5b67817bb
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://jel.ly.fish/pattern-heartbeating-devices-without-vpn-connectivity-show-configuring-when-turned-off-f19c956
+        see: https://jel.ly.fish/pattern-heartbeating-devices-without-vpn-connectivity-show-configuring-when-turned-off-f19c956
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.206.0
+  title: "'Consider devices with heartbeats to be out of the pre-provisioning state'"
+  date: 2022-04-19T11:04:58.121Z
+- commits:
     - subject: Only cache the device id for `checkDeviceExists` rather than an object
       hash: d6530100c9568ae30db82b50f35ade6bec98fa18
       body: |
