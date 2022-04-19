@@ -186,9 +186,9 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 	if (!uuid) {
 		return res.status(400).end();
 	}
-	const { resolvedDevice: device } =
+	const { resolvedDevice: deviceId } =
 		req.custom as ResolveDeviceInfoCustomObject;
-	if (device == null) {
+	if (deviceId == null) {
 		// We are supposed to have already checked this.
 		throw new UnauthorizedError();
 	}
@@ -254,7 +254,7 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 					deviceBody = { ...deviceBody, ...metricsBody };
 					await resinApiTx.patch({
 						resource: 'device',
-						id: device.id,
+						id: deviceId,
 						options: {
 							$filter: { $not: deviceBody },
 						},
@@ -297,7 +297,7 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 						options: {
 							$select: ['id', 'installs__image'],
 							$filter: {
-								device: device.id,
+								device: deviceId,
 								installs__image: { $in: imageIds },
 							},
 						},
@@ -313,13 +313,13 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 								resinApiTx,
 								existingImgInstallsByImage[imgInstall.imageId],
 								imgInstall,
-								device.id,
+								deviceId,
 							);
 						}),
 					);
 				}
 
-				await deleteOldImageInstalls(resinApiTx, device.id, imageIds);
+				await deleteOldImageInstalls(resinApiTx, deviceId, imageIds);
 			});
 		}
 	}
@@ -349,7 +349,7 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 					options: {
 						$select: ['id', 'image'],
 						$filter: {
-							is_downloaded_by__device: device.id,
+							is_downloaded_by__device: deviceId,
 							image: { $in: imageIds },
 						},
 					},
@@ -364,14 +364,14 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 						await upsertGatewayDownload(
 							resinApiTx,
 							existingGatewayDownloadsByImage[gatewayDownload.imageId],
-							device.id,
+							deviceId,
 							gatewayDownload,
 						);
 					}),
 				);
 			}
 
-			await deleteOldGatewayDownloads(resinApiTx, device.id, imageIds);
+			await deleteOldGatewayDownloads(resinApiTx, deviceId, imageIds);
 		});
 	}
 
