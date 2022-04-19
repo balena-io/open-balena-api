@@ -1,4 +1,18 @@
 - commits:
+    - subject: Only cache the device id for `checkDeviceExists` rather than an object
+      hash: d6530100c9568ae30db82b50f35ade6bec98fa18
+      body: |
+        The object is unnecessary as we only care about the id and only serves
+        to increases the cache memory usage
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.205.2
+  title: "'Only cache the device id for  rather than an object'"
+  date: 2022-04-19T10:03:20.488Z
+- commits:
     - subject: Clear the device existence cache entry when registering a device
       hash: badc429a3847072068353ca13e4d9d0d43b68207
       body: |
