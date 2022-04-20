@@ -2,7 +2,10 @@ import type { JSONSchema6Definition } from 'json-schema';
 
 import { errors } from '@balena/pinejs';
 
-import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from '../../lib/config';
+import {
+	DEFAULT_SUPERVISOR_POLL_INTERVAL,
+	DEFAULT_SUPERVISOR_REPORT_INTERVAL,
+} from '../../lib/config';
 
 const { BadRequestError } = errors;
 
@@ -34,6 +37,7 @@ export const ALLOWED_NAMES = addReservedPrefixes([
 	'SUPERVISOR_LOCAL_MODE',
 	'SUPERVISOR_LOG_CONTROL',
 	'SUPERVISOR_POLL_INTERVAL',
+	'SUPERVISOR_REPORT_INTERVAL',
 	'SUPERVISOR_UPDATE_STRATEGY',
 	'SUPERVISOR_VPN_CONTROL',
 	'SUPERVISOR_PERSISTENT_LOGGING',
@@ -72,6 +76,14 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		enum: ['false', 'true'],
 		description: 'Enable / Disable logs from being sent to balena API',
 		default: 'true',
+	},
+	RESIN_SUPERVISOR_REPORT_INTERVAL: {
+		type: 'integer',
+		description:
+			'Define how frequently the device reports its current state to the cloud in milliseconds',
+		default: DEFAULT_SUPERVISOR_REPORT_INTERVAL,
+		minimum: DEFAULT_SUPERVISOR_REPORT_INTERVAL,
+		maximum: 86400000,
 	},
 	RESIN_SUPERVISOR_POLL_INTERVAL: {
 		type: 'integer',
