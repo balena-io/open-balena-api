@@ -1,4 +1,16 @@
 - commits:
+    - subject: Move some state-patch-v2 preprocessing out of the transaction
+      hash: b63959461ecaf3e7aee1c1a9c5acf58aef1bc30c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.206.2
+  title: "'Move some state-patch-v2 preprocessing out of the transaction'"
+  date: 2022-04-21T19:03:12.592Z
+- commits:
     - subject: Look up the release id in advance of starting the write transaction
       hash: 3da0f8074e4cf8b4d887bc13bc88fced564fcef6
       body: ""
