@@ -271,34 +271,32 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 			}
 
 			if (apps != null) {
+				const imgInstalls = _.flatMap(apps, (app) =>
+					_.map(app.services, (svc, imageIdStr) => {
+						const imageId = parseInt(imageIdStr, 10);
+						if (!Number.isFinite(imageId)) {
+							throw new BadRequestError('Invalid image ID value in request');
+						}
+
+						const releaseId =
+							typeof svc.releaseId === 'number'
+								? svc.releaseId
+								: parseInt(svc.releaseId, 10);
+						if (!Number.isFinite(releaseId)) {
+							throw new BadRequestError('Invalid release ID value in request');
+						}
+
+						return {
+							imageId,
+							releaseId,
+							status: svc.status,
+							downloadProgress: svc.download_progress,
+						};
+					}),
+				);
+				const imageIds = imgInstalls.map(({ imageId }) => imageId);
+
 				updateFns.push(async (resinApiTx) => {
-					const imgInstalls = _.flatMap(apps, (app) =>
-						_.map(app.services, (svc, imageIdStr) => {
-							const imageId = parseInt(imageIdStr, 10);
-							if (!Number.isFinite(imageId)) {
-								throw new BadRequestError('Invalid image ID value in request');
-							}
-
-							const releaseId =
-								typeof svc.releaseId === 'number'
-									? svc.releaseId
-									: parseInt(svc.releaseId, 10);
-							if (!Number.isFinite(releaseId)) {
-								throw new BadRequestError(
-									'Invalid release ID value in request',
-								);
-							}
-
-							return {
-								imageId,
-								releaseId,
-								status: svc.status,
-								downloadProgress: svc.download_progress,
-							};
-						}),
-					);
-					const imageIds = imgInstalls.map(({ imageId }) => imageId);
-
 					if (imageIds.length > 0) {
 						const existingImgInstalls = (await resinApiTx.get({
 							resource: 'image_install',
@@ -333,24 +331,24 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 		}
 
 		if (dependent?.apps != null) {
+			// Handle dependent devices if necessary
+			const gatewayDownloads = _.flatMap(dependent.apps, ({ images }) =>
+				_.map(images, ({ status, download_progress }, imageIdStr) => {
+					const imageId = parseInt(imageIdStr, 10);
+					if (!Number.isFinite(imageId)) {
+						throw new BadRequestError('Invalid image ID value in request');
+					}
+
+					return {
+						imageId,
+						status,
+						downloadProgress: download_progress,
+					};
+				}),
+			);
+			const imageIds = gatewayDownloads.map(({ imageId }) => imageId);
+
 			updateFns.push(async (resinApiTx) => {
-				// Handle dependent devices if necessary
-				const gatewayDownloads = _.flatMap(dependent.apps, ({ images }) =>
-					_.map(images, ({ status, download_progress }, imageIdStr) => {
-						const imageId = parseInt(imageIdStr, 10);
-						if (!Number.isFinite(imageId)) {
-							throw new BadRequestError('Invalid image ID value in request');
-						}
-
-						return {
-							imageId,
-							status,
-							downloadProgress: download_progress,
-						};
-					}),
-				);
-				const imageIds = gatewayDownloads.map(({ imageId }) => imageId);
-
 				if (imageIds.length > 0) {
 					const existingGatewayDownloads = (await resinApiTx.get({
 						resource: 'gateway_download',
