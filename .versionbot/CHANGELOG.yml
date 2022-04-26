@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use a shared cache for the device type json
+      hash: 6afe8f13706bb746f0cd6d819610483cddc6b53d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.206.3
+  title: "'Use a shared cache for the device type json'"
+  date: 2022-04-26T10:31:04.498Z
+- commits:
     - subject: Move some state-patch-v2 preprocessing out of the transaction
       hash: b63959461ecaf3e7aee1c1a9c5acf58aef1bc30c
       body: ""
