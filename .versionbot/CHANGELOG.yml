@@ -1,4 +1,26 @@
 - commits:
+    - subject: Increase device cache timeout to 1 hour
+      hash: a81f32b356a9d3e18a886f074f309d1390290f3a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Use a multi-level cache for device types info
+      hash: 9442564625618721a86b265bb38fa7ce18bb77f3
+      body: |
+        This also lets the cache handle the automatic refreshing rather than
+        having custom code for it
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.206.4
+  title: "'Use a multi-level cache for device types info'"
+  date: 2022-04-26T11:31:04.282Z
+- commits:
     - subject: Use a shared cache for the device type json
       hash: 6afe8f13706bb746f0cd6d819610483cddc6b53d
       body: ""
