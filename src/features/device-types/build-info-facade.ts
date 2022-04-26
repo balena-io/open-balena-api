@@ -1,4 +1,3 @@
-import * as memoizee from 'memoizee';
 import { multiCacheMemoizee } from '../../infra/cache';
 
 import type { DeviceTypeJson } from './device-type-json';
@@ -45,8 +44,7 @@ export const getLogoUrl = multiCacheMemoizee(
 	},
 );
 
-// We only cache this locally since it gets regularly cleared - is it actually necessary to clear?
-export const getDeviceTypeJson = memoizee(
+export const getDeviceTypeJson = multiCacheMemoizee(
 	async (
 		normalizedSlug: string,
 		buildId: string,
@@ -70,6 +68,8 @@ export const getDeviceTypeJson = memoizee(
 		return deviceType;
 	},
 	{
+		cacheKey: 'getDeviceTypeJson',
+		undefinedAs: false,
 		promise: true,
 		primitive: true,
 		preFetch: true,
