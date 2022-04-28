@@ -1,4 +1,28 @@
 - commits:
+    - subject: "env-vars: Add a validation pattern for the BALENA_HOST_SPLASH_IMAGE"
+      hash: b296f59aa0eff4a9a3961bd276b839e684199813
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: "env-vars: Remove the invalid default value for BALENA_HOST_SPLASH_IMAGE"
+      hash: d31a58ccca307fc1cc6d12d1902ae30b3e65f24e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.206.6
+  title: "'Fix splash logo config var definition'"
+  date: 2022-04-28T13:08:48.708Z
+- commits:
     - subject: Update dependencies
       hash: 89136767d63bfaef9316c388da3458d06d40cdba
       body: |
