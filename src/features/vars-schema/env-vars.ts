@@ -111,7 +111,6 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		description:
 			'Define the PNG image to be used for the boot splash screen. Only supported by supervisor versions >= v12.3.0.',
 		maxLength: 13400, // ~10KB base64 encoded image
-		default: '/boot/splash/balena-logo-default.png',
 		will_reboot: true,
 	},
 	BALENA_SUPERVISOR_HARDWARE_METRICS: {
