@@ -67,6 +67,11 @@ export const generateConfig = async (
 			req.query.provisioningKeyDescription ??
 			'Automatically generated for an image download or config file generation';
 
+		apiKeyOptions.expiryDate =
+			req.body.provisioningKeyExpiryDate ??
+			req.query.provisioningKeyExpiryDate ??
+			undefined;
+
 		return await createProvisioningApiKey(req, app.id, apiKeyOptions);
 	})();
 

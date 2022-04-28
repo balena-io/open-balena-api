@@ -11,6 +11,7 @@ export interface ApiKeyOptions {
 	apiKey?: string;
 	name?: string;
 	description?: string;
+	expiryDate?: string;
 	tx?: Tx;
 }
 
@@ -24,7 +25,7 @@ const $createApiKey = async (
 	roleName: string,
 	req: Request,
 	actorTypeID: number,
-	{ apiKey, tx, name, description }: InternalApiKeyOptions,
+	{ apiKey, tx, name, description, expiryDate }: InternalApiKeyOptions,
 ): Promise<string> => {
 	const actorable = await api.resin.get({
 		resource: actorType,
@@ -68,6 +69,7 @@ const $createApiKey = async (
 				key: apiKey,
 				name,
 				description,
+				expiry_date: expiryDate,
 			},
 			options: { returnResource: false },
 		}) as Promise<{ id: number }>,
@@ -94,8 +96,12 @@ const $createApiKey = async (
 	return apiKey;
 };
 
-const getKeyMetadata = (reqBody: { name?: any; description?: any }) => {
-	const { name, description } = reqBody;
+const getKeyMetadata = (reqBody: {
+	name?: any;
+	description?: any;
+	expiryDate?: any;
+}) => {
+	const { name, description, expiryDate } = reqBody;
 
 	if (name != null && typeof name !== 'string') {
 		throw new errors.BadRequestError('Key name should be a string value');
@@ -107,7 +113,20 @@ const getKeyMetadata = (reqBody: { name?: any; description?: any }) => {
 		);
 	}
 
-	return { name, description };
+	if (
+		expiryDate != null &&
+		(typeof expiryDate !== 'string' || isNaN(new Date(expiryDate).getTime()))
+	) {
+		throw new errors.BadRequestError('Key expiry date should be a valid date');
+	}
+
+	return {
+		name,
+		description,
+		...(expiryDate && {
+			expiryDate: new Date(expiryDate),
+		}),
+	};
 };
 
 export const createApiKey = async (
@@ -118,13 +137,16 @@ export const createApiKey = async (
 	options: ApiKeyOptions = {},
 ): Promise<string> => {
 	options.apiKey ??= randomstring.generate();
-	const { name, description } = getKeyMetadata(req.body);
+	const { name, description, expiryDate } = getKeyMetadata(req.body);
 
 	if (!options.name) {
 		options.name = name;
 	}
 	if (!options.description) {
 		options.description = description;
+	}
+	if (!options.expiryDate) {
+		options.expiryDate = expiryDate;
 	}
 
 	if (options.tx != null) {

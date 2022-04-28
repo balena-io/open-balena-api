@@ -74,6 +74,7 @@ export interface ApiKey {
 	modified_at: DateString;
 	id: number;
 	key: string;
+	expiry_date: DateString | null;
 	is_of__actor: { __id: number } | [Actor];
 	name: string | null;
 	description: string | null;
