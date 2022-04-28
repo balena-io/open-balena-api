@@ -1,4 +1,18 @@
 - commits:
+    - subject: Add optional expiration date on api keys
+      hash: d44c7f4ee0d401c90bba1e193c42a98f55a4cad4
+      body: ""
+      footer:
+        Change-Type: minor
+        change-type: minor
+        Signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+        signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+      author: Nitish Agarwal
+      nested: []
+  version: 0.207.0
+  title: "'Add an option to input expiry date for provisioning key'"
+  date: 2022-04-28T15:53:37.119Z
+- commits:
     - subject: "env-vars: Add a validation pattern for the BALENA_HOST_SPLASH_IMAGE"
       hash: b296f59aa0eff4a9a3961bd276b839e684199813
       body: ""
