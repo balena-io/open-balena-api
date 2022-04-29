@@ -1,4 +1,18 @@
 - commits:
+    - subject: Fix early exist check on service install creation from application PATCH
+      hash: 523f9cf3d1f877218c8880a77a252783951c67b5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.207.1
+  title: "'Fix early exist check on service install creation from application PATCH'"
+  date: 2022-04-29T19:21:02.409Z
+- commits:
     - subject: Add optional expiration date on api keys
       hash: d44c7f4ee0d401c90bba1e193c42a98f55a4cad4
       body: ""
