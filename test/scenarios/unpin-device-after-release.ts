@@ -140,6 +140,22 @@ describe('Device with missing service installs', () => {
 		);
 	});
 
+	it('should not add any new service installs of the new release to pinned devices', async function () {
+		const {
+			body: { d: serviceInstalls },
+		} = await supertest(admin)
+			.get(
+				`/${version}/service_install?$select=id&$expand=installs__service($select=service_name)&$filter=device eq ${device.id}`,
+			)
+			.expect(200);
+
+		expect(serviceInstalls).to.be.an('array');
+		const serviceNames = serviceInstalls
+			.map((si: AnyObject) => si.installs__service[0].service_name)
+			.sort();
+		expect(serviceNames).to.deep.equal(['service-1']);
+	});
+
 	it('should un-pin the device', async function () {
 		await supertest(admin)
 			.patch(`/${version}/device(${device.id})`)
@@ -147,6 +163,22 @@ describe('Device with missing service installs', () => {
 				should_be_running__release: null,
 			})
 			.expect(200);
+	});
+
+	it('should add any new service installs of the new release once the device gets unpinned', async function () {
+		const {
+			body: { d: serviceInstalls },
+		} = await supertest(admin)
+			.get(
+				`/${version}/service_install?$select=id&$expand=installs__service($select=service_name)&$filter=device eq ${device.id}`,
+			)
+			.expect(200);
+
+		expect(serviceInstalls).to.be.an('array');
+		const serviceNames = serviceInstalls
+			.map((si: AnyObject) => si.installs__service[0].service_name)
+			.sort();
+		expect(serviceNames).to.deep.equal(['service-1', 'service-2']);
 	});
 
 	it('should pull the intended state', async function () {
