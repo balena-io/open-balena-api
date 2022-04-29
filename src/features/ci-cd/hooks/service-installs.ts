@@ -24,7 +24,7 @@ const createReleaseServiceInstalls = async (
 					},
 				})) as Array<Pick<Device, 'id'>>
 		  ).map(({ id }) => id);
-	if (deviceFilterOrIds.length === 0) {
+	if (deviceIds.length === 0) {
 		return;
 	}
 
