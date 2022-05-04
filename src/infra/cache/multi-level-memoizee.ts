@@ -16,6 +16,13 @@ type MultiCacheMemoizeeOpts<T extends (...args: any[]) => any> = {
 	max?: MemoizeeOptions<T>['max'];
 } & Pick<MemoizeeOptions<T>, 'preFetch' | 'normalizer'>;
 
+const memoizeeSharedOptionsKeys = ['max', 'maxAge', 'preFetch'] as const;
+
+type MultiCacheMemoizeeSharedOpts<T extends (...args: any[]) => any> = Pick<
+	MultiCacheMemoizeeOpts<T>,
+	typeof memoizeeSharedOptionsKeys[number]
+>;
+
 export interface MemoizedFn<T extends (...args: any[]) => Promise<any>> {
 	(...args: Parameters<T>): Promise<ResolvableReturnType<T>>;
 	delete: (...args: Parameters<T>) => Promise<void>;
@@ -30,21 +37,21 @@ export function multiCacheMemoizee<
 >(
 	fn: T,
 	opts: types.RequiredField<MultiCacheMemoizeeOpts<T>, 'undefinedAs'>,
-	sharedCacheOpts?: Partial<Pick<MultiCacheMemoizeeOpts<T>, 'max' | 'maxAge'>>,
+	sharedCacheOpts?: Partial<MultiCacheMemoizeeSharedOpts<T>>,
 ): MemoizedFn<T>;
 export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined>,
 >(
 	fn: T,
 	opts: MultiCacheMemoizeeOpts<T>,
-	sharedCacheOpts?: Partial<Pick<MultiCacheMemoizeeOpts<T>, 'max' | 'maxAge'>>,
+	sharedCacheOpts?: Partial<MultiCacheMemoizeeSharedOpts<T>>,
 ): MemoizedFn<T>;
 export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined | undefined>,
 >(
 	fn: T,
 	opts: MultiCacheMemoizeeOpts<T>,
-	sharedCacheOpts?: Partial<Pick<MultiCacheMemoizeeOpts<T>, 'max' | 'maxAge'>>,
+	sharedCacheOpts?: Partial<MultiCacheMemoizeeSharedOpts<T>>,
 ): MemoizedFn<T> {
 	const {
 		cacheKey = fn.name,
@@ -63,7 +70,7 @@ export function multiCacheMemoizee<
 	}
 	const remainingSharedCacheKeys =
 		sharedCacheOpts != null
-			? _.without(Object.keys(sharedCacheOpts), 'max', 'maxAge')
+			? _.without(Object.keys(sharedCacheOpts), ...memoizeeSharedOptionsKeys)
 			: null;
 	if (remainingSharedCacheKeys != null && remainingSharedCacheKeys.length > 0) {
 		throw new Error(`Unsupported shared cache options: ${remainingKeys}`);
