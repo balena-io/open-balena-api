@@ -1,4 +1,29 @@
 - commits:
+    - subject: Update open-balena-base to 13.3.1
+      hash: 4308b7133851a1c5bc648b2c9721600f109c7109
+      body: |
+        Update open-balena-base from 13.3.0 to 13.3.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Add SystemMaxUse for journald.conf
+              hash: 59543bf6b8b1faf2914be1ff2302982c0d269b33
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.3.1
+          title: "'Add SystemMaxUse for journald.conf'"
+          date: 2022-05-05T09:33:37.847Z
+  version: 0.207.4
+  title: "'Update open-balena-base to 13.3.1'"
+  date: 2022-05-05T10:04:17.897Z
+- commits:
     - subject: Update open-balena-base to 13.3.0
       hash: 4bcafd3b32d5eb299b60f4d9be40b32cf91dca81
       body: |
