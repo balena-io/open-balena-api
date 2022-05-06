@@ -151,28 +151,33 @@ export type StatePatchV2Body = {
 	};
 };
 
-const releaseOfDeviceQuery = _.once(() =>
-	api.resin.prepare<{ uuid: string; commit: string }>({
-		resource: 'release',
+const appAndReleaseOfDeviceQuery = _.once(() =>
+	// This is a performance optimization impactful when using device API key permissions,
+	// in which case emitting the OR checks for the dependent & public device access
+	// in a nested subquery didn't perform as well.
+	// TODO: Should be converted back to a simple GET to the release resource once
+	// the performance of that query improves.
+	api.resin.prepare<{ deviceId: number; commit: string }>({
+		resource: 'application',
 		options: {
+			$top: 1,
 			$select: 'id',
+			$expand: {
+				owns__release: {
+					$top: 1,
+					$select: 'id',
+					$filter: {
+						commit: { '@': 'commit' },
+						status: 'success',
+					},
+				},
+			},
 			$filter: {
-				commit: { '@': 'commit' },
-				status: 'success',
-				belongs_to__application: {
+				owns__device: {
 					$any: {
-						$alias: 'a',
+						$alias: 'd',
 						$expr: {
-							a: {
-								owns__device: {
-									$any: {
-										$alias: 'd',
-										$expr: {
-											d: { uuid: { '@': 'uuid' } },
-										},
-									},
-								},
-							},
+							d: { id: { '@': 'deviceId' } },
 						},
 					},
 				},
@@ -180,6 +185,13 @@ const releaseOfDeviceQuery = _.once(() =>
 		},
 	}),
 );
+
+const resolveReleaseId = async (
+	...args: Parameters<ReturnType<typeof appAndReleaseOfDeviceQuery>>
+) => {
+	const [app] = await appAndReleaseOfDeviceQuery()(...args);
+	return app?.owns__release[0]?.id;
+};
 
 export const statePatchV2: RequestHandler = async (req, res) => {
 	try {
@@ -239,17 +251,17 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 					} else if (local.is_on__commit !== undefined) {
 						// Run this in a separate read-only transaction in advance, this allows it to be redirected
 						// to a read replica as necessary and avoids holding the write transaction open unnecessarily
-						const [release] = await releaseOfDeviceQuery()(
+						const releaseId = await resolveReleaseId(
 							{
 								commit: local.is_on__commit,
-								uuid,
+								deviceId,
 							},
 							undefined,
 							{ req },
 						);
-						if (release != null) {
+						if (releaseId != null) {
 							// Only set the running release if it's valid, otherwise just silently ignore it
-							deviceBody!.is_running__release = release.id;
+							deviceBody!.is_running__release = releaseId;
 						}
 					}
 				}
