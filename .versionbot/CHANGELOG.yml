@@ -1,4 +1,38 @@
 - commits:
+    - subject: Change the device type local cache timeout to 5 minutes
+      hash: 08e575411d5bb5cd45e84cd6e7ab06c8e8f48ddc
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Invalidate the device type JSONs cache when a new hostApp is created
+      hash: 71b4c3d6da97008b5b0e95056db4f288171bfeeb
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: "mutli-level-memoizee: Support different preFetch per cache"
+      hash: 6a5f8b170eaedec8483b42ba3a0162c79293bfc8
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.207.5
+  title: "'Invalidate the device type JSONs cache when a new hostApp is created'"
+  date: 2022-05-06T11:50:23.836Z
+- commits:
     - subject: Update open-balena-base to 13.3.1
       hash: 4308b7133851a1c5bc648b2c9721600f109c7109
       body: |
