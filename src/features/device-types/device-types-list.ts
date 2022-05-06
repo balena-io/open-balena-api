@@ -11,7 +11,10 @@ import { captureException } from '../../infra/error-handling';
 import { getDeviceTypeJson, getLogoUrl } from './build-info-facade';
 import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
 import { multiCacheMemoizee } from '../../infra/cache';
-import { DEVICE_TYPES_CACHE_TIMEOUT } from '../../lib/config';
+import {
+	DEVICE_TYPES_CACHE_LOCAL_TIMEOUT,
+	DEVICE_TYPES_CACHE_TIMEOUT,
+} from '../../lib/config';
 
 export interface DeviceTypeInfo {
 	latest: DeviceTypeJson;
@@ -96,6 +99,9 @@ export const getDeviceTypes = multiCacheMemoizee(
 		cacheKey: 'fetchDeviceTypes',
 		promise: true,
 		primitive: true,
+		maxAge: DEVICE_TYPES_CACHE_LOCAL_TIMEOUT,
+	},
+	{
 		preFetch: 0.1,
 		maxAge: DEVICE_TYPES_CACHE_TIMEOUT,
 	},
