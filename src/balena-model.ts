@@ -319,6 +319,7 @@ export interface Device {
 	is_web_accessible: boolean | null;
 	overall_status: string | null;
 	overall_progress: number | null;
+	release_policy: 'pinned' | 'default';
 }
 
 export interface DeviceEnvironmentVariable {
