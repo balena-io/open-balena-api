@@ -363,4 +363,18 @@ export const addToModel = (
 			],
 		],
 	});
+
+	abstractSql.tables['device'].fields.push({
+		fieldName: 'release policy',
+		dataType: 'Short Text',
+		computed: [
+			'Case',
+			[
+				'When',
+				['Exists', ['ReferencedField', 'device', 'should be running-release']],
+				['EmbeddedText', 'pinned'],
+			],
+			['Else', ['EmbeddedText', 'default']],
+		],
+	});
 };
