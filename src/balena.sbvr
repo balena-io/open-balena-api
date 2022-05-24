@@ -220,6 +220,9 @@ Term: os version range
 Term: os variant
 	Concept Type: Short Text (Type)
 
+Term: phase
+	Concept Type: Short Text (Type)
+
 Term: project type
 	Concept Type: Short Text (Type)
 
@@ -688,6 +691,9 @@ Fact type: release has contract
 Fact type: release is passing tests
 Fact type: release is finalized at date
 	Necessity: each release is finalized at at most one date.
+Fact type: release has phase
+	Necessity: each release has at most one phase.
+	Definition: "next" or "current" or "sunset" or "end-of-life"
 Fact type: release has semver major
 	Necessity: each release has exactly one semver major.
 Fact type: release has semver minor

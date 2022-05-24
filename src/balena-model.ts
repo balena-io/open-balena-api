@@ -455,6 +455,7 @@ export interface Release {
 	contract: {} | null;
 	is_passing_tests: boolean;
 	is_finalized_at__date: DateString | null;
+	phase: 'next' | 'current' | 'sunset' | 'end-of-life' | null;
 	semver_major: number;
 	semver_minor: number;
 	semver_patch: number;
