@@ -1,4 +1,28 @@
 - commits:
+    - subject: Re-generate the model types to include reverse navigation resources
+      hash: d816a1c352d7bc1eef83a9cbf32a1d68200cf842
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Optimize the release resolution in state v2 PATCH endpoint
+      hash: b3c556d2f1df6163d578906beb6d6424301ae597
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.207.6
+  title: "'Re-generate the model types to include reverse navigation resources'"
+  date: 2022-05-24T18:00:15.492Z
+- commits:
     - subject: Change the device type local cache timeout to 5 minutes
       hash: 08e575411d5bb5cd45e84cd6e7ab06c8e8f48ddc
       body: ""
