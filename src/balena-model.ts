@@ -5,7 +5,7 @@
 export type DateString = string;
 export type Expanded<T> = Extract<T, any[]>;
 export type PickExpanded<T, K extends keyof T> = {
-	[P in K]: Expanded<T[P]>;
+	[P in K]-?: Expanded<T[P]>;
 };
 export type Deferred<T> = Exclude<T, any[]>;
 export type PickDeferred<T, K extends keyof T> = {
@@ -16,6 +16,10 @@ export interface Actor {
 	created_at: DateString;
 	modified_at: DateString;
 	id: number;
+	is_of__user?: User[];
+	is_of__application?: Application[];
+	is_of__device?: Device[];
+	api_key?: ApiKey[];
 }
 
 export interface Permission {
@@ -23,6 +27,10 @@ export interface Permission {
 	modified_at: DateString;
 	id: number;
 	name: string;
+	is_of__role?: RoleHasPermission[];
+	is_of__user?: UserHasPermission[];
+	is_of__api_key?: ApiKeyHasPermission[];
+	user__has__permission?: UserHasPermission[];
 }
 
 export interface Role {
@@ -30,6 +38,10 @@ export interface Role {
 	modified_at: DateString;
 	id: number;
 	name: string;
+	role__has__permission?: RoleHasPermission[];
+	user__has__role?: UserHasRole[];
+	is_of__user?: UserHasRole[];
+	is_of__api_key?: ApiKeyHasRole[];
 }
 
 export interface RoleHasPermission {
@@ -49,6 +61,12 @@ export interface User {
 	password: string | null;
 	jwt_secret: string | null;
 	email: string | null;
+	user__has__role?: UserHasRole[];
+	user__has__permission?: UserHasPermission[];
+	user__has__public_key?: UserHasPublicKey[];
+	user__is_member_of__organization?: OrganizationMembership[];
+	is_member_of__organization?: OrganizationMembership[];
+	has_direct_access_to__application?: UserHasDirectAccessToApplication[];
 }
 
 export interface UserHasRole {
@@ -78,6 +96,8 @@ export interface ApiKey {
 	is_of__actor: { __id: number } | [Actor];
 	name: string | null;
 	description: string | null;
+	api_key__has__role?: ApiKeyHasRole[];
+	api_key__has__permission?: ApiKeyHasPermission[];
 }
 
 export interface ApiKeyHasRole {
@@ -110,6 +130,7 @@ export interface ApplicationType {
 	slug: string;
 	description: string | null;
 	maximum_device_count: number | null;
+	is_of__application?: Application[];
 }
 
 export interface CpuArchitecture {
@@ -117,6 +138,7 @@ export interface CpuArchitecture {
 	modified_at: DateString;
 	id: number;
 	slug: string;
+	is_supported_by__device_type?: DeviceType[];
 }
 
 export interface Config {
@@ -139,6 +161,10 @@ export interface DeviceType {
 	logo: string | null;
 	contract: {} | null;
 	belongs_to__device_family: { __id: number } | [DeviceFamily?] | null;
+	is_default_for__application?: Application[];
+	describes__device?: Device[];
+	device_type__is_referenced_by__alias?: DeviceTypeAlias[];
+	is_referenced_by__alias?: DeviceTypeAlias[];
 }
 
 export interface DeviceFamily {
@@ -151,6 +177,7 @@ export interface DeviceFamily {
 		| { __id: number }
 		| [DeviceManufacturer?]
 		| null;
+	device_type?: DeviceType[];
 }
 
 export interface DeviceManufacturer {
@@ -159,6 +186,7 @@ export interface DeviceManufacturer {
 	id: number;
 	slug: string;
 	name: string;
+	manufactures__device_family?: DeviceFamily[];
 }
 
 export interface Image {
@@ -178,6 +206,11 @@ export interface Image {
 	status: string;
 	content_hash: string | null;
 	contract: {} | null;
+	device__installs__image?: ImageInstall[];
+	is_downloaded_by__device?: GatewayDownload[];
+	image__is_downloaded_by__device?: GatewayDownload[];
+	image__is_part_of__release?: ImageIsPartOfRelease[];
+	is_part_of__release?: ImageIsPartOfRelease[];
 }
 
 export interface Organization {
@@ -186,6 +219,9 @@ export interface Organization {
 	id: number;
 	name: string;
 	handle: string;
+	user__is_member_of__organization?: OrganizationMembership[];
+	includes__user?: OrganizationMembership[];
+	application?: Application[];
 }
 
 export interface ServiceInstance {
@@ -195,6 +231,7 @@ export interface ServiceInstance {
 	service_type: string;
 	ip_address: string;
 	last_heartbeat: DateString;
+	manages__device?: Device[];
 }
 
 export interface Application {
@@ -215,6 +252,14 @@ export interface Application {
 	is_archived: boolean;
 	uuid: string;
 	is_public: boolean;
+	application__has__env_var_name?: ApplicationEnvironmentVariable[];
+	application__has__name?: ApplicationConfigVariable[];
+	application__has__service_name?: Service[];
+	application__has__tag_key?: ApplicationTag[];
+	is_depended_on_by__application?: Application[];
+	owns__device?: Device[];
+	owns__release?: Release[];
+	is_directly_accessible_by__user?: UserHasDirectAccessToApplication[];
 }
 
 export interface ApplicationEnvironmentVariable {
@@ -241,6 +286,10 @@ export interface Service {
 	application: { __id: number } | [Application];
 	service_name: string;
 	id: number;
+	application__has__service_name__has__label_name?: ServiceLabel[];
+	application__has__service_name__has__name?: ServiceEnvironmentVariable[];
+	device__installs__application__has__service_name?: ServiceInstall[];
+	is_built_by__image?: Image[];
 }
 
 export interface ServiceLabel {
@@ -319,6 +368,16 @@ export interface Device {
 	is_web_accessible: boolean | null;
 	overall_status: string | null;
 	overall_progress: number | null;
+	device__has__env_var_name?: DeviceEnvironmentVariable[];
+	device__has__name?: DeviceConfigVariable[];
+	device__has__tag_key?: DeviceTag[];
+	device__installs__image?: ImageInstall[];
+	device__installs__application__has__service_name?: ServiceInstall[];
+	installs__image?: ImageInstall[];
+	installs__application__has__service_name?: ServiceInstall[];
+	image__is_downloaded_by__device?: GatewayDownload[];
+	downloads__image?: GatewayDownload[];
+	manages__device?: Device[];
 }
 
 export interface DeviceEnvironmentVariable {
@@ -357,6 +416,7 @@ export interface ServiceInstall {
 	device: { __id: number } | [Device];
 	installs__service: { __id: number } | [Service];
 	id: number;
+	device__installs__application__has__service_name__has__name?: DeviceServiceEnvironmentVariable[];
 }
 
 export interface DeviceServiceEnvironmentVariable {
@@ -409,6 +469,15 @@ export interface Release {
 	semver: string;
 	raw_version: string;
 	version: {};
+	release__has__tag_key?: ReleaseTag[];
+	image__is_part_of__release?: ImageIsPartOfRelease[];
+	contains__image?: ImageIsPartOfRelease[];
+	should_be_running_on__application?: Application[];
+	should_be_running_on__device?: Device[];
+	is_running_on__device?: Device[];
+	should_operate__device?: Device[];
+	should_manage__device?: Device[];
+	provides__device__installs__image?: ImageInstall[];
 }
 
 export interface ReleaseTag {
@@ -436,6 +505,8 @@ export interface ImageIsPartOfRelease {
 	image: { __id: number } | [Image];
 	is_part_of__release: { __id: number } | [Release];
 	id: number;
+	image__is_part_of__release__has__label_name?: ImageLabel[];
+	image__is_part_of__release__has__name?: ImageEnvironmentVariable[];
 }
 
 export interface ImageLabel {
@@ -499,6 +570,13 @@ export interface MyApplication {
 	is_archived: boolean;
 	uuid: string;
 	is_public: boolean;
+	application__has__env_var_name?: ApplicationEnvironmentVariable[];
+	application__has__name?: ApplicationConfigVariable[];
+	application__has__service_name?: Service[];
+	application__has__tag_key?: ApplicationTag[];
+	is_depended_on_by__application?: Application[];
+	owns__device?: Device[];
+	owns__release?: Release[];
 }
 
 export interface UserHasDirectAccessToApplication {
