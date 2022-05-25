@@ -797,5 +797,18 @@ describe('generic-api-key-endpoint', function () {
 				})
 				.expect(200);
 		});
+
+		it('should be able to create an api key with expiry date', async function () {
+			await supertest(this.user)
+				.post(`/api-key/v1`)
+				.send({
+					actorType: 'user',
+					actorTypeId: this.user.id,
+					roles: ['named-user-api-key'],
+					name: 'Named Key',
+					expiryDate: new Date(Date.now() + 86400000).toISOString(), // one day in future
+				})
+				.expect(200);
+		});
 	});
 });
