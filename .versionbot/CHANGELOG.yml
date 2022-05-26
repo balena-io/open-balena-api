@@ -1,4 +1,18 @@
 - commits:
+    - subject: Add provisioning key expiry date to generic api key endpoint
+      hash: 2acafcfc2c416230e37a17f844c93bec303ac7df
+      body: ""
+      footer:
+        Change-Type: patch
+        change-type: patch
+        Signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+        signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+      author: Nitish Agarwal
+      nested: []
+  version: 0.207.8
+  title: "'Add provisioning key expiry date to generic api key endpoint'"
+  date: 2022-05-26T14:15:27.114Z
+- commits:
     - subject: Update TypeScript to v4.7
       hash: 9633a7027478f2bc9898123c532eba10914d3927
       body: ""
