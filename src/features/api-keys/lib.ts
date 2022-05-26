@@ -206,7 +206,7 @@ export type ApiKeyParameters = {
 	actorType: typeof supportedActorTypes[number];
 	actorTypeId: number;
 	roles: string[];
-} & Pick<ApiKeyOptions, 'name' | 'description' | 'apiKey'>;
+} & Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate' | 'apiKey'>;
 
 const supportedActorTypes = ['application', 'user', 'device'] as const;
 
@@ -218,6 +218,7 @@ export const createGenericApiKey = async (
 		roles,
 		name,
 		description,
+		expiryDate,
 		apiKey,
 	}: ApiKeyParameters,
 ) => {
@@ -262,6 +263,7 @@ export const createGenericApiKey = async (
 		{
 			name,
 			description,
+			expiryDate,
 			apiKey,
 		},
 	);
