@@ -1,4 +1,18 @@
 - commits:
+    - subject: Sort some sbvr terms alphabetically
+      hash: 8422e14e3268be235b241a1222aa742891c5c2a5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.207.9
+  title: "'Sort some sbvr terms alphabetically'"
+  date: 2022-05-31T09:44:58.958Z
+- commits:
     - subject: Add provisioning key expiry date to generic api key endpoint
       hash: 2acafcfc2c416230e37a17f844c93bec303ac7df
       body: ""
