@@ -133,14 +133,6 @@ export interface ApplicationType {
 	is_of__application?: Application[];
 }
 
-export interface CpuArchitecture {
-	created_at: DateString;
-	modified_at: DateString;
-	id: number;
-	slug: string;
-	is_supported_by__device_type?: DeviceType[];
-}
-
 export interface Config {
 	created_at: DateString;
 	modified_at: DateString;
@@ -151,20 +143,12 @@ export interface Config {
 	description: string | null;
 }
 
-export interface DeviceType {
+export interface CpuArchitecture {
 	created_at: DateString;
 	modified_at: DateString;
 	id: number;
 	slug: string;
-	name: string;
-	is_of__cpu_architecture: { __id: number } | [CpuArchitecture];
-	logo: string | null;
-	contract: {} | null;
-	belongs_to__device_family: { __id: number } | [DeviceFamily?] | null;
-	is_default_for__application?: Application[];
-	describes__device?: Device[];
-	device_type__is_referenced_by__alias?: DeviceTypeAlias[];
-	is_referenced_by__alias?: DeviceTypeAlias[];
+	is_supported_by__device_type?: DeviceType[];
 }
 
 export interface DeviceFamily {
@@ -187,6 +171,22 @@ export interface DeviceManufacturer {
 	slug: string;
 	name: string;
 	manufactures__device_family?: DeviceFamily[];
+}
+
+export interface DeviceType {
+	created_at: DateString;
+	modified_at: DateString;
+	id: number;
+	slug: string;
+	name: string;
+	is_of__cpu_architecture: { __id: number } | [CpuArchitecture];
+	logo: string | null;
+	contract: {} | null;
+	belongs_to__device_family: { __id: number } | [DeviceFamily?] | null;
+	is_default_for__application?: Application[];
+	describes__device?: Device[];
+	device_type__is_referenced_by__alias?: DeviceTypeAlias[];
+	is_referenced_by__alias?: DeviceTypeAlias[];
 }
 
 export interface Image {
