@@ -311,11 +311,11 @@ Term: vpn address
 -- Complex terms
 
 Term: application type
-Term: cpu architecture
 Term: config
-Term: device type
+Term: cpu architecture
 Term: device family
 Term: device manufacturer
+Term: device type
 Term: image
 Term: organization
 Term: service instance
