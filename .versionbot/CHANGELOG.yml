@@ -1,4 +1,20 @@
 - commits:
+    - subject: Add release phase to the model
+      hash: 40dd13ee9068b305f531bcef992700d3660961b1
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://jel.ly.fish/improvement-server-side-filtering-pagination-sorting-autoui-d8cc8c0
+        see: https://jel.ly.fish/improvement-server-side-filtering-pagination-sorting-autoui-d8cc8c0
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.208.0
+  title: "'Add release phase to the model'"
+  date: 2022-06-01T08:59:04.713Z
+- commits:
     - subject: Sort some sbvr terms alphabetically
       hash: 8422e14e3268be235b241a1222aa742891c5c2a5
       body: ""
