@@ -122,6 +122,63 @@ describe('releases', () => {
 			note: 'This is a note!',
 		});
 	});
+
+	it('should not be able to set an invalid value to the phase of a release', async () => {
+		for (const phase of ['', 'my phase']) {
+			await pineUser
+				.patch({
+					resource: 'release',
+					id: fx.releases.release1.id,
+					body: {
+						phase,
+					},
+				})
+				.expect(400);
+		}
+
+		await expectResourceToMatch(pineUser, 'release', fx.releases.release1.id, {
+			phase: null,
+		});
+	});
+
+	it('should be able to set the phase of a release to', async () => {
+		for (const phase of ['next', 'current', 'sunset', 'end-of-life']) {
+			await pineUser
+				.patch({
+					resource: 'release',
+					id: fx.releases.release1.id,
+					body: {
+						phase,
+					},
+				})
+				.expect(200);
+
+			await expectResourceToMatch(
+				pineUser,
+				'release',
+				fx.releases.release1.id,
+				{
+					phase,
+				},
+			);
+		}
+	});
+
+	it('should be able to set the phase of a release to null', async () => {
+		await pineUser
+			.patch({
+				resource: 'release',
+				id: fx.releases.release1.id,
+				body: {
+					phase: null,
+				},
+			})
+			.expect(200);
+
+		await expectResourceToMatch(pineUser, 'release', fx.releases.release1.id, {
+			phase: null,
+		});
+	});
 });
 
 const getTopRevision = async (
