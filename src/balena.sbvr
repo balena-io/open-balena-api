@@ -686,6 +686,7 @@ Fact type: release has update timestamp
 	Necessity: each release has exactly one update timestamp.
 Fact type: release has release version
 	Necessity: each release has at most one release version
+	Note: Deprecated.
 Fact type: release has contract
 	Necessity: each release has at most one contract
 Fact type: release is passing tests
