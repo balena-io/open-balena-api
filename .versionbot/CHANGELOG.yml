@@ -1,4 +1,20 @@
 - commits:
+    - subject: "balena.sbvr: Note that release.release_version is deprecated"
+      hash: 16ac5bbe4797a1c5036181ba34bc1ab0a2d77254
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://www.flowdock.com/app/rulemotion/resin-tech/threads/uilzd9PITMmMprh75HXa_yYJnc6
+        see: https://www.flowdock.com/app/rulemotion/resin-tech/threads/uilzd9PITMmMprh75HXa_yYJnc6
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.208.1
+  title: "'balena.sbvr: Note that release.release_version is deprecated'"
+  date: 2022-06-03T15:28:55.245Z
+- commits:
     - subject: Add release phase to the model
       hash: 40dd13ee9068b305f531bcef992700d3660961b1
       body: ""
