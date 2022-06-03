@@ -16,7 +16,7 @@ export const basicApiKeyAuthenticate: RequestHandler = async (
 		req.params.apikey = creds.pass;
 	}
 	try {
-		await retrieveAPIKey(req);
+		await retrieveAPIKey(req, undefined);
 		next();
 	} catch (err) {
 		next(err);

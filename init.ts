@@ -182,6 +182,7 @@ async function createSuperuser() {
 					const updated = await updatePasswordIfNeeded(
 						data.username,
 						SUPERUSER_PASSWORD,
+						tx,
 					);
 					if (updated) {
 						console.log('Superuser password changed.');

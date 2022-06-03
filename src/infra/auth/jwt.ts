@@ -38,11 +38,13 @@ export const tokenFields = [...userFields];
 export interface ExtraParams {
 	existingToken?: Partial<User>;
 	jwtOptions?: SignOptions;
+	tx: Tx;
 }
 
 export type GetUserTokenDataFn = (
 	userId: number,
-	existingToken?: Partial<User>,
+	existingToken: Partial<User> | undefined,
+	tx: Tx,
 ) => PromiseLike<AnyObject>;
 
 export function setUserTokenDataCallback(fn: GetUserTokenDataFn) {
@@ -52,17 +54,18 @@ export function setUserTokenDataCallback(fn: GetUserTokenDataFn) {
 let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 	userId,
 	existingToken,
+	tx: Tx,
 ): Promise<User> => {
 	const [userData, permissionData] = await Promise.all([
 		api.resin.get({
 			resource: 'user',
 			id: userId,
-			passthrough: { req: permissions.root },
+			passthrough: { req: permissions.root, tx },
 			options: {
 				$select: tokenFields,
 			},
 		}) as Promise<AnyObject>,
-		permissions.getUserPermissions(userId),
+		permissions.getUserPermissions(userId, tx),
 	]);
 	if (!userData || !permissionData) {
 		throw new Error('No data found?!');
@@ -85,39 +88,52 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 
 export const createSessionToken = async (
 	userId: number,
-	{ existingToken, jwtOptions }: ExtraParams = {},
+	{ existingToken, jwtOptions, tx }: ExtraParams,
 ): Promise<string> => {
-	const tokenData = await $getUserTokenDataCallback(userId, existingToken);
+	const tokenData = await $getUserTokenDataCallback(userId, existingToken, tx);
 	return createJwt(tokenData, jwtOptions);
 };
 
-const sendXHRToken = (res: Response, token: string, statusCode = 200): void => {
-	res.header('content-type', 'text/plain');
-	res.status(statusCode).send(token);
+const sendXHRToken = (
+	res: Response,
+	token: string,
+	tx: Tx,
+	statusCode = 200,
+) => {
+	const $sendXHRToken = () => {
+		res.header('content-type', 'text/plain');
+		res.status(statusCode).send(token);
+	};
+
+	// Make sure to only send the response *after* the provided
+	// transaction has been committed, to avoid race conditions
+	// and be sure that the data did get persisted to the DB.
+	tx.on('end', $sendXHRToken);
 };
 
 export const loginUserXHR = async (
 	res: Response,
 	userId: number,
-	statusCode?: number,
-	extraParams?: ExtraParams,
+	extraParams: ExtraParams & { statusCode?: number },
 ): Promise<void> => {
 	const token = await createSessionToken(userId, extraParams);
-	sendXHRToken(res, token, statusCode);
+	sendXHRToken(res, token, extraParams.tx, extraParams.statusCode);
 };
 
 export const updateUserXHR = async (
 	res: Response,
 	req: Request,
+	{ tx }: { tx: Tx },
 ): Promise<void> => {
-	await getUser(req, false);
+	await getUser(req, tx, false);
 	if (req.creds == null || !('id' in req.creds) || req.creds.id == null) {
 		throw new InternalRequestError('No user present');
 	}
 	const token = await createSessionToken(req.creds.id, {
 		existingToken: req.creds,
+		tx,
 	});
-	sendXHRToken(res, token);
+	sendXHRToken(res, token, tx);
 };
 
 export interface ScopedAccessToken {

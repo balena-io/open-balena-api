@@ -2,7 +2,7 @@ import type { Request } from 'express';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 
-import { errors } from '@balena/pinejs';
+import { errors, sbvrUtils } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 import * as deviceConfig from 'balena-device-config';
 
@@ -36,44 +36,54 @@ export const generateConfig = async (
 	deviceType: DeviceTypeJson,
 	osVersion?: string,
 ) => {
-	const userPromise = getUser(req);
-
 	// Devices running ResinOS >=1.2.1 are capable of using Registry v2, while earlier ones must use v1
 	if (osVersion != null && semver.lte(osVersion, '1.2.0')) {
 		throw new BadRequestError(
 			'balenaOS versions <= 1.2.0 are no longer supported, please update',
 		);
 	}
-	const registryHost = REGISTRY2_HOST;
 
-	const apiKeyPromise = (async () => {
-		// Devices running ResinOS >= 2.7.8 can use provisioning keys
-		if (osVersion != null && semver.satisfies(osVersion, '<2.7.8')) {
-			// Older ones have to use the old "user api keys"
-			return await createUserApiKey(req, (await userPromise).id);
-		}
+	const userAndApiKeyPromise = sbvrUtils.db.transaction(async (tx) => {
+		const userPromise = getUser(req, tx);
 
-		const apiKeyOptions: ApiKeyOptions = {};
+		return await Promise.all([
+			userPromise,
+			(async () => {
+				const apiKeyOptions: ApiKeyOptions = { tx };
 
-		// Checking both req.body and req.query given both GET and POST support
-		// Ref: https://github.com/balena-io/balena-api/blob/master/src/routes/applications.ts#L95
-		apiKeyOptions.name =
-			req.body.provisioningKeyName ??
-			req.query.provisioningKeyName ??
-			'Automatically generated provisioning key';
+				// Devices running ResinOS >= 2.7.8 can use provisioning keys
+				if (osVersion != null && semver.satisfies(osVersion, '<2.7.8')) {
+					// Older ones have to use the old "user api keys"
+					return await createUserApiKey(
+						req,
+						(
+							await userPromise
+						).id,
+						apiKeyOptions,
+					);
+				}
 
-		apiKeyOptions.description =
-			req.body.provisioningKeyDescription ??
-			req.query.provisioningKeyDescription ??
-			'Automatically generated for an image download or config file generation';
+				// Checking both req.body and req.query given both GET and POST support
+				// Ref: https://github.com/balena-io/balena-api/blob/master/src/routes/applications.ts#L95
+				apiKeyOptions.name =
+					req.body.provisioningKeyName ??
+					req.query.provisioningKeyName ??
+					'Automatically generated provisioning key';
 
-		apiKeyOptions.expiryDate =
-			req.body.provisioningKeyExpiryDate ??
-			req.query.provisioningKeyExpiryDate ??
-			undefined;
+				apiKeyOptions.description =
+					req.body.provisioningKeyDescription ??
+					req.query.provisioningKeyDescription ??
+					'Automatically generated for an image download or config file generation';
 
-		return await createProvisioningApiKey(req, app.id, apiKeyOptions);
-	})();
+				apiKeyOptions.expiryDate =
+					req.body.provisioningKeyExpiryDate ??
+					req.query.provisioningKeyExpiryDate ??
+					undefined;
+
+				return await createProvisioningApiKey(req, app.id, apiKeyOptions);
+			})(),
+		]);
+	});
 
 	// There may be multiple CAs, this doesn't matter as all will be passed in the config
 	const selfSignedRootPromise = (async () => {
@@ -92,8 +102,7 @@ export const generateConfig = async (
 		}
 	})();
 
-	const user = await userPromise;
-	const apiKey = await apiKeyPromise;
+	const [user, apiKey] = await userAndApiKeyPromise;
 	const rootCA = await selfSignedRootPromise;
 
 	const config = deviceConfig.generate(
@@ -109,7 +118,7 @@ export const generateConfig = async (
 			endpoints: {
 				api: `https://${API_HOST}`,
 				delta: `https://${DELTA_HOST}`,
-				registry: registryHost,
+				registry: REGISTRY2_HOST,
 				vpn: VPN_HOST,
 			},
 			version: osVersion,

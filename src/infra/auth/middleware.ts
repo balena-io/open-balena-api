@@ -10,7 +10,7 @@ export const authenticatedMiddleware: RequestHandler = async (
 	next,
 ) => {
 	try {
-		await getUser(req, false);
+		await getUser(req, undefined, false);
 		if (req.creds) {
 			next();
 			return null;
@@ -24,7 +24,7 @@ export const authenticatedMiddleware: RequestHandler = async (
 
 export const authorizedMiddleware: RequestHandler = async (req, res, next) => {
 	try {
-		await getUser(req);
+		await getUser(req, undefined);
 		next();
 		return null;
 	} catch {
@@ -33,7 +33,7 @@ export const authorizedMiddleware: RequestHandler = async (req, res, next) => {
 };
 
 export const identifyMiddleware: RequestHandler = async (req, _res, next) => {
-	await getUser(req, false);
+	await getUser(req, undefined, false);
 	next();
 	return null;
 };
@@ -46,7 +46,7 @@ export const prefetchApiKeyMiddleware: RequestHandler = (req, _res, next) => {
 		}
 	} else {
 		// Start the prefetch and let it run in the background - do not await it
-		req.prefetchApiKey = getAPIKey(req);
+		req.prefetchApiKey = getAPIKey(req, undefined);
 	}
 	next();
 };
@@ -76,7 +76,7 @@ export const permissionRequiredMiddleware =
 
 export const sudoMiddleware: RequestHandler = async (req, res, next) => {
 	try {
-		const user = await getUser(req, false);
+		const user = await getUser(req, undefined, false);
 		if (user != null && (await checkSudoValidity(user))) {
 			next();
 			return;
