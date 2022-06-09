@@ -57,6 +57,10 @@ export const validatePassword = (password?: string) => {
 	if (password.length < 8) {
 		throw new BadRequestError('Password must be at least 8 characters.');
 	}
+	if (64 < password.length) {
+		// OWASP: Avoid long password DoS attacks
+		throw new BadRequestError('Password must be at most 64 characters.');
+	}
 };
 
 // Think twice before using this function as it *unconditionally* sets the
