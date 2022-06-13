@@ -1,0 +1,20 @@
+{
+	"release1_image1": {
+		"user": "admin",
+		"service": "app1_service1",
+		"releases": [ "release1" ],
+		"image_size": 2048,
+		"project_type": "Dockerfile.template",
+		"build_log": "This is also the build log",
+		"status": "success"
+	},
+	"release1_image2": {
+		"user": "admin",
+		"service": "app1_service2",
+		"releases": [ "release1" ],
+		"image_size": 2048,
+		"project_type": "Dockerfile.template",
+		"build_log": "This is also the build log",
+		"status": "success"
+	}
+}

@@ -4,7 +4,16 @@
 		"application": "app1",
 		"commit": "deadc0de",
 		"status": "success",
-		"composition": {},
+		"composition": {
+			"services": {
+				"image1": {
+					"build": "./image1/"
+				},
+				"image2": {
+					"build": "./image2/"
+				}
+			}
+		},
 		"source": "cloud"
 	},
 	"release2": {
