@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update @types/node-schedule from 1.3.2 to 2.1.0
+      hash: bc23510a7124cadedc14d6bee77f0c7954e63780
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 0.208.4
+  title: "'Update @types/node-schedule from 1.3.2 to 2.1.0'"
+  date: 2022-06-13T21:43:16.040Z
+- commits:
     - subject: Add test for the release update progress
       hash: 13c23a730f248083a66f7d4d7a2dd55b7b5a9b14
       body: ""
