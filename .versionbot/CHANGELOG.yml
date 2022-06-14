@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update cache-manager from 3.6.1 to 4.0.1
+      hash: 4740170c780f847c3598157d559c9b4e484504f6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 0.208.6
+  title: "'Update cache-manager from 3.6.1 to 4.0.1'"
+  date: 2022-06-14T12:06:35.497Z
+- commits:
     - subject: Update balena/open-balena-base from v13.3.1 to v13.3.2
       hash: d62a78e25de989080289478e3b185746d41d0cf9
       body: |
