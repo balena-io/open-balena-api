@@ -1,4 +1,22 @@
 - commits:
+    - subject: "auth: Limit password length to 64 characters"
+      hash: a616af49c19937c734d387a0bbcbcf3f3ba0f4b3
+      body: ""
+      footer:
+        Connects-to: "#1050"
+        connects-to: "#1050"
+        Change-type: minor
+        change-type: minor
+        See: https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#implement-proper-password-strength-controls
+        see: https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#implement-proper-password-strength-controls
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.209.0
+  title: "'auth: Limit password length to 64 characters'"
+  date: 2022-06-14T23:21:36.106Z
+- commits:
     - subject: Update cache-manager from 3.6.1 to 4.0.1
       hash: 4740170c780f847c3598157d559c9b4e484504f6
       body: ""
