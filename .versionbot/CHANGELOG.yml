@@ -1,4 +1,18 @@
 - commits:
+    - subject: "repo.yml: Use module names that match renovate's depName"
+      hash: 4a2b0126af322922667e091461040134bccb364c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.209.1
+  title: "'repo.yml: Use module names that match renovate's depName'"
+  date: 2022-06-16T19:22:30.590Z
+- commits:
     - subject: "auth: Limit password length to 64 characters"
       hash: a616af49c19937c734d387a0bbcbcf3f3ba0f4b3
       body: ""
