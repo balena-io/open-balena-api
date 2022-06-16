@@ -1,4 +1,18 @@
 - commits:
+    - subject: Add a cleanup npm script to remove all runtime caches
+      hash: d9e0b332bf78dfb938a7933a224c98fc311a05d9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.209.2
+  title: "'Add a cleanup npm script to remove all runtime caches'"
+  date: 2022-06-16T21:29:50.007Z
+- commits:
     - subject: "repo.yml: Use module names that match renovate's depName"
       hash: 4a2b0126af322922667e091461040134bccb364c
       body: ""
