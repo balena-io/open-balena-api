@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update mocha from 9.2.2 to 10.0.0
+      hash: d4b373b7aa606231a3b4c35cdb77c570eacf2c9d
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Renovate Bot
+      nested: []
+  version: 1.0.0
+  title: "'Update mocha from 9.2.2 to 10.0.0'"
+  date: 2022-06-16T22:16:48.666Z
+- commits:
     - subject: Add a cleanup npm script to remove all runtime caches
       hash: d9e0b332bf78dfb938a7933a224c98fc311a05d9
       body: ""
