@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update sinon from 13.0.2 to 14.0.0
+      hash: 0f4ded36b3f6e39064d3036a9424840e19e30003
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Renovate Bot
+      nested: []
+  version: 2.0.0
+  title: "'Update sinon from 13.0.2 to 14.0.0'"
+  date: 2022-06-17T07:41:14.670Z
+- commits:
     - subject: Update mocha from 9.2.2 to 10.0.0
       hash: d4b373b7aa606231a3b4c35cdb77c570eacf2c9d
       body: ""
