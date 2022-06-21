@@ -70,8 +70,8 @@ ON "device" ("is running-release");
 -- Also optimizes should be running succesful release rule
 CREATE INDEX IF NOT EXISTS "device_should_be_running_release_application_idx"
 ON "device" ("should be running-release", "belongs to-application");
-CREATE INDEX IF NOT EXISTS "device_should_be_operated_by_release_idx"
-ON "device" ("should be operated by-release");
+CREATE INDEX IF NOT EXISTS "device_should_be_operated_by__release_device_type_idx"
+ON "device" ("should be operated by-release", "is of-device type");
 -- Also optimizes the supervisor cpu arch should match device cpu arch rule
 CREATE INDEX IF NOT EXISTS "device_should_be_managed_by__release_device_type_idx"
 ON "device" ("should be managed by-release", "is of-device type");
