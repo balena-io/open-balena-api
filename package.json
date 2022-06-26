@@ -28,10 +28,10 @@
     "posttest": "docker rmi test-open-balena-api"
   },
   "dependencies": {
-    "@balena/abstract-sql-compiler": "^7.19.1",
+    "@balena/abstract-sql-compiler": "^7.20.0",
     "@balena/es-version": "^1.0.1",
     "@balena/node-metrics-gatherer": "^6.0.3",
-    "@balena/pinejs": "^14.42.2",
+    "@balena/pinejs": "^14.43.5",
     "@sentry/node": "^6.19.6",
     "@types/basic-auth": "^1.1.3",
     "@types/bluebird": "^3.5.36",
