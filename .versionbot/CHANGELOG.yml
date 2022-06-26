@@ -1,4 +1,190 @@
 - commits:
+    - subject: Update dependencies
+      hash: cb4ed636b5b6d1a1ecb03309d4336daf6189dbe3
+      body: |
+        Update @balena/abstract-sql-compiler from 7.19.1 to 7.20.0
+        Update @balena/pinejs from 14.42.2 to 14.43.5
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested:
+        - commits:
+            - subject: Update dependencies
+              hash: b765b0941de329230e4d38bbe2c994491413c3ce
+              body: |
+                Update @balena/abstract-sql-compiler from 7.19.1 to 7.20.0
+                Update @balena/odata-to-abstract-sql from 5.4.9 to 5.4.11
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Expose `isAliasNode` helper
+                      hash: 6f59b2d31e4dee5eef008e755d4ee2cb42dd50ba
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-7.20.0
+                  title: "'Expose  helper'"
+                  date: 2022-05-19T17:25:29.766Z
+                - commits:
+                    - subject: Improve support for computed fields by respecting them in more places
+                      hash: 3346e579e5e0b2b7b01066b3d95bd5b6e6281c63
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: odata-to-abstract-sql-5.4.11
+                  title: "'Improve computed fields'"
+                  date: 2022-05-19T19:26:50.059Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: 19c112c863b63bdd8d86a04b704fb136077d01a9
+                      body: >
+                        Update @balena/abstract-sql-compiler from 7.19.0 to
+                        7.20.0
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Expose `isAliasNode` helper
+                              hash: 6f59b2d31e4dee5eef008e755d4ee2cb42dd50ba
+                              body: ""
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                              author: Pagan Gazzard
+                              nested: []
+                          version: abstract-sql-compiler-7.20.0
+                          title: "'Expose  helper'"
+                          date: 2022-05-19T17:25:29.766Z
+                        - commits:
+                            - subject: Update dependencies
+                              hash: 923dd2d492246b99cc62d51a25dd96464e7c1e87
+                              body: |
+                                Update @balena/sbvr-types from 3.4.5 to 3.4.7
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested:
+                                - commits:
+                                    - subject: Update dependencies
+                                      hash: e416444d436c0e01474b624408635a811259f9a1
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                    - subject: Remove circleci
+                                      hash: 15cbb6de080f6f5a7898d1626d9948b371d971b2
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                  version: sbvr-types-3.4.7
+                                  title: "'Remove circleci/update deps'"
+                                  date: 2022-04-08T13:33:49.743Z
+                                - commits:
+                                    - subject: Avoid creating a new Date object when we already have one
+                                      hash: 07eb756eca00a506b618dc197b67dcc7a9ea3733
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                  version: sbvr-types-3.4.6
+                                  date: 2021-09-21T14:01:00.590Z
+                          version: abstract-sql-compiler-7.19.1
+                          title: "'Update dependencies'"
+                          date: 2022-04-08T13:57:15.961Z
+                  version: odata-to-abstract-sql-5.4.10
+                  title: "'Update dependencies'"
+                  date: 2022-05-19T18:23:14.608Z
+          version: pinejs-14.43.5
+          title: "'Update dependencies'"
+          date: 2022-05-20T11:58:56.632Z
+        - commits:
+            - subject: Only remove constrained aliases when they match the field name
+              hash: 35a0647d3a21e45afa1f9982c5d77c14a47a0d35
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.43.4
+          title: "'Leave aliases intact'"
+          date: 2022-05-18T16:37:28.536Z
+        - commits:
+            - subject: Use the modern definition format for permission constrained definitions
+              hash: 187eec84dd2e1b097a4ef2d62bb8bfd917536342
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.43.3
+          title: "'Use the modern definition format for permission constrained
+            definitions'"
+          date: 2022-05-16T16:04:51.770Z
+        - commits:
+            - subject: Update to webpack 5
+              hash: c81e3df13232f9a7730c005288fa0f4123066e3c
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.43.2
+          title: "'Update to webpack 5'"
+          date: 2022-05-12T14:40:46.324Z
+        - commits:
+            - subject: Simplify check for read-only hooks
+              hash: 6c62635fe12ba0f4a1acae2dcbebad5efb03e120
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.43.1
+          title: "'Simplify check for read-only hooks'"
+          date: 2022-05-12T14:12:16.520Z
+        - commits:
+            - subject: inital test framework for pinejs
+              hash: b55af22181531f7068f3137b40374a42e5ecaa10
+              body: |
+                Addind mocha, ts-node and chai to  pinejs.
+                Utilising docker-compose to handle test requirements like db
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-14.43.0
+          title: "'inital test framework for pinejs'"
+          date: 2022-04-28T13:31:32.039Z
+  version: 2.0.1
+  title: "'Update dependencies'"
+  date: 2022-06-26T14:06:53.968Z
+- commits:
     - subject: Update sinon from 13.0.2 to 14.0.0
       hash: 0f4ded36b3f6e39064d3036a9424840e19e30003
       body: ""
