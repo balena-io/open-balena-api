@@ -276,6 +276,7 @@ export interface SetupOptions {
 
 	onLogin?: (
 		user: Pick<DbUser, typeof defaultFindUser$select[number]>,
+		tx: Tx,
 	) => PromiseLike<void> | void;
 	onLogWriteStreamInitialized?: (req: Request) => void;
 	onLogReadStreamInitialized?: (req: Request) => void;

@@ -1,7 +1,5 @@
 import type { RequestHandler } from 'express';
-
-import { errors } from '@balena/pinejs';
-
+import { errors, sbvrUtils } from '@balena/pinejs';
 import { comparePassword, findUser } from '../../infra/auth/auth';
 import { loginUserXHR } from '../../infra/auth/jwt';
 import { captureException } from '../../infra/error-handling';
@@ -20,20 +18,22 @@ export const login =
 		}
 
 		try {
-			const user = await findUser(username);
-			if (!user) {
-				throw new NotFoundError('User not found.');
-			}
+			await sbvrUtils.db.readTransaction(async (tx) => {
+				const user = await findUser(username, tx);
+				if (!user) {
+					throw new NotFoundError('User not found.');
+				}
 
-			const matches = await comparePassword(password, user.password);
-			if (!matches) {
-				throw new BadRequestError('Current password incorrect.');
-			}
-			if (onLogin) {
-				await onLogin(user);
-			}
-			await req.resetRatelimit?.();
-			await loginUserXHR(res, user.id);
+				const matches = await comparePassword(password, user.password);
+				if (!matches) {
+					throw new BadRequestError('Current password incorrect.');
+				}
+				if (onLogin) {
+					await onLogin(user, tx);
+				}
+				await req.resetRatelimit?.();
+				await loginUserXHR(res, user.id, { tx });
+			});
 		} catch (err) {
 			if (err instanceof BadRequestError || err instanceof NotFoundError) {
 				res.status(401).end();

@@ -42,7 +42,7 @@ export const assignUserRole = (user: number, role: number, tx: Tx) =>
 export const assignUserPermission = (
 	user: number,
 	permission: number,
-	tx?: Tx,
+	tx: Tx,
 ) => getOrInsertId('user__has__permission', { user, permission }, tx);
 
 // api key helpers

@@ -7,6 +7,6 @@ hooks.addHook('all', 'all', 'all', {
 	PREPARSE: async ({ req }) => {
 		// Extend Pine's default behavior of calling apiKeyMiddleware()
 		// support api keys on the Authorization header with Bearer scheme
-		await retrieveAPIKey(req);
+		await retrieveAPIKey(req, undefined);
 	},
 });

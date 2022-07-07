@@ -1,4 +1,4 @@
-import { errors } from '@balena/pinejs';
+import { errors, sbvrUtils } from '@balena/pinejs';
 import { checkUserPassword, getUser } from '../../infra/auth/auth';
 import { updateUserXHR } from '../../infra/auth/jwt';
 import { captureException } from '../../infra/error-handling';
@@ -8,18 +8,20 @@ const { BadRequestError } = errors;
 
 export const refreshToken: RequestHandler = async (req, res) => {
 	try {
-		const { password } = req.body;
+		await sbvrUtils.db.readTransaction(async (tx) => {
+			const { password } = req.body;
 
-		if (password != null) {
-			await getUser(req, false);
-			const creds = req.creds!;
-			if (!('id' in creds)) {
-				throw new BadRequestError('Can only password refresh user tokens');
+			if (password != null) {
+				await getUser(req, tx, false);
+				const creds = req.creds!;
+				if (!('id' in creds)) {
+					throw new BadRequestError('Can only password refresh user tokens');
+				}
+				await checkUserPassword(password, creds.id, tx);
+				creds.authTime = Date.now();
 			}
-			await checkUserPassword(password, creds.id);
-			creds.authTime = Date.now();
-		}
-		await updateUserXHR(res, req);
+			await updateUserXHR(res, req, { tx });
+		});
 	} catch (err) {
 		if (err instanceof BadRequestError) {
 			res.status(401).end();
