@@ -89,7 +89,7 @@
     "ndjson": "^2.0.0",
     "node-schedule": "^2.1.0",
     "on-finished": "^2.4.1",
-    "passport": "^0.5.2",
+    "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "randomstring": "^1.2.2",
     "rate-limiter-flexible": "^2.3.6",
