@@ -1,4 +1,19 @@
 - commits:
+    - subject: "chore(deps): update dependency lint-staged to 13.0.3"
+      hash: f0fcfba33887ca6cdc84526cf5718423792b7822
+      body: |
+        Update lint-staged to 13.0.3
+
+        Update lint-staged from 12.4.0 to 13.0.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 3.0.2
+  title: "'chore(deps): update dependency lint-staged to 13.0.3'"
+  date: 2022-07-07T19:57:54.685Z
+- commits:
     - subject: Update @balena/pinejs from 14.44.0 to 14.46.0
       hash: 75c40c37a10d720173e6f0f0db637db00b044e52
       body: |
