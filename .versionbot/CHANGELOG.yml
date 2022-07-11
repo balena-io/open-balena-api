@@ -1,4 +1,22 @@
 - commits:
+    - subject: Add custom DTB support for the Variscite DART-MX8M device family
+      hash: bfcfd6c0133c347adac8e6d5e232a321581b31d7
+      body: ""
+      footer:
+        Connects-to: "#1033"
+        connects-to: "#1033"
+        Change-type: minor
+        change-type: minor
+        See: https://www.flowdock.com/app/rulemotion/resin-tech/threads/RUx2uThR_LbRMS2lTRzbiSQMVCL
+        see: https://www.flowdock.com/app/rulemotion/resin-tech/threads/RUx2uThR_LbRMS2lTRzbiSQMVCL
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 3.2.0
+  title: "'Add custom DTB support for the Variscite DART-MX8M device family'"
+  date: 2022-07-11T07:46:19.614Z
+- commits:
     - subject: Update @balena/pinejs to 14.46.1
       hash: 631ce9ebaeabb2e9f2603de42e7ddbbb36e97d70
       body: |
