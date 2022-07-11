@@ -1,4 +1,19 @@
 - commits:
+    - subject: "fix(deps): update dependency @sentry/node to 7.6.0"
+      hash: 02a8bd720e68e7cab20e30af5380bfbe038737c5
+      body: |
+        Update @sentry/node to 7.6.0
+
+        Update @sentry/node from 6.19.6 to 7.6.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested: []
+  version: 3.3.0
+  title: "'fix(deps): update dependency @sentry/node to 7.6.0'"
+  date: 2022-07-11T08:18:38.351Z
+- commits:
     - subject: Add custom DTB support for the Variscite DART-MX8M device family
       hash: bfcfd6c0133c347adac8e6d5e232a321581b31d7
       body: ""
