@@ -1,4 +1,19 @@
 - commits:
+    - subject: "chore(deps): update dependency husky to 8.0.1"
+      hash: 154bd177cf6a1e9e8ce3e67f07539fd60de90c84
+      body: |
+        Update husky to 8.0.1
+
+        Update husky from 4.3.8 to 8.0.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 3.3.2
+  title: "'chore(deps): update dependency husky to 8.0.1'"
+  date: 2022-07-12T13:54:41.698Z
+- commits:
     - subject: Update open-balena-base to 13.4.0
       hash: 640711b660f12e569d01ba65bf0f606152f26ec0
       body: |
