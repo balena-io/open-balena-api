@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update open-balena-base to 13.4.0
+      hash: 640711b660f12e569d01ba65bf0f606152f26ec0
+      body: |
+        Update open-balena-base from 13.3.2 to 13.4.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.1
+  title: "'Update open-balena-base to 13.4.0'"
+  date: 2022-07-12T13:24:38.536Z
+- commits:
     - subject: "fix(deps): update dependency @sentry/node to 7.6.0"
       hash: 02a8bd720e68e7cab20e30af5380bfbe038737c5
       body: |
