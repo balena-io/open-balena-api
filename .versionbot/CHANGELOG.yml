@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update dependencies
+      hash: f5a2f616adbc060a71886029e3db8627dc57a6e6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.4
+  title: "'Update dependencies'"
+  date: 2022-07-15T16:11:55.978Z
+- commits:
     - subject: Remove an unnecessary `$select`ed field
       hash: c42eb1bccddbd335438bf23f1ddf1725e791439a
       body: ""
