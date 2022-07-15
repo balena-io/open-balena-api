@@ -1,6 +1,7 @@
 import * as Bluebird from 'bluebird';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
+import compressible = require('compressible');
 import * as cookieParser from 'cookie-parser';
 import cookieSession = require('cookie-session');
 import type { Application, Handler, Request } from 'express';
@@ -43,6 +44,7 @@ import {
 	SENTRY_DSN,
 	HIDE_UNVERSIONED_ENDPOINT,
 	setVersion,
+	NDJSON_CTYPE,
 } from './lib/config';
 
 import {
@@ -406,7 +408,19 @@ function fixProtocolMiddleware(skipUrls: string[] = []): Handler {
 }
 
 function setupMiddleware(app: Application) {
-	app.use(compression());
+	app.use(
+		compression({
+			// We use a custom filter so that we can explicitly enable compression for ndjson (ie logs)
+			filter(_req, res) {
+				const type = res.getHeader('Content-Type') as string;
+
+				return (
+					type !== undefined &&
+					(type === NDJSON_CTYPE || compressible(type) === true)
+				);
+			},
+		}),
+	);
 	app.use(AUTH_PATH, cookieParser());
 
 	const JSON_REGEXP =
