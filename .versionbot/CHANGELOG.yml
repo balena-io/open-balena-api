@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove an unnecessary `$select`ed field
+      hash: c42eb1bccddbd335438bf23f1ddf1725e791439a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.3
+  title: "'Remove an unnecessary ed field'"
+  date: 2022-07-15T15:45:47.478Z
+- commits:
     - subject: "chore(deps): update dependency husky to 8.0.1"
       hash: 154bd177cf6a1e9e8ce3e67f07539fd60de90c84
       body: |
