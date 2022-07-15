@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add an explicit flush for the logs read stream
+      hash: 6f39a739ed19d94eb2504a91d3db240202a71953
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.6
+  title: "'Add an explicit flush for the logs read stream'"
+  date: 2022-07-15T19:06:28.837Z
+- commits:
     - subject: Explicitly enable compression for ndjson
       hash: 22d8da71f7d4cc19cd2781d95cadbee1ab1a91dc
       body: ""
