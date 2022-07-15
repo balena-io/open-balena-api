@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express';
 import onFinished = require('on-finished');
-
+import * as _ from 'lodash';
 import { sbvrUtils, errors } from '@balena/pinejs';
 
 import {
@@ -17,6 +17,7 @@ import {
 	LOGS_DEFAULT_HISTORY_COUNT,
 	LOGS_DEFAULT_SUBSCRIPTION_COUNT,
 	LOGS_HEARTBEAT_INTERVAL,
+	LOGS_READ_STREAM_FLUSH_INTERVAL,
 	NDJSON_CTYPE,
 } from '../../../lib/config';
 
@@ -58,6 +59,19 @@ async function handleStreamingRead(
 	res.setHeader('Content-Type', NDJSON_CTYPE);
 	res.setHeader('Cache-Control', 'no-cache');
 
+	const flush = _.throttle(
+		() => {
+			res.flush();
+		},
+		LOGS_READ_STREAM_FLUSH_INTERVAL,
+		{ leading: false },
+	);
+	function write(data: string) {
+		const r = res.write(data);
+		flush();
+		return r;
+	}
+
 	function onLog(log: DeviceLog) {
 		if (state === StreamState.Buffering) {
 			buffer.push(log);
@@ -65,7 +79,7 @@ async function handleStreamingRead(
 			dropped++;
 		} else if (state !== StreamState.Closed) {
 			if (
-				!res.write(
+				!write(
 					JSON.stringify(log, (key, value) =>
 						key === 'nanoTimestamp' ? undefined : value,
 					) + '\n',
@@ -99,7 +113,7 @@ async function handleStreamingRead(
 	function heartbeat() {
 		if (state !== StreamState.Closed) {
 			// In order to keep the connection alive, output new lines every now and then
-			res.write('\n');
+			write('\n');
 			setTimeout(heartbeat, LOGS_HEARTBEAT_INTERVAL);
 		}
 	}
