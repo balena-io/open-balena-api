@@ -308,6 +308,12 @@ export const LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS =
 
 export const LOGS_DEFAULT_RETENTION_LIMIT = 1000;
 
+// Logs read config
+export const LOGS_READ_STREAM_FLUSH_INTERVAL = intVar(
+	'LOGS_READ_STREAM_FLUSH_INTERVAL',
+	500,
+);
+
 // Logs write config
 export const LOGS_STREAM_FLUSH_INTERVAL = intVar(
 	'LOGS_STREAM_FLUSH_INTERVAL',
