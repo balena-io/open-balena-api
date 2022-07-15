@@ -1,4 +1,16 @@
 - commits:
+    - subject: Explicitly enable compression for ndjson
+      hash: 22d8da71f7d4cc19cd2781d95cadbee1ab1a91dc
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.5
+  title: "'Explicitly enable compression for ndjson'"
+  date: 2022-07-15T16:43:15.398Z
+- commits:
     - subject: Update dependencies
       hash: f5a2f616adbc060a71886029e3db8627dc57a6e6
       body: ""
