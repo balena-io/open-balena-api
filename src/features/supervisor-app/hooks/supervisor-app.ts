@@ -6,7 +6,12 @@ import {
 	permissions,
 	errors as pinejsErrors,
 } from '@balena/pinejs';
-import type { Release } from '../../../balena-model';
+import type {
+	Device,
+	DeviceType,
+	PickDeferred,
+	Release,
+} from '../../../balena-model';
 
 const { BadRequestError } = pinejsErrors;
 
@@ -187,7 +192,7 @@ async function setSupervisorReleaseResource(
 	if (deviceIds.length === 0) {
 		return;
 	}
-	const devices = await api.get({
+	const devices = (await api.get({
 		resource: 'device',
 		options: {
 			// if the device already has a supervisor_version, just bail.
@@ -195,12 +200,16 @@ async function setSupervisorReleaseResource(
 				id: { $in: deviceIds },
 				supervisor_version: null,
 			},
-			$select: ['id'],
+			$select: ['id', 'is_of__device_type'],
 			$expand: {
-				is_of__device_type: { $select: ['is_of__cpu_architecture', 'id'] },
+				is_of__device_type: { $select: ['is_of__cpu_architecture'] },
 			},
 		},
-	});
+	})) as Array<
+		Pick<Device, 'id'> & {
+			is_of__device_type: [PickDeferred<DeviceType, 'is_of__cpu_architecture'>];
+		}
+	>;
 
 	if (devices.length === 0) {
 		return;
