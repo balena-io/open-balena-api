@@ -149,7 +149,7 @@ Term: invalidation reason
 	Concept Type: Text (Type)
 
 Term: ip address
-	Concept Type: Short Text (Type)
+	Concept Type: Text (Type)
 
 Term: known issue list
 	Concept Type: Text (Type)
@@ -176,7 +176,7 @@ Term: logs channel
 	Concept Type: Short Text (Type)
 
 Term: mac address
-	Concept Type: Short Text (Type)
+	Concept Type: Text (Type)
 
 Term: memory usage
 	Concept Type: Integer (Type)

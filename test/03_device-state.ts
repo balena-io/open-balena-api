@@ -481,6 +481,27 @@ mockery.registerMock('../src/lib/config', configMock);
 			);
 		});
 
+		it('should accept text longer than 255 chars', async () => {
+			const devicePatchBody = {
+				[stateKey]: {
+					ip_address: 'x'.repeat(256),
+					mac_address: 'x'.repeat(256),
+				},
+			};
+
+			await fakeDevice.patchState(
+				device,
+				device.uuid,
+				devicePatchBody,
+				stateVersion,
+			);
+
+			await expectResourceToMatch(pineUser, 'device', device.id, {
+				ip_address: devicePatchBody[stateKey].ip_address,
+				mac_address: devicePatchBody[stateKey].mac_address,
+			});
+		})
+
 		it('should set the metrics throttling key in redis', async () => {
 			const cachedValue = await redisRO.get(
 				getMetricsRecentlyUpdatedCacheKey(device.uuid),
