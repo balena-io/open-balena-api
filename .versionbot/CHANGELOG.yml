@@ -1,4 +1,20 @@
 - commits:
+    - subject: Fix Husky not working after v4 to v8 update
+      hash: bd8d089de3d4742499672f3649cf92a07999462a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://typicode.github.io/husky/#/?id=migrate-from-v4-to-v8
+        see: https://typicode.github.io/husky/#/?id=migrate-from-v4-to-v8
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 3.3.7
+  title: "'Fix Husky not working after v4 to v8 update'"
+  date: 2022-07-21T10:05:58.798Z
+- commits:
     - subject: Add an explicit flush for the logs read stream
       hash: 6f39a739ed19d94eb2504a91d3db240202a71953
       body: ""
