@@ -135,11 +135,6 @@
     "node": "^16.13.0",
     "npm": "^8.1.1"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "mocha": {
     "reporter": "spec",
     "sort": true,
