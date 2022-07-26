@@ -435,11 +435,11 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 		)
 		.map((file) => file.slice(0, -'.json'.length).trim());
 
-	models.forEach((model) => {
+	for (const model of models) {
 		fixtures[model] = import(
 			path.join('../fixtures', fixtureName, `${model}.json`)
 		).then((fromJson) => loadFixtureModel(loaders[model], fixtures, fromJson));
-	});
+	}
 
 	return await Bluebird.props(
 		_.mapValues(fixtures, (fx) => Bluebird.props(fx)),

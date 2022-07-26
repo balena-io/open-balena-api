@@ -109,17 +109,17 @@ const parseReleaseVersioningFields: (args: sbvrUtils.HookArgs) => void = ({
 		custom.semverObject = semverObject;
 	} else {
 		// the semver part fields are only settable through the computed term
-		[
+		for (const semverPart of [
 			'semver_major',
 			'semver_minor',
 			'semver_patch',
 			'semver_prerelease',
 			'semver_build',
-		].forEach((semverPart) => {
+		]) {
 			if (semverPart in request.values) {
 				delete request.values[semverPart];
 			}
-		});
+		}
 	}
 
 	// Keep computed terms as custom values and remove them from the body,

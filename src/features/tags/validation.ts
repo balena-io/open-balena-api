@@ -6,13 +6,13 @@ const checkTagKeyValidity = (key: string) => {
 	if (/\s/.test(key)) {
 		throw new errors.BadRequestError('Tag keys cannot contain whitespace.');
 	}
-	RESERVED_NAMESPACES.forEach((ns) => {
+	for (const ns of RESERVED_NAMESPACES) {
 		if (key.startsWith(ns)) {
 			throw new errors.BadRequestError(
 				`Tag keys beginning with ${ns} are reserved.`,
 			);
 		}
-	});
+	}
 };
 
 // Tag hooks
