@@ -352,6 +352,9 @@ mockery.registerMock('../src/lib/config', configMock);
 		let applicationUuid: string;
 		let release1: AnyObject;
 		let release2: AnyObject;
+		let release1Image1: AnyObject;
+		let release1Image2: AnyObject;
+		let servicesById: Dictionary<AnyObject>;
 		let device: fakeDevice.Device;
 		let stateKey: string;
 		const getMetricsRecentlyUpdatedCacheKey = (uuid: string) =>
@@ -365,6 +368,9 @@ mockery.registerMock('../src/lib/config', configMock);
 			applicationId = fx.applications.app1.id;
 			release1 = fx.releases.release1;
 			release2 = fx.releases.release2;
+			release1Image1 = fx.images.release1_image1;
+			release1Image2 = fx.images.release1_image2;
+			servicesById = _.keyBy(Object.values(fx.services), 'id');
 			pineUser = pineTest.clone({
 				passthrough: { user: admin },
 			});
@@ -383,6 +389,53 @@ mockery.registerMock('../src/lib/config', configMock);
 		after(async () => {
 			await fixtures.clean(fx);
 		});
+
+		const getServiceUpdatePatchBody = (
+			images: AnyObject[],
+			{
+				status = 'Downloading',
+				download_progress,
+			}: {
+				status?: string;
+				download_progress: number;
+			},
+		) => {
+			return {
+				[stateKey]:
+					stateVersion === 'v2'
+						? {
+								apps: images.map((image) => ({
+									services: {
+										[image.id]: {
+											releaseId: release1.id,
+											status,
+											download_progress,
+										},
+									},
+								})),
+						  }
+						: {
+								apps: {
+									[applicationUuid]: {
+										releases: {
+											[release1.commit]: {
+												services: Object.fromEntries(
+													images.map((image) => [
+														servicesById[image.is_a_build_of__service.__id],
+														{
+															image: image.is_stored_at__image_location,
+															status,
+															download_progress,
+														},
+													]),
+												),
+											},
+										},
+									},
+								},
+						  },
+			};
+		};
 
 		it('should save the updated device state', async () => {
 			const devicePatchBody = {
@@ -517,6 +570,34 @@ mockery.registerMock('../src/lib/config', configMock);
 			await expectResourceToMatch(pineUser, 'device', device.id, {
 				cpu_usage: 20,
 				cpu_temp: 20,
+			});
+		});
+
+		it('should save the update progress of the device state', async () => {
+			await fakeDevice.patchState(
+				device,
+				device.uuid,
+				getServiceUpdatePatchBody([release1Image1, release1Image2], {
+					download_progress: 20,
+				}),
+				stateVersion,
+			);
+
+			await expectResourceToMatch(pineUser, 'device', device.id, {
+				overall_progress: 20,
+			});
+
+			await fakeDevice.patchState(
+				device,
+				device.uuid,
+				getServiceUpdatePatchBody([release1Image1, release1Image2], {
+					download_progress: 50,
+				}),
+				stateVersion,
+			);
+
+			await expectResourceToMatch(pineUser, 'device', device.id, {
+				overall_progress: 50,
 			});
 		});
 

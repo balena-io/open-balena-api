@@ -1,4 +1,4 @@
-import { errors } from '@balena/pinejs';
+import { errors, sbvrUtils } from '@balena/pinejs';
 import type { RequestHandler } from 'express';
 
 import { getUser } from '../../infra/auth/auth';
@@ -77,8 +77,10 @@ export const createProvisioningApiKey: RequestHandler = async (req, res) => {
  */
 export const createUserApiKey: RequestHandler = async (req, res) => {
 	try {
-		const user = await getUser(req);
-		const apiKey = await $createUserApiKey(req, user.id);
+		const apiKey = await sbvrUtils.db.transaction(async (tx) => {
+			const user = await getUser(req, tx);
+			return await $createUserApiKey(req, user.id, { tx });
+		});
 		res.json(apiKey);
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {

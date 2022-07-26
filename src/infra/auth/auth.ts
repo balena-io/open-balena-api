@@ -57,6 +57,10 @@ export const validatePassword = (password?: string) => {
 	if (password.length < 8) {
 		throw new BadRequestError('Password must be at least 8 characters.');
 	}
+	if (64 < password.length) {
+		// OWASP: Avoid long password DoS attacks
+		throw new BadRequestError('Password must be at most 64 characters.');
+	}
 };
 
 // Think twice before using this function as it *unconditionally* sets the
@@ -66,7 +70,7 @@ export const validatePassword = (password?: string) => {
 export const setPassword = async (
 	user: AnyObject,
 	newPassword: string,
-	tx?: Tx,
+	tx: Tx,
 ) => {
 	await api.resin.patch({
 		resource: 'user',
@@ -87,7 +91,7 @@ export const setPassword = async (
 export const updatePasswordIfNeeded = async (
 	usernameOrEmail: string,
 	newPassword: string,
-	tx?: Tx,
+	tx: Tx,
 ): Promise<boolean> => {
 	const user = await findUser(usernameOrEmail, tx);
 	if (user == null) {
@@ -109,12 +113,14 @@ export const updatePasswordIfNeeded = async (
 export const checkUserPassword = async (
 	password: string,
 	userId: number,
+	tx: Tx,
 ): Promise<void> => {
 	const user = (await api.resin.get({
 		resource: 'user',
 		id: userId,
 		passthrough: {
 			req: permissions.root,
+			tx,
 		},
 		options: {
 			$select: ['password', 'id'],
@@ -174,50 +180,62 @@ const getUserQuery = _.once(() =>
 );
 export function getUser(
 	req: Request | hooks.HookReq,
+	txParam: Tx | undefined,
 	required?: true,
 ): Promise<User>;
 export function getUser(
 	req: Request | hooks.HookReq,
+	txParam: Tx | undefined,
 	required: false,
 ): Promise<User | undefined>;
 export async function getUser(
 	req: hooks.HookReq & Pick<Request, 'user' | 'creds'>,
+	/** You should always be passing a Tx, unless you are using this in a middleware. */
+	txParam: Tx | undefined,
 	required = true,
 ): Promise<Express.User | undefined> {
-	await retrieveAPIKey(req);
-	// This shouldn't happen but it does for some internal PineJS requests
-	if (req.user && !req.creds) {
-		req.creds = req.user;
-	}
-
-	// JWT or API key already loaded
-	if (req.creds) {
-		if (required && !req.user) {
-			throw new UnauthorizedError('User has not been authorized');
+	const $getUser = async (tx: Tx) => {
+		await retrieveAPIKey(req, tx);
+		// This shouldn't happen but it does for some internal PineJS requests
+		if (req.user && !req.creds) {
+			req.creds = req.user;
 		}
-		// If partial user, promise will resolve to `null` user
+
+		// JWT or API key already loaded
+		if (req.creds) {
+			if (required && !req.user) {
+				throw new UnauthorizedError('User has not been authorized');
+			}
+			// If partial user, promise will resolve to `null` user
+			return req.user;
+		}
+
+		let key;
+		if (req.apiKey != null) {
+			key = req.apiKey.key;
+		}
+		if (!key) {
+			if (required) {
+				throw new UnauthorizedError('Request has no JWT or API key');
+			}
+			return;
+		}
+
+		const [user] = await getUserQuery()({ key }, undefined, { tx });
+		if (user) {
+			// Store it in `req` to be compatible with JWTs and for caching
+			req.user = req.creds = _.pick(user, userFields) as User;
+		} else if (required) {
+			throw new UnauthorizedError('User not found for API key');
+		}
 		return req.user;
+	};
+
+	if (txParam == null) {
+		return await sbvrUtils.db.readTransaction($getUser);
 	}
 
-	let key;
-	if (req.apiKey != null) {
-		key = req.apiKey.key;
-	}
-	if (!key) {
-		if (required) {
-			throw new UnauthorizedError('Request has no JWT or API key');
-		}
-		return;
-	}
-
-	const [user] = await getUserQuery()({ key });
-	if (user) {
-		// Store it in `req` to be compatible with JWTs and for caching
-		req.user = req.creds = _.pick(user, userFields) as User;
-	} else if (required) {
-		throw new UnauthorizedError('User not found for API key');
-	}
-	return req.user;
+	return await $getUser(txParam);
 }
 
 export const defaultFindUser$select = [
@@ -229,14 +247,14 @@ export const defaultFindUser$select = [
 
 export async function findUser(
 	loginInfo: string,
-	tx?: Tx,
+	tx: Tx,
 ): Promise<Pick<DbUser, typeof defaultFindUser$select[number]> | undefined>;
 export async function findUser<
 	T extends DbUser,
 	TProps extends ReadonlyArray<keyof T>,
 >(
 	loginInfo: string,
-	tx: Tx | undefined,
+	tx: Tx,
 	$select: TProps,
 ): Promise<Pick<T, typeof $select[number]> | undefined>;
 export async function findUser<
@@ -244,7 +262,7 @@ export async function findUser<
 	TProps extends ReadonlyArray<keyof T & string>,
 >(
 	loginInfo: string,
-	tx?: Tx,
+	tx: Tx,
 	$select: TProps = defaultFindUser$select as ReadonlyArray<
 		keyof DbUser & string
 	> as TProps,

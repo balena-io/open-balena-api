@@ -1,4 +1,3545 @@
 - commits:
+    - subject: Fix Husky not working after v4 to v8 update
+      hash: bd8d089de3d4742499672f3649cf92a07999462a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://typicode.github.io/husky/#/?id=migrate-from-v4-to-v8
+        see: https://typicode.github.io/husky/#/?id=migrate-from-v4-to-v8
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 3.3.7
+  title: "'Fix Husky not working after v4 to v8 update'"
+  date: 2022-07-21T10:05:58.798Z
+- commits:
+    - subject: Add an explicit flush for the logs read stream
+      hash: 6f39a739ed19d94eb2504a91d3db240202a71953
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.6
+  title: "'Add an explicit flush for the logs read stream'"
+  date: 2022-07-15T19:06:28.837Z
+- commits:
+    - subject: Explicitly enable compression for ndjson
+      hash: 22d8da71f7d4cc19cd2781d95cadbee1ab1a91dc
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.5
+  title: "'Explicitly enable compression for ndjson'"
+  date: 2022-07-15T16:43:15.398Z
+- commits:
+    - subject: Update dependencies
+      hash: f5a2f616adbc060a71886029e3db8627dc57a6e6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.4
+  title: "'Update dependencies'"
+  date: 2022-07-15T16:11:55.978Z
+- commits:
+    - subject: Remove an unnecessary `$select`ed field
+      hash: c42eb1bccddbd335438bf23f1ddf1725e791439a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.3
+  title: "'Remove an unnecessary ed field'"
+  date: 2022-07-15T15:45:47.478Z
+- commits:
+    - subject: "chore(deps): update dependency husky to 8.0.1"
+      hash: 154bd177cf6a1e9e8ce3e67f07539fd60de90c84
+      body: |
+        Update husky to 8.0.1
+
+        Update husky from 4.3.8 to 8.0.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 3.3.2
+  title: "'chore(deps): update dependency husky to 8.0.1'"
+  date: 2022-07-12T13:54:41.698Z
+- commits:
+    - subject: Update open-balena-base to 13.4.0
+      hash: 640711b660f12e569d01ba65bf0f606152f26ec0
+      body: |
+        Update open-balena-base from 13.3.2 to 13.4.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.1
+  title: "'Update open-balena-base to 13.4.0'"
+  date: 2022-07-12T13:24:38.536Z
+- commits:
+    - subject: "fix(deps): update dependency @sentry/node to 7.6.0"
+      hash: 02a8bd720e68e7cab20e30af5380bfbe038737c5
+      body: |
+        Update @sentry/node to 7.6.0
+
+        Update @sentry/node from 6.19.6 to 7.6.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested: []
+  version: 3.3.0
+  title: "'fix(deps): update dependency @sentry/node to 7.6.0'"
+  date: 2022-07-11T08:18:38.351Z
+- commits:
+    - subject: Add custom DTB support for the Variscite DART-MX8M device family
+      hash: bfcfd6c0133c347adac8e6d5e232a321581b31d7
+      body: ""
+      footer:
+        Connects-to: "#1033"
+        connects-to: "#1033"
+        Change-type: minor
+        change-type: minor
+        See: https://www.flowdock.com/app/rulemotion/resin-tech/threads/RUx2uThR_LbRMS2lTRzbiSQMVCL
+        see: https://www.flowdock.com/app/rulemotion/resin-tech/threads/RUx2uThR_LbRMS2lTRzbiSQMVCL
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 3.2.0
+  title: "'Add custom DTB support for the Variscite DART-MX8M device family'"
+  date: 2022-07-11T07:46:19.614Z
+- commits:
+    - subject: Update @balena/pinejs to 14.46.1
+      hash: 631ce9ebaeabb2e9f2603de42e7ddbbb36e97d70
+      body: |
+        Update @balena/pinejs from 14.46.0 to 14.46.1
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested:
+        - commits:
+            - subject: Update @balena/odata-to-abstract-sql to 5.4.12
+              hash: 2e7f668d79b8d0120d9b63c49521bdf3afd83a2f
+              body: |
+                Update @balena/odata-to-abstract-sql from 5.4.11 to 5.4.12
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+              author: Thodoris Greasidis
+              nested:
+                - commits:
+                    - subject: Use nullish coalescing when sensible
+                      hash: c69dff4d46792c4c858f869646adca9272210364
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: odata-to-abstract-sql-5.4.12
+                  title: "'Use nullish coalescing when sensible'"
+                  date: 2022-06-03T15:45:18.251Z
+          version: pinejs-14.46.1
+          title: "'Update @balena/odata-to-abstract-sql to 5.4.12'"
+          date: 2022-07-08T15:16:38.671Z
+  version: 3.1.0
+  title: "'Update @balena/pinejs to 14.46.1'"
+  date: 2022-07-08T18:34:32.972Z
+- commits:
+    - subject: "chore(deps): update dependency lint-staged to 13.0.3"
+      hash: f0fcfba33887ca6cdc84526cf5718423792b7822
+      body: |
+        Update lint-staged to 13.0.3
+
+        Update lint-staged from 12.4.0 to 13.0.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 3.0.2
+  title: "'chore(deps): update dependency lint-staged to 13.0.3'"
+  date: 2022-07-07T19:57:54.685Z
+- commits:
+    - subject: Update @balena/pinejs from 14.44.0 to 14.46.0
+      hash: 75c40c37a10d720173e6f0f0db637db00b044e52
+      body: |
+        Update @balena/pinejs from 14.44.0 to 14.46.0
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested:
+        - commits:
+            - subject: Fix for passport.js update 0.6.0
+              hash: c26d33dd13e4139b970e5bd594982786a1c56cea
+              body: |
+                passport.js 0.6.0 introduces a mandatory callback done function.
+                Updated logout argument which should remain backwards compatible
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-14.46.0
+          title: "'Fix for passport.js update 0.6.0'"
+          date: 2022-06-21T23:27:28.468Z
+        - commits:
+            - subject: Update dependencies
+              hash: fb47772d628789b77288e7e0e90f3740f6cd27d8
+              body: |
+                Update @balena/odata-parser from 2.2.9 to 2.3.0
+                Update @balena/odata-to-abstract-sql from 5.4.11 to 5.4.12
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Add source map
+                      hash: a6bb5e67fac1cdcc69491800ad042f003fa13556
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                  version: odata-parser-2.3.0
+                  title: "'Add source map'"
+                  date: 2022-06-06T15:59:20.389Z
+                - commits:
+                    - subject: Use nullish coalescing when sensible
+                      hash: c69dff4d46792c4c858f869646adca9272210364
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: odata-to-abstract-sql-5.4.12
+                  title: "'Use nullish coalescing when sensible'"
+                  date: 2022-06-03T15:45:18.251Z
+          version: pinejs-14.45.1
+          title: "'Update dependencies'"
+          date: 2022-06-08T08:16:26.230Z
+        - commits:
+            - subject: Generalisation and decouple migrator functions. Prepare for migration
+                categories.
+              hash: 0184e6119088170f6990996a3afcfbd78a2497fc
+              body: |
+                Add basic test for sync migrator
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-14.45.0
+          title: "'Generalisation of migrator'"
+          date: 2022-06-03T17:08:40.433Z
+    - subject: "fix(deps): update dependency passport to 0.6.0 [security]"
+      hash: 5973e729bc8fd448b935a87ef21474d2fb76564d
+      body: |
+        Update passport to 0.6.0
+
+        Update passport from 0.5.3 to 0.6.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 3.0.1
+  title: "'fix(deps): update dependency passport to 0.6.0 [security]'"
+  date: 2022-07-07T15:02:00.438Z
+- commits:
+    - subject: "auth: Require & use a transaction param in most methods"
+      hash: ba710e43405a8de91a0f8334169dc8977092e1bc
+      body: |
+        Update @balena/pinejs from 14.39.1 to 14.44.0
+      footer:
+        Change-type: major
+        change-type: major
+        See: https://www.flowdock.com/app/rulemotion/user_happiness/threads/TdkQkJpfu72Sh-uQZSJQbuqfYrN
+        see: https://www.flowdock.com/app/rulemotion/user_happiness/threads/TdkQkJpfu72Sh-uQZSJQbuqfYrN
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested:
+        - commits:
+            - subject: "permissions: Add optional transaction param to user & api key methods"
+              hash: 42253a2928a8cb7c4356bec3960bb4555321f859
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+              author: Thodoris Greasidis
+              nested: []
+          version: pinejs-14.44.0
+          title: "'permissions: Add optional transaction param to user & api key methods'"
+          date: 2022-05-30T09:23:42.149Z
+        - commits:
+            - subject: Update typescript to 4.7
+              hash: 6c25444730ccbb0120468a6ce063be7a7f4610be
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+              author: Thodoris Greasidis
+              nested: []
+          version: pinejs-14.43.6
+          title: "'Update typescript to 4.7'"
+          date: 2022-05-27T20:31:53.052Z
+        - commits:
+            - subject: Update dependencies
+              hash: b765b0941de329230e4d38bbe2c994491413c3ce
+              body: |
+                Update @balena/abstract-sql-compiler from 7.19.1 to 7.20.0
+                Update @balena/odata-to-abstract-sql from 5.4.9 to 5.4.11
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Expose `isAliasNode` helper
+                      hash: 6f59b2d31e4dee5eef008e755d4ee2cb42dd50ba
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-7.20.0
+                  title: "'Expose  helper'"
+                  date: 2022-05-19T17:25:29.766Z
+                - commits:
+                    - subject: Improve support for computed fields by respecting them in more places
+                      hash: 3346e579e5e0b2b7b01066b3d95bd5b6e6281c63
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: odata-to-abstract-sql-5.4.11
+                  title: "'Improve computed fields'"
+                  date: 2022-05-19T19:26:50.059Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: 19c112c863b63bdd8d86a04b704fb136077d01a9
+                      body: >
+                        Update @balena/abstract-sql-compiler from 7.19.0 to
+                        7.20.0
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Expose `isAliasNode` helper
+                              hash: 6f59b2d31e4dee5eef008e755d4ee2cb42dd50ba
+                              body: ""
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                              author: Pagan Gazzard
+                              nested: []
+                          version: abstract-sql-compiler-7.20.0
+                          title: "'Expose  helper'"
+                          date: 2022-05-19T17:25:29.766Z
+                        - commits:
+                            - subject: Update dependencies
+                              hash: 923dd2d492246b99cc62d51a25dd96464e7c1e87
+                              body: |
+                                Update @balena/sbvr-types from 3.4.5 to 3.4.7
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested:
+                                - commits:
+                                    - subject: Update dependencies
+                                      hash: e416444d436c0e01474b624408635a811259f9a1
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                    - subject: Remove circleci
+                                      hash: 15cbb6de080f6f5a7898d1626d9948b371d971b2
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                  version: sbvr-types-3.4.7
+                                  title: "'Remove circleci/update deps'"
+                                  date: 2022-04-08T13:33:49.743Z
+                                - commits:
+                                    - subject: Avoid creating a new Date object when we already have one
+                                      hash: 07eb756eca00a506b618dc197b67dcc7a9ea3733
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                  version: sbvr-types-3.4.6
+                                  date: 2021-09-21T14:01:00.590Z
+                          version: abstract-sql-compiler-7.19.1
+                          title: "'Update dependencies'"
+                          date: 2022-04-08T13:57:15.961Z
+                  version: odata-to-abstract-sql-5.4.10
+                  title: "'Update dependencies'"
+                  date: 2022-05-19T18:23:14.608Z
+          version: pinejs-14.43.5
+          title: "'Update dependencies'"
+          date: 2022-05-20T11:58:56.632Z
+        - commits:
+            - subject: Only remove constrained aliases when they match the field name
+              hash: 35a0647d3a21e45afa1f9982c5d77c14a47a0d35
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.43.4
+          title: "'Leave aliases intact'"
+          date: 2022-05-18T16:37:28.536Z
+        - commits:
+            - subject: Use the modern definition format for permission constrained definitions
+              hash: 187eec84dd2e1b097a4ef2d62bb8bfd917536342
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.43.3
+          title: "'Use the modern definition format for permission constrained
+            definitions'"
+          date: 2022-05-16T16:04:51.770Z
+        - commits:
+            - subject: Update to webpack 5
+              hash: c81e3df13232f9a7730c005288fa0f4123066e3c
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.43.2
+          title: "'Update to webpack 5'"
+          date: 2022-05-12T14:40:46.324Z
+        - commits:
+            - subject: Simplify check for read-only hooks
+              hash: 6c62635fe12ba0f4a1acae2dcbebad5efb03e120
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.43.1
+          title: "'Simplify check for read-only hooks'"
+          date: 2022-05-12T14:12:16.520Z
+        - commits:
+            - subject: inital test framework for pinejs
+              hash: b55af22181531f7068f3137b40374a42e5ecaa10
+              body: |
+                Addind mocha, ts-node and chai to  pinejs.
+                Utilising docker-compose to handle test requirements like db
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-14.43.0
+          title: "'inital test framework for pinejs'"
+          date: 2022-04-28T13:31:32.039Z
+        - commits:
+            - subject: Use the db engine from the existing request when getting affected ids
+              hash: 2e95c62654ad5a4f4c92d941c7e433337790b032
+              body: >
+                In practice the module level `db.engine` will always match the
+
+                `request.engine` but this future proofs things and makes it clear where
+
+                this value actually comes from
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.42.2
+          title: "'Use the db engine from the existing request when getting affected ids'"
+          date: 2022-04-20T17:24:16.328Z
+        - commits:
+            - subject: Update dependencies
+              hash: 5009aecb7b6ae68dbe4ed53d95ec0cab45e19564
+              body: |
+                Update @balena/abstract-sql-compiler from 7.19.0 to 7.19.1
+                Update @balena/abstract-sql-to-typescript from 1.1.1 to 1.2.0
+                Update @balena/lf-to-abstract-sql from 4.5.0 to 4.5.1
+                Update @balena/odata-parser from 2.2.8 to 2.2.9
+                Update @balena/odata-to-abstract-sql from 5.4.8 to 5.4.9
+                Update @balena/sbvr-parser from 1.4.0 to 1.4.1
+                Update @balena/sbvr-types from 3.4.6 to 3.4.7
+                Update pinejs-client-core from 6.10.1 to 6.10.2
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Update dependencies
+                      hash: 923dd2d492246b99cc62d51a25dd96464e7c1e87
+                      body: |
+                        Update @balena/sbvr-types from 3.4.5 to 3.4.7
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Update dependencies
+                              hash: e416444d436c0e01474b624408635a811259f9a1
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                            - subject: Remove circleci
+                              hash: 15cbb6de080f6f5a7898d1626d9948b371d971b2
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                          version: sbvr-types-3.4.7
+                          title: "'Remove circleci/update deps'"
+                          date: 2022-04-08T13:33:49.743Z
+                        - commits:
+                            - subject: Avoid creating a new Date object when we already have one
+                              hash: 07eb756eca00a506b618dc197b67dcc7a9ea3733
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                          version: sbvr-types-3.4.6
+                          date: 2021-09-21T14:01:00.590Z
+                  version: abstract-sql-compiler-7.19.1
+                  title: "'Update dependencies'"
+                  date: 2022-04-08T13:57:15.961Z
+                - commits:
+                    - subject: Add support for reverse references using relationships info
+                      hash: 0899e7780f41e34f7ee396f24fc4aff1edf7e4f8
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-to-typescript-1.2.0
+                  title: "'Add support for reverse references using relationships info'"
+                  date: 2022-04-15T14:46:55.075Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: dd79d29d1e4ac31a4fdf7daf2e663ef876aec09c
+                      body: >
+                        Update @balena/abstract-sql-compiler from 7.4.2 to
+                        7.19.1
+
+                        Update @balena/odata-to-abstract-sql from 5.4.1 to 5.4.9
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Update dependencies
+                              hash: a80855150955d687b565a33633fe69b4e5e10ebd
+                              body: >
+                                Update @balena/abstract-sql-compiler from 7.17.0
+                                to 7.19.0
+
+                                Update @balena/odata-parser from 2.2.8 to 2.2.9
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested:
+                                - commits:
+                                    - subject: Remove .circleci/config.yml
+                                      hash: 017b5e4c10ed4e13b344086888f6bc64cacb9c0c
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                                        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                                      author: Thodoris Greasidis
+                                      nested: []
+                                    - subject: Add support for `ConcatenateWithSeparator` nodes
+                                      hash: 34bae3f19224ba38cf6806653ef8884a07f41357
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Thodoris Greasidis
+                                      nested: []
+                                  version: abstract-sql-compiler-7.19.0
+                                  title: "'Add support for  nodes'"
+                                  date: 2022-03-24T14:48:17.742Z
+                                - commits:
+                                    - subject: Add reference property type
+                                      hash: d28e2456dff10b18bcc97b7232479fe78efd5eb3
+                                      body: >
+                                        Property type describes if the reference
+                                        is 'strict' or 'informative'.
+
+
+                                        Behaviour change only if type is informative otherwise default 'strict'.
+
+
+                                        An informative reference is just an int field that points
+
+                                        to another tables id field - like foreign key without constraints
+
+                                        or foregein key cascades.
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                        Signed-off-by: Harald Fischer <harald@balena.io>
+                                        signed-off-by: Harald Fischer <harald@balena.io>
+                                      author: Harald Fischer
+                                      nested: []
+                                  version: abstract-sql-compiler-7.18.0
+                                  title: "'Add informative reference dataType to schema tests'"
+                                  date: 2022-02-16T14:18:44.963Z
+                                - commits:
+                                    - subject: Avoid the operation type optimization for HAVING clauses
+                                      hash: 3fcf08bc02c21d9f49b78787ed516fa9a403f021
+                                      body: >
+                                        Since it's possible for them to behave
+                                        in a way that violates the
+
+                                        safety checks we'll disable them until we can add specific checks
+
+                                        for the HAVING clause
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.17.1
+                                  date: 2022-01-24T17:36:32.056Z
+                                - commits:
+                                    - subject: Update dependencies
+                                      hash: e63884d3e86c2654fd601cacc53f3e8e61bb1d87
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                    - subject: Remove circleci
+                                      hash: 39e258be1ffdd9cce2c4e1bcc4ba69bf00f8de76
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                  version: odata-parser-2.2.9
+                                  title: "'Remove circleci/update deps'"
+                                  date: 2022-04-08T13:13:27.932Z
+                            - subject: Remove circleci
+                              hash: a0d153897fe474fbb6fb87f2606c3d8ca5296799
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.9
+                          title: "'Remove circleci/update deps'"
+                          date: 2022-04-08T13:29:18.390Z
+                        - commits:
+                            - subject: Use the full alias for the prefix hash
+                              hash: d60132e2eed1408735c1ee6dae12d69548cb1796
+                              body: >
+                                This simplifies the code and also avoids an
+                                issue where we not using
+
+                                enough of the prefix for the hash
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.8
+                          date: 2022-01-13T13:11:52.889Z
+                        - commits:
+                            - subject: Use a hash instead of random str when it's necessary to shorten aliases
+                              hash: cb05ec69fe0e08fc4619b38a99272c3a7ea42e21
+                              body: >
+                                This means the prefix will be stable/reliable
+                                across runs and make it
+
+                                easier to compare the output generating from different runs
+
+
+                                Update @balena/abstract-sql-compiler from 7.14.1 to 7.17.0
+
+                                Update @balena/lf-to-abstract-sql from 4.3.0 to 4.4.1
+
+                                Update @balena/sbvr-parser from 1.2.5 to 1.3.0
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.7
+                          date: 2022-01-11T17:40:53.504Z
+                        - commits:
+                            - subject: Improve `ResourceFunction` typings
+                              hash: b511221bb08ad74b72020093f618ba49db5be765
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.6
+                          date: 2021-11-30T16:42:04.591Z
+                        - commits:
+                            - subject: Fix `isBindReference` check for non-null non-object types
+                              hash: a1d356e93d8b6f4e137e70ebf5c1719b88e20ea5
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.5
+                          date: 2021-11-26T16:03:43.668Z
+                        - commits:
+                            - subject: Convert tests to type checked javascript
+                              hash: a5ba8586c03c85918d69f051b499e2e8f0751e4f
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.4
+                          date: 2021-09-07T14:57:14.139Z
+                        - commits:
+                            - subject: Add SBVR Date TIme Type to DateTrunc Wrapper JS Date format has only
+                                milliseconds precision, postgresql stores
+                                TIMESTAMPS with microseconds precission.
+                                Comparisions may fail, when giving millisecond
+                                JS dates but comparing on microseconds.
+                              hash: 4cc9f617facc62717cf475c93b3b12232475e9a0
+                              body: >
+                                Update abstract-sql-compiler from 7.4.2 to 7.13.4
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                                Signed-off-by: fisehara <harald@balena.io>
+                                signed-off-by: fisehara <harald@balena.io>
+                              author: fisehara
+                              nested:
+                                - commits:
+                                    - subject: Support for non postgres db engines
+                                      hash: 7f93d469cadec5fe77353dff90bbf0183debaaab
+                                      body: |
+                                        FunctionWrapper type for ReferencedField
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                        Signed-off-by: fisehara <harald@balena.io>
+                                        signed-off-by: fisehara <harald@balena.io>
+                                      author: fisehara
+                                      nested: []
+                                  version: abstract-sql-compiler-7.13.4
+                                  date: 2021-08-17T09:30:05.634Z
+                                - commits:
+                                    - subject: Supprt date_trunc postgres date function for DateValue
+                                      hash: 75066d356729fdd9d230abcd639c80ac806018ab
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                        Signed-off-by: fisehara harald@balena.io
+                                        signed-off-by: fisehara harald@balena.io
+                                      author: fisehara
+                                      nested: []
+                                  version: abstract-sql-compiler-7.13.3
+                                  date: 2021-07-28T08:58:56.916Z
+                                - commits:
+                                    - subject: Update dependencies
+                                      hash: 8fc84d38e28b1dfdf5a3d349fde874e81c4c9a02
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.13.2
+                                  date: 2021-07-26T13:53:41.679Z
+                                - commits:
+                                    - subject: Delete CODEOWNERS
+                                      hash: 91a8e9ac9b30d144c7a9034eeda9bd30956addfd
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                        See: https://www.flowdock.com/app/rulemotion/pub/threads/trLcZFnSX9fLZn4LiaIv4xuBbah
+                                        see: https://www.flowdock.com/app/rulemotion/pub/threads/trLcZFnSX9fLZn4LiaIv4xuBbah
+                                      author: Thodoris Greasidis
+                                      nested: []
+                                  version: abstract-sql-compiler-7.13.1
+                                  date: 2021-06-30T21:23:27.059Z
+                                - commits:
+                                    - subject: Add support for `CurrentTimestamp`/`CurrentDate` nodes
+                                      hash: 0f2dce05456d953a09cbe13df3bf95471026db4a
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.13.0
+                                  date: 2021-05-18T18:28:20.380Z
+                                - commits:
+                                    - subject: Update sbvr-types to 3.4.3
+                                      hash: 4acfbd8870b6948ea243a663515f1ebb3e0233d4
+                                      body: |
+                                        Update sbvr-types from 3.4.2 to 3.4.3
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Thodoris Greasidis
+                                      nested:
+                                        - commits:
+                                            - subject: Support boolean results from the db as well as integer
+                                              hash: 337c9af41ca4b17e06e79e574b0c5849928a167b
+                                              body: ""
+                                              footer:
+                                                Change-type: patch
+                                                change-type: patch
+                                              author: Pagan Gazzard
+                                          version: sbvr-types-3.4.3
+                                          date: 2021-05-11T13:04:19.851Z
+                                  version: abstract-sql-compiler-7.12.7
+                                  date: 2021-05-18T17:05:09.592Z
+                                - commits:
+                                    - subject: Allow duration seconds to be nullable
+                                      hash: 66775322c806e9fb6fdcdcb922604860f78ee5dc
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.12.6
+                                  date: 2021-05-18T16:34:30.300Z
+                                - commits:
+                                    - subject: Re-enable all tests
+                                      hash: dee9ad52b1ae35e26ccdd129c8e540b83e8cd57e
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.12.5
+                                  date: 2021-05-18T16:24:08.122Z
+                                - commits:
+                                    - subject: Revert "Remove now unnecessary hack for casting SERIAL types"
+                                      hash: 60a56423de9262b5b454ff4cd83c1d1fd39d071e
+                                      body: >
+                                        This reverts commit
+                                        187bc075d237a2ced731d0a026ca25aa3e0f5540.
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.12.4
+                                  date: 2021-05-04T17:51:57.071Z
+                                - commits:
+                                    - subject: Remove now unnecessary hack for casting SERIAL types
+                                      hash: 187bc075d237a2ced731d0a026ca25aa3e0f5540
+                                      body: >
+                                        This became unnecessary when
+                                        @balena/sbvr-types added the concept of
+
+                                        cast types since that now specifies how to cast a SERIAL type
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.12.3
+                                  date: 2021-05-03T11:31:24.967Z
+                                - commits:
+                                    - subject: Update dependencies
+                                      hash: a6219180c9962df1ff0de4951201f088efb1fb4b
+                                      body: |
+                                        Update sbvr-types from 3.1.3 to 3.4.2
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested:
+                                        - commits:
+                                            - subject: Update dev dependencies
+                                              hash: b7c817c8246fb95aab917e8ba1196b695103d962
+                                              body: ""
+                                              footer:
+                                                Change-type: patch
+                                                change-type: patch
+                                              author: Pagan Gazzard
+                                          version: sbvr-types-3.4.2
+                                          date: 2021-03-22T17:11:56.138Z
+                                        - commits:
+                                            - subject: Remove unnecessary native fact type entries for synonymous forms
+                                              hash: 64e889f7bda6f3dcf4c539248e737fef26b5686c
+                                              body: ""
+                                              footer:
+                                                Change-type: patch
+                                                change-type: patch
+                                              author: Pagan Gazzard
+                                          version: sbvr-types-3.4.1
+                                          date: 2021-02-10T18:13:49.610Z
+                                        - commits:
+                                            - subject: Add a `Current Time` name that can be used to refer to the current time
+                                              hash: 83d20325939d0e5f9922f57a36e0932ba71ebad4
+                                              body: ""
+                                              footer:
+                                                Change-type: minor
+                                                change-type: minor
+                                              author: Pagan Gazzard
+                                          version: sbvr-types-3.4.0
+                                          date: 2021-02-08T13:54:15.848Z
+                                        - commits:
+                                            - subject: Add `is before` & `is after` verbs to the Date & DateTime types
+                                              hash: 9d4414558d16821e485e08fc4a0504ef1d6c617f
+                                              body: ""
+                                              footer:
+                                                Change-type: minor
+                                                change-type: minor
+                                                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                                                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                                              author: Thodoris Greasidis
+                                          version: sbvr-types-3.3.0
+                                          date: 2021-02-05T20:43:59.350Z
+                                        - commits:
+                                            - subject: Add support for the `contains` verb to the text type
+                                              hash: 8e074867c7b94f99664b14caaebeddb5e9f1fe9c
+                                              body: ""
+                                              footer:
+                                                Change-type: minor
+                                                change-type: minor
+                                              author: Thodoris Greasidis
+                                            - subject: Add support for the`ends with` verb to the text type
+                                              hash: 4e233bffa0800a9601e80aebf86d70cd518c2901
+                                              body: ""
+                                              footer:
+                                                Change-type: minor
+                                                change-type: minor
+                                              author: Thodoris Greasidis
+                                            - subject: Add support for the `starts with` verb to the text type
+                                              hash: 1b5652a57bbad48f9b9b18c88f8b4ad9e6b01441
+                                              body: ""
+                                              footer:
+                                                Change-type: minor
+                                                change-type: minor
+                                              author: Thodoris Greasidis
+                                          version: sbvr-types-3.2.0
+                                          date: 2021-01-29T19:15:49.140Z
+                                  version: abstract-sql-compiler-7.12.2
+                                  date: 2021-03-22T17:41:46.393Z
+                                - commits:
+                                    - subject: Enable strict options by default and only disable specific ones
+                                      hash: 84bfaac15e78453ff8a87a5a4836505a78f43666
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.12.1
+                                  date: 2021-03-22T17:21:30.316Z
+                                - commits:
+                                    - subject: Enable narrowing down create/delete referenced fields for nested exists
+                                      hash: 5dbc3ddf05701e5b4188bfa8db64d0a12e3b8298
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.12.0
+                                  date: 2021-03-05T20:34:11.366Z
+                                - commits:
+                                    - subject: Generalize/share the referenced fields code and cover more cases
+                                      hash: 3e77ac1aed9f3fb596f6a01a08a1800fead1e860
+                                      body: >
+                                        This now allows detecting deletes that
+                                        are
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.11.0
+                                  date: 2021-03-01T18:55:09.855Z
+                                - commits:
+                                    - subject: Fix `getModifiedFields` for `UpsertQuery`s
+                                      hash: c19c902f1a6e268952540cd19960f6752a303f65
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.10.2
+                                  date: 2021-02-12T19:36:19.259Z
+                                - commits:
+                                    - subject: Separate code relating to referenced fields out of the main file
+                                      hash: 7ca7b5cfad4e8833293426235667cc59245f427a
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.10.1
+                                  date: 2021-01-29T18:35:19.430Z
+                                - commits:
+                                    - subject: Add an `action` property to modified fields of create/update/delete
+                                      hash: 8f071b8724bdae5574d5fea6c9f20e6e77daf3e6
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                    - subject: Automatically add `ruleReferencedFields` to `SqlRule`s
+                                      hash: f49548828fd75957290b6fdec166abf7bb0a53bf
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                    - subject: Add a `getRuleReferencedFields` which is tailored for rules
+                                      hash: 256c36de4a1efb7a46eb9833e1c3228d17194015
+                                      body: >
+                                        This works on the assumption that it is
+                                        a rule query that should always
+
+                                        return true and allows ignoring more modification cases where they
+
+                                        cannot change the result from true to false
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.10.0
+                                  date: 2021-01-29T16:30:19.410Z
+                                - commits:
+                                    - subject: Add test for optimizeSchema optimizing rules
+                                      hash: 4e94ee4961e98305c927734ce85067d409f90e18
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.9.1
+                                  date: 2021-01-29T13:01:10.504Z
+                                - commits:
+                                    - subject: Optimize the abstract sql of rules when running `optimizeSchema`
+                                      hash: 2ed97849674acb76f498c346b28d2861d1827ba5
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.9.0
+                                  date: 2021-01-25T17:48:56.215Z
+                                - commits:
+                                    - subject: Fix schema optimizations when table and resource names are different
+                                      hash: 46704031fbde45fd0e36b0963f8cf524df53398b
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.8.2
+                                  date: 2021-01-15T20:38:59.313Z
+                                - commits:
+                                    - subject: Convert some lodash usage to native equivalents
+                                      hash: 400937fd3b220dccd557d67ff33d83d51ff0b939
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.8.1
+                                  date: 2021-01-04T13:04:45.938Z
+                                - commits:
+                                    - subject: Optimize Is[Not]DistinctFrom and [Not]Exists for non-null values
+                                      hash: 682e84dea2088fb0c336b05be83183e627c20d4f
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.8.0
+                                  date: 2021-01-01T20:22:14.871Z
+                                - commits:
+                                    - subject: Optimize EXISTS/NOT EXISTS for empty queries
+                                      hash: 39431de07eeb98d731a114c1717575d364ddc06f
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.7.0
+                                  date: 2021-01-01T17:47:15.206Z
+                                - commits:
+                                    - subject: Optimize away AND/ORs with false/true respectively
+                                      hash: f0249d98032b0306f7d216b5ad8e8d2c96c466fc
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.6.0
+                                  date: 2021-01-01T16:18:03.545Z
+                                - commits:
+                                    - subject: Optimize out booleans from AND/OR where possible
+                                      hash: d3d9a86ebc231dc4b11b20311e6d007a19202b18
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.5.0
+                                  date: 2021-01-01T14:03:49.386Z
+                          version: odata-to-abstract-sql-5.4.3
+                          date: 2021-08-24T18:50:04.205Z
+                        - commits:
+                            - subject: Delete CODEOWNERS
+                              hash: 2b64f472840fa23d1636bc7ae71fe95780683017
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                                See: https://www.flowdock.com/app/rulemotion/pub/threads/trLcZFnSX9fLZn4LiaIv4xuBbah
+                                see: https://www.flowdock.com/app/rulemotion/pub/threads/trLcZFnSX9fLZn4LiaIv4xuBbah
+                              author: Thodoris Greasidis
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.2
+                          date: 2021-06-30T21:27:55.877Z
+                  version: abstract-sql-to-typescript-1.1.2
+                  title: "'Update dependencies'"
+                  date: 2022-04-08T15:16:42.065Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: 5b17ef11e039219dec3498c531288a1bdfbbc83b
+                      body: |
+                        Update @balena/sbvr-parser from 1.4.0 to 1.4.1
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Update dependencies
+                              hash: 28e057c3c2329b9a3e76dcc136632eab7e271f48
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                            - subject: Remove circleci
+                              hash: cd8d96dc294daa11873cee5d723ecb816e015089
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                          version: sbvr-parser-1.4.1
+                          title: "'Remove circleci/update deps'"
+                          date: 2022-04-08T11:53:36.217Z
+                    - subject: Remove circleci
+                      hash: 2f10bfa8381fba27ed211c4dfe0e47dfec779b21
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: lf-to-abstract-sql-4.5.1
+                  title: "'Remove circleci/update deps'"
+                  date: 2022-04-08T12:05:32.848Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: e63884d3e86c2654fd601cacc53f3e8e61bb1d87
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                    - subject: Remove circleci
+                      hash: 39e258be1ffdd9cce2c4e1bcc4ba69bf00f8de76
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: odata-parser-2.2.9
+                  title: "'Remove circleci/update deps'"
+                  date: 2022-04-08T13:13:27.932Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: a80855150955d687b565a33633fe69b4e5e10ebd
+                      body: >
+                        Update @balena/abstract-sql-compiler from 7.17.0 to
+                        7.19.0
+
+                        Update @balena/odata-parser from 2.2.8 to 2.2.9
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Remove .circleci/config.yml
+                              hash: 017b5e4c10ed4e13b344086888f6bc64cacb9c0c
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                              author: Thodoris Greasidis
+                              nested: []
+                            - subject: Add support for `ConcatenateWithSeparator` nodes
+                              hash: 34bae3f19224ba38cf6806653ef8884a07f41357
+                              body: ""
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                              author: Thodoris Greasidis
+                              nested: []
+                          version: abstract-sql-compiler-7.19.0
+                          title: "'Add support for  nodes'"
+                          date: 2022-03-24T14:48:17.742Z
+                        - commits:
+                            - subject: Add reference property type
+                              hash: d28e2456dff10b18bcc97b7232479fe78efd5eb3
+                              body: >
+                                Property type describes if the reference is
+                                'strict' or 'informative'.
+
+
+                                Behaviour change only if type is informative otherwise default 'strict'.
+
+
+                                An informative reference is just an int field that points
+
+                                to another tables id field - like foreign key without constraints
+
+                                or foregein key cascades.
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                                Signed-off-by: Harald Fischer <harald@balena.io>
+                                signed-off-by: Harald Fischer <harald@balena.io>
+                              author: Harald Fischer
+                              nested: []
+                          version: abstract-sql-compiler-7.18.0
+                          title: "'Add informative reference dataType to schema tests'"
+                          date: 2022-02-16T14:18:44.963Z
+                        - commits:
+                            - subject: Avoid the operation type optimization for HAVING clauses
+                              hash: 3fcf08bc02c21d9f49b78787ed516fa9a403f021
+                              body: >
+                                Since it's possible for them to behave in a way
+                                that violates the
+
+                                safety checks we'll disable them until we can add specific checks
+
+                                for the HAVING clause
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: abstract-sql-compiler-7.17.1
+                          date: 2022-01-24T17:36:32.056Z
+                        - commits:
+                            - subject: Update dependencies
+                              hash: e63884d3e86c2654fd601cacc53f3e8e61bb1d87
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                            - subject: Remove circleci
+                              hash: 39e258be1ffdd9cce2c4e1bcc4ba69bf00f8de76
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                          version: odata-parser-2.2.9
+                          title: "'Remove circleci/update deps'"
+                          date: 2022-04-08T13:13:27.932Z
+                    - subject: Remove circleci
+                      hash: a0d153897fe474fbb6fb87f2606c3d8ca5296799
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: odata-to-abstract-sql-5.4.9
+                  title: "'Remove circleci/update deps'"
+                  date: 2022-04-08T13:29:18.390Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: edc7575ac0976037506deb076d034e7cf08ce5bb
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                    - subject: Remove circleci
+                      hash: 59c5a36292a80149b305d83a4d22b4d2dbe3001d
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: pinejs-client-js-6.10.2
+                  title: "'Remove circleci/update deps'"
+                  date: 2022-04-08T13:22:23.848Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: 28e057c3c2329b9a3e76dcc136632eab7e271f48
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                    - subject: Remove circleci
+                      hash: cd8d96dc294daa11873cee5d723ecb816e015089
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: sbvr-parser-1.4.1
+                  title: "'Remove circleci/update deps'"
+                  date: 2022-04-08T11:53:36.217Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: e416444d436c0e01474b624408635a811259f9a1
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                    - subject: Remove circleci
+                      hash: 15cbb6de080f6f5a7898d1626d9948b371d971b2
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: sbvr-types-3.4.7
+                  title: "'Remove circleci/update deps'"
+                  date: 2022-04-08T13:33:49.743Z
+          version: pinejs-14.42.1
+          title: "'Update dependencies'"
+          date: 2022-04-20T15:58:46.567Z
+        - commits:
+            - subject: Add an expiry date to 'api key'
+              hash: 153f05c6eb7828a239872a4346f2d0392ffe2f93
+              body: ""
+              footer:
+                Change-Type: minor
+                change-type: minor
+                Signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+                signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+              author: Nitish Agarwal
+              nested: []
+          version: pinejs-14.42.0
+          title: "'Add an expiry date to 'api key''"
+          date: 2022-04-13T17:13:03.727Z
+        - commits:
+            - subject: Add link and npm package version badge
+              hash: 9218483726ccc03e187087c7b89b05d6ef89586d
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-14.41.2
+          title: "'Add link and npm package version badge'"
+          date: 2022-04-07T14:10:15.339Z
+        - commits:
+            - subject: Update dependencies
+              hash: f3f119caddf949b9493f35c271613520121a629c
+              body: |
+                Update pinejs-client-core from 6.10.0 to 6.10.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Do not await the _request() result to allow enhanced promises
+                        downstream
+                      hash: a209138f928809869d68e05cdcea4c2bf0d1fac1
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                      author: Thodoris Greasidis
+                  version: pinejs-client-js-6.10.1
+                  title: "'Avoid modifying the resulting promise when retries are not used'"
+                  date: 2022-02-08T23:33:07.778Z
+          version: pinejs-14.41.1
+          title: "'Update dependencies'"
+          date: 2022-04-01T14:58:06.990Z
+        - commits:
+            - subject: Update dependencies
+              hash: 037251e064e52c3b16b33362d2e88d52d577db73
+              body: |
+                Update @balena/abstract-sql-compiler from 7.18.0 to 7.19.0
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+              author: Thodoris Greasidis
+              nested:
+                - commits:
+                    - subject: Remove .circleci/config.yml
+                      hash: 017b5e4c10ed4e13b344086888f6bc64cacb9c0c
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                      author: Thodoris Greasidis
+                      nested: []
+                    - subject: Add support for `ConcatenateWithSeparator` nodes
+                      hash: 34bae3f19224ba38cf6806653ef8884a07f41357
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Thodoris Greasidis
+                      nested: []
+                  version: abstract-sql-compiler-7.19.0
+                  title: "'Add support for  nodes'"
+                  date: 2022-03-24T14:48:17.742Z
+          version: pinejs-14.41.0
+          title: "'Update dependencies'"
+          date: 2022-03-24T15:22:09.436Z
+        - commits:
+            - subject: Add logo and header to README
+              hash: 4960c03fb07ccf3b2fe98da153de8d567a4270d8
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Lucian Buzzo <lucian.buzzo@gmail.com>
+                signed-off-by: Lucian Buzzo <lucian.buzzo@gmail.com>
+              author: Lucian Buzzo
+              nested: []
+          version: pinejs-14.40.2
+          title: "'Add logo and header to README'"
+          date: 2022-03-18T20:29:44.605Z
+        - commits:
+            - subject: Fixed unneccessary @ts-expect-error + lint
+              hash: dad9192dfd9b783b134317b6a5f9aad16417f60b
+              body: >
+                PG Types have added maxUses as key and ts except is not needed
+                any more.
+
+
+                Fixed a linting change
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-14.40.1
+          title: "'Fixed unneccessary @ts-expect-error'"
+          date: 2022-03-18T20:14:06.711Z
+        - commits:
+            - subject: Update dependencies for referenceType
+              hash: fa5ec8302014fc4f54a0b933e1e34b99a353a0b8
+              body: |
+                Update @balena/abstract-sql-compiler from 7.17.1 to 7.18.0
+                Update @balena/lf-to-abstract-sql from 4.4.1 to 4.5.0
+                Update @balena/sbvr-parser from 1.3.0 to 1.4.0
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested:
+                - commits:
+                    - subject: Add reference property type
+                      hash: d28e2456dff10b18bcc97b7232479fe78efd5eb3
+                      body: >
+                        Property type describes if the reference is 'strict' or
+                        'informative'.
+
+
+                        Behaviour change only if type is informative otherwise default 'strict'.
+
+
+                        An informative reference is just an int field that points
+
+                        to another tables id field - like foreign key without constraints
+
+                        or foregein key cascades.
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                        Signed-off-by: Harald Fischer <harald@balena.io>
+                        signed-off-by: Harald Fischer <harald@balena.io>
+                      author: Harald Fischer
+                      nested: []
+                  version: abstract-sql-compiler-7.18.0
+                  title: "'Add informative reference dataType to schema tests'"
+                  date: 2022-02-16T14:18:44.963Z
+                - commits:
+                    - subject: Reference property type for informative references
+                      hash: 647c05a1111f39fb5f1b03de59a641cf32050bf6
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                        Signed-off-by: Harald Fischer <harald@balena.io>
+                        signed-off-by: Harald Fischer <harald@balena.io>
+                      author: Harald Fischer
+                      nested: []
+                  version: lf-to-abstract-sql-4.5.0
+                  title: "'Reference property type'"
+                  date: 2022-02-16T14:06:44.717Z
+                - commits:
+                    - subject: Addind ReferenceType
+                      hash: aa064c2f1f0d40d4fd07da53fe0b6f0e4a692e07
+                      body: >
+                        Reference type is needed to realise informative
+                        references
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                        Signed-off-by: Harald Fischer <harald@balena.io>
+                        signed-off-by: Harald Fischer <harald@balena.io>
+                      author: Harald Fischer
+                  version: sbvr-parser-1.4.0
+                  title: "'Attribute ReferenceType'"
+                  date: 2022-02-16T13:52:05.386Z
+          version: pinejs-14.40.0
+          title: "'Update dependencies for referenceType'"
+          date: 2022-03-04T16:24:21.068Z
+        - commits:
+            - subject: Remove circle.yml
+              hash: 038e7efa021a92c5585784493c3024446d25933e
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.39.2
+          title: "'Remove circle.yml'"
+          date: 2022-03-04T13:19:00.877Z
+  version: 3.0.0
+  title: "'auth: Accept optional transaction parameter for user XHR login'"
+  date: 2022-07-04T18:10:05.043Z
+- commits:
+    - subject: Update dependencies
+      hash: cb4ed636b5b6d1a1ecb03309d4336daf6189dbe3
+      body: |
+        Update @balena/abstract-sql-compiler from 7.19.1 to 7.20.0
+        Update @balena/pinejs from 14.42.2 to 14.43.5
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested:
+        - commits:
+            - subject: Update dependencies
+              hash: b765b0941de329230e4d38bbe2c994491413c3ce
+              body: |
+                Update @balena/abstract-sql-compiler from 7.19.1 to 7.20.0
+                Update @balena/odata-to-abstract-sql from 5.4.9 to 5.4.11
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Expose `isAliasNode` helper
+                      hash: 6f59b2d31e4dee5eef008e755d4ee2cb42dd50ba
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-7.20.0
+                  title: "'Expose  helper'"
+                  date: 2022-05-19T17:25:29.766Z
+                - commits:
+                    - subject: Improve support for computed fields by respecting them in more places
+                      hash: 3346e579e5e0b2b7b01066b3d95bd5b6e6281c63
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: odata-to-abstract-sql-5.4.11
+                  title: "'Improve computed fields'"
+                  date: 2022-05-19T19:26:50.059Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: 19c112c863b63bdd8d86a04b704fb136077d01a9
+                      body: >
+                        Update @balena/abstract-sql-compiler from 7.19.0 to
+                        7.20.0
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Expose `isAliasNode` helper
+                              hash: 6f59b2d31e4dee5eef008e755d4ee2cb42dd50ba
+                              body: ""
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                              author: Pagan Gazzard
+                              nested: []
+                          version: abstract-sql-compiler-7.20.0
+                          title: "'Expose  helper'"
+                          date: 2022-05-19T17:25:29.766Z
+                        - commits:
+                            - subject: Update dependencies
+                              hash: 923dd2d492246b99cc62d51a25dd96464e7c1e87
+                              body: |
+                                Update @balena/sbvr-types from 3.4.5 to 3.4.7
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested:
+                                - commits:
+                                    - subject: Update dependencies
+                                      hash: e416444d436c0e01474b624408635a811259f9a1
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                    - subject: Remove circleci
+                                      hash: 15cbb6de080f6f5a7898d1626d9948b371d971b2
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                  version: sbvr-types-3.4.7
+                                  title: "'Remove circleci/update deps'"
+                                  date: 2022-04-08T13:33:49.743Z
+                                - commits:
+                                    - subject: Avoid creating a new Date object when we already have one
+                                      hash: 07eb756eca00a506b618dc197b67dcc7a9ea3733
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                  version: sbvr-types-3.4.6
+                                  date: 2021-09-21T14:01:00.590Z
+                          version: abstract-sql-compiler-7.19.1
+                          title: "'Update dependencies'"
+                          date: 2022-04-08T13:57:15.961Z
+                  version: odata-to-abstract-sql-5.4.10
+                  title: "'Update dependencies'"
+                  date: 2022-05-19T18:23:14.608Z
+          version: pinejs-14.43.5
+          title: "'Update dependencies'"
+          date: 2022-05-20T11:58:56.632Z
+        - commits:
+            - subject: Only remove constrained aliases when they match the field name
+              hash: 35a0647d3a21e45afa1f9982c5d77c14a47a0d35
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.43.4
+          title: "'Leave aliases intact'"
+          date: 2022-05-18T16:37:28.536Z
+        - commits:
+            - subject: Use the modern definition format for permission constrained definitions
+              hash: 187eec84dd2e1b097a4ef2d62bb8bfd917536342
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.43.3
+          title: "'Use the modern definition format for permission constrained
+            definitions'"
+          date: 2022-05-16T16:04:51.770Z
+        - commits:
+            - subject: Update to webpack 5
+              hash: c81e3df13232f9a7730c005288fa0f4123066e3c
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.43.2
+          title: "'Update to webpack 5'"
+          date: 2022-05-12T14:40:46.324Z
+        - commits:
+            - subject: Simplify check for read-only hooks
+              hash: 6c62635fe12ba0f4a1acae2dcbebad5efb03e120
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.43.1
+          title: "'Simplify check for read-only hooks'"
+          date: 2022-05-12T14:12:16.520Z
+        - commits:
+            - subject: inital test framework for pinejs
+              hash: b55af22181531f7068f3137b40374a42e5ecaa10
+              body: |
+                Addind mocha, ts-node and chai to  pinejs.
+                Utilising docker-compose to handle test requirements like db
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-14.43.0
+          title: "'inital test framework for pinejs'"
+          date: 2022-04-28T13:31:32.039Z
+  version: 2.0.1
+  title: "'Update dependencies'"
+  date: 2022-06-26T14:06:53.968Z
+- commits:
+    - subject: Update sinon from 13.0.2 to 14.0.0
+      hash: 0f4ded36b3f6e39064d3036a9424840e19e30003
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Renovate Bot
+      nested: []
+  version: 2.0.0
+  title: "'Update sinon from 13.0.2 to 14.0.0'"
+  date: 2022-06-17T07:41:14.670Z
+- commits:
+    - subject: Update mocha from 9.2.2 to 10.0.0
+      hash: d4b373b7aa606231a3b4c35cdb77c570eacf2c9d
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Renovate Bot
+      nested: []
+  version: 1.0.0
+  title: "'Update mocha from 9.2.2 to 10.0.0'"
+  date: 2022-06-16T22:16:48.666Z
+- commits:
+    - subject: Add a cleanup npm script to remove all runtime caches
+      hash: d9e0b332bf78dfb938a7933a224c98fc311a05d9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.209.2
+  title: "'Add a cleanup npm script to remove all runtime caches'"
+  date: 2022-06-16T21:29:50.007Z
+- commits:
+    - subject: "repo.yml: Use module names that match renovate's depName"
+      hash: 4a2b0126af322922667e091461040134bccb364c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.209.1
+  title: "'repo.yml: Use module names that match renovate's depName'"
+  date: 2022-06-16T19:22:30.590Z
+- commits:
+    - subject: "auth: Limit password length to 64 characters"
+      hash: a616af49c19937c734d387a0bbcbcf3f3ba0f4b3
+      body: ""
+      footer:
+        Connects-to: "#1050"
+        connects-to: "#1050"
+        Change-type: minor
+        change-type: minor
+        See: https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#implement-proper-password-strength-controls
+        see: https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#implement-proper-password-strength-controls
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.209.0
+  title: "'auth: Limit password length to 64 characters'"
+  date: 2022-06-14T23:21:36.106Z
+- commits:
+    - subject: Update cache-manager from 3.6.1 to 4.0.1
+      hash: 4740170c780f847c3598157d559c9b4e484504f6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 0.208.6
+  title: "'Update cache-manager from 3.6.1 to 4.0.1'"
+  date: 2022-06-14T12:06:35.497Z
+- commits:
+    - subject: Update balena/open-balena-base from v13.3.1 to v13.3.2
+      hash: d62a78e25de989080289478e3b185746d41d0cf9
+      body: |
+        Update balena/open-balena-base from 13.3.1 to 13.3.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 0.208.5
+  title: "'Update balena/open-balena-base from v13.3.1 to v13.3.2'"
+  date: 2022-06-14T11:17:46.927Z
+- commits:
+    - subject: Update @types/node-schedule from 1.3.2 to 2.1.0
+      hash: bc23510a7124cadedc14d6bee77f0c7954e63780
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 0.208.4
+  title: "'Update @types/node-schedule from 1.3.2 to 2.1.0'"
+  date: 2022-06-13T21:43:16.040Z
+- commits:
+    - subject: Add test for the release update progress
+      hash: 13c23a730f248083a66f7d4d7a2dd55b7b5a9b14
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.208.3
+  title: "'Add test for the release update progress'"
+  date: 2022-06-13T13:07:46.935Z
+- commits:
+    - subject: "patch: Bump semver-regex from 3.1.3 to 3.1.4"
+      hash: a7345de110e9205842f50556ba07bca04c00099c
+      body: >
+        Bumps [semver-regex](https://github.com/sindresorhus/semver-regex) from
+        3.1.3 to 3.1.4.
+
+        - [Release notes](https://github.com/sindresorhus/semver-regex/releases)
+
+        - [Commits](https://github.com/sindresorhus/semver-regex/commits/v3.1.4)
+
+
+        ---
+
+        updated-dependencies:
+
+        - dependency-name: semver-regex
+          dependency-type: indirect
+        ...
+      footer:
+        Signed-off-by: dependabot[bot] <support@github.com>
+        signed-off-by: dependabot[bot] <support@github.com>
+      author: dependabot[bot]
+      nested: []
+  version: 0.208.2
+  title: "'Bump semver-regex from 3.1.3 to 3.1.4'"
+  date: 2022-06-06T14:28:46.763Z
+- commits:
+    - subject: "balena.sbvr: Note that release.release_version is deprecated"
+      hash: 16ac5bbe4797a1c5036181ba34bc1ab0a2d77254
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://www.flowdock.com/app/rulemotion/resin-tech/threads/uilzd9PITMmMprh75HXa_yYJnc6
+        see: https://www.flowdock.com/app/rulemotion/resin-tech/threads/uilzd9PITMmMprh75HXa_yYJnc6
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.208.1
+  title: "'balena.sbvr: Note that release.release_version is deprecated'"
+  date: 2022-06-03T15:28:55.245Z
+- commits:
+    - subject: Add release phase to the model
+      hash: 40dd13ee9068b305f531bcef992700d3660961b1
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://jel.ly.fish/improvement-server-side-filtering-pagination-sorting-autoui-d8cc8c0
+        see: https://jel.ly.fish/improvement-server-side-filtering-pagination-sorting-autoui-d8cc8c0
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.208.0
+  title: "'Add release phase to the model'"
+  date: 2022-06-01T08:59:04.713Z
+- commits:
+    - subject: Sort some sbvr terms alphabetically
+      hash: 8422e14e3268be235b241a1222aa742891c5c2a5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.207.9
+  title: "'Sort some sbvr terms alphabetically'"
+  date: 2022-05-31T09:44:58.958Z
+- commits:
+    - subject: Add provisioning key expiry date to generic api key endpoint
+      hash: 2acafcfc2c416230e37a17f844c93bec303ac7df
+      body: ""
+      footer:
+        Change-Type: patch
+        change-type: patch
+        Signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+        signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+      author: Nitish Agarwal
+      nested: []
+  version: 0.207.8
+  title: "'Add provisioning key expiry date to generic api key endpoint'"
+  date: 2022-05-26T14:15:27.114Z
+- commits:
+    - subject: Update TypeScript to v4.7
+      hash: 9633a7027478f2bc9898123c532eba10914d3927
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.207.7
+  title: "'Update TypeScript to v4.7'"
+  date: 2022-05-25T08:10:19.950Z
+- commits:
+    - subject: Re-generate the model types to include reverse navigation resources
+      hash: d816a1c352d7bc1eef83a9cbf32a1d68200cf842
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Optimize the release resolution in state v2 PATCH endpoint
+      hash: b3c556d2f1df6163d578906beb6d6424301ae597
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.207.6
+  title: "'Re-generate the model types to include reverse navigation resources'"
+  date: 2022-05-24T18:00:15.492Z
+- commits:
+    - subject: Change the device type local cache timeout to 5 minutes
+      hash: 08e575411d5bb5cd45e84cd6e7ab06c8e8f48ddc
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Invalidate the device type JSONs cache when a new hostApp is created
+      hash: 71b4c3d6da97008b5b0e95056db4f288171bfeeb
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: "mutli-level-memoizee: Support different preFetch per cache"
+      hash: 6a5f8b170eaedec8483b42ba3a0162c79293bfc8
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.207.5
+  title: "'Invalidate the device type JSONs cache when a new hostApp is created'"
+  date: 2022-05-06T11:50:23.836Z
+- commits:
+    - subject: Update open-balena-base to 13.3.1
+      hash: 4308b7133851a1c5bc648b2c9721600f109c7109
+      body: |
+        Update open-balena-base from 13.3.0 to 13.3.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Add SystemMaxUse for journald.conf
+              hash: 59543bf6b8b1faf2914be1ff2302982c0d269b33
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.3.1
+          title: "'Add SystemMaxUse for journald.conf'"
+          date: 2022-05-05T09:33:37.847Z
+  version: 0.207.4
+  title: "'Update open-balena-base to 13.3.1'"
+  date: 2022-05-05T10:04:17.897Z
+- commits:
+    - subject: Update open-balena-base to 13.3.0
+      hash: 4bcafd3b32d5eb299b60f4d9be40b32cf91dca81
+      body: |
+        Update open-balena-base from 13.2.3 to 13.3.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 16.15.0 and npm to 8.8.0
+              hash: a7454fb62d845e444e3e798c577a264979da574a
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.3.0
+          title: "'Update nodejs to 16.15.0 and npm to 8.8.0'"
+          date: 2022-05-02T16:14:06.385Z
+  version: 0.207.3
+  title: "'Update open-balena-base to 13.3.0'"
+  date: 2022-05-03T08:53:27.785Z
+- commits:
+    - subject: Optimize missing service-install detection for large fleets
+      hash: b3ae6bf99bdf86cd727946e542af806ec45044e9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.207.2
+  title: "'Optimize missing service-install detection for large fleets'"
+  date: 2022-04-29T22:42:29.691Z
+- commits:
+    - subject: Fix early exist check on service install creation from application PATCH
+      hash: 523f9cf3d1f877218c8880a77a252783951c67b5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.207.1
+  title: "'Fix early exist check on service install creation from application PATCH'"
+  date: 2022-04-29T19:21:02.409Z
+- commits:
+    - subject: Add optional expiration date on api keys
+      hash: d44c7f4ee0d401c90bba1e193c42a98f55a4cad4
+      body: ""
+      footer:
+        Change-Type: minor
+        change-type: minor
+        Signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+        signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+      author: Nitish Agarwal
+      nested: []
+  version: 0.207.0
+  title: "'Add an option to input expiry date for provisioning key'"
+  date: 2022-04-28T15:53:37.119Z
+- commits:
+    - subject: "env-vars: Add a validation pattern for the BALENA_HOST_SPLASH_IMAGE"
+      hash: b296f59aa0eff4a9a3961bd276b839e684199813
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: "env-vars: Remove the invalid default value for BALENA_HOST_SPLASH_IMAGE"
+      hash: d31a58ccca307fc1cc6d12d1902ae30b3e65f24e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.206.6
+  title: "'Fix splash logo config var definition'"
+  date: 2022-04-28T13:08:48.708Z
+- commits:
+    - subject: Update dependencies
+      hash: 89136767d63bfaef9316c388da3458d06d40cdba
+      body: |
+        Update @balena/pinejs from 14.41.1 to 14.42.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Use the db engine from the existing request when getting affected ids
+              hash: 2e95c62654ad5a4f4c92d941c7e433337790b032
+              body: >
+                In practice the module level `db.engine` will always match the
+
+                `request.engine` but this future proofs things and makes it clear where
+
+                this value actually comes from
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.42.2
+          title: "'Use the db engine from the existing request when getting affected ids'"
+          date: 2022-04-20T17:24:16.328Z
+        - commits:
+            - subject: Update dependencies
+              hash: 5009aecb7b6ae68dbe4ed53d95ec0cab45e19564
+              body: |
+                Update @balena/abstract-sql-compiler from 7.19.0 to 7.19.1
+                Update @balena/abstract-sql-to-typescript from 1.1.1 to 1.2.0
+                Update @balena/lf-to-abstract-sql from 4.5.0 to 4.5.1
+                Update @balena/odata-parser from 2.2.8 to 2.2.9
+                Update @balena/odata-to-abstract-sql from 5.4.8 to 5.4.9
+                Update @balena/sbvr-parser from 1.4.0 to 1.4.1
+                Update @balena/sbvr-types from 3.4.6 to 3.4.7
+                Update pinejs-client-core from 6.10.1 to 6.10.2
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Update dependencies
+                      hash: 923dd2d492246b99cc62d51a25dd96464e7c1e87
+                      body: |
+                        Update @balena/sbvr-types from 3.4.5 to 3.4.7
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Update dependencies
+                              hash: e416444d436c0e01474b624408635a811259f9a1
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                            - subject: Remove circleci
+                              hash: 15cbb6de080f6f5a7898d1626d9948b371d971b2
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                          version: sbvr-types-3.4.7
+                          title: "'Remove circleci/update deps'"
+                          date: 2022-04-08T13:33:49.743Z
+                        - commits:
+                            - subject: Avoid creating a new Date object when we already have one
+                              hash: 07eb756eca00a506b618dc197b67dcc7a9ea3733
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                          version: sbvr-types-3.4.6
+                          date: 2021-09-21T14:01:00.590Z
+                  version: abstract-sql-compiler-7.19.1
+                  title: "'Update dependencies'"
+                  date: 2022-04-08T13:57:15.961Z
+                - commits:
+                    - subject: Add support for reverse references using relationships info
+                      hash: 0899e7780f41e34f7ee396f24fc4aff1edf7e4f8
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-to-typescript-1.2.0
+                  title: "'Add support for reverse references using relationships info'"
+                  date: 2022-04-15T14:46:55.075Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: dd79d29d1e4ac31a4fdf7daf2e663ef876aec09c
+                      body: >
+                        Update @balena/abstract-sql-compiler from 7.4.2 to
+                        7.19.1
+
+                        Update @balena/odata-to-abstract-sql from 5.4.1 to 5.4.9
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Update dependencies
+                              hash: a80855150955d687b565a33633fe69b4e5e10ebd
+                              body: >
+                                Update @balena/abstract-sql-compiler from 7.17.0
+                                to 7.19.0
+
+                                Update @balena/odata-parser from 2.2.8 to 2.2.9
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested:
+                                - commits:
+                                    - subject: Remove .circleci/config.yml
+                                      hash: 017b5e4c10ed4e13b344086888f6bc64cacb9c0c
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                                        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                                      author: Thodoris Greasidis
+                                      nested: []
+                                    - subject: Add support for `ConcatenateWithSeparator` nodes
+                                      hash: 34bae3f19224ba38cf6806653ef8884a07f41357
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Thodoris Greasidis
+                                      nested: []
+                                  version: abstract-sql-compiler-7.19.0
+                                  title: "'Add support for  nodes'"
+                                  date: 2022-03-24T14:48:17.742Z
+                                - commits:
+                                    - subject: Add reference property type
+                                      hash: d28e2456dff10b18bcc97b7232479fe78efd5eb3
+                                      body: >
+                                        Property type describes if the reference
+                                        is 'strict' or 'informative'.
+
+
+                                        Behaviour change only if type is informative otherwise default 'strict'.
+
+
+                                        An informative reference is just an int field that points
+
+                                        to another tables id field - like foreign key without constraints
+
+                                        or foregein key cascades.
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                        Signed-off-by: Harald Fischer <harald@balena.io>
+                                        signed-off-by: Harald Fischer <harald@balena.io>
+                                      author: Harald Fischer
+                                      nested: []
+                                  version: abstract-sql-compiler-7.18.0
+                                  title: "'Add informative reference dataType to schema tests'"
+                                  date: 2022-02-16T14:18:44.963Z
+                                - commits:
+                                    - subject: Avoid the operation type optimization for HAVING clauses
+                                      hash: 3fcf08bc02c21d9f49b78787ed516fa9a403f021
+                                      body: >
+                                        Since it's possible for them to behave
+                                        in a way that violates the
+
+                                        safety checks we'll disable them until we can add specific checks
+
+                                        for the HAVING clause
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.17.1
+                                  date: 2022-01-24T17:36:32.056Z
+                                - commits:
+                                    - subject: Update dependencies
+                                      hash: e63884d3e86c2654fd601cacc53f3e8e61bb1d87
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                    - subject: Remove circleci
+                                      hash: 39e258be1ffdd9cce2c4e1bcc4ba69bf00f8de76
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                  version: odata-parser-2.2.9
+                                  title: "'Remove circleci/update deps'"
+                                  date: 2022-04-08T13:13:27.932Z
+                            - subject: Remove circleci
+                              hash: a0d153897fe474fbb6fb87f2606c3d8ca5296799
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.9
+                          title: "'Remove circleci/update deps'"
+                          date: 2022-04-08T13:29:18.390Z
+                        - commits:
+                            - subject: Use the full alias for the prefix hash
+                              hash: d60132e2eed1408735c1ee6dae12d69548cb1796
+                              body: >
+                                This simplifies the code and also avoids an
+                                issue where we not using
+
+                                enough of the prefix for the hash
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.8
+                          date: 2022-01-13T13:11:52.889Z
+                        - commits:
+                            - subject: Use a hash instead of random str when it's necessary to shorten aliases
+                              hash: cb05ec69fe0e08fc4619b38a99272c3a7ea42e21
+                              body: >
+                                This means the prefix will be stable/reliable
+                                across runs and make it
+
+                                easier to compare the output generating from different runs
+
+
+                                Update @balena/abstract-sql-compiler from 7.14.1 to 7.17.0
+
+                                Update @balena/lf-to-abstract-sql from 4.3.0 to 4.4.1
+
+                                Update @balena/sbvr-parser from 1.2.5 to 1.3.0
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.7
+                          date: 2022-01-11T17:40:53.504Z
+                        - commits:
+                            - subject: Improve `ResourceFunction` typings
+                              hash: b511221bb08ad74b72020093f618ba49db5be765
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.6
+                          date: 2021-11-30T16:42:04.591Z
+                        - commits:
+                            - subject: Fix `isBindReference` check for non-null non-object types
+                              hash: a1d356e93d8b6f4e137e70ebf5c1719b88e20ea5
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.5
+                          date: 2021-11-26T16:03:43.668Z
+                        - commits:
+                            - subject: Convert tests to type checked javascript
+                              hash: a5ba8586c03c85918d69f051b499e2e8f0751e4f
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.4
+                          date: 2021-09-07T14:57:14.139Z
+                        - commits:
+                            - subject: Add SBVR Date TIme Type to DateTrunc Wrapper JS Date format has only
+                                milliseconds precision, postgresql stores
+                                TIMESTAMPS with microseconds precission.
+                                Comparisions may fail, when giving millisecond
+                                JS dates but comparing on microseconds.
+                              hash: 4cc9f617facc62717cf475c93b3b12232475e9a0
+                              body: >
+                                Update abstract-sql-compiler from 7.4.2 to 7.13.4
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                                Signed-off-by: fisehara <harald@balena.io>
+                                signed-off-by: fisehara <harald@balena.io>
+                              author: fisehara
+                              nested:
+                                - commits:
+                                    - subject: Support for non postgres db engines
+                                      hash: 7f93d469cadec5fe77353dff90bbf0183debaaab
+                                      body: |
+                                        FunctionWrapper type for ReferencedField
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                        Signed-off-by: fisehara <harald@balena.io>
+                                        signed-off-by: fisehara <harald@balena.io>
+                                      author: fisehara
+                                      nested: []
+                                  version: abstract-sql-compiler-7.13.4
+                                  date: 2021-08-17T09:30:05.634Z
+                                - commits:
+                                    - subject: Supprt date_trunc postgres date function for DateValue
+                                      hash: 75066d356729fdd9d230abcd639c80ac806018ab
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                        Signed-off-by: fisehara harald@balena.io
+                                        signed-off-by: fisehara harald@balena.io
+                                      author: fisehara
+                                      nested: []
+                                  version: abstract-sql-compiler-7.13.3
+                                  date: 2021-07-28T08:58:56.916Z
+                                - commits:
+                                    - subject: Update dependencies
+                                      hash: 8fc84d38e28b1dfdf5a3d349fde874e81c4c9a02
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.13.2
+                                  date: 2021-07-26T13:53:41.679Z
+                                - commits:
+                                    - subject: Delete CODEOWNERS
+                                      hash: 91a8e9ac9b30d144c7a9034eeda9bd30956addfd
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                        See: https://www.flowdock.com/app/rulemotion/pub/threads/trLcZFnSX9fLZn4LiaIv4xuBbah
+                                        see: https://www.flowdock.com/app/rulemotion/pub/threads/trLcZFnSX9fLZn4LiaIv4xuBbah
+                                      author: Thodoris Greasidis
+                                      nested: []
+                                  version: abstract-sql-compiler-7.13.1
+                                  date: 2021-06-30T21:23:27.059Z
+                                - commits:
+                                    - subject: Add support for `CurrentTimestamp`/`CurrentDate` nodes
+                                      hash: 0f2dce05456d953a09cbe13df3bf95471026db4a
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.13.0
+                                  date: 2021-05-18T18:28:20.380Z
+                                - commits:
+                                    - subject: Update sbvr-types to 3.4.3
+                                      hash: 4acfbd8870b6948ea243a663515f1ebb3e0233d4
+                                      body: |
+                                        Update sbvr-types from 3.4.2 to 3.4.3
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Thodoris Greasidis
+                                      nested:
+                                        - commits:
+                                            - subject: Support boolean results from the db as well as integer
+                                              hash: 337c9af41ca4b17e06e79e574b0c5849928a167b
+                                              body: ""
+                                              footer:
+                                                Change-type: patch
+                                                change-type: patch
+                                              author: Pagan Gazzard
+                                          version: sbvr-types-3.4.3
+                                          date: 2021-05-11T13:04:19.851Z
+                                  version: abstract-sql-compiler-7.12.7
+                                  date: 2021-05-18T17:05:09.592Z
+                                - commits:
+                                    - subject: Allow duration seconds to be nullable
+                                      hash: 66775322c806e9fb6fdcdcb922604860f78ee5dc
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.12.6
+                                  date: 2021-05-18T16:34:30.300Z
+                                - commits:
+                                    - subject: Re-enable all tests
+                                      hash: dee9ad52b1ae35e26ccdd129c8e540b83e8cd57e
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.12.5
+                                  date: 2021-05-18T16:24:08.122Z
+                                - commits:
+                                    - subject: Revert "Remove now unnecessary hack for casting SERIAL types"
+                                      hash: 60a56423de9262b5b454ff4cd83c1d1fd39d071e
+                                      body: >
+                                        This reverts commit
+                                        187bc075d237a2ced731d0a026ca25aa3e0f5540.
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.12.4
+                                  date: 2021-05-04T17:51:57.071Z
+                                - commits:
+                                    - subject: Remove now unnecessary hack for casting SERIAL types
+                                      hash: 187bc075d237a2ced731d0a026ca25aa3e0f5540
+                                      body: >
+                                        This became unnecessary when
+                                        @balena/sbvr-types added the concept of
+
+                                        cast types since that now specifies how to cast a SERIAL type
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.12.3
+                                  date: 2021-05-03T11:31:24.967Z
+                                - commits:
+                                    - subject: Update dependencies
+                                      hash: a6219180c9962df1ff0de4951201f088efb1fb4b
+                                      body: |
+                                        Update sbvr-types from 3.1.3 to 3.4.2
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested:
+                                        - commits:
+                                            - subject: Update dev dependencies
+                                              hash: b7c817c8246fb95aab917e8ba1196b695103d962
+                                              body: ""
+                                              footer:
+                                                Change-type: patch
+                                                change-type: patch
+                                              author: Pagan Gazzard
+                                          version: sbvr-types-3.4.2
+                                          date: 2021-03-22T17:11:56.138Z
+                                        - commits:
+                                            - subject: Remove unnecessary native fact type entries for synonymous forms
+                                              hash: 64e889f7bda6f3dcf4c539248e737fef26b5686c
+                                              body: ""
+                                              footer:
+                                                Change-type: patch
+                                                change-type: patch
+                                              author: Pagan Gazzard
+                                          version: sbvr-types-3.4.1
+                                          date: 2021-02-10T18:13:49.610Z
+                                        - commits:
+                                            - subject: Add a `Current Time` name that can be used to refer to the current time
+                                              hash: 83d20325939d0e5f9922f57a36e0932ba71ebad4
+                                              body: ""
+                                              footer:
+                                                Change-type: minor
+                                                change-type: minor
+                                              author: Pagan Gazzard
+                                          version: sbvr-types-3.4.0
+                                          date: 2021-02-08T13:54:15.848Z
+                                        - commits:
+                                            - subject: Add `is before` & `is after` verbs to the Date & DateTime types
+                                              hash: 9d4414558d16821e485e08fc4a0504ef1d6c617f
+                                              body: ""
+                                              footer:
+                                                Change-type: minor
+                                                change-type: minor
+                                                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                                                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                                              author: Thodoris Greasidis
+                                          version: sbvr-types-3.3.0
+                                          date: 2021-02-05T20:43:59.350Z
+                                        - commits:
+                                            - subject: Add support for the `contains` verb to the text type
+                                              hash: 8e074867c7b94f99664b14caaebeddb5e9f1fe9c
+                                              body: ""
+                                              footer:
+                                                Change-type: minor
+                                                change-type: minor
+                                              author: Thodoris Greasidis
+                                            - subject: Add support for the`ends with` verb to the text type
+                                              hash: 4e233bffa0800a9601e80aebf86d70cd518c2901
+                                              body: ""
+                                              footer:
+                                                Change-type: minor
+                                                change-type: minor
+                                              author: Thodoris Greasidis
+                                            - subject: Add support for the `starts with` verb to the text type
+                                              hash: 1b5652a57bbad48f9b9b18c88f8b4ad9e6b01441
+                                              body: ""
+                                              footer:
+                                                Change-type: minor
+                                                change-type: minor
+                                              author: Thodoris Greasidis
+                                          version: sbvr-types-3.2.0
+                                          date: 2021-01-29T19:15:49.140Z
+                                  version: abstract-sql-compiler-7.12.2
+                                  date: 2021-03-22T17:41:46.393Z
+                                - commits:
+                                    - subject: Enable strict options by default and only disable specific ones
+                                      hash: 84bfaac15e78453ff8a87a5a4836505a78f43666
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.12.1
+                                  date: 2021-03-22T17:21:30.316Z
+                                - commits:
+                                    - subject: Enable narrowing down create/delete referenced fields for nested exists
+                                      hash: 5dbc3ddf05701e5b4188bfa8db64d0a12e3b8298
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.12.0
+                                  date: 2021-03-05T20:34:11.366Z
+                                - commits:
+                                    - subject: Generalize/share the referenced fields code and cover more cases
+                                      hash: 3e77ac1aed9f3fb596f6a01a08a1800fead1e860
+                                      body: >
+                                        This now allows detecting deletes that
+                                        are
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.11.0
+                                  date: 2021-03-01T18:55:09.855Z
+                                - commits:
+                                    - subject: Fix `getModifiedFields` for `UpsertQuery`s
+                                      hash: c19c902f1a6e268952540cd19960f6752a303f65
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.10.2
+                                  date: 2021-02-12T19:36:19.259Z
+                                - commits:
+                                    - subject: Separate code relating to referenced fields out of the main file
+                                      hash: 7ca7b5cfad4e8833293426235667cc59245f427a
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.10.1
+                                  date: 2021-01-29T18:35:19.430Z
+                                - commits:
+                                    - subject: Add an `action` property to modified fields of create/update/delete
+                                      hash: 8f071b8724bdae5574d5fea6c9f20e6e77daf3e6
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                    - subject: Automatically add `ruleReferencedFields` to `SqlRule`s
+                                      hash: f49548828fd75957290b6fdec166abf7bb0a53bf
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                    - subject: Add a `getRuleReferencedFields` which is tailored for rules
+                                      hash: 256c36de4a1efb7a46eb9833e1c3228d17194015
+                                      body: >
+                                        This works on the assumption that it is
+                                        a rule query that should always
+
+                                        return true and allows ignoring more modification cases where they
+
+                                        cannot change the result from true to false
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.10.0
+                                  date: 2021-01-29T16:30:19.410Z
+                                - commits:
+                                    - subject: Add test for optimizeSchema optimizing rules
+                                      hash: 4e94ee4961e98305c927734ce85067d409f90e18
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.9.1
+                                  date: 2021-01-29T13:01:10.504Z
+                                - commits:
+                                    - subject: Optimize the abstract sql of rules when running `optimizeSchema`
+                                      hash: 2ed97849674acb76f498c346b28d2861d1827ba5
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.9.0
+                                  date: 2021-01-25T17:48:56.215Z
+                                - commits:
+                                    - subject: Fix schema optimizations when table and resource names are different
+                                      hash: 46704031fbde45fd0e36b0963f8cf524df53398b
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.8.2
+                                  date: 2021-01-15T20:38:59.313Z
+                                - commits:
+                                    - subject: Convert some lodash usage to native equivalents
+                                      hash: 400937fd3b220dccd557d67ff33d83d51ff0b939
+                                      body: ""
+                                      footer:
+                                        Change-type: patch
+                                        change-type: patch
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.8.1
+                                  date: 2021-01-04T13:04:45.938Z
+                                - commits:
+                                    - subject: Optimize Is[Not]DistinctFrom and [Not]Exists for non-null values
+                                      hash: 682e84dea2088fb0c336b05be83183e627c20d4f
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.8.0
+                                  date: 2021-01-01T20:22:14.871Z
+                                - commits:
+                                    - subject: Optimize EXISTS/NOT EXISTS for empty queries
+                                      hash: 39431de07eeb98d731a114c1717575d364ddc06f
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.7.0
+                                  date: 2021-01-01T17:47:15.206Z
+                                - commits:
+                                    - subject: Optimize away AND/ORs with false/true respectively
+                                      hash: f0249d98032b0306f7d216b5ad8e8d2c96c466fc
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.6.0
+                                  date: 2021-01-01T16:18:03.545Z
+                                - commits:
+                                    - subject: Optimize out booleans from AND/OR where possible
+                                      hash: d3d9a86ebc231dc4b11b20311e6d007a19202b18
+                                      body: ""
+                                      footer:
+                                        Change-type: minor
+                                        change-type: minor
+                                      author: Pagan Gazzard
+                                      nested: []
+                                  version: abstract-sql-compiler-7.5.0
+                                  date: 2021-01-01T14:03:49.386Z
+                          version: odata-to-abstract-sql-5.4.3
+                          date: 2021-08-24T18:50:04.205Z
+                        - commits:
+                            - subject: Delete CODEOWNERS
+                              hash: 2b64f472840fa23d1636bc7ae71fe95780683017
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                                See: https://www.flowdock.com/app/rulemotion/pub/threads/trLcZFnSX9fLZn4LiaIv4xuBbah
+                                see: https://www.flowdock.com/app/rulemotion/pub/threads/trLcZFnSX9fLZn4LiaIv4xuBbah
+                              author: Thodoris Greasidis
+                              nested: []
+                          version: odata-to-abstract-sql-5.4.2
+                          date: 2021-06-30T21:27:55.877Z
+                  version: abstract-sql-to-typescript-1.1.2
+                  title: "'Update dependencies'"
+                  date: 2022-04-08T15:16:42.065Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: 5b17ef11e039219dec3498c531288a1bdfbbc83b
+                      body: |
+                        Update @balena/sbvr-parser from 1.4.0 to 1.4.1
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Update dependencies
+                              hash: 28e057c3c2329b9a3e76dcc136632eab7e271f48
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                            - subject: Remove circleci
+                              hash: cd8d96dc294daa11873cee5d723ecb816e015089
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                          version: sbvr-parser-1.4.1
+                          title: "'Remove circleci/update deps'"
+                          date: 2022-04-08T11:53:36.217Z
+                    - subject: Remove circleci
+                      hash: 2f10bfa8381fba27ed211c4dfe0e47dfec779b21
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: lf-to-abstract-sql-4.5.1
+                  title: "'Remove circleci/update deps'"
+                  date: 2022-04-08T12:05:32.848Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: e63884d3e86c2654fd601cacc53f3e8e61bb1d87
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                    - subject: Remove circleci
+                      hash: 39e258be1ffdd9cce2c4e1bcc4ba69bf00f8de76
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: odata-parser-2.2.9
+                  title: "'Remove circleci/update deps'"
+                  date: 2022-04-08T13:13:27.932Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: a80855150955d687b565a33633fe69b4e5e10ebd
+                      body: >
+                        Update @balena/abstract-sql-compiler from 7.17.0 to
+                        7.19.0
+
+                        Update @balena/odata-parser from 2.2.8 to 2.2.9
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Remove .circleci/config.yml
+                              hash: 017b5e4c10ed4e13b344086888f6bc64cacb9c0c
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                                Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                                signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+                              author: Thodoris Greasidis
+                              nested: []
+                            - subject: Add support for `ConcatenateWithSeparator` nodes
+                              hash: 34bae3f19224ba38cf6806653ef8884a07f41357
+                              body: ""
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                              author: Thodoris Greasidis
+                              nested: []
+                          version: abstract-sql-compiler-7.19.0
+                          title: "'Add support for  nodes'"
+                          date: 2022-03-24T14:48:17.742Z
+                        - commits:
+                            - subject: Add reference property type
+                              hash: d28e2456dff10b18bcc97b7232479fe78efd5eb3
+                              body: >
+                                Property type describes if the reference is
+                                'strict' or 'informative'.
+
+
+                                Behaviour change only if type is informative otherwise default 'strict'.
+
+
+                                An informative reference is just an int field that points
+
+                                to another tables id field - like foreign key without constraints
+
+                                or foregein key cascades.
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                                Signed-off-by: Harald Fischer <harald@balena.io>
+                                signed-off-by: Harald Fischer <harald@balena.io>
+                              author: Harald Fischer
+                              nested: []
+                          version: abstract-sql-compiler-7.18.0
+                          title: "'Add informative reference dataType to schema tests'"
+                          date: 2022-02-16T14:18:44.963Z
+                        - commits:
+                            - subject: Avoid the operation type optimization for HAVING clauses
+                              hash: 3fcf08bc02c21d9f49b78787ed516fa9a403f021
+                              body: >
+                                Since it's possible for them to behave in a way
+                                that violates the
+
+                                safety checks we'll disable them until we can add specific checks
+
+                                for the HAVING clause
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: abstract-sql-compiler-7.17.1
+                          date: 2022-01-24T17:36:32.056Z
+                        - commits:
+                            - subject: Update dependencies
+                              hash: e63884d3e86c2654fd601cacc53f3e8e61bb1d87
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                            - subject: Remove circleci
+                              hash: 39e258be1ffdd9cce2c4e1bcc4ba69bf00f8de76
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                          version: odata-parser-2.2.9
+                          title: "'Remove circleci/update deps'"
+                          date: 2022-04-08T13:13:27.932Z
+                    - subject: Remove circleci
+                      hash: a0d153897fe474fbb6fb87f2606c3d8ca5296799
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: odata-to-abstract-sql-5.4.9
+                  title: "'Remove circleci/update deps'"
+                  date: 2022-04-08T13:29:18.390Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: edc7575ac0976037506deb076d034e7cf08ce5bb
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                    - subject: Remove circleci
+                      hash: 59c5a36292a80149b305d83a4d22b4d2dbe3001d
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: pinejs-client-js-6.10.2
+                  title: "'Remove circleci/update deps'"
+                  date: 2022-04-08T13:22:23.848Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: 28e057c3c2329b9a3e76dcc136632eab7e271f48
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                    - subject: Remove circleci
+                      hash: cd8d96dc294daa11873cee5d723ecb816e015089
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: sbvr-parser-1.4.1
+                  title: "'Remove circleci/update deps'"
+                  date: 2022-04-08T11:53:36.217Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: e416444d436c0e01474b624408635a811259f9a1
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                    - subject: Remove circleci
+                      hash: 15cbb6de080f6f5a7898d1626d9948b371d971b2
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: sbvr-types-3.4.7
+                  title: "'Remove circleci/update deps'"
+                  date: 2022-04-08T13:33:49.743Z
+          version: pinejs-14.42.1
+          title: "'Update dependencies'"
+          date: 2022-04-20T15:58:46.567Z
+        - commits:
+            - subject: Add an expiry date to 'api key'
+              hash: 153f05c6eb7828a239872a4346f2d0392ffe2f93
+              body: ""
+              footer:
+                Change-Type: minor
+                change-type: minor
+                Signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+                signed-off-by: Nitish Agarwal <1592163+nitishagar@users.noreply.github.com>
+              author: Nitish Agarwal
+              nested: []
+          version: pinejs-14.42.0
+          title: "'Add an expiry date to 'api key''"
+          date: 2022-04-13T17:13:03.727Z
+        - commits:
+            - subject: Add link and npm package version badge
+              hash: 9218483726ccc03e187087c7b89b05d6ef89586d
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-14.41.2
+          title: "'Add link and npm package version badge'"
+          date: 2022-04-07T14:10:15.339Z
+  version: 0.206.5
+  title: "'Update dependencies'"
+  date: 2022-04-26T11:52:45.408Z
+- commits:
+    - subject: Increase device cache timeout to 1 hour
+      hash: a81f32b356a9d3e18a886f074f309d1390290f3a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Use a multi-level cache for device types info
+      hash: 9442564625618721a86b265bb38fa7ce18bb77f3
+      body: |
+        This also lets the cache handle the automatic refreshing rather than
+        having custom code for it
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.206.4
+  title: "'Use a multi-level cache for device types info'"
+  date: 2022-04-26T11:31:04.282Z
+- commits:
+    - subject: Use a shared cache for the device type json
+      hash: 6afe8f13706bb746f0cd6d819610483cddc6b53d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.206.3
+  title: "'Use a shared cache for the device type json'"
+  date: 2022-04-26T10:31:04.498Z
+- commits:
+    - subject: Move some state-patch-v2 preprocessing out of the transaction
+      hash: b63959461ecaf3e7aee1c1a9c5acf58aef1bc30c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.206.2
+  title: "'Move some state-patch-v2 preprocessing out of the transaction'"
+  date: 2022-04-21T19:03:12.592Z
+- commits:
+    - subject: Look up the release id in advance of starting the write transaction
+      hash: 3da0f8074e4cf8b4d887bc13bc88fced564fcef6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.206.1
+  title: "'Look up the release id in advance of starting the write transaction'"
+  date: 2022-04-21T18:47:40.539Z
+- commits:
+    - subject: Consider devices with heartbeats to be out of the pre-provisioning state
+      hash: e736279f3e2cbccc95a1a904d081d9a5b67817bb
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://jel.ly.fish/pattern-heartbeating-devices-without-vpn-connectivity-show-configuring-when-turned-off-f19c956
+        see: https://jel.ly.fish/pattern-heartbeating-devices-without-vpn-connectivity-show-configuring-when-turned-off-f19c956
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.206.0
+  title: "'Consider devices with heartbeats to be out of the pre-provisioning state'"
+  date: 2022-04-19T11:04:58.121Z
+- commits:
+    - subject: Only cache the device id for `checkDeviceExists` rather than an object
+      hash: d6530100c9568ae30db82b50f35ade6bec98fa18
+      body: |
+        The object is unnecessary as we only care about the id and only serves
+        to increases the cache memory usage
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.205.2
+  title: "'Only cache the device id for  rather than an object'"
+  date: 2022-04-19T10:03:20.488Z
+- commits:
+    - subject: Clear the device existence cache entry when registering a device
+      hash: badc429a3847072068353ca13e4d9d0d43b68207
+      body: |
+        This avoids a delay in case it tried to communicate with the API
+        before registering
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Correctly cache devices that have been deleted
+      hash: 8b15bb5dfac45fcac49c944cb3b5489aa74c2219
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.205.1
+  title: "'Correctly cache devices that have been deleted'"
+  date: 2022-04-18T17:25:11.564Z
+- commits:
+    - subject: Add an early check to quickly deny deleted devices access to the VPN
+      hash: 5d5df29d63fa17e4856258b87f8314a0a5640d83
+      body: |
+        This avoids unnecessary work when checking for a device that has
+        already been deleted and will allow legitimate VPN auth requests to be
+        served more quickly
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.205.0
+  title: "'Add an early check to quickly deny deleted devices access to the VPN'"
+  date: 2022-04-15T16:57:20.034Z
+- commits:
+    - subject: Update open-balena-base to 13.2.3 Update open-balena-base from 13.2.1
+        to 13.2.3
+      hash: e3bf3ab287bd118bf01cc2c0443f0774f99aa573
+      body: |
+        * adjust HC
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+  version: 0.204.1
+  title: "'Update open-balena-base'"
+  date: 2022-04-08T19:48:24.613Z
+- commits:
+    - subject: Add release variant & support all valid semver values in releases
+      hash: 2d01d7dfac4db25b5aeea5a256ca0da09661d6ba
+      body: ""
+      footer:
+        Resolves: "#827"
+        resolves: "#827"
+        Change-type: minor
+        change-type: minor
+        HQ: https://github.com/balena-io/balena-api/issues/3291
+        hq: https://github.com/balena-io/balena-api/issues/3291
+        See: https://jel.ly.fish/product-improvement-draft-releases-and-release-versioning-d0391f45-c2f9-4f4e-b964-1a7e9023a3f4
+        see: https://jel.ly.fish/product-improvement-draft-releases-and-release-versioning-d0391f45-c2f9-4f4e-b964-1a7e9023a3f4
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 0.204.0
+  title: "'Add release variant & support all valid semver values in releases'"
+  date: 2022-04-08T16:08:26.219Z
+- commits:
+    - subject: Update dependencies
+      hash: 900f20f48d1fa4b4884805429b1d793c0d42c6da
+      body: |
+        Update @balena/node-metrics-gatherer from 6.0.0 to 6.0.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Add missing await
+              hash: 97ed30f9cc16c2350e3c0233d5024e8a70db9431
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Josh Bowling <josh@balena.io>
+                signed-off-by: Josh Bowling <josh@balena.io>
+              author: Josh Bowling
+          version: node-metrics-gatherer-6.0.1
+          title: "'Add missing await'"
+          date: 2022-04-06T02:08:06.136Z
+  version: 0.203.1
+  title: "'Update dependencies'"
+  date: 2022-04-06T11:59:37.971Z
+- commits:
+    - subject: Update dependencies
+      hash: 29675d45a4193e0696993979cc98c77aea87fb9b
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.203.0
+  title: "'Update dependencies'"
+  date: 2022-04-05T15:51:50.143Z
+- commits:
+    - subject: Avoid deprecated `req.param` calls for downloading device config
+      hash: 015d6c545a76e771657ccddfb2c3c240e19b543e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.202.5
+  title: "'Avoid deprecated  calls for downloading device config'"
+  date: 2022-04-05T14:16:00.764Z
+- commits:
+    - subject: Fix hiding unversioned endpoint
+      hash: 03069e3409eb6d0e1b5b05a7c6c1432cac82c818
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.202.4
+  title: "'Fix hiding unversioned endpoint'"
+  date: 2022-04-05T12:04:55.065Z
+- commits:
+    - subject: Fix lua syntax
+      hash: e273c04bce24b7abdeb3314a2e33429c7bc3cd3c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.202.3
+  title: "'Fix lua syntax'"
+  date: 2022-04-04T13:48:47.281Z
+- commits:
+    - subject: Optimize check for active subscribers
+      hash: f5cd019ca407a734d68fa95cbbcfa100a5fc97df
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.202.2
+  title: "'Optimize check for active subscribers'"
+  date: 2022-04-01T10:40:21.681Z
+- commits:
+    - subject: Ensure `subscriptionHeartbeats` is initialized
+      hash: 65f4fc29b9971135c61f7fb85156a41956a6a654
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Lazy load device backends
+      hash: 68bc40b0f8ac9fdfb1246f233f967c56d826e2b5
+      body: |
+        This avoids potentially unnecessary memory usage
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.202.1
+  title: "'Logging fixes'"
+  date: 2022-03-31T15:26:47.283Z
+- commits:
+    - subject: Only publish logs to redis subscribers if there are any
+      hash: 00393277e4a0b618101e41d61ced675a72c64288
+      body: |
+        The idea of this is that if we can avoid issuing the PUBLISH calls for
+        logs when there are no active subscribers then we can save a lot of
+        work for redis, particularly when there are many nodes. The problem is
+        that there's no (safe) way to get the number of current subscribers,
+        you can query for current subscribers but it'll only return subscribers
+        that are connected to the current node and as it is possible to
+        subscribe to any node that means that no subscribers on the current
+        node is not the same as no subscribers. The solution used here is to
+        increment a subscribers count key when a given API instance first
+        subscribes to a given device's logs and then decrement it when
+        unsubscribing. The problem with that is that if we experience a
+        crash/redeploy/etc the subscribers count could end up being permanently
+        > 0, we handle that here by adding an expiry time when incrementing the
+        subscribers count and using a heartbeat whilst the subscription is
+        active to ensure that the subscribers count does not expire whilst we
+        have an actively subscribed instance but it will expire if the instance
+        that incremented it disappears for whatever reason. This does mean that
+        if we get regular connects/disconnects for certain logs then it means
+        the subscriber count for that log would never expire but the
+        expectation is that should be rare enough that the small extra load
+        from that is minimal and still better than having no subscriber count
+        mechanism.
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.202.0
+  title: "'Only publish logs to redis subscribers if there are any'"
+  date: 2022-03-31T12:41:02.243Z
+- commits:
+    - subject: Bump minimist from 1.2.5 to 1.2.6
+      hash: 707c0ae51fed2e8bb72aa4e197c9a0ba76a55763
+      body: >
+        Bumps [minimist](https://github.com/substack/minimist) from 1.2.5 to
+        1.2.6.
+
+        - [Release notes](https://github.com/substack/minimist/releases)
+
+        - [Commits](https://github.com/substack/minimist/compare/1.2.5...1.2.6)
+
+
+        ---
+
+        updated-dependencies:
+
+        - dependency-name: minimist
+          dependency-type: indirect
+        ...
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: dependabot[bot] <support@github.com>
+        signed-off-by: dependabot[bot] <support@github.com>
+      author: dependabot[bot]
+      nested: []
+  version: 0.201.2
+  title: "'Bump minimist from 1.2.5 to 1.2.6'"
+  date: 2022-03-28T18:36:01.715Z
+- commits:
+    - subject: Allow configuring some log storage settings
+      hash: bff7e300c419b545fb951231b5f1105c0a19c6ca
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 0.201.1
+  title: "'Allow configuring some log storage settings'"
+  date: 2022-03-28T10:17:11.966Z
+- commits:
+    - subject: Switch from raven to @sentry/node for error reporting
+      hash: 895a5c28971eb5979ae900863d505d9cc330a7eb
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.201.0
+  title: "'Switch from raven to @sentry/node for error reporting'"
+  date: 2022-03-24T16:39:33.788Z
+- commits:
+    - subject: Add support for using a redis cluster for device logs
+      hash: eb82a8ca1e482e73f114517b3c2ce191f3e0d531
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+    - subject: Use a hash tag for redis logs keys
+      hash: 0aa485e25ae47a497f933798c6106f42808cbb52
+      body: |
+        This allows specifying the part of the key to use for redis hashing to
+        ensure that related logs keys are grouped together
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 0.200.0
+  title: "'Add support for using a redis cluster for device logs'"
+  date: 2022-03-24T10:49:12.644Z
+- commits:
     - subject: Add v3 state-patch endpoint
       hash: 8adaf395550ba4c5be3722520a1337fd68af77d2
       body: ""

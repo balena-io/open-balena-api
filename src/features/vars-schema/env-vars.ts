@@ -1,4 +1,4 @@
-import type { JSONSchema6Definition } from 'json-schema';
+import type { JSONSchema6 } from 'json-schema';
 
 import { errors } from '@balena/pinejs';
 
@@ -16,10 +16,11 @@ const addReservedPrefixes = (array: string[]) => {
 	);
 };
 
-type ConfigVarDefinition = JSONSchema6Definition & {
-	will_reboot?: boolean;
-	warning?: string;
-};
+type ConfigVarDefinition = JSONSchema6 &
+	Required<Pick<JSONSchema6, 'description'>> & {
+		will_reboot?: boolean;
+		warning?: string;
+	};
 
 // Config variables that are allowed to be set externally
 // Note that this list will be mutated by the cloud API to add
@@ -58,6 +59,25 @@ export const BLOCKED_NAMES = addReservedPrefixes([
 export const INVALID_CHARACTER_REGEX = /^\d|\W/;
 export const INVALID_NEWLINE_REGEX = /\r|\n/;
 
+const getDefinitionWithMinimumSupervisorVersion = (
+	dtsPerSupervisorVersion: { [supervisorVersion: string]: string[] },
+	definitions: Dictionary<ConfigVarDefinition>,
+) => {
+	return Object.entries(dtsPerSupervisorVersion).map(([version, dts]) => {
+		return {
+			capableDeviceTypes: dts,
+			properties: Object.fromEntries(
+				Object.entries(definitions).map(([key, definition]) => [
+					key,
+					{
+						...definition,
+						description: `${definition.description} Only supported by supervisor versions >= v${version}.`,
+					},
+				]),
+			),
+		};
+	});
+};
 // Note that this list will be mutated by the cloud API to add
 // extra variables as for cloud-only features.
 export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
@@ -111,8 +131,8 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		description:
 			'Define the PNG image to be used for the boot splash screen. Only supported by supervisor versions >= v12.3.0.',
 		maxLength: 13400, // ~10KB base64 encoded image
-		default: '/boot/splash/balena-logo-default.png',
 		will_reboot: true,
+		pattern: `^data:image\/png;(?:name=(.*);)?base64,(.*)$`,
 	},
 	BALENA_SUPERVISOR_HARDWARE_METRICS: {
 		enum: ['false', 'true'],
@@ -215,18 +235,20 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			},
 		},
 	},
-	{
-		capableDeviceTypes: [
-			'astro-tx2',
-			'blackboard-tx2',
-			'jetson-tx2',
-			'n310-tx2',
-			'n510-tx2',
-			'orbitty-tx2',
-			'spacely-tx2',
-			'srd3-tx2',
-		],
-		properties: {
+	...getDefinitionWithMinimumSupervisorVersion(
+		{
+			'11.13.0': [
+				'astro-tx2',
+				'blackboard-tx2',
+				'jetson-tx2',
+				'n310-tx2',
+				'n510-tx2',
+				'orbitty-tx2',
+				'spacely-tx2',
+				'srd3-tx2',
+			],
+		},
+		{
 			RESIN_HOST_ODMDATA_configuration: {
 				type: 'integer',
 				oneOf: [
@@ -238,59 +260,87 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 					{ const: 6, title: 'Configuration #6' },
 				],
 				description:
-					'Define the ODMDATA configuration to configure UPHY lanes. Only supported by supervisor versions >= v11.13.0',
+					'Define the ODMDATA configuration to configure UPHY lanes.',
 				will_reboot: true,
 				default: 2,
 			},
 		},
-	},
-	{
-		capableDeviceTypes: [
-			'astro-tx2',
-			'blackboard-tx2',
-			'jetson-tx2',
-			'n310-tx2',
-			'n510-tx2',
-			'orbitty-tx2',
-			'spacely-tx2',
-			'srd3-tx2',
-			'jetson-nano',
-			'jetson-nano-emmc',
-			'jetson-nano-2gb-devkit',
-			'floyd-nano',
-			'jn30b-nano',
-			'photon-nano',
-			'jetson-tx2-nx-devkit',
-			'photon-tx2-nx',
-		],
-		properties: {
+	),
+	...getDefinitionWithMinimumSupervisorVersion(
+		{
+			'11.14.2': [
+				'astro-tx2',
+				'blackboard-tx2',
+				'jetson-tx2',
+				'n310-tx2',
+				'n510-tx2',
+				'orbitty-tx2',
+				'spacely-tx2',
+				'srd3-tx2',
+				'jetson-nano',
+				'jetson-nano-emmc',
+				'jetson-nano-2gb-devkit',
+				'floyd-nano',
+				'jn30b-nano',
+				'photon-nano',
+				'jetson-tx2-nx-devkit',
+				'photon-tx2-nx',
+			],
+			'14.0.8': ['imx8m-var-dart', 'imx8mm-var-dart'],
+		},
+		{
 			RESIN_HOST_EXTLINUX_fdt: {
 				type: 'string',
-				description:
-					'Define the file name of the DTB to be used. Only supported by supervisor versions >= v11.14.2',
+				description: 'Define the file name of the DTB to be used.',
 				will_reboot: true,
 			},
+		},
+	),
+	...getDefinitionWithMinimumSupervisorVersion(
+		{
+			'7.25.0': [
+				'astro-tx2',
+				'blackboard-tx2',
+				'jetson-tx2',
+				'n310-tx2',
+				'n510-tx2',
+				'orbitty-tx2',
+				'spacely-tx2',
+				'srd3-tx2',
+				'jetson-nano',
+				'jetson-nano-emmc',
+				'jetson-nano-2gb-devkit',
+				'floyd-nano',
+				'jn30b-nano',
+				'photon-nano',
+				'jetson-tx2-nx-devkit',
+				'photon-tx2-nx',
+			],
+		},
+		{
 			RESIN_HOST_EXTLINUX_isolcpus: {
 				type: 'string',
 				description:
-					'Allows to isolate CPU cores from the kernel scheduler by specifying CPU cores in the system starting from 0. Only supported by supervisor versions >= v7.25.0',
+					'Allows to isolate CPU cores from the kernel scheduler by specifying CPU cores in the system starting from 0.',
 				examples: ['0,2,3'],
 				will_reboot: true,
 			},
 		},
-	},
-	{
-		capableDeviceTypes: ['up-board'],
-		properties: {
+	),
+	...getDefinitionWithMinimumSupervisorVersion(
+		{
+			'10.9.2': ['up-board'],
+		},
+		{
 			RESIN_HOST_CONFIGFS_ssdt: {
 				type: 'string',
 				description:
-					'Define SSDT overlays. Only supported by supervisor versions >= v10.9.2.',
+					'Define SSDT overlays. Only supported by supervisor versions >= v.',
 				examples: ['"spidev1.0","spidev1.1"'],
 				will_reboot: true,
 			},
 		},
-	},
+	),
 ];
 
 const startsWithAny = (ns: string[], name: string) => {

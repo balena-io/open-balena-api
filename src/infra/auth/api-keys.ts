@@ -9,8 +9,9 @@ const isRequest = (req: hooks.HookReq | Request): req is Request =>
 
 export const getAPIKey = async (
 	req: hooks.HookReq | Request,
+	tx: Tx | undefined,
 ): Promise<sbvrUtils.ApiKey | undefined> => {
-	const apiKey = await permissions.resolveApiKey(req);
+	const apiKey = await permissions.resolveApiKey(req, 'apikey', tx);
 	if (apiKey != null) {
 		return apiKey;
 	}
@@ -24,16 +25,17 @@ export const getAPIKey = async (
 	const token = (req.get('Authorization') || '').split(' ', 2)[1];
 	if (token && !isJWT(token)) {
 		// Add support for API keys on Authorization header if a JWT wasn't provided
-		return await permissions.resolveAuthHeader(req);
+		return await permissions.resolveAuthHeader(req, 'Bearer', tx);
 	}
 };
 
 export const retrieveAPIKey = async (
 	req: hooks.HookReq | Request,
+	tx: Tx | undefined,
 ): Promise<void> => {
 	// We should be able to skip this if req.user but doing so breaks the SDK
 	// because it sends both a JWT and an API Key in requests like /devices/register
-	const apiKey = await getAPIKey(req);
+	const apiKey = await getAPIKey(req, tx);
 	if (apiKey != null) {
 		req.apiKey = apiKey;
 	}

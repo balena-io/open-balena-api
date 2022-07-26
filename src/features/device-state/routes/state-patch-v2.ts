@@ -151,28 +151,33 @@ export type StatePatchV2Body = {
 	};
 };
 
-const releaseOfDeviceQuery = _.once(() =>
-	api.resin.prepare<{ uuid: string; commit: string }>({
-		resource: 'release',
+const appAndReleaseOfDeviceQuery = _.once(() =>
+	// This is a performance optimization impactful when using device API key permissions,
+	// in which case emitting the OR checks for the dependent & public device access
+	// in a nested subquery didn't perform as well.
+	// TODO: Should be converted back to a simple GET to the release resource once
+	// the performance of that query improves.
+	api.resin.prepare<{ deviceId: number; commit: string }>({
+		resource: 'application',
 		options: {
+			$top: 1,
 			$select: 'id',
+			$expand: {
+				owns__release: {
+					$top: 1,
+					$select: 'id',
+					$filter: {
+						commit: { '@': 'commit' },
+						status: 'success',
+					},
+				},
+			},
 			$filter: {
-				commit: { '@': 'commit' },
-				status: 'success',
-				belongs_to__application: {
+				owns__device: {
 					$any: {
-						$alias: 'a',
+						$alias: 'd',
 						$expr: {
-							a: {
-								owns__device: {
-									$any: {
-										$alias: 'd',
-										$expr: {
-											d: { uuid: { '@': 'uuid' } },
-										},
-									},
-								},
-							},
+							d: { id: { '@': 'deviceId' } },
 						},
 					},
 				},
@@ -181,91 +186,103 @@ const releaseOfDeviceQuery = _.once(() =>
 	}),
 );
 
+const resolveReleaseId = async (
+	...args: Parameters<ReturnType<typeof appAndReleaseOfDeviceQuery>>
+) => {
+	const [app] = await appAndReleaseOfDeviceQuery()(...args);
+	return app?.owns__release[0]?.id;
+};
+
 export const statePatchV2: RequestHandler = async (req, res) => {
-	const { uuid } = req.params;
-	if (!uuid) {
-		return res.status(400).end();
-	}
-	const { resolvedDevice: device } =
-		req.custom as ResolveDeviceInfoCustomObject;
-	if (device == null) {
-		// We are supposed to have already checked this.
-		throw new UnauthorizedError();
-	}
-
-	const values = req.body;
-	// firstly we need to extract all fields which should be sent to the device
-	// resource which is everything but the service entries
-
-	// Every field that is passed to the endpoint is the same, except
-	// device name
-	const { local, dependent } = values as StatePatchV2Body;
-
-	const updateFns: Array<
-		(resinApiTx: sbvrUtils.PinejsClient) => Promise<void>
-	> = [];
-
-	if (local != null) {
-		const { apps } = local;
-
-		let deviceBody:
-			| Pick<LocalBody, typeof v2ValidPatchFields[number]> & {
-					is_running__release?: number | null;
-			  } = _.pick(local, v2ValidPatchFields);
-		let metricsBody: Pick<LocalBody, typeof metricsPatchFields[number]> =
-			_.pick(local, metricsPatchFields);
-		if (
-			Object.keys(metricsBody).length > 0 &&
-			(await shouldUpdateMetrics(uuid))
-		) {
-			// If we should force a metrics update then merge the two together and clear `metricsBody` so
-			// that we don't try to merge it again later
-			deviceBody = { ...deviceBody, ...metricsBody };
-			metricsBody = {};
+	try {
+		const { uuid } = req.params;
+		if (!uuid) {
+			throw new BadRequestError();
+		}
+		const { resolvedDevice: deviceId } =
+			req.custom as ResolveDeviceInfoCustomObject;
+		if (deviceId == null) {
+			// We are supposed to have already checked this.
+			throw new UnauthorizedError();
 		}
 
-		if (local.name != null) {
-			deviceBody.device_name = local.name;
-		}
+		const values = req.body;
+		// firstly we need to extract all fields which should be sent to the device
+		// resource which is everything but the service entries
 
-		if (
-			local.is_on__commit !== undefined ||
-			Object.keys(deviceBody).length > 0
-		) {
-			updateFns.push(async (resinApiTx) => {
+		// Every field that is passed to the endpoint is the same, except
+		// device name
+		const { local, dependent } = values as StatePatchV2Body;
+
+		const updateFns: Array<
+			(resinApiTx: sbvrUtils.PinejsClient) => Promise<void>
+		> = [];
+
+		if (local != null) {
+			const { apps } = local;
+
+			let deviceBody:
+				| Pick<LocalBody, typeof v2ValidPatchFields[number]> & {
+						is_running__release?: number | null;
+				  } = _.pick(local, v2ValidPatchFields);
+			let metricsBody: Pick<LocalBody, typeof metricsPatchFields[number]> =
+				_.pick(local, metricsPatchFields);
+			if (
+				Object.keys(metricsBody).length > 0 &&
+				(await shouldUpdateMetrics(uuid))
+			) {
+				// If we should force a metrics update then merge the two together and clear `metricsBody` so
+				// that we don't try to merge it again later
+				deviceBody = { ...deviceBody, ...metricsBody };
+				metricsBody = {};
+			}
+
+			if (local.name != null) {
+				deviceBody.device_name = local.name;
+			}
+
+			if (
+				local.is_on__commit !== undefined ||
+				Object.keys(deviceBody).length > 0
+			) {
 				if (local != null) {
 					if (local.is_on__commit === null) {
 						deviceBody!.is_running__release = null;
 					} else if (local.is_on__commit !== undefined) {
-						const [release] = await releaseOfDeviceQuery()(
-							{ commit: local.is_on__commit, uuid },
+						// Run this in a separate read-only transaction in advance, this allows it to be redirected
+						// to a read replica as necessary and avoids holding the write transaction open unnecessarily
+						const releaseId = await resolveReleaseId(
+							{
+								commit: local.is_on__commit,
+								deviceId,
+							},
 							undefined,
-							resinApiTx.passthrough,
+							{ req },
 						);
-						if (release != null) {
+						if (releaseId != null) {
 							// Only set the running release if it's valid, otherwise just silently ignore it
-							deviceBody!.is_running__release = release.id;
+							deviceBody!.is_running__release = releaseId;
 						}
 					}
 				}
 
-				if (Object.keys(deviceBody).length > 0) {
-					// If we're updating anyway then ensure the metrics data is included
-					deviceBody = { ...deviceBody, ...metricsBody };
-					await resinApiTx.patch({
-						resource: 'device',
-						id: device.id,
-						options: {
-							$filter: { $not: deviceBody },
-						},
-						body: deviceBody,
-					});
-				}
-			});
-		}
+				updateFns.push(async (resinApiTx) => {
+					if (Object.keys(deviceBody).length > 0) {
+						// If we're updating anyway then ensure the metrics data is included
+						deviceBody = { ...deviceBody, ...metricsBody };
+						await resinApiTx.patch({
+							resource: 'device',
+							id: deviceId,
+							options: {
+								$filter: { $not: deviceBody },
+							},
+							body: deviceBody,
+						});
+					}
+				});
+			}
 
-		if (apps != null) {
-			updateFns.push(async (resinApiTx) => {
+			if (apps != null) {
 				const imgInstalls = _.flatMap(apps, (app) =>
 					_.map(app.services, (svc, imageIdStr) => {
 						const imageId = parseInt(imageIdStr, 10);
@@ -291,41 +308,41 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 				);
 				const imageIds = imgInstalls.map(({ imageId }) => imageId);
 
-				if (imageIds.length > 0) {
-					const existingImgInstalls = (await resinApiTx.get({
-						resource: 'image_install',
-						options: {
-							$select: ['id', 'installs__image'],
-							$filter: {
-								device: device.id,
-								installs__image: { $in: imageIds },
+				updateFns.push(async (resinApiTx) => {
+					if (imageIds.length > 0) {
+						const existingImgInstalls = (await resinApiTx.get({
+							resource: 'image_install',
+							options: {
+								$select: ['id', 'installs__image'],
+								$filter: {
+									device: deviceId,
+									installs__image: { $in: imageIds },
+								},
 							},
-						},
-					})) as Array<PickDeferred<ImageInstall, 'id' | 'installs__image'>>;
-					const existingImgInstallsByImage = _.keyBy(
-						existingImgInstalls,
-						({ installs__image }) => installs__image.__id,
-					);
+						})) as Array<PickDeferred<ImageInstall, 'id' | 'installs__image'>>;
+						const existingImgInstallsByImage = _.keyBy(
+							existingImgInstalls,
+							({ installs__image }) => installs__image.__id,
+						);
 
-					await Promise.all(
-						imgInstalls.map(async (imgInstall) => {
-							await upsertImageInstall(
-								resinApiTx,
-								existingImgInstallsByImage[imgInstall.imageId],
-								imgInstall,
-								device.id,
-							);
-						}),
-					);
-				}
+						await Promise.all(
+							imgInstalls.map(async (imgInstall) => {
+								await upsertImageInstall(
+									resinApiTx,
+									existingImgInstallsByImage[imgInstall.imageId],
+									imgInstall,
+									deviceId,
+								);
+							}),
+						);
+					}
 
-				await deleteOldImageInstalls(resinApiTx, device.id, imageIds);
-			});
+					await deleteOldImageInstalls(resinApiTx, deviceId, imageIds);
+				});
+			}
 		}
-	}
 
-	if (dependent?.apps != null) {
-		updateFns.push(async (resinApiTx) => {
+		if (dependent?.apps != null) {
 			// Handle dependent devices if necessary
 			const gatewayDownloads = _.flatMap(dependent.apps, ({ images }) =>
 				_.map(images, ({ status, download_progress }, imageIdStr) => {
@@ -343,39 +360,39 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 			);
 			const imageIds = gatewayDownloads.map(({ imageId }) => imageId);
 
-			if (imageIds.length > 0) {
-				const existingGatewayDownloads = (await resinApiTx.get({
-					resource: 'gateway_download',
-					options: {
-						$select: ['id', 'image'],
-						$filter: {
-							is_downloaded_by__device: device.id,
-							image: { $in: imageIds },
+			updateFns.push(async (resinApiTx) => {
+				if (imageIds.length > 0) {
+					const existingGatewayDownloads = (await resinApiTx.get({
+						resource: 'gateway_download',
+						options: {
+							$select: ['id', 'image'],
+							$filter: {
+								is_downloaded_by__device: deviceId,
+								image: { $in: imageIds },
+							},
 						},
-					},
-				})) as Array<PickDeferred<GatewayDownload, 'id' | 'image'>>;
-				const existingGatewayDownloadsByImage = _.keyBy(
-					existingGatewayDownloads,
-					({ image }) => image.__id,
-				);
+					})) as Array<PickDeferred<GatewayDownload, 'id' | 'image'>>;
+					const existingGatewayDownloadsByImage = _.keyBy(
+						existingGatewayDownloads,
+						({ image }) => image.__id,
+					);
 
-				await Promise.all(
-					gatewayDownloads.map(async (gatewayDownload) => {
-						await upsertGatewayDownload(
-							resinApiTx,
-							existingGatewayDownloadsByImage[gatewayDownload.imageId],
-							device.id,
-							gatewayDownload,
-						);
-					}),
-				);
-			}
+					await Promise.all(
+						gatewayDownloads.map(async (gatewayDownload) => {
+							await upsertGatewayDownload(
+								resinApiTx,
+								existingGatewayDownloadsByImage[gatewayDownload.imageId],
+								deviceId,
+								gatewayDownload,
+							);
+						}),
+					);
+				}
 
-			await deleteOldGatewayDownloads(resinApiTx, device.id, imageIds);
-		});
-	}
+				await deleteOldGatewayDownloads(resinApiTx, deviceId, imageIds);
+			});
+		}
 
-	try {
 		if (updateFns.length > 0) {
 			// Only enter the transaction/do work if there's any updating to be done
 

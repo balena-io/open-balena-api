@@ -59,8 +59,13 @@ export const addToModel = (
 	// so it's still provisioning.
 	const isPreProvisioning: AndNode = [
 		'And',
-		isOverallOffline,
+		['Equals', ['ReferencedField', 'device', 'is online'], ['Boolean', false]],
 		['NotExists', ['ReferencedField', 'device', 'last connectivity event']],
+		[
+			'Equals',
+			['ReferencedField', 'device', 'api heartbeat state'],
+			['EmbeddedText', 'unknown'],
+		],
 	];
 
 	const isPostProvisioning: EqualsNode = [

@@ -13,18 +13,7 @@ const createReleaseServiceInstalls = async (
 	deviceFilterOrIds: number[] | FilterObj,
 	releaseFilter: Filter,
 ): Promise<void> => {
-	const deviceIds = Array.isArray(deviceFilterOrIds)
-		? deviceFilterOrIds
-		: (
-				(await api.get({
-					resource: 'device',
-					options: {
-						$select: 'id',
-						$filter: deviceFilterOrIds,
-					},
-				})) as Array<Pick<Device, 'id'>>
-		  ).map(({ id }) => id);
-	if (deviceFilterOrIds.length === 0) {
+	if (Array.isArray(deviceFilterOrIds) && deviceFilterOrIds.length === 0) {
 		return;
 	}
 
@@ -65,35 +54,57 @@ const createReleaseServiceInstalls = async (
 	}
 	const serviceIds = services.map(({ id }) => id);
 
-	const serviceInstalls = (await api.get({
-		resource: 'service_install',
-		options: {
-			$select: ['device', 'installs__service'],
-			$filter: {
-				// Pass the device filters instead of IDs, since a using $in errors with `code: '08P01'` for more than 66k IDs.
-				device: Array.isArray(deviceFilterOrIds)
-					? { $in: deviceFilterOrIds }
-					: {
-							$any: {
-								$alias: 'd',
-								$expr: {
-									d: deviceFilterOrIds,
-								},
-							},
-					  },
-				installs__service: { $in: serviceIds },
+	const missingServiceFilters = serviceIds.map((serviceId) => ({
+		$not: {
+			service_install: {
+				$any: {
+					$alias: 'si',
+					$expr: {
+						si: {
+							installs__service: serviceId,
+						},
+					},
+				},
 			},
 		},
-	})) as Array<PickDeferred<ServiceInstall, 'device' | 'installs__service'>>;
-	const serviceInstallsByDevice = _.groupBy(
-		serviceInstalls,
-		(si) => si.device.__id as number,
-	);
+	}));
+
+	const devicesToAddServiceInstalls = (await api.get({
+		resource: 'device',
+		options: {
+			$select: 'id',
+			$expand: {
+				service_install: {
+					$select: 'installs__service',
+					$filter: {
+						installs__service: { $in: serviceIds },
+					},
+				},
+			},
+			$filter: {
+				// Pass the device filters instead of IDs, since a using $in errors with `code: '08P01'` for more than 66k IDs.
+				...(Array.isArray(deviceFilterOrIds)
+					? { id: { $in: deviceFilterOrIds } }
+					: deviceFilterOrIds),
+				// TODO: Once Pine support it, change this with a filtered-count filter like:
+				// $filter=... service_install/$filter(installs__service $in (...serviceIds))/$count lt ${serviceIds.length}
+				// See: http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_RequestingtheNumberofItemsinaCollect
+				...(missingServiceFilters.length === 1
+					? missingServiceFilters[0]
+					: {
+							$or: missingServiceFilters,
+					  }),
+			},
+		},
+	})) as Array<
+		Pick<Device, 'id'> & {
+			service_install: Array<PickDeferred<ServiceInstall, 'installs__service'>>;
+		}
+	>;
 
 	await Promise.all(
-		deviceIds.map(async (deviceId) => {
-			const existingServiceIds: number[] = _.map(
-				serviceInstallsByDevice[deviceId],
+		devicesToAddServiceInstalls.map(async (device) => {
+			const existingServiceIds = device.service_install.map(
 				(si) => si.installs__service.__id,
 			);
 			const deviceServiceIds = _.difference(serviceIds, existingServiceIds);
@@ -103,7 +114,7 @@ const createReleaseServiceInstalls = async (
 					await api.post({
 						resource: 'service_install',
 						body: {
-							device: deviceId,
+							device: device.id,
 							installs__service: serviceId,
 						},
 						options: { returnResource: false },

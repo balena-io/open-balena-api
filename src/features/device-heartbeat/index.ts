@@ -189,10 +189,9 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 			return;
 		}
 
-		// initialise the RedisSMQ object using our Redis client...
 		this.rsmq = new RedisSMQ({
-			host: REDIS.general.host,
-			port: REDIS.general.port,
+			// TODO: RSMQ does not currently support a redis cluster
+			...REDIS.general.host,
 			ns: DeviceOnlineStateManager.REDIS_NAMESPACE,
 		});
 

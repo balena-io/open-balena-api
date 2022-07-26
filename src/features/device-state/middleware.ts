@@ -22,22 +22,23 @@ const checkDeviceExistsQuery = _.once(() =>
 	}),
 );
 export const checkDeviceExists = multiCacheMemoizee(
-	async (uuid: string) => {
-		return (await checkDeviceExistsQuery()({ uuid })) as Pick<
-			Device,
-			typeof $select
-		>;
+	async (uuid: string): Promise<number | undefined> => {
+		const device = (await checkDeviceExistsQuery()({ uuid })) as
+			| Pick<Device, typeof $select>
+			| undefined;
+		return device?.id;
 	},
 	{
 		cacheKey: 'checkDeviceExists',
 		promise: true,
 		primitive: true,
+		undefinedAs: false,
 		maxAge: DEVICE_EXISTS_CACHE_TIMEOUT,
 	},
 );
 
 export interface ResolveDeviceInfoCustomObject {
-	resolvedDevice: Pick<Device, typeof $select>;
+	resolvedDevice: Device['id'];
 }
 
 export const resolveOrGracefullyDenyDevices: RequestHandler = async (

@@ -70,6 +70,7 @@ runapi () {
 		-e MIXPANEL_TOKEN=mixpanel_token \
 		-e NUM_WORKERS=1 \
 		-e PORT=80 \
+		-e REDIS_IS_CLUSTER="false" \
 		-e REDIS_HOST="${redis_id}:6379" \
 		-e LOKI_HOST=$loki_id \
 		-e LOKI_PORT=9095 \

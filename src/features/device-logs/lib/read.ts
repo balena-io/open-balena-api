@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express';
 import onFinished = require('on-finished');
-
+import * as _ from 'lodash';
 import { sbvrUtils, errors } from '@balena/pinejs';
 
 import {
@@ -9,17 +9,17 @@ import {
 } from '../../../infra/error-handling';
 
 import { DeviceLog, LogContext, StreamState } from './struct';
-import {
-	addRetentionLimit,
-	DEFAULT_HISTORY_LOGS,
-	DEFAULT_SUBSCRIPTION_LOGS,
-	getBackend,
-	HEARTBEAT_INTERVAL,
-	NDJSON_CTYPE,
-} from './config';
+import { addRetentionLimit, getBackend } from './config';
 import { getNanoTimestamp } from '../../../lib/utils';
 import { SetupOptions } from '../../..';
 import { Device, PickDeferred } from '../../../balena-model';
+import {
+	LOGS_DEFAULT_HISTORY_COUNT,
+	LOGS_DEFAULT_SUBSCRIPTION_COUNT,
+	LOGS_HEARTBEAT_INTERVAL,
+	LOGS_READ_STREAM_FLUSH_INTERVAL,
+	NDJSON_CTYPE,
+} from '../../../lib/config';
 
 const { NotFoundError } = errors;
 const { api } = sbvrUtils;
@@ -35,7 +35,7 @@ export const read =
 				await handleStreamingRead(ctx, req, res);
 				onLogReadStreamInitialized?.(req);
 			} else {
-				const logs = await getHistory(ctx, req, DEFAULT_HISTORY_LOGS);
+				const logs = await getHistory(ctx, req, LOGS_DEFAULT_HISTORY_COUNT);
 				res.json(logs);
 			}
 		} catch (err) {
@@ -59,6 +59,19 @@ async function handleStreamingRead(
 	res.setHeader('Content-Type', NDJSON_CTYPE);
 	res.setHeader('Cache-Control', 'no-cache');
 
+	const flush = _.throttle(
+		() => {
+			res.flush();
+		},
+		LOGS_READ_STREAM_FLUSH_INTERVAL,
+		{ leading: false },
+	);
+	function write(data: string) {
+		const r = res.write(data);
+		flush();
+		return r;
+	}
+
 	function onLog(log: DeviceLog) {
 		if (state === StreamState.Buffering) {
 			buffer.push(log);
@@ -66,7 +79,7 @@ async function handleStreamingRead(
 			dropped++;
 		} else if (state !== StreamState.Closed) {
 			if (
-				!res.write(
+				!write(
 					JSON.stringify(log, (key, value) =>
 						key === 'nanoTimestamp' ? undefined : value,
 					) + '\n',
@@ -100,17 +113,17 @@ async function handleStreamingRead(
 	function heartbeat() {
 		if (state !== StreamState.Closed) {
 			// In order to keep the connection alive, output new lines every now and then
-			res.write('\n');
-			setTimeout(heartbeat, HEARTBEAT_INTERVAL);
+			write('\n');
+			setTimeout(heartbeat, LOGS_HEARTBEAT_INTERVAL);
 		}
 	}
 
-	setTimeout(heartbeat, HEARTBEAT_INTERVAL);
+	setTimeout(heartbeat, LOGS_HEARTBEAT_INTERVAL);
 
 	function close() {
 		if (state !== StreamState.Closed) {
 			state = StreamState.Closed;
-			getBackend(ctx).unsubscribe(ctx, onLog);
+			getBackend().unsubscribe(ctx, onLog);
 		}
 	}
 
@@ -118,9 +131,9 @@ async function handleStreamingRead(
 	onFinished(res, close);
 
 	// Subscribe in parallel so we don't miss logs in between
-	getBackend(ctx).subscribe(ctx, onLog);
+	getBackend().subscribe(ctx, onLog);
 	try {
-		const logs = await getHistory(ctx, req, DEFAULT_SUBSCRIPTION_LOGS);
+		const logs = await getHistory(ctx, req, LOGS_DEFAULT_SUBSCRIPTION_COUNT);
 
 		// We need this cast as typescript narrows to `StreamState.Buffering`
 		// because it ignores that during the `await` break it can be changed
@@ -186,7 +199,7 @@ function getHistory(
 	}
 
 	// TODO: Implement `?since` filter here too in the next phase
-	return getBackend(ctx).history(ctx, count);
+	return getBackend().history(ctx, count);
 }
 
 async function getReadContext(req: Request): Promise<LogContext> {

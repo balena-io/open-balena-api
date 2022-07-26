@@ -11,14 +11,15 @@ import type { Application, DeviceType } from '../../balena-model';
 
 import { generateConfig } from './device-config';
 import { findBySlug } from '../device-types/device-types';
+import { checkInt } from '../../lib/utils';
 
 const { UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
 
-const getApp = async (req: Request) => {
+const getApp = async (appId: number, req: Request) => {
 	const app = (await api.resin.get({
 		resource: 'application',
-		id: req.param('appId'),
+		id: appId,
 		passthrough: { req },
 		options: {
 			$select: 'id',
@@ -44,13 +45,14 @@ const getApp = async (req: Request) => {
 };
 
 export const downloadImageConfig: RequestHandler = async (req, res) => {
-	if (!req.param('appId')) {
+	const appId = checkInt(req.body.appId ?? req.query.appId);
+	if (!appId) {
 		res.status(400).send('An appId is required.');
 		return;
 	}
 
-	const deviceTypeSlug = req.param('deviceType');
-	const osVersion = req.param('version');
+	const deviceTypeSlug = req.body.deviceType ?? req.query.deviceType;
+	const osVersion = req.body.version ?? req.query.version;
 
 	if (!osVersion) {
 		res.status(400).send('A version is required.');
@@ -60,7 +62,7 @@ export const downloadImageConfig: RequestHandler = async (req, res) => {
 	try {
 		const resinApi = api.resin.clone({ passthrough: { req } });
 
-		const app = await getApp(req);
+		const app = await getApp(appId, req);
 		const deviceTypeJson = await findBySlug(
 			resinApi,
 			deviceTypeSlug || app.is_for__device_type[0].slug,
