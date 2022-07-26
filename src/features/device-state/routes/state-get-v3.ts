@@ -104,7 +104,7 @@ function buildAppFromRelease(
 		}
 	}
 
-	(release.contains__image as AnyObject[]).forEach((ipr) => {
+	for (const ipr of release.contains__image as AnyObject[]) {
 		// extract the per-image information
 		const image = ipr.image[0];
 
@@ -128,11 +128,12 @@ function buildAppFromRelease(
 		varListInsert(si.device_service_environment_variable, environment);
 
 		const labels: Dictionary<string> = {};
-		[...ipr.image_label, ...svc.service_label].forEach(
-			({ label_name, value }: { label_name: string; value: string }) => {
-				labels[label_name] = value;
-			},
-		);
+		for (const { label_name, value } of [
+			...ipr.image_label,
+			...svc.service_label,
+		] as Array<{ label_name: string; value: string }>) {
+			labels[label_name] = value;
+		}
 
 		_.each(ConfigurationVarsToLabels, (labelName, confName) => {
 			if (confName in config && !(labelName in labels)) {
@@ -165,7 +166,7 @@ function buildAppFromRelease(
 			delete compositionService.build;
 			services[svc.service_name].composition = compositionService;
 		}
-	});
+	}
 
 	return {
 		[release.commit]: {

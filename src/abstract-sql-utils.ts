@@ -121,19 +121,19 @@ export const renameField = (
 	from: string,
 	to: string,
 ) => {
-	abstractSqlModel.tables[resourceName].fields.forEach((field) => {
+	for (const field of abstractSqlModel.tables[resourceName].fields) {
 		if (field.fieldName === from) {
 			field.fieldName = to;
 		}
-	});
-	abstractSqlModel.tables[resourceName].indexes.forEach((index) => {
+	}
+	for (const index of abstractSqlModel.tables[resourceName].indexes) {
 		index.fields = index.fields.map((field) => {
 			if (field === from) {
 				return to;
 			}
 			return field;
 		});
-	});
+	}
 
 	const relationship = abstractSqlModel.relationships[resourceName];
 
