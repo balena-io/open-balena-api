@@ -1,4 +1,16 @@
 - commits:
+    - subject: Prefer for..of over forEach
+      hash: 36608d471388e61ed17312c81696d20c0e68cb29
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.8
+  title: "'Prefer for..of over forEach'"
+  date: 2022-07-26T16:20:50.921Z
+- commits:
     - subject: Fix Husky not working after v4 to v8 update
       hash: bd8d089de3d4742499672f3649cf92a07999462a
       body: ""
