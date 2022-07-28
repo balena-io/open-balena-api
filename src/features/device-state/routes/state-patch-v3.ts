@@ -86,9 +86,11 @@ const fetchData = async (
 	req: Express.Request,
 	custom: AnyObject,
 	uuids: string[],
-	imageLocations: string[],
 	appReleaseUuids: {
-		[appUuid: string]: Set<string>;
+		[appUuid: string]: {
+			releaseUuids: Set<string>;
+			imageLocations: string[];
+		};
 	},
 ) =>
 	await sbvrUtils.db.readTransaction(async (tx) => {
@@ -117,8 +119,19 @@ const fetchData = async (
 			throw new UnauthorizedError();
 		}
 
-		let images: Array<Pick<Image, 'id' | 'is_stored_at__image_location'>> = [];
-		if (imageLocations.length > 0) {
+		const images: Array<Pick<Image, 'id' | 'is_stored_at__image_location'>> =
+			[];
+		const releasesByAppUuid: {
+			[appUuid: string]: Array<Pick<Release, 'id' | 'commit'>>;
+		} = {};
+		for (const [appUuid, { releaseUuids, imageLocations }] of Object.entries(
+			appReleaseUuids,
+		)) {
+			if (releaseUuids.size === 0) {
+				releasesByAppUuid[appUuid] = [];
+				continue;
+			}
+
 			const imgLocationFilter = imageLocations.map((imgLocation) => {
 				const [location, contentHash] = imgLocation.split('@');
 				const filter: Filter = { is_stored_at__image_location: location };
@@ -127,51 +140,73 @@ const fetchData = async (
 				}
 				return filter;
 			});
-			images = (await resinApiTx.get({
-				resource: 'image',
-				options: {
-					$select: ['id', 'is_stored_at__image_location'],
-					$filter:
-						imgLocationFilter.length === 1
-							? imgLocationFilter[0]
-							: imgLocationFilter,
-				},
-			})) as Array<Pick<Image, 'id' | 'is_stored_at__image_location'>>;
-			if (imageLocations.length !== images.length) {
-				throw new UnauthorizedError();
-			}
-		}
 
-		const appReleases: {
-			[appUuid: string]: Array<Pick<Release, 'id' | 'commit'>>;
-		} = {};
-		for (const [appUuid, releaseUuids] of Object.entries(appReleaseUuids)) {
-			appReleases[appUuid] =
-				releaseUuids.size === 0
-					? []
-					: ((await resinApiTx.get({
-							resource: 'release',
-							options: {
-								$select: ['id', 'commit'],
+			const appReleases = (releasesByAppUuid[appUuid] = (await resinApiTx.get({
+				resource: 'release',
+				options: {
+					$select: ['id', 'commit'],
+					...(imgLocationFilter.length > 0 && {
+						$expand: {
+							release_image: {
+								$select: 'image',
+								$expand: {
+									image: {
+										$select: ['id', 'is_stored_at__image_location'],
+									},
+								},
 								$filter: {
-									commit: { $in: Array.from(releaseUuids) },
-									status: 'success',
-									belongs_to__application: {
+									image: {
 										$any: {
-											$alias: 'a',
-											$expr: {
-												a: { uuid: appUuid },
-											},
+											$alias: 'i',
+											$expr:
+												imgLocationFilter.length === 1
+													? { i: imgLocationFilter[0] }
+													: {
+															$or: imgLocationFilter.map((ilf) => ({
+																i: ilf,
+															})),
+													  },
 										},
 									},
 								},
 							},
-					  })) as Array<Pick<Release, 'id' | 'commit'>>);
-			if (appReleases[appUuid].length !== releaseUuids.size) {
+						},
+					}),
+					$filter: {
+						commit: { $in: Array.from(releaseUuids) },
+						status: 'success',
+						belongs_to__application: {
+							$any: {
+								$alias: 'a',
+								$expr: {
+									a: { uuid: appUuid },
+								},
+							},
+						},
+					},
+				},
+			})) as Array<
+				Pick<Release, 'id' | 'commit'> & {
+					release_image?: Array<{
+						image: Array<Pick<Image, 'id' | 'is_stored_at__image_location'>>;
+					}>;
+				}
+			>);
+			if (appReleases.length !== releaseUuids.size) {
 				throw new UnauthorizedError();
 			}
+
+			if (imageLocations.length > 0) {
+				const appImages = appReleases.flatMap(
+					(r) => r.release_image?.map((ri) => ri.image[0]) ?? [],
+				);
+				if (imageLocations.length !== appImages.length) {
+					throw new UnauthorizedError();
+				}
+				images.push(...appImages);
+			}
 		}
-		return { devices, images, appReleases };
+		return { devices, images, releasesByAppUuid };
 	});
 
 export const statePatchV3: RequestHandler = async (req, res) => {
@@ -189,10 +224,12 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 			throw new BadRequestError();
 		}
 
-		const appReleaseUuids: {
-			[appUuid: string]: Set<string>;
+		const appReleasesCriteria: {
+			[appUuid: string]: {
+				releaseUuids: Set<string>;
+				imageLocations: string[];
+			};
 		} = {};
-		const imageLocations: string[] = [];
 		for (const uuid of uuids) {
 			const { apps } = body[uuid];
 			if (apps != null) {
@@ -200,19 +237,22 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 					appUuid,
 					{ release_uuid: isRunningReleaseUuid, releases },
 				] of Object.entries(apps)) {
-					appReleaseUuids[appUuid] ??= new Set();
+					const appReleaseCriteria = (appReleasesCriteria[appUuid] ??= {
+						releaseUuids: new Set<string>(),
+						imageLocations: [],
+					});
 					if (isRunningReleaseUuid) {
-						appReleaseUuids[appUuid].add(isRunningReleaseUuid);
+						appReleaseCriteria.releaseUuids.add(isRunningReleaseUuid);
 					}
 					if (releases != null) {
 						for (const [releaseUuid, { services }] of Object.entries(
 							releases,
 						)) {
-							appReleaseUuids[appUuid].add(releaseUuid);
+							appReleaseCriteria.releaseUuids.add(releaseUuid);
 							if (services != null) {
-								for (const service of Object.values(services)) {
-									imageLocations.push(service.image);
-								}
+								appReleaseCriteria.imageLocations.push(
+									...Object.values(services).map((s) => s.image),
+								);
 							}
 						}
 					}
@@ -220,12 +260,11 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 			}
 		}
 
-		const { devices, images, appReleases } = await fetchData(
+		const { devices, images, releasesByAppUuid } = await fetchData(
 			req,
 			custom,
 			uuids,
-			imageLocations,
-			appReleaseUuids,
+			appReleasesCriteria,
 		);
 
 		const updateFns: Array<
@@ -263,7 +302,7 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 
 			const userAppUuid = device.belongs_to__application[0].uuid;
 			if (apps != null) {
-				const release = appReleases[userAppUuid].find(
+				const release = releasesByAppUuid[userAppUuid].find(
 					(r) => r.commit === apps[userAppUuid].release_uuid,
 				);
 				if (release) {
@@ -310,7 +349,7 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 					for (const [releaseUuid, { services = {} }] of Object.entries(
 						releases,
 					)) {
-						const release = appReleases[appUuid].find(
+						const release = releasesByAppUuid[appUuid].find(
 							(r) => r.commit === releaseUuid,
 						);
 						if (release == null) {
