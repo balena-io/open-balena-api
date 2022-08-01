@@ -1,4 +1,34 @@
 - commits:
+    - subject: "device-state: Optimize state PATCH v3's image retrieval pine requests"
+      hash: 3f3ae1c93a75a9a968e55c6f451374a0ad94c7fa
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://explain.dalibo.com/plan/5ga#plan (updated combined release & image
+          query 11.7ms)
+        see: https://explain.dalibo.com/plan/5ga#plan (updated combined release & image
+          query 11.7ms)
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 3.3.9
+  title: "'device-state: Optimize state PATCH v3's image retrieval pine requests'"
+  date: 2022-07-28T09:30:14.600Z
+- commits:
+    - subject: Prefer for..of over forEach
+      hash: 36608d471388e61ed17312c81696d20c0e68cb29
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.8
+  title: "'Prefer for..of over forEach'"
+  date: 2022-07-26T16:20:50.921Z
+- commits:
     - subject: Fix Husky not working after v4 to v8 update
       hash: bd8d089de3d4742499672f3649cf92a07999462a
       body: ""

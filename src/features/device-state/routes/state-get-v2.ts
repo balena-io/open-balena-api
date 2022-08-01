@@ -108,7 +108,7 @@ function buildAppFromRelease(
 		}
 	}
 
-	(release.contains__image as AnyObject[]).forEach((ipr) => {
+	for (const ipr of release.contains__image as AnyObject[]) {
 		// extract the per-image information
 		const image = ipr.image[0];
 
@@ -132,11 +132,12 @@ function buildAppFromRelease(
 		varListInsert(si.device_service_environment_variable, environment);
 
 		const labels: Dictionary<string> = {};
-		[...ipr.image_label, ...svc.service_label].forEach(
-			({ label_name, value }: { label_name: string; value: string }) => {
-				labels[label_name] = value;
-			},
-		);
+		for (const { label_name, value } of [
+			...ipr.image_label,
+			...svc.service_label,
+		] as Array<{ label_name: string; value: string }>) {
+			labels[label_name] = value;
+		}
 
 		_.each(ConfigurationVarsToLabels, (labelName, confName) => {
 			if (confName in config && !(labelName in labels)) {
@@ -174,7 +175,7 @@ function buildAppFromRelease(
 				...services[svc.id],
 			};
 		}
-	});
+	}
 
 	return {
 		releaseId: release.id,
@@ -424,7 +425,7 @@ const getDependent = (device: AnyObject): StateV2['dependent'] => {
 		}>;
 	}> = {};
 
-	dependendOnByApps.forEach((depApp) => {
+	for (const depApp of dependendOnByApps) {
 		const depRelease = depApp?.should_be_running__release?.[0];
 		depAppCache[depApp.id] = {
 			release: depRelease,
@@ -454,9 +455,9 @@ const getDependent = (device: AnyObject): StateV2['dependent'] => {
 				image.is_stored_at__image_location,
 			);
 		}
-	});
+	}
 
-	managesDevice.forEach((depDev) => {
+	for (const depDev of managesDevice) {
 		const depAppId: number = depDev.belongs_to__application.__id;
 		const { release: depRelease, application_environment_variable } =
 			depAppCache[depAppId];
@@ -498,7 +499,7 @@ const getDependent = (device: AnyObject): StateV2['dependent'] => {
 				},
 			},
 		};
-	});
+	}
 
 	return dependentInfo;
 };

@@ -95,11 +95,11 @@ export const varListInsert = (
 	obj: Dictionary<string>,
 	filterFn: (name: string) => boolean = () => true,
 ) => {
-	varList.forEach(({ name, value }) => {
+	for (const { name, value } of varList) {
 		if (filterFn(name)) {
 			obj[name] = value;
 		}
-	});
+	}
 };
 
 // These 2 config vars below are mapped to labels if missing for backwards-compatibility

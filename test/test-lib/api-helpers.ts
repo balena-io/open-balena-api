@@ -101,12 +101,12 @@ export const expectResourceToMatch = async (
 			},
 		})
 		.expect(200);
-	Object.entries(expectations).forEach(([key, valueOrAssertion]) => {
+	for (const [key, valueOrAssertion] of Object.entries(expectations)) {
 		if (typeof valueOrAssertion === 'function') {
 			valueOrAssertion(expect(result).to.have.property(key));
 		} else {
 			expect(result).to.have.property(key, valueOrAssertion);
 		}
-	});
+	}
 	return result;
 };
