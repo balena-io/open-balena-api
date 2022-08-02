@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update tsconfig target to es2021
+      hash: 86535fb0ccda2b8aabd18c748ef7898fb7654cd7
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.10
+  title: "'Update tsconfig target to es2021'"
+  date: 2022-08-02T13:46:17.239Z
+- commits:
     - subject: "device-state: Optimize state PATCH v3's image retrieval pine requests"
       hash: 3f3ae1c93a75a9a968e55c6f451374a0ad94c7fa
       body: ""
