@@ -1,5 +1,10 @@
 import type { Request, RequestHandler, Response } from 'express';
-import type { DeviceLog, LogWriteContext, SupervisorLog } from './struct';
+import type {
+	DeviceLog,
+	DeviceLogsBackend,
+	LogWriteContext,
+	SupervisorLog,
+} from './struct';
 
 import onFinished = require('on-finished');
 import { sbvrUtils, errors } from '@balena/pinejs';
@@ -15,6 +20,7 @@ import {
 	addRetentionLimit,
 	getBackend,
 	getLokiBackend,
+	LOKI_ENABLED,
 	shouldPublishToLoki,
 } from './config';
 import { SetupOptions } from '../../..';
@@ -125,6 +131,30 @@ function handleStoreErrors(req: Request, res: Response, err: Error) {
 	res.status(500).end();
 }
 
+const publishBackend = LOKI_ENABLED
+	? async (
+			backend: DeviceLogsBackend,
+			ctx: LogWriteContext,
+			buffer: DeviceLog[],
+	  ) => {
+			const publishingToRedis = backend.publish(ctx, buffer);
+			const publishingToLoki = shouldPublishToLoki()
+				? getLokiBackend()
+						.publish(ctx, buffer)
+						.catch((err) =>
+							captureException(err, 'Failed to publish logs to Loki'),
+						)
+				: undefined;
+			await Promise.all([publishingToRedis, publishingToLoki]);
+	  }
+	: async (
+			backend: DeviceLogsBackend,
+			ctx: LogWriteContext,
+			buffer: DeviceLog[],
+	  ) => {
+			await backend.publish(ctx, buffer);
+	  };
+
 function handleStreamingWrite(
 	ctx: LogWriteContext,
 	req: Request,
@@ -201,14 +231,7 @@ function handleStreamingWrite(
 					buffer.splice(0, buffer.length - limit);
 				}
 				// Even if the connection was closed, still flush the buffer
-				const publishingToRedis = backend.publish(ctx, buffer);
-				const publishingToLoki = shouldPublishToLoki()
-					? getLokiBackend()
-							.publish(ctx, buffer)
-							.catch((err) =>
-								captureException(err, 'Failed to publish logs to Loki'),
-							)
-					: undefined;
+				const publishPromise = publishBackend(backend, ctx, buffer);
 				// Clear the buffer
 				buffer.length = 0;
 				// Resume in case it was paused due to buffering
@@ -216,7 +239,7 @@ function handleStreamingWrite(
 					req.resume();
 				}
 				// Wait for publishing to complete
-				await Promise.all([publishingToRedis, publishingToLoki]);
+				await publishPromise;
 			}
 			publishScheduled = false;
 
