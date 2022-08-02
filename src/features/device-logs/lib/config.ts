@@ -8,8 +8,9 @@ import {
 	LOKI_WRITE_PCT,
 } from '../../../lib/config';
 
+export const LOKI_ENABLED = LOKI_HOST && LOKI_WRITE_PCT > 0;
 export const shouldPublishToLoki = () =>
-	LOKI_HOST && LOKI_WRITE_PCT > Math.random() * 100;
+	LOKI_ENABLED && LOKI_WRITE_PCT > Math.random() * 100;
 
 export function addRetentionLimit<T extends LogContext>(
 	ctx: Omit<T, 'retention_limit'>,
