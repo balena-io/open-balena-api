@@ -1,4 +1,131 @@
 - commits:
+    - subject: Update dependencies
+      hash: a958e9edc5f373874e076b7e74f5f632eb7ec9dd
+      body: |
+        Update @balena/pinejs from 14.46.1 to 14.48.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Refactur checkModelExists to isModelNew
+              hash: 28725993f36edb2f372145addb3841b9a899d880
+              body: >
+                Modules may need to know if a model existed before
+                initialisation of the instance.
+
+                Eg. migrations need to know if a model is freshly generated / executed
+
+                of if this model already existed and can be target for migrations.
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-14.48.0
+          title: "'Refactor checkModelExists to isModelNew'"
+          date: 2022-07-26T17:59:52.601Z
+        - commits:
+            - subject: Fix synonyms iteration
+              hash: a13857c71696aff92e01d5beab88f19470f57f08
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.47.6
+          title: "'Fix synonyms iteration'"
+          date: 2022-07-26T15:21:52.695Z
+        - commits:
+            - subject: Prefer for..of over forEach
+              hash: 71449d9e0eccc52209e8639f3146d0a672408000
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.47.5
+          title: "'Prefer for..of over forEach'"
+          date: 2022-07-26T14:28:43.972Z
+        - commits:
+            - subject: Convert lodash flatMap/flatten to native versions
+              hash: 84d66b7adad29cafdfe80fcdc62d396c7ff5640e
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.47.4
+          title: "'Convert lodash flatMap/flatten to native versions'"
+          date: 2022-07-25T14:28:40.196Z
+        - commits:
+            - subject: Convert lodash `isObject` usage to native versions
+              hash: 878e484788dc9f74d7c8d88b136694943e6ae592
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.47.3
+          title: "'Convert lodash  usage to native versions'"
+          date: 2022-07-25T12:55:28.636Z
+        - commits:
+            - subject: Narrow the scope of the permissions bypass for root permissions
+              hash: 5b25906b444af997d0cae532d60866479b077c0d
+              body: >
+                This changes the bypass to only occur before guest permissions
+                are
+
+                initialized, only when specifically using `root` or `rootRead`
+
+                permissions, and also now constrains the model to the specific
+
+                permissions passed in rather than bypassing permissions altogether
+
+                for the root cases
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.47.2
+          title: "'Narrow the scope of the permissions bypass for root permissions'"
+          date: 2022-07-21T14:18:44.358Z
+        - commits:
+            - subject: Increase strictness of typings
+              hash: b375427a135f9194cc1fbe93afe9e1b627173a52
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.47.1
+          title: "'Increase strictness of typings'"
+          date: 2022-07-21T13:24:04.688Z
+        - commits:
+            - subject: Allow PRERESPOND hooks to modify the response
+              hash: 5281c05f32f80133dc2016eb8f7903b76bbba272
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.47.0
+          title: "'Allow PRERESPOND hooks to modify the response'"
+          date: 2022-07-14T16:01:21.648Z
+  version: 3.3.12
+  title: "'Update dependencies'"
+  date: 2022-08-02T17:25:03.990Z
+- commits:
     - subject: Optimize device logs in the case that loki is disabled
       hash: 8f231eb604ba01b742e6764868e01007b35d6418
       body: ""
