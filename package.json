@@ -25,7 +25,8 @@
     "prettify": "balena-lint --fix src/ test/ typings/ init.ts index.js",
     "prepack": "npm run build",
     "test": "IMAGE_NAME=test-open-balena-api ./automation/test.sh",
-    "posttest": "docker rmi test-open-balena-api"
+    "posttest": "docker rmi test-open-balena-api",
+    "prepare": "[ \"$HUSKY\" = 0 ] || husky install"
   },
   "dependencies": {
     "@balena/abstract-sql-compiler": "^7.20.0",
