@@ -1,5 +1,6 @@
 import { sbvrUtils, hooks } from '@balena/pinejs';
-import type { Filter } from 'pinejs-client-core';
+import * as _ from 'lodash';
+import type { FilterObj } from 'pinejs-client-core';
 
 import { captureException } from '../../../infra/error-handling';
 
@@ -9,6 +10,12 @@ interface CustomObject {
 	affectedDevices?: number[];
 }
 
+// Postgresql uses 16 bits to address the binds of sql commands. We use a number a bit below
+// that limit to chunk the binds, in order to have some extra room for other things like
+// computed terms/permissions.
+// See: https://www.postgresql.org/docs/13/protocol-message-formats.html#:~:text=The%20number%20of%20parameter%20values%20that%20follow
+const MAX_SAFE_SQL_BINDS = 2 ** 16 - 1 - 100;
+
 // Env vars hooks
 const addEnvHooks = (
 	resource: string,
@@ -16,7 +23,11 @@ const addEnvHooks = (
 		args: hooks.HookArgs & {
 			tx: Tx;
 		},
-	) => Promise<Filter | undefined>,
+	) => Promise<
+		| FilterObj
+		| [affectedIds: number[], filterBuilder: (ids: number[]) => FilterObj]
+		| undefined
+	>,
 ): void => {
 	const getAffectedDeviceIds = async (
 		args: hooks.HookArgs & {
@@ -28,14 +39,31 @@ const addEnvHooks = (
 			if (filter == null) {
 				return;
 			}
-			const devices = (await args.api.get({
-				resource: 'device',
-				options: {
-					$select: 'id',
-					$filter: filter,
-				},
-			})) as Array<{ id: number }>;
-			return devices.map(({ id }) => id);
+			const filters = Array.isArray(filter)
+				? (() => {
+						const [affectedIds, filterBuilder] = filter;
+						// Chunk the affected device retrieval, since a using $in errors with `code: '42P01'` for more than 66k IDs.
+						return _.chunk(affectedIds, MAX_SAFE_SQL_BINDS).map((ids) =>
+							filterBuilder(ids),
+						);
+				  })()
+				: [filter];
+			const deviceIds = (
+				await Promise.all(
+					filters.map(async ($filter) =>
+						(
+							(await args.api.get({
+								resource: 'device',
+								options: {
+									$select: 'id',
+									$filter,
+								},
+							})) as Array<{ id: number }>
+						).map(({ id }) => id),
+					),
+				)
+			).flat();
+			return deviceIds;
 		} catch (err) {
 			captureException(err, `Error building the ${resource} filter`, {
 				req: args.req,
@@ -101,23 +129,26 @@ const addAppEnvHooks = (resource: string) =>
 				return;
 			}
 
-			return {
-				belongs_to__application: {
-					$any: {
-						$alias: 'a',
-						$expr: {
-							a: {
-								[resource]: {
-									$any: {
-										$alias: 'e',
-										$expr: { e: { id: { $in: envVarIds } } },
+			return [
+				envVarIds,
+				(envVarIdsChunk) => ({
+					belongs_to__application: {
+						$any: {
+							$alias: 'a',
+							$expr: {
+								a: {
+									[resource]: {
+										$any: {
+											$alias: 'e',
+											$expr: { e: { id: { $in: envVarIdsChunk } } },
+										},
 									},
 								},
 							},
 						},
 					},
-				},
-			};
+				}),
+			];
 		},
 	);
 
@@ -141,16 +172,19 @@ const addDeviceEnvHooks = (resource: string) =>
 			if (envVarIds.length === 0) {
 				return;
 			}
-			return {
-				[resource]: {
-					$any: {
-						$alias: 'e',
-						$expr: {
-							e: { id: { $in: envVarIds } },
+			return [
+				envVarIds,
+				(envVarIdsChunk) => ({
+					[resource]: {
+						$any: {
+							$alias: 'e',
+							$expr: {
+								e: { id: { $in: envVarIdsChunk } },
+							},
 						},
 					},
-				},
-			};
+				}),
+			];
 		},
 	);
 
@@ -188,22 +222,25 @@ addEnvHooks(
 		if (envVarIds.length === 0) {
 			return;
 		}
-		return {
-			service_install: {
-				$any: {
-					$alias: 'si',
-					$expr: {
-						si: {
-							service: {
-								$any: {
-									$alias: 's',
-									$expr: {
-										s: {
-											service_environment_variable: {
-												$any: {
-													$alias: 'e',
-													$expr: {
-														e: { id: { $in: envVarIds } },
+		return [
+			envVarIds,
+			(envVarIdsChunk) => ({
+				service_install: {
+					$any: {
+						$alias: 'si',
+						$expr: {
+							si: {
+								service: {
+									$any: {
+										$alias: 's',
+										$expr: {
+											s: {
+												service_environment_variable: {
+													$any: {
+														$alias: 'e',
+														$expr: {
+															e: { id: { $in: envVarIdsChunk } },
+														},
 													},
 												},
 											},
@@ -214,8 +251,8 @@ addEnvHooks(
 						},
 					},
 				},
-			},
-		};
+			}),
+		];
 	},
 );
 
@@ -241,23 +278,26 @@ addEnvHooks(
 		if (envVarIds.length === 0) {
 			return;
 		}
-		return {
-			service_install: {
-				$any: {
-					$alias: 's',
-					$expr: {
-						s: {
-							device_service_environment_variable: {
-								$any: {
-									$alias: 'e',
-									$expr: { e: { id: { $in: envVarIds } } },
+		return [
+			envVarIds,
+			(envVarIdsChunk) => ({
+				service_install: {
+					$any: {
+						$alias: 's',
+						$expr: {
+							s: {
+								device_service_environment_variable: {
+									$any: {
+										$alias: 'e',
+										$expr: { e: { id: { $in: envVarIdsChunk } } },
+									},
 								},
 							},
 						},
 					},
 				},
-			},
-		};
+			}),
+		];
 	},
 );
 
@@ -299,25 +339,28 @@ addEnvHooks(
 		if (envVarIds.length === 0) {
 			return;
 		}
-		return {
-			image_install: {
-				$any: {
-					$alias: 'ii',
-					$expr: {
-						installs__image: {
-							$any: {
-								$alias: 'i',
-								$expr: {
-									i: {
-										release_image: {
-											$any: {
-												$alias: 'ri',
-												$expr: {
-													ri: {
-														image_environment_variable: {
-															$any: {
-																$alias: 'e',
-																$expr: { e: { id: { $in: envVarIds } } },
+		return [
+			envVarIds,
+			(envVarIdsChunk) => ({
+				image_install: {
+					$any: {
+						$alias: 'ii',
+						$expr: {
+							installs__image: {
+								$any: {
+									$alias: 'i',
+									$expr: {
+										i: {
+											release_image: {
+												$any: {
+													$alias: 'ri',
+													$expr: {
+														ri: {
+															image_environment_variable: {
+																$any: {
+																	$alias: 'e',
+																	$expr: { e: { id: { $in: envVarIdsChunk } } },
+																},
 															},
 														},
 													},
@@ -330,7 +373,7 @@ addEnvHooks(
 						},
 					},
 				},
-			},
-		};
+			}),
+		];
 	},
 );
