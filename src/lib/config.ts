@@ -403,8 +403,22 @@ if (trustProxy === 'true') {
 	// If it's 'true' enable it
 	trustProxyValue = true;
 } else if (trustProxy.includes('.') || trustProxy.includes(':')) {
-	// If it looks like an ip use as-is
-	trustProxyValue = trustProxy;
+	// If it looks like an ip then compile the trust function directly and memoize it, since the trust
+	// function is fairly expensive for such a hot function and if we trust some ips then it's likely
+	// that the majority of trust proxy calls will be coming from those ips - 50% if there's one level
+	// of proxy/load balancing and increasing if there are more levels of proxies/load balancers
+
+	// Support comma-separated IPs
+	const trustProxyIPs = trustProxy.split(/ *, */);
+
+	// tslint:disable-next-line:no-var-requires
+	const proxyAddr = require('proxy-addr') as typeof import('proxy-addr');
+	// tslint:disable-next-line:no-var-requires
+	const memoizee = require('memoizee') as typeof import('memoizee');
+	trustProxyValue = memoizee(proxyAddr.compile(trustProxyIPs), {
+		primitive: true,
+		max: 1000,
+	});
 } else {
 	const trustProxyNum = parseInt(trustProxy, 10);
 	if (Number.isFinite(trustProxyNum)) {
