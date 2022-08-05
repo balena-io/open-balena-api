@@ -9,7 +9,7 @@ RUN apt update \
 	&& pip3 install --no-cache-dir pgsanity
 
 COPY package.json package-lock.json /usr/src/app/
-RUN npm ci --unsafe-perm --production && npm cache clean --force
+RUN HUSKY=0 npm ci --unsafe-perm --production && npm cache clean --force
 
 COPY . /usr/src/app
 
