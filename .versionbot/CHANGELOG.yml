@@ -1,4 +1,24 @@
 - commits:
+    - subject: Truncate ip and mac addresses from Supervisor state patches
+      hash: 1af021eed988be9a6b357ffe55487ae78095d34b
+      body: >
+        Truncate to resolve failing device state patch when ip/mac addresses are
+        over 255 chars
+      footer:
+        Change-type: minor
+        change-type: minor
+        Closes: "#1059"
+        closes: "#1059"
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+        Co-authored-by: Christina Wang <christina@balena.io>
+        co-authored-by: Christina Wang <christina@balena.io>
+      author: Harald Fischer
+      nested: []
+  version: 3.4.0
+  title: "'Ip address and mac address resilient truncation'"
+  date: 2022-08-05T17:30:32.960Z
+- commits:
     - subject: Fix Husky hooks not being installed on fresh repo clones
       hash: 23abb15a138df833e1e35735377006e368dfca79
       body: ""
