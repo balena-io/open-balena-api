@@ -1,4 +1,20 @@
 - commits:
+    - subject: Fix Husky hooks not being installed on fresh repo clones
+      hash: 23abb15a138df833e1e35735377006e368dfca79
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://typicode.github.io/husky/#/?id=migrate-from-v4-to-v8
+        see: https://typicode.github.io/husky/#/?id=migrate-from-v4-to-v8
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 3.3.14
+  title: "'Fix Husky hooks not being installed on fresh repo clones'"
+  date: 2022-08-05T14:02:34.249Z
+- commits:
     - subject: Add caching for the trust proxy function when trusting by ip
       hash: b583538852f46422e868e09434bc67f6d247a571
       body: ""
