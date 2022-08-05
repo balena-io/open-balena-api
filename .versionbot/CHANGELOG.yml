@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add caching for the trust proxy function when trusting by ip
+      hash: b583538852f46422e868e09434bc67f6d247a571
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.3.13
+  title: "'Add caching for the trust proxy function when trusting by ip'"
+  date: 2022-08-04T12:03:14.560Z
+- commits:
     - subject: Update dependencies
       hash: a958e9edc5f373874e076b7e74f5f632eb7ec9dd
       body: |
