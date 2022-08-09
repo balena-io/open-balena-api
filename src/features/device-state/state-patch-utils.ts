@@ -61,21 +61,23 @@ type ValidPatchFields = Array<
 	typeof v3ValidPatchFields[number] | typeof v2ValidPatchFields[number]
 >;
 
+const defaultShortTextFieldsToTruncate: ValidPatchFields = [
+	'ip_address',
+	'mac_address',
+];
 export const truncateShortTextFields = (
 	object: Dictionary<any>,
-	keysToTruncate: ValidPatchFields,
+	keysToTruncate: ValidPatchFields = defaultShortTextFieldsToTruncate,
 ) => {
-	keysToTruncate.forEach((key) => {
+	for (const key of keysToTruncate) {
 		if (
 			typeof object[key] !== 'string' ||
 			object[key].length <= SHORT_TEXT_LENGTH
 		) {
-			return;
+			continue;
 		}
-		if (['ip_address', 'mac_address'].includes(key)) {
-			object[key] = truncateText(object[key]);
-		}
-	});
+		object[key] = truncateText(object[key]);
+	}
 	return object;
 };
 
