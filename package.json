@@ -1,7 +1,7 @@
 {
   "name": "@balena/open-balena-api",
   "description": "Internet of things, Made Simple",
-  "version": "3.3.13",
+  "version": "3.4.0",
   "license": "AGPL-3.0",
   "repository": {
     "type": "git",
@@ -25,7 +25,8 @@
     "prettify": "balena-lint --fix src/ test/ typings/ init.ts index.js",
     "prepack": "npm run build",
     "test": "IMAGE_NAME=test-open-balena-api ./automation/test.sh",
-    "posttest": "docker rmi test-open-balena-api"
+    "posttest": "docker rmi test-open-balena-api",
+    "prepare": "[ \"$HUSKY\" = 0 ] || husky install"
   },
   "dependencies": {
     "@balena/abstract-sql-compiler": "^7.20.0",
@@ -146,6 +147,6 @@
     "_": "index.js"
   },
   "versionist": {
-    "publishedAt": "2022-08-04T12:03:14.949Z"
+    "publishedAt": "2022-08-05T17:30:33.387Z"
   }
 }

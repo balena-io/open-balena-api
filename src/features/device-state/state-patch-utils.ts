@@ -39,6 +39,46 @@ export const v2ValidPatchFields: Array<
 	'download_progress',
 ];
 
+const SHORT_TEXT_LENGTH = 255;
+const ADDRESS_DELIMITER = ' ';
+
+// Truncate text at delimiters to input length or less
+const truncateText = (
+	longText: string,
+	length: number = SHORT_TEXT_LENGTH,
+	delimiter: string = ADDRESS_DELIMITER,
+): string => {
+	return longText
+		.split(delimiter)
+		.reduce((text, fragment) => {
+			const textWithFragment = text + delimiter + fragment;
+			return textWithFragment.length <= length ? textWithFragment : text;
+		}, '')
+		.trim();
+};
+
+type ValidPatchFields = Array<
+	typeof v3ValidPatchFields[number] | typeof v2ValidPatchFields[number]
+>;
+
+export const truncateShortTextFields = (
+	object: Dictionary<any>,
+	keysToTruncate: ValidPatchFields,
+) => {
+	keysToTruncate.forEach((key) => {
+		if (
+			typeof object[key] !== 'string' ||
+			object[key].length <= SHORT_TEXT_LENGTH
+		) {
+			return;
+		}
+		if (['ip_address', 'mac_address'].includes(key)) {
+			object[key] = truncateText(object[key]);
+		}
+	});
+	return object;
+};
+
 export const metricsPatchFields = [
 	'memory_usage',
 	'memory_total',

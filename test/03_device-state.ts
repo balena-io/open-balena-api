@@ -481,6 +481,50 @@ mockery.registerMock('../src/lib/config', configMock);
 			);
 		});
 
+		it('should accept addresses longer than 255 chars and truncate at space delimiters', async () => {
+			const generateValidAddress = (
+				addr: string,
+				truncLen: number,
+				delimiter: string = '',
+			): string => {
+				let validAddress = '';
+				while (true) {
+					if (validAddress.length + addr.length + delimiter.length > truncLen) {
+						break;
+					} else {
+						validAddress += addr + delimiter;
+					}
+				}
+				return validAddress.trim();
+			};
+			const IP = '10.0.0.10';
+			const MAC = 'aa:bb:cc:dd:ee:ff';
+			const DELIMITER = ' ';
+			// Generate valid address strings just shy of 255 chars
+			const validIp = generateValidAddress(IP, 255, DELIMITER);
+			const validMac = generateValidAddress(MAC, 255, DELIMITER);
+			// Simulate a report with space-separated addresses longer than 255 chars
+			const devicePatchBody = {
+				[stateKey]: {
+					ip_address: validIp + DELIMITER + IP,
+					mac_address: validMac + DELIMITER + MAC,
+				},
+			};
+
+			await fakeDevice.patchState(
+				device,
+				device.uuid,
+				devicePatchBody,
+				stateVersion,
+			);
+
+			// Addresses should truncate at the space delimiter
+			await expectResourceToMatch(pineUser, 'device', device.id, {
+				ip_address: validIp,
+				mac_address: validMac,
+			});
+		});
+
 		it('should set the metrics throttling key in redis', async () => {
 			const cachedValue = await redisRO.get(
 				getMetricsRecentlyUpdatedCacheKey(device.uuid),

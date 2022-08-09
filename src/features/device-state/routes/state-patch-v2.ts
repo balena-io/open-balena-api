@@ -19,6 +19,7 @@ import {
 	v2ValidPatchFields,
 	upsertImageInstall,
 	deleteOldImageInstalls,
+	truncateShortTextFields,
 } from '../state-patch-utils';
 import type { ResolveDeviceInfoCustomObject } from '../middleware';
 
@@ -268,6 +269,13 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 
 				updateFns.push(async (resinApiTx) => {
 					if (Object.keys(deviceBody).length > 0) {
+						// truncate for resilient legacy compatible device state patch so that supervisors don't fail
+						// to update b/c of length violation of 255 (SBVR SHORT TEXT type) for ip and mac address.
+						// sbvr-types does not export SHORT TEXT VARCHAR length 255 to import.
+						deviceBody = truncateShortTextFields(deviceBody, [
+							'ip_address',
+							'mac_address',
+						]);
 						// If we're updating anyway then ensure the metrics data is included
 						deviceBody = { ...deviceBody, ...metricsBody };
 						await resinApiTx.patch({
