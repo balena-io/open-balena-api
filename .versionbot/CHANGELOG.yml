@@ -1,4 +1,16 @@
 - commits:
+    - subject: Allow trusted ips to make http connections with x-forwarded-proto
+      hash: 40ca893b60fa3093e7d08ceeab2d049c517c5861
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 3.5.0
+  title: "'Allow trusted ips to make http connections with x-forwarded-proto'"
+  date: 2022-08-10T15:08:03.647Z
+- commits:
     - subject: Change forEach to for..of for truncateShortText
       hash: 2bca642bdad52e7eaaf6080188871ecc283aa72a
       body: ""
