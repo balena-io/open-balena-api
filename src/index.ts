@@ -403,6 +403,16 @@ function fixProtocolMiddleware(skipUrls: string[] = []): Handler {
 		if (req.protocol === 'https' || skipUrls.includes(req.url)) {
 			return next();
 		}
+		if (req.headers['x-forwarded-for'] == null) {
+			const trust = req.app.get('trust proxy fn') as ReturnType<
+				typeof import('proxy-addr').compile
+			>;
+			if (trust(req.socket.remoteAddress!, 0)) {
+				// If we trust the origin of the request and they have not set any `x-forwarded-for` header then
+				// allow them to use http connections without needing to set a dummy `x-forwarded-proto` header
+				return next();
+			}
+		}
 		res.redirect(301, `https://${API_HOST}${req.url}`);
 	};
 }

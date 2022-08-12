@@ -1,4 +1,32 @@
 - commits:
+    - subject: Allow trusted ips to make http connections with x-forwarded-proto
+      hash: 40ca893b60fa3093e7d08ceeab2d049c517c5861
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 3.5.0
+  title: "'Allow trusted ips to make http connections with x-forwarded-proto'"
+  date: 2022-08-10T15:08:03.647Z
+- commits:
+    - subject: Change forEach to for..of for truncateShortText
+      hash: 2bca642bdad52e7eaaf6080188871ecc283aa72a
+      body: ""
+      footer:
+        See: https://github.com/balena-io/open-balena-api/pull/1068#discussion_r939492048
+        see: https://github.com/balena-io/open-balena-api/pull/1068#discussion_r939492048
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Christina Wang <christina@balena.io>
+        signed-off-by: Christina Wang <christina@balena.io>
+      author: Christina Wang
+      nested: []
+  version: 3.4.1
+  title: "'Change forEach to for..of for truncateShortText'"
+  date: 2022-08-09T18:54:53.262Z
+- commits:
     - subject: Truncate ip and mac addresses from Supervisor state patches
       hash: 1af021eed988be9a6b357ffe55487ae78095d34b
       body: >
