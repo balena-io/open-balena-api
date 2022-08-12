@@ -1,3 +1,16 @@
+import {
+	boolVar,
+	HostPort,
+	HOURS,
+	intVar,
+	MINUTES,
+	optionalVar,
+	requiredVar,
+	SECONDS,
+	hostPortsVar,
+	trustProxyVar,
+} from '@balena/env-parsing';
+
 export let version: string;
 export function setVersion(v: typeof version) {
 	if (version !== undefined) {
@@ -7,12 +20,6 @@ export function setVersion(v: typeof version) {
 	}
 	version = v;
 }
-
-export const SECONDS = 1000;
-export const SECONDS_PER_HOUR = 60 * 60;
-export const MINUTES = 60 * SECONDS;
-export const HOURS = 60 * MINUTES;
-export const DAYS = 24 * HOURS;
 
 const openVpnConfig = `
 client
@@ -45,76 +52,6 @@ reneg-bytes 0
 reneg-pkts 0
 reneg-sec 0
 `;
-
-export const requiredVar = (varName: string): string => {
-	const s = process.env[varName];
-	if (s == null) {
-		process.exitCode = 1;
-		throw new Error(`Missing environment variable: ${varName}`);
-	}
-	return s;
-};
-
-export function optionalVar(varName: string, defaultValue: string): string;
-export function optionalVar(
-	varName: string,
-	defaultValue?: string,
-): string | undefined;
-export function optionalVar(
-	varName: string,
-	defaultValue?: string,
-): string | undefined {
-	return process.env[varName] || defaultValue;
-}
-
-export const checkInt = (s: string) => {
-	const i = parseInt(s, 10);
-	if (!Number.isFinite(i)) {
-		return;
-	}
-	return i;
-};
-
-export function intVar(varName: string): number;
-export function intVar<R>(varName: string, defaultValue: R): number | R;
-export function intVar<R>(varName: string, defaultValue?: R): number | R {
-	if (arguments.length === 1) {
-		requiredVar(varName);
-	}
-
-	const s = process.env[varName];
-	if (s == null) {
-		return defaultValue!;
-	}
-
-	const i = checkInt(s);
-	if (i === undefined) {
-		throw new Error(`${varName} must be a valid number if set`);
-	}
-	return i;
-}
-
-export function boolVar(varName: string): boolean;
-export function boolVar<R>(varName: string, defaultValue: R): boolean | R;
-export function boolVar<R>(varName: string, defaultValue?: R): boolean | R {
-	if (arguments.length === 1) {
-		requiredVar(varName);
-	}
-
-	const s = process.env[varName];
-	if (s == null) {
-		return defaultValue!;
-	}
-	if (s === 'false') {
-		return false;
-	}
-	if (s === 'true') {
-		return true;
-	}
-	throw new Error(
-		`Invalid value for boolean var '${varName}', got '${s}', expected 'true' or 'false'`,
-	);
-}
 
 export enum ADVISORY_LOCK_NAMESPACES {
 	release__revision__belongs_to__application = 1,
@@ -201,28 +138,6 @@ export const RATE_LIMIT_MEMORY_BACKEND = optionalVar(
 	'RATE_LIMIT_MEMORY_BACKEND',
 );
 
-type HostPort = { host: string; port: number };
-// Split `${host}:${port}` pairs
-const splitHostPort = (
-	varName: string,
-	defaultHosts?: HostPort[],
-): HostPort[] => {
-	const hostPairs = optionalVar(varName);
-	if (hostPairs == null) {
-		if (defaultHosts == null) {
-			throw new Error(`Missing environment variable: ${varName}`);
-		}
-		return defaultHosts;
-	}
-	return hostPairs.split(',').map((hostPair): HostPort => {
-		const [host, maybePort] = hostPair.split(':');
-		const port = checkInt(maybePort);
-		if (port == null) {
-			throw new Error(`Invalid port for '${varName}': ${maybePort}`);
-		}
-		return { host, port };
-	});
-};
 type RedisOpts =
 	| {
 			isCluster: true;
@@ -247,7 +162,7 @@ function redisOpts(
 	const hostVarName = `${prefix}_HOST`;
 	const roHostVarName = `${prefix}_RO_HOST`;
 	const isCluster = boolVar(`${prefix}_IS_CLUSTER`, defaultIsCluster);
-	const hosts = splitHostPort(hostVarName, defaultHosts);
+	const hosts = hostPortsVar(hostVarName, defaultHosts);
 	if (isCluster == null) {
 		throw new Error(`Missing env: '${prefix}_IS_CLUSTER'`);
 	}
@@ -268,7 +183,7 @@ function redisOpts(
 			`'${hostVarName}' must contain only one entry when not in cluster mode`,
 		);
 	}
-	const roHosts = splitHostPort(roHostVarName, hosts);
+	const roHosts = hostPortsVar(roHostVarName, hosts);
 	if (roHosts.length > 1) {
 		throw new Error(`'${roHostVarName}' must contain at most one entry`);
 	}
@@ -380,6 +295,7 @@ export const DEVICE_EXISTS_CACHE_TIMEOUT = intVar(
 	'DEVICE_EXISTS_CACHE_TIMEOUT',
 	5 * MINUTES,
 );
+export const GET_SUBJECT_CACHE_TIMEOUT = 5 * MINUTES;
 export const RESOLVE_IMAGE_ID_CACHE_TIMEOUT = intVar(
 	'RESOLVE_IMAGE_ID_CACHE_TIMEOUT',
 	5 * MINUTES,
@@ -397,13 +313,13 @@ export const VPN_AUTH_CACHE_TIMEOUT = intVar(
 	5 * MINUTES,
 );
 
-const { TRUST_PROXY: trustProxy = 'true' } = process.env;
-let trustProxyValue;
-if (trustProxy === 'true') {
-	// If it's 'true' enable it
-	trustProxyValue = true;
-} else if (trustProxy.includes('.') || trustProxy.includes(':')) {
-	// If it looks like an ip then compile the trust function directly and memoize it, since the trust
+const trustProxy = trustProxyVar('TRUST_PROXY', false);
+
+let trustProxyValue:
+	| Exclude<typeof trustProxy, string>
+	| ReturnType<typeof import('proxy-addr').compile>;
+if (typeof trustProxy === 'string') {
+	// If trust proxy is a string then compile the trust function directly and memoize it, since the trust
 	// function is fairly expensive for such a hot function and if we trust some ips then it's likely
 	// that the majority of trust proxy calls will be coming from those ips - 50% if there's one level
 	// of proxy/load balancing and increasing if there are more levels of proxies/load balancers
@@ -420,12 +336,6 @@ if (trustProxy === 'true') {
 		max: 1000,
 	});
 } else {
-	const trustProxyNum = parseInt(trustProxy, 10);
-	if (Number.isFinite(trustProxyNum)) {
-		// If it's a number use the number
-		trustProxyValue = trustProxyNum;
-	} else {
-		throw new Error(`Invalid value for 'TRUST_PROXY' of '${trustProxy}'`);
-	}
+	trustProxyValue = trustProxy;
 }
 export const TRUST_PROXY = trustProxyValue;

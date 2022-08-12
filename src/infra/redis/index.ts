@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import Redis from 'ioredis';
-import { MINUTES, REDIS } from '../../lib/config';
+import { REDIS } from '../../lib/config';
+import { MINUTES } from '@balena/env-parsing';
 import { captureException } from '../error-handling';
 import { getRedisOptions } from './config';
 

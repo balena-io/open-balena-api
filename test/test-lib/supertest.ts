@@ -13,7 +13,6 @@ export const supertest = function (user?: string | UserObjectParam) {
 	// We have to cast `as any` because the types are poorly maintained
 	// and don't support setting defaults
 	const req: any = $supertest.agent(app);
-	req.set('X-Forwarded-Proto', 'https');
 
 	if (typeof token === 'string') {
 		req.set('Authorization', `Bearer ${token}`);
