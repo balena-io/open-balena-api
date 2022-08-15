@@ -1,7 +1,7 @@
 import type { Application } from 'express';
 import type { SetupOptions } from '../..';
 
-import { SECONDS_PER_HOUR } from '../../lib/config';
+import { SECONDS_PER_HOUR } from '@balena/env-parsing';
 import {
 	createRateLimiter,
 	createRateLimitMiddleware,

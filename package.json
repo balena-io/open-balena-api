@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@balena/abstract-sql-compiler": "^7.20.0",
+    "@balena/env-parsing": "^1.0.0",
     "@balena/es-version": "^1.0.1",
     "@balena/node-metrics-gatherer": "^6.0.3",
     "@balena/pinejs": "^14.48.0",

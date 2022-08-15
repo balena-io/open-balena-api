@@ -5,10 +5,10 @@ import * as _ from 'lodash';
 import { errors } from '@balena/pinejs';
 import { captureException } from '../../../../infra/error-handling';
 import {
-	DAYS,
 	LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS,
 	LOGS_SUBSCRIPTION_EXPIRY_SECONDS,
 } from '../../../../lib/config';
+import { DAYS } from '@balena/env-parsing';
 import type {
 	DeviceLog,
 	DeviceLogsBackend,
