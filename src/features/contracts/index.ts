@@ -10,8 +10,8 @@ import {
 	CONTRACTS_PUBLIC_REPO_BRANCH,
 	CONTRACTS_PUBLIC_REPO_NAME,
 	CONTRACTS_PUBLIC_REPO_OWNER,
-	MINUTES,
 } from '../../lib/config';
+import { MINUTES } from '@balena/env-parsing';
 import { captureException } from '../../infra/error-handling';
 import { scheduleJob } from '../../infra/scheduler';
 

@@ -14,7 +14,7 @@ import { captureException, handleHttpErrors } from '../../infra/error-handling';
 import { registryAuth as CERT } from './certs';
 import {
 	AUTH_RESINOS_REGISTRY_CODE,
-	MINUTES,
+	GET_SUBJECT_CACHE_TIMEOUT,
 	REGISTRY2_HOST,
 	RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
 	RESOLVE_IMAGE_LOCATION_CACHE_TIMEOUT,
@@ -679,7 +679,7 @@ const $getSubject = multiCacheMemoizee(
 		cacheKey: '$getSubject',
 		undefinedAs: false,
 		promise: true,
-		maxAge: 5 * MINUTES,
+		maxAge: GET_SUBJECT_CACHE_TIMEOUT,
 		primitive: true,
 		normalizer: ([apiKey, subject]) => `${apiKey}\u0001${subject}`,
 	},

@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use @balena/env-parsing for shared env var parsing behavior
+      hash: 387f438ebb8fc6d625f2eb49d66ff04691b3c3c9
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+  version: 4.0.0
+  title: "'Use @balena/env-parsing for shared env var parsing behavior'"
+  date: 2022-08-15T16:30:31.873Z
+- commits:
     - subject: Allow trusted ips to make http connections with x-forwarded-proto
       hash: 40ca893b60fa3093e7d08ceeab2d049c517c5861
       body: ""

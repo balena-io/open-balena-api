@@ -33,7 +33,7 @@ const createResource = async (args: {
 	user?: { token: string };
 }) => {
 	const { resource, method = 'POST', body = {}, user } = args;
-	const headers: Headers = { 'X-Forwarded-Proto': 'https' };
+	const headers: Headers = {};
 
 	if (user != null) {
 		headers.Authorization = `Bearer ${user.token}`;

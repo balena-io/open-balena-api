@@ -77,6 +77,7 @@ runapi () {
 		-e LOKI_WRITE_PCT=100 \
 		-e REGISTRY2_HOST=registry2.balenadev.io \
 		-e REQUEST_MOCK_DEBUG=0 \
+		-e TRUST_PROXY=true \
 		-e RUN_TESTS=1 \
 		-e SUPERUSER_EMAIL=test@balena.io \
 		-e SUPERUSER_PASSWORD=Password01 \
