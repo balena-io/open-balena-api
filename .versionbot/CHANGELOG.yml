@@ -1,4 +1,20 @@
 - commits:
+    - subject: Remove more unnecessary headers for supervisor requests
+      hash: 8ca2fc9a12fc81cc3d13e37ca01b23b23587bc67
+      body: |
+        Supervisor target state requests are usually cached and as such the
+        majority of the bandwidth is used for sending headers, by removing all
+        unnecessary headers it allows us the reduce the idle bandwidth from
+        supervisors by a significant percentage
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 4.0.1
+  title: "'Remove more unnecessary headers for supervisor requests'"
+  date: 2022-08-16T15:34:41.612Z
+- commits:
     - subject: Use @balena/env-parsing for shared env var parsing behavior
       hash: 387f438ebb8fc6d625f2eb49d66ff04691b3c3c9
       body: ""
