@@ -321,23 +321,22 @@ export async function setup(app: Application, options: SetupOptions) {
 		fixProtocolMiddleware(['/ping'].concat(options.skipHttpsPaths || [])),
 	);
 
-	app.use((_req, res, next) => {
-		res.set('X-Frame-Options', 'DENY');
-		res.set('X-Content-Type-Options', 'nosniff');
-		next();
-	});
-
 	app.use((req, res, next) => {
-		let origin = req.get('Origin');
 		const userAgent = req.get('User-Agent');
-		if (!origin && (!userAgent || /^Supervisor|^curl/.test(userAgent))) {
+		if (!userAgent || /^Supervisor|^curl/.test(userAgent)) {
 			// The supervisor either sends no user-agent or, more recently, identifies
 			// itself as "Supervisor/X.X.X (Linux; Resin OS X.X.X; prod)" and the
-			// cron-updater uses curl, all of which ignore CORS, so we can drop the
-			// CORS headers to save bandwidth.
+			// cron-updater uses curl, all of which ignore CORS and other browser related
+			// headers, so we can drop them to save bandwidth.
+
+			// We can also remove the date header as unnecessary
+			res.removeHeader('Date');
 			return next();
 		}
-		origin = origin || '*';
+		res.set('X-Frame-Options', 'DENY');
+		res.set('X-Content-Type-Options', 'nosniff');
+
+		const origin = req.get('Origin') || '*';
 		res.header('Access-Control-Allow-Origin', origin);
 		res.header(
 			'Access-Control-Allow-Methods',
