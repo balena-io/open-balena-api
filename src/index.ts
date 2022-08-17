@@ -328,9 +328,6 @@ export async function setup(app: Application, options: SetupOptions) {
 			// itself as "Supervisor/X.X.X (Linux; Resin OS X.X.X; prod)" and the
 			// cron-updater uses curl, all of which ignore CORS and other browser related
 			// headers, so we can drop them to save bandwidth.
-
-			// We can also remove the date header as unnecessary
-			res.removeHeader('Date');
 			return next();
 		}
 		res.set('X-Frame-Options', 'DENY');
