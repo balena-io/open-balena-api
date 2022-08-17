@@ -1,4 +1,20 @@
 - commits:
+    - subject: Remove misleading date header removal for supervisor requests
+      hash: 41ec5001a218c850f345e03353c441a8c2457ba6
+      body: |
+        Since the date header is automatically added when you set the status
+        you need to remove it after the fact (or disable nodejs adding it
+        altogether) so it was not having any effect here other than adding
+        confusion
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 4.0.2
+  title: "'Remove misleading date header removal for supervisor requests'"
+  date: 2022-08-17T14:23:09.060Z
+- commits:
     - subject: Remove more unnecessary headers for supervisor requests
       hash: 8ca2fc9a12fc81cc3d13e37ca01b23b23587bc67
       body: |
