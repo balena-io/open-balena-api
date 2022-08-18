@@ -41,7 +41,7 @@
     "@balena/node-metrics-gatherer": "^6.0.3",
     "@balena/pinejs-webresource-cloudfront": "^0.0.5",
     "@sentry/node": "^7.49.0",
-    "@balena/pinejs": "14.50.0-odata-metadata-json-dbd8d4b1c1b8823be2e600498d75212069c82708",
+    "@balena/pinejs": "14.50.0-odata-metadata-json-f70416c2d3a609dfa103fc6382d62eeb1f3e791a",
     "@types/basic-auth": "^1.1.3",
     "@types/bluebird": "^3.5.38",
     "@types/cache-manager": "^4.0.2",
