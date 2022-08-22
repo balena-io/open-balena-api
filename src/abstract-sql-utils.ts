@@ -165,6 +165,12 @@ const $renameEnvVarName = (abstractSql: AbstractSqlModel, resource: string) => {
 export const renameEnvVarName = (abstractSql: AbstractSqlModel) => {
 	$renameEnvVarName(abstractSql, 'device');
 	$renameEnvVarName(abstractSql, 'application');
+	$renameEnvVarName(
+		abstractSql,
+		'device-installs-application-has-service name',
+	);
+	$renameEnvVarName(abstractSql, 'application-has-service name');
+	$renameEnvVarName(abstractSql, 'image-is part of-release');
 };
 
 const sqlConcatFactory = (
