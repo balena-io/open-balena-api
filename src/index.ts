@@ -335,6 +335,13 @@ export async function setup(app: Application, options: SetupOptions) {
 
 		const origin = req.get('Origin') || '*';
 		res.header('Access-Control-Allow-Origin', origin);
+		res.header('Access-Control-Allow-Credentials', 'true');
+
+		if (req.method !== 'OPTIONS') {
+			// If we're not a preflight request then carry on to the real implementation
+			return next();
+		}
+		// Otherwise add the preflight CORS headers and return 200
 		res.header(
 			'Access-Control-Allow-Methods',
 			'GET, PUT, POST, PATCH, DELETE, OPTIONS, HEAD',
@@ -343,9 +350,8 @@ export async function setup(app: Application, options: SetupOptions) {
 			'Access-Control-Allow-Headers',
 			'Content-Type, Authorization, Application-Record-Count, MaxDataServiceVersion, X-Requested-With, X-Balena-Client',
 		);
-		res.header('Access-Control-Allow-Credentials', 'true');
 		res.header('Access-Control-Max-Age', '86400');
-		next();
+		res.status(200).end();
 	});
 
 	app.use('/ping', (_req, res) => {
