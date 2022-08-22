@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove unnecessary CORS headers from non-OPTIONS requests
+      hash: 1ccef760b75ca327d06890ce2fd011cea6806a72
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 4.0.3
+  title: "'Remove unnecessary CORS headers from non-OPTIONS requests'"
+  date: 2022-08-22T11:40:17.382Z
+- commits:
     - subject: Remove misleading date header removal for supervisor requests
       hash: 41ec5001a218c850f345e03353c441a8c2457ba6
       body: |
