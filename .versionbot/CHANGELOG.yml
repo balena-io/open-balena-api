@@ -1,4 +1,34 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v13.5.0
+      hash: 2a10d8f7690a75bd83a810a511fe49a128fb06ad
+      body: |
+        Update balena/open-balena-base to 13.5.0
+
+        Update balena/open-balena-base from 13.4.0 to 13.5.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Update balenalib/amd64-debian-node Docker tag to v16.17.0
+              hash: def1d2e6db189ce01390bd48c3c99a2fadf5486a
+              body: |
+                Update balenalib/amd64-debian-node to 16.17.0
+
+                Update balenalib/amd64-debian-node from 16.16.0 to 16.17.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-13.5.0
+          title: "'Update balenalib/amd64-debian-node Docker tag to v16.17.0'"
+          date: 2022-08-18T20:08:44.059Z
+  version: 4.1.0
+  title: "'Update balena/open-balena-base Docker tag to v13.5.0'"
+  date: 2022-08-22T11:59:15.374Z
+- commits:
     - subject: Remove unnecessary CORS headers from non-OPTIONS requests
       hash: 1ccef760b75ca327d06890ce2fd011cea6806a72
       body: ""
