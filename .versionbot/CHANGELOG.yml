@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use a windows+dev-only friendly husky install method
+      hash: 98e89dca8c32697285eec63f14bc9b3dab3e2a36
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 4.1.2
+  title: "'Use a windows+dev-only friendly husky install method'"
+  date: 2022-08-22T15:10:19.328Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v13.5.1
       hash: 7cdaa7a188ff06a0247e32c3d867a38829ce45ec
       body: |
