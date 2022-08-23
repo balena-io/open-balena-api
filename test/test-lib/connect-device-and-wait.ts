@@ -19,6 +19,7 @@ const registerService = async (version: string) => {
 export const connectDeviceAndWaitForUpdate = async (
 	uuid: string,
 	version: string,
+	/** An action that should trigger a device update. */
 	promiseFn: () => PromiseLike<any>,
 ) => {
 	let updateRequested = false;
