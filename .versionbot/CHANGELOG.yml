@@ -1,4 +1,31 @@
 - commits:
+    - subject: "vars-update-trigger: Fix 42P01 error when the affected envs are too
+        many"
+      hash: 749f043666cbf2145fa1724215d2a8b450849190
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://www.flowdock.com/app/rulemotion/public-s-community/threads/GrL4sR7imv_sfdTqZsgu80lMvpg
+        see: https://www.flowdock.com/app/rulemotion/public-s-community/threads/GrL4sR7imv_sfdTqZsgu80lMvpg
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Add tests for supervisor notification after deleting variables
+      hash: 48d78c83b2b1c0482d1c174e9aa4968abebf340d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 4.1.3
+  title: "'vars-update-trigger: Fix 42P01 error when the affected envs are too many'"
+  date: 2022-08-23T12:25:50.021Z
+- commits:
     - subject: Use a windows+dev-only friendly husky install method
       hash: 98e89dca8c32697285eec63f14bc9b3dab3e2a36
       body: ""
