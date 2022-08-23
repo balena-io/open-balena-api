@@ -103,6 +103,9 @@ Term: commit
 Term: composition
 	Concept Type: JSON (Type)
 
+Term: config var name
+	Concept Type: Short Text (Type)
+
 Term: content hash
 	Concept Type: Short Text (Type)
 
@@ -336,7 +339,7 @@ Term: application
 		Term Form: application environment variable
 		Database Table Name: application environment variable
 
-	Fact type: application has name (Auth)
+	Fact type: application has config var name
 		Term Form: application config variable
 		Database Table Name: application config variable
 
@@ -368,7 +371,7 @@ Term: device
 		Term Form: device environment variable
 		Database Table Name: device environment variable
 
-	Fact type: device has name (Auth)
+	Fact type: device has config var name
 		Term Form: device config variable
 		Database Table Name: device config variable
 
