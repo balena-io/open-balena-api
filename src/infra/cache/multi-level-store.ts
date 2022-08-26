@@ -24,7 +24,10 @@ export function createMultiLevelStore<T extends Defined>(
 		| {
 				default: MultiStoreOpt & cacheManager.CacheOptions;
 				local?: MultiStoreOpt | false;
-				global?: MultiStoreOpt;
+				/**
+				 * The global store will ignore the `max` anyway, so avoiding passing it in will help reduce confusion
+				 */
+				global?: Exclude<MultiStoreOpt, 'max'>;
 		  },
 	useVersion = true,
 ): {
