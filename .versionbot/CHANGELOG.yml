@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove unused `max` option from the global multi-level-memoizee typings
+      hash: 378df9967a1efd8ecd1f828e129721cb4f509020
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 4.1.6
+  title: "'Remove unused  option from the global multi-level-memoizee typings'"
+  date: 2022-08-26T16:53:02.798Z
+- commits:
     - subject: Remove unused `max` option from the global multi-level-store typings
       hash: a0321a38be5ff17692c66edff6f234d6843cd355
       body: ""
