@@ -19,7 +19,7 @@ type MultiCacheMemoizeeOpts<T extends (...args: any[]) => any> = {
 const memoizeeSharedOptionsKeys = ['max', 'maxAge', 'preFetch'] as const;
 
 type MultiCacheMemoizeeSharedOpts<T extends (...args: any[]) => any> = Pick<
-	MultiCacheMemoizeeOpts<T>,
+	Exclude<MultiCacheMemoizeeOpts<T>, 'max'>,
 	typeof memoizeeSharedOptionsKeys[number]
 >;
 
