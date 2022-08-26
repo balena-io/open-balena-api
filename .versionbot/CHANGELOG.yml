@@ -1,4 +1,18 @@
 - commits:
+    - subject: Update TypeScript to v4.8
+      hash: 4784d346323a02ba1da7e0c8c4d7b39acfa90b15
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 4.1.4
+  title: "'Update TypeScript to v4.8'"
+  date: 2022-08-26T08:55:01.737Z
+- commits:
     - subject: "vars-update-trigger: Fix 42P01 error when the affected envs are too
         many"
       hash: 749f043666cbf2145fa1724215d2a8b450849190
