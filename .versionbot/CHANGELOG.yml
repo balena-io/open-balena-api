@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove unused `max` option from the global multi-level-store typings
+      hash: a0321a38be5ff17692c66edff6f234d6843cd355
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 4.1.5
+  title: "'Remove unused  option from the global multi-level-store typings'"
+  date: 2022-08-26T15:57:02.275Z
+- commits:
     - subject: Update TypeScript to v4.8
       hash: 4784d346323a02ba1da7e0c8c4d7b39acfa90b15
       body: ""
