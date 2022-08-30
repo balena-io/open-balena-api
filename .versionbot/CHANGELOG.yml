@@ -1,4 +1,18 @@
 - commits:
+    - subject: Add logs throttling when exceeding the `LOGS_WRITE_BUFFER_LIMIT`
+      hash: c7369578ec44af0b2fbbfe330e6e74fd2772f025
+      body: |
+        This limits the number of logs we will accept per flush interval with a
+        warning when logs are dropped
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 4.2.0
+  title: "'Add logs throttling when exceeding the '"
+  date: 2022-08-30T16:44:48.043Z
+- commits:
     - subject: Remove unused `max` option from the global multi-level-memoizee typings
       hash: 378df9967a1efd8ecd1f828e129721cb4f509020
       body: ""
