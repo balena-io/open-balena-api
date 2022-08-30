@@ -177,6 +177,7 @@ function handleStreamingWrite(
 		);
 	}
 
+	const bufferLimit = Math.min(LOGS_WRITE_BUFFER_LIMIT, ctx.retention_limit);
 	const buffer: DeviceLog[] = [];
 	const parser = ndjson.parse();
 
@@ -204,7 +205,7 @@ function handleStreamingWrite(
 		}
 		buffer.push(log);
 		// If we buffer too much or the backend goes down, pause it for back-pressure
-		if (buffer.length >= LOGS_WRITE_BUFFER_LIMIT || !backend.available) {
+		if (buffer.length >= bufferLimit || !backend.available) {
 			req.pause();
 		}
 	});
@@ -225,10 +226,17 @@ function handleStreamingWrite(
 		try {
 			// Don't flush if the backend is reporting as unavailable
 			if (buffer.length && backend.available) {
-				const limit = ctx.retention_limit;
-				if (buffer.length > limit) {
-					// Ensure the buffer cannot be larger than the retention limit
-					buffer.splice(0, buffer.length - limit);
+				if (buffer.length > bufferLimit) {
+					// Ensure the buffer cannot be larger than the buffer limit, adding a warning message if we removed messages
+					const deleteCount = buffer.length - bufferLimit;
+					buffer.splice(0, deleteCount, {
+						nanoTimestamp: buffer[0].nanoTimestamp,
+						createdAt: buffer[0].createdAt,
+						timestamp: buffer[0].timestamp,
+						isStdErr: true,
+						isSystem: true,
+						message: `Warning: Suppressed ${deleteCount} message(s) due to rate limiting`,
+					});
 				}
 				// Even if the connection was closed, still flush the buffer
 				const publishPromise = publishBackend(backend, ctx, buffer);
