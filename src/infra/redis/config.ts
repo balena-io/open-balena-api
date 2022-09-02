@@ -24,7 +24,7 @@ export const getRedisOptions = ({
 	| Redis.RedisOptions => {
 	const r = REDIS[instance];
 
-	const redisOptions = {
+	const redisOptions: Redis.RedisOptions = {
 		retryStrategy: redisRetryStrategy,
 		enableOfflineQueue: false,
 		enableAutoPipelining,
