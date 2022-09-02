@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update dependencies
+      hash: 89d2cf83d9b1c221fbf906c28284c1af72c00611
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 4.2.1
+  title: "'Update dependencies'"
+  date: 2022-09-02T14:41:01.819Z
+- commits:
     - subject: Add logs throttling when exceeding the `LOGS_WRITE_BUFFER_LIMIT`
       hash: c7369578ec44af0b2fbbfe330e6e74fd2772f025
       body: |
