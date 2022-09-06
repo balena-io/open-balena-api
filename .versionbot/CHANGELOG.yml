@@ -1,4 +1,19 @@
 - commits:
+    - subject: Update dependency uuid to 9.0.0
+      hash: da22e18e755efb0c1e4b5de8c3f0d714dfb30889
+      body: |
+        Update uuid to 9.0.0
+
+        Update uuid from 8.3.2 to 9.0.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested: []
+  version: 4.3.0
+  title: "'Update dependency uuid to 9.0.0'"
+  date: 2022-09-05T20:13:11.821Z
+- commits:
     - subject: Update dependencies
       hash: 89d2cf83d9b1c221fbf906c28284c1af72c00611
       body: ""
