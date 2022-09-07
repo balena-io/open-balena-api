@@ -1,4 +1,18 @@
 - commits:
+    - subject: "vars-schema: Add custom DTB support for imx8mm-var-som"
+      hash: c20553db325dadead9c4a207cbc2e3d2a5f1a7e9
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Alexandru Costache <alexandru@balena.io>
+        signed-off-by: Alexandru Costache <alexandru@balena.io>
+      author: Alexandru Costache
+      nested: []
+  version: 4.4.0
+  title: "'vars-schema: Add custom DTB support for imx8mm-var-som'"
+  date: 2022-09-07T08:37:44.207Z
+- commits:
     - subject: Update dependency uuid to 9.0.0
       hash: da22e18e755efb0c1e4b5de8c3f0d714dfb30889
       body: |
