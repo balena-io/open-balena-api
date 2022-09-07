@@ -287,6 +287,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 				'photon-tx2-nx',
 			],
 			'14.0.8': ['imx8m-var-dart', 'imx8mm-var-dart'],
+			'14.0.16': ['imx8mm-var-som'],
 		},
 		{
 			RESIN_HOST_EXTLINUX_fdt: {
