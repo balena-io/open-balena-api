@@ -218,6 +218,7 @@ export interface Organization {
 	modified_at: DateString;
 	id: number;
 	name: string;
+	logo: string | null;
 	handle: string;
 	user__is_member_of__organization?: OrganizationMembership[];
 	includes__user?: OrganizationMembership[];
