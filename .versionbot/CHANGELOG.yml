@@ -1,4 +1,95 @@
 - commits:
+    - subject: Update pinejs version for async migrator
+      hash: dd0f6aa8899f00f4154f927a3742265d742ee610
+      body: |
+        Update @balena/pinejs from 14.49.2 to 14.50.0
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested:
+        - commits:
+            - subject: Add async migrator
+              hash: 133896dadbb443130d20879fd9fee751fdbc705e
+              body: >
+                Needed for long lasting / massive data affecting migrations for
+                zero downtime of API.
+
+
+                Depends-on: #556
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-14.50.0
+          title: ""
+          date: 2022-09-09T14:19:48.435Z
+        - commits:
+            - subject: Remove docker hub credentials from flow zone job Set docker_image
+                explicitly to empty to skip push
+              hash: cfe220459485b0298ca64578a4dce4681c0447c3
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-14.49.6
+          title: ""
+          date: 2022-09-09T12:54:05.264Z
+        - commits:
+            - subject: Enable flowzone branch protection
+              hash: 4b7913a412b84d3db297dfec5f0a18406dd7946c
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.49.5
+          title: ""
+          date: 2022-09-08T11:55:39.940Z
+        - commits:
+            - subject: Remove prepublishOnly lint step
+              hash: 07dea6a510d84954ff6dcaedf2b4731137fcc5bd
+              body: >
+                It is already run as part of the tests which are required by CI
+                before
+
+                it'll publish, and avoids issues when publishing without dev deps
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.49.4
+          title: ""
+          date: 2022-09-08T10:59:51.840Z
+        - commits:
+            - subject: Replace balena ci with flowzone
+              hash: 8b7ef6e75ee2f27fffed23c508148a5a9061afb2
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: fisehara <harald@balena.io>
+                signed-off-by: fisehara <harald@balena.io>
+              author: fisehara
+              nested: []
+          version: pinejs-14.49.3
+          title: ""
+          date: 2022-09-08T10:38:53.110Z
+  version: 4.5.0
+  title: "'Update pinejs version for async migrator'"
+  date: 2022-09-12T08:28:51.216Z
+- commits:
     - subject: "vars-schema: Add custom DTB support for imx8mm-var-som"
       hash: c20553db325dadead9c4a207cbc2e3d2a5f1a7e9
       body: ""
