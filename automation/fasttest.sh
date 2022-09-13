@@ -31,8 +31,8 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
-docker-compose -f docker-compose.test.yml up --renew-anon-volumes --detach redis db loki 
-docker-compose -f docker-compose.test.yml up --no-recreate --detach sut-fast 
+docker compose -f docker-compose.test.yml up --renew-anon-volumes --force-recreate --detach redis db loki 
+docker compose -f docker-compose.test.yml up --no-recreate --detach sut-fast 
 docker compose -f docker-compose.test.yml exec sut-fast npm rebuild
 
 if [[ -z "$test_files" ]]; then
