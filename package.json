@@ -12,9 +12,6 @@
     "dist/"
   ],
   "scripts": {
-    "fasttest": "IMAGE_NAME=test-open-balena-api-fast ./automation/fasttest.sh",
-    "fasttest-stop": "IMAGE_NAME=test-open-balena-api-fast ./automation/fasttest.sh --stop",
-    "fasttest-cleanup": "IMAGE_NAME=test-open-balena-api-fast ./automation/fasttest.sh --teardown",
     "materialize-config": "npm run fasttest -- --generate-config .materialized-config.json",
     "generate-model-schema": "npm run materialize-config && npx -p @balena/pinejs abstract-sql-compiler compile .materialized-config.json .materialized-schema.sql",
     "generate-model-types": "npm run materialize-config && echo '/**\n * This file is auto-generated with `npm run generate-model-types`\n */\n' > src/balena-model.ts && npx abstract-sql-compiler generate-types .materialized-config.json >> src/balena-model.ts",
@@ -24,8 +21,14 @@
     "lint": "balena-lint src/ test/ typings/ init.ts index.js && tsc --noEmit --project .",
     "prettify": "balena-lint --fix src/ test/ typings/ init.ts index.js",
     "prepack": "npm run build",
-    "test": "IMAGE_NAME=test-open-balena-api ./automation/test.sh",
-    "posttest": "docker rmi test-open-balena-api",
+    "test": "npm run build",
+    "mocha": "mocha",
+    "compose:down": "docker compose -f docker-compose.test.yml down",
+    "test:compose": "docker compose -f docker-compose.test.yml up --build --always-recreate-deps --renew-anon-volumes sut",
+    "posttest:compose": "npm run compose:down",
+    "fasttest:compose": "./automation/fasttest.sh",
+    "fasttest:compose:stop": "docker compose -f docker-compose.test.yml stop",
+    "fasttest:compose:cleanup": "npm run compose:down",
     "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\""
   },
   "dependencies": {
