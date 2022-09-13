@@ -1,7 +1,8 @@
-FROM balena/open-balena-base:v13.5.1
+FROM balena/open-balena-base:v13.5.1 as runtime
 
 EXPOSE 80
 
+# libgrpc++1 libgrpc10  are for debian:bullseye
 RUN apt update \
 	&& apt install libecpg-dev python3-pip \
 	&& rm -rf /var/lib/apt/lists/* \
@@ -18,3 +19,11 @@ RUN npx tsc --noEmit --project ./tsconfig.build.json
 COPY config/services/ /etc/systemd/system/
 
 RUN systemctl enable open-balena-api.service
+
+# Set up a test image that can be reused
+FROM runtime as test
+
+RUN npm ci && npm run lint && systemctl disable balena-api
+
+# Make the default output be the runtime image
+FROM runtime
