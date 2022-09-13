@@ -24,6 +24,7 @@
     "test": "npm run build",
     "mocha": "mocha",
     "compose:down": "docker compose -f docker-compose.test.yml down",
+    "compose:rebuild": "docker compose -f docker-compose.test.yml build --no-cache",
     "test:compose": "docker compose -f docker-compose.test.yml up --build --always-recreate-deps --renew-anon-volumes sut",
     "posttest:compose": "npm run compose:down",
     "fasttest:compose": "./automation/fasttest.sh",
