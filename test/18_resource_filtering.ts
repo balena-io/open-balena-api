@@ -36,7 +36,9 @@ describe('Resource Filtering', () => {
 
 		// create couple of applications with ensuring different created_at timestamps
 		for (let i = 0; i < applicationCount; i++) {
-			await pineUser.post({
+			const {
+				body: { id: appId },
+			} = await pineUser.post({
 				resource: 'application',
 				body: {
 					app_name: `appapp${i}`,
@@ -45,6 +47,18 @@ describe('Resource Filtering', () => {
 					is_for__device_type: devicetype.id,
 				},
 			});
+			await Promise.all(
+				_.times(i + 1, async (tagNo) => {
+					await pineUser.post({
+						resource: 'application_tag',
+						body: {
+							application: appId,
+							tag_key: `test-app-tag-${tagNo}`,
+							value: `${tagNo % 2}`,
+						},
+					});
+				}),
+			);
 			await setTimeout(100);
 		}
 
@@ -140,6 +154,40 @@ describe('Resource Filtering', () => {
 			expect(body.map((app: Application) => app.id)).to.not.include(
 				testTimes[0].id,
 			);
+		});
+
+		it('Should order applications by tag count', async () => {
+			const { body } = await pineUser.get({
+				resource: 'application',
+				options: {
+					$orderby: 'application_tag/$count desc',
+				},
+			});
+			expect(body).to.be.an('array').to.have.lengthOf(4);
+			expect(body.map((app: Application) => app.app_name)).deep.equal([
+				'appapp3',
+				'appapp2',
+				'appapp1',
+				'appapp0',
+			]);
+		});
+
+		it('Should order applications by filtered tag count', async () => {
+			const { body } = await pineUser.get({
+				resource: 'application',
+				options: {
+					$select: 'app_name',
+					$expand: { application_tag: {} },
+					$orderby: `application_tag/$count($filter=value eq '0') desc,app_name asc`,
+				},
+			});
+			expect(body).to.be.an('array').to.have.lengthOf(4);
+			expect(body.map((app: Application) => app.app_name)).deep.equal([
+				'appapp2',
+				'appapp3',
+				'appapp0',
+				'appapp1',
+			]);
 		});
 	});
 });
