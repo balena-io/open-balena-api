@@ -1,5 +1,5 @@
-import { getKey } from './s3';
-export * from './s3';
+import { getKey } from '../../../lib/s3';
+export * from '../../../lib/s3';
 import { IMAGE_STORAGE_PREFIX } from '../../../lib/config';
 
 export { IMAGE_STORAGE_PREFIX } from '../../../lib/config';

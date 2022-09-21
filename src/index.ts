@@ -10,6 +10,7 @@ import _ from 'lodash';
 import methodOverride from 'method-override';
 import passport from 'passport';
 import path from 'path';
+import multer from 'multer';
 import * as Sentry from '@sentry/node';
 
 import * as pine from '@balena/pinejs';
@@ -449,6 +450,7 @@ function setupMiddleware(app: Application) {
 	app.use(bodyParser.json({ type: isJson, limit: '512kb' }));
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(methodOverride());
+	app.use(multer().any());
 	app.use(passport.initialize());
 	app.use(AUTH_PATH, cookieSession({ secret: COOKIE_SESSION_SECRET }));
 
