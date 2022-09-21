@@ -8,7 +8,7 @@ import {
 	IMAGE_STORAGE_ENDPOINT,
 	IMAGE_STORAGE_FORCE_PATH_STYLE,
 	IMAGE_STORAGE_SECRET_KEY,
-} from '../../../lib/config';
+} from './config';
 
 export const getKey = (...parts: string[]): string => parts.join('/');
 
@@ -25,6 +25,12 @@ class UnauthenticatedS3Facade {
 		params: AWS.S3.Types.GetObjectRequest,
 	): ReturnType<AWS.S3['getObject']> {
 		return this.s3.makeUnauthenticatedRequest('getObject', params);
+	}
+
+	public upload(
+		params: AWS.S3.Types.ManagedUpload,
+	): ReturnType<AWS.S3['upload']> {
+		return this.s3.makeUnauthenticatedRequest('upload', params);
 	}
 
 	public listObjectsV2(
@@ -60,6 +66,15 @@ async function getFileInfo(s3Path: string) {
 		Bucket: S3_BUCKET,
 		Key: s3Path,
 	});
+	return await req.promise();
+}
+
+export async function putFile(s3Path: string, file: Buffer) {
+	const req = s3Client.upload({
+		Bucket: S3_BUCKET,
+		Key: s3Path,
+		Body: file,
+	} as AWS.S3.PutObjectRequest & AWS.S3.ManagedUpload);
 	return await req.promise();
 }
 
