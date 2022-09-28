@@ -1,4 +1,19 @@
 - commits:
+    - subject: Introduce flowzone
+      hash: 3dfcd58f385697acd009340258014d573e75a9fc
+      body: |
+        Use docker compose for test and fasttest
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: fisehara <harald@balena.io>
+        signed-off-by: fisehara <harald@balena.io>
+      author: fisehara
+      nested: []
+  version: 4.7.0
+  title: ""
+  date: 2022-09-28T09:59:04.718Z
+- commits:
     - subject: Update pinejs to support filtered $count inside $orderby
       hash: e5ad78243df0eaf3c75b2517cf185dc9aac4adc7
       body: |
