@@ -1,18 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
-. "$(dirname $0)/common.sh"
-
 cleanup () {
-	teardown '' $api_id $db_id $redis_id $loki_id
+	docker compose -f docker-compose.test.yml down
 }
 trap cleanup EXIT
 
-build $IMAGE_NAME
-db_id=$(rundb)
-redis_id=$(runredis)
-loki_id=$(runloki)
-api_id=$(runapi $IMAGE_NAME $db_id $redis_id $loki_id)
-setup $api_id
-
-docker exec $api_id /bin/sh -c 'npx mocha'
+docker compose -f docker-compose.test.yml up --force-recreate --renew-anon-volumes sut
