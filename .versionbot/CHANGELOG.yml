@@ -1,4 +1,31 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v13.5.2
+      hash: 8c3bd1ed7a4e97f5cf6279fd63dae3aa9613b3a4
+      body: |
+        Update balena/open-balena-base to 13.5.2
+
+        Update balena/open-balena-base from 13.5.1 to 13.5.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Update to nodejs 16.17.1
+              hash: e6e486ef5eb2a497c635701fceaba719af24f041
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.5.2
+          title: "'Update to nodejs 16.17.1'"
+          date: 2022-09-26T13:08:05.210Z
+  version: 4.7.2
+  title: ""
+  date: 2022-09-29T10:59:41.574Z
+- commits:
     - subject: Prevent unauthenticated requests from proceeding in token auth
       hash: 3e104e34c111f06b9e1bb3de2c64e28678d9c1d9
       body: >
