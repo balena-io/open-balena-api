@@ -1,4 +1,31 @@
 - commits:
+    - subject: Prevent unauthenticated requests from proceeding in token auth
+      hash: 3e104e34c111f06b9e1bb3de2c64e28678d9c1d9
+      body: >
+        Authentication failure due to "no credentials provided" and due to
+        "invalid credentials provided" are currently treated in exactly the same
+        way: we just let the request proceed and rely on (no) permissions to
+        limit access to resources. This is problematic (it can result in
+        redundant work being done in the API) and misleading ("I've provided
+        creds but I get back no results").
+
+
+        This change separates the latter case and responds immediately with 401, as it should.
+
+
+        This is however a workaround and ideally it would be Pine that makes this distinction and throws an exception appropriately but this would be a breaking change to existing code.
+
+
+        Chat thread: https://jel.ly.fish/thread-79f9d489-8af5-42dd-b45f-84cef2d379a9
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: dfunckt
+      nested: []
+  version: 4.7.1
+  title: ""
+  date: 2022-09-29T10:42:52.601Z
+- commits:
     - subject: Introduce flowzone
       hash: 3dfcd58f385697acd009340258014d573e75a9fc
       body: |
