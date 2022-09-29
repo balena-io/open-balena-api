@@ -24,9 +24,14 @@ services:
     networks:
       - local-test  
   sut:
+    # open-balena-base image is amd64 only. Explicitly naming the architecture so that it's executed in amd64 mode
+    # on mac with docker desktop `Use Docker Compose V2 Enables the docker-compose command to use Docker Compose V2` has to be enabled
+    platform: linux/amd64
     build:
       context: ./
       target: test
+      platforms:
+        - linux/amd64
     command: npx mocha
     restart: "no"
     depends_on:
@@ -87,32 +92,37 @@ services:
       VPN_SERVICE_CONNECTIONS: 5
 
   sut-fast:
-      build:
-        context: ./
-        target: test
-      restart: "no"
-      depends_on:
-        - "db"
-        - "redis"
-        - "loki"
-      ports:
-        - "9228:9229"
-      networks:
-        - local-test
-      volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup
-        - ./node_modules:/usr/src/app/node_modules
-        - ./package.json:/usr/src/app/package.json
-        - ./package-lock.json:/usr/src/app/package-lock.json
-        - ./src:/usr/src/app/src
-        - ./test:/usr/src/app/test
-        - ./typings:/usr/src/app/typings
-        - ./bin:/usr/src/app/bin
-        - ./index.js:/usr/src/app/index.js
-        - ./init.ts:/usr/src/app/init.ts
-        - ./.materialized-config.json:/usr/src/app/.materialized-config.json
-      privileged: true
-      environment: 
-        <<: *env
+    # open-balena-base image is amd64 only. Explicitly naming the architecture so that it's executed in amd64 mode
+    # on mac with docker desktop `Use Docker Compose V2 Enables the docker-compose command to use Docker Compose V2` has to be enabled
+    platform: linux/amd64
+    build:
+      context: ./
+      target: test
+      platforms:
+        - linux/amd64
+    restart: "no"
+    depends_on:
+      - "db"
+      - "redis"
+      - "loki"
+    ports:
+      - "9228:9229"
+    networks:
+      - local-test
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup
+      - ./node_modules:/usr/src/app/node_modules
+      - ./package.json:/usr/src/app/package.json
+      - ./package-lock.json:/usr/src/app/package-lock.json
+      - ./src:/usr/src/app/src
+      - ./test:/usr/src/app/test
+      - ./typings:/usr/src/app/typings
+      - ./bin:/usr/src/app/bin
+      - ./index.js:/usr/src/app/index.js
+      - ./init.ts:/usr/src/app/init.ts
+      - ./.materialized-config.json:/usr/src/app/.materialized-config.json
+    privileged: true
+    environment:
+      <<: *env
 networks:
   local-test:
