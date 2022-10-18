@@ -1,6 +1,6 @@
 import * as Bluebird from 'bluebird';
 import * as bodyParser from 'body-parser';
-import * as compression from 'compression';
+import compression = require('compression-next');
 import compressible = require('compressible');
 import * as cookieParser from 'cookie-parser';
 import cookieSession = require('cookie-session');
@@ -19,6 +19,7 @@ import type { defaultFindUser$select } from './infra/auth/auth';
 import * as jwt from './infra/auth/jwt-passport';
 
 const { api } = pine.sbvrUtils;
+
 // TODO: Move this into a feature
 passport.use(
 	jwt.createStrategy(
