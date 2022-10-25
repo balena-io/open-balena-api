@@ -1,4 +1,60 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v13.6.1
+      hash: 157c4fb185cc2c3996165368568961785348c4e4
+      body: |
+        Update balena/open-balena-base to 13.6.1
+
+        Update balena/open-balena-base from 13.5.2 to 13.6.1
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Update nodejs to 18.18.0
+              hash: 6e6ba93463f9020b200f242881fe5de27c1426fc
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.6.1
+          title: ""
+          date: 2022-10-24T09:22:00.512Z
+        - commits:
+            - subject: Update balenalib/amd64-debian-node Docker tag to v16.18.0
+              hash: 7f559f02f542427fe457175b974a6194038f6f6f
+              body: |
+                Update balenalib/amd64-debian-node to 16.18.0
+
+                Update balenalib/amd64-debian-node from 16.17.1 to 16.18.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-13.6.0
+          title: ""
+          date: 2022-10-14T18:09:18.515Z
+        - commits:
+            - subject: Switch to Flowzone for CI/CD
+              hash: 2723e0e9b01d81e2c41bb79232ab0d101f8ebe71
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-13.5.3
+          title: ""
+          date: 2022-10-14T17:47:53.889Z
+  version: 4.9.0
+  title: ""
+  date: 2022-10-25T21:49:29.912Z
+- commits:
     - subject: Update dependency @types/mocha to 10.0.0
       hash: 39e606d95ff240d0e84ebe8cbeb47cf12087979c
       body: |
@@ -171,8 +227,8 @@
             - subject: Add async migrator
               hash: 133896dadbb443130d20879fd9fee751fdbc705e
               body: >
-                Needed for long lasting / massive data affecting migrations for
-                zero downtime of API.
+                Needed for long lasting / massive data affecting migrations for zero
+                downtime of API.
 
 
                 Depends-on: #556
@@ -217,8 +273,7 @@
             - subject: Remove prepublishOnly lint step
               hash: 07dea6a510d84954ff6dcaedf2b4731137fcc5bd
               body: >
-                It is already run as part of the tests which are required by CI
-                before
+                It is already run as part of the tests which are required by CI before
 
                 it'll publish, and avoids issues when publishing without dev deps
               footer:
@@ -581,8 +636,8 @@
             - subject: Refactur checkModelExists to isModelNew
               hash: 28725993f36edb2f372145addb3841b9a899d880
               body: >
-                Modules may need to know if a model existed before
-                initialisation of the instance.
+                Modules may need to know if a model existed before initialisation of the
+                instance.
 
                 Eg. migrations need to know if a model is freshly generated / executed
 
@@ -649,8 +704,7 @@
             - subject: Narrow the scope of the permissions bypass for root permissions
               hash: 5b25906b444af997d0cae532d60866479b077c0d
               body: >
-                This changes the bypass to only occur before guest permissions
-                are
+                This changes the bypass to only occur before guest permissions are
 
                 initialized, only when specifically using `root` or `rootRead`
 
@@ -1104,8 +1158,7 @@
                     - subject: Update dependencies
                       hash: 19c112c863b63bdd8d86a04b704fb136077d01a9
                       body: >
-                        Update @balena/abstract-sql-compiler from 7.19.0 to
-                        7.20.0
+                        Update @balena/abstract-sql-compiler from 7.19.0 to 7.20.0
                       footer:
                         Change-type: patch
                         change-type: patch
@@ -1326,8 +1379,7 @@
                     - subject: Update dependencies
                       hash: dd79d29d1e4ac31a4fdf7daf2e663ef876aec09c
                       body: >
-                        Update @balena/abstract-sql-compiler from 7.4.2 to
-                        7.19.1
+                        Update @balena/abstract-sql-compiler from 7.4.2 to 7.19.1
 
                         Update @balena/odata-to-abstract-sql from 5.4.1 to 5.4.9
                       footer:
@@ -1339,8 +1391,7 @@
                             - subject: Update dependencies
                               hash: a80855150955d687b565a33633fe69b4e5e10ebd
                               body: >
-                                Update @balena/abstract-sql-compiler from 7.17.0
-                                to 7.19.0
+                                Update @balena/abstract-sql-compiler from 7.17.0 to 7.19.0
 
                                 Update @balena/odata-parser from 2.2.8 to 2.2.9
                               footer:
@@ -1374,8 +1425,7 @@
                                     - subject: Add reference property type
                                       hash: d28e2456dff10b18bcc97b7232479fe78efd5eb3
                                       body: >
-                                        Property type describes if the reference
-                                        is 'strict' or 'informative'.
+                                        Property type describes if the reference is 'strict' or 'informative'.
 
 
                                         Behaviour change only if type is informative otherwise default 'strict'.
@@ -1400,8 +1450,7 @@
                                     - subject: Avoid the operation type optimization for HAVING clauses
                                       hash: 3fcf08bc02c21d9f49b78787ed516fa9a403f021
                                       body: >
-                                        Since it's possible for them to behave
-                                        in a way that violates the
+                                        Since it's possible for them to behave in a way that violates the
 
                                         safety checks we'll disable them until we can add specific checks
 
@@ -1446,8 +1495,7 @@
                             - subject: Use the full alias for the prefix hash
                               hash: d60132e2eed1408735c1ee6dae12d69548cb1796
                               body: >
-                                This simplifies the code and also avoids an
-                                issue where we not using
+                                This simplifies the code and also avoids an issue where we not using
 
                                 enough of the prefix for the hash
                               footer:
@@ -1461,8 +1509,7 @@
                             - subject: Use a hash instead of random str when it's necessary to shorten aliases
                               hash: cb05ec69fe0e08fc4619b38a99272c3a7ea42e21
                               body: >
-                                This means the prefix will be stable/reliable
-                                across runs and make it
+                                This means the prefix will be stable/reliable across runs and make it
 
                                 easier to compare the output generating from different runs
 
@@ -1638,8 +1685,7 @@
                                     - subject: Revert "Remove now unnecessary hack for casting SERIAL types"
                                       hash: 60a56423de9262b5b454ff4cd83c1d1fd39d071e
                                       body: >
-                                        This reverts commit
-                                        187bc075d237a2ced731d0a026ca25aa3e0f5540.
+                                        This reverts commit 187bc075d237a2ced731d0a026ca25aa3e0f5540.
                                       footer:
                                         Change-type: patch
                                         change-type: patch
@@ -1651,8 +1697,7 @@
                                     - subject: Remove now unnecessary hack for casting SERIAL types
                                       hash: 187bc075d237a2ced731d0a026ca25aa3e0f5540
                                       body: >
-                                        This became unnecessary when
-                                        @balena/sbvr-types added the concept of
+                                        This became unnecessary when @balena/sbvr-types added the concept of
 
                                         cast types since that now specifies how to cast a SERIAL type
                                       footer:
@@ -1766,8 +1811,7 @@
                                     - subject: Generalize/share the referenced fields code and cover more cases
                                       hash: 3e77ac1aed9f3fb596f6a01a08a1800fead1e860
                                       body: >
-                                        This now allows detecting deletes that
-                                        are
+                                        This now allows detecting deletes that are
                                       footer:
                                         Change-type: minor
                                         change-type: minor
@@ -1817,8 +1861,7 @@
                                     - subject: Add a `getRuleReferencedFields` which is tailored for rules
                                       hash: 256c36de4a1efb7a46eb9833e1c3228d17194015
                                       body: >
-                                        This works on the assumption that it is
-                                        a rule query that should always
+                                        This works on the assumption that it is a rule query that should always
 
                                         return true and allows ignoring more modification cases where they
 
@@ -1997,8 +2040,7 @@
                     - subject: Update dependencies
                       hash: a80855150955d687b565a33633fe69b4e5e10ebd
                       body: >
-                        Update @balena/abstract-sql-compiler from 7.17.0 to
-                        7.19.0
+                        Update @balena/abstract-sql-compiler from 7.17.0 to 7.19.0
 
                         Update @balena/odata-parser from 2.2.8 to 2.2.9
                       footer:
@@ -2032,8 +2074,7 @@
                             - subject: Add reference property type
                               hash: d28e2456dff10b18bcc97b7232479fe78efd5eb3
                               body: >
-                                Property type describes if the reference is
-                                'strict' or 'informative'.
+                                Property type describes if the reference is 'strict' or 'informative'.
 
 
                                 Behaviour change only if type is informative otherwise default 'strict'.
@@ -2058,8 +2099,7 @@
                             - subject: Avoid the operation type optimization for HAVING clauses
                               hash: 3fcf08bc02c21d9f49b78787ed516fa9a403f021
                               body: >
-                                Since it's possible for them to behave in a way
-                                that violates the
+                                Since it's possible for them to behave in a way that violates the
 
                                 safety checks we'll disable them until we can add specific checks
 
@@ -2267,8 +2307,7 @@
             - subject: Fixed unneccessary @ts-expect-error + lint
               hash: dad9192dfd9b783b134317b6a5f9aad16417f60b
               body: >
-                PG Types have added maxUses as key and ts except is not needed
-                any more.
+                PG Types have added maxUses as key and ts except is not needed any more.
 
 
                 Fixed a linting change
@@ -2300,8 +2339,7 @@
                     - subject: Add reference property type
                       hash: d28e2456dff10b18bcc97b7232479fe78efd5eb3
                       body: >
-                        Property type describes if the reference is 'strict' or
-                        'informative'.
+                        Property type describes if the reference is 'strict' or 'informative'.
 
 
                         Behaviour change only if type is informative otherwise default 'strict'.
@@ -2340,8 +2378,7 @@
                     - subject: Addind ReferenceType
                       hash: aa064c2f1f0d40d4fd07da53fe0b6f0e4a692e07
                       body: >
-                        Reference type is needed to realise informative
-                        references
+                        Reference type is needed to realise informative references
                       footer:
                         Change-type: minor
                         change-type: minor
@@ -2421,8 +2458,7 @@
                     - subject: Update dependencies
                       hash: 19c112c863b63bdd8d86a04b704fb136077d01a9
                       body: >
-                        Update @balena/abstract-sql-compiler from 7.19.0 to
-                        7.20.0
+                        Update @balena/abstract-sql-compiler from 7.19.0 to 7.20.0
                       footer:
                         Change-type: patch
                         change-type: patch
@@ -3052,8 +3088,7 @@
                     - subject: Update dependencies
                       hash: dd79d29d1e4ac31a4fdf7daf2e663ef876aec09c
                       body: >
-                        Update @balena/abstract-sql-compiler from 7.4.2 to
-                        7.19.1
+                        Update @balena/abstract-sql-compiler from 7.4.2 to 7.19.1
 
                         Update @balena/odata-to-abstract-sql from 5.4.1 to 5.4.9
                       footer:
@@ -3065,8 +3100,7 @@
                             - subject: Update dependencies
                               hash: a80855150955d687b565a33633fe69b4e5e10ebd
                               body: >
-                                Update @balena/abstract-sql-compiler from 7.17.0
-                                to 7.19.0
+                                Update @balena/abstract-sql-compiler from 7.17.0 to 7.19.0
 
                                 Update @balena/odata-parser from 2.2.8 to 2.2.9
                               footer:
@@ -3100,8 +3134,7 @@
                                     - subject: Add reference property type
                                       hash: d28e2456dff10b18bcc97b7232479fe78efd5eb3
                                       body: >
-                                        Property type describes if the reference
-                                        is 'strict' or 'informative'.
+                                        Property type describes if the reference is 'strict' or 'informative'.
 
 
                                         Behaviour change only if type is informative otherwise default 'strict'.
@@ -3126,8 +3159,7 @@
                                     - subject: Avoid the operation type optimization for HAVING clauses
                                       hash: 3fcf08bc02c21d9f49b78787ed516fa9a403f021
                                       body: >
-                                        Since it's possible for them to behave
-                                        in a way that violates the
+                                        Since it's possible for them to behave in a way that violates the
 
                                         safety checks we'll disable them until we can add specific checks
 
@@ -3172,8 +3204,7 @@
                             - subject: Use the full alias for the prefix hash
                               hash: d60132e2eed1408735c1ee6dae12d69548cb1796
                               body: >
-                                This simplifies the code and also avoids an
-                                issue where we not using
+                                This simplifies the code and also avoids an issue where we not using
 
                                 enough of the prefix for the hash
                               footer:
@@ -3187,8 +3218,7 @@
                             - subject: Use a hash instead of random str when it's necessary to shorten aliases
                               hash: cb05ec69fe0e08fc4619b38a99272c3a7ea42e21
                               body: >
-                                This means the prefix will be stable/reliable
-                                across runs and make it
+                                This means the prefix will be stable/reliable across runs and make it
 
                                 easier to compare the output generating from different runs
 
@@ -3364,8 +3394,7 @@
                                     - subject: Revert "Remove now unnecessary hack for casting SERIAL types"
                                       hash: 60a56423de9262b5b454ff4cd83c1d1fd39d071e
                                       body: >
-                                        This reverts commit
-                                        187bc075d237a2ced731d0a026ca25aa3e0f5540.
+                                        This reverts commit 187bc075d237a2ced731d0a026ca25aa3e0f5540.
                                       footer:
                                         Change-type: patch
                                         change-type: patch
@@ -3377,8 +3406,7 @@
                                     - subject: Remove now unnecessary hack for casting SERIAL types
                                       hash: 187bc075d237a2ced731d0a026ca25aa3e0f5540
                                       body: >
-                                        This became unnecessary when
-                                        @balena/sbvr-types added the concept of
+                                        This became unnecessary when @balena/sbvr-types added the concept of
 
                                         cast types since that now specifies how to cast a SERIAL type
                                       footer:
@@ -3492,8 +3520,7 @@
                                     - subject: Generalize/share the referenced fields code and cover more cases
                                       hash: 3e77ac1aed9f3fb596f6a01a08a1800fead1e860
                                       body: >
-                                        This now allows detecting deletes that
-                                        are
+                                        This now allows detecting deletes that are
                                       footer:
                                         Change-type: minor
                                         change-type: minor
@@ -3543,8 +3570,7 @@
                                     - subject: Add a `getRuleReferencedFields` which is tailored for rules
                                       hash: 256c36de4a1efb7a46eb9833e1c3228d17194015
                                       body: >
-                                        This works on the assumption that it is
-                                        a rule query that should always
+                                        This works on the assumption that it is a rule query that should always
 
                                         return true and allows ignoring more modification cases where they
 
@@ -3723,8 +3749,7 @@
                     - subject: Update dependencies
                       hash: a80855150955d687b565a33633fe69b4e5e10ebd
                       body: >
-                        Update @balena/abstract-sql-compiler from 7.17.0 to
-                        7.19.0
+                        Update @balena/abstract-sql-compiler from 7.17.0 to 7.19.0
 
                         Update @balena/odata-parser from 2.2.8 to 2.2.9
                       footer:
@@ -3758,8 +3783,7 @@
                             - subject: Add reference property type
                               hash: d28e2456dff10b18bcc97b7232479fe78efd5eb3
                               body: >
-                                Property type describes if the reference is
-                                'strict' or 'informative'.
+                                Property type describes if the reference is 'strict' or 'informative'.
 
 
                                 Behaviour change only if type is informative otherwise default 'strict'.
@@ -3784,8 +3808,7 @@
                             - subject: Avoid the operation type optimization for HAVING clauses
                               hash: 3fcf08bc02c21d9f49b78787ed516fa9a403f021
                               body: >
-                                Since it's possible for them to behave in a way
-                                that violates the
+                                Since it's possible for them to behave in a way that violates the
 
                                 safety checks we'll disable them until we can add specific checks
 
@@ -4900,8 +4923,7 @@
                     - subject: Avoid the operation type optimization for HAVING clauses
                       hash: 3fcf08bc02c21d9f49b78787ed516fa9a403f021
                       body: >
-                        Since it's possible for them to behave in a way that
-                        violates the
+                        Since it's possible for them to behave in a way that violates the
 
                         safety checks we'll disable them until we can add specific checks
 
@@ -5930,8 +5952,7 @@
             - subject: Add support for circular `canAccess` permissions using a depth argument
               hash: fa0164119e212a0e1c0a3d2a4fe23271c3034032
               body: >
-                eg using `resource/canAccess(2)` will allow recursing twice
-                before
+                eg using `resource/canAccess(2)` will allow recursing twice before
 
                 bailing on that branch and considering it falsey
 
@@ -7230,9 +7251,9 @@
             - subject: Fix configuration for non-BoB deployments
               hash: be5d9722d47b65ca511cfb66ab13ed1f3ddff372
               body: >
-                The default value on the BALENA_DEVICE_UUID variable forced all
-                code paths that used to run optionally depending on whether
-                deployment was on a balenaOS device to run.
+                The default value on the BALENA_DEVICE_UUID variable forced all code paths
+                that used to run optionally depending on whether deployment was
+                on a balenaOS device to run.
               footer:
                 Change-type: patch
                 change-type: patch
@@ -7244,8 +7265,8 @@
             - subject: Auto-configure balenaMachine(bob)
               hash: efb8da155b7bedec44558dfcd55cb6b535099c01
               body: >
-                + allows balenaMachine(s)/BoB(s) to automatically configure
-                itself (without bob-cli)
+                + allows balenaMachine(s)/BoB(s) to automatically configure itself
+                (without bob-cli)
 
                 + auto-configuration requires balena-ca and cert-manager to do the heavy lifting prior
 
@@ -7288,8 +7309,7 @@
             - subject: Attempt to load root CA certificate bundle from file
               hash: 493bb446e99fc7a5b6ecaa4e796942aa65ad03d0
               body: >
-                * allows dynamic certificate generation and loading within the
-                stack
+                * allows dynamic certificate generation and loading within the stack
 
                 * if a (volume|directory) /certs exists, set up a notification to watch
                   for /certs/ca-bundle.pem and update CA certificates/restart confd
@@ -7413,8 +7433,7 @@
             - subject: Add support for a `PINEJS_DEBUG` env var that is more strictly checked
               hash: 4b591eefae812a10f43d98e440d11bbfdded69c0
               body: >
-                This means we can warn on/ignore invalid values rather than
-                giving a
+                This means we can warn on/ignore invalid values rather than giving a
 
                 potentially surprising result, eg `'0'` being truthy
               footer:
@@ -7870,8 +7889,7 @@
                             - subject: Revert "Remove now unnecessary hack for casting SERIAL types"
                               hash: 60a56423de9262b5b454ff4cd83c1d1fd39d071e
                               body: >
-                                This reverts commit
-                                187bc075d237a2ced731d0a026ca25aa3e0f5540.
+                                This reverts commit 187bc075d237a2ced731d0a026ca25aa3e0f5540.
                               footer:
                                 Change-type: patch
                                 change-type: patch
@@ -7883,8 +7901,7 @@
                             - subject: Remove now unnecessary hack for casting SERIAL types
                               hash: 187bc075d237a2ced731d0a026ca25aa3e0f5540
                               body: >
-                                This became unnecessary when @balena/sbvr-types
-                                added the concept of
+                                This became unnecessary when @balena/sbvr-types added the concept of
 
                                 cast types since that now specifies how to cast a SERIAL type
                               footer:
@@ -8048,8 +8065,7 @@
                             - subject: Add a `getRuleReferencedFields` which is tailored for rules
                               hash: 256c36de4a1efb7a46eb9833e1c3228d17194015
                               body: >
-                                This works on the assumption that it is a rule
-                                query that should always
+                                This works on the assumption that it is a rule query that should always
 
                                 return true and allows ignoring more modification cases where they
 
@@ -8738,8 +8754,8 @@
             - subject: Add parallel HOSTs and env vars
               hash: 7ef7a8e470f195afec8a104e837f901c9f0d1044
               body: >
-                * allows removal of BALENA_ prefixes across all products and
-                services (aside from reserved within balenaOS/Supervisor)
+                * allows removal of BALENA_ prefixes across all products and services
+                (aside from reserved within balenaOS/Supervisor)
 
                 * made balena-root-ca service a dependency of confd.service
               footer:
@@ -9095,8 +9111,7 @@
             - subject: Avoid concat/_.uniq calls in getReqPermissions
               hash: 9cd074a5c810ba66130695758ccbf9cc6d7b46d1
               body: >
-                These are relatively expensive considering it is a fairly hot
-                function
+                These are relatively expensive considering it is a fairly hot function
               footer:
                 Change-type: patch
                 change-type: patch
@@ -9287,8 +9302,8 @@
     - subject: Add Build Stat to Release
       hash: 7aa26a44848cc825d7202571072d4c7533fc35f7
       body: >
-        This change is part of the larger change to add build statistics from
-        the Builder to Releases.
+        This change is part of the larger change to add build statistics from the
+        Builder to Releases.
       footer:
         Signed-off-by: Paul Jonathan Zoulin <pj@balena.io>
         signed-off-by: Paul Jonathan Zoulin <pj@balena.io>
@@ -9619,8 +9634,7 @@
                     - subject: Revert "Remove now unnecessary hack for casting SERIAL types"
                       hash: 60a56423de9262b5b454ff4cd83c1d1fd39d071e
                       body: >
-                        This reverts commit
-                        187bc075d237a2ced731d0a026ca25aa3e0f5540.
+                        This reverts commit 187bc075d237a2ced731d0a026ca25aa3e0f5540.
                       footer:
                         Change-type: patch
                         change-type: patch
@@ -9632,8 +9646,7 @@
                     - subject: Remove now unnecessary hack for casting SERIAL types
                       hash: 187bc075d237a2ced731d0a026ca25aa3e0f5540
                       body: >
-                        This became unnecessary when @balena/sbvr-types added
-                        the concept of
+                        This became unnecessary when @balena/sbvr-types added the concept of
 
                         cast types since that now specifies how to cast a SERIAL type
                       footer:
@@ -10479,8 +10492,7 @@
             - subject: Block eagerly fetching affected ids in cases it is not possible to do
               hash: 413257bd23a32d90678cd9b224529a89e328afe9
               body: >
-                This fixes an issue where trying to eagerly fetch affected ids
-                for
+                This fixes an issue where trying to eagerly fetch affected ids for
 
                 equests that can create entries would return ids for existing entries
 
@@ -11477,8 +11489,7 @@
                     - subject: Add a `getRuleReferencedFields` which is tailored for rules
                       hash: 256c36de4a1efb7a46eb9833e1c3228d17194015
                       body: >
-                        This works on the assumption that it is a rule query
-                        that should always
+                        This works on the assumption that it is a rule query that should always
 
                         return true and allows ignoring more modification cases where they
 
@@ -11785,8 +11796,7 @@
             - subject: Optimize generating constrained abstract sql model
               hash: b176abf77bf4f550ea7728fee52b5d6746ec7d22
               body: >
-                Instantiating an `OData2AbstractSQL` instance can be relatively
-                costly
+                Instantiating an `OData2AbstractSQL` instance can be relatively costly
 
                 and as such reusing a memoized instance can provide a reasonable
 
@@ -12184,8 +12194,7 @@
             - subject: Add support for more input types to abstract-sql-compiler
               hash: 431f3dbcb2177c602042e01c46eac45b185c555c
               body: >
-                We now support support passing an SBVR file or a model
-                specification
+                We now support support passing an SBVR file or a model specification
 
                 as well as an abstract sql model, and we also accept any file type that
 
@@ -12422,8 +12431,7 @@
                     - subject: Add support for table definitions
                       hash: 2939656834c374e35af8867d6337b119b58cd198
                       body: >
-                        Static definitions will be converted to views and
-                        dynamic definitions
+                        Static definitions will be converted to views and dynamic definitions
 
                         will be ignored
                       footer:
@@ -12469,8 +12477,7 @@
                             - subject: Add support for table definitions
                               hash: 2939656834c374e35af8867d6337b119b58cd198
                               body: >
-                                Static definitions will be converted to views
-                                and dynamic definitions
+                                Static definitions will be converted to views and dynamic definitions
 
                                 will be ignored
                               footer:
@@ -12506,8 +12513,7 @@
                             - subject: Add an `optimizeSchema` function
                               hash: 43a3c0eac0ed0c57a79fbc62d025c058ab8dbb1c
                               body: >
-                                Currently this can optimize certain rules into
-                                check constraints
+                                Currently this can optimize certain rules into check constraints
                               footer:
                                 Change-type: minor
                                 change-type: minor
@@ -12632,8 +12638,7 @@
                     - subject: Add an `optimizeSchema` function
                       hash: 43a3c0eac0ed0c57a79fbc62d025c058ab8dbb1c
                       body: >
-                        Currently this can optimize certain rules into check
-                        constraints
+                        Currently this can optimize certain rules into check constraints
                       footer:
                         Change-type: minor
                         change-type: minor
@@ -12805,8 +12810,7 @@
                             - subject: Add a `castType` property to type functions
                               hash: 409077eb9d6c0315779ddd877220280c251b4eb5
                               body: >
-                                This allows specifying the correct type to cast
-                                to when necessary
+                                This allows specifying the correct type to cast to when necessary
 
                                 rather than relying on the fact the currently all type functions happen
 
@@ -12864,8 +12868,7 @@
                             - subject: Add a `castType` property to type functions
                               hash: 409077eb9d6c0315779ddd877220280c251b4eb5
                               body: >
-                                This allows specifying the correct type to cast
-                                to when necessary
+                                This allows specifying the correct type to cast to when necessary
 
                                 rather than relying on the fact the currently all type functions happen
 
@@ -12933,8 +12936,7 @@
                                     - subject: Add a `castType` property to type functions
                                       hash: 409077eb9d6c0315779ddd877220280c251b4eb5
                                       body: >
-                                        This allows specifying the correct type
-                                        to cast to when necessary
+                                        This allows specifying the correct type to cast to when necessary
 
                                         rather than relying on the fact the currently all type functions happen
 
@@ -13014,8 +13016,7 @@
                     - subject: Add a `castType` property to type functions
                       hash: 409077eb9d6c0315779ddd877220280c251b4eb5
                       body: >
-                        This allows specifying the correct type to cast to when
-                        necessary
+                        This allows specifying the correct type to cast to when necessary
 
                         rather than relying on the fact the currently all type functions happen
 
