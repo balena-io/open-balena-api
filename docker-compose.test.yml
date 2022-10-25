@@ -25,7 +25,7 @@ services:
       - local-test
   sut:
     build:
-      context: ./
+      context: .
       dockerfile: Dockerfile
       target: test
     command: npx mocha
@@ -89,7 +89,7 @@ services:
 
   sut-fast:
       build:
-        context: ./
+        context: .
         dockerfile: Dockerfile
         target: test
       restart: "no"
