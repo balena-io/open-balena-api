@@ -1,13 +1,21 @@
 import * as _ from 'lodash';
 import * as cacheManager from 'cache-manager';
-import redisStore = require('cache-manager-ioredis');
+import { redisStore } from 'cache-manager-ioredis-yet';
 import { version } from '../../lib/config';
 import { Defined } from '.';
 import { getRedisOptions } from '../redis/config';
 
 const usedCacheKeys: Dictionary<true> = {};
 
-export type MultiStoreOpt = Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
+export interface CacheOptions extends Pick<cacheManager.Config, 'isCacheable'> {
+	/** @deprecated User isCacheable instead */
+	isCacheableValue?(value: unknown): boolean;
+}
+
+export type MultiStoreOpt = (
+	| Required<Pick<cacheManager.StoreConfig, 'ttl'>>
+	| Required<Pick<cacheManager.MemoryConfig, 'max'>>
+) & {
 	refreshThreshold?: number;
 };
 
@@ -20,9 +28,9 @@ export type MultiStoreOpt = Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
 export function createMultiLevelStore<T extends Defined>(
 	cacheKey: string,
 	opts:
-		| (MultiStoreOpt & cacheManager.CacheOptions)
+		| (MultiStoreOpt & CacheOptions)
 		| {
-				default: MultiStoreOpt & cacheManager.CacheOptions;
+				default: MultiStoreOpt & CacheOptions;
 				local?: MultiStoreOpt | false;
 				/**
 				 * The global store will ignore the `max` anyway, so avoiding passing it in will help reduce confusion
@@ -34,7 +42,7 @@ export function createMultiLevelStore<T extends Defined>(
 	get: (key: string) => Promise<T | undefined>;
 	set: (key: string, value: T) => Promise<void>;
 	delete: (key: string) => Promise<void>;
-	wrap: (key: string, fn: () => T) => Promise<T>;
+	wrap: (key: string, fn: () => Promise<T>) => Promise<T>;
 } {
 	if (usedCacheKeys[cacheKey] === true) {
 		throw new Error(`Cache key '${cacheKey}' has already been taken`);
@@ -44,36 +52,40 @@ export function createMultiLevelStore<T extends Defined>(
 	if (!('default' in opts)) {
 		opts = { default: opts };
 	}
-	const { default: baseOpts, local, global } = opts;
-	const { isCacheableValue } = baseOpts;
-	const memoryCache =
+	const {
+		default: {
+			isCacheableValue: $isCacheableValue,
+			isCacheable: $isCacheable,
+			...baseOpts
+		},
+		local,
+		global,
+	} = opts;
+	const isCacheable = $isCacheable ?? $isCacheableValue;
+	const memoryCachePromise =
 		local === false
 			? undefined
-			: cacheManager.caching({ ...baseOpts, ...local, store: 'memory' });
+			: cacheManager.caching('memory', { ...baseOpts, ...local, isCacheable });
 
-	let cacheOpts: cacheManager.StoreConfig & cacheManager.CacheOptions = {
+	const redisOpts = getRedisOptions();
+	const cacheOpts: NonNullable<Parameters<typeof redisStore>[0]> = {
 		...baseOpts,
 		...global,
-		store: redisStore,
-		isCacheableValue: (v) =>
+		...('nodes' in redisOpts ? { clusterConfig: redisOpts } : { redisOpts }),
+		isCacheable: (v) =>
 			// redis cannot cache undefined/null values whilst others can, so we explicitly mark those as uncacheable
-			v != null && (isCacheableValue == null || isCacheableValue(v) === true),
+			v != null && (isCacheable == null || isCacheable(v) === true),
 	};
-	const redisOpts = getRedisOptions();
 
-	if ('nodes' in redisOpts) {
-		// @ts-expect-error: This shouldn't really need to be passed here but due to a quirk of cache-manager-ioredis it expects
-		// all the store opts to be stored on the created redis instance
-		redisOpts.options.isCacheableValue = cacheOpts.isCacheableValue;
-		cacheOpts.clusterConfig = redisOpts;
-	} else {
-		cacheOpts = { ...cacheOpts, ...redisOpts };
-	}
-
-	const redisCache = cacheManager.caching(cacheOpts);
-	const cache = memoryCache
-		? cacheManager.multiCaching([memoryCache, redisCache])
-		: redisCache;
+	const cachePromise = (async () => {
+		const [memoryCache, redisCache] = await Promise.all([
+			memoryCachePromise,
+			cacheManager.caching(redisStore, cacheOpts),
+		]);
+		return memoryCache
+			? cacheManager.multiCaching([memoryCache, redisCache])
+			: redisCache;
+	})();
 
 	let keyPrefix: string;
 	const getKey = (key: string) => {
@@ -87,19 +99,19 @@ export function createMultiLevelStore<T extends Defined>(
 	return {
 		get: async (key) => {
 			const fullKey = getKey(key);
-			return await cache.get(fullKey);
+			return await (await cachePromise).get(fullKey);
 		},
 		set: async (key, value) => {
 			const fullKey = getKey(key);
-			await cache.set(fullKey, value);
+			await (await cachePromise).set(fullKey, value);
 		},
 		delete: async (key) => {
 			const fullKey = getKey(key);
-			await cache.del(fullKey);
+			await (await cachePromise).del(fullKey);
 		},
 		wrap: async (key, fn) => {
 			const fullKey = getKey(key);
-			return await cache.wrap(fullKey, fn);
+			return await (await cachePromise).wrap(fullKey, fn);
 		},
 	};
 }

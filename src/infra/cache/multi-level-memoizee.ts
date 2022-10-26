@@ -104,7 +104,7 @@ export function multiCacheMemoizee<
 	};
 
 	const multiCacheOpts: Parameters<typeof createMultiLevelStore>[1] = {
-		default: { ...convertToMultiStoreOpts(opts), isCacheableValue: () => true },
+		default: { ...convertToMultiStoreOpts(opts), isCacheable: () => true },
 		global: convertToMultiStoreOpts({ ...opts, ...sharedCacheOpts }),
 	};
 
@@ -146,7 +146,16 @@ function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 			const valueToCache = await fn(...args);
 			// Some caches (eg redis) cannot handle caching undefined/null so we convert it to the `undefinedAs` proxy value
 			// which will be used when storing in the cache and then convert it back to undefined when retrieving from the cache
-			return valueToCache === undefined ? undefinedAs : valueToCache;
+			if (valueToCache === undefined) {
+				// Just to make TS happy, since the typings should already be protecting us.
+				if (undefinedAs === undefined) {
+					throw new Error(
+						'Multilevel cache detected undefined value while the undefinedAs was not defined',
+					);
+				}
+				return undefinedAs;
+			}
+			return valueToCache;
 		});
 		return valueFromCache === undefinedAs ? undefined : valueFromCache;
 	};
