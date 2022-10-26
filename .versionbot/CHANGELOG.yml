@@ -1,4 +1,17 @@
 - commits:
+    - subject: Adding forked Express.js compression lib to support brotli compression
+      hash: c972e211c6c2172a325f73281eb6be1deadb4001
+      body: |
+        Switch to compression-next
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: dsevastianov
+      nested: []
+  version: 4.9.1
+  title: ""
+  date: 2022-10-26T13:09:12.778Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v13.6.1
       hash: 157c4fb185cc2c3996165368568961785348c4e4
       body: |
