@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update open-balena-base to 14.0.0
+      hash: 0694ca0dc7cc127fa61a86eb1e20fae9e4bee3f9
+      body: |
+        Update open-balena-base from 13.6.1 to 14.0.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 4.10.0
+  title: ""
+  date: 2022-10-27T14:28:44.922Z
+- commits:
     - subject: Adding forked Express.js compression lib to support brotli compression
       hash: c972e211c6c2172a325f73281eb6be1deadb4001
       body: |
