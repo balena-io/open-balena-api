@@ -4,7 +4,7 @@ upstream:
     url: https://github.com/balena-io/pinejs
     module: '@balena/pinejs'
   - repo: 'balena/open-balena-base'
-    url: 'https://github.com/balena-io/open-balena-base'
+    url: 'https://github.com/balena-io-modules/open-balena-base'
     module: 'balena/open-balena-base'
   - repo: 'typed-error'
     url: 'https://github.com/balena-io-modules/typed-error'
