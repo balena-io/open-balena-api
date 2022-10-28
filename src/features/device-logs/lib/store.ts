@@ -220,6 +220,20 @@ function handleStreamingWrite(
 		req.pipe(parser);
 	}
 
+	// NOTE: this is testing code to test logging behavior with cloudflare
+	// these timers need to be defined in a non-harcoded way
+
+	// Wait for the client to finish the grace period and connect the buffers
+	setTimeout(pingClient, 5 * 1000);
+
+	function pingClient() {
+		if (!res.closed) {
+			// Send a single byte back every 10 seconds
+			res.write(Buffer.alloc(1, 1));
+			setTimeout(pingClient, 10 * 1000);
+		}
+	}
+
 	let publishScheduled = false;
 
 	async function tryPublish() {
