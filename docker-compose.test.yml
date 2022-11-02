@@ -102,6 +102,8 @@ services:
       volumes:
         - /sys/fs/cgroup:/sys/fs/cgroup
         - ./node_modules:/usr/src/app/node_modules
+        # Exclude syncing grpc from the host to avoid issues when built w/ different library versions
+        - /usr/src/app/node_modules/grpc
         - ./package.json:/usr/src/app/package.json
         - ./package-lock.json:/usr/src/app/package-lock.json
         - ./src:/usr/src/app/src
