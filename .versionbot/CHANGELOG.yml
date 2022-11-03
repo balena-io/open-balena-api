@@ -1,4 +1,28 @@
 - commits:
+    - subject: Change the Fact Type for device & app config vars to `config var name`
+      hash: 3870f4b5241c31f9abc938a06f354ec11748ca19
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+    - subject: "fasttest: Stop syncing node_modules/grpc to fix conflicting lib errors"
+      hash: 29cad2f716940ee71f272f6a22ddee67803ca7fc
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 5.0.0
+  title: ""
+  date: 2022-11-03T14:39:31.599Z
+- commits:
     - subject: Update open-balena-base to 14.0.0
       hash: 0694ca0dc7cc127fa61a86eb1e20fae9e4bee3f9
       body: |
