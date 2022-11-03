@@ -1,7 +1,7 @@
 import {
 	aliasTable,
 	generateAbstractSqlModel,
-	renameEnvVarName,
+	renameVarResourcesName,
 	optimizeSchema,
 } from './abstract-sql-utils';
 
@@ -20,7 +20,7 @@ aliasTable(abstractSql, 'application', 'my application', {
 	abstractSql: ['Resource', 'application'],
 });
 
-renameEnvVarName(abstractSql);
+renameVarResourcesName(abstractSql);
 
 userHasDirectAccessToApplication.addToModel(abstractSql);
 deviceAdditions.addToModel(abstractSql);

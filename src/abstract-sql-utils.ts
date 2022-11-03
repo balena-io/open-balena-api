@@ -146,25 +146,33 @@ export const renameField = (
 	_.set(relationship, [to, '$'], [to]);
 };
 
-const $renameEnvVarName = (abstractSql: AbstractSqlModel, resource: string) => {
+export const renameResourceField = (
+	abstractSql: AbstractSqlModel,
+	resource: string,
+	fromFieldName: string,
+	toFieldName: string,
+) => {
 	renameField(
 		abstractSql,
-		`${resource}-has-env var name`,
+		`${resource}-has-${fromFieldName}`,
 		[...resource.split('-'), 'has'],
-		'env var name',
-		'name',
+		fromFieldName,
+		toFieldName,
 	);
 	renameField(
 		abstractSql,
-		`${resource}-has-env var name`,
+		`${resource}-has-${fromFieldName}`,
 		['has'],
-		'env var name',
-		'name',
+		fromFieldName,
+		toFieldName,
 	);
 };
-export const renameEnvVarName = (abstractSql: AbstractSqlModel) => {
-	$renameEnvVarName(abstractSql, 'device');
-	$renameEnvVarName(abstractSql, 'application');
+
+export const renameVarResourcesName = (abstractSql: AbstractSqlModel) => {
+	for (const resource of ['device', 'application']) {
+		renameResourceField(abstractSql, resource, 'config var name', 'name');
+		renameResourceField(abstractSql, resource, 'env var name', 'name');
+	}
 };
 
 const sqlConcatFactory = (
