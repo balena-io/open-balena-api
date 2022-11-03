@@ -102,8 +102,14 @@ services:
       volumes:
         - /sys/fs/cgroup:/sys/fs/cgroup
         - ./node_modules:/usr/src/app/node_modules
-        # Exclude syncing grpc from the host to avoid issues when built w/ different library versions
+        # Exclude syncing node_modules that have a native build step
+        # to avoid hostOS/container incompatibility issues.
+        # Search for '-gyp' in the `package.json`s in node_modules.
+        - /usr/src/app/node_modules/@mapbox/node-pre-gyp
+        - /usr/src/app/node_modules/bcrypt
         - /usr/src/app/node_modules/grpc
+        - /usr/src/app/node_modules/nan
+        - /usr/src/app/node_modules/node-addon-api
         - ./package.json:/usr/src/app/package.json
         - ./package-lock.json:/usr/src/app/package-lock.json
         - ./src:/usr/src/app/src
