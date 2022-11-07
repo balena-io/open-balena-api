@@ -1,4 +1,26 @@
 - commits:
+    - subject: Remove chai-as-promised
+      hash: a87f1335c485e955e793d3ca07a6ab68cce23e12
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: "fasttest: Stop syncing node_modules that have a native build step"
+      hash: 5bd4c3d2d6d5536b7bc38bd9fb4ce5140d666011
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 5.0.1
+  title: ""
+  date: 2022-11-07T19:05:25.781Z
+- commits:
     - subject: Change the Fact Type for device & app config vars to `config var name`
       hash: 3870f4b5241c31f9abc938a06f354ec11748ca19
       body: ""
