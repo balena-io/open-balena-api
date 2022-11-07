@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { withRetries } from '../src/lib/utils';
-import { expect } from './test-lib/chai';
+import { expect } from 'chai';
 
 describe('Utils', () => {
 	it('withRetries should retry before throwing', async () => {

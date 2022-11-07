@@ -1,4 +1,4 @@
-import { expect } from './test-lib/chai';
+import { expect } from 'chai';
 import * as fixtures from './test-lib/fixtures';
 import { supertest } from './test-lib/supertest';
 import { version } from './test-lib/versions';

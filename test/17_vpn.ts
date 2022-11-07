@@ -1,5 +1,5 @@
 import * as randomstring from 'randomstring';
-import { expect } from './test-lib/chai';
+import { expect } from 'chai';
 import * as fixtures from './test-lib/fixtures';
 import { generateDeviceUuid } from './test-lib/fake-device';
 import { supertest } from './test-lib/supertest';

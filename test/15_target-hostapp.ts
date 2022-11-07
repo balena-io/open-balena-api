@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as fixtures from './test-lib/fixtures';
 import * as fakeDevice from './test-lib/fake-device';
-import { expect } from './test-lib/chai';
+import { expect } from 'chai';
 import { pineTest } from './test-lib/pinetest';
 
 import { supertest, UserObjectParam } from './test-lib/supertest';

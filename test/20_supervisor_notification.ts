@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { expect } from './test-lib/chai';
+import { expect } from 'chai';
 import { connectDeviceAndWaitForUpdate } from './test-lib/connect-device-and-wait';
 import * as fakeDevice from './test-lib/fake-device';
 import { UserObjectParam } from './test-lib/supertest';

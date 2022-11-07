@@ -1,4 +1,4 @@
-import { expect } from './test-lib/chai';
+import { expect } from 'chai';
 import * as fixtures from './test-lib/fixtures';
 import * as fakeDevice from './test-lib/fake-device';
 import { pineTest } from './test-lib/pinetest';

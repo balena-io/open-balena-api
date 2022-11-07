@@ -1,4 +1,4 @@
-import { expect } from './chai';
+import { expect } from 'chai';
 import * as nock from 'nock';
 import { supertest } from './supertest';
 

@@ -1,4 +1,4 @@
-import { expect } from './test-lib/chai';
+import { expect } from 'chai';
 import { UserObjectParam } from './test-lib/supertest';
 import { pineTest } from './test-lib/pinetest';
 
