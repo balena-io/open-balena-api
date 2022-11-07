@@ -4,7 +4,7 @@ import * as semverLib from 'semver';
 import type { Release } from '../src/balena-model';
 import { expectResourceToMatch } from './test-lib/api-helpers';
 import * as fixtures from './test-lib/fixtures';
-import { expect } from './test-lib/chai';
+import { expect } from 'chai';
 import { supertest, UserObjectParam } from './test-lib/supertest';
 import { version } from './test-lib/versions';
 import { pineTest } from './test-lib/pinetest';

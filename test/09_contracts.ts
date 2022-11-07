@@ -4,7 +4,7 @@ import {
 	getContracts,
 	removeContractDirectory,
 } from '../src/features/contracts/contracts-directory';
-import { expect } from './test-lib/chai';
+import { expect } from 'chai';
 import { supertest } from './test-lib/supertest';
 import { version } from './test-lib/versions';
 import {

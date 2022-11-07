@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as mockery from 'mockery';
 import * as sinon from 'sinon';
-import { expect } from './test-lib/chai';
+import { expect } from 'chai';
 import * as fakeDevice from './test-lib/fake-device';
 import { supertest, UserObjectParam } from './test-lib/supertest';
 import { version } from './test-lib/versions';

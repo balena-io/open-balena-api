@@ -1,5 +1,5 @@
 import { VPN_SERVICE_API_KEY } from '../src/lib/config';
-import { expect } from './test-lib/chai';
+import { expect } from 'chai';
 import * as fixtures from './test-lib/fixtures';
 import { generateDeviceUuid } from './test-lib/fake-device';
 import { supertest, UserObjectParam } from './test-lib/supertest';

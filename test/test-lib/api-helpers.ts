@@ -1,6 +1,6 @@
 import { Release } from '../../src/balena-model';
 import { supertest, UserObjectParam } from '../test-lib/supertest';
-import { expect } from './chai';
+import { expect } from 'chai';
 import { version } from './versions';
 import type { PineTest } from './pinetest';
 
