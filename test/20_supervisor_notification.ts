@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { expect } from 'chai';
 import { connectDeviceAndWaitForUpdate } from './test-lib/connect-device-and-wait';
 import * as fakeDevice from './test-lib/fake-device';

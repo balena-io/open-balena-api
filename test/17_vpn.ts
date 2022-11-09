@@ -1,4 +1,4 @@
-import * as randomstring from 'randomstring';
+import randomstring from 'randomstring';
 import { expect } from 'chai';
 import * as fixtures from './test-lib/fixtures';
 import { generateDeviceUuid } from './test-lib/fake-device';

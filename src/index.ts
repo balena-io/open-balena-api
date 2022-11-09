@@ -1,15 +1,15 @@
-import * as Bluebird from 'bluebird';
-import * as bodyParser from 'body-parser';
-import compression = require('compression-next');
-import compressible = require('compressible');
-import * as cookieParser from 'cookie-parser';
-import cookieSession = require('cookie-session');
+import Bluebird from 'bluebird';
+import bodyParser from 'body-parser';
+import compression from 'compression-next';
+import compressible from 'compressible';
+import cookieParser from 'cookie-parser';
+import cookieSession from 'cookie-session';
 import type { Application, Handler, Request } from 'express';
 import type { Server } from 'http';
-import * as _ from 'lodash';
-import * as methodOverride from 'method-override';
-import * as passport from 'passport';
-import * as path from 'path';
+import _ from 'lodash';
+import methodOverride from 'method-override';
+import passport from 'passport';
+import path from 'path';
 import * as Sentry from '@sentry/node';
 
 import * as pine from '@balena/pinejs';

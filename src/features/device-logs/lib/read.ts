@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express';
-import onFinished = require('on-finished');
-import * as _ from 'lodash';
+import onFinished from 'on-finished';
+import _ from 'lodash';
 import { sbvrUtils, errors } from '@balena/pinejs';
 
 import {

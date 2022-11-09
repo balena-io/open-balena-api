@@ -1,6 +1,6 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import * as Sentry from '@sentry/node';
-import escapeHtml = require('escape-html');
+import escapeHtml from 'escape-html';
 
 import { hooks, errors, sbvrUtils } from '@balena/pinejs';
 

@@ -1,4 +1,4 @@
-import * as BasicAuth from 'basic-auth';
+import BasicAuth from 'basic-auth';
 import type { RequestHandler } from 'express';
 
 import { errors } from '@balena/pinejs';

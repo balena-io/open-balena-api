@@ -1,6 +1,6 @@
-import * as _ from 'lodash';
-import * as mockery from 'mockery';
-import * as sinon from 'sinon';
+import _ from 'lodash';
+import mockery from 'mockery';
+import sinon from 'sinon';
 import { expect } from 'chai';
 import * as fakeDevice from './test-lib/fake-device';
 import { supertest, UserObjectParam } from './test-lib/supertest';

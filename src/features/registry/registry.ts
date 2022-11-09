@@ -2,8 +2,8 @@
 // Reference: https://docs.docker.com/registry/spec/auth/jwt/
 
 import type { Request, RequestHandler } from 'express';
-import * as jsonwebtoken from 'jsonwebtoken';
-import * as _ from 'lodash';
+import jsonwebtoken from 'jsonwebtoken';
+import _ from 'lodash';
 import { multiCacheMemoizee, reqPermissionNormalizer } from '../../infra/cache';
 import { randomUUID } from 'crypto';
 

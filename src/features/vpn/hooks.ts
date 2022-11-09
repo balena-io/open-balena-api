@@ -1,5 +1,5 @@
 import type { Request } from 'express';
-import * as ipaddr from 'ipaddr.js';
+import ipaddr from 'ipaddr.js';
 
 import { hooks, errors } from '@balena/pinejs';
 

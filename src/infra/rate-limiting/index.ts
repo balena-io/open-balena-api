@@ -1,6 +1,6 @@
-import * as cluster from 'cluster';
+import cluster from 'cluster';
 import type { Request, Response, RequestHandler } from 'express';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import {
 	IRateLimiterOptions,
 	RateLimiterCluster,

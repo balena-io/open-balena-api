@@ -1,4 +1,4 @@
-import * as jsonwebtoken from 'jsonwebtoken';
+import jsonwebtoken from 'jsonwebtoken';
 import * as fixtures from './fixtures';
 import { supertest, UserObjectParam } from './supertest';
 import { version } from './versions';

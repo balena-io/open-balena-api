@@ -1,6 +1,6 @@
-import * as events from 'eventemitter3';
-import * as _ from 'lodash';
-import * as RedisSMQ from 'rsmq';
+import events from 'eventemitter3';
+import _ from 'lodash';
+import RedisSMQ from 'rsmq';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 

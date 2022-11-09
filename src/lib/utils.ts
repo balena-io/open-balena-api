@@ -1,7 +1,7 @@
 import { pseudoRandomBytes } from 'crypto';
 import type { Request } from 'express';
-import * as ipaddr from 'ipaddr.js';
-import * as fs from 'fs';
+import ipaddr from 'ipaddr.js';
+import fs from 'fs';
 import { promisify } from 'util';
 import { setTimeout } from 'timers/promises';
 

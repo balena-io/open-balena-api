@@ -1,5 +1,5 @@
-import * as Bluebird from 'bluebird';
-import * as request from 'request';
+import Bluebird from 'bluebird';
+import request from 'request';
 
 import { EXTERNAL_HTTP_TIMEOUT_MS } from '../../lib/config';
 

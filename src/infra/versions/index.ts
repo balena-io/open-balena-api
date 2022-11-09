@@ -1,5 +1,5 @@
 import type { Application } from 'express';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 export const forwardRequests = (
 	app: Application,

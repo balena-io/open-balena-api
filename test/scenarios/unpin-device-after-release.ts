@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 import { expect } from 'chai';
 import * as fakeDevice from '../test-lib/fake-device';

@@ -1,8 +1,8 @@
-import * as Bluebird from 'bluebird';
+import Bluebird from 'bluebird';
 import type { RequestHandler } from 'express';
-import * as jsonwebtoken from 'jsonwebtoken';
-import * as _ from 'lodash';
-import * as passport from 'passport';
+import jsonwebtoken from 'jsonwebtoken';
+import _ from 'lodash';
+import passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { TypedError } from 'typed-error';
 

@@ -6,11 +6,11 @@ import type {
 	SupervisorLog,
 } from './struct';
 
-import onFinished = require('on-finished');
+import onFinished from 'on-finished';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { Supervisor } from './supervisor';
 import { createGunzip } from 'zlib';
-import * as ndjson from 'ndjson';
+import ndjson from 'ndjson';
 import {
 	captureException,
 	handleHttpErrors,

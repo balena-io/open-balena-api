@@ -1,6 +1,6 @@
-import * as Bluebird from 'bluebird';
-import * as _ from 'lodash';
-import * as randomstring from 'randomstring';
+import Bluebird from 'bluebird';
+import _ from 'lodash';
+import randomstring from 'randomstring';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 

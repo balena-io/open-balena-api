@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express';
 import type { Filter } from 'pinejs-client-core';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 import {
 	captureException,
 	handleHttpErrors,

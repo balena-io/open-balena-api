@@ -1,7 +1,7 @@
 import type { types } from '@balena/pinejs';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import type { Options as MemoizeeOptions } from 'memoizee';
-import primitiveKey = require('memoizee/normalizers/primitive');
+import primitiveKey from 'memoizee/normalizers/primitive';
 import { SECONDS } from '@balena/env-parsing';
 import { createMultiLevelStore, Defined, MultiStoreOpt } from '.';
 
