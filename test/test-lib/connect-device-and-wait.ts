@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as nock from 'nock';
+import nock from 'nock';
 import { supertest } from './supertest';
 
 import { VPN_SERVICE_API_KEY } from '../../src/lib/config';

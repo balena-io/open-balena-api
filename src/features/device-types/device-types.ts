@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 import type { DeviceTypeJson } from './device-type-json';
 import { sbvrUtils, errors } from '@balena/pinejs';

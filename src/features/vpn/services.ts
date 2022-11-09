@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import {
 	captureException,

@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 import { sbvrUtils, errors, permissions } from '@balena/pinejs';
 import * as semver from 'balena-semver';

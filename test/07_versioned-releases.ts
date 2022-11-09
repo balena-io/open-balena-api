@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
-import * as _ from 'lodash';
-import * as semverLib from 'semver';
+import _ from 'lodash';
+import semverLib from 'semver';
 import type { Release } from '../src/balena-model';
 import { expectResourceToMatch } from './test-lib/api-helpers';
 import * as fixtures from './test-lib/fixtures';

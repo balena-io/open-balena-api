@@ -1,5 +1,5 @@
 import { sbvrUtils, hooks } from '@balena/pinejs';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import type { FilterObj } from 'pinejs-client-core';
 
 import { captureException } from '../../../infra/error-handling';

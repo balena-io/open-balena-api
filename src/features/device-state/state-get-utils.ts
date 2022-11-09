@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import * as semver from 'balena-semver';
 import { sbvrUtils, dbModule } from '@balena/pinejs';
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from '../../lib/config';

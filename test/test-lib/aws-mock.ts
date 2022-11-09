@@ -1,15 +1,15 @@
-import * as AWS from 'aws-sdk';
-import * as Bluebird from 'bluebird';
+import AWS from 'aws-sdk';
+import Bluebird from 'bluebird';
 import { assert } from 'chai';
-import * as _ from 'lodash';
-import * as mockery from 'mockery';
+import _ from 'lodash';
+import mockery from 'mockery';
 import {
 	IMAGE_STORAGE_ACCESS_KEY,
 	IMAGE_STORAGE_SECRET_KEY,
 } from '../../src/lib/config';
 
-import $getObjectMocks = require('../fixtures/s3/getObject.json');
-import listObjectsV2Mocks = require('../fixtures/s3/listObjectsV2.json');
+import $getObjectMocks from '../fixtures/s3/getObject.json';
+import listObjectsV2Mocks from '../fixtures/s3/listObjectsV2.json';
 
 // AWS S3 Client getObject results have a Buffer on their Body prop
 // and a Date on their LastModified prop so we have to reconstruct

@@ -1,5 +1,5 @@
-import _ = require('lodash');
-import * as Bluebird from 'bluebird';
+import _ from 'lodash';
+import Bluebird from 'bluebird';
 import { expect } from 'chai';
 import { LokiBackend } from '../src/features/device-logs/lib/backends/loki';
 import { getNanoTimestamp } from '../src/lib/utils';

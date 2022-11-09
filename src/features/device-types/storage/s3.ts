@@ -1,6 +1,6 @@
-import * as AWS from 'aws-sdk';
-import * as _ from 'lodash';
-import * as path from 'path';
+import AWS from 'aws-sdk';
+import _ from 'lodash';
+import path from 'path';
 
 import {
 	IMAGE_STORAGE_ACCESS_KEY,

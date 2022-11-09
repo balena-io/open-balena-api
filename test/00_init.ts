@@ -1,7 +1,7 @@
-import * as Bluebird from 'bluebird';
-import * as fs from 'fs';
-import * as _ from 'lodash';
-import * as path from 'path';
+import Bluebird from 'bluebird';
+import fs from 'fs';
+import _ from 'lodash';
+import path from 'path';
 
 const testFiles = _(process.env.TEST_FILES)
 	.trim()

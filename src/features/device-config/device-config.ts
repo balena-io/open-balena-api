@@ -1,10 +1,10 @@
 import type { Request } from 'express';
-import * as fs from 'fs';
-import * as _ from 'lodash';
+import fs from 'fs';
+import _ from 'lodash';
 
 import { errors, sbvrUtils } from '@balena/pinejs';
 import * as semver from 'balena-semver';
-import * as deviceConfig from 'balena-device-config';
+import deviceConfig from 'balena-device-config';
 
 import { getUser } from '../../infra/auth/auth';
 import { captureException } from '../../infra/error-handling';

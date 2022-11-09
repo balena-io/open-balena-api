@@ -4,9 +4,9 @@ import {
 	CONTRACTS_PUBLIC_REPO_BRANCH,
 } from '../../src/lib/config';
 import { RepositoryInfo } from '../../src/features/contracts';
-import * as nock from 'nock';
-import * as path from 'path';
-import * as tar from 'tar';
+import nock from 'nock';
+import path from 'path';
+import tar from 'tar';
 
 export const mockRepo = (
 	repo: RepositoryInfo,

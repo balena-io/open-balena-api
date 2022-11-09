@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
-import * as Bluebird from 'bluebird';
+import _ from 'lodash';
+import Bluebird from 'bluebird';
 import { fetchContractsLocally, getContracts } from './contracts-directory';
 import { sbvrUtils, permissions, types } from '@balena/pinejs';
 import {

@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { multiCacheMemoizee } from '../../infra/cache';
 import type { Device } from '../../balena-model';
 

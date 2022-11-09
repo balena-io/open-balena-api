@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import type { Filter, FilterObj } from 'pinejs-client-core';
 import type {

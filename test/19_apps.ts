@@ -1,4 +1,4 @@
-import * as mockery from 'mockery';
+import mockery from 'mockery';
 import { expect } from 'chai';
 import * as fixtures from './test-lib/fixtures';
 import * as fakeDevice from './test-lib/fake-device';

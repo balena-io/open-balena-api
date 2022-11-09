@@ -1,5 +1,5 @@
-import * as arraySort from 'array-sort';
-import * as _ from 'lodash';
+import arraySort from 'array-sort';
+import _ from 'lodash';
 
 import type { DeviceTypeJson } from './device-type-json';
 import { errors } from '@balena/pinejs';

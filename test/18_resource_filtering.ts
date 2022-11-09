@@ -3,7 +3,7 @@ import { UserObjectParam } from './test-lib/supertest';
 import { pineTest } from './test-lib/pinetest';
 
 import * as fixtures from './test-lib/fixtures';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { Application } from '../src/balena-model';
 import { setTimeout } from 'timers/promises';
 

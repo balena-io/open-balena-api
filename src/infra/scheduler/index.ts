@@ -17,9 +17,9 @@
 			- upon completion the lock is released.
 */
 
-import * as _ from 'lodash';
-import * as schedule from 'node-schedule';
-import * as Redlock from 'redlock';
+import _ from 'lodash';
+import schedule from 'node-schedule';
+import Redlock from 'redlock';
 import { captureException } from '../error-handling';
 import { redis, redisRO } from '../redis';
 

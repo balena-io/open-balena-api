@@ -1,6 +1,6 @@
 import type { Request } from 'express';
-import * as randomstring from 'randomstring';
-import * as _ from 'lodash';
+import randomstring from 'randomstring';
+import _ from 'lodash';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 

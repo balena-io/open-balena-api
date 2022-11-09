@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as randomstring from 'randomstring';
+import randomstring from 'randomstring';
 import { randomUUID } from 'crypto';
 
 import { supertest, UserObjectParam } from './supertest';

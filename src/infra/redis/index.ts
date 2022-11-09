@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import Redis from 'ioredis';
 import { REDIS } from '../../lib/config';
 import { MINUTES } from '@balena/env-parsing';

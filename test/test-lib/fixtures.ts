@@ -1,8 +1,8 @@
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import * as Bluebird from 'bluebird';
-import * as fs from 'fs';
-import * as _ from 'lodash';
-import * as path from 'path';
+import Bluebird from 'bluebird';
+import fs from 'fs';
+import _ from 'lodash';
+import path from 'path';
 import { randomUUID } from 'crypto';
 
 import { Headers } from 'request';
@@ -438,7 +438,9 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 	for (const model of models) {
 		fixtures[model] = import(
 			path.join('../fixtures', fixtureName, `${model}.json`)
-		).then((fromJson) => loadFixtureModel(loaders[model], fixtures, fromJson));
+		).then(({ default: fromJson }) =>
+			loadFixtureModel(loaders[model], fixtures, fromJson),
+		);
 	}
 
 	return await Bluebird.props(

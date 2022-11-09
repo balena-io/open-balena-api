@@ -1,7 +1,7 @@
-import * as avro from 'avsc';
+import avro from 'avsc';
 import { stripIndent } from 'common-tags';
 import { EventEmitter } from 'events';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { errors } from '@balena/pinejs';
 import { captureException } from '../../../../infra/error-handling';
 import {

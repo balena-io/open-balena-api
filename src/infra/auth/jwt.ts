@@ -1,9 +1,9 @@
 import type { Request, Response } from 'express';
 
-import * as _ from 'lodash';
-import * as base32 from 'thirty-two';
-import * as randomstring from 'randomstring';
-import * as jsonwebtoken from 'jsonwebtoken';
+import _ from 'lodash';
+import base32 from 'thirty-two';
+import randomstring from 'randomstring';
+import jsonwebtoken from 'jsonwebtoken';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 

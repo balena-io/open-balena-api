@@ -1,6 +1,6 @@
 import type { DeviceLogsBackend, LogContext } from './struct';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { RedisBackend } from './backends/redis';
 import {
 	LOGS_DEFAULT_RETENTION_LIMIT,

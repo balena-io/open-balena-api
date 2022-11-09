@@ -1,9 +1,9 @@
-import * as fs from 'fs';
-import * as _ from 'lodash';
-import * as path from 'path';
+import fs from 'fs';
+import _ from 'lodash';
+import path from 'path';
 import { promisify } from 'util';
 import { exec } from 'child_process';
-import configJson = require('../config');
+import configJson from '../config';
 
 const execAsync = promisify(exec);
 

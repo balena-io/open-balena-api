@@ -1,5 +1,5 @@
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { expect } from 'chai';
 import { version } from './test-lib/versions';
 

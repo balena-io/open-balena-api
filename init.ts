@@ -1,10 +1,10 @@
 import type { ApplicationType } from './src';
 import { sbvrUtils, errors, types } from '@balena/pinejs';
-import * as express from 'express';
-import * as _ from 'lodash';
+import express from 'express';
+import _ from 'lodash';
 import config = require('./config');
 import { apiRoot } from './src/balena';
-import { version } from './package.json';
+import packageJson from './package.json';
 import { promises as fs } from 'fs';
 import { TRUST_PROXY, PORT } from './src/lib/config';
 
@@ -239,7 +239,7 @@ const init = async () => {
 		const { setup } = await import('./src');
 		const { startServer } = await setup(app, {
 			config,
-			version,
+			version: packageJson.version,
 			getUrl,
 			onInitMiddleware,
 			onInitModel,

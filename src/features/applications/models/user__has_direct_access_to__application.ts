@@ -2,7 +2,7 @@ import type {
 	AbstractSqlModel,
 	SelectQueryNode,
 } from '@balena/abstract-sql-compiler';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 export const addToModel = (
 	abstractSql: AbstractSqlModel,

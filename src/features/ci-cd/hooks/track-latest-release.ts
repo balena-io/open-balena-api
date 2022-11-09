@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { sbvrUtils, hooks } from '@balena/pinejs';
 
 // We only track releases that are successful, final, not invalid, and passing tests

@@ -1,5 +1,5 @@
 import type { Application, Request, RequestHandler } from 'express';
-import * as morgan from 'morgan';
+import morgan from 'morgan';
 import { getServiceFromRequest } from '../../lib/auth';
 import { getIP } from '../../lib/utils';
 
