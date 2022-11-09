@@ -1,4 +1,31 @@
 - commits:
+    - subject: "chore(deps): update balena/open-balena-base docker tag to v14.0.1"
+      hash: 4e15d5c93adb4e1c81dc3997ac5fbfddd7c8d31c
+      body: |
+        Update balena/open-balena-base to 14.0.1
+
+        Update balena/open-balena-base from 14.0.0 to 14.0.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Update nodejs to 18.12.1
+              hash: 27b5a62d68a121e4856aefeca6f575cb44b01d40
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-14.0.1
+          title: ""
+          date: 2022-11-09T03:53:17.490Z
+  version: 5.0.2
+  title: ""
+  date: 2022-11-09T05:10:35.111Z
+- commits:
     - subject: Remove chai-as-promised
       hash: a87f1335c485e955e793d3ca07a6ab68cce23e12
       body: ""
