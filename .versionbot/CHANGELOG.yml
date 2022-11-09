@@ -1,4 +1,16 @@
 - commits:
+    - subject: Enable esModuleInterop to ease the transition to ES modules
+      hash: 4c9271ff73a5280b4500a09fc80f41821fb44c4e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 5.0.3
+  title: ""
+  date: 2022-11-09T22:21:42.196Z
+- commits:
     - subject: "chore(deps): update balena/open-balena-base docker tag to v14.0.1"
       hash: 4e15d5c93adb4e1c81dc3997ac5fbfddd7c8d31c
       body: |
