@@ -1,4 +1,18 @@
 - commits:
+    - subject: "vars-schema: Add custom DTB support for Jetson AGX Orin"
+      hash: 1f39e6e4279bc8b097195bb73405fd98797d7d4c
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Alexandru Costache <alexandru@balena.io>
+        signed-off-by: Alexandru Costache <alexandru@balena.io>
+      author: Alexandru Costache
+      nested: []
+  version: 5.1.0
+  title: ""
+  date: 2022-11-10T15:09:40.905Z
+- commits:
     - subject: Enable esModuleInterop to ease the transition to ES modules
       hash: 4c9271ff73a5280b4500a09fc80f41821fb44c4e
       body: ""
