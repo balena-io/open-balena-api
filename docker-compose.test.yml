@@ -16,7 +16,7 @@ services:
     networks:
       - local-test
   loki: 
-    image: grafana/loki:2.6.1
+    image: grafana/loki:2.7.0
     restart: "no"
     ports:
       - "9095:9095"
