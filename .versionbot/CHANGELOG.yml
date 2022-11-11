@@ -1,4 +1,19 @@
 - commits:
+    - subject: "chore(deps): update grafana/loki docker tag to v2.7.0"
+      hash: 6998fc0500d8d9688b0274e111e041f965fab7fd
+      body: |
+        Update grafana/loki to 2.7.0
+
+        Update grafana/loki from 2.6.1 to 2.7.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested: []
+  version: 5.2.0
+  title: ""
+  date: 2022-11-11T01:18:36.114Z
+- commits:
     - subject: "vars-schema: Add custom DTB support for Jetson AGX Orin"
       hash: 1f39e6e4279bc8b097195bb73405fd98797d7d4c
       body: ""
