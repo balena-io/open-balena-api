@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add a test that auto-generated model types are up to date
+      hash: b117f92e61d7c38174d1c10270aee3d1f9f676fa
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 5.3.1
+  title: ""
+  date: 2022-11-15T22:04:51.788Z
+- commits:
     - subject: Add a Synonymous Form for service & image installs
       hash: 48902b5878d9242cd7273907ed4a479983e08dac
       body: ""
