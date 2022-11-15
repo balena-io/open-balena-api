@@ -31,11 +31,11 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
-docker compose -f docker-compose.test.yml up --renew-anon-volumes --force-recreate --detach redis db
+docker compose -f docker-compose.test-custom.yml up --renew-anon-volumes --force-recreate --detach redis db
 if [[ -z "$test_files" ]]; then
 	echo "Running all tests"
 else
 	echo "Running tests:$test_files"
 fi
 
-docker compose -f docker-compose.test.yml run --rm --service-ports ${extra_env} --env TEST_FILES="$test_files" sut-fast npx mocha --bail ${extra_args}
+docker compose -f docker-compose.test-custom.yml run --rm --service-ports ${extra_env} --env TEST_FILES="$test_files" sut-fast npx mocha --bail ${extra_args}
