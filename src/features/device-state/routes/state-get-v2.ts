@@ -314,6 +314,8 @@ const stateQuery = _.once(() =>
 
 const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 	const device = await getDevice(req, uuid);
+	// At this point we are sure that the api key is valid and not expired.
+	events.emit('get-state', uuid, { apiKey: req.apiKey });
 	const config = getConfig(device);
 
 	const userApp = getUserAppForState(device, config);
@@ -339,9 +341,6 @@ export const stateV2: RequestHandler = async (req, res) => {
 	if (!uuid) {
 		return res.status(400).end();
 	}
-
-	const { apiKey } = req;
-	events.emit('get-state', uuid, { apiKey });
 
 	try {
 		res.json(await getStateV2(req, uuid));
