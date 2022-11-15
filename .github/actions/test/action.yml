@@ -1,0 +1,19 @@
+# https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
+name: "Docker tests"
+description: "Custom test action to test the API and model typings"
+# these inputs are always provided by flowzone, so they must always be defined on the composite action
+inputs:
+  json:
+    description: "JSON stringified object containing all the inputs from the calling workflow"
+    required: true
+  secrets:
+    description: "JSON stringified object containing all the secrets from the calling workflow"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run tests
+      shell: bash
+      run: |
+        npm run test:compose

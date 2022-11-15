@@ -39,6 +39,7 @@ services:
       - local-test
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
+      - ./src/balena-model.ts:/usr/src/app/src/balena-model.ts
     privileged: true
     environment: &env
       API_HOST: 127.0.0.1 
