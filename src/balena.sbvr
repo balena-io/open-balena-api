@@ -376,10 +376,12 @@ Term: device
 		Database Table Name: device config variable
 
 	Fact type: device installs image
+		Synonymous Form: image is installed on device
 		Term Form: image install
 		Database Table Name: image install
 
 	Fact type: device installs service
+		Synonymous Form: service is installed on device
 		Term Form: service install
 		Database Table Name: service install
 

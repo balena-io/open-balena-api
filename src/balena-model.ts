@@ -207,6 +207,7 @@ export interface Image {
 	content_hash: string | null;
 	contract: {} | null;
 	device__installs__image?: ImageInstall[];
+	is_installed_on__device?: ImageInstall[];
 	is_downloaded_by__device?: GatewayDownload[];
 	image__is_downloaded_by__device?: GatewayDownload[];
 	image__is_part_of__release?: ImageIsPartOfRelease[];
@@ -253,7 +254,7 @@ export interface Application {
 	uuid: string;
 	is_public: boolean;
 	application__has__env_var_name?: ApplicationEnvironmentVariable[];
-	application__has__name?: ApplicationConfigVariable[];
+	application__has__config_var_name?: ApplicationConfigVariable[];
 	application__has__service_name?: Service[];
 	application__has__tag_key?: ApplicationTag[];
 	is_depended_on_by__application?: Application[];
@@ -289,6 +290,7 @@ export interface Service {
 	application__has__service_name__has__label_name?: ServiceLabel[];
 	application__has__service_name__has__name?: ServiceEnvironmentVariable[];
 	device__installs__application__has__service_name?: ServiceInstall[];
+	is_installed_on__device?: ServiceInstall[];
 	is_built_by__image?: Image[];
 }
 
@@ -369,7 +371,7 @@ export interface Device {
 	overall_status: string | null;
 	overall_progress: number | null;
 	device__has__env_var_name?: DeviceEnvironmentVariable[];
-	device__has__name?: DeviceConfigVariable[];
+	device__has__config_var_name?: DeviceConfigVariable[];
 	device__has__tag_key?: DeviceTag[];
 	device__installs__image?: ImageInstall[];
 	device__installs__application__has__service_name?: ServiceInstall[];
@@ -572,7 +574,7 @@ export interface MyApplication {
 	uuid: string;
 	is_public: boolean;
 	application__has__env_var_name?: ApplicationEnvironmentVariable[];
-	application__has__name?: ApplicationConfigVariable[];
+	application__has__config_var_name?: ApplicationConfigVariable[];
 	application__has__service_name?: Service[];
 	application__has__tag_key?: ApplicationTag[];
 	is_depended_on_by__application?: Application[];
