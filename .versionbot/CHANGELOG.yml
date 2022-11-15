@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update TypeScript to 4.9.3
+      hash: fcf36df180b70b3b3893cfab75a4295d0988b7ac
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 5.3.2
+  title: ""
+  date: 2022-11-15T22:49:17.344Z
+- commits:
     - subject: Add a test that auto-generated model types are up to date
       hash: b117f92e61d7c38174d1c10270aee3d1f9f676fa
       body: ""
