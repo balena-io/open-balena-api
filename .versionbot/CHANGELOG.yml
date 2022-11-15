@@ -1,4 +1,16 @@
 - commits:
+    - subject: Mark loki-grpc-client as an optional dependency
+      hash: ece419b43fb18d463e0b1cb30843479f7cc01128
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 5.2.1
+  title: ""
+  date: 2022-11-15T13:37:58.811Z
+- commits:
     - subject: "chore(deps): update grafana/loki docker tag to v2.7.0"
       hash: 6998fc0500d8d9688b0274e111e041f965fab7fd
       body: |
