@@ -1,4 +1,18 @@
 - commits:
+    - subject: Add a Synonymous Form for service & image installs
+      hash: 48902b5878d9242cd7273907ed4a479983e08dac
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://balena.zulipchat.com/#narrow/stream/346007-balena-io.2FbalenaCloud/topic/device.20installs.20image.2Fservice.20Synonymous.20Form
+        see: https://balena.zulipchat.com/#narrow/stream/346007-balena-io.2FbalenaCloud/topic/device.20installs.20image.2Fservice.20Synonymous.20Form
+      author: Thodoris Greasidis
+      nested: []
+  version: 5.3.0
+  title: ""
+  date: 2022-11-15T18:27:17.425Z
+- commits:
     - subject: Mark loki-grpc-client as an optional dependency
       hash: ece419b43fb18d463e0b1cb30843479f7cc01128
       body: ""
