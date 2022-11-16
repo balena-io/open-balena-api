@@ -436,11 +436,12 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 		.map((file) => file.slice(0, -'.json'.length).trim());
 
 	for (const model of models) {
-		fixtures[model] = import(
-			path.join('../fixtures', fixtureName, `${model}.json`)
-		).then(({ default: fromJson }) =>
-			loadFixtureModel(loaders[model], fixtures, fromJson),
-		);
+		fixtures[model] = (async () => {
+			const { default: fromJson } = await import(
+				path.join('../fixtures', fixtureName, `${model}.json`)
+			);
+			return await loadFixtureModel(loaders[model], fixtures, fromJson);
+		})();
 	}
 
 	return await Bluebird.props(
