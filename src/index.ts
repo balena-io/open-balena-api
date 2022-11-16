@@ -18,7 +18,6 @@ import * as pine from '@balena/pinejs';
 import type { User as DbUser } from './balena-model';
 import type { defaultFindUser$select } from './infra/auth/auth';
 import * as jwt from './infra/auth/jwt-passport';
-
 const { api } = pine.sbvrUtils;
 
 // TODO: Move this into a feature
@@ -107,7 +106,13 @@ import {
 	normalizeHandle,
 	refreshToken,
 } from './features/auth';
-import { getIP, getIPv4, isValidInteger, throttledForEach } from './lib/utils';
+import {
+	getIP,
+	getIPv4,
+	isValidInteger,
+	multerTransform,
+	throttledForEach,
+} from './lib/utils';
 import {
 	createRateLimitMiddleware,
 	createRateLimiter,
@@ -451,6 +456,7 @@ function setupMiddleware(app: Application) {
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(methodOverride());
 	app.use(multer().any());
+	app.use(multerTransform);
 	app.use(passport.initialize());
 	app.use(AUTH_PATH, cookieSession({ secret: COOKIE_SESSION_SECRET }));
 

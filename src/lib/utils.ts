@@ -1,9 +1,10 @@
 import { pseudoRandomBytes } from 'crypto';
-import type { Request } from 'express';
+import type { Request, RequestHandler } from 'express';
 import ipaddr from 'ipaddr.js';
 import fs from 'fs';
 import { promisify } from 'util';
 import { setTimeout } from 'timers/promises';
+import * as _ from 'lodash';
 
 // process.hrtime() will give nanos, but it is from an unknown relative time, not epoch.
 // This approach calculates the difference and adds to get the current nano time.
@@ -18,6 +19,19 @@ export const pseudoRandomBytesAsync = promisify(pseudoRandomBytes);
 export const isValidInteger = (num: any): num is number => {
 	const n = checkInt(num);
 	return n !== false && n > 0;
+};
+
+export const multerTransform: RequestHandler = async (req, _res, next) => {
+	try {
+		if (req.files) {
+			_.forEach(req.files, (file: any) => {
+				req.body[file.fieldname] = file;
+			});
+		}
+		next();
+	} catch (err) {
+		next(err);
+	}
 };
 
 export const checkInt = (num?: string): number | false => {
