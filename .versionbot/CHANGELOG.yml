@@ -1,4 +1,26 @@
 - commits:
+    - subject: "test/fixtures: Convert to async-await to workaround TS 4.9.3 regression"
+      hash: dc332fb215f9a03f2332af5925dba9390aeb7dbb
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://github.com/microsoft/TypeScript/issues/51554
+        see: https://github.com/microsoft/TypeScript/issues/51554
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Rely on npm test for checking for diverged model types
+      hash: 163a1e23d02219993120809946f0fed31c68af93
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 5.3.4
+  title: ""
+  date: 2022-11-16T15:48:04.032Z
+- commits:
     - subject: Only fetch data if necessary for patching v3 current device state
       hash: b467f0d827ddd0977e66e541882f410daa9e3b28
       body: ""
