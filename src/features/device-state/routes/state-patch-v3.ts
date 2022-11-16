@@ -207,7 +207,8 @@ const fetchData = async (
 				images.push(...appImages);
 			}
 		}
-		return { devices, images, releasesByAppUuid };
+		const devicesByUuid = _.keyBy(devices, (d) => d.uuid);
+		return { devicesByUuid, images, releasesByAppUuid };
 	});
 
 export const statePatchV3: RequestHandler = async (req, res) => {
@@ -261,19 +262,12 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 			}
 		}
 
-		const { devices, images, releasesByAppUuid } = await fetchData(
-			req,
-			custom,
-			uuids,
-			appReleasesCriteria,
-		);
-
 		const updateFns: Array<
 			(resinApiTx: sbvrUtils.PinejsClient) => Promise<void>
 		> = [];
 
-		for (const device of devices) {
-			const { uuid } = device;
+		let data;
+		for (const uuid of uuids) {
 			const state = body[uuid];
 
 			const { apps } = state;
@@ -301,116 +295,125 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 				deviceBody.device_name = state.name;
 			}
 
-			const userAppUuid = device.belongs_to__application[0].uuid;
-			if (apps != null) {
-				const release = releasesByAppUuid[userAppUuid].find(
-					(r) => r.commit === apps[userAppUuid].release_uuid,
-				);
-				if (release) {
-					deviceBody.is_running__release = release.id;
+			if (apps != null || Object.keys(deviceBody).length > 0) {
+				// We lazily fetch the necessary data only if we absolutely must to avoid unnecessary work if it turns out we don't need it
+				data ??= await fetchData(req, custom, uuids, appReleasesCriteria);
+				const { images, releasesByAppUuid } = data;
+				const device = data.devicesByUuid[uuid];
+
+				if (apps != null) {
+					const userAppUuid = device.belongs_to__application[0].uuid;
+					const release = releasesByAppUuid[userAppUuid].find(
+						(r) => r.commit === apps[userAppUuid].release_uuid,
+					);
+					if (release) {
+						deviceBody.is_running__release = release.id;
+					}
 				}
-			}
 
-			if (Object.keys(deviceBody).length > 0) {
-				// truncate for resilient legacy compatible device state patch so that supervisors don't fail
-				// to update b/c of length violation of 255 (SBVR SHORT TEXT type) for ip and mac address.
-				// sbvr-types does not export SHORT TEXT VARCHAR length 255 to import.
-				deviceBody = truncateShortTextFields(deviceBody);
-				// If we're updating anyway then ensure the metrics data is included
-				deviceBody = { ...deviceBody, ...metricsBody };
-				updateFns.push(async (resinApiTx) => {
-					await resinApiTx.patch({
-						resource: 'device',
-						id: device.id,
-						options: {
-							$filter: { $not: deviceBody },
-						},
-						body: deviceBody,
+				if (Object.keys(deviceBody).length > 0) {
+					// truncate for resilient legacy compatible device state patch so that supervisors don't fail
+					// to update b/c of length violation of 255 (SBVR SHORT TEXT type) for ip and mac address.
+					// sbvr-types does not export SHORT TEXT VARCHAR length 255 to import.
+					deviceBody = truncateShortTextFields(deviceBody);
+					// If we're updating anyway then ensure the metrics data is included
+					deviceBody = { ...deviceBody, ...metricsBody };
+					updateFns.push(async (resinApiTx) => {
+						await resinApiTx.patch({
+							resource: 'device',
+							id: device.id,
+							options: {
+								$filter: { $not: deviceBody },
+							},
+							body: deviceBody,
+						});
 					});
-				});
-			}
+				}
 
-			if (apps != null) {
-				const imgInstalls: Array<{
-					imageId: number;
-					releaseId: number;
-					status: string;
-					downloadProgress?: number;
-				}> = [];
-				for (const [
-					appUuid,
-					{
-						// release_uuid: isRunningReleaseUuid,
-						releases = {},
-					},
-				] of Object.entries(apps)) {
-					// // TODO: This gets the release we are running for the given app but currently we handle the user app out of band above, and ignore supervisor/os
-					// const release = releases[appUuid].find(
-					// 	(r) => r.commit === isRunningReleaseUuid,
-					// );
-					// if (release == null) {
-					// 	throw new InternalRequestError();
-					// }
-					for (const [releaseUuid, { services = {} }] of Object.entries(
-						releases,
-					)) {
-						const release = releasesByAppUuid[appUuid].find(
-							(r) => r.commit === releaseUuid,
-						);
-						if (release == null) {
-							throw new InternalRequestError();
-						}
-						for (const service of Object.values(services)) {
-							const serviceLocation = service.image.split('@', 1)[0];
-							const image = images.find(
-								(i) => i.is_stored_at__image_location === serviceLocation,
+				if (apps != null) {
+					const imgInstalls: Array<{
+						imageId: number;
+						releaseId: number;
+						status: string;
+						downloadProgress?: number;
+					}> = [];
+					for (const [
+						appUuid,
+						{
+							// release_uuid: isRunningReleaseUuid,
+							releases = {},
+						},
+					] of Object.entries(apps)) {
+						// // TODO: This gets the release we are running for the given app but currently we handle the user app out of band above, and ignore supervisor/os
+						// const release = releases[appUuid].find(
+						// 	(r) => r.commit === isRunningReleaseUuid,
+						// );
+						// if (release == null) {
+						// 	throw new InternalRequestError();
+						// }
+						for (const [releaseUuid, { services = {} }] of Object.entries(
+							releases,
+						)) {
+							const release = releasesByAppUuid[appUuid].find(
+								(r) => r.commit === releaseUuid,
 							);
-							if (image == null) {
+							if (release == null) {
 								throw new InternalRequestError();
 							}
-							imgInstalls.push({
-								imageId: image.id,
-								releaseId: release.id,
-								status: service.status,
-								downloadProgress: service.download_progress,
-							});
+							for (const service of Object.values(services)) {
+								const serviceLocation = service.image.split('@', 1)[0];
+								const image = images.find(
+									(i) => i.is_stored_at__image_location === serviceLocation,
+								);
+								if (image == null) {
+									throw new InternalRequestError();
+								}
+								imgInstalls.push({
+									imageId: image.id,
+									releaseId: release.id,
+									status: service.status,
+									downloadProgress: service.download_progress,
+								});
+							}
 						}
 					}
-				}
 
-				const imageIds = imgInstalls.map(({ imageId }) => imageId);
+					const imageIds = imgInstalls.map(({ imageId }) => imageId);
 
-				updateFns.push(async (resinApiTx) => {
-					if (imageIds.length > 0) {
-						const existingImgInstalls = (await resinApiTx.get({
-							resource: 'image_install',
-							options: {
-								$select: ['id', 'installs__image'],
-								$filter: {
-									device: device.id,
-									installs__image: { $in: imageIds },
+					updateFns.push(async (resinApiTx) => {
+						if (imageIds.length > 0) {
+							const existingImgInstalls = (await resinApiTx.get({
+								resource: 'image_install',
+								options: {
+									$select: ['id', 'installs__image'],
+									$filter: {
+										device: device.id,
+										installs__image: { $in: imageIds },
+									},
 								},
-							},
-						})) as Array<PickDeferred<ImageInstall, 'id' | 'installs__image'>>;
-						const existingImgInstallsByImage = _.keyBy(
-							existingImgInstalls,
-							({ installs__image }) => installs__image.__id,
-						);
+							})) as Array<
+								PickDeferred<ImageInstall, 'id' | 'installs__image'>
+							>;
+							const existingImgInstallsByImage = _.keyBy(
+								existingImgInstalls,
+								({ installs__image }) => installs__image.__id,
+							);
 
-						await Promise.all(
-							imgInstalls.map(async (imgInstall) => {
-								await upsertImageInstall(
-									resinApiTx,
-									existingImgInstallsByImage[imgInstall.imageId],
-									imgInstall,
-									device.id,
-								);
-							}),
-						);
-					}
+							await Promise.all(
+								imgInstalls.map(async (imgInstall) => {
+									await upsertImageInstall(
+										resinApiTx,
+										existingImgInstallsByImage[imgInstall.imageId],
+										imgInstall,
+										device.id,
+									);
+								}),
+							);
+						}
 
-					await deleteOldImageInstalls(resinApiTx, device.id, imageIds);
-				});
+						await deleteOldImageInstalls(resinApiTx, device.id, imageIds);
+					});
+				}
 			}
 		}
 
