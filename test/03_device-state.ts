@@ -1,3 +1,4 @@
+import { sbvrUtils, permissions } from '@balena/pinejs';
 import _ from 'lodash';
 import mockery from 'mockery';
 import sinon from 'sinon';
@@ -13,6 +14,8 @@ import * as fixtures from './test-lib/fixtures';
 import { expectResourceToMatch } from './test-lib/api-helpers';
 import { redis, redisRO } from '../src/infra/redis';
 import { setTimeout } from 'timers/promises';
+
+const { api } = sbvrUtils;
 
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
@@ -338,6 +341,90 @@ mockery.registerMock('../src/lib/config', configMock);
 						});
 					},
 				);
+
+				describe('given an expired device api key', function () {
+					before(async function () {
+						await api.resin.patch({
+							resource: 'api_key',
+							passthrough: {
+								req: permissions.root,
+							},
+							id: {
+								key: device.token,
+							},
+							body: {
+								expiry_date: Date.now() - 60_000,
+							},
+						});
+					});
+
+					it(`should not account state polls as heartbeats`, async () => {
+						stateChangeEventSpy.resetHistory();
+
+						await supertest(device)
+							.get(`/device/${stateVersion}/${device.uuid}/state`)
+							.expect(401);
+
+						await setTimeout(1000);
+						expect(stateChangeEventSpy.notCalled).to.equal(
+							true,
+							`The stateChangeEventSpy shouldn't have been called.`,
+						);
+
+						expect(tracker.states[device.uuid]).to.equal(
+							DeviceOnlineStates.Offline,
+						);
+
+						const { body } = await supertest(admin)
+							.get(`/${version}/device(${device.id})`)
+							.expect(200);
+
+						expect(body.d[0]).to.not.be.undefined;
+						expect(body.d[0]).to.have.property(
+							'api_heartbeat_state',
+							DeviceOnlineStates.Offline,
+							'API heartbeat state changed using an expired api key',
+						);
+					});
+
+					it(`should see state become "online" again following a state poll after removing the expiry date from the api key`, async () => {
+						stateChangeEventSpy.resetHistory();
+
+						await api.resin.patch({
+							resource: 'api_key',
+							passthrough: {
+								req: permissions.root,
+							},
+							id: {
+								key: device.token,
+							},
+							body: {
+								expiry_date: null,
+							},
+						});
+
+						await fakeDevice.getState(device, device.uuid, stateVersion);
+
+						await waitFor({
+							checkFn: () => stateChangeEventSpy.called,
+						});
+
+						expect(tracker.states[device.uuid]).to.equal(
+							DeviceOnlineStates.Online,
+						);
+
+						const { body } = await supertest(admin)
+							.get(`/${version}/device(${device.id})`)
+							.expect(200);
+
+						expect(body.d[0]).to.not.be.undefined;
+						expect(body.d[0]).to.have.property(
+							'api_heartbeat_state',
+							DeviceOnlineStates.Online,
+							'API heartbeat state is not online',
+						);
+					});
+				});
 			});
 		});
 	}),
