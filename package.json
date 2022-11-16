@@ -19,7 +19,8 @@
     "fasttest-cleanup": "docker compose -f docker-compose.test.yml down --rmi local --volumes",
     "materialize-config": "npm run fasttest -- --generate-config .materialized-config.json",
     "generate-model-schema": "npm run materialize-config && npx -p @balena/pinejs abstract-sql-compiler compile .materialized-config.json .materialized-schema.sql",
-    "generate-model-types": "npm run materialize-config && echo '/**\n * This file is auto-generated with `npm run generate-model-types`\n */\n' > src/balena-model.ts && npx abstract-sql-compiler generate-types .materialized-config.json >> src/balena-model.ts",
+    "generate-model-types": "npm run materialize-config && echo '/**\n * This file is auto-generated with `npm run generate-model-types`\n */\n' > src/balena-model.ts && npx abstract-sql-compiler generate-types .materialized-config.json >> src/balena-model.ts && balena-lint --typescript --fix src/balena-model.ts",
+    "check-model-types-generated": "./automation/check-model-types-generated.sh",
     "build": "npm run clean && tsc --project ./tsconfig.build.json && copyup \"src/**/*.sbvr\" \"src/**/*.sql\" dist/",
     "clean": "rimraf dist/",
     "cleanup": "rm .fast-boot.json .pinejs-cache.json || true",
@@ -27,7 +28,7 @@
     "prettify": "balena-lint --fix src/ test/ typings/ init.ts index.js",
     "prepack": "npm run build",
     "test:compose": "./automation/test.sh",
-    "test": "echo Tests are run via docker compose",
+    "test": "npm run lint && npm run check-model-types-generated",
     "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\""
   },
   "dependencies": {
