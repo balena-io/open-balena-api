@@ -1,4 +1,16 @@
 - commits:
+    - subject: Only fetch data if necessary for patching v3 current device state
+      hash: b467f0d827ddd0977e66e541882f410daa9e3b28
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 5.3.3
+  title: ""
+  date: 2022-11-16T15:11:51.514Z
+- commits:
     - subject: Update TypeScript to 4.9.3
       hash: fcf36df180b70b3b3893cfab75a4295d0988b7ac
       body: ""
