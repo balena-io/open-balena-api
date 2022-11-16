@@ -1,4 +1,18 @@
 - commits:
+    - subject: "state-get-v2/v3: Do not count expired api key requests as heartbeats"
+      hash: 64c5f12ddebab2355062bbe85c20afb7c2e620ef
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://balena.zulipchat.com/#narrow/stream/346009-aspect.2Fcustomer-success/topic/Nebra.20bills
+        see: https://balena.zulipchat.com/#narrow/stream/346009-aspect.2Fcustomer-success/topic/Nebra.20bills
+      author: Thodoris Greasidis
+      nested: []
+  version: 5.3.5
+  title: ""
+  date: 2022-11-16T16:54:49.031Z
+- commits:
     - subject: "test/fixtures: Convert to async-await to workaround TS 4.9.3 regression"
       hash: dc332fb215f9a03f2332af5925dba9390aeb7dbb
       body: ""
