@@ -1,4 +1,16 @@
 - commits:
+    - subject: "Tests: pin redis to 7.x"
+      hash: 1a490ffe761cc28a32c113eb16b9bc715e633ad4
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 5.3.6
+  title: ""
+  date: 2022-11-17T19:56:34.630Z
+- commits:
     - subject: "state-get-v2/v3: Do not count expired api key requests as heartbeats"
       hash: 64c5f12ddebab2355062bbe85c20afb7c2e620ef
       body: ""
