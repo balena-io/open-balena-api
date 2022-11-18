@@ -10,11 +10,13 @@ import {
 	VPN_SERVICE_API_KEY,
 } from './config';
 
-export const writePerms = (resource: string, filter: string): string[] => [
-	`${resource}.create?${filter}`,
-	`${resource}.update?${filter}`,
-	`${resource}.delete?${filter}`,
-];
+const defaultWritePerms = ['create', 'update', 'delete'] as const;
+
+const writePerms = (
+	resource: string,
+	filter: string,
+	access: ReadonlyArray<typeof defaultWritePerms[number]> = defaultWritePerms,
+): string[] => access.map((verb) => `${resource}.${verb}?${filter}`);
 
 const matchesActor = 'actor eq @__ACTOR_ID';
 const matchesUser = `user/any(u:u/${matchesActor})`;
@@ -89,7 +91,13 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.service.read?application/canAccess() or service_install/canAccess()',
 
 	'resin.service_install.read?device/canAccess()',
-	...writePerms('resin.service_install', `device/any(d:d/${matchesActor})`),
+	// Should be created for the device itself, and it should be for a service of the app that the device belongs to or for a service of the supervisor release that manages the device.
+	`resin.service_install.create?device/any(d:d/${matchesActor}) and installs__service/any(s:s/application/any(a:a/owns__device/any(d:d/${matchesActor}) or (a/is_public eq true and a/owns__release/any(r:r/should_manage__device/any(d:d/${matchesActor})))))`,
+	// A device should be able to manage its own service installs, even from apps its not or no longer part of (past/supervisor/os)
+	...writePerms('resin.service_install', `device/any(d:d/${matchesActor})`, [
+		'update',
+		'delete',
+	]),
 
 	'resin.service_environment_variable.read?service/canAccess()',
 
