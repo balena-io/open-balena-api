@@ -249,9 +249,12 @@ const resolveImageLocation = multiCacheMemoizee(
 											$any: {
 												$alias: 'ipor',
 												$expr: {
-													ipor: {
+													$eq: [
 														// for now only return releases with one image (service)
-														release_image: { $count: { $eq: 1 } },
+														{ ipor: { release_image: { $count: {} } } },
+														1,
+													],
+													ipor: {
 														status: 'success',
 														belongs_to__application: {
 															$any: {

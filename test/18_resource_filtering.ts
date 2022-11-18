@@ -160,6 +160,27 @@ describe('Resource Filtering', () => {
 			const { body } = await pineUser.get({
 				resource: 'application',
 				options: {
+					$orderby: {
+						application_tag: {
+							$count: {},
+						},
+						$dir: 'desc',
+					},
+				},
+			});
+			expect(body).to.be.an('array').to.have.lengthOf(4);
+			expect(body.map((app: Application) => app.app_name)).deep.equal([
+				'appapp3',
+				'appapp2',
+				'appapp1',
+				'appapp0',
+			]);
+		});
+
+		it('Should order applications by tag count using the deprecated raw string notation', async () => {
+			const { body } = await pineUser.get({
+				resource: 'application',
+				options: {
 					$orderby: 'application_tag/$count desc',
 				},
 			});
@@ -173,6 +194,38 @@ describe('Resource Filtering', () => {
 		});
 
 		it('Should order applications by filtered tag count', async () => {
+			const { body } = await pineUser.get({
+				resource: 'application',
+				options: {
+					$select: 'app_name',
+					$expand: { application_tag: {} },
+					$orderby: [
+						{
+							application_tag: {
+								$count: {
+									$filter: {
+										value: '0',
+									},
+								},
+							},
+							$dir: 'desc',
+						},
+						{
+							app_name: 'asc',
+						},
+					],
+				},
+			});
+			expect(body).to.be.an('array').to.have.lengthOf(4);
+			expect(body.map((app: Application) => app.app_name)).deep.equal([
+				'appapp2',
+				'appapp3',
+				'appapp0',
+				'appapp1',
+			]);
+		});
+
+		it('Should order applications by filtered tag count using the deprecated raw string notation', async () => {
 			const { body } = await pineUser.get({
 				resource: 'application',
 				options: {
