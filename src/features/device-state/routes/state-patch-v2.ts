@@ -347,7 +347,7 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 			}
 		}
 
-		if (dependent?.apps != null) {
+		if (dependent?.apps != null && Object.keys(dependent.apps).length > 0) {
 			// Handle dependent devices if necessary
 			const gatewayDownloads = _.flatMap(dependent.apps, ({ images }) =>
 				_.map(images, ({ status, download_progress }, imageIdStr) => {
