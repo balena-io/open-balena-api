@@ -1,4 +1,16 @@
 - commits:
+    - subject: Improve check to only handle dependent devices when necessary
+      hash: 1a05c8947b5d29809a358ea4609a8f8a1076fb4b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 6.0.2
+  title: ""
+  date: 2022-11-18T21:49:59.937Z
+- commits:
     - subject: Replace the deprecated $count notation
       hash: 2ceefe2a3fd8993d2b29ae8f55c06d159fabb241
       body: ""
