@@ -425,7 +425,9 @@ function fixProtocolMiddleware(skipUrls: string[] = []): Handler {
 function setupMiddleware(app: Application) {
 	app.use(
 		compression({
-			[zlib.constants.BROTLI_PARAM_QUALITY]: BROTLI_COMPRESSION_QUALITY,
+			params: {
+				[zlib.constants.BROTLI_PARAM_QUALITY]: BROTLI_COMPRESSION_QUALITY,
+			},
 			// We use a custom filter so that we can explicitly enable compression for ndjson (ie logs)
 			filter(_req, res) {
 				const type = res.getHeader('Content-Type') as string;
