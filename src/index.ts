@@ -11,6 +11,7 @@ import methodOverride from 'method-override';
 import passport from 'passport';
 import path from 'path';
 import * as Sentry from '@sentry/node';
+import * as zlib from 'node:zlib';
 
 import * as pine from '@balena/pinejs';
 
@@ -46,6 +47,7 @@ import {
 	HIDE_UNVERSIONED_ENDPOINT,
 	setVersion,
 	NDJSON_CTYPE,
+	BROTLI_COMPRESSION_QUALITY,
 } from './lib/config';
 
 import {
@@ -423,6 +425,7 @@ function fixProtocolMiddleware(skipUrls: string[] = []): Handler {
 function setupMiddleware(app: Application) {
 	app.use(
 		compression({
+			[zlib.constants.BROTLI_PARAM_QUALITY]: BROTLI_COMPRESSION_QUALITY,
 			// We use a custom filter so that we can explicitly enable compression for ndjson (ie logs)
 			filter(_req, res) {
 				const type = res.getHeader('Content-Type') as string;
