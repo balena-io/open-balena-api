@@ -313,6 +313,11 @@ export const VPN_AUTH_CACHE_TIMEOUT = intVar(
 	5 * MINUTES,
 );
 
+export const BROTLI_COMPRESSION_QUALITY = intVar(
+	'BROTLI_COMPRESSION_QUALITY',
+	4,
+);
+
 const trustProxy = trustProxyVar('TRUST_PROXY', false);
 
 let trustProxyValue:
