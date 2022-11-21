@@ -90,7 +90,7 @@ describe('device type resource', () => {
 			expect(deviceType).to.have.property('name').that.is.a('string');
 		});
 
-		expect(res.body.d).to.have.property('length', 13);
+		expect(res.body.d).to.have.property('length', 14);
 	});
 });
 

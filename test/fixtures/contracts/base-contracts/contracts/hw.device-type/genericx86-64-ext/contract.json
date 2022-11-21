@@ -1,0 +1,29 @@
+{
+  "slug": "genericx86-64-ext",
+  "version": "1",
+  "type": "hw.device-type",
+  "aliases": [],
+  "name": "Generic x86_64",
+  "assets": {
+    "logo": {
+      "url": "./genericx86-64-ext.svg",
+      "name": "logo"
+    }
+  },
+  "data": {
+    "arch": "amd64",
+    "hdmi": true,
+    "led": false,
+    "connectivity": {
+      "bluetooth": false,
+      "wifi": false
+    },
+    "storage": {
+      "internal": true
+    },
+    "media": {
+      "installation": "usbkey"
+    },
+    "is_private": false
+  }
+}

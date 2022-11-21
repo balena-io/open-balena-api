@@ -79,7 +79,7 @@ describe('contracts', () => {
 			await fetchContractsLocally([contractRepository]);
 			const contracts = await getContracts('hw.device-type');
 
-			expect(contracts).to.have.length(13);
+			expect(contracts).to.have.length(14);
 			expect(contracts.find((contract) => contract.slug === 'raspberrypi3')).to
 				.not.be.undefined;
 		});
@@ -97,7 +97,7 @@ describe('contracts', () => {
 			]);
 			const contracts = await getContracts('hw.device-type');
 
-			expect(contracts).to.have.length(14);
+			expect(contracts).to.have.length(15);
 			expect(
 				contracts.find((contract) => contract.slug === 'other-contract-dt'),
 			).to.not.be.undefined;
@@ -164,7 +164,7 @@ describe('contracts', () => {
 				(dbDeviceType) => dbDeviceType.slug === 'fincm3',
 			);
 
-			expect(contracts).to.have.length(14);
+			expect(contracts).to.have.length(15);
 			expect(newDt).to.not.be.undefined;
 			expect(finDt).to.have.property('name', 'Fin');
 		});
@@ -233,7 +233,7 @@ describe('contracts', () => {
 				(dbDeviceType) => dbDeviceType.slug === 'raspberry-pi',
 			);
 
-			expect(dbDeviceTypes).to.have.length(14);
+			expect(dbDeviceTypes).to.have.length(15);
 			expect(newDt).to.not.be.undefined;
 			expect(finDt).to.have.property('name', 'Fin');
 			expect(finDt).to.have.deep.property(
