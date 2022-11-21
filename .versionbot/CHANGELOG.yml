@@ -1,4 +1,16 @@
 - commits:
+    - subject: Allow configuring brotli compression quality
+      hash: 41d92ce7d122667a57baea274ed05308a8b5a2f7
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 6.1.0
+  title: ""
+  date: 2022-11-21T14:14:52.690Z
+- commits:
     - subject: Improve check to only handle dependent devices when necessary
       hash: 1a05c8947b5d29809a358ea4609a8f8a1076fb4b
       body: ""
