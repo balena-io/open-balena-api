@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix specifying brotli compression parameter
+      hash: efe44153d396927d82016bdb22ba5e5777f39170
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 6.1.1
+  title: ""
+  date: 2022-11-21T16:33:12.023Z
+- commits:
     - subject: Allow configuring brotli compression quality
       hash: 41d92ce7d122667a57baea274ed05308a8b5a2f7
       body: ""
