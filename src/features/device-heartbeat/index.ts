@@ -242,20 +242,14 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 		uuid: string,
 		newState: DeviceOnlineStates,
 	): Promise<boolean> {
-		// patch the api_heartbeat_state value to the new state...
-		const body = {
-			api_heartbeat_state: newState,
-		};
-
-		const eventArgs = {
-			uuid,
-			newState,
-			startAt: Date.now(),
-			endAt: Date.now(),
-			err: undefined,
-		};
+		const startAt = Date.now();
+		let err;
 
 		try {
+			// patch the api_heartbeat_state value to the new state...
+			const body = {
+				api_heartbeat_state: newState,
+			};
 			await api.resin.patch({
 				resource: 'device',
 				passthrough: { req: permissions.root },
@@ -269,17 +263,23 @@ export class DeviceOnlineStateManager extends events.EventEmitter {
 				},
 				body,
 			});
-		} catch (err) {
-			eventArgs.err = err;
+			return true;
+		} catch ($err) {
+			err = $err;
 			captureException(
-				err,
+				$err,
 				'DeviceStateManager: Error updating the API with the device new state.',
 			);
+			return false;
 		} finally {
-			eventArgs.endAt = Date.now();
-			this.emit('change', eventArgs);
+			this.emit('change', {
+				uuid,
+				newState,
+				startAt,
+				endAt: Date.now(),
+				err,
+			});
 		}
-		return eventArgs.err !== undefined;
 	}
 
 	private consume() {
