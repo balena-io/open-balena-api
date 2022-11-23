@@ -113,6 +113,9 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 
 	'resin.image_environment_variable.read?release_image/canAccess()',
 
+	// So that requests do not get rejected with 401 but still do not have any effect.
+	`resin.gateway_download.all?1 eq 0`,
+
 	`resin.device.write-log?${matchesActor}`,
 ];
 
