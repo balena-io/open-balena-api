@@ -118,7 +118,7 @@
     "validator": "^13.7.0"
   },
   "optionalDependencies": {
-    "loki-grpc-client": "^1.0.6"
+    "loki-grpc-client": "^2.0.0"
   },
   "devDependencies": {
     "@balena/lint": "^6.2.1",
