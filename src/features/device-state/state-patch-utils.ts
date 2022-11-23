@@ -4,6 +4,7 @@ import { StatePatchV2Body } from './routes/state-patch-v2';
 import { StatePatchV3Body } from './routes/state-patch-v3';
 import {
 	DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
+	IMAGE_INSTALL_CACHE_TIMEOUT,
 	METRICS_MAX_REPORT_INTERVAL_SECONDS,
 } from '../../lib/config';
 import { createMultiLevelStore } from '../../infra/cache';
@@ -128,7 +129,12 @@ const shouldUpdateImageInstall = (() => {
 	>(
 		'lastImageInstallUpdate',
 		{
-			ttl: DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
+			default: {
+				ttl: IMAGE_INSTALL_CACHE_TIMEOUT,
+			},
+			// Do not have a local cache to avoid skipping updates based on an
+			// outdated local cache
+			local: false,
 		},
 		false,
 	);
@@ -140,8 +146,9 @@ const shouldUpdateImageInstall = (() => {
 		const now = Date.now();
 		if (
 			lastReport == null ||
-			// If the entry has expired then it means we should actually do the report
-			lastReport.updateTime + DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL < now ||
+			// If the download progress has changed and the entry has expired then it means we should actually do the report
+			(lastReport.download_progress !== body.download_progress &&
+				lastReport.updateTime + DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL < now) ||
 			// Or if the status has changed
 			lastReport.status !== body.status ||
 			// Or if the release has changed
