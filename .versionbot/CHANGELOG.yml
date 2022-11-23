@@ -1,4 +1,18 @@
 - commits:
+    - subject: Separate the image install cache and download progress throttle timers
+      hash: 1c217e4dbd04ff278fbd99706babb440ab1ed727
+      body: |
+        This allows for caching unchanged image install info for longer than
+        the duration of the download progress throttle
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 6.2.0
+  title: ""
+  date: 2022-11-23T14:39:35.314Z
+- commits:
     - subject: Update `loki-grpc-client` to version 2
       hash: 246bb5ab10dc0db3e2810391611737e6331fbf59
       body: >
