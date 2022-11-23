@@ -41,6 +41,7 @@ describe('loki backend', () => {
 		const ctx = createContext();
 		const log = createLog();
 		const response = await loki.publish(ctx, [_.clone(log)]);
+		await setTimeout(100); // wait for the logs to be published
 		expect(response).to.be.not.null;
 		const history = await loki.history(ctx, 1000);
 		expect(history[history.length - 1]).to.deep.equal(log);
@@ -79,6 +80,7 @@ describe('loki backend', () => {
 			createLog({ nanoTimestamp: now, isStdErr: false, isSystem: false }),
 		];
 		const response = await loki.publish(ctx, _.cloneDeep(logs));
+		await setTimeout(100); // wait for the logs to be published
 		expect(response).to.be.not.null;
 		const history = await loki.history(ctx, 1000);
 		expect(history.slice(-5)).to.deep.equal(logs);
@@ -90,6 +92,7 @@ describe('loki backend', () => {
 		const log = createLog();
 		const logs = [_.clone(log), _.clone(log), _.clone(log)];
 		const response = await loki.publish(ctx, _.cloneDeep(logs));
+		await setTimeout(100); // wait for the logs to be published
 		expect(response).to.be.not.null;
 		const history = await loki.history(ctx, 1000);
 		expect(history[1].timestamp).to.not.equal(log.timestamp);
