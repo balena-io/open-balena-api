@@ -1,4 +1,18 @@
 - commits:
+    - subject: Fix device requests to gateway_download failing with 401
+      hash: 6d1afc11eea92951bf86802e90721c34d46934d3
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://balena.zulipchat.com/#narrow/stream/345889-loop.2Fbalena-os/topic/Python.20SDK.20doesn't.20work.20with.20device.20API.20key
+        see: https://balena.zulipchat.com/#narrow/stream/345889-loop.2Fbalena-os/topic/Python.20SDK.20doesn't.20work.20with.20device.20API.20key
+      author: Thodoris Greasidis
+      nested: []
+  version: 6.1.3
+  title: ""
+  date: 2022-11-23T10:10:59.057Z
+- commits:
     - subject: Update dependencies
       hash: 53460a6a032db6b75daf1e21e33397af1057c344
       body: |
