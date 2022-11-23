@@ -7,10 +7,9 @@ import {
 	createOrgIdMetadata,
 	Direction,
 	EntryAdapter,
-	IGrpcClientAsync,
-	promisifyClient,
 	PusherClient,
 	PushRequest,
+	PushResponse,
 	QuerierClient,
 	QueryRequest,
 	QueryResponse,
@@ -99,7 +98,7 @@ function backoff<T extends (...args: any[]) => any>(
 export class LokiBackend implements DeviceLogsBackend {
 	private subscriptions: EventEmitter;
 	private querier: QuerierClient;
-	private pusher: IGrpcClientAsync;
+	private pusher: PusherClient;
 	private tailCalls: Map<string, ClientReadableStream<TailResponse>>;
 
 	constructor() {
@@ -108,11 +107,9 @@ export class LokiBackend implements DeviceLogsBackend {
 			`${LOKI_HOST}:${LOKI_PORT}`,
 			createInsecureCredentials(),
 		);
-		this.pusher = promisifyClient(
-			new PusherClient(
-				`${LOKI_HOST}:${LOKI_PORT}`,
-				createInsecureCredentials(),
-			),
+		this.pusher = new PusherClient(
+			`${LOKI_HOST}:${LOKI_PORT}`,
+			createInsecureCredentials(),
 		);
 		this.tailCalls = new Map();
 		this.push = backoff(this.push.bind(this), (err: ServiceError): boolean => {
@@ -210,11 +207,16 @@ export class LokiBackend implements DeviceLogsBackend {
 		const pushRequest = new PushRequest();
 		pushRequest.setStreamsList(streams);
 		const startAt = Date.now();
-		return this.pusher
-			.push(pushRequest, createOrgIdMetadata(String(appId)), {
-				deadline: Date.now() + PUSH_TIMEOUT,
-			})
-			.finally(() => updateLokiPushDurationHistogram(Date.now() - startAt));
+		return new Promise<PushResponse>((resolve, reject) => {
+			this.pusher.push(
+				pushRequest,
+				createOrgIdMetadata(String(appId)),
+				{
+					deadline: startAt + PUSH_TIMEOUT,
+				},
+				(err, response) => (err ? reject(err) : resolve(response)),
+			);
+		}).finally(() => updateLokiPushDurationHistogram(Date.now() - startAt));
 	}
 
 	public subscribe(ctx: LogContext, subscription: Subscription) {
