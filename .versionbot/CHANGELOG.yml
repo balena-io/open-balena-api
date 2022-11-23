@@ -1,4 +1,16 @@
 - commits:
+    - subject: Avoid some unnecessary work in device-heartbeat
+      hash: 08c0a6c0daf1f54a126fabf5d39ea0f605645f4a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 6.1.4
+  title: ""
+  date: 2022-11-23T12:56:05.456Z
+- commits:
     - subject: Fix device requests to gateway_download failing with 401
       hash: 6d1afc11eea92951bf86802e90721c34d46934d3
       body: ""
