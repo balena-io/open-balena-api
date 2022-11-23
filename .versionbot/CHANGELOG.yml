@@ -1,4 +1,21 @@
 - commits:
+    - subject: Update `loki-grpc-client` to version 2
+      hash: 246bb5ab10dc0db3e2810391611737e6331fbf59
+      body: >
+        Version 2 uses `grpc-js` instead of `grpc`
+
+        Moved `loki-grpc-client` from `optionalDependencies` `dependencies` since it should no longer cause install fails
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thomas Manning <thomasm@balena.io>
+        signed-off-by: Thomas Manning <thomasm@balena.io>
+      author: Thomas Manning
+      nested: []
+  version: 6.1.5
+  title: ""
+  date: 2022-11-23T14:06:30.255Z
+- commits:
     - subject: Avoid some unnecessary work in device-heartbeat
       hash: 08c0a6c0daf1f54a126fabf5d39ea0f605645f4a
       body: ""
