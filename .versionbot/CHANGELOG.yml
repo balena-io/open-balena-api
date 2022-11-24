@@ -1,4 +1,33 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v14.1.0
+      hash: b84499fa0e8c63eb0287cf6bf722457870e7125e
+      body: |
+        Update balena/open-balena-base to 14.1.0
+
+        Update balena/open-balena-base from 14.0.1 to 14.1.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Enable builds of no-systemd variant for arm64
+              hash: eb0e7644ae148ef34901fefab6a9c45d22688a9a
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-14.1.0
+          title: ""
+          date: 2022-11-24T11:14:20.809Z
+  version: 6.5.0
+  title: ""
+  date: 2022-11-24T13:07:28.936Z
+- commits:
     - subject: Update dependencies
       hash: bdd772b1d313e973ae0e1c99ae38be7028d4724c
       body: |
