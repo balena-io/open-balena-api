@@ -1,4 +1,19 @@
 - commits:
+    - subject: Update dependencies Update @balena/abstract-sql-compiler from 7.21.1 to
+        7.22.0
+      hash: 4bb261531544fe5a920f3d93986ff59a0bf0c8b5
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: fisehara <harald@balena.io>
+        signed-off-by: fisehara <harald@balena.io>
+      author: fisehara
+      nested: []
+  version: 6.3.0
+  title: ""
+  date: 2022-11-24T10:06:57.597Z
+- commits:
     - subject: Separate the image install cache and download progress throttle timers
       hash: 1c217e4dbd04ff278fbd99706babb440ab1ed727
       body: |
