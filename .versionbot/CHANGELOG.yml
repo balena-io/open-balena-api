@@ -1,4 +1,18 @@
 - commits:
+    - subject: Finalize release contract async migration
+      hash: 78b0573b01e473afefbca22a9940428e6d98d206
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Josh Bowling <josh@monarci.com>
+        signed-off-by: Josh Bowling <josh@monarci.com>
+      author: Josh Bowling
+      nested: []
+  version: 6.5.3
+  title: ""
+  date: 2022-11-25T14:06:00.490Z
+- commits:
     - subject: "Migration: Normalize release contract fields"
       hash: 52a7aba3a9a29cff95af4bee3d5cc4d5d7b8a7b6
       body: ""
