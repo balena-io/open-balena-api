@@ -1,4 +1,18 @@
 - commits:
+    - subject: "Migration: Normalize release contract fields"
+      hash: 52a7aba3a9a29cff95af4bee3d5cc4d5d7b8a7b6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Josh Bowling <josh@monarci.com>
+        signed-off-by: Josh Bowling <josh@monarci.com>
+      author: Josh Bowling
+      nested: []
+  version: 6.5.2
+  title: ""
+  date: 2022-11-25T12:29:36.442Z
+- commits:
     - subject: Check the model typings as part of the sut
       hash: 33651428c5f0ec26f4a327d6962c6408ce7b714d
       body: ""
