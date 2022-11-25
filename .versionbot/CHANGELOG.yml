@@ -1,4 +1,18 @@
 - commits:
+    - subject: Check the model typings as part of the sut
+      hash: 33651428c5f0ec26f4a327d6962c6408ce7b714d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://github.com/balena-io/balena-api/pull/3905
+        see: https://github.com/balena-io/balena-api/pull/3905
+      author: Thodoris Greasidis
+      nested: []
+  version: 6.5.1
+  title: ""
+  date: 2022-11-25T09:23:40.919Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v14.1.0
       hash: b84499fa0e8c63eb0287cf6bf722457870e7125e
       body: |
