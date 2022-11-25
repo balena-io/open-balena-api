@@ -2,8 +2,18 @@
 set -e
 
 cleanup () {
-	docker compose -f docker-compose.test.yml down
+	exitCode=$?
+	docker compose -f docker-compose.test-custom.yml down
+	echo "Exiting with code: $exitCode"
+	exit $exitCode
 }
 trap cleanup EXIT
 
-docker compose -f docker-compose.test.yml up --force-recreate --renew-anon-volumes sut
+docker compose -f docker-compose.test-custom.yml run \
+	--env NODE_ENV=production \
+	--env GENERATE_CONFIG=.materialized-config.json \
+	sut bash -c "npx mocha && npm run check-model-types-generated"
+
+# ensure redis and db have clean volumes
+docker compose -f docker-compose.test-custom.yml up --force-recreate --renew-anon-volumes -d db redis loki
+docker compose -f docker-compose.test-custom.yml run --env NODE_ENV=production sut npx mocha
