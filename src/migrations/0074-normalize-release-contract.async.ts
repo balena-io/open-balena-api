@@ -17,5 +17,5 @@ export = {
 	backoffDelayMS: 4000,
 	errorThreshold: 15,
 	asyncBatchSize: 1000,
-	finalize: false,
+	finalize: true,
 };
