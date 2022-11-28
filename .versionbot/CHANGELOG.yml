@@ -1,4 +1,16 @@
 - commits:
+    - subject: Allow configuring gzip compression quality
+      hash: 32004070f307a77bddb31fb701d89ad0cb9ac4ee
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 6.6.0
+  title: ""
+  date: 2022-11-28T15:03:07.721Z
+- commits:
     - subject: Finalize release contract async migration
       hash: 78b0573b01e473afefbca22a9940428e6d98d206
       body: ""
