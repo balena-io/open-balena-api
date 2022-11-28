@@ -558,14 +558,14 @@ mockery.registerMock('../src/lib/config', configMock);
 				stateVersion,
 			);
 
-			await expectResourceToMatch(
-				pineUser,
-				'device',
-				device.id,
-				_.mapKeys(devicePatchBody[stateKey], (_v, key) =>
-					key === 'name' ? 'device_name' : key,
-				),
-			);
+			const expectedData =
+				stateVersion === 'v2'
+					? _.mapKeys(devicePatchBody[stateKey], (_v, key) =>
+							key === 'name' ? 'device_name' : key,
+					  )
+					: _.pickBy(devicePatchBody[stateKey], (_v, key) => key !== 'name');
+
+			await expectResourceToMatch(pineUser, 'device', device.id, expectedData);
 		});
 
 		it('should accept addresses longer than 255 chars and truncate at space delimiters', async () => {
