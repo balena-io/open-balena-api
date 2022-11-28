@@ -48,6 +48,7 @@ import {
 	setVersion,
 	NDJSON_CTYPE,
 	BROTLI_COMPRESSION_QUALITY,
+	GZIP_COMPRESSION_QUALITY,
 } from './lib/config';
 
 import {
@@ -425,6 +426,7 @@ function fixProtocolMiddleware(skipUrls: string[] = []): Handler {
 function setupMiddleware(app: Application) {
 	app.use(
 		compression({
+			level: GZIP_COMPRESSION_QUALITY,
 			params: {
 				[zlib.constants.BROTLI_PARAM_QUALITY]: BROTLI_COMPRESSION_QUALITY,
 			},
