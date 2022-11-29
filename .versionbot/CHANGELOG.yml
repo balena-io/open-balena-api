@@ -1,4 +1,23 @@
 - commits:
+    - subject: Simplify the device host & SV app permissions to rely only on is_public
+      hash: cfe542227739f242b9634c24dd6970111b7e7831
+      body: |
+        Atm is_host eq 1 or is_public eq 1 ===
+        is_public eq 1, so the is_host check is
+        redundant. It seem that the is_host eq 1 is a
+        leftover since before we added is_public and
+        adopted its semantics in host apps.
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://github.com/balena-io/open-balena-api/pull/645
+        see: https://github.com/balena-io/open-balena-api/pull/645
+      author: Thodoris Greasidis
+      nested: []
+  version: 6.6.1
+  title: ""
+  date: 2022-11-29T18:08:43.274Z
+- commits:
     - subject: Allow configuring gzip compression quality
       hash: 32004070f307a77bddb31fb701d89ad0cb9ac4ee
       body: ""
