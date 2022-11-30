@@ -1,4 +1,18 @@
 - commits:
+    - subject: Fix whitespace/sql in release contract migration
+      hash: 943bb7b6d9824d81d8bd3b56721e5b424f81b7e7
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Josh Bowling <josh@monarci.com>
+        signed-off-by: Josh Bowling <josh@monarci.com>
+      author: Josh Bowling
+      nested: []
+  version: 6.6.2
+  title: ""
+  date: 2022-11-30T11:27:40.498Z
+- commits:
     - subject: Simplify the device host & SV app permissions to rely only on is_public
       hash: cfe542227739f242b9634c24dd6970111b7e7831
       body: |
