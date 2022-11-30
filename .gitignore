@@ -42,7 +42,6 @@ dist
 config/env
 
 # Startup cache files
-/.ts-node
 /.fast-boot.json
 /.coffee
 /.materialized-config.json

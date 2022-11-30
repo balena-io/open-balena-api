@@ -30,7 +30,6 @@ require('fast-boot2').start({
 require('@balena/es-version').set('es2022');
 
 // Support `require()` of *.ts files
-process.env.TS_NODE_CACHE_DIRECTORY = '.ts-node';
 require('ts-node/register/transpile-only');
 
 require('./init.ts');
