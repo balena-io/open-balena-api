@@ -1,4 +1,37 @@
 - commits:
+    - subject: Remove TS node cache directory usage.
+      hash: 11d88847df866cfe519094cb1b2336024a56d5b0
+      body: |
+        Removed in ts-node here: https://github.com/TypeStrong/ts-node/pull/701
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested: []
+    - subject: Disable changing device name via the state endpoint
+      hash: 7dd4f5e2a1e528a2e60d6b4707825aec06267325
+      body: |
+        While the state endpoint allows patching the device name since v2, that
+        feature hasn't really been used by supervisor until supervisor v13 when
+        that feature was introduced by mistake. Because of a race condition
+        between supervisors v13.0.0 and v14.0.2, the device name may get either
+        an empty value or the value 'local', this can cause confusion in users
+        or affect the user workflows that depend on having distinct device
+        names.
+
+        This commit removes the device name from the list of allowed patch
+        variables for the v3 state endpoint.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Felipe Lalanne
+      nested: []
+  version: 6.6.3
+  title: ""
+  date: 2022-11-30T16:28:07.633Z
+- commits:
     - subject: Fix whitespace/sql in release contract migration
       hash: 943bb7b6d9824d81d8bd3b56721e5b424f81b7e7
       body: ""
