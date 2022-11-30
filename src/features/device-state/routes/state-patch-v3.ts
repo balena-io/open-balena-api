@@ -32,7 +32,6 @@ const { api } = sbvrUtils;
  */
 export type StatePatchV3Body = {
 	[uuid: string]: {
-		name?: string;
 		status?: string;
 		os_version?: string;
 		os_variant?: string;
