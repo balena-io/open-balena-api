@@ -1,4 +1,17 @@
 - commits:
+    - subject: Remove name property from v3 state patch typing
+      hash: bd9e5901e36653f91895140551d477707117b86f
+      body: |
+        Some additional cleanup missing from #1175
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Felipe Lalanne
+      nested: []
+  version: 6.6.4
+  title: ""
+  date: 2022-11-30T17:20:07.069Z
+- commits:
     - subject: Remove TS node cache directory usage.
       hash: 11d88847df866cfe519094cb1b2336024a56d5b0
       body: |
