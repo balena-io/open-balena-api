@@ -1,4 +1,16 @@
 - commits:
+    - subject: Improve device service install permission
+      hash: aef9fbc02b01580fdcdbd38a4fbd8d84bcafe2c3
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 6.7.1
+  title: ""
+  date: 2022-12-01T14:53:04.267Z
+- commits:
     - subject: Make public apps & releases accessible by guests
       hash: d8bb6e11237e57543f19bb272d46cc7b927bc59b
       body: ""
