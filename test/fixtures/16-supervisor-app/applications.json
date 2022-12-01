@@ -21,7 +21,7 @@
 	},
 	"amd64_supervisor_app": {
 		"user": "admin",
-		"device_type": "intel-nuc",
+		"device_type": "genericx86-64-ext",
 		"is_public": true,
 		"app_name": "amd64-supervisor",
 		"organization": "balena_os"
