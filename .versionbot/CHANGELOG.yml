@@ -1,4 +1,24 @@
 - commits:
+    - subject: Make public apps & releases accessible by guests
+      hash: d8bb6e11237e57543f19bb272d46cc7b927bc59b
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Test service install creation of SV app of different DT than the device
+      hash: a3e8da301e82178723b88320dd2e394519b923ac
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 6.7.0
+  title: ""
+  date: 2022-12-01T14:41:22.897Z
+- commits:
     - subject: Remove name property from v3 state patch typing
       hash: bd9e5901e36653f91895140551d477707117b86f
       body: |
