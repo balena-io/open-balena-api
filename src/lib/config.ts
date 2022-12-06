@@ -325,6 +325,10 @@ export const BROTLI_COMPRESSION_QUALITY = intVar(
 	'BROTLI_COMPRESSION_QUALITY',
 	4,
 );
+export const BROTLI_COMPRESSION_WINDOW_BITS = intVar(
+	'BROTLI_COMPRESSION_WINDOW_BITS',
+	undefined,
+);
 
 const trustProxy = trustProxyVar('TRUST_PROXY', false);
 

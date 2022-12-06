@@ -49,6 +49,7 @@ import {
 	NDJSON_CTYPE,
 	BROTLI_COMPRESSION_QUALITY,
 	GZIP_COMPRESSION_QUALITY,
+	BROTLI_COMPRESSION_WINDOW_BITS,
 } from './lib/config';
 
 import {
@@ -429,6 +430,9 @@ function setupMiddleware(app: Application) {
 			level: GZIP_COMPRESSION_QUALITY,
 			params: {
 				[zlib.constants.BROTLI_PARAM_QUALITY]: BROTLI_COMPRESSION_QUALITY,
+				[zlib.constants.BROTLI_PARAM_LGWIN]:
+					BROTLI_COMPRESSION_WINDOW_BITS ??
+					zlib.constants.BROTLI_DEFAULT_WINDOW,
 			},
 			// We use a custom filter so that we can explicitly enable compression for ndjson (ie logs)
 			filter(_req, res) {
