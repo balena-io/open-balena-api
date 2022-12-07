@@ -1,4 +1,19 @@
 - commits:
+    - subject: Update dependency @types/uuid to 9.0.0
+      hash: b588c3270f8a78934563e2d23b1449e16228f7b5
+      body: |
+        Update @types/uuid to 9.0.0
+
+        Update @types/uuid from 8.3.4 to 9.0.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested: []
+  version: 6.9.0
+  title: ""
+  date: 2022-12-07T09:21:17.951Z
+- commits:
     - subject: Add support for setting brotli window size
       hash: a1c11781d84b6949a79fa5b600971d1478284113
       body: ""
