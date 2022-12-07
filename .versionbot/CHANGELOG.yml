@@ -1,4 +1,18 @@
 - commits:
+    - subject: "Flowzone: Allow external contributions"
+      hash: f2ff443045a766bdceff086cf6aea17139a91d13
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Josh Bowling <josh@monarci.com>
+        signed-off-by: Josh Bowling <josh@monarci.com>
+      author: Josh Bowling
+      nested: []
+  version: 6.9.1
+  title: ""
+  date: 2022-12-07T10:28:09.094Z
+- commits:
     - subject: Update dependency @types/uuid to 9.0.0
       hash: b588c3270f8a78934563e2d23b1449e16228f7b5
       body: |
