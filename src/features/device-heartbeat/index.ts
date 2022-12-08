@@ -1,4 +1,4 @@
-import events from 'eventemitter3';
+import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 import RedisSMQ from 'rsmq';
 
@@ -169,7 +169,7 @@ export declare interface DeviceOnlineStateManager {
 	on(event: string, listener: (args: AnyObject) => void): this;
 }
 
-export class DeviceOnlineStateManager extends events.EventEmitter {
+export class DeviceOnlineStateManager extends EventEmitter {
 	private static readonly REDIS_NAMESPACE = 'device-online-state';
 	private static readonly EXPIRED_QUEUE = 'expired';
 	private static readonly RSMQ_READ_TIMEOUT = 30;
