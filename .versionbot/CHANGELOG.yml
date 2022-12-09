@@ -1,4 +1,19 @@
 - commits:
+    - subject: Update dependency sinon to 15.0.0
+      hash: 398a078dfd24fb9bd59a84a0bf7b977d147d70cf
+      body: |
+        Update sinon to 15.0.0
+
+        Update sinon from 14.0.2 to 15.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 6.9.4
+  title: ""
+  date: 2022-12-09T14:05:51.676Z
+- commits:
     - subject: Update @balena/pinejs to 14.53.6
       hash: 3c5367e28bf9ef51ecd268757f157ae6b76606c6
       body: |
