@@ -1,4 +1,34 @@
 - commits:
+    - subject: Update @balena/pinejs to 14.53.6
+      hash: 3c5367e28bf9ef51ecd268757f157ae6b76606c6
+      body: |
+        Update @balena/pinejs from 14.53.5 to 14.53.6
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested:
+        - commits:
+            - subject: Fix async migrations being able to stop unexpectedly in some failure
+                cases
+              hash: aa28e9213ca5b48cf247de635ff44f50764da699
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: fisehara <harald@balena.io>
+                signed-off-by: fisehara <harald@balena.io>
+              author: fisehara
+              nested: []
+          version: pinejs-14.53.6
+          title: ""
+          date: 2022-12-09T09:54:25.163Z
+  version: 6.9.3
+  title: ""
+  date: 2022-12-09T13:51:12.974Z
+- commits:
     - subject: Update dependencies
       hash: 642b82393aa3e5a63bb0a65f11fc472ea2325aeb
       body: |
