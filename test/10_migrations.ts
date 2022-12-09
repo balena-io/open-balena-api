@@ -1,11 +1,9 @@
+import { strict as assert } from 'assert';
 import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
-import { promisify } from 'util';
-import { exec } from 'child_process';
+import parser from 'libpg-query';
 import configJson from '../config';
-
-const execAsync = promisify(exec);
 
 describe('migrations', () => {
 	_(configJson.models)
@@ -33,13 +31,52 @@ describe('migrations', () => {
 				it('should have valid sql', async () => {
 					const fileNames = await fileNamesPromise;
 
+					// Sanity check SQL files
 					const fullSqlPaths = fileNames
 						.filter((fileName) => fileName.endsWith('.sql'))
 						.map((fileName) => path.join(migrationsPath!, fileName));
-					try {
-						await execAsync(`pgsanity '${fullSqlPaths.join("' '")}'`);
-					} catch (e) {
-						throw new Error(`Invalid sql in ${e.stdout}`);
+					for (const fullSqlPath of fullSqlPaths) {
+						try {
+							const sql = await fs.promises.readFile(fullSqlPath, 'utf8');
+							await parser.parseQuery(sql);
+						} catch (e) {
+							const [migrationKey] = path.basename(fullSqlPath).split('-', 1);
+							throw new Error(
+								`Invalid sql for migration ${migrationKey}: ${e} `,
+							);
+						}
+					}
+
+					// Sanity check async migrations
+					const asyncMigrationPaths = fileNames
+						.filter((fileName) => fileName.endsWith('.async.ts'))
+						.map((fileName) => path.join(migrationsPath!, fileName));
+					for (const asyncMigrationPath of asyncMigrationPaths) {
+						const migration = (await import(asyncMigrationPath)).default;
+						if (migration.syncSql || migration.asyncSql) {
+							assert(
+								migration.syncSql &&
+									migration.asyncSql &&
+									migration.asyncBatchSize,
+								'Missing required async migration options',
+							);
+							try {
+								await parser.parseQuery(
+									migration.asyncSql.replaceAll(
+										'%%ASYNC_BATCH_SIZE%%',
+										migration.asyncBatchSize,
+									),
+								);
+								await parser.parseQuery(migration.syncSql);
+							} catch (e) {
+								const [migrationKey] = path
+									.basename(asyncMigrationPath)
+									.split('-', 1);
+								throw new Error(
+									`Invalid sql for migration ${migrationKey}: ${e} `,
+								);
+							}
+						}
 					}
 				});
 			});
@@ -49,11 +86,13 @@ describe('migrations', () => {
 describe('balena-init.sql', () => {
 	it('should have valid sql', async () => {
 		try {
-			await execAsync(
-				`pgsanity '${require.resolve('../src/balena-init.sql')}'`,
+			const sql = await fs.promises.readFile(
+				require.resolve('../src/balena-init.sql'),
+				'utf8',
 			);
+			await parser.parseQuery(sql);
 		} catch (e) {
-			throw new Error(`Invalid sql in ${e.stdout}`);
+			throw new Error(`Invalid sql: ${e} `);
 		}
 	});
 });

@@ -2,12 +2,6 @@ FROM balena/open-balena-base:v14.1.0 as runtime
 
 EXPOSE 80
 
-RUN apt update \
-	&& apt install libecpg-dev python3-pip \
-	&& rm -rf /var/lib/apt/lists/* \
-	&& pip3 install --no-cache-dir setuptools \
-	&& pip3 install --no-cache-dir pgsanity
-
 COPY package.json package-lock.json /usr/src/app/
 RUN HUSKY=0 npm ci --unsafe-perm --production && npm cache clean --force
 
