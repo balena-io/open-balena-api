@@ -110,6 +110,7 @@ services:
         - /usr/src/app/node_modules/@mapbox/node-pre-gyp
         - /usr/src/app/node_modules/bcrypt
         - /usr/src/app/node_modules/grpc
+        - /usr/src/app/node_modules/libpg-query
         - /usr/src/app/node_modules/nan
         - /usr/src/app/node_modules/node-addon-api
         - ./package.json:/usr/src/app/package.json
