@@ -1,4 +1,19 @@
 - commits:
+    - subject: Update grafana/loki Docker tag to v2.7.1
+      hash: d24b18954510a960d233c19f11e96aa6cd4e7002
+      body: |
+        Update grafana/loki to 2.7.1
+
+        Update grafana/loki from 2.7.0 to 2.7.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 6.9.7
+  title: ""
+  date: 2022-12-11T10:57:02.591Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v14.1.3
       hash: 0571f1450231c59cb99383dcfb3ab963b6bacd5e
       body: |
