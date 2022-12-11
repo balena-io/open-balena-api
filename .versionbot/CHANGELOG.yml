@@ -1,4 +1,20 @@
 - commits:
+    - subject: "CI: Replace pgsanity with libpg-query"
+      hash: 360227434a4fb5da7b67d747e69993cc0c7c2e8c
+      body: |
+        Replacing pgsanity as it hasn't been updated in several years and
+        is unable to properly parse JSON operators.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Josh Bowling <josh@monarci.com>
+        signed-off-by: Josh Bowling <josh@monarci.com>
+      author: Josh Bowling
+      nested: []
+  version: 6.9.5
+  title: ""
+  date: 2022-12-11T08:12:13.321Z
+- commits:
     - subject: Update dependency sinon to 15.0.0
       hash: 398a078dfd24fb9bd59a84a0bf7b977d147d70cf
       body: |
