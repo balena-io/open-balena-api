@@ -858,7 +858,7 @@ Rule: It is necessary that each image that has a status that is equal to "succes
 Rule: It is necessary that each application that is public, has an application type that is not legacy.
 Rule: It is necessary that each application that owns a release1 that has a status that is equal to "success" and has a commit1, owns at most one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.
 Rule: It is necessary that each application that owns a release1 that has a revision, owns at most one release2 that has a semver major that is of the release1 and has a semver minor that is of the release1 and has a semver patch that is of the release1 and has a semver prerelease that is of the release1 and has a variant that is of the release1 and has a revision that is of the release1.
-Rule: It is necessary that each release that should be running on a device, has a status that is equal to "success" and belongs to an application1 that the device belongs to.
+Rule: It is necessary that each device that should be running a release, should be running a release that has a status that is equal to "success" and belongs to an application1 that the device belongs to.
 Rule: It is necessary that each release that should be running on an application, has a status that is equal to "success" and belongs to the application.
 Rule: It is necessary that each application type that does not supports multicontainer, is of no application that owns a release that contains at least 2 images.
 Rule: It is necessary that each release that should operate a device, has a status that is equal to "success".
