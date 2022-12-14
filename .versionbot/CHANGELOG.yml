@@ -1,4 +1,18 @@
 - commits:
+    - subject: Allow device API keys to delete their own device_tags
+      hash: 6807761764e3f963413e681b6b7d563c6014571e
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://balena.zulipchat.com/#narrow/stream/346010-channel.2Fsupport/topic/Deleting.20Tags.20from.20Deivce
+        see: https://balena.zulipchat.com/#narrow/stream/346010-channel.2Fsupport/topic/Deleting.20Tags.20from.20Deivce
+      author: Thodoris Greasidis
+      nested: []
+  version: 6.10.0
+  title: ""
+  date: 2022-12-14T16:33:27.914Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v14.1.4
       hash: dedb07cb656b5f12179529aca9351b911ac24621
       body: |
