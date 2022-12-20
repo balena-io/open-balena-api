@@ -3,6 +3,7 @@ import randomstring from 'randomstring';
 import _ from 'lodash';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import { Deferred, Application, Device, Role, User } from '../../balena-model';
 
 const { api } = sbvrUtils;
 const { BadRequestError } = errors;
@@ -27,16 +28,20 @@ const $createApiKey = async (
 	actorTypeID: number,
 	{ apiKey, tx, name, description, expiryDate }: InternalApiKeyOptions,
 ): Promise<string> => {
-	const actorable = await api.resin.get({
+	const actorable = (await api.resin.get({
 		resource: actorType,
 		id: actorTypeID,
 		passthrough: { req, tx },
 		options: {
 			$select: 'actor',
 		},
-	});
+	})) as
+		| {
+				actor: Deferred<Application['actor'] | Device['actor'] | User['actor']>;
+		  }
+		| undefined;
 
-	const actorID: number | undefined = actorable?.actor;
+	const actorID = actorable?.actor;
 	if (actorID == null) {
 		throw new Error(`No ${actorType} found to associate with the api key`);
 	}
@@ -81,7 +86,7 @@ const $createApiKey = async (
 			options: {
 				$select: 'id',
 			},
-		}) as Promise<{ id: number }>,
+		}) as Promise<Pick<Role, 'id'>>,
 	]);
 
 	await authApiTx.post({
