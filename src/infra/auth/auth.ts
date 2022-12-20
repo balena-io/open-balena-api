@@ -229,7 +229,10 @@ export async function getUser(
 		const [user] = await getUserQuery()({ key }, undefined, { tx });
 		if (user) {
 			// Store it in `req` to be compatible with JWTs and for caching
-			req.user = req.creds = _.pick(user, userFields);
+			req.user = req.creds = {
+				..._.pick(user, userFields),
+				actor: user.actor.__id,
+			};
 		} else if (required) {
 			throw new UnauthorizedError('User not found for API key');
 		}

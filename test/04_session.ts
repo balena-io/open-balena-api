@@ -35,7 +35,7 @@ describe('session', () => {
 
 		// Create a token that only has access to the granting users document
 		const accessToken = createScopedAccessToken({
-			actor: record.actor,
+			actor: record.actor.__id,
 			permissions: ['resin.user.read?actor eq @__ACTOR_ID'],
 			expiresIn: 60 * 10,
 		});
@@ -60,7 +60,7 @@ describe('session', () => {
 
 		// Create a token that only has access to the granting users applications
 		const accessToken = createScopedAccessToken({
-			actor: record.actor,
+			actor: record.actor.__id,
 			permissions,
 			expiresIn: 60 * 10,
 		});

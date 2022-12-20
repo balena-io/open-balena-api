@@ -128,13 +128,13 @@ hooks.addPureHook('DELETE', 'resin', 'user', {
 			if (user == null) {
 				throw new errors.BadRequestError('Invalid user');
 			}
-			request.custom.actorId = user.actor;
+			request.custom.actorId = user.actor.__id;
 			try {
 				await authApiTx.delete({
 					resource: 'api_key',
 					options: {
 						$filter: {
-							is_of__actor: user.actor,
+							is_of__actor: user.actor.__id,
 						},
 					},
 				});

@@ -11,9 +11,13 @@ const getAPIKey = async (
 	req: hooks.HookReq | Request,
 	tx: Tx | undefined,
 ): Promise<sbvrUtils.ApiKey | undefined> => {
-	const apiKey = await permissions.resolveApiKey(req, 'apikey', tx);
-	if (apiKey != null) {
-		return apiKey;
+	try {
+		const apiKey = await permissions.resolveApiKey(req, 'apikey', tx);
+		if (apiKey != null) {
+			return apiKey;
+		}
+	} catch {
+		// ignore
 	}
 
 	// Skip for Pine's request objects that don't support headers
@@ -24,8 +28,12 @@ const getAPIKey = async (
 	// While this could be omitted, Pine will go to the DB in vain if not handled
 	const token = (req.get('Authorization') || '').split(' ', 2)[1];
 	if (token && !isJWT(token)) {
-		// Add support for API keys on Authorization header if a JWT wasn't provided
-		return await permissions.resolveAuthHeader(req, 'Bearer', tx);
+		try {
+			// Add support for API keys on Authorization header if a JWT wasn't provided
+			return await permissions.resolveAuthHeader(req, 'Bearer', tx);
+		} catch {
+			// ignore
+		}
 	}
 };
 

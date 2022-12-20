@@ -19,7 +19,7 @@ export const getGuestActorId = memoize(
 		if (guest?.actor == null) {
 			throw new Error('Cannot find guest user');
 		}
-		return guest?.actor;
+		return guest.actor.__id;
 	},
 	{
 		promise: true,
