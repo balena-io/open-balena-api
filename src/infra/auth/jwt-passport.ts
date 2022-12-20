@@ -90,7 +90,7 @@ export const createStrategy = (
 						throw new InvalidJwtSecretError();
 					}
 
-					jwtUser.actor = user.actor;
+					jwtUser.actor = user.actor.__id;
 					const userPermissions = await permissions.getUserPermissions(
 						jwtUser.id,
 					);

@@ -23,6 +23,10 @@ export const basicApiKeyAuthenticate: RequestHandler = async (
 		req.params.subject = creds.name;
 		req.params.apikey = creds.pass;
 	}
+	if (req.params.apikey === TOKEN_AUTH_BUILDER_TOKEN) {
+		next();
+		return;
+	}
 	try {
 		await retrieveAPIKey(req, undefined);
 
@@ -40,7 +44,6 @@ export const basicApiKeyAuthenticate: RequestHandler = async (
 		if (
 			(req.apiKey?.permissions == null ||
 				req.apiKey.permissions.length === 0) &&
-			req.apiKey?.key !== TOKEN_AUTH_BUILDER_TOKEN &&
 			req.user == null
 		) {
 			if (
