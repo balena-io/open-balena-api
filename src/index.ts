@@ -15,7 +15,7 @@ import * as zlib from 'node:zlib';
 
 import * as pine from '@balena/pinejs';
 
-import type { User as DbUser } from './balena-model';
+import type { PickDeferred, User as DbUser } from './balena-model';
 import type { defaultFindUser$select } from './infra/auth/auth';
 import * as jwt from './infra/auth/jwt-passport';
 
@@ -32,7 +32,7 @@ passport.use(
 				options: {
 					$select: ['actor', 'jwt_secret'],
 				},
-			})) as Pick<DbUser, 'actor' | 'jwt_secret'>,
+			})) as PickDeferred<DbUser, 'actor' | 'jwt_secret'>,
 	),
 );
 

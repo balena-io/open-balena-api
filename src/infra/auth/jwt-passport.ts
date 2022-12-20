@@ -12,6 +12,7 @@ import { JSON_WEB_TOKEN_SECRET } from '../../lib/config';
 
 import { captureException } from '../error-handling';
 import { ScopedAccessToken, ScopedToken } from './jwt';
+import { PickDeferred, User as DbUser } from '../../balena-model';
 
 export { SignOptions } from 'jsonwebtoken';
 
@@ -52,7 +53,7 @@ const jwtFromRequest = ExtractJwt.versionOneCompatibility({
 export const createStrategy = (
 	fetchUser: (
 		id: number,
-	) => Promise<{ jwt_secret: string | null; actor: number }>,
+	) => Promise<PickDeferred<DbUser, 'jwt_secret' | 'actor'>>,
 ) =>
 	new JwtStrategy(
 		{

@@ -7,7 +7,7 @@ import { retrieveAPIKey } from './api-keys';
 import { User } from './jwt-passport';
 
 import { getIP } from '../../lib/utils';
-import type { User as DbUser } from '../../balena-model';
+import type { PickDeferred, User as DbUser } from '../../balena-model';
 
 const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
@@ -248,7 +248,9 @@ export const defaultFindUser$select = [
 export async function findUser(
 	loginInfo: string,
 	tx: Tx,
-): Promise<Pick<DbUser, typeof defaultFindUser$select[number]> | undefined>;
+): Promise<
+	PickDeferred<DbUser, typeof defaultFindUser$select[number]> | undefined
+>;
 export async function findUser<
 	T extends DbUser,
 	TProps extends ReadonlyArray<keyof T>,
@@ -256,7 +258,7 @@ export async function findUser<
 	loginInfo: string,
 	tx: Tx,
 	$select: TProps,
-): Promise<Pick<T, typeof $select[number]> | undefined>;
+): Promise<PickDeferred<T, typeof $select[number]> | undefined>;
 export async function findUser<
 	T extends DbUser,
 	TProps extends ReadonlyArray<keyof T & string>,
@@ -278,7 +280,7 @@ export async function findUser<
 		loginField = 'username';
 	}
 
-	type UserResult = Pick<T, typeof $select[number]>;
+	type UserResult = PickDeferred<T, typeof $select[number]>;
 	const [user] = (await api.resin.get({
 		resource: 'user',
 		passthrough: {
