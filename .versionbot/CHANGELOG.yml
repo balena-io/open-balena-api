@@ -1,4 +1,16 @@
 - commits:
+    - subject: Improve some typings
+      hash: 18e468d38d3221718f50e4ecd035d4ee47991fde
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 6.10.1
+  title: ""
+  date: 2022-12-20T17:41:32.014Z
+- commits:
     - subject: Allow device API keys to delete their own device_tags
       hash: 6807761764e3f963413e681b6b7d563c6014571e
       body: ""
