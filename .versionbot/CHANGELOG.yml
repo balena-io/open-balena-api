@@ -1,5 +1,17 @@
 - commits:
     - subject: Improve some typings
+      hash: fb559f457ebc8036e420ac7e27eef419cbfc6359
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 6.10.2
+  title: ""
+  date: 2022-12-21T15:46:24.275Z
+- commits:
+    - subject: Improve some typings
       hash: 18e468d38d3221718f50e4ecd035d4ee47991fde
       body: ""
       footer:
