@@ -8,6 +8,7 @@ import { User } from './jwt-passport';
 
 import { getIP } from '../../lib/utils';
 import type { PickDeferred, User as DbUser } from '../../balena-model';
+import { PreparedFn } from 'pinejs-client-core';
 
 const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
@@ -143,29 +144,32 @@ export const reqHasPermission = (req: Request, permission: string): boolean =>
 // in "typings/common.d.ts".
 export const userFields = [
 	'id',
+	'actor',
 	'username',
 	'email',
 	'created_at',
 	'jwt_secret',
-];
+] as const;
 
-const getUserQuery = _.once(() =>
-	api.resin.prepare<{ key: string }>({
-		resource: 'user',
-		passthrough: { req: permissions.root },
-		options: {
-			$select: userFields,
-			$filter: {
-				actor: {
-					$any: {
-						$alias: 'a',
-						$expr: {
-							a: {
-								api_key: {
-									$any: {
-										$alias: 'k',
-										$expr: {
-											k: { key: { '@': 'key' } },
+const getUserQuery = _.once(
+	() =>
+		api.resin.prepare<{ key: string }>({
+			resource: 'user',
+			passthrough: { req: permissions.root },
+			options: {
+				$select: userFields as Writable<typeof userFields>,
+				$filter: {
+					actor: {
+						$any: {
+							$alias: 'a',
+							$expr: {
+								a: {
+									api_key: {
+										$any: {
+											$alias: 'k',
+											$expr: {
+												k: { key: { '@': 'key' } },
+											},
 										},
 									},
 								},
@@ -173,10 +177,12 @@ const getUserQuery = _.once(() =>
 						},
 					},
 				},
+				$top: 1,
 			},
-			$top: 1,
-		},
-	}),
+		}) as PreparedFn<
+			{ key: string },
+			Promise<Array<PickDeferred<DbUser, typeof userFields[number]>>>
+		>,
 );
 export function getUser(
 	req: Request | hooks.HookReq,
@@ -210,10 +216,7 @@ export async function getUser(
 			return req.user;
 		}
 
-		let key;
-		if (req.apiKey != null) {
-			key = req.apiKey.key;
-		}
+		const key = req.apiKey?.key;
 		if (!key) {
 			if (required) {
 				throw new UnauthorizedError('Request has no JWT or API key');
@@ -224,7 +227,7 @@ export async function getUser(
 		const [user] = await getUserQuery()({ key }, undefined, { tx });
 		if (user) {
 			// Store it in `req` to be compatible with JWTs and for caching
-			req.user = req.creds = _.pick(user, userFields) as User;
+			req.user = req.creds = _.pick(user, userFields);
 		} else if (required) {
 			throw new UnauthorizedError('User not found for API key');
 		}

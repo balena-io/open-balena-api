@@ -29,13 +29,10 @@ export interface ApiKey extends sbvrUtils.ApiKey {
 }
 
 export interface User extends sbvrUtils.User {
-	id: number;
-	actor: number;
 	username: string;
-	email: string;
+	email: string | null;
 	created_at: string;
-	jwt_secret?: string;
-	permissions: string[];
+	jwt_secret: string | null;
 
 	twoFactorRequired?: boolean;
 	authTime?: number;
