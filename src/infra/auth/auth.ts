@@ -201,7 +201,6 @@ export async function getUser(
 	required = true,
 ): Promise<Express.User | undefined> {
 	const $getUser = async (tx: Tx) => {
-		await retrieveAPIKey(req, tx);
 		// This shouldn't happen but it does for some internal PineJS requests
 		if (req.user && !req.creds) {
 			req.creds = req.user;
@@ -216,6 +215,7 @@ export async function getUser(
 			return req.user;
 		}
 
+		await retrieveAPIKey(req, tx);
 		const key = req.apiKey?.key;
 		if (!key) {
 			if (required) {
