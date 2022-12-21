@@ -1,6 +1,7 @@
 import Bluebird from 'bluebird';
 import _ from 'lodash';
 import randomstring from 'randomstring';
+import memoize from 'memoizee';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
@@ -9,6 +10,22 @@ import { captureException } from '../error-handling';
 import { getOrInsertId } from '../pinejs-client-helpers';
 
 const { api } = sbvrUtils;
+
+export const getGuestActorId = memoize(
+	async (): Promise<number> => {
+		const guest = await sbvrUtils.db.readTransaction(
+			async (tx) => await findUser('guest', tx, ['actor']),
+		);
+		if (guest?.actor == null) {
+			throw new Error('Cannot find guest user');
+		}
+		return guest?.actor;
+	},
+	{
+		promise: true,
+		primitive: true,
+	},
+);
 
 // role and permission helpers
 
@@ -116,11 +133,8 @@ export const setApiKey = async (
 ): Promise<AnyObject> => {
 	const role = await getOrInsertRoleId(roleName, tx);
 	await assignRolePermissions(role.id, apiKeyPermissions, tx);
-	const user = await findUser('guest', tx, ['actor']);
-	if (user?.actor == null) {
-		throw new Error('Cannot find guest user');
-	}
-	const apiKey = await getOrInsertApiKey(user.actor, role, tx);
+	const guestActorId = await getGuestActorId();
+	const apiKey = await getOrInsertApiKey(guestActorId, role, tx);
 
 	if (key) {
 		apiKey.key = key;
@@ -319,11 +333,8 @@ export async function createAllPermissions(
 			async ([roleName, { permissions: apiKeyPermissions, key }]) => {
 				try {
 					const role = await createRolePermissions(apiKeyPermissions, roleName);
-					const user = await findUser('guest', tx, ['actor']);
-					if (user?.actor == null) {
-						throw new Error('Cannot find guest user');
-					}
-					const apiKey = await getOrInsertApiKey(user.actor, role, tx);
+					const guestActorId = await getGuestActorId();
+					const apiKey = await getOrInsertApiKey(guestActorId, role, tx);
 
 					if (!key) {
 						return apiKey.key;
