@@ -1,4 +1,19 @@
 - commits:
+    - subject: Update dependency libpg-query to 15.0.2
+      hash: 4b0ebb8206508354581a2d12827005a2ecf1146e
+      body: |
+        Update libpg-query to 15.0.2
+
+        Update libpg-query from 13.3.0 to 15.0.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 7.1.1
+  title: ""
+  date: 2022-12-23T17:59:33.474Z
+- commits:
     - subject: Update dependency jsonwebtoken to 9.0.0 [SECURITY]
       hash: 56381274472ababab86274f42423f94fd069ce47
       body: |
