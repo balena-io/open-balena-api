@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update device/should_be_operated_by_release index to include device type
+      hash: 74cd4af14e1f8a3b8eeb8160a8ee9888ba89ef6b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.0.1
+  title: ""
+  date: 2022-12-23T15:56:12.549Z
+- commits:
     - subject: Rename auth middleware for clarity reasons
       hash: ef3faaee4f90f2256338001d8f382cef13739c79
       body: ""
