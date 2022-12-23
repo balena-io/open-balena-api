@@ -1,4 +1,27 @@
 - commits:
+    - subject: Include the actor id for service api keys
+      hash: c7058f6aaa4bb4b9288fb17c74eecb383e2ae191
+      body: |
+        This avoids pinejs having to look up the actor id when we already know
+        it and will prepare us for the actor property becoming required in
+        pinejs 15
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Memoize the guest actor, avoiding unnecessary queries during start up
+      hash: dbcf1bf3b850ec8c84ee5089852d9e5b1c0075a1
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 6.10.4
+  title: ""
+  date: 2022-12-23T11:58:28.863Z
+- commits:
     - subject: Avoid calling `retrieveAPIKey` when possible in `getUser`
       hash: e60443b274459d0d1923aeff95a403c67ade7f21
       body: ""
