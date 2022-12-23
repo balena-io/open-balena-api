@@ -1,8 +1,8 @@
 import type { Application } from 'express';
 
-import { apiKeyMiddleware } from '../../infra/auth';
+import { middleware } from '../../infra/auth';
 import { register } from './register';
 
 export const setup = (app: Application) => {
-	app.post('/device/register', apiKeyMiddleware, register);
+	app.post('/device/register', middleware.resolveApiKey, register);
 };

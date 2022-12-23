@@ -4,7 +4,11 @@ import { checkSudoValidity } from './jwt';
 import { prefetchAPIKey, retrieveAPIKey } from './api-keys';
 import { getUser, reqHasPermission } from './auth';
 
-export const authenticatedMiddleware: RequestHandler = async (
+/**
+ * This checks that a user has provided credentials, they may not be fully authorized, ie they may still need to pass 2fa
+ * Note: This is specifically *user* credentials, device keys/application provisioning keys do not count
+ */
+export const partiallyAuthenticatedUser: RequestHandler = async (
 	req,
 	res,
 	next,
@@ -13,7 +17,6 @@ export const authenticatedMiddleware: RequestHandler = async (
 		await getUser(req, undefined, false);
 		if (req.creds) {
 			next();
-			return null;
 		} else {
 			res.status(401).end();
 		}
@@ -22,7 +25,15 @@ export const authenticatedMiddleware: RequestHandler = async (
 	}
 };
 
-export const authorizedMiddleware: RequestHandler = async (req, res, next) => {
+/**
+ * This checks that a user has provided authorized credentials, ie they have passed any required 2fa checks
+ * Note: This is specifically *user* credentials, device keys/application provisioning keys do not count
+ */
+export const fullyAuthenticatedUser: RequestHandler = async (
+	req,
+	res,
+	next,
+) => {
 	try {
 		await getUser(req, undefined);
 		next();
@@ -32,20 +43,34 @@ export const authorizedMiddleware: RequestHandler = async (req, res, next) => {
 	}
 };
 
-export const identifyMiddleware: RequestHandler = async (req, _res, next) => {
+/**
+ * This resolves any provided credentials (api key or JWT), with no checks on the actor or 2fa status,
+ * it will also resolve the user the credentials belong to if they are user credentials
+ */
+export const resolveCredentialsAndUser: RequestHandler = async (
+	req,
+	_res,
+	next,
+) => {
 	await getUser(req, undefined, false);
 	next();
 	return null;
 };
 
-export const prefetchApiKeyMiddleware: RequestHandler = (req, _res, next) => {
+/**
+ * This starts a prefetch of api key permissions without waiting for them to finish resolving
+ */
+export const prefetchApiKey: RequestHandler = (req, _res, next) => {
 	prefetchAPIKey(req, undefined);
 	next();
 };
 
-export const apiKeyMiddleware: RequestHandler = async (req, _res, next) => {
+/**
+ * This resolves api key permissions, making use of the prefetch if it exists or otherwise starting a fetch from scratch
+ * Note: this won't reply with 401 if there's no api key
+ */
+export const resolveApiKey: RequestHandler = async (req, _res, next) => {
 	try {
-		// Note: this won't reply with 401 if there's no api key
 		await retrieveAPIKey(req, undefined);
 		next();
 	} catch (err) {
@@ -53,7 +78,13 @@ export const apiKeyMiddleware: RequestHandler = async (req, _res, next) => {
 	}
 };
 
-export const permissionRequiredMiddleware =
+/**
+ * This creates a middleware that checks a specific permission is present on the request
+ *
+ * @param permission The required permission
+ * @returns The middleware to check the permission
+ */
+export const permissionRequired =
 	(permission: string): RequestHandler =>
 	(req, res, next) => {
 		if (reqHasPermission(req, permission)) {
@@ -64,7 +95,11 @@ export const permissionRequiredMiddleware =
 		}
 	};
 
-export const sudoMiddleware: RequestHandler = async (req, res, next) => {
+/**
+ * This checks that a user has authenticated recently and therefore can perform privileged operations
+ * Note: This is specifically *user* credentials, device keys/application provisioning keys do not count
+ */
+export const sudo: RequestHandler = async (req, res, next) => {
 	try {
 		const user = await getUser(req, undefined, false);
 		if (user != null && (await checkSudoValidity(user))) {

@@ -2,7 +2,7 @@ import type { Application, Request } from 'express';
 import type StrictEventEmitter from 'strict-event-emitter-types';
 
 import { EventEmitter } from 'events';
-import { apiKeyMiddleware } from '../../infra/auth';
+import { middleware } from '../../infra/auth';
 
 import { resolveOrGracefullyDenyDevices } from './middleware';
 import { stateV2 } from './routes/state-get-v2';
@@ -29,22 +29,22 @@ export const setup = (app: Application) => {
 	app.get(
 		'/device/v2/:uuid/state',
 		resolveOrGracefullyDenyDevices,
-		apiKeyMiddleware,
+		middleware.resolveApiKey,
 		stateV2,
 	);
 	app.get(
 		'/device/v3/:uuid/state',
 		resolveOrGracefullyDenyDevices,
-		apiKeyMiddleware,
+		middleware.resolveApiKey,
 		stateV3,
 	);
 	app.patch(
 		'/device/v2/:uuid/state',
 		resolveOrGracefullyDenyDevices,
-		apiKeyMiddleware,
+		middleware.resolveApiKey,
 		statePatchV2,
 	);
-	app.patch('/device/v3/state', apiKeyMiddleware, statePatchV3);
+	app.patch('/device/v3/state', middleware.resolveApiKey, statePatchV3);
 };
 
 export interface Events {
