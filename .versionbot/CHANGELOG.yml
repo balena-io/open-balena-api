@@ -1,4 +1,16 @@
 - commits:
+    - subject: Rename auth middleware for clarity reasons
+      hash: ef3faaee4f90f2256338001d8f382cef13739c79
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+  version: 7.0.0
+  title: ""
+  date: 2022-12-23T14:57:06.662Z
+- commits:
     - subject: Unify API key handling across `retrieveAPIKey` and middleware
       hash: 72dde1610847408b587e5910bf7ec53f0eb70fc1
       body: |
