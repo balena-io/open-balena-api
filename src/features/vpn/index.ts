@@ -1,8 +1,5 @@
 import type { Application } from 'express';
-import {
-	apiKeyMiddleware,
-	permissionRequiredMiddleware,
-} from '../../infra/auth';
+import { middleware } from '../../infra/auth';
 import {
 	authDevice,
 	clientConnect,
@@ -14,19 +11,19 @@ export const setup = (app: Application) => {
 	app.get(
 		'/services/vpn/auth/:uuid',
 		denyDeletedDevices,
-		apiKeyMiddleware,
+		middleware.apiKey,
 		authDevice,
 	);
 	app.post(
 		'/services/vpn/client-connect',
-		apiKeyMiddleware,
-		permissionRequiredMiddleware('service.vpn'),
+		middleware.apiKey,
+		middleware.permissionRequired('service.vpn'),
 		clientConnect,
 	);
 	app.post(
 		'/services/vpn/client-disconnect',
-		apiKeyMiddleware,
-		permissionRequiredMiddleware('service.vpn'),
+		middleware.apiKey,
+		middleware.permissionRequired('service.vpn'),
 		clientDisconnect,
 	);
 };

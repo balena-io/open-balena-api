@@ -6,12 +6,7 @@ import {
 	createRateLimiter,
 	createRateLimitMiddleware,
 } from '../../infra/rate-limiting';
-import {
-	apiKeyMiddleware,
-	authorizedMiddleware,
-	authenticatedMiddleware,
-	permissionRequiredMiddleware,
-} from '../../infra/auth';
+import { middleware } from '../../infra/auth';
 import { login } from './login';
 import { getUserPublicKeys } from './public-keys';
 import { refreshToken } from './refresh-token';
@@ -32,24 +27,24 @@ export const loginRateLimiter = createRateLimitMiddleware(
 export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.post('/login_', loginRateLimiter('body.username'), login(onLogin));
 
-	app.get('/user/v1/whoami', authorizedMiddleware, whoami);
+	app.get('/user/v1/whoami', middleware.authorized, whoami);
 
 	app.get(
 		'/auth/v1/public-keys/:username',
-		apiKeyMiddleware,
+		middleware.apiKey,
 		getUserPublicKeys,
 	);
 
 	app.get(
 		'/user/v1/refresh-token',
-		authenticatedMiddleware,
-		permissionRequiredMiddleware('auth.create_token'),
+		middleware.authenticated,
+		middleware.permissionRequired('auth.create_token'),
 		refreshToken,
 	);
 	app.post(
 		'/user/v1/refresh-token',
-		authenticatedMiddleware,
-		permissionRequiredMiddleware('auth.create_token'),
+		middleware.authenticated,
+		middleware.permissionRequired('auth.create_token'),
 		refreshToken,
 	);
 };

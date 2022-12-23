@@ -1,5 +1,5 @@
 import type { Application } from 'express';
-import { identifyMiddleware } from '../../infra/auth';
+import { middleware } from '../../infra/auth';
 import {
 	downloadImageSize,
 	getDeviceType,
@@ -8,16 +8,16 @@ import {
 } from './routes';
 
 export const setup = (app: Application) => {
-	app.get('/device-types/v1', identifyMiddleware, getDeviceTypes);
-	app.get('/device-types/v1/:deviceType', identifyMiddleware, getDeviceType);
+	app.get('/device-types/v1', middleware.identify, getDeviceTypes);
+	app.get('/device-types/v1/:deviceType', middleware.identify, getDeviceType);
 	app.get(
 		'/device-types/v1/:deviceType/images',
-		identifyMiddleware,
+		middleware.identify,
 		listAvailableImageVersions,
 	);
 	app.get(
 		'/device-types/v1/:deviceType/images/:version/download-size',
-		identifyMiddleware,
+		middleware.identify,
 		downloadImageSize,
 	);
 };

@@ -90,15 +90,7 @@ import {
 } from './infra/auth/permissions';
 import { createScopedAccessToken, createJwt } from './infra/auth/jwt';
 import { resolveOrGracefullyDenyDevices } from './features/device-state/middleware';
-import {
-	authenticatedMiddleware,
-	authorizedMiddleware,
-	apiKeyMiddleware,
-	identifyMiddleware,
-	permissionRequiredMiddleware,
-	prefetchApiKeyMiddleware,
-	sudoMiddleware,
-} from './infra/auth';
+import { middleware as authMiddleware } from './infra/auth';
 import { isApiKeyWithRole } from './features/api-keys/lib';
 import { setupDeleteCascade as addDeleteHookForDependents } from './features/cascade-delete/setup-delete-cascade';
 import {
@@ -209,13 +201,10 @@ export const rateLimiting = {
 	createRateLimiter,
 };
 export const middleware = {
-	sudoMiddleware,
-	authenticated: authenticatedMiddleware,
-	authorized: authorizedMiddleware,
-	apiKeyMiddleware,
+	...authMiddleware,
+	sudoMiddleware: authMiddleware.sudo,
+	apiKeyMiddleware: authMiddleware.apiKey,
 	resolveOrGracefullyDenyDevices,
-	identify: identifyMiddleware,
-	permissionRequired: permissionRequiredMiddleware,
 	loginRateLimiter,
 	skipLogging,
 };
@@ -465,7 +454,7 @@ function setupMiddleware(app: Application) {
 
 	app.use(jwt.middleware);
 
-	app.use(prefetchApiKeyMiddleware);
+	app.use(authMiddleware.prefetchApiKey);
 }
 
 async function startServer(

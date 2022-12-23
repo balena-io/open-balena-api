@@ -4,7 +4,7 @@ import {
 	createRateLimiter,
 	createRateLimitMiddleware,
 } from '../../infra/rate-limiting';
-import { apiKeyMiddleware, authorizedMiddleware } from '../../infra/auth';
+import { middleware } from '../../infra/auth';
 import { read } from './lib/read';
 import { store, storeStream } from './lib/store';
 import { SetupOptions } from '../..';
@@ -28,18 +28,18 @@ export const setup = (
 ) => {
 	app.get(
 		'/device/v2/:uuid/logs',
-		authorizedMiddleware,
+		middleware.authorized,
 		read(onLogReadStreamInitialized),
 	);
 	app.post(
 		'/device/v2/:uuid/logs',
 		deviceLogsRateLimiter('params.uuid'),
-		apiKeyMiddleware,
+		middleware.apiKey,
 		store,
 	);
 	app.post(
 		'/device/v2/:uuid/log-stream',
-		apiKeyMiddleware,
+		middleware.apiKey,
 		storeStream(onLogWriteStreamInitialized),
 	);
 };
