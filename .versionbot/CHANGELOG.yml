@@ -1,4 +1,19 @@
 - commits:
+    - subject: Unify API key handling across `retrieveAPIKey` and middleware
+      hash: 72dde1610847408b587e5910bf7ec53f0eb70fc1
+      body: |
+        This unifies the code to avoid duplicate work in the case of mixing and
+        matching the two methods where you may have prefetched and api key but
+        then end up doing a full fetch elsewhere anyway
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 6.10.5
+  title: ""
+  date: 2022-12-23T12:12:50.074Z
+- commits:
     - subject: Include the actor id for service api keys
       hash: c7058f6aaa4bb4b9288fb17c74eecb383e2ae191
       body: |
