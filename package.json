@@ -91,7 +91,7 @@
     "fast-glob": "^3.2.12",
     "ioredis": "^5.2.4",
     "ipaddr.js": "^2.0.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.21",
     "loki-grpc-client": "^2.0.0",
     "memoizee": "^0.4.15",
