@@ -6,7 +6,7 @@ import { hostOSAccess } from './access';
 export const setup = (app: Application) => {
 	app.get(
 		'/access/v1/hostos/:device_uuid',
-		middleware.authorized,
+		middleware.fullyAuthenticatedUser,
 		hostOSAccess,
 	);
 };

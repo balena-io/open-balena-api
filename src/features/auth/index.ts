@@ -27,23 +27,23 @@ export const loginRateLimiter = createRateLimitMiddleware(
 export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.post('/login_', loginRateLimiter('body.username'), login(onLogin));
 
-	app.get('/user/v1/whoami', middleware.authorized, whoami);
+	app.get('/user/v1/whoami', middleware.fullyAuthenticatedUser, whoami);
 
 	app.get(
 		'/auth/v1/public-keys/:username',
-		middleware.apiKey,
+		middleware.resolveApiKey,
 		getUserPublicKeys,
 	);
 
 	app.get(
 		'/user/v1/refresh-token',
-		middleware.authenticated,
+		middleware.partiallyAuthenticatedUser,
 		middleware.permissionRequired('auth.create_token'),
 		refreshToken,
 	);
 	app.post(
 		'/user/v1/refresh-token',
-		middleware.authenticated,
+		middleware.partiallyAuthenticatedUser,
 		middleware.permissionRequired('auth.create_token'),
 		refreshToken,
 	);

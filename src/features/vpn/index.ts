@@ -11,18 +11,18 @@ export const setup = (app: Application) => {
 	app.get(
 		'/services/vpn/auth/:uuid',
 		denyDeletedDevices,
-		middleware.apiKey,
+		middleware.resolveApiKey,
 		authDevice,
 	);
 	app.post(
 		'/services/vpn/client-connect',
-		middleware.apiKey,
+		middleware.resolveApiKey,
 		middleware.permissionRequired('service.vpn'),
 		clientConnect,
 	);
 	app.post(
 		'/services/vpn/client-disconnect',
-		middleware.apiKey,
+		middleware.resolveApiKey,
 		middleware.permissionRequired('service.vpn'),
 		clientDisconnect,
 	);

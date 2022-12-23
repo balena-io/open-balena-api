@@ -202,8 +202,6 @@ export const rateLimiting = {
 };
 export const middleware = {
 	...authMiddleware,
-	sudoMiddleware: authMiddleware.sudo,
-	apiKeyMiddleware: authMiddleware.apiKey,
 	resolveOrGracefullyDenyDevices,
 	loginRateLimiter,
 	skipLogging,

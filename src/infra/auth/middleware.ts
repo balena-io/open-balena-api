@@ -8,7 +8,11 @@ import { getUser, reqHasPermission } from './auth';
  * This checks that a user has provided credentials, they may not be fully authorized, ie they may still need to pass 2fa
  * Note: This is specifically *user* credentials, device keys/application provisioning keys do not count
  */
-export const authenticated: RequestHandler = async (req, res, next) => {
+export const partiallyAuthenticatedUser: RequestHandler = async (
+	req,
+	res,
+	next,
+) => {
 	try {
 		await getUser(req, undefined, false);
 		if (req.creds) {
@@ -25,7 +29,11 @@ export const authenticated: RequestHandler = async (req, res, next) => {
  * This checks that a user has provided authorized credentials, ie they have passed any required 2fa checks
  * Note: This is specifically *user* credentials, device keys/application provisioning keys do not count
  */
-export const authorized: RequestHandler = async (req, res, next) => {
+export const fullyAuthenticatedUser: RequestHandler = async (
+	req,
+	res,
+	next,
+) => {
 	try {
 		await getUser(req, undefined);
 		next();
@@ -36,9 +44,14 @@ export const authorized: RequestHandler = async (req, res, next) => {
 };
 
 /**
- * This resolves any provided credentials, with no checks on the actor or 2fa status
+ * This resolves any provided credentials (api key or JWT), with no checks on the actor or 2fa status,
+ * it will also resolve the user the credentials belong to if they are user credentials
  */
-export const identify: RequestHandler = async (req, _res, next) => {
+export const resolveCredentialsAndUser: RequestHandler = async (
+	req,
+	_res,
+	next,
+) => {
 	await getUser(req, undefined, false);
 	next();
 	return null;
@@ -54,10 +67,10 @@ export const prefetchApiKey: RequestHandler = (req, _res, next) => {
 
 /**
  * This resolves api key permissions, making use of the prefetch if it exists or otherwise starting a fetch from scratch
+ * Note: this won't reply with 401 if there's no api key
  */
-export const apiKey: RequestHandler = async (req, _res, next) => {
+export const resolveApiKey: RequestHandler = async (req, _res, next) => {
 	try {
-		// Note: this won't reply with 401 if there's no api key
 		await retrieveAPIKey(req, undefined);
 		next();
 	} catch (err) {

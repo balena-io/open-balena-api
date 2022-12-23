@@ -15,25 +15,29 @@ export const setup = (app: Application) => {
 	 */
 	app.post(
 		'/application/:appId/generate-api-key',
-		middleware.authorized,
+		middleware.fullyAuthenticatedUser,
 		createUserApiKey,
 	);
 	app.post(
 		'/api-key/user/full',
-		middleware.authorized,
+		middleware.fullyAuthenticatedUser,
 		middleware.permissionRequired('auth.create_token'),
 		createNamedUserApiKey,
 	);
 	app.post(
 		'/api-key/application/:appId/provisioning',
-		middleware.authorized,
+		middleware.fullyAuthenticatedUser,
 		createProvisioningApiKey,
 	);
 	app.post(
 		'/api-key/device/:deviceId/device-key',
-		middleware.apiKey,
+		middleware.resolveApiKey,
 		createDeviceApiKey,
 	);
 
-	app.post('/api-key/v1', middleware.authorized, createGenericApiKey);
+	app.post(
+		'/api-key/v1',
+		middleware.fullyAuthenticatedUser,
+		createGenericApiKey,
+	);
 };

@@ -4,5 +4,5 @@ import { middleware } from '../../infra/auth';
 import { proxy } from './device-proxy';
 
 export const setup = (app: Application) => {
-	app.post(/^\/supervisor(\/.+)$/, middleware.apiKey, proxy);
+	app.post(/^\/supervisor(\/.+)$/, middleware.resolveApiKey, proxy);
 };

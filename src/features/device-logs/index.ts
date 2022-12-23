@@ -28,18 +28,18 @@ export const setup = (
 ) => {
 	app.get(
 		'/device/v2/:uuid/logs',
-		middleware.authorized,
+		middleware.fullyAuthenticatedUser,
 		read(onLogReadStreamInitialized),
 	);
 	app.post(
 		'/device/v2/:uuid/logs',
 		deviceLogsRateLimiter('params.uuid'),
-		middleware.apiKey,
+		middleware.resolveApiKey,
 		store,
 	);
 	app.post(
 		'/device/v2/:uuid/log-stream',
-		middleware.apiKey,
+		middleware.resolveApiKey,
 		storeStream(onLogWriteStreamInitialized),
 	);
 };

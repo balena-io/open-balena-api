@@ -6,7 +6,7 @@ import { receiveOnlineDependentDevices } from './receive-online-dependent-device
 export const setup = (app: Application) => {
 	app.post(
 		'/dependent/v1/scan',
-		middleware.apiKey,
+		middleware.resolveApiKey,
 		receiveOnlineDependentDevices,
 	);
 };

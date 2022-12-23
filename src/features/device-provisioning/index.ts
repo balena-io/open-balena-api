@@ -4,5 +4,5 @@ import { middleware } from '../../infra/auth';
 import { register } from './register';
 
 export const setup = (app: Application) => {
-	app.post('/device/register', middleware.apiKey, register);
+	app.post('/device/register', middleware.resolveApiKey, register);
 };

@@ -8,16 +8,24 @@ import {
 } from './routes';
 
 export const setup = (app: Application) => {
-	app.get('/device-types/v1', middleware.identify, getDeviceTypes);
-	app.get('/device-types/v1/:deviceType', middleware.identify, getDeviceType);
+	app.get(
+		'/device-types/v1',
+		middleware.resolveCredentialsAndUser,
+		getDeviceTypes,
+	);
+	app.get(
+		'/device-types/v1/:deviceType',
+		middleware.resolveCredentialsAndUser,
+		getDeviceType,
+	);
 	app.get(
 		'/device-types/v1/:deviceType/images',
-		middleware.identify,
+		middleware.resolveCredentialsAndUser,
 		listAvailableImageVersions,
 	);
 	app.get(
 		'/device-types/v1/:deviceType/images/:version/download-size',
-		middleware.identify,
+		middleware.resolveCredentialsAndUser,
 		downloadImageSize,
 	);
 };
