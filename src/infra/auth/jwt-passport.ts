@@ -13,6 +13,7 @@ import { JSON_WEB_TOKEN_SECRET } from '../../lib/config';
 import { captureException } from '../error-handling';
 import { ScopedAccessToken, ScopedToken } from './jwt';
 import { PickDeferred, User as DbUser } from '../../balena-model';
+import { getGuestActorId } from './permissions';
 
 export { SignOptions } from 'jsonwebtoken';
 
@@ -113,7 +114,7 @@ export const middleware: RequestHandler = (req, res, next) => {
 	const authenticate = passport.authenticate(
 		'jwt',
 		{ session: false },
-		(err: Error, auth: Creds) => {
+		async (err: Error, auth: Creds) => {
 			// Clear the body token field in case it exists to avoid any
 			// possible leaking
 			// store the potential body token in the authorziation header
@@ -140,6 +141,8 @@ export const middleware: RequestHandler = (req, res, next) => {
 				// setting req.apiKey allows service JWT tokens to be used with odata requests
 				req.apiKey = {
 					key: auth.apikey,
+					// Warning: This requires/assumes all service api keys are created under the guest actor
+					actor: await getGuestActorId(),
 					permissions: auth.permissions,
 				};
 			} else if ('twoFactorRequired' in auth && auth.twoFactorRequired) {
