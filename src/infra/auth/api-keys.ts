@@ -7,7 +7,7 @@ import { isJWT } from './jwt-passport';
 const isRequest = (req: hooks.HookReq | Request): req is Request =>
 	'get' in req;
 
-export const getAPIKey = async (
+const getAPIKey = async (
 	req: hooks.HookReq | Request,
 	tx: Tx | undefined,
 ): Promise<sbvrUtils.ApiKey | undefined> => {
@@ -29,14 +29,32 @@ export const getAPIKey = async (
 	}
 };
 
+/**
+ * Trigger a prefetch of the api key which is not awaited, stored in `req.prefetchApiKey`, which can be later consumed by `retrieveAPIKey`
+ */
+export const prefetchAPIKey = (
+	req: (hooks.HookReq & Pick<Request, 'prefetchApiKey'>) | Request,
+	tx: Tx | undefined,
+): void => {
+	if (req.apiKey) {
+		// If the api key is already set then we just reuse that and keep it
+		req.prefetchApiKey ??= req.apiKey;
+	} else {
+		// Start the prefetch and let it run in the background - do not await it
+		req.prefetchApiKey = getAPIKey(req, tx);
+	}
+};
+
+/**
+ * Ensure `req.apiKey` is set if it should be, using the prefetched apiKey if it exists
+ */
 export const retrieveAPIKey = async (
-	req: hooks.HookReq | Request,
+	req: (hooks.HookReq & Pick<Request, 'prefetchApiKey'>) | Request,
 	tx: Tx | undefined,
 ): Promise<void> => {
-	// We should be able to skip this if req.user but doing so breaks the SDK
-	// because it sends both a JWT and an API Key in requests like /devices/register
-	const apiKey = await getAPIKey(req, tx);
-	if (apiKey != null) {
-		req.apiKey = apiKey;
+	prefetchAPIKey(req, tx);
+	if (req.apiKey) {
+		return;
 	}
+	req.apiKey ??= await req.prefetchApiKey;
 };
