@@ -17,5 +17,5 @@ runs:
       shell: bash
       run: |
         # TODO: Drop the custom test action once we have a better way to
-        # generate the meterialized onfig, other than passing an env var.
+        # generate the materialized config, other than passing an env var.
         npm run test:compose
