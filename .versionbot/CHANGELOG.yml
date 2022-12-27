@@ -1,4 +1,16 @@
 - commits:
+    - subject: "CI: Fix action config typos"
+      hash: 745c834afe29258a2c937c2a9d7f1d386c690262
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Josh Bowling
+      nested: []
+  version: 7.1.2
+  title: ""
+  date: 2022-12-27T04:55:26.956Z
+- commits:
     - subject: Update dependency libpg-query to 15.0.2
       hash: 4b0ebb8206508354581a2d12827005a2ecf1146e
       body: |
