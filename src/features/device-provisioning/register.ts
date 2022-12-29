@@ -43,10 +43,6 @@ export const register: RequestHandler = async (req, res) => {
 			throw new BadRequestError('UUID must be specified');
 		}
 
-		if (req.apiKey == null) {
-			throw new BadRequestError('API key must be used for registering');
-		}
-
 		const {
 			supervisor_version: supervisorVersion,
 			os_version: osVersion,

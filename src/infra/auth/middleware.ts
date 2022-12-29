@@ -79,6 +79,22 @@ export const resolveApiKey: RequestHandler = async (req, _res, next) => {
 };
 
 /**
+ * This ensures that a valid api key has been passed, returning 401 if it has not
+ */
+export const authenticatedApiKey: RequestHandler = async (req, res, next) => {
+	try {
+		await retrieveAPIKey(req, undefined);
+		if (req.apiKey) {
+			next();
+		} else {
+			res.status(401).json({ error: 'API key required' });
+		}
+	} catch (err) {
+		next(err);
+	}
+};
+
+/**
  * This creates a middleware that checks a specific permission is present on the request
  *
  * @param permission The required permission
