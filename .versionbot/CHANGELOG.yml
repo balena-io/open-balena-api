@@ -1,4 +1,16 @@
 - commits:
+    - subject: "Tests: fix composition typings/usage"
+      hash: c3124db36daeffc94e53acab3ececfa2fd08894b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.2.1
+  title: ""
+  date: 2022-12-29T14:42:26.533Z
+- commits:
     - subject: Update dependency @types/jsonwebtoken to 9.0.0
       hash: 11a49751ea9ae21bbc6c61a74ecf13bb9827b0e1
       body: |
