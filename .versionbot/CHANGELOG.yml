@@ -1,4 +1,16 @@
 - commits:
+    - subject: Switch to a middleware for enforcing API key on /device/register
+      hash: c39a7b0cba01bffbd3ce3147d94cbe8e22e8f846
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 7.3.0
+  title: ""
+  date: 2022-12-29T14:54:04.964Z
+- commits:
     - subject: "Tests: fix composition typings/usage"
       hash: c3124db36daeffc94e53acab3ececfa2fd08894b
       body: ""
