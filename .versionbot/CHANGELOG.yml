@@ -1,4 +1,16 @@
 - commits:
+    - subject: Preserve comments in the generated output for JSDoc reasons
+      hash: ed25b53defcc5f8246a3530ff7a994adf7b3ab3d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.3.1
+  title: ""
+  date: 2022-12-29T15:24:21.871Z
+- commits:
     - subject: Switch to a middleware for enforcing API key on /device/register
       hash: c39a7b0cba01bffbd3ce3147d94cbe8e22e8f846
       body: ""
