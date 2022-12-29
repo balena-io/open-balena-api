@@ -292,6 +292,13 @@ export async function setup(app: Application, options: SetupOptions) {
 
 	app.disable('x-powered-by');
 
+	// https://stackoverflow.com/a/44780406/1559300
+	// https://stackoverflow.com/a/52433572/1559300
+	app.use((req, _res, next) => {
+		req.socket.setKeepAlive(true, 60 * 1000);
+		return next();
+	});
+
 	app.use('/connectivity-check', (_req, res) => {
 		res.status(204);
 		// Remove some automatically added headers, we want the response to be as small as possible
