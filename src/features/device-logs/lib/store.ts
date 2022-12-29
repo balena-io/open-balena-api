@@ -234,6 +234,11 @@ function handleStreamingWrite(
 		}
 	}
 
+	// https://stackoverflow.com/a/44780406/1559300
+	req.on('socket', (s) => {
+		s.setKeepAlive(true, 240 * 1000);
+	});
+
 	let publishScheduled = false;
 
 	async function tryPublish() {
