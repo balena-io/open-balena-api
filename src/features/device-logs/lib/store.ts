@@ -179,7 +179,8 @@ function handleStreamingWrite(
 
 	const bufferLimit = Math.min(LOGS_WRITE_BUFFER_LIMIT, ctx.retention_limit);
 	const buffer: DeviceLog[] = [];
-	const parser = ndjson.parse();
+	// FIXME: {strict: false} option results in silent failure when Content-Encoding is omitted
+	const parser = ndjson.parse({ strict: false });
 
 	function close(err?: Error | null) {
 		if (!res.headersSent) {
@@ -217,6 +218,7 @@ function handleStreamingWrite(
 	if (req.get('Content-Encoding') === 'gzip') {
 		req.pipe(createGunzip()).on('error', close).pipe(parser);
 	} else {
+		// FIXME: omitting Content-Encoding throws HTTP/400 without ndjson.parse({strict: false})
 		req.pipe(parser);
 	}
 

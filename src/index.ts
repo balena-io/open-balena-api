@@ -292,13 +292,6 @@ export async function setup(app: Application, options: SetupOptions) {
 
 	app.disable('x-powered-by');
 
-	// https://stackoverflow.com/a/44780406/1559300
-	// https://stackoverflow.com/a/52433572/1559300
-	app.use((req, _res, next) => {
-		req.socket.setKeepAlive(true, 60 * 1000);
-		return next();
-	});
-
 	app.use('/connectivity-check', (_req, res) => {
 		res.status(204);
 		// Remove some automatically added headers, we want the response to be as small as possible
@@ -469,6 +462,9 @@ async function startServer(
 	let server: Server;
 	await Bluebird.fromCallback((cb) => {
 		server = app.listen(port, cb as (...args: any[]) => void);
+		// prevent http/408 on POST(s) to /device/v2/{{uuid}}/log-stream
+		// https://nodejs.org/docs/latest-v18.x/api/http.html#http_server_listen
+		server.requestTimeout = 0;
 	});
 	console.log(`Server listening in ${app.get('env')} mode on port ${port}`);
 	return server!;
