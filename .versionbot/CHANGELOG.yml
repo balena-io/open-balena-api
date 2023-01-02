@@ -1,4 +1,17 @@
 - commits:
+    - subject: Remove dependent devices from state v2/v3, the permissions were removed
+        in 6.0.0
+      hash: 4630249103dd68d3b3c074a4c8fca9b446648443
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.3.2
+  title: ""
+  date: 2023-01-02T21:53:27.590Z
+- commits:
     - subject: Preserve comments in the generated output for JSDoc reasons
       hash: ed25b53defcc5f8246a3530ff7a994adf7b3ab3d
       body: ""
