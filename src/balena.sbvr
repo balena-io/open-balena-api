@@ -313,6 +313,8 @@ Term: version
 Term: vpn address
 	Concept Type: Short Text (Type)
 
+Term: monogram
+	Concept Type: WebResource (Type)
 
 -- Complex terms
 
@@ -433,7 +435,8 @@ Fact type: organization has handle
 	Necessity: each organization has exactly one handle.
 	Necessity: each handle is of exactly one organization.
 	Necessity: each handle of an organization, has a Length (Type) that is greater than 0.
-
+Fact type: organization has monogram
+	Necessity: each organization has at most one monogram.
 
 -- user
 

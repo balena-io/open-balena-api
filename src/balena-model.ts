@@ -220,6 +220,7 @@ export interface Organization {
 	id: number;
 	name: string;
 	handle: string;
+	monogram: {} | null;
 	user__is_member_of__organization?: OrganizationMembership[];
 	includes__user?: OrganizationMembership[];
 	application?: Application[];
