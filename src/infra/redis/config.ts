@@ -28,9 +28,9 @@ export const getRedisOptions = ({
 		retryStrategy: redisRetryStrategy,
 		enableOfflineQueue: false,
 		enableAutoPipelining,
-		// @ts-expect-error - `keepAlive` is actually used as `initialDelay` which is a number as the typings say
-		//                    but it clashes with the socket keepAlive option which is a boolean, this probably
-		//                    needs updated ioredis typings
+		// `keepAlive` is actually used as `initialDelay` which is a number as the typings say
+		// but it clashes with the socket keepAlive option which is a boolean, this probably
+		// needs updated ioredis typings
 		keepAlive: 0,
 	};
 
