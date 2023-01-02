@@ -270,13 +270,7 @@ const stateQuery = _.once(() =>
 		id: { uuid: { '@': 'uuid' } },
 		options: {
 			$select: ['device_name', 'os_version'],
-			$expand: {
-				...deviceExpand,
-				manages__device: {
-					$select: ['uuid', 'device_name'],
-					$expand: deviceExpand,
-				},
-			},
+			$expand: deviceExpand,
 		},
 	}),
 );
@@ -303,13 +297,6 @@ const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
 			config,
 		},
 	};
-
-	for (const depDev of device.manages__device as AnyObject[]) {
-		state[depDev.uuid] = {
-			name: depDev.device_name,
-			apps: getUserAppState(depDev, getConfig(depDev)),
-		};
-	}
 
 	return state;
 };

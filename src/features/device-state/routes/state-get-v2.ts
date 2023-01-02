@@ -57,34 +57,8 @@ export type StateV2 = {
 		};
 	};
 	dependent: {
-		apps: {
-			[id: string]: {
-				name: string;
-				parentApp: number;
-				config: {
-					[varName: string]: string;
-				};
-				releaseId?: number;
-				imageId?: number;
-				commit?: string;
-				image?: string;
-			};
-		};
-		devices: {
-			[uuid: string]: {
-				name: string;
-				apps: {
-					[id: string]: {
-						config: {
-							[varName: string]: string;
-						};
-						environment: {
-							[varName: string]: string;
-						};
-					};
-				};
-			};
-		};
+		apps: {};
+		devices: {};
 	};
 };
 
@@ -261,50 +235,7 @@ const stateQuery = _.once(() =>
 						application_environment_variable: {
 							$select: ['name', 'value'],
 						},
-						is_depended_on_by__application: {
-							$select: ['id', 'app_name'],
-							$expand: {
-								application_config_variable: {
-									$select: ['name', 'value'],
-									$orderby: {
-										name: 'asc',
-									},
-								},
-								application_environment_variable: {
-									$select: ['name', 'value'],
-								},
-								should_be_running__release: releaseExpand,
-							},
-						},
 						should_be_running__release: releaseExpand,
-					},
-				},
-				manages__device: {
-					$select: ['uuid', 'device_name', 'belongs_to__application'],
-					$expand: {
-						service_install: {
-							$select: ['id'],
-							$top: 1,
-							$expand: {
-								device_service_environment_variable: {
-									$select: ['name', 'value'],
-								},
-								service: {
-									$select: ['id'],
-									$expand: {
-										service_environment_variable: {
-											$select: ['name', 'value'],
-										},
-									},
-								},
-							},
-						},
-						device_config_variable: {
-							$select: ['name', 'value'],
-						},
-						device_environment_variable: {
-							$select: ['name', 'value'],
-						},
 					},
 				},
 			},
@@ -329,10 +260,12 @@ const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 		},
 	};
 
-	const dependent = getDependent(device);
 	return {
 		local,
-		dependent,
+		dependent: {
+			apps: {},
+			devices: {},
+		},
 	};
 };
 
@@ -402,103 +335,4 @@ const getUserAppForState = (
 				volumes: {},
 		  }
 		: buildAppFromRelease(device, userAppFromApi, release, config);
-};
-
-const getDependent = (device: AnyObject): StateV2['dependent'] => {
-	const userAppFromApi: AnyObject = device.belongs_to__application[0];
-
-	const dependendOnByApps =
-		userAppFromApi.is_depended_on_by__application as AnyObject[];
-	const managesDevice = device.manages__device as AnyObject[];
-
-	const dependentInfo: StateV2['dependent'] = {
-		apps: {},
-		devices: {},
-	};
-
-	const depAppCache: Dictionary<{
-		release?: AnyObject;
-		application_environment_variable: Array<{
-			name: string;
-			value: string;
-		}>;
-	}> = {};
-
-	for (const depApp of dependendOnByApps) {
-		const depRelease = depApp?.should_be_running__release?.[0];
-		depAppCache[depApp.id] = {
-			release: depRelease,
-			application_environment_variable: depApp.application_environment_variable,
-		};
-
-		const depConfig: Dictionary<string> = {};
-		varListInsert(
-			depApp.application_config_variable,
-			depConfig,
-			rejectUiConfig,
-		);
-
-		dependentInfo.apps[depApp.id] = {
-			name: depApp.app_name,
-			parentApp: userAppFromApi.id,
-			config: depConfig,
-		};
-
-		const image = depRelease?.contains__image?.[0]?.image?.[0];
-		if (depRelease != null && image != null) {
-			const depAppState = dependentInfo.apps[depApp.id];
-			depAppState.releaseId = depRelease.id;
-			depAppState.imageId = image.id;
-			depAppState.commit = depRelease.commit;
-			depAppState.image = formatImageLocation(
-				image.is_stored_at__image_location,
-			);
-		}
-	}
-
-	for (const depDev of managesDevice) {
-		const depAppId: number = depDev.belongs_to__application.__id;
-		const { release: depRelease, application_environment_variable } =
-			depAppCache[depAppId];
-
-		const depConfig: Dictionary<string> = {};
-		varListInsert(depDev.device_config_variable, depConfig, rejectUiConfig);
-
-		const ipr = depRelease?.contains__image?.[0];
-		const image = ipr?.image?.[0];
-		const svcInstall = serviceInstallFromImage(depDev, image);
-
-		const environment: Dictionary<string> = {};
-		if (ipr != null) {
-			varListInsert(ipr.image_environment_variable, environment);
-		}
-
-		varListInsert(application_environment_variable, environment);
-		if (svcInstall?.service?.[0] != null) {
-			varListInsert(
-				svcInstall.service[0].service_environment_variable,
-				environment,
-			);
-		}
-
-		varListInsert(depDev.device_environment_variable, environment);
-		if (svcInstall != null) {
-			varListInsert(
-				svcInstall.device_service_environment_variable,
-				environment,
-			);
-		}
-
-		dependentInfo.devices[depDev.uuid] = {
-			name: depDev.device_name,
-			apps: {
-				[depAppId]: {
-					config: depConfig,
-					environment,
-				},
-			},
-		};
-	}
-
-	return dependentInfo;
 };
