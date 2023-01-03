@@ -31,7 +31,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 
 	app.get(
 		'/auth/v1/public-keys/:username',
-		middleware.resolveApiKey,
+		middleware.authenticatedApiKey,
 		getUserPublicKeys,
 	);
 

@@ -41,10 +41,10 @@ export const setup = (app: Application) => {
 	app.patch(
 		'/device/v2/:uuid/state',
 		resolveOrGracefullyDenyDevices,
-		middleware.resolveApiKey,
+		middleware.authenticatedApiKey,
 		statePatchV2,
 	);
-	app.patch('/device/v3/state', middleware.resolveApiKey, statePatchV3);
+	app.patch('/device/v3/state', middleware.authenticatedApiKey, statePatchV3);
 };
 
 export interface Events {
