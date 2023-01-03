@@ -29,13 +29,13 @@ export const setup = (app: Application) => {
 	app.get(
 		'/device/v2/:uuid/state',
 		resolveOrGracefullyDenyDevices,
-		middleware.resolveApiKey,
+		middleware.authenticated,
 		stateV2,
 	);
 	app.get(
 		'/device/v3/:uuid/state',
 		resolveOrGracefullyDenyDevices,
-		middleware.resolveApiKey,
+		middleware.authenticated,
 		stateV3,
 	);
 	app.patch(
