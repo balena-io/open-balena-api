@@ -95,6 +95,23 @@ export const authenticatedApiKey: RequestHandler = async (req, res, next) => {
 };
 
 /**
+ * This ensures that valid credentials have been passed, , returning 401 if they have not
+ */
+export const authenticated: RequestHandler = async (req, res, next) => {
+	try {
+		await getUser(req, undefined);
+		next();
+		return null;
+	} catch {
+		if (req.apiKey) {
+			next();
+		} else {
+			res.status(401).end();
+		}
+	}
+};
+
+/**
  * This creates a middleware that checks a specific permission is present on the request
  *
  * @param permission The required permission
