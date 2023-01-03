@@ -1,4 +1,27 @@
 - commits:
+    - subject: Use new authenticated middleware on some endpoints to require auth
+      hash: e8a34aa5acdb015e240afdb24cbb17d0cb826eb0
+      body: |
+        They would previously have required auth but the check would have come
+        later so this primarily moves that check before any other work may be
+        done
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+    - subject: Use authenticatedApiKey middleware on some endpoints that require one
+      hash: a4c656411fa105655a2cf9b584ed66b55c1e5ae5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.4.0
+  title: ""
+  date: 2023-01-03T17:00:31.773Z
+- commits:
     - subject: Remove dependent devices from state v2/v3, the permissions were removed
         in 6.0.0
       hash: 4630249103dd68d3b3c074a4c8fca9b446648443
