@@ -1,4 +1,31 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v14.2.0
+      hash: f46e49cdcdf4eacf4cc0ad9f0ca78955bc486929
+      body: |
+        Update balena/open-balena-base to 14.2.0
+
+        Update balena/open-balena-base from 14.1.4 to 14.2.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Update to nodejs 18.13.0
+              hash: 93d27af823100a75822e20f29f41dc4d576aa8e1
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-14.2.0
+          title: ""
+          date: 2023-01-09T15:46:31.806Z
+  version: 7.5.0
+  title: ""
+  date: 2023-01-09T17:09:29.138Z
+- commits:
     - subject: Use new authenticated middleware on some endpoints to require auth
       hash: e8a34aa5acdb015e240afdb24cbb17d0cb826eb0
       body: |
