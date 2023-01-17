@@ -34,12 +34,12 @@ export const setup = (
 	app.post(
 		'/device/v2/:uuid/logs',
 		deviceLogsRateLimiter('params.uuid'),
-		middleware.resolveApiKey,
+		middleware.authenticatedApiKey,
 		store,
 	);
 	app.post(
 		'/device/v2/:uuid/log-stream',
-		middleware.resolveApiKey,
+		middleware.authenticatedApiKey,
 		storeStream(onLogWriteStreamInitialized),
 	);
 };
