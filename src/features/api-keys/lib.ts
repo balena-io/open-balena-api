@@ -208,7 +208,7 @@ export const createUserApiKey: PartialCreateKey = _.partial(
 );
 
 export type ApiKeyParameters = {
-	actorType: typeof supportedActorTypes[number];
+	actorType: (typeof supportedActorTypes)[number];
 	actorTypeId: number;
 	roles: string[];
 } & Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate' | 'apiKey'>;

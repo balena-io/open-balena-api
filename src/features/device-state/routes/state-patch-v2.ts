@@ -223,10 +223,10 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 			const { apps } = local;
 
 			let deviceBody:
-				| Pick<LocalBody, typeof v2ValidPatchFields[number]> & {
+				| Pick<LocalBody, (typeof v2ValidPatchFields)[number]> & {
 						is_running__release?: number | null;
 				  } = _.pick(local, v2ValidPatchFields);
-			let metricsBody: Pick<LocalBody, typeof metricsPatchFields[number]> =
+			let metricsBody: Pick<LocalBody, (typeof metricsPatchFields)[number]> =
 				_.pick(local, metricsPatchFields);
 			if (
 				Object.keys(metricsBody).length > 0 &&

@@ -15,7 +15,7 @@ const defaultWritePerms = ['create', 'update', 'delete'] as const;
 const writePerms = (
 	resource: string,
 	filter: string,
-	access: ReadonlyArray<typeof defaultWritePerms[number]> = defaultWritePerms,
+	access: ReadonlyArray<(typeof defaultWritePerms)[number]> = defaultWritePerms,
 ): string[] => access.map((verb) => `${resource}.${verb}?${filter}`);
 
 const matchesActor = 'actor eq @__ACTOR_ID';

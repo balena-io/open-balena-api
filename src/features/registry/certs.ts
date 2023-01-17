@@ -25,7 +25,8 @@ const allowedAlgorithms = [
 ] as const;
 const isAllowedAlgorithm = (
 	algo: any,
-): algo is typeof allowedAlgorithms[number] => allowedAlgorithms.includes(algo);
+): algo is (typeof allowedAlgorithms)[number] =>
+	allowedAlgorithms.includes(algo);
 
 if (!isAllowedAlgorithm(TOKEN_AUTH_JWT_ALGO)) {
 	throw new Error(`Invalid JWT algorithm: '${TOKEN_AUTH_JWT_ALGO}'`);
