@@ -1,0 +1,26 @@
+{
+    "release1_image1_lbl1": {
+        "user": "admin",
+        "image": "release1_image1",
+        "label_name": "rel1Img1Lbl1Name",
+        "value": "rel1Img1Lbl1Value"
+    },
+    "release1_image2_lbl2": {
+        "user": "admin",
+        "image": "release1_image2",
+        "label_name": "rel1Img2Lbl1Name",
+        "value": "rel1Img2Lbl1Value"
+    },
+    "release2_image1_lbl3": {
+        "user": "admin",
+        "image": "release2_image1",
+        "label_name": "rel2Img1Lbl1Name",
+        "value": "rel2Img1Lbl1Value"
+    },
+    "release2_image2_lbl4": {
+        "user": "admin",
+        "image": "release2_image2",
+        "label_name": "rel2Img2Lbl1Name",
+        "value": "rel2Img2Lbl1Value"
+    }
+}

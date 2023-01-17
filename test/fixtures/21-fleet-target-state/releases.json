@@ -1,0 +1,37 @@
+{
+	"release1": {
+		"user": "admin",
+		"application": "app1",
+		"commit": "deadc0de",
+		"status": "success",
+		"composition": {
+			"services": {
+				"image1": {
+					"build": "./image1/"
+				},
+				"image2": {
+					"build": "./image2/"
+				}
+			}
+		},
+		"source": "cloud",
+		"createAfterRelease":"release2"
+	},
+	"release2": {
+		"user": "admin",
+		"application": "app1",
+		"commit": "aaaabbbb",
+		"status": "success",
+		"composition": {
+			"services": {
+				"image1": {
+					"build": "./image1/"
+				},
+				"image2": {
+					"build": "./image2/"
+				}
+			}
+		},
+		"source": "cloud"
+	}
+}

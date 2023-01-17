@@ -1,0 +1,26 @@
+{
+    "release1_image1_env_var1": {
+        "user": "admin",
+        "image": "release1_image1",
+        "name": "rel1Img1EnvVar1Name",
+        "value": "rel1Img1EnvVar1Value"
+    },
+    "release1_image2_env_var2": {
+        "user": "admin",
+        "image": "release1_image2",
+        "name": "rel1Img2EnvVar1Name",
+        "value": "rel1Img2EnvVar1Value"
+    },
+    "release2_image1_env_var3": {
+        "user": "admin",
+        "image": "release2_image1",
+        "name": "rel2Img1EnvVar1Name",
+        "value": "rel2Img1EnvVar1Value"
+    },
+    "release2_image2_env_var4": {
+        "user": "admin",
+        "image": "release2_image2",
+        "name": "rel2Img2EnvVar1Name",
+        "value": "rel2Img2EnvVar1Value"
+    }
+}

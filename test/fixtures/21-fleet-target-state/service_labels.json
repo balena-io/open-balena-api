@@ -1,0 +1,8 @@
+{
+    "svcEnvVar1": {
+        "user": "admin",
+        "service": "app1_service1",
+        "label_name": "app1Svc1Label1Name",
+        "value": "app1Svc1Label1Value"
+    }
+}

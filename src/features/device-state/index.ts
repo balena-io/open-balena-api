@@ -9,6 +9,7 @@ import { stateV2 } from './routes/state-get-v2';
 import { stateV3 } from './routes/state-get-v3';
 import { statePatchV2 } from './routes/state-patch-v2';
 import { statePatchV3 } from './routes/state-patch-v3';
+import { fleetStateV3 } from './routes/fleet-state-get-v3';
 
 export {
 	setReadTransaction,
@@ -45,6 +46,16 @@ export const setup = (app: Application) => {
 		statePatchV2,
 	);
 	app.patch('/device/v3/state', middleware.authenticatedApiKey, statePatchV3);
+	app.get(
+		'/device/v3/fleet/:fleetUuid/state',
+		middleware.authenticated,
+		fleetStateV3,
+	);
+	app.get(
+		'/device/v3/fleet/:fleetUuid/release/:releaseUuid/state',
+		middleware.authenticated,
+		fleetStateV3,
+	);
 };
 
 export interface Events {
