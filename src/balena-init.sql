@@ -96,8 +96,8 @@ ON "device type" ("belongs to-device family");
 CREATE INDEX IF NOT EXISTS "gateway_download_device_idx"
 ON "gateway download" ("is downloaded by-device");
 
-CREATE INDEX IF NOT EXISTS "image_is_build_of_service_idx"
-ON "image" ("is a build of-service");
+CREATE INDEX IF NOT EXISTS "image_is_build_of_service_id_idx"
+ON "image" ("is a build of-service", "id");
 
 -- "image environment variable"."release image" is the first part of an automated unique index
 
