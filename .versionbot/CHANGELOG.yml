@@ -1,4 +1,126 @@
 - commits:
+    - subject: Update dependencies
+      hash: ef0713f235e3a74b5b423c3e7b1e70d2ddf297e2
+      body: |
+        Update @balena/pinejs from 14.53.6 to 14.54.7
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Filter for `SideEffectHook`s before entering the async rollback loop
+              hash: 887027c084172658d29904e9fcdc1104779ebfb2
+              body: >
+                This avoids unnecessary work by adding an async boundary for the
+
+                filtering part, meaning we can avoid any async boundaries in the case
+
+                of no side effecting hooks (the likely case)
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.54.7
+          title: ""
+          date: 2023-01-13T15:53:47.439Z
+        - commits:
+            - subject: Handle symbols when proxying for constrained models
+              hash: e53a6744ba0e32e2ae414ab7bb1ae375957e115c
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.54.6
+          title: ""
+          date: 2023-01-12T18:51:58.179Z
+        - commits:
+            - subject: Prettified according to new rules
+              hash: 8c5a73399171eae3dd8d105810ba71b811cdc3ea
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: fisehara <harald@balena.io>
+                signed-off-by: fisehara <harald@balena.io>
+              author: fisehara
+              nested: []
+          version: pinejs-14.54.5
+          title: ""
+          date: 2023-01-11T14:18:59.648Z
+        - commits:
+            - subject: Fix pre-commit husky hook
+              hash: c146ecb23faa8aeaa93086e6a4e78b5bdc3fecbc
+              body: |
+                pre-commit file has no executable flag.
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: fisehara <harald@balena.io>
+                signed-off-by: fisehara <harald@balena.io>
+              author: fisehara
+              nested: []
+          version: pinejs-14.54.4
+          title: ""
+          date: 2022-12-22T16:30:12.873Z
+        - commits:
+            - subject: Fix running linting as part of `npm test`
+              hash: 9bdc35e17faa8d9958b2046b691e9d28fb37d51c
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.54.3
+          title: ""
+          date: 2022-12-19T16:01:26.236Z
+        - commits:
+            - subject: Simplify `checkApiKey` by moving checks out to more relevant places
+              hash: c421ec64b7a7ad858007e3570065e5c9ec98d5f4
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.54.2
+          title: ""
+          date: 2022-12-19T15:37:05.130Z
+        - commits:
+            - subject: Update debugging docs
+              hash: 6c6331cab24edc0d1264166d885c52246f71d04f
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.54.1
+          title: ""
+          date: 2022-12-12T16:56:30.099Z
+        - commits:
+            - subject: Update postgres Docker tag to v15
+              hash: e1c8e1436dae44739a844ecc86c09fd084f09e86
+              body: |
+                Update postgres to 15
+
+                Update postgres from 14 to 15
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: pinejs-14.54.0
+          title: ""
+          date: 2022-12-09T17:20:55.621Z
+  version: 7.5.2
+  title: ""
+  date: 2023-01-17T16:15:38.240Z
+- commits:
     - subject: Include id in "image"."is a build of-service" index
       hash: 02b9907698a947dc21cff5fd1b03329f6a2b1174
       body: ""
