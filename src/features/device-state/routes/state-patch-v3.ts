@@ -272,12 +272,15 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 			const { apps } = state;
 
 			let deviceBody:
-				| Pick<StatePatchV3Body[string], typeof v3ValidPatchFields[number]> & {
+				| Pick<
+						StatePatchV3Body[string],
+						(typeof v3ValidPatchFields)[number]
+				  > & {
 						is_running__release?: number | null;
 				  } = _.pick(state, v3ValidPatchFields);
 			let metricsBody: Pick<
 				StatePatchV3Body[string],
-				typeof metricsPatchFields[number]
+				(typeof metricsPatchFields)[number]
 			> = _.pick(state, metricsPatchFields);
 			if (
 				Object.keys(metricsBody).length > 0 &&

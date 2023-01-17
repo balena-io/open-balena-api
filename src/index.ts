@@ -269,7 +269,7 @@ export interface SetupOptions {
 	onInitRoutes?: SetupFunction;
 
 	onLogin?: (
-		user: Pick<DbUser, typeof defaultFindUser$select[number]>,
+		user: Pick<DbUser, (typeof defaultFindUser$select)[number]>,
 		tx: Tx,
 	) => PromiseLike<void> | void;
 	onLogWriteStreamInitialized?: (req: Request) => void;

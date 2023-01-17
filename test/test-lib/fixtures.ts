@@ -372,7 +372,7 @@ const modelUnloadOrder = [
 ];
 
 const unloaders: {
-	[K in typeof modelUnloadOrder[number]]: (obj: {
+	[K in (typeof modelUnloadOrder)[number]]: (obj: {
 		id: number;
 	}) => PromiseLike<void>;
 } = {

@@ -20,7 +20,7 @@ const memoizeeSharedOptionsKeys = ['max', 'maxAge', 'preFetch'] as const;
 
 type MultiCacheMemoizeeSharedOpts<T extends (...args: any[]) => any> = Pick<
 	Exclude<MultiCacheMemoizeeOpts<T>, 'max'>,
-	typeof memoizeeSharedOptionsKeys[number]
+	(typeof memoizeeSharedOptionsKeys)[number]
 >;
 
 export interface MemoizedFn<T extends (...args: any[]) => Promise<any>> {

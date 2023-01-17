@@ -17,7 +17,7 @@ import listObjectsV2Mocks from '../fixtures/s3/listObjectsV2.json';
 const getObjectMocks: Dictionary<AWS.S3.Types.GetObjectOutput> = _.mapValues(
 	$getObjectMocks,
 	(
-		getObjectMock: typeof $getObjectMocks[keyof typeof $getObjectMocks],
+		getObjectMock: (typeof $getObjectMocks)[keyof typeof $getObjectMocks],
 	): AWS.S3.Types.GetObjectOutput => {
 		return {
 			...getObjectMock,

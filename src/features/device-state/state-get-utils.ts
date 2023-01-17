@@ -15,7 +15,7 @@ const defaultConfigVariableFns: Array<(config: Dictionary<string>) => void> = [
 	},
 ];
 export const addDefaultConfigVariableFn = (
-	fn: typeof defaultConfigVariableFns[number],
+	fn: (typeof defaultConfigVariableFns)[number],
 ) => {
 	defaultConfigVariableFns.push(fn);
 };

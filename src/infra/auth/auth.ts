@@ -181,7 +181,7 @@ const getUserQuery = _.once(
 			},
 		}) as PreparedFn<
 			{ key: string },
-			Promise<Array<PickDeferred<DbUser, typeof userFields[number]>>>
+			Promise<Array<PickDeferred<DbUser, (typeof userFields)[number]>>>
 		>,
 );
 export function getUser(
@@ -252,7 +252,7 @@ export async function findUser(
 	loginInfo: string,
 	tx: Tx,
 ): Promise<
-	PickDeferred<DbUser, typeof defaultFindUser$select[number]> | undefined
+	PickDeferred<DbUser, (typeof defaultFindUser$select)[number]> | undefined
 >;
 export async function findUser<
 	T extends DbUser,
@@ -261,7 +261,7 @@ export async function findUser<
 	loginInfo: string,
 	tx: Tx,
 	$select: TProps,
-): Promise<PickDeferred<T, typeof $select[number]> | undefined>;
+): Promise<PickDeferred<T, (typeof $select)[number]> | undefined>;
 export async function findUser<
 	T extends DbUser,
 	TProps extends ReadonlyArray<keyof T & string>,
@@ -283,7 +283,7 @@ export async function findUser<
 		loginField = 'username';
 	}
 
-	type UserResult = PickDeferred<T, typeof $select[number]>;
+	type UserResult = PickDeferred<T, (typeof $select)[number]>;
 	const [user] = (await api.resin.get({
 		resource: 'user',
 		passthrough: {

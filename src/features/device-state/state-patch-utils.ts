@@ -59,7 +59,7 @@ const truncateText = (
 };
 
 type ValidPatchFields = Array<
-	typeof v3ValidPatchFields[number] | typeof v2ValidPatchFields[number]
+	(typeof v3ValidPatchFields)[number] | (typeof v2ValidPatchFields)[number]
 >;
 
 const defaultShortTextFieldsToTruncate: ValidPatchFields = [

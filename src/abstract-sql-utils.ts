@@ -185,7 +185,7 @@ const sqlConcatFactory = (
 		...nodes: Array<TextTypeNodes | string>
 	) {
 		const concats: ConcatenateNode = ['Concatenate'];
-		const addNode = (node: typeof nodes[number]) => {
+		const addNode = (node: (typeof nodes)[number]) => {
 			node = transformers.reduce((acc, transformer) => transformer(acc), node);
 			if (typeof node === 'string') {
 				if (node.length > 0) {
