@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use `authenticatedApiKey` middleware for device logs endpoints
+      hash: 2dd297e466d286dfdcf16c896d6d4db10279601c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.5.3
+  title: ""
+  date: 2023-01-17T16:29:40.158Z
+- commits:
     - subject: Update dependencies
       hash: ef0713f235e3a74b5b423c3e7b1e70d2ddf297e2
       body: |
