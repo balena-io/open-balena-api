@@ -1,4 +1,16 @@
 - commits:
+    - subject: Include id in "image"."is a build of-service" index
+      hash: 02b9907698a947dc21cff5fd1b03329f6a2b1174
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.5.1
+  title: ""
+  date: 2023-01-17T13:51:11.276Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v14.2.0
       hash: f46e49cdcdf4eacf4cc0ad9f0ca78955bc486929
       body: |
