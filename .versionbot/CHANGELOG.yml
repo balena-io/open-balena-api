@@ -1,4 +1,19 @@
 - commits:
+    - subject: Update npm to 9.4.0
+      hash: 4591b930ea164e4860166866bcab77e0434ea038
+      body: |
+        Update npm to 9.4.0
+
+        Update npm from 8.19.3 to 9.4.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested: []
+  version: 7.7.0
+  title: ""
+  date: 2023-01-25T23:37:50.036Z
+- commits:
     - subject: Update dependencies
       hash: 214c71eb4eb7a00a6695a7cbf72bbea662732959
       body: |
