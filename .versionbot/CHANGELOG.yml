@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add a re-usable ThisShouldNeverHappenError helper
+      hash: 3d35b95532ce249d5da0e6e0c98408b508cb730b
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 7.6.0
+  title: ""
+  date: 2023-01-25T09:27:36.188Z
+- commits:
     - subject: Use `authenticatedApiKey` middleware for device logs endpoints
       hash: 2dd297e466d286dfdcf16c896d6d4db10279601c
       body: ""
