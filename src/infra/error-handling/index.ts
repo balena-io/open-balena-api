@@ -72,6 +72,16 @@ export function captureException(
 	});
 }
 
+/** Captures and returns an InternalRequestError */
+export const ThisShouldNeverHappenError = (
+	errorMessage: string,
+	options?: Parameters<typeof captureException>[2],
+) => {
+	const error = new InternalRequestError(errorMessage);
+	captureException(error, errorMessage, options);
+	return error;
+};
+
 sbvrUtils.onHandleHttpError((req, err) => {
 	if (err instanceof InternalRequestError) {
 		captureException(err, 'Internal server error', { req });

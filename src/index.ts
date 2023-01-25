@@ -55,6 +55,7 @@ import {
 import {
 	captureException,
 	handleHttpErrors,
+	ThisShouldNeverHappenError,
 	translateError,
 } from './infra/error-handling';
 import {
@@ -162,7 +163,12 @@ export * as config from './lib/config';
 export * as abstractSql from './abstract-sql-utils';
 
 export * as deviceState from './features/device-state';
-export const errors = { captureException, handleHttpErrors, translateError };
+export const errors = {
+	captureException,
+	handleHttpErrors,
+	ThisShouldNeverHappenError,
+	translateError,
+};
 export const auth = {
 	...baseAuth,
 	findUser,
