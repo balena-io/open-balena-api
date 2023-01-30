@@ -1,4 +1,63 @@
 - commits:
+    - subject: Update dependencies
+      hash: ee0dbd5115fab874a259fcb1ee9a6fa801dbac09
+      body: |
+        Update @balena/pinejs from 14.57.2 to 14.59.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Remove duplicate stack trace logging
+              hash: 9399925c01dc42e5426d69e3843a63ed142795a7
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.59.1
+          title: ""
+          date: 2023-01-26T12:06:17.588Z
+        - commits:
+            - subject: Introduce control means for async migration execution
+              hash: a034b8ff3168284785b0d776954b16782b0f9a87
+              body: >
+                Introduce env var PINEJS_ASYNC_MIGRATION_ENABLED to control async
+                migration execution on startup.
+
+
+                Test with SIGUSR2 listener to toggle migration execution during runtime.
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: fisehara <harald@balena.io>
+                signed-off-by: fisehara <harald@balena.io>
+              author: fisehara
+              nested: []
+          version: pinejs-14.59.0
+          title: ""
+          date: 2023-01-25T15:05:10.001Z
+        - commits:
+            - subject: "chore(deps): update node.js to v19"
+              hash: 6b85dd0063669e7db4432bdb650927d05ef9f9c4
+              body: |
+                Update node to 19
+
+                Update node from 16 to 19
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: pinejs-14.58.0
+          title: ""
+          date: 2023-01-25T10:18:49.492Z
+  version: 7.7.2
+  title: ""
+  date: 2023-01-30T13:51:05.035Z
+- commits:
     - subject: Update grafana/loki Docker tag to v2.7.2
       hash: 90902f2e3d000b5a23683ab7c5e226f6decc3b1a
       body: |
