@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix typo
+      hash: 615b8711bcc8d57fcfa357b70550e0536eb2b9cf
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.7.5
+  title: ""
+  date: 2023-02-02T14:37:15.358Z
+- commits:
     - subject: Allow state patches with no user app releases
       hash: 51590a9696c4a291192484c5bc6c74646bbcf4db
       body: |
