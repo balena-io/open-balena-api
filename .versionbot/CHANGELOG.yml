@@ -1,4 +1,24 @@
 - commits:
+    - subject: Change auth.findUser to accept non-readonly arrays of user fiels
+      hash: 3bebc95e567b53c793c5dcd9f8027d30c88da455
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Reduce "as Writable" casts with "satisfies"
+      hash: fa723e4ca3ab332e99c1b6ae400cebd5b7c4b520
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 7.8.1
+  title: ""
+  date: 2023-02-02T16:19:22.937Z
+- commits:
     - subject: Add support for sharded pub/sub for redis device logs
       hash: 100a4d8ccefe6f6c555a908272a46a04f273e8a6
       body: ""
