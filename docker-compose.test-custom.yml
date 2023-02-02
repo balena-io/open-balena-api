@@ -68,6 +68,7 @@ services:
       TRUST_PROXY: "true"
       REDIS_IS_CLUSTER: "false"
       REDIS_HOST: "redis:6379"
+      REDIS_LOGS_SHARDED_PUBSUB: "true"
       LOKI_HOST: loki
       LOKI_PORT: 9095
       LOKI_WRITE_PCT: 100
