@@ -7,6 +7,7 @@ import { captureException } from '../../../../infra/error-handling';
 import {
 	LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS,
 	LOGS_SUBSCRIPTION_EXPIRY_SECONDS,
+	REDIS_LOGS_SHARDED_PUBSUB,
 } from '../../../../lib/config';
 import { DAYS } from '@balena/env-parsing';
 import type {
@@ -21,6 +22,12 @@ import {
 	createIsolatedRedis,
 } from '../../../../infra/redis';
 import { Result } from 'ioredis';
+
+const SUBSCRIBECMD = REDIS_LOGS_SHARDED_PUBSUB ? 'ssubscribe' : 'subscribe';
+const UNSUBSCRIBECMD = REDIS_LOGS_SHARDED_PUBSUB
+	? 'sunsubscribe'
+	: 'unsubscribe';
+const PUBLISHCMD = REDIS_LOGS_SHARDED_PUBSUB ? 'spublish' : 'publish';
 
 const redis = createIsolatedRedis({ instance: 'logs' });
 const redisRO = createIsolatedRedis({ instance: 'logs', readOnly: true });
@@ -74,7 +81,7 @@ redis.defineCommand('publishLogs', {
 			-- Check there are active subscribers before publishing logs using Redis PubSub, avoiding wasted work
 			-- We know that if the key is false (doesn't exist) then there are no subscribers as it is cleared upon reaching 0
 			for i = 1, #ARGV do
-				redis.call("publish", KEYS[1], ARGV[i]);
+				redis.call("${PUBLISHCMD}", KEYS[1], ARGV[i]);
 			end
 		end
 		-- Increment log bytes written total
@@ -174,7 +181,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		const key = this.getKey(ctx);
 		if (!this.subscriptions.listenerCount(key)) {
 			const subscribersKey = this.getKey(ctx, 'subscribers');
-			pubSub.subscribe(key);
+			pubSub[SUBSCRIBECMD](key);
 			// Increment the subscribers counter to recognize we've subscribed
 			redis.incrSubscribers(subscribersKey);
 			// Start a heartbeat to ensure the subscribers counter stays alive whilst we're subscribed
@@ -201,7 +208,7 @@ export class RedisBackend implements DeviceLogsBackend {
 					);
 				}
 			});
-			pubSub.unsubscribe(key);
+			pubSub[UNSUBSCRIBECMD](key);
 		}
 	}
 
