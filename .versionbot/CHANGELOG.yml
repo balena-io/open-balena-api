@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add support for sharded pub/sub for redis device logs
+      hash: 100a4d8ccefe6f6c555a908272a46a04f273e8a6
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 7.8.0
+  title: ""
+  date: 2023-02-02T15:49:35.499Z
+- commits:
     - subject: Fix typo
       hash: 615b8711bcc8d57fcfa357b70550e0536eb2b9cf
       body: ""
