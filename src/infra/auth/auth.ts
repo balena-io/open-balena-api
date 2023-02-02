@@ -254,23 +254,18 @@ export async function findUser(
 ): Promise<
 	PickDeferred<DbUser, (typeof defaultFindUser$select)[number]> | undefined
 >;
-export async function findUser<
-	T extends DbUser,
-	TProps extends ReadonlyArray<keyof T>,
->(
+export async function findUser<T extends DbUser, TProps extends Array<keyof T>>(
 	loginInfo: string,
 	tx: Tx,
 	$select: TProps,
 ): Promise<PickDeferred<T, (typeof $select)[number]> | undefined>;
 export async function findUser<
 	T extends DbUser,
-	TProps extends ReadonlyArray<keyof T & string>,
+	TProps extends Array<keyof T & string>,
 >(
 	loginInfo: string,
 	tx: Tx,
-	$select: TProps = defaultFindUser$select as ReadonlyArray<
-		keyof DbUser & string
-	> as TProps,
+	$select: TProps = defaultFindUser$select as TProps,
 ) {
 	if (!loginInfo) {
 		return;
