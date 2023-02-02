@@ -296,7 +296,7 @@ export async function findUser<
 					},
 				],
 			},
-			$select: $select as Writable<typeof $select>,
+			$select,
 		},
 	})) as [UserResult?];
 	return user;
