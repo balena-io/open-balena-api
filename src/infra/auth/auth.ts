@@ -149,7 +149,7 @@ export const userFields = [
 	'email',
 	'created_at',
 	'jwt_secret',
-] as const;
+] satisfies Array<keyof DbUser>;
 
 const getUserQuery = _.once(
 	() =>
@@ -157,7 +157,7 @@ const getUserQuery = _.once(
 			resource: 'user',
 			passthrough: { req: permissions.root },
 			options: {
-				$select: userFields as Writable<typeof userFields>,
+				$select: userFields,
 				$filter: {
 					actor: {
 						$any: {
@@ -246,7 +246,7 @@ export const defaultFindUser$select = [
 	'actor',
 	'username',
 	'password',
-] as const;
+] satisfies Array<keyof DbUser>;
 
 export async function findUser(
 	loginInfo: string,
