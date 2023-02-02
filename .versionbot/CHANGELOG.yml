@@ -1,4 +1,19 @@
 - commits:
+    - subject: Allow state patches with no user app releases
+      hash: 51590a9696c4a291192484c5bc6c74646bbcf4db
+      body: |
+        This fixes a bug in v3 state patch which would prevent a state patch
+        updating information for services coming from the supervisor app when
+        there is no releases yet for the user app.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Felipe Lalanne
+      nested: []
+  version: 7.7.4
+  title: ""
+  date: 2023-02-02T14:16:27.896Z
+- commits:
     - subject: Update grafana/loki Docker tag to v2.7.3
       hash: d6666e3408be3ca26b91ba6bcdf213daed2c8a54
       body: |
