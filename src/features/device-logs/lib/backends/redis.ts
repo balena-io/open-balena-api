@@ -28,6 +28,7 @@ const UNSUBSCRIBECMD = REDIS_LOGS_SHARDED_PUBSUB
 	? 'sunsubscribe'
 	: 'unsubscribe';
 const PUBLISHCMD = REDIS_LOGS_SHARDED_PUBSUB ? 'spublish' : 'publish';
+const MESSAGECMD = REDIS_LOGS_SHARDED_PUBSUB ? 'smessage' : 'message';
 
 const redis = createIsolatedRedis({ instance: 'logs' });
 const redisRO = createIsolatedRedis({ instance: 'logs', readOnly: true });
@@ -125,7 +126,7 @@ export class RedisBackend implements DeviceLogsBackend {
 	} = {};
 
 	constructor() {
-		pubSub.on('message', this.handleMessage.bind(this));
+		pubSub.on(MESSAGECMD, this.handleMessage.bind(this));
 
 		this.subscriptions = new EventEmitter();
 	}
