@@ -1,4 +1,16 @@
 - commits:
+    - subject: Listen for the correct message type when using sharded pub/sub
+      hash: c8cfeb2b5e502d7c326b479b7acfa4ada02bd60e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.8.3
+  title: ""
+  date: 2023-02-03T12:05:32.870Z
+- commits:
     - subject: Remove missed no longer needed Writable cast
       hash: cfe69cc35dc2ab29e5568c83bddf29ace83ee1cf
       body: ""
