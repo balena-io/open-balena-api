@@ -1,4 +1,72 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v14.4.1
+      hash: 2c5d49314c79802c622cdbdb84ad0ab1aad08aa8
+      body: |
+        Update balena/open-balena-base to 14.4.1
+
+        Update balena/open-balena-base from 14.2.0 to 14.4.1
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Resolve some apt warnings by adding protection flags
+              hash: e2209f980026ad64548587f35ddc5e0e2e102ad1
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+            - subject: Clear the npm cache manually before running cache clear
+              hash: 21ba9cdef0659106d034b04ac051400f7c043439
+              body: |
+                On emulated builds like arm64 the cache clear command
+                can fail and this seems to unblock it.
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-14.4.1
+          title: ""
+          date: 2023-02-03T22:36:31.788Z
+        - commits:
+            - subject: Update nodejs to 18.14.0 and npm to 9.4.1
+              hash: 8f8ff1c68b4d1973f3e6c03e4ac4b5ab8ee70592
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-14.4.0
+          title: ""
+          date: 2023-02-03T17:34:44.201Z
+        - commits:
+            - subject: Update dependency node to 18.14.0
+              hash: 94316b8e029eaf1a15ec303b5e6887261971c4a3
+              body: |
+                Update node to 18.14.0
+
+                Update node from 18.13.0 to 18.14.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.3.0
+          title: ""
+          date: 2023-02-02T20:01:11.681Z
+  version: 7.9.0
+  title: ""
+  date: 2023-02-04T00:00:32.484Z
+- commits:
     - subject: Listen for the correct message type when using sharded pub/sub
       hash: c8cfeb2b5e502d7c326b479b7acfa4ada02bd60e
       body: ""
