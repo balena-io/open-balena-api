@@ -141,8 +141,8 @@
     "supertest": "^6.3.3"
   },
   "engines": {
-    "node": "^18.12.0",
-    "npm": "^9.0.0"
+    "node": "^18.14.0",
+    "npm": "^9.4.1"
   },
   "mocha": {
     "reporter": "spec",
