@@ -347,7 +347,7 @@ const getConfig = (device: AnyObject) => {
 
 	// override with device-specific values...
 	varListInsert(device.device_config_variable, config, rejectUiConfig);
-	filterDeviceConfig(config, device.os_version);
+	filterDeviceConfig(config);
 	setDefaultConfigVariables(config);
 
 	return config;
