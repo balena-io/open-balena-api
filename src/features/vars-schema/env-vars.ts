@@ -56,8 +56,8 @@ export const BLOCKED_NAMES = addReservedPrefixes([
 	'HOST_LOG_TO_DISPLAY',
 ]);
 
-const INVALID_ALPHANUMERIC_REGEX = /^\d|\W/;
-export const INVALID_CHARACTER_REGEX = /^[\d:]|[^A-Za-z0-9_:]/;
+export const INVALID_ENV_VAR_REGEX = /^\d|\W/;
+export const INVALID_CONFIG_VAR_REGEX = /^[\d:]|[^A-Za-z0-9_:]/;
 export const INVALID_NEWLINE_REGEX = /\r|\n/;
 
 const getDefinitionWithMinimumSupervisorVersion = (
@@ -383,7 +383,7 @@ const startsWithAny = (ns: string[], name: string) => {
 };
 
 const checkAlphaNumericWithColon = (type: string, name: string) => {
-	if (INVALID_CHARACTER_REGEX.test(name)) {
+	if (INVALID_CONFIG_VAR_REGEX.test(name)) {
 		throw new BadRequestError(
 			`${type} names can only contain alphanumeric characters, underscores or a colon`,
 		);
@@ -405,7 +405,7 @@ const checkVarName = (
 };
 
 const checkAlphaNumeric = (type: string, name: string) => {
-	if (INVALID_ALPHANUMERIC_REGEX.test(name)) {
+	if (INVALID_ENV_VAR_REGEX.test(name)) {
 		throw new BadRequestError(
 			`${type} names can only contain alphanumeric characters and underscores.`,
 		);

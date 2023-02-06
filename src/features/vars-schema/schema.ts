@@ -4,7 +4,8 @@ import type { JSONSchema6 } from 'json-schema';
 import {
 	BLOCKED_NAMES,
 	DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES,
-	INVALID_CHARACTER_REGEX,
+	INVALID_ENV_VAR_REGEX,
+	INVALID_CONFIG_VAR_REGEX,
 	RESERVED_NAMES,
 	RESERVED_NAMESPACES,
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
@@ -31,7 +32,8 @@ export const schema: RequestHandler = (req, res) => {
 	const varsConfig = {
 		reservedNames: RESERVED_NAMES,
 		reservedNamespaces: RESERVED_NAMESPACES,
-		invalidRegex: INVALID_CHARACTER_REGEX.toString(),
+		invalidRegex: INVALID_ENV_VAR_REGEX.toString(),
+		configVarInvalidRegex: INVALID_CONFIG_VAR_REGEX.toString(),
 		whiteListedNames: ALLOWED_NAMES,
 		whiteListedNamespaces: ALLOWED_NAMESPACES,
 		blackListedNames: BLOCKED_NAMES,
