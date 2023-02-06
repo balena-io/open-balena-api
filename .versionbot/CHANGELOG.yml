@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update engines entry to specify npm 9
+      hash: ff29850bafdfa46354eb2d3e3d7eee751b275b9e
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 7.11.0
+  title: ""
+  date: 2023-02-06T12:22:29.574Z
+- commits:
     - subject: Always apply device configuration filtering
       hash: 247296bbb64710ccae1847ca04f0621e30eceb5e
       body: >
