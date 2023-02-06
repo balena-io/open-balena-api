@@ -1,4 +1,23 @@
 - commits:
+    - subject: Add configuration variables for HDMI port 1
+      hash: 05ece50c65059bc60d3805d609fd553bbd8162de
+      body: >
+        Raspberry PI 4 has a second which can be configured adding the suffix
+
+        `:1` to configurations in config.txt. This commit enables those variables on
+
+        the API.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Relates-to: "#759"
+        relates-to: "#759"
+      author: Felipe Lalanne
+      nested: []
+  version: 7.12.0
+  title: ""
+  date: 2023-02-06T15:26:55.222Z
+- commits:
     - subject: Update engines entry to specify npm 9
       hash: ff29850bafdfa46354eb2d3e3d7eee751b275b9e
       body: ""
