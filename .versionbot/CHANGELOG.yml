@@ -1,4 +1,23 @@
 - commits:
+    - subject: Fix env-var schema for backwards compatibility
+      hash: 98c21ac4c2dc42a32ab34669139147b04442f2d0
+      body: |
+        PR #1199 relaxed the allowed character set for configuration variables,
+        but it also inadvertently relaxed the `/config/vars` JSON schema
+        exported by the API. This would cause that the UI allows the extended
+        character set for env vars, but the API would ultimately reject it,
+        creating an inconsistency. This PR adds a `configVarInvalidRegex`
+        variable to the schema that should be adopted by the UI to render
+        configuration variables.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Felipe Lalanne
+      nested: []
+  version: 7.12.1
+  title: ""
+  date: 2023-02-06T19:52:29.602Z
+- commits:
     - subject: Add configuration variables for HDMI port 1
       hash: 05ece50c65059bc60d3805d609fd553bbd8162de
       body: >
