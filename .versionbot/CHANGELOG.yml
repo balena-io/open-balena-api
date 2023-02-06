@@ -1,4 +1,21 @@
 - commits:
+    - subject: Always apply device configuration filtering
+      hash: 247296bbb64710ccae1847ca04f0621e30eceb5e
+      body: >
+        Dropping os.semver >= 2.0.0 filter for testing device configuration.
+
+        open-balena-api does not support resinOS anymore and for sure only balenaOS 2.x
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested: []
+  version: 7.10.0
+  title: ""
+  date: 2023-02-06T09:22:43.370Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v14.4.1
       hash: 2c5d49314c79802c622cdbdb84ad0ab1aad08aa8
       body: |
