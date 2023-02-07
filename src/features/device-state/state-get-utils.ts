@@ -34,7 +34,7 @@ export const getReleaseForDevice = (
 };
 
 export const serviceInstallFromImage = (
-	device: AnyObject,
+	deviceOrFleet: AnyObject,
 	image?: AnyObject,
 ): undefined | AnyObject => {
 	if (image == null) {
@@ -48,7 +48,16 @@ export const serviceInstallFromImage = (
 		id = image.is_a_build_of__service;
 	}
 
-	return _.find(device.service_install, (si) => si.service[0].id === id);
+	if ('service_install' in deviceOrFleet) {
+		return _.find(
+			deviceOrFleet.service_install,
+			(si) => si.service[0].id === id,
+		);
+	} else if ('service' in deviceOrFleet) {
+		return deviceOrFleet.service.find(
+			(fleetService: AnyObject) => fleetService.id === id,
+		);
+	}
 };
 
 export const formatImageLocation = (imageLocation: string) =>

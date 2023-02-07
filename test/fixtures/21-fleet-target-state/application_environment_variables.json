@@ -1,0 +1,8 @@
+{
+    "appEnvVar1": {
+        "user": "admin",
+        "application": "app1",
+        "name": "app1EnvVar1Name",
+        "value": "app1EnvVar1Value"
+    }
+}
