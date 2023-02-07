@@ -32,12 +32,16 @@
     "test": "npm run lint",
     "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\""
   },
+  "overrides": {
+    "@balena/abstract-sql-compiler": "8.0.0-build-affected-ids-in-rules-v1-0b5022dface6da156e6c34d2dfa95f28f3c7e8b8-2",
+    "@balena/abstract-sql-to-typescript": "^1.3.0"
+  },
   "dependencies": {
-    "@balena/abstract-sql-compiler": "^7.25.3",
+    "@balena/abstract-sql-compiler": "8.0.0-build-affected-ids-in-rules-v1-0b5022dface6da156e6c34d2dfa95f28f3c7e8b8-2",
     "@balena/env-parsing": "^1.1.5",
     "@balena/es-version": "^1.0.2",
     "@balena/node-metrics-gatherer": "^6.0.3",
-    "@balena/pinejs": "^14.59.1",
+    "@balena/pinejs": "14.62.0-build-affected-ids-in-rules-4506ae6726eb22d666c809fe1db4a573a29bf22d-1",
     "@sentry/node": "^7.34.0",
     "@types/basic-auth": "^1.1.3",
     "@types/bluebird": "^3.5.38",
