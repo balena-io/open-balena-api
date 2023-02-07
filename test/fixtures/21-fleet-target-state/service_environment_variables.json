@@ -1,0 +1,14 @@
+{
+    "svc1EnvVar": {
+        "user": "admin",
+        "service": "app1_service1",
+        "name": "app1Svc1EnvVar1Name",
+        "value": "app1Svc1EnvVar1Value"
+    },
+    "svc2EnvVar": {
+        "user": "admin",
+        "service": "app1_service2",
+        "name": "app1Svc2EnvVar1Name",
+        "value": "app1Svc2EnvVar1Value"
+    }
+}
