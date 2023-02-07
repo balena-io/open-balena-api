@@ -1,4 +1,19 @@
 - commits:
+    - subject: Default fleet state compatible to device state v3
+      hash: a5dbc4feb6b8c65c877639d460cf84054b5117cb
+      body: |
+        resolves #1071
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested: []
+  version: 7.13.0
+  title: ""
+  date: 2023-02-07T13:34:48.035Z
+- commits:
     - subject: Fix env-var schema for backwards compatibility
       hash: 98c21ac4c2dc42a32ab34669139147b04442f2d0
       body: |
