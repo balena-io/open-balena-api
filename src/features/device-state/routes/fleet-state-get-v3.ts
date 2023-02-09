@@ -157,8 +157,13 @@ const getFleetStateV3 = async (
 
 export const fleetStateV3: RequestHandler = async (req, res) => {
 	const { fleetUuid } = req.params;
-	const { releaseUuid } = req.body;
+	const { releaseUuid } = req.query;
+
 	if (!fleetUuid) {
+		return res.status(400).end();
+	}
+
+	if (releaseUuid && typeof releaseUuid !== 'string') {
 		return res.status(400).end();
 	}
 

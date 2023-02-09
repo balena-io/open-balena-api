@@ -83,8 +83,7 @@ const checkServiceProperties = (
 
 			it(`should fail to get a state for an unknown releaseUuid parameter`, async () => {
 				await supertest(admin)
-					.get(fleetStateEndpoint)
-					.send({ releaseUuid: 'AABBAABB' })
+					.get(`${fleetStateEndpoint}?releaseUuid=AABBAABB`)
 					.expect(401);
 			});
 
@@ -96,9 +95,11 @@ const checkServiceProperties = (
 				] as const
 			).forEach(async (testReleaseKey) => {
 				it(`with releaseUuid parameter for ${testReleaseKey}`, async () => {
+					const releaseUuidQueryParam = releases[testReleaseKey]?.commit
+						? `?releaseUuid=${releases[testReleaseKey]?.commit}`
+						: '';
 					const fleetRes = await supertest(admin)
-						.get(fleetStateEndpoint)
-						.send({ releaseUuid: releases[testReleaseKey]?.commit })
+						.get(`${fleetStateEndpoint}${releaseUuidQueryParam}`)
 						.expect(200);
 
 					const release = releases[testReleaseKey] ?? releases.release1;
