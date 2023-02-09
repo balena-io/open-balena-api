@@ -1,4 +1,18 @@
 - commits:
+    - subject: Fixes fleet default state releaseUuid query parameter
+      hash: 9dc665a87a593d3976deb218969618353f56eca1
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested: []
+  version: 7.13.1
+  title: ""
+  date: 2023-02-09T21:12:52.265Z
+- commits:
     - subject: Default fleet state compatible to device state v3
       hash: a5dbc4feb6b8c65c877639d460cf84054b5117cb
       body: |
