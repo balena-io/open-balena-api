@@ -1,4 +1,18 @@
 - commits:
+    - subject: Allow public applications be of a legacy application type
+      hash: e551f06a42ddbcb712e157418e2f22b67d46f87c
+      body: |
+        Moving this to bC to make grandfathering
+        application types easier.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 7.13.2
+  title: ""
+  date: 2023-02-10T22:50:18.585Z
+- commits:
     - subject: Fixes fleet default state releaseUuid query parameter
       hash: 9dc665a87a593d3976deb218969618353f56eca1
       body: ""
