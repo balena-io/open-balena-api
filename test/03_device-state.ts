@@ -558,6 +558,10 @@ mockery.registerMock('../src/lib/config', configMock);
 				stateVersion,
 			);
 
+			// manually force cpu_id toLowerCase before expecting the value
+			devicePatchBody[stateKey].cpu_id =
+				devicePatchBody[stateKey].cpu_id.toLowerCase();
+
 			const expectedData =
 				stateVersion === 'v2'
 					? _.mapKeys(devicePatchBody[stateKey], (_v, key) =>
