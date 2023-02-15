@@ -67,17 +67,17 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			request.custom.movedDevices = devices.map((device) => device.id);
 		}
 	},
-	POSTRUN: async (args) => {
-		if (args.request.values.belongs_to__application != null) {
+	POSTRUN: async ({ request, api }) => {
+		if (request.values.belongs_to__application != null) {
 			// Also mark all image installs of moved devices as deleted because
 			// they're for the previous application.
-			const { movedDevices } = args.request.custom;
+			const { movedDevices } = request.custom;
 			if (movedDevices != null && movedDevices.length > 0) {
 				const body = {
 					status: 'deleted',
 					download_progress: null,
 				};
-				await args.api.patch({
+				await api.patch({
 					resource: 'image_install',
 					body,
 					options: {

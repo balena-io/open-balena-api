@@ -28,8 +28,7 @@ hooks.addPureHook('POST', 'resin', 'application', {
 });
 
 hooks.addPureHook('PATCH', 'resin', 'application', {
-	POSTRUN: async (args) => {
-		const { request, api, tx } = args;
+	POSTRUN: async ({ request, api, tx }) => {
 		const ids = request.affectedIds!;
 		if (ids.length === 0) {
 			return;
@@ -81,8 +80,7 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 });
 
 hooks.addPureHook('PATCH', 'resin', 'organization', {
-	POSTRUN: async (args) => {
-		const { request, api, tx } = args;
+	POSTRUN: async ({ request, api, tx }) => {
 		const orgIds = request.affectedIds!;
 		if (orgIds.length === 0) {
 			return;
