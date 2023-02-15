@@ -1,4 +1,19 @@
 - commits:
+    - subject: Fix cpu_id reported either in lower / upper case
+      hash: 76f7339ab7b549d60db9fb5e42415681fba85445
+      body: |
+        Force cpu_id to lower case
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: fisehara <harald@balena.io>
+        signed-off-by: fisehara <harald@balena.io>
+      author: fisehara
+      nested: []
+  version: 7.13.3
+  title: ""
+  date: 2023-02-15T12:53:00.732Z
+- commits:
     - subject: Allow public applications be of a legacy application type
       hash: e551f06a42ddbcb712e157418e2f22b67d46f87c
       body: |
