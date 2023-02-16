@@ -98,29 +98,35 @@ describe('device log', () => {
 	});
 
 	// Reading Logs
+	(
+		[
+			['users to read device logs with a JWT', () => ctx.user],
+			['devices to read their device logs', () => ctx.device.apiKey],
+		] as const
+	).forEach(([description, getAuth]) => {
+		it(`should allow ${description}`, async () => {
+			const res = await supertest(getAuth())
+				.get(`/device/v2/${ctx.device.uuid}/logs`)
+				.expect(200);
 
-	it('should allow users to read device logs with a JWT', async () => {
-		const res = await supertest(ctx.user)
-			.get(`/device/v2/${ctx.device.uuid}/logs`)
-			.expect(200);
-
-		expect(res.body).to.have.lengthOf(6);
-		let lastTs = 0;
-		(res.body as AnyObject[]).forEach((log, index) => {
-			expect(log).to.have.property('message').that.equals('a log line');
-			expect(log).to.have.property('isStdErr').that.equals(true);
-			expect(log).to.have.property('isSystem').that.equals(true);
-			expect(log).to.have.property('timestamp').that.is.a('number');
-			expect(log).to.have.property('createdAt').that.is.a('number');
-			// Validate they are sorted chronologically
-			expect(log.createdAt).to.be.gte(lastTs);
-			lastTs = log.createdAt;
-			// The 4th is a service log and should have the correct serviceId
-			if (index === 3) {
-				expect(log).to.have.property('serviceId').that.equals(10);
-			} else {
-				expect(log).not.to.have.property('serviceId');
-			}
+			expect(res.body).to.have.lengthOf(6);
+			let lastTs = 0;
+			(res.body as AnyObject[]).forEach((log, index) => {
+				expect(log).to.have.property('message').that.equals('a log line');
+				expect(log).to.have.property('isStdErr').that.equals(true);
+				expect(log).to.have.property('isSystem').that.equals(true);
+				expect(log).to.have.property('timestamp').that.is.a('number');
+				expect(log).to.have.property('createdAt').that.is.a('number');
+				// Validate they are sorted chronologically
+				expect(log.createdAt).to.be.gte(lastTs);
+				lastTs = log.createdAt;
+				// The 4th is a service log and should have the correct serviceId
+				if (index === 3) {
+					expect(log).to.have.property('serviceId').that.equals(10);
+				} else {
+					expect(log).not.to.have.property('serviceId');
+				}
+			});
 		});
 	});
 

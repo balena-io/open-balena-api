@@ -28,7 +28,7 @@ export const setup = (
 ) => {
 	app.get(
 		'/device/v2/:uuid/logs',
-		middleware.fullyAuthenticatedUser,
+		middleware.authenticated,
 		read(onLogReadStreamInitialized),
 	);
 	app.post(
