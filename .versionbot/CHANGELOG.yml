@@ -1,4 +1,18 @@
 - commits:
+    - subject: Update pine with root narrowing
+      hash: 57d6438d8c280ef224b9920153bc312b66b1e169
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Carol Schulze <carol@balena.io>
+        signed-off-by: Carol Schulze <carol@balena.io>
+      author: Carol Schulze
+      nested: []
+  version: 7.14.0
+  title: ""
+  date: 2023-02-20T17:54:53.445Z
+- commits:
     - subject: Destructure hook args in the fn definition where possible
       hash: 691b778a781880de5cc8cda4c188e1cf3525c631
       body: ""
