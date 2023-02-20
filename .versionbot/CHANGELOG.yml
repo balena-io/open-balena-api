@@ -1,4 +1,854 @@
 - commits:
+    - subject: Destructure hook args in the fn definition where possible
+      hash: 691b778a781880de5cc8cda4c188e1cf3525c631
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.13.4
+  title: ""
+  date: 2023-02-15T14:59:35.285Z
+- commits:
+    - subject: Fix cpu_id reported either in lower / upper case
+      hash: 76f7339ab7b549d60db9fb5e42415681fba85445
+      body: |
+        Force cpu_id to lower case
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: fisehara <harald@balena.io>
+        signed-off-by: fisehara <harald@balena.io>
+      author: fisehara
+      nested: []
+  version: 7.13.3
+  title: ""
+  date: 2023-02-15T12:53:00.732Z
+- commits:
+    - subject: Allow public applications be of a legacy application type
+      hash: e551f06a42ddbcb712e157418e2f22b67d46f87c
+      body: |
+        Moving this to bC to make grandfathering
+        application types easier.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 7.13.2
+  title: ""
+  date: 2023-02-10T22:50:18.585Z
+- commits:
+    - subject: Fixes fleet default state releaseUuid query parameter
+      hash: 9dc665a87a593d3976deb218969618353f56eca1
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested: []
+  version: 7.13.1
+  title: ""
+  date: 2023-02-09T21:12:52.265Z
+- commits:
+    - subject: Default fleet state compatible to device state v3
+      hash: a5dbc4feb6b8c65c877639d460cf84054b5117cb
+      body: |
+        resolves #1071
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested: []
+  version: 7.13.0
+  title: ""
+  date: 2023-02-07T13:34:48.035Z
+- commits:
+    - subject: Fix env-var schema for backwards compatibility
+      hash: 98c21ac4c2dc42a32ab34669139147b04442f2d0
+      body: |
+        PR #1199 relaxed the allowed character set for configuration variables,
+        but it also inadvertently relaxed the `/config/vars` JSON schema
+        exported by the API. This would cause that the UI allows the extended
+        character set for env vars, but the API would ultimately reject it,
+        creating an inconsistency. This PR adds a `configVarInvalidRegex`
+        variable to the schema that should be adopted by the UI to render
+        configuration variables.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Felipe Lalanne
+      nested: []
+  version: 7.12.1
+  title: ""
+  date: 2023-02-06T19:52:29.602Z
+- commits:
+    - subject: Add configuration variables for HDMI port 1
+      hash: 05ece50c65059bc60d3805d609fd553bbd8162de
+      body: >
+        Raspberry PI 4 has a second which can be configured adding the suffix
+
+        `:1` to configurations in config.txt. This commit enables those variables on
+
+        the API.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Relates-to: "#759"
+        relates-to: "#759"
+      author: Felipe Lalanne
+      nested: []
+  version: 7.12.0
+  title: ""
+  date: 2023-02-06T15:26:55.222Z
+- commits:
+    - subject: Update engines entry to specify npm 9
+      hash: ff29850bafdfa46354eb2d3e3d7eee751b275b9e
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 7.11.0
+  title: ""
+  date: 2023-02-06T12:22:29.574Z
+- commits:
+    - subject: Always apply device configuration filtering
+      hash: 247296bbb64710ccae1847ca04f0621e30eceb5e
+      body: >
+        Dropping os.semver >= 2.0.0 filter for testing device configuration.
+
+        open-balena-api does not support resinOS anymore and for sure only balenaOS 2.x
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested: []
+  version: 7.10.0
+  title: ""
+  date: 2023-02-06T09:22:43.370Z
+- commits:
+    - subject: Update balena/open-balena-base Docker tag to v14.4.1
+      hash: 2c5d49314c79802c622cdbdb84ad0ab1aad08aa8
+      body: |
+        Update balena/open-balena-base to 14.4.1
+
+        Update balena/open-balena-base from 14.2.0 to 14.4.1
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Resolve some apt warnings by adding protection flags
+              hash: e2209f980026ad64548587f35ddc5e0e2e102ad1
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+            - subject: Clear the npm cache manually before running cache clear
+              hash: 21ba9cdef0659106d034b04ac051400f7c043439
+              body: |
+                On emulated builds like arm64 the cache clear command
+                can fail and this seems to unblock it.
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-14.4.1
+          title: ""
+          date: 2023-02-03T22:36:31.788Z
+        - commits:
+            - subject: Update nodejs to 18.14.0 and npm to 9.4.1
+              hash: 8f8ff1c68b4d1973f3e6c03e4ac4b5ab8ee70592
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-14.4.0
+          title: ""
+          date: 2023-02-03T17:34:44.201Z
+        - commits:
+            - subject: Update dependency node to 18.14.0
+              hash: 94316b8e029eaf1a15ec303b5e6887261971c4a3
+              body: |
+                Update node to 18.14.0
+
+                Update node from 18.13.0 to 18.14.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.3.0
+          title: ""
+          date: 2023-02-02T20:01:11.681Z
+  version: 7.9.0
+  title: ""
+  date: 2023-02-04T00:00:32.484Z
+- commits:
+    - subject: Listen for the correct message type when using sharded pub/sub
+      hash: c8cfeb2b5e502d7c326b479b7acfa4ada02bd60e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.8.3
+  title: ""
+  date: 2023-02-03T12:05:32.870Z
+- commits:
+    - subject: Remove missed no longer needed Writable cast
+      hash: cfe69cc35dc2ab29e5568c83bddf29ace83ee1cf
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 7.8.2
+  title: ""
+  date: 2023-02-02T16:33:35.231Z
+- commits:
+    - subject: Change auth.findUser to accept non-readonly arrays of user fiels
+      hash: 3bebc95e567b53c793c5dcd9f8027d30c88da455
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Reduce "as Writable" casts with "satisfies"
+      hash: fa723e4ca3ab332e99c1b6ae400cebd5b7c4b520
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 7.8.1
+  title: ""
+  date: 2023-02-02T16:19:22.937Z
+- commits:
+    - subject: Add support for sharded pub/sub for redis device logs
+      hash: 100a4d8ccefe6f6c555a908272a46a04f273e8a6
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 7.8.0
+  title: ""
+  date: 2023-02-02T15:49:35.499Z
+- commits:
+    - subject: Fix typo
+      hash: 615b8711bcc8d57fcfa357b70550e0536eb2b9cf
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.7.5
+  title: ""
+  date: 2023-02-02T14:37:15.358Z
+- commits:
+    - subject: Allow state patches with no user app releases
+      hash: 51590a9696c4a291192484c5bc6c74646bbcf4db
+      body: |
+        This fixes a bug in v3 state patch which would prevent a state patch
+        updating information for services coming from the supervisor app when
+        there is no releases yet for the user app.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Felipe Lalanne
+      nested: []
+  version: 7.7.4
+  title: ""
+  date: 2023-02-02T14:16:27.896Z
+- commits:
+    - subject: Update grafana/loki Docker tag to v2.7.3
+      hash: d6666e3408be3ca26b91ba6bcdf213daed2c8a54
+      body: |
+        Update grafana/loki to 2.7.3
+
+        Update grafana/loki from 2.7.2 to 2.7.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 7.7.3
+  title: ""
+  date: 2023-02-01T11:09:38.312Z
+- commits:
+    - subject: Update dependencies
+      hash: ee0dbd5115fab874a259fcb1ee9a6fa801dbac09
+      body: |
+        Update @balena/pinejs from 14.57.2 to 14.59.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Remove duplicate stack trace logging
+              hash: 9399925c01dc42e5426d69e3843a63ed142795a7
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.59.1
+          title: ""
+          date: 2023-01-26T12:06:17.588Z
+        - commits:
+            - subject: Introduce control means for async migration execution
+              hash: a034b8ff3168284785b0d776954b16782b0f9a87
+              body: >
+                Introduce env var PINEJS_ASYNC_MIGRATION_ENABLED to control async
+                migration execution on startup.
+
+
+                Test with SIGUSR2 listener to toggle migration execution during runtime.
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: fisehara <harald@balena.io>
+                signed-off-by: fisehara <harald@balena.io>
+              author: fisehara
+              nested: []
+          version: pinejs-14.59.0
+          title: ""
+          date: 2023-01-25T15:05:10.001Z
+        - commits:
+            - subject: "chore(deps): update node.js to v19"
+              hash: 6b85dd0063669e7db4432bdb650927d05ef9f9c4
+              body: |
+                Update node to 19
+
+                Update node from 16 to 19
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: pinejs-14.58.0
+          title: ""
+          date: 2023-01-25T10:18:49.492Z
+  version: 7.7.2
+  title: ""
+  date: 2023-01-30T13:51:05.035Z
+- commits:
+    - subject: Update grafana/loki Docker tag to v2.7.2
+      hash: 90902f2e3d000b5a23683ab7c5e226f6decc3b1a
+      body: |
+        Update grafana/loki to 2.7.2
+
+        Update grafana/loki from 2.7.1 to 2.7.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested: []
+  version: 7.7.1
+  title: ""
+  date: 2023-01-26T15:08:07.896Z
+- commits:
+    - subject: Update npm to 9.4.0
+      hash: 4591b930ea164e4860166866bcab77e0434ea038
+      body: |
+        Update npm to 9.4.0
+
+        Update npm from 8.19.3 to 9.4.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested: []
+  version: 7.7.0
+  title: ""
+  date: 2023-01-25T23:37:50.036Z
+- commits:
+    - subject: Update dependencies
+      hash: 214c71eb4eb7a00a6695a7cbf72bbea662732959
+      body: |
+        Update @balena/pinejs from 14.54.7 to 14.57.2
+        Update @balena/abstract-sql-compiler from 7.24.0 to 7.25.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested:
+        - commits:
+            - subject: "db: Make the base getTxLevelLock blocking by default"
+              hash: 2aeef9f48b33892455779eab866cfc10988ab226
+              body: |
+                Otherwise users would get a  TS error after
+                updating.
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Thodoris Greasidis
+              nested: []
+          version: pinejs-14.57.2
+          title: ""
+          date: 2023-01-25T09:56:48.633Z
+        - commits:
+            - subject: Update @balena/abstract-sql-compiler to 7.25.3
+              hash: cba15cec2c99356371180feaf5dadf1601f3fe61
+              body: |
+                Update @balena/abstract-sql-compiler from 7.25.0 to 7.25.3
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Thodoris Greasidis
+              nested:
+                - commits:
+                    - subject: Wrap Date & Duration operations with parenthesis when necessary
+                      hash: 4d05dbf6d86bbc95b323e3571633e22c625a114d
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Thodoris Greasidis
+                      nested: []
+                    - subject: Wrap composite math operations with parenthesis when necessary
+                      hash: ab7d6b73808affbf8316f816b9e968e58e83d733
+                      body: ""
+                      footer:
+                        Resolves: "#184"
+                        resolves: "#184"
+                        Change-type: patch
+                        change-type: patch
+                      author: Thodoris Greasidis
+                      nested: []
+                  version: abstract-sql-compiler-7.25.3
+                  title: ""
+                  date: 2023-01-24T16:19:22.753Z
+                - commits:
+                    - subject: "Tests: update @balena/odata-to-abstract-sql to 5.8"
+                      hash: ade93b12c14a0a9c833845a9feb79f2feb4b6844
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Thodoris Greasidis
+                      nested: []
+                  version: abstract-sql-compiler-7.25.2
+                  title: ""
+                  date: 2023-01-24T07:18:49.086Z
+                - commits:
+                    - subject: Change AggregateJSON to use `JSON_AGG` instead of
+                        `ARRAY_TO_JSON`+`ARRAY_AGG`
+                      hash: 360bbd95352d96be7ec0ce83521cd6e155b7da88
+                      body: >
+                        This increases the minimum postgres version for AggregateJSON from 9.2
+
+                        to 9.3 but it is likely that other places already require postgres
+
+                        >=9.3 and as such this should not increase the minimum version at all.
+
+                        If it does somehow manage to then increasing the minimum from a 2012
+
+                        postgres to 2013 should still be fine
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-7.25.1
+                  title: ""
+                  date: 2023-01-23T19:03:56.421Z
+          version: pinejs-14.57.1
+          title: ""
+          date: 2023-01-25T09:08:04.726Z
+        - commits:
+            - subject: Use postgres advisory locks for migration locking.
+              hash: b59c18865e5964d40bb31cc369eee33658f4e990
+              body: |
+                Avoid starvation of sync migrations while
+                aggressive async migrations take the model lock
+                over and over again.
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-14.57.0
+          title: ""
+          date: 2023-01-24T16:21:38.099Z
+        - commits:
+            - subject: Update dependency @types/node to 18.11.18
+              hash: 0997dacb598c5fdab904b9918a11f003d92a3f59
+              body: |
+                Update @types/node to 18.11.18
+
+                Update @types/node from 12.20.55 to 18.11.18
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: pinejs-14.56.0
+          title: ""
+          date: 2023-01-23T20:17:22.573Z
+        - commits:
+            - subject: Update dependency commander to 10.0.0
+              hash: 80989852ab6759e074f842a61fd1d72c951108e8
+              body: |
+                Update commander to 10.0.0
+
+                Update commander from 9.5.0 to 10.0.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: pinejs-14.55.0
+          title: ""
+          date: 2023-01-23T19:13:03.471Z
+        - commits:
+            - subject: Update dependencies
+              hash: e174ca518bce3890988a964b8f267784710c5197
+              body: |
+                Update @balena/abstract-sql-compiler from 7.23.0 to 7.25.0
+                Update @balena/lf-to-abstract-sql from 4.6.0 to 4.7.0
+                Update @balena/odata-to-abstract-sql from 5.7.2 to 5.8.0
+                Update pinejs-client-core from 6.12.2 to 6.12.3
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Add `modifyFields`/`modifyName` to table definition
+                      hash: 174c07b3923bb41fe50b413829b4268c1b28172e
+                      body: >
+                        This is intended to be used to target tables differently for reads vs
+
+                        writes, eg where you might read from a view/definition but want to
+
+                        write to a physical table instead
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-7.25.0
+                  title: ""
+                  date: 2023-01-23T17:39:22.841Z
+                - commits:
+                    - subject: Add the AbstractSql node `Any`
+                      hash: ebc43d8139624a95f08b18ee290e89bb425a791a
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                        Signed-off-by: Carol Schulze <carol@balena.io>
+                        signed-off-by: Carol Schulze <carol@balena.io>
+                      author: Carol Schulze
+                      nested: []
+                  version: abstract-sql-compiler-7.24.0
+                  title: ""
+                  date: 2023-01-16T14:40:50.608Z
+                - commits:
+                    - subject: Empty commit to force a new version to be generated
+                      hash: 41bc55fa9af394d8c2294c243839d472c1ed92c6
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                        Signed-off-by: Carol Schulze <carol@balena.io>
+                        signed-off-by: Carol Schulze <carol@balena.io>
+                      author: Carol Schulze
+                      nested: []
+                    - subject: Add an `lfInfo` entry in the results object
+                      hash: 167680ba65e73235307370c3e211a211a14a1acc
+                      body: >
+                        `lfInfo` will be used to pass extra context extracted from LF
+
+                        downstream. Currently the only context is the root table alias for each
+
+                        rule.
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                        Signed-off-by: Carol Schulze <carol@balena.io>
+                        signed-off-by: Carol Schulze <carol@balena.io>
+                      author: Carol Schulze
+                      nested: []
+                  version: lf-to-abstract-sql-4.7.0
+                  title: ""
+                  date: 2022-12-14T12:09:57.887Z
+                - commits:
+                    - subject: Respect `modifyFields`/`modifyName` in the table definition
+                      hash: af5233c9c312ab23fbe6fa7bbcc20f5007c80dc2
+                      body: >
+                        This is intended to be used to target tables differently for reads vs
+
+                        writes, eg where you might read from a view/definition but want to
+
+                        write to a physical table instead
+
+
+                        Update @balena/abstract-sql-compiler from 7.22.0 to 7.25.0
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested:
+                        - commits:
+                            - subject: Add `modifyFields`/`modifyName` to table definition
+                              hash: 174c07b3923bb41fe50b413829b4268c1b28172e
+                              body: >
+                                This is intended to be used to target tables differently for reads vs
+
+                                writes, eg where you might read from a view/definition but want to
+
+                                write to a physical table instead
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                              author: Pagan Gazzard
+                              nested: []
+                          version: abstract-sql-compiler-7.25.0
+                          title: ""
+                          date: 2023-01-23T17:39:22.841Z
+                        - commits:
+                            - subject: Add the AbstractSql node `Any`
+                              hash: ebc43d8139624a95f08b18ee290e89bb425a791a
+                              body: ""
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                                Signed-off-by: Carol Schulze <carol@balena.io>
+                                signed-off-by: Carol Schulze <carol@balena.io>
+                              author: Carol Schulze
+                              nested: []
+                          version: abstract-sql-compiler-7.24.0
+                          title: ""
+                          date: 2023-01-16T14:40:50.608Z
+                        - commits:
+                            - subject: Add support for rules optimizations when using COUNT(*) = 0
+                              hash: f45412c4dbec8bed287ef116b9c5f0afdc047f9f
+                              body: ""
+                              footer:
+                                Change-type: minor
+                                change-type: minor
+                              author: Pagan Gazzard
+                              nested: []
+                          version: abstract-sql-compiler-7.23.0
+                          title: ""
+                          date: 2022-12-08T15:38:24.108Z
+                        - commits:
+                            - subject: "Flowzone: Allow external contributions"
+                              hash: de26e9d6cc65ab9a03fd9e1ac6027e0df198864d
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                                Signed-off-by: Josh Bowling <josh@monarci.com>
+                                signed-off-by: Josh Bowling <josh@monarci.com>
+                              author: Josh Bowling
+                              nested: []
+                          version: abstract-sql-compiler-7.22.5
+                          title: ""
+                          date: 2022-12-08T01:00:02.914Z
+                        - commits:
+                            - subject: "Fix: move @balena/odata-to-abstract-sql to dev dependencies"
+                              hash: a5bd2c11c4e6f04a98c7784601a0d0e36ca7f6a2
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: abstract-sql-compiler-7.22.4
+                          title: ""
+                          date: 2022-11-30T16:23:35.142Z
+                        - commits:
+                            - subject: "Tests: update @balena/odata-to-abstract-sql to 5.x"
+                              hash: e93dfd1cbf56a9df248ac199776dca44c71cbc11
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: abstract-sql-compiler-7.22.3
+                          title: ""
+                          date: 2022-11-30T16:17:30.183Z
+                        - commits:
+                            - subject: Fix deprecation notice module name
+                              hash: 7272a823a00ffd6af52228f2cab4c95e3b3474b9
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: abstract-sql-compiler-7.22.2
+                          title: ""
+                          date: 2022-11-30T16:12:20.310Z
+                        - commits:
+                            - subject: Add deprecation notices to the legacy null formats of `null` and
+                                `'Null'`
+                              hash: d4a8a31911b80c4c8ad46e5b6567496c232fad9b
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                            - subject: Add deprecation notice to the legacy table format of `tableName`
+                              hash: c0847bf375bb40bae0141aab5e09f97a844f69c7
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                            - subject: Add deprecation notice to the legacy alias format of `[node, alias]`
+                              hash: 75e04d107ad1d1ddd7f8e33fa53c3a70c46a35ac
+                              body: ""
+                              footer:
+                                Change-type: patch
+                                change-type: patch
+                              author: Pagan Gazzard
+                              nested: []
+                          version: abstract-sql-compiler-7.22.1
+                          title: ""
+                          date: 2022-11-29T18:49:06.598Z
+                  version: odata-to-abstract-sql-5.8.0
+                  title: ""
+                  date: 2023-01-23T18:27:50.934Z
+                - commits:
+                    - subject: Always replace the table being modified in definitions, ignoring
+                        aliases
+                      hash: 253fdae228cf1edd5e9137819b1bbe783c0e72b0
+                      body: >
+                        This avoids issues where the aliases may not map up, particularly if
+
+                        the definition was generated and may have automatic aliases, eg if
+
+                        using the result of an odata-to-abstract-sql generation
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: odata-to-abstract-sql-5.7.7
+                  title: ""
+                  date: 2023-01-23T15:42:11.369Z
+                - commits:
+                    - subject: Integrate beta version of sbvr-types supporting WebResource
+                      hash: 8940999f5f3dda0f0f04012a6d0508c4a1028b94
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                        Signed-off-by: Ramiro Gonzalez <ramiro.gonzalez@balena.io>
+                        signed-off-by: Ramiro Gonzalez <ramiro.gonzalez@balena.io>
+                      author: Ramiro González Maciel
+                      nested: []
+                  version: odata-to-abstract-sql-5.7.6
+                  title: ""
+                  date: 2023-01-20T17:34:18.887Z
+                - commits:
+                    - subject: Integrate beta version of sbvr-types supporting WebResource
+                      hash: 2d045ee23367146eb53d9c1a8ea5c0bd6bde2abc
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                        Signed-off-by: Ramiro Gonzalez <ramiro.gonzalez@balena.io>
+                        signed-off-by: Ramiro Gonzalez <ramiro.gonzalez@balena.io>
+                      author: Ramiro González Maciel
+                      nested: []
+                  version: odata-to-abstract-sql-5.7.5
+                  title: ""
+                  date: 2023-01-16T14:51:23.427Z
+                - commits:
+                    - subject: "Tests: reduce lodash usage"
+                      hash: 99e3f4f2b3c67bac49c09a695f02070a9dd133ce
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: odata-to-abstract-sql-5.7.4
+                  title: ""
+                  date: 2023-01-10T17:12:08.376Z
+                - commits:
+                    - subject: "Flowzone: Allow external contributions"
+                      hash: 74dc9ac5c833d6bfe31de9500cc4692052179090
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                        Signed-off-by: Josh Bowling <josh@monarci.com>
+                        signed-off-by: Josh Bowling <josh@monarci.com>
+                      author: Josh Bowling
+                      nested: []
+                  version: odata-to-abstract-sql-5.7.3
+                  title: ""
+                  date: 2022-12-08T01:10:24.930Z
+                - commits:
+                    - subject: "CI: Convert tests to TypeScript"
+                      hash: 683efba924728fc57cbb9a43b7b65f124903661e
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Josh Bowling
+                      nested: []
+                  version: pinejs-client-js-6.12.3
+                  title: ""
+                  date: 2022-12-28T09:32:01.282Z
+          version: pinejs-14.54.8
+          title: ""
+          date: 2023-01-23T18:49:55.840Z
+  version: 7.6.1
+  title: ""
+  date: 2023-01-25T10:09:01.919Z
+- commits:
+    - subject: Add a re-usable ThisShouldNeverHappenError helper
+      hash: 3d35b95532ce249d5da0e6e0c98408b508cb730b
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 7.6.0
+  title: ""
+  date: 2023-01-25T09:27:36.188Z
+- commits:
     - subject: Use `authenticatedApiKey` middleware for device logs endpoints
       hash: 2dd297e466d286dfdcf16c896d6d4db10279601c
       body: ""

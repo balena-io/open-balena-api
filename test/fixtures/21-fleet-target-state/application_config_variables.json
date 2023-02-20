@@ -1,0 +1,8 @@
+{
+    "appConfVar1": {
+        "user": "admin",
+        "application": "app1",
+        "name": "RESIN_APPLICATION_CONFIG_VAR1_NAME",
+        "value": "RESIN_APPLICATION_CONFIG_VAR1_VALUE"
+    }
+}

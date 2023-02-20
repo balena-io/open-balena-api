@@ -127,33 +127,33 @@ const loaders: Dictionary<LoaderFunc> = {
 			user,
 		});
 	},
-	organizations: async (jsonData) => {
-		return await api.resin.post({
-			resource: 'organization',
-			passthrough: { req: permissions.root },
-			body: jsonData,
-		});
-	},
-	service_environment_variables: async (jsonData, fixtures) => {
+	application_config_variables: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.user];
 		if (user == null) {
 			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
 		}
 
-		const service = await fixtures.services[jsonData.service];
-		if (service == null) {
-			logErrorAndThrow(`Could not find service: ${jsonData.service}`);
+		const application = await fixtures.applications[jsonData.application];
+		if (application == null) {
+			logErrorAndThrow(`Could not find application: ${jsonData.application}`);
 		}
 
 		const body = _.pick(jsonData, 'name', 'value');
 
 		return await createResource({
-			resource: 'service_environment_variable',
+			resource: 'application_config_variable',
 			body: {
 				...body,
-				service: service.id,
+				application: application.id,
 			},
 			user,
+		});
+	},
+	organizations: async (jsonData) => {
+		return await api.resin.post({
+			resource: 'organization',
+			passthrough: { req: permissions.root },
+			body: jsonData,
 		});
 	},
 	releases: async (jsonData, fixtures) => {
@@ -180,6 +180,11 @@ const loaders: Dictionary<LoaderFunc> = {
 					} to wait for.`,
 				);
 			}
+		}
+
+		// helper to define a release create order - for application track latest feature.
+		if (jsonData.createAfterRelease) {
+			await fixtures.releases[jsonData.createAfterRelease];
 		}
 
 		const release = await createResource({
@@ -213,7 +218,6 @@ const loaders: Dictionary<LoaderFunc> = {
 				`Fixture loader failed to properly set revision ${jsonData.revision} to release with semver ${jsonData.semver}`,
 			);
 		}
-
 		return release;
 	},
 	release_tags: async (jsonData, fixtures) => {
@@ -242,7 +246,9 @@ const loaders: Dictionary<LoaderFunc> = {
 			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
 		}
 
-		for (const r of jsonData.releases) {
+		let createdImages = {};
+
+		for await (const r of jsonData.releases) {
 			const release = await fixtures.releases[r];
 			if (release == null) {
 				logErrorAndThrow(`Could not find release: ${r}`);
@@ -280,7 +286,7 @@ const loaders: Dictionary<LoaderFunc> = {
 				user,
 			});
 
-			await createResource({
+			const ipr = await createResource({
 				resource: 'image__is_part_of__release',
 				body: {
 					image: newImage.id,
@@ -288,9 +294,60 @@ const loaders: Dictionary<LoaderFunc> = {
 				},
 				user,
 			});
-
-			return newImage;
+			newImage.image__is_part_of__release = ipr;
+			createdImages = { createdImages, ...newImage };
 		}
+		return createdImages;
+	},
+	image_environment_variables: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const image = await fixtures.images[jsonData.image];
+		if (image == null) {
+			logErrorAndThrow(`Could not find image: ${jsonData.image}`);
+		}
+
+		const body = _.pick(jsonData, 'name', 'value');
+		const iev = await createResource({
+			resource: 'image_environment_variable',
+			body: {
+				...body,
+				release_image: image.image__is_part_of__release.id,
+			},
+			user,
+		});
+
+		return { ...iev, ...{ release_image: image.image__is_part_of__release } };
+	},
+	image_labels: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const image = await fixtures.images[jsonData.image];
+		if (image == null) {
+			logErrorAndThrow(`Could not find image: ${jsonData.image}`);
+		}
+
+		const body = _.pick(jsonData, 'label_name', 'value');
+
+		const imageLabel = await createResource({
+			resource: 'image_label',
+			body: {
+				...body,
+				release_image: image.image__is_part_of__release.id,
+			},
+			user,
+		});
+
+		return {
+			...imageLabel,
+			...{ release_image: image.image__is_part_of__release },
+		};
 	},
 	services: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.user];
@@ -310,6 +367,50 @@ const loaders: Dictionary<LoaderFunc> = {
 			body: {
 				...body,
 				application: application.id,
+			},
+			user,
+		});
+	},
+	service_environment_variables: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const service = await fixtures.services[jsonData.service];
+		if (service == null) {
+			logErrorAndThrow(`Could not find service: ${jsonData.service}`);
+		}
+
+		const body = _.pick(jsonData, 'name', 'value');
+
+		return await createResource({
+			resource: 'service_environment_variable',
+			body: {
+				...body,
+				service: service.id,
+			},
+			user,
+		});
+	},
+	service_labels: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const service = await fixtures.services[jsonData.service];
+		if (service == null) {
+			logErrorAndThrow(`Could not find service: ${jsonData.service}`);
+		}
+
+		const body = _.pick(jsonData, 'label_name', 'value');
+
+		return await createResource({
+			resource: 'service_label',
+			body: {
+				...body,
+				service: service.id,
 			},
 			user,
 		});

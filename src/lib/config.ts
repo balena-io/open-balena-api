@@ -206,6 +206,10 @@ export const REDIS = {
 	general: generalRedis,
 	logs: redisOpts('REDIS_LOGS', [generalRedis.host], generalRedis.isCluster),
 };
+export const REDIS_LOGS_SHARDED_PUBSUB = boolVar(
+	'REDIS_LOGS_SHARDED_PUBSUB',
+	false,
+);
 export const LOKI_HOST = optionalVar('LOKI_HOST');
 export const LOKI_PORT = intVar('LOKI_PORT', 9095);
 // control the percent of logs written to Loki while scaling up

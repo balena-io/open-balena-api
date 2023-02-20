@@ -300,11 +300,13 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 
 				if (apps != null) {
 					const userAppUuid = device.belongs_to__application[0].uuid;
-					const release = releasesByAppUuid[userAppUuid].find(
-						(r) => r.commit === apps[userAppUuid].release_uuid,
-					);
-					if (release) {
-						deviceBody.is_running__release = release.id;
+					if (releasesByAppUuid[userAppUuid] != null) {
+						const release = releasesByAppUuid[userAppUuid].find(
+							(r) => r.commit === apps[userAppUuid].release_uuid,
+						);
+						if (release) {
+							deviceBody.is_running__release = release.id;
+						}
 					}
 				}
 
@@ -315,6 +317,9 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 					deviceBody = truncateShortTextFields(deviceBody);
 					// If we're updating anyway then ensure the metrics data is included
 					deviceBody = { ...deviceBody, ...metricsBody };
+					if (deviceBody.cpu_id != null) {
+						deviceBody.cpu_id = deviceBody.cpu_id.toLowerCase();
+					}
 					updateFns.push(async (resinApiTx) => {
 						await resinApiTx.patch({
 							resource: 'device',

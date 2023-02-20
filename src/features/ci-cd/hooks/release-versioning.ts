@@ -11,7 +11,10 @@ import _ from 'lodash';
 import { ADVISORY_LOCK_NAMESPACES } from '../../../lib/config';
 import { groupByMap } from '../../../lib/utils';
 import type { PickDeferred, Release } from '../../../balena-model';
-import { captureException } from '../../../infra/error-handling';
+import {
+	captureException,
+	ThisShouldNeverHappenError,
+} from '../../../infra/error-handling';
 
 const { BadRequestError } = errors;
 
@@ -131,12 +134,9 @@ const parseReleaseVersioningFields: (args: sbvrUtils.HookArgs) => void = ({
 
 const DEFAULT_SEMVER = semverLib.parse('0.0.0');
 if (DEFAULT_SEMVER == null) {
-	// This should never happen!
-	const sentryError = new Error(
+	throw ThisShouldNeverHappenError(
 		'Error while parsing the default server object!',
 	);
-	captureException(sentryError);
-	throw sentryError;
 }
 
 const REVISION_REGEXP = /^rev(\d+)$/;

@@ -149,7 +149,7 @@ export const userFields = [
 	'email',
 	'created_at',
 	'jwt_secret',
-] as const;
+] satisfies Array<keyof DbUser>;
 
 const getUserQuery = _.once(
 	() =>
@@ -157,7 +157,7 @@ const getUserQuery = _.once(
 			resource: 'user',
 			passthrough: { req: permissions.root },
 			options: {
-				$select: userFields as Writable<typeof userFields>,
+				$select: userFields,
 				$filter: {
 					actor: {
 						$any: {
@@ -246,7 +246,7 @@ export const defaultFindUser$select = [
 	'actor',
 	'username',
 	'password',
-] as const;
+] satisfies Array<keyof DbUser>;
 
 export async function findUser(
 	loginInfo: string,
@@ -254,23 +254,18 @@ export async function findUser(
 ): Promise<
 	PickDeferred<DbUser, (typeof defaultFindUser$select)[number]> | undefined
 >;
-export async function findUser<
-	T extends DbUser,
-	TProps extends ReadonlyArray<keyof T>,
->(
+export async function findUser<T extends DbUser, TProps extends Array<keyof T>>(
 	loginInfo: string,
 	tx: Tx,
 	$select: TProps,
 ): Promise<PickDeferred<T, (typeof $select)[number]> | undefined>;
 export async function findUser<
 	T extends DbUser,
-	TProps extends ReadonlyArray<keyof T & string>,
+	TProps extends Array<keyof T & string>,
 >(
 	loginInfo: string,
 	tx: Tx,
-	$select: TProps = defaultFindUser$select as ReadonlyArray<
-		keyof DbUser & string
-	> as TProps,
+	$select: TProps = defaultFindUser$select as TProps,
 ) {
 	if (!loginInfo) {
 		return;
@@ -301,7 +296,7 @@ export async function findUser<
 					},
 				],
 			},
-			$select: $select as Writable<typeof $select>,
+			$select,
 		},
 	})) as [UserResult?];
 	return user;

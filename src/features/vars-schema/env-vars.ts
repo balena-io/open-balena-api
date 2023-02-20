@@ -56,7 +56,8 @@ export const BLOCKED_NAMES = addReservedPrefixes([
 	'HOST_LOG_TO_DISPLAY',
 ]);
 
-export const INVALID_CHARACTER_REGEX = /^\d|\W/;
+export const INVALID_ENV_VAR_REGEX = /^\d|\W/;
+export const INVALID_CONFIG_VAR_REGEX = /^[\d:]|[^A-Za-z0-9_:]/;
 export const INVALID_NEWLINE_REGEX = /\r|\n/;
 
 const getDefinitionWithMinimumSupervisorVersion = (
@@ -343,22 +344,70 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			},
 		},
 	),
+	...getDefinitionWithMinimumSupervisorVersion(
+		{
+			'14.6.0': [
+				'raspberrypi4-64',
+				'raspberrypi400-64',
+				'raspberrypicm4-ioboard',
+			],
+		},
+		{
+			'BALENA_HOST_CONFIG_hdmi_force_hotplug:1': {
+				type: 'integer',
+				enum: [0, 1],
+				description: 'Force the HDMI hotplug signal on HDMI port 2',
+				will_reboot: true,
+				default: 0,
+			},
+			'BALENA_HOST_CONFIG_hdmi_group:1': {
+				type: 'integer',
+				description: 'Define the HDMI output group on HDMI port 2',
+				examples: [2],
+				will_reboot: true,
+				default: 0,
+			},
+			'BALENA_HOST_CONFIG_hdmi_mode:1': {
+				type: 'integer',
+				description: 'Define the HDMI output format on HDMI port 2 ',
+				examples: [87],
+				will_reboot: true,
+				default: 1,
+			},
+		},
+	),
 ];
 
 const startsWithAny = (ns: string[], name: string) => {
 	return ns.some((n) => name.startsWith(n));
 };
 
-const checkVarName = (type: string, name: string) => {
-	if (INVALID_CHARACTER_REGEX.test(name)) {
+const checkAlphaNumericWithColon = (type: string, name: string) => {
+	if (INVALID_CONFIG_VAR_REGEX.test(name)) {
 		throw new BadRequestError(
-			`${type} names can only contain alphanumeric characters and underscores.`,
+			`${type} names can only contain alphanumeric characters, underscores or a colon`,
 		);
 	}
+};
+
+const checkVarName = (
+	type: string,
+	name: string,
+	checkVarFormat = checkAlphaNumericWithColon,
+) => {
+	checkVarFormat(type, name);
 
 	if (RESERVED_NAMES.includes(name)) {
 		throw new BadRequestError(
 			`${type}s ${RESERVED_NAMES.join(', ')} are reserved`,
+		);
+	}
+};
+
+const checkAlphaNumeric = (type: string, name: string) => {
+	if (INVALID_ENV_VAR_REGEX.test(name)) {
+		throw new BadRequestError(
+			`${type} names can only contain alphanumeric characters and underscores.`,
 		);
 	}
 };
@@ -374,7 +423,7 @@ export const checkConfigVarNameValidity = (name: string) => {
 };
 
 export const checkEnvVarNameValidity = (name: string) => {
-	checkVarName('Environment variable', name);
+	checkVarName('Environment variable', name, checkAlphaNumeric);
 
 	if (startsWithAny(RESERVED_NAMESPACES, name)) {
 		throw new BadRequestError(

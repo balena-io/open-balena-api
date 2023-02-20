@@ -1,7 +1,7 @@
 {
   "name": "@balena/open-balena-api",
   "description": "Internet of things, Made Simple",
-  "version": "7.5.3",
+  "version": "7.13.4",
   "license": "AGPL-3.0",
   "repository": {
     "type": "git",
@@ -33,12 +33,12 @@
     "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\""
   },
   "dependencies": {
-    "@balena/abstract-sql-compiler": "7.24.1-build-web-resource-2-924b6a699f0e50a1ecd787695879418e54671abd-1",
+    "@balena/abstract-sql-compiler": "^7.25.3",
     "@balena/env-parsing": "^1.1.5",
     "@balena/es-version": "^1.0.2",
     "@balena/node-metrics-gatherer": "^6.0.3",
-    "@balena/pinejs": "14.54.8-build-web-resource-2-6b3e0e820e9e0914ec6226c0453f64a264876297-1",
-    "@sentry/node": "^7.31.1",
+    "@balena/pinejs": "^14.59.1",
+    "@sentry/node": "^7.34.0",
     "@types/basic-auth": "^1.1.3",
     "@types/bluebird": "^3.5.38",
     "@types/cache-manager": "^4.0.2",
@@ -48,8 +48,8 @@
     "@types/compression-next": "^1.0.0",
     "@types/cookie-session": "^2.0.44",
     "@types/escape-html": "^1.0.2",
-    "@types/express": "^4.17.15",
-    "@types/express-serve-static-core": "^4.17.32",
+    "@types/express": "^4.17.16",
+    "@types/express-serve-static-core": "^4.17.33",
     "@types/json-schema": "^7.0.11",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/lodash": "^4.14.191",
@@ -67,10 +67,10 @@
     "@types/semver": "^7.3.13",
     "@types/tar": "^6.1.3",
     "@types/uuid": "^9.0.0",
-    "@types/validator": "^13.7.10",
+    "@types/validator": "^13.7.11",
     "array-sort": "^1.0.0",
     "avsc": "^5.7.7",
-    "aws-sdk": "^2.1295.0",
+    "aws-sdk": "^2.1304.0",
     "balena-device-config": "^6.2.0",
     "balena-semver": "^2.3.2",
     "basic-auth": "^2.0.1",
@@ -89,7 +89,7 @@
     "express": "^4.18.2",
     "fast-boot2": "^1.1.3",
     "fast-glob": "^3.2.12",
-    "ioredis": "^5.2.5",
+    "ioredis": "^5.3.0",
     "ipaddr.js": "^2.0.1",
     "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.21",
@@ -136,13 +136,13 @@
     "mockery": "^2.1.0",
     "nock": "^13.3.0",
     "pinejs-client-supertest": "^1.3.5",
-    "rimraf": "^4.1.0",
+    "rimraf": "^4.1.2",
     "sinon": "^15.0.1",
     "supertest": "^6.3.3"
   },
   "engines": {
-    "node": "^18.12.0",
-    "npm": "^8.19.2"
+    "node": "^18.14.0",
+    "npm": "^9.4.1"
   },
   "mocha": {
     "reporter": "spec",
@@ -153,6 +153,6 @@
     "_": "index.js"
   },
   "versionist": {
-    "publishedAt": "2023-01-17T16:29:40.898Z"
+    "publishedAt": "2023-02-15T14:59:36.267Z"
   }
 }

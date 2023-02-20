@@ -83,8 +83,8 @@ export type StateV3 = {
 	};
 };
 
-function buildAppFromRelease(
-	device: AnyObject,
+export function buildAppFromRelease(
+	device: AnyObject | undefined,
 	application: AnyObject,
 	release: AnyObject,
 	config: Dictionary<string>,
@@ -108,24 +108,32 @@ function buildAppFromRelease(
 		// extract the per-image information
 		const image = ipr.image[0];
 
-		const si = serviceInstallFromImage(device, image);
+		const si = serviceInstallFromImage(device ?? application, image);
 		if (si == null) {
 			throw new Error(
-				`Could not find service install for device: '${
+				`Could not find service install for device or application: '${
 					application.uuid
 				}', image: '${image?.id}', service: '${JSON.stringify(
 					image?.is_a_build_of__service,
-				)}', service installs: '${JSON.stringify(device.service_install)}'`,
+				)}', service: '${
+					device
+						? JSON.stringify(device.service_install)
+						: JSON.stringify(application.service)
+				}'`,
 			);
 		}
-		const svc = si.service[0];
-
+		const svc = si.service?.[0] ?? si;
 		const environment: Dictionary<string> = {};
 		varListInsert(ipr.image_environment_variable, environment);
 		varListInsert(application.application_environment_variable, environment);
 		varListInsert(svc.service_environment_variable, environment);
-		varListInsert(device.device_environment_variable, environment);
-		varListInsert(si.device_service_environment_variable, environment);
+
+		if (device?.device_environment_variable) {
+			varListInsert(device.device_environment_variable, environment);
+		}
+		if (si?.device_service_environment_variable) {
+			varListInsert(si.device_service_environment_variable, environment);
+		}
 
 		const labels: Dictionary<string> = {};
 		for (const { label_name, value } of [
@@ -178,7 +186,7 @@ function buildAppFromRelease(
 	};
 }
 
-const releaseExpand = {
+export const releaseExpand = {
 	$select: ['id', 'commit', 'composition'],
 	$expand: {
 		contains__image: {
@@ -334,20 +342,28 @@ const getDevice = async (req: Request, uuid: string) => {
 	return device;
 };
 
-const getConfig = (device: AnyObject) => {
+export const getConfig = (
+	device: AnyObject | undefined,
+	application: AnyObject = device?.belongs_to__application[0],
+) => {
 	const config: Dictionary<string> = {};
 
 	// add any app-specific config values...
-	const userAppFromApi: AnyObject = device.belongs_to__application[0];
-	varListInsert(
-		userAppFromApi.application_config_variable,
-		config,
-		rejectUiConfig,
-	);
+
+	if (application) {
+		varListInsert(
+			application.application_config_variable,
+			config,
+			rejectUiConfig,
+		);
+	}
 
 	// override with device-specific values...
-	varListInsert(device.device_config_variable, config, rejectUiConfig);
-	filterDeviceConfig(config, device.os_version);
+	if (device) {
+		varListInsert(device.device_config_variable, config, rejectUiConfig);
+	}
+
+	filterDeviceConfig(config);
 	setDefaultConfigVariables(config);
 
 	return config;

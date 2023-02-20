@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import * as semver from 'balena-semver';
 import { sbvrUtils, dbModule } from '@balena/pinejs';
 import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from '../../lib/config';
 
@@ -35,7 +34,7 @@ export const getReleaseForDevice = (
 };
 
 export const serviceInstallFromImage = (
-	device: AnyObject,
+	deviceOrFleet: AnyObject,
 	image?: AnyObject,
 ): undefined | AnyObject => {
 	if (image == null) {
@@ -49,7 +48,16 @@ export const serviceInstallFromImage = (
 		id = image.is_a_build_of__service;
 	}
 
-	return _.find(device.service_install, (si) => si.service[0].id === id);
+	if ('service_install' in deviceOrFleet) {
+		return _.find(
+			deviceOrFleet.service_install,
+			(si) => si.service[0].id === id,
+		);
+	} else if ('service' in deviceOrFleet) {
+		return deviceOrFleet.service.find(
+			(fleetService: AnyObject) => fleetService.id === id,
+		);
+	}
 };
 
 export const formatImageLocation = (imageLocation: string) =>
@@ -61,17 +69,12 @@ export const formatImageLocation = (imageLocation: string) =>
 // be sent to the device.
 //
 // `configVars` should be in the form { [name: string]: string }
-export const filterDeviceConfig = (
-	configVars: Dictionary<string>,
-	osVersion: string,
-): void => {
+export const filterDeviceConfig = (configVars: Dictionary<string>): void => {
 	// ResinOS >= 2.x has a read-only file system, and this var causes the
 	// supervisor to run `systemctl enable|disable [unit]`, which does not
 	// persist over reboots. This causes the supervisor to go into a reboot
 	// loop, so filter out this var for these os versions.
-	if (semver.gte(osVersion, '2.0.0')) {
-		delete configVars.RESIN_HOST_LOG_TO_DISPLAY;
-	}
+	delete configVars.RESIN_HOST_LOG_TO_DISPLAY;
 };
 
 let $readTransaction: dbModule.Database['readTransaction'] = (

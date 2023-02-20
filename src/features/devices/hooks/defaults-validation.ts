@@ -33,9 +33,7 @@ hooks.addPureHook('POST', 'resin', 'device', {
 });
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
-	POSTPARSE: (args) => {
-		const { request } = args;
-
+	POSTPARSE: ({ request }) => {
 		// Check for extra whitespace characters
 		if (
 			request.values.device_name != null &&
