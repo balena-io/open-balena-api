@@ -1,4 +1,87 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v14.5.2
+      hash: ca9dea6351963765e2b2aff8c798b0b1d92dcd1f
+      body: |
+        Update balena/open-balena-base to 14.5.2
+
+        Update balena/open-balena-base from 14.5.1 to 14.5.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency node to 18.14.2
+              hash: e700e1d25da951c94f48e1656fafcf7c15a65f51
+              body: |
+                Update node to 18.14.2
+
+                Update node from 18.14.1 to 18.14.2
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.5.2
+          title: ""
+          date: 2023-02-21T20:50:44.948Z
+    - subject: Update balena/open-balena-base Docker tag to v14.5.1
+      hash: bea564b41f61629f8f7930ec2d3dbe55e348b6fd
+      body: |
+        Update balena/open-balena-base to 14.5.1
+
+        Update balena/open-balena-base from 14.4.1 to 14.5.1
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Update no-systemd nodejs to 18.14.1
+              hash: ca8e18a969db856881cbfedc23a3144747d2f782
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Page-
+              nested: []
+          version: open-balena-base-14.5.1
+          title: ""
+          date: 2023-02-20T11:20:13.039Z
+        - commits:
+            - subject: Update dependency npm to 9.5.0
+              hash: f3df618fb95a434b3777b3678c30bd0b9f83e37a
+              body: |
+                Update npm to 9.5.0
+
+                Update npm from 9.4.1 to 9.5.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.5.0
+          title: ""
+          date: 2023-02-17T10:50:35.397Z
+        - commits:
+            - subject: Update dependency node to 18.14.1
+              hash: 3441c2306d38f449eb30ae19d037bc11556b2dee
+              body: |
+                Update node to 18.14.1
+
+                Update node from 18.14.0 to 18.14.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.4.2
+          title: ""
+          date: 2023-02-16T23:51:09.734Z
+  version: 7.15.0
+  title: ""
+  date: 2023-02-21T22:05:54.289Z
+- commits:
     - subject: Update pine with root narrowing
       hash: 57d6438d8c280ef224b9920153bc312b66b1e169
       body: ""
