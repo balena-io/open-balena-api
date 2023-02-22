@@ -1,4 +1,16 @@
 - commits:
+    - subject: Rewrite multicontainer rule for better rule narrowing
+      hash: 3ea4169e9b82594cbcdd01440437b5db0b7880d7
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.15.1
+  title: ""
+  date: 2023-02-22T11:36:54.431Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v14.5.2
       hash: ca9dea6351963765e2b2aff8c798b0b1d92dcd1f
       body: |
