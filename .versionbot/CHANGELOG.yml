@@ -1,4 +1,34 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v14.5.3
+      hash: b460198b8b1f4d13bf7bc71c9f5b3b7a9e8de673
+      body: |
+        Update balena/open-balena-base to 14.5.3
+
+        Update balena/open-balena-base from 14.5.2 to 14.5.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency npm to 9.5.1
+              hash: 0ebdfd84ae9b56b0f14936d0292f744156869f81
+              body: |
+                Update npm to 9.5.1
+
+                Update npm from 9.5.0 to 9.5.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.5.3
+          title: ""
+          date: 2023-02-22T20:50:21.405Z
+  version: 7.15.2
+  title: ""
+  date: 2023-02-22T22:09:29.091Z
+- commits:
     - subject: Rewrite multicontainer rule for better rule narrowing
       hash: 3ea4169e9b82594cbcdd01440437b5db0b7880d7
       body: ""
