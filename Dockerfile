@@ -16,7 +16,7 @@ RUN systemctl enable open-balena-api.service
 # Set up a test image that can be reused
 FROM runtime as test
 
-RUN npm ci && npm run lint && systemctl disable balena-api
+RUN npm ci && npm run lint
 
 # Make the default output be the runtime image
 FROM runtime
