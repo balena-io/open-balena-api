@@ -1,4 +1,16 @@
 - commits:
+    - subject: "Tests dockerfile: Remove unnecessary `systemctl disable balena-api`"
+      hash: 6657e89112106d3616e20d4013e1b9b37d915cc7
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 7.15.4
+  title: ""
+  date: 2023-02-27T12:06:58.908Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v14.5.4
       hash: 6cf0313a759ad75b123ee526c0af28aa6d69791e
       body: |
