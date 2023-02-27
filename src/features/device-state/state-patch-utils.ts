@@ -13,7 +13,6 @@ import { permissions, sbvrUtils } from '@balena/pinejs';
 export const v3ValidPatchFields: Array<
 	Exclude<keyof StatePatchV3Body[string], 'apps'>
 > = [
-	'is_managed_by__device',
 	'status',
 	'is_online',
 	'os_version',

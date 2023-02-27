@@ -13,7 +13,6 @@ setupDeleteCascade('application', {
 	application_tag: 'application',
 	release: 'belongs_to__application',
 	service: 'application',
-	application: 'depends_on__application',
 });
 
 setupDeleteCascade('device', {
