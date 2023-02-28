@@ -20,12 +20,9 @@ const { api } = sbvrUtils;
 const { UnauthorizedError } = errors;
 
 type FleetStateV3 = {
-	[uuid: string]: Omit<StateV3[string], 'is_managed_by__device' | 'apps'> & {
+	[uuid: string]: Omit<StateV3[string], 'apps'> & {
 		apps: {
-			[uuid: string]: Omit<
-				StateV3[string]['apps'][string],
-				'is_managed_by__device'
-			>;
+			[uuid: string]: StateV3[string]['apps'][string];
 		};
 	};
 };

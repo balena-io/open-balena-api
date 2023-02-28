@@ -29,7 +29,6 @@ type ServiceComposition = AnyObject;
 export type StateV3 = {
 	[uuid: string]: {
 		name: string;
-		is_managed_by__device?: string;
 		config?: {
 			[varName: string]: string;
 		};
@@ -41,7 +40,6 @@ export type StateV3 = {
 				id: number;
 				name: string;
 				class: 'fleet' | 'block' | 'app';
-				is_managed_by__device?: string;
 				is_host?: boolean;
 				releases?: {
 					[uuid: string]: {

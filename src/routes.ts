@@ -9,7 +9,6 @@ import * as deviceTypes from './features/device-types';
 import * as osConfig from './features/os-config';
 import * as registry from './features/registry';
 import * as auth from './features/auth';
-import * as dependentDevices from './features/dependent-devices';
 import * as deviceLogs from './features/device-logs';
 import * as deviceState from './features/device-state';
 import * as deviceProvisioning from './features/device-provisioning';
@@ -33,7 +32,6 @@ export const setup = (
 		onLogWriteStreamInitialized,
 		onLogReadStreamInitialized,
 	);
-	dependentDevices.setup(app);
 	deviceProxy.setup(app);
 	deviceConfig.setup(app);
 	apiKeys.setup(app);

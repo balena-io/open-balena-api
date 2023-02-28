@@ -70,22 +70,9 @@ const loaders: Dictionary<LoaderFunc> = {
 			logErrorAndThrow(`Could not find ${targetOrgHandle} org`);
 		}
 
-		if (jsonData.depends_on__application != null) {
-			const gatewayApp = await fixtures.applications[
-				jsonData.depends_on__application
-			];
-			if (gatewayApp == null) {
-				logErrorAndThrow(
-					`Could not find application: ${jsonData.depends_on__application}`,
-				);
-			}
-			jsonData.depends_on__application = gatewayApp.id;
-		}
-
 		const body = _.pick(
 			jsonData,
 			'app_name',
-			'depends_on__application',
 			'should_track_latest_release',
 			'application_type',
 			'is_public',
@@ -441,7 +428,6 @@ const loaders: Dictionary<LoaderFunc> = {
 					jsonData,
 					'custom_latitude',
 					'custom_longitude',
-					'is_managed_by__device',
 					'is_online',
 					'latitude',
 					'logs_channel',

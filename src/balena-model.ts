@@ -258,7 +258,6 @@ export interface Application {
 	slug: string;
 	is_for__device_type: { __id: number } | [DeviceType];
 	should_be_running__release: { __id: number } | [Release?] | null;
-	depends_on__application: { __id: number } | [Application?] | null;
 	application_type: { __id: number } | [ApplicationType];
 	is_host: boolean;
 	is_archived: boolean;
@@ -272,7 +271,6 @@ export interface Application {
 	service?: Service[];
 	application__has__tag_key?: ApplicationTag[];
 	application_tag?: ApplicationTag[];
-	is_depended_on_by__application?: Application[];
 	owns__device?: Device[];
 	owns__release?: Release[];
 	is_directly_accessible_by__user?: UserHasDirectAccessToApplication[];
@@ -383,7 +381,6 @@ export interface Device {
 	is_managed_by__service_instance: { __id: number } | [ServiceInstance?] | null;
 	should_be_running__release: { __id: number } | [Release?] | null;
 	should_be_operated_by__release: { __id: number } | [Release?] | null;
-	is_managed_by__device: { __id: number } | [Device?] | null;
 	should_be_managed_by__release: { __id: number } | [Release?] | null;
 	is_web_accessible: boolean | null;
 	overall_status: string | null;
@@ -403,7 +400,6 @@ export interface Device {
 	image__is_downloaded_by__device?: GatewayDownload[];
 	gateway_download?: GatewayDownload[];
 	downloads__image?: GatewayDownload[];
-	manages__device?: Device[];
 }
 
 export interface DeviceEnvironmentVariable {
@@ -596,7 +592,6 @@ export interface MyApplication {
 	slug: string;
 	is_for__device_type: { __id: number } | [DeviceType];
 	should_be_running__release: { __id: number } | [Release?] | null;
-	depends_on__application: { __id: number } | [Application?] | null;
 	application_type: { __id: number } | [ApplicationType];
 	is_host: boolean;
 	is_archived: boolean;
@@ -610,7 +605,6 @@ export interface MyApplication {
 	service?: Service[];
 	application__has__tag_key?: ApplicationTag[];
 	application_tag?: ApplicationTag[];
-	is_depended_on_by__application?: Application[];
 	owns__device?: Device[];
 	owns__release?: Release[];
 }

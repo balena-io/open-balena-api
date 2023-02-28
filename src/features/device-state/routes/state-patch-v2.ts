@@ -100,7 +100,6 @@ type LocalBody = NonNullable<StatePatchV2Body['local']>;
  */
 export type StatePatchV2Body = {
 	local?: {
-		is_managed_by__device?: number;
 		should_be_running__release?: number;
 		name?: string;
 		/**

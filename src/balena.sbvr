@@ -487,9 +487,6 @@ Fact type: application is for device type
 Fact type: application should be running release
 	Synonymous Form: release should be running on application
 	Necessity: each application should be running at most one release.
-Fact type: application1 depends on application2
-	Synonymous Form: application2 is depended on by application1
-	Necessity: each application1 depends on at most one application2.
 Fact type: application has application type
 	Necessity: each application has exactly one application type.
 Fact type: application is host
@@ -592,9 +589,6 @@ Fact type: device should be running release
 Fact type: device should be operated by release
 	Synonymous Form: release should operate device
 	Necessity: each device should be operated by at most one release
-Fact type: device1 is managed by device2
-	Synonymous Form: device2 manages device1
-	Necessity: each device1 is managed by at most one device2.
 Fact type: device should be managed by release
 	Synonymous Form: release should manage device
 	Necessity: each device should be managed by at most one release
@@ -852,7 +846,6 @@ Fact type: config has description (Auth)
 
 -- Rules
 
-Rule: It is necessary that each device1 that is managed by a device2, belongs to an application1 that depends on an application2 that owns the device2.
 Rule: It is necessary that each release that has a release version1 and has a status that is equal to "success" and is not invalidated, belongs to an application that owns exactly one release that has a release version2 that is equal to the release version1 and has a status that is equal to "success" and is not invalidated.
 Rule: It is necessary that each image that has a status that is equal to "success", has a push timestamp.
 Rule: It is necessary that each application that owns a release1 that has a status that is equal to "success" and has a commit1, owns at most one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.

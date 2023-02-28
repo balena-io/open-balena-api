@@ -56,10 +56,6 @@ export type StatePatchV3Body = {
 		 * Used for setting dependent devices as online
 		 */
 		is_online?: boolean;
-		/**
-		 * Used for setting gateway device of dependent devices
-		 */
-		is_managed_by__device?: number;
 		apps?: {
 			[uuid: string]: {
 				/**

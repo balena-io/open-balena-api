@@ -38,8 +38,6 @@ ON "api key-has-permission" ("permission");
 
 CREATE INDEX IF NOT EXISTS "application_actor_idx"
 ON "application" ("actor");
-CREATE INDEX IF NOT EXISTS "application_depends_on_application_idx"
-ON "application" ("depends on-application");
 CREATE INDEX IF NOT EXISTS "application_device_type_idx"
 ON "application" ("is for-device type");
 CREATE INDEX IF NOT EXISTS "application_organization_idx"
@@ -59,8 +57,6 @@ CREATE INDEX IF NOT EXISTS "device_actor_idx"
 ON "device" ("actor");
 CREATE INDEX IF NOT EXISTS "device_application_idx"
 ON "device" ("belongs to-application");
-CREATE INDEX IF NOT EXISTS "device_is_managed_by_device_idx"
-ON "device" ("is managed by-device");
 CREATE INDEX IF NOT EXISTS "device_is_managed_by_service_instance_idx"
 ON "device" ("is managed by-service instance");
 CREATE INDEX IF NOT EXISTS "device_device_type_idx"
@@ -161,9 +157,6 @@ ON "device" ("device name");
 -- Optimize querying uuid with startswith and similar text patterns
 CREATE INDEX IF NOT EXISTS "device_uuid_idx"
 ON "device" ("uuid" text_pattern_ops);
--- Optimization for device state query
-CREATE INDEX IF NOT EXISTS "device_id_actor_managed_device_idx"
-ON "device" ("id", "actor", "is managed by-device");
 
 -- Optimization for querying endswith of "is stored at-image location" for resolving access
 CREATE INDEX IF NOT EXISTS "image_is_stored_at_image_location_idx"
