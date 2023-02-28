@@ -1,4 +1,19 @@
 - commits:
+    - subject: Remove dependent devices
+      hash: f8d7691f163d3da71e025448fbc5968d8342b6e5
+      body: |
+        This has been essentially disabled for a while now and was never fully
+        finished so this removes it to avoid the associated maintenance burden.
+        Particularly that of the dependent devices rule
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+  version: 8.0.0
+  title: ""
+  date: 2023-02-28T17:32:40.608Z
+- commits:
     - subject: "Tests dockerfile: Remove unnecessary `systemctl disable balena-api`"
       hash: 6657e89112106d3616e20d4013e1b9b37d915cc7
       body: ""
