@@ -354,7 +354,6 @@ export interface Device {
 	is_connected_to_vpn: boolean;
 	last_vpn_event: DateString | null;
 	is_locked_until__date: DateString | null;
-	logs_channel: string | null;
 	public_address: string | null;
 	vpn_address: string | null;
 	ip_address: string | null;

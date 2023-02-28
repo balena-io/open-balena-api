@@ -119,7 +119,6 @@ export type StatePatchV2Body = {
 		download_progress?: number | null;
 		api_port?: number;
 		api_secret?: string;
-		logs_channel?: string | null;
 		memory_usage?: number;
 		memory_total?: number;
 		storage_block_device?: string;

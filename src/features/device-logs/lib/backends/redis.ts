@@ -14,7 +14,6 @@ import type {
 	DeviceLog,
 	DeviceLogsBackend,
 	LogContext,
-	LogWriteContext,
 	Subscription,
 } from '../struct';
 import {
@@ -148,7 +147,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		return this.connected;
 	}
 
-	public async publish(ctx: LogWriteContext, logs: DeviceLog[]): Promise<void> {
+	public async publish(ctx: LogContext, logs: DeviceLog[]): Promise<void> {
 		if (!this.connected) {
 			throw new ServiceUnavailableError();
 		}

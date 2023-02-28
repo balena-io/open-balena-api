@@ -2,7 +2,7 @@ import type { Request, RequestHandler, Response } from 'express';
 import type {
 	DeviceLog,
 	DeviceLogsBackend,
-	LogWriteContext,
+	LogContext,
 	SupervisorLog,
 } from './struct';
 
@@ -33,7 +33,6 @@ import {
 } from '../../../lib/config';
 
 const {
-	BadRequestError,
 	NotFoundError,
 	UnauthorizedError,
 	ServiceUnavailableError,
@@ -43,7 +42,7 @@ const { api } = sbvrUtils;
 
 const supervisor = new Supervisor();
 
-const getWriteContext = async (req: Request): Promise<LogWriteContext> => {
+const getWriteContext = async (req: Request): Promise<LogContext> => {
 	const { uuid } = req.params;
 	return await sbvrUtils.db.readTransaction(async (tx) => {
 		const resinApi = api.resin.clone({ passthrough: { req, tx } });
@@ -51,19 +50,16 @@ const getWriteContext = async (req: Request): Promise<LogWriteContext> => {
 			resource: 'device',
 			id: { uuid },
 			options: {
-				$select: ['id', 'logs_channel', 'belongs_to__application'],
+				$select: ['id', 'belongs_to__application'],
 			},
-		})) as
-			| PickDeferred<Device, 'id' | 'logs_channel' | 'belongs_to__application'>
-			| undefined;
+		})) as PickDeferred<Device, 'id' | 'belongs_to__application'> | undefined;
 		if (!device) {
 			throw new NotFoundError('No device with uuid ' + uuid);
 		}
 		await checkWritePermissions(resinApi, device);
-		return addRetentionLimit<LogWriteContext>({
+		return addRetentionLimit<LogContext>({
 			id: device.id,
 			belongs_to__application: device.belongs_to__application!.__id,
-			logs_channel: device.logs_channel,
 			uuid,
 		});
 	});
@@ -134,7 +130,7 @@ function handleStoreErrors(req: Request, res: Response, err: Error) {
 const publishBackend = LOKI_ENABLED
 	? async (
 			backend: DeviceLogsBackend,
-			ctx: LogWriteContext,
+			ctx: LogContext,
 			buffer: DeviceLog[],
 	  ) => {
 			const publishingToRedis = backend.publish(ctx, buffer);
@@ -149,23 +145,17 @@ const publishBackend = LOKI_ENABLED
 	  }
 	: async (
 			backend: DeviceLogsBackend,
-			ctx: LogWriteContext,
+			ctx: LogContext,
 			buffer: DeviceLog[],
 	  ) => {
 			await backend.publish(ctx, buffer);
 	  };
 
 function handleStreamingWrite(
-	ctx: LogWriteContext,
+	ctx: LogContext,
 	req: Request,
 	res: Response,
 ): void {
-	if (ctx.logs_channel) {
-		throw new BadRequestError(
-			'The device must clear the `logs_channel` before using this endpoint',
-		);
-	}
-
 	const backend = getBackend();
 	// If the backend is down, reject right away, don't take in new connections
 	if (!backend.available) {

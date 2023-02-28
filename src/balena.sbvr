@@ -175,9 +175,6 @@ Term: local id
 Term: logo
 	Concept Type: Text (Type)
 
-Term: logs channel
-	Concept Type: Short Text (Type)
-
 Term: mac address
 	Concept Type: Short Text (Type)
 
@@ -532,8 +529,6 @@ Fact type: device has last vpn event
 	Necessity: each device has at most one last vpn event.
 Fact type: device is locked until date
 	Necessity: each device is locked until at most one date.
-Fact type: device has logs channel
-	Necessity: each device has at most one logs channel
 Fact type: device has public address
 	Necessity: each device has at most one public address
 Fact type: device has vpn address

@@ -5,10 +5,6 @@ export interface LogContext {
 	readonly retention_limit: number;
 }
 
-export interface LogWriteContext extends LogContext {
-	readonly logs_channel: string | null;
-}
-
 // This is the format we store and that we output to consumers
 export interface DeviceLog {
 	message: string;
@@ -49,7 +45,7 @@ export interface DeviceLogsBackend {
 	history(ctx: LogContext, count: number): Promise<DeviceLog[]>;
 	available: boolean;
 	// `logs` will be mutated to empty and so must be handled synchronously
-	publish(ctx: LogWriteContext, logs: DeviceLog[]): Promise<any>;
+	publish(ctx: LogContext, logs: DeviceLog[]): Promise<any>;
 	subscribe(ctx: LogContext, subscription: Subscription): void;
 	unsubscribe(ctx: LogContext, subscription: Subscription): void;
 }

@@ -42,7 +42,6 @@ export type StatePatchV3Body = {
 		mac_address?: string;
 		api_port?: number;
 		api_secret?: string;
-		logs_channel?: string; // TODO: should this not be reported anymore?
 		memory_usage?: number;
 		memory_total?: number;
 		storage_block_device?: string;

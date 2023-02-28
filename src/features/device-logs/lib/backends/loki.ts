@@ -26,7 +26,6 @@ import {
 	DeviceLog,
 	DeviceLogsBackend,
 	LogContext,
-	LogWriteContext,
 	Subscription,
 } from '../struct';
 import { captureException } from '../../../../infra/error-handling';
@@ -174,7 +173,7 @@ export class LokiBackend implements DeviceLogsBackend {
 	}
 
 	public async publish(
-		ctx: LogWriteContext,
+		ctx: LogContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	): Promise<any> {
 		const countLogs = logs.length;
@@ -326,7 +325,7 @@ export class LokiBackend implements DeviceLogsBackend {
 	}
 
 	private fromDeviceLogsToStreams(
-		ctx: LogWriteContext,
+		ctx: LogContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	) {
 		const streams: StreamAdapter[] = [];
