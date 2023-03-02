@@ -141,6 +141,7 @@ const createAppServiceInstalls = async (
 
 const deleteServiceInstallsForCurrentApp = (
 	api: sbvrUtils.PinejsClient,
+	newAppId: number,
 	deviceIds: number[],
 ) =>
 	api.delete({
@@ -154,6 +155,8 @@ const deleteServiceInstallsForCurrentApp = (
 						$expr: {
 							s: {
 								application: {
+									// Don't bother deleting service installs for the app we're moving to
+									$ne: newAppId,
 									$any: {
 										$alias: 'a',
 										$expr: {
@@ -219,17 +222,14 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	PRERUN: async (args) => {
 		// We need to delete all service_install resources for the current app of these devices
 		// and create new ones for the new application (if the device is moving application)
-		if (args.request.values.belongs_to__application == null) {
+		const newAppId = args.request.values.belongs_to__application;
+		if (newAppId == null) {
 			return;
 		}
 		const affectedIds = await sbvrUtils.getAffectedIds(args);
 		if (affectedIds.length !== 0) {
-			await deleteServiceInstallsForCurrentApp(args.api, affectedIds);
-			await createAppServiceInstalls(
-				args.api,
-				args.request.values.belongs_to__application,
-				affectedIds,
-			);
+			await deleteServiceInstallsForCurrentApp(args.api, newAppId, affectedIds);
+			await createAppServiceInstalls(args.api, newAppId, affectedIds);
 		}
 	},
 });
