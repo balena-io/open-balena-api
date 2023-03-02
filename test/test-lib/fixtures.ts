@@ -430,7 +430,6 @@ const loaders: Dictionary<LoaderFunc> = {
 					'custom_longitude',
 					'is_online',
 					'latitude',
-					'logs_channel',
 					'longitude',
 					'os_variant',
 					'os_version',

@@ -24,7 +24,6 @@ export const v3ValidPatchFields: Array<
 	'mac_address',
 	'api_port',
 	'api_secret',
-	'logs_channel',
 	'cpu_id',
 	'is_undervolted',
 ];
