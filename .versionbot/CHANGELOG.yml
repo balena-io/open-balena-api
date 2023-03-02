@@ -1,4 +1,113 @@
 - commits:
+    - subject: Update dependencies
+      hash: 403a5d465995e2035c210bdbabeeb17576123ed8
+      body: |
+        Update @balena/pinejs from 14.62.0 to 14.62.4
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Rollback async migration tx on failed async mgmt tx
+              hash: c196aaa10afb407a2f83efb8fbfde8eaa568f156
+              body: |
+                Disable automaticClose on async mgmt tx
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: fisehara <harald@balena.io>
+                signed-off-by: fisehara <harald@balena.io>
+              author: fisehara
+              nested: []
+          version: pinejs-14.62.4
+          title: ""
+          date: 2023-02-28T17:52:52.534Z
+        - commits:
+            - subject: Fix `isAsyncMigration` to accept mixed fn and sql async migrations
+              hash: 4d6feb8f8164770e012e04a5c956b90ca0e3e9c3
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.62.3
+          title: ""
+          date: 2023-02-27T19:10:29.898Z
+        - commits:
+            - subject: Fix async migrator typings when mixing migrator fns and sql
+              hash: 8432b1143acc6a7bbb7d96bb21caacb4e2f96579
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.62.2
+          title: ""
+          date: 2023-02-27T18:23:58.423Z
+        - commits:
+            - subject: Update @balena/odata-parser to 2.4.6
+              hash: c2ae65faa13a420c87bbd2608974c3387b1350fc
+              body: |
+                Update @balena/odata-parser from 2.4.2 to 2.4.6
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Improve typings
+                      hash: ed5fa5675021485a775eb777f2358d8041b93ce1
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: odata-parser-2.4.6
+                  title: ""
+                  date: 2023-02-24T17:02:58.272Z
+                - commits:
+                    - subject: Use const/let as appropriate
+                      hash: 0824fe7d85eeb97941319749fc802f9bae3c9fb6
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: odata-parser-2.4.5
+                  title: ""
+                  date: 2023-02-23T16:31:08.299Z
+                - commits:
+                    - subject: Use shorthand object notation
+                      hash: 611c0480681965c7af06302264eac79fea18bded
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: odata-parser-2.4.4
+                  title: ""
+                  date: 2023-02-23T16:26:30.639Z
+                - commits:
+                    - subject: Update dependencies
+                      hash: 25b153aca258347c6742cb8b4efe54c0ae199695
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                  version: odata-parser-2.4.3
+                  title: ""
+                  date: 2023-02-23T16:14:13.013Z
+          version: pinejs-14.62.1
+          title: ""
+          date: 2023-02-24T17:45:10.612Z
+  version: 9.0.1
+  title: ""
+  date: 2023-03-02T16:55:03.543Z
+- commits:
     - subject: Remove legacy logs_channel entries
       hash: abc43e43b374d7196122e80175a75f6586ef473d
       body: ""
