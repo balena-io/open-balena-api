@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove legacy logs_channel entries
+      hash: abc43e43b374d7196122e80175a75f6586ef473d
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+  version: 9.0.0
+  title: ""
+  date: 2023-03-02T16:35:47.048Z
+- commits:
     - subject: Skip deleting service installs for the app a device is moving to
       hash: fecfcda6c58390df04dd4acadcdcec97ca31cdb6
       body: ""
