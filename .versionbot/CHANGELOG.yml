@@ -1,4 +1,16 @@
 - commits:
+    - subject: Improve typings
+      hash: 2f50774dfd5060e311bda0b0ab5671a53134b49c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 9.0.2
+  title: ""
+  date: 2023-03-03T16:12:41.847Z
+- commits:
     - subject: Update dependencies
       hash: 403a5d465995e2035c210bdbabeeb17576123ed8
       body: |
