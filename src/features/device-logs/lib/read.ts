@@ -211,7 +211,7 @@ async function getReadContext(req: Request): Promise<LogContext> {
 		options: {
 			$select: ['id', 'belongs_to__application'],
 		},
-	})) as PickDeferred<Device, 'id' | 'belongs_to__application'>;
+	})) as PickDeferred<Device, 'id' | 'belongs_to__application'> | undefined;
 
 	if (!device) {
 		throw new NotFoundError('No device with uuid ' + uuid);

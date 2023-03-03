@@ -1,10 +1,10 @@
 import * as mockery from 'mockery';
 import { expect } from 'chai';
-import { supertest } from './test-lib/supertest';
+import { supertest, UserObjectParam } from './test-lib/supertest';
 import { version } from './test-lib/versions';
 import * as configMock from '../src/lib/config';
 import * as fixtures from './test-lib/fixtures';
-import { Application, User } from '../src/balena-model';
+import { Application } from '../src/balena-model';
 
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
@@ -53,7 +53,7 @@ const checkServiceProperties = (
 	describe(`Fleet State ${stateVersion}`, function () {
 		let fx: fixtures.Fixtures;
 		let application: Application;
-		let admin: User;
+		let admin: UserObjectParam;
 		let releases: AnyObject;
 		let fleetStateEndpoint: string;
 
