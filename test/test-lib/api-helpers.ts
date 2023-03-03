@@ -15,6 +15,7 @@ interface MockReleaseParams {
 	start_timestamp: number;
 	end_timestamp?: number;
 	update_timestamp?: number;
+	semver?: string;
 }
 
 interface MockImageParams {

@@ -8,6 +8,7 @@ import './features/device-types/hooks';
 import './features/device-urls/hooks';
 import './features/hostapp/hooks';
 import './features/organizations/hooks';
+import './features/releases/hooks';
 import './features/supervisor-app/hooks';
 import './features/tags/hooks';
 import './features/vars-schema/hooks';
