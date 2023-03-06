@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use `crypto.randomUUID` for generating default device uuids
+      hash: 4d31855946f19378d23923bd7f6bc3a2e8aff471
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 9.0.3
+  title: ""
+  date: 2023-03-06T18:18:36.219Z
+- commits:
     - subject: Improve typings
       hash: 2f50774dfd5060e311bda0b0ab5671a53134b49c
       body: ""
