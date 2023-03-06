@@ -360,3 +360,8 @@ if (typeof trustProxy === 'string') {
 	trustProxyValue = trustProxy;
 }
 export const TRUST_PROXY = trustProxyValue;
+
+export const IGNORE_FROZEN_DEVICE_PERMISSIONS = boolVar(
+	'IGNORE_FROZEN_DEVICE_PERMISSIONS',
+	false,
+);

@@ -18,6 +18,13 @@ export const addToModel = (
 			// The cast is needed because AbstractSqlQuery cannot express a constant value.
 			computed: ['Boolean', false] as AbstractSqlQuery,
 		});
+
+		abstractSql.tables['device'].fields.push({
+			fieldName: 'is frozen',
+			dataType: 'Boolean',
+			// The cast is needed because AbstractSqlQuery cannot express a constant value.
+			computed: ['Boolean', false] as AbstractSqlQuery,
+		});
 	}
 
 	// FIXME: cloud has the notion of active/inactive devices via a field

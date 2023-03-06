@@ -382,6 +382,7 @@ export interface Device {
 	should_be_operated_by__release: { __id: number } | [Release?] | null;
 	should_be_managed_by__release: { __id: number } | [Release?] | null;
 	is_web_accessible: boolean | null;
+	is_frozen: boolean | null;
 	overall_status: string | null;
 	overall_progress: number | null;
 	device__has__env_var_name?: DeviceEnvironmentVariable[];
