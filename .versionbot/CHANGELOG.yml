@@ -1,4 +1,18 @@
 - commits:
+    - subject: Block device api key permissions of frozen devices
+      hash: ee01e00e91555790fa6406d76ec0bb76bacd8b78
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://github.com/balena-io/balena-api/issues/3775
+        see: https://github.com/balena-io/balena-api/issues/3775
+      author: Thodoris Greasidis
+      nested: []
+  version: 9.1.0
+  title: ""
+  date: 2023-03-06T22:38:04.253Z
+- commits:
     - subject: Use `crypto.randomUUID` for generating default device uuids
       hash: 4d31855946f19378d23923bd7f6bc3a2e8aff471
       body: ""
