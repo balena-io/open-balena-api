@@ -74,8 +74,7 @@ export async function patchState(
 	await supertest(user).patch(uri).send(patchBody).expect(200);
 }
 
-export const generateDeviceUuid = () =>
-	randomUUID().replace(/\-/g, '').toLowerCase();
+export const generateDeviceUuid = () => randomUUID().replaceAll('-', '');
 
 export async function provisionDevice(
 	admin: UserObjectParam,

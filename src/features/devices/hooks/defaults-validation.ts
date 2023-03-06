@@ -1,6 +1,6 @@
 import { hooks, errors } from '@balena/pinejs';
+import { randomUUID } from 'crypto';
 import * as haikuName from '../../../infra/haiku-name';
-import { pseudoRandomBytesAsync } from '../../../lib/utils';
 
 const INVALID_NEWLINE_REGEX = /\r|\n/;
 export const isDeviceNameValid = (name: string) => {
@@ -22,7 +22,7 @@ hooks.addPureHook('POST', 'resin', 'device', {
 		request.values.device_name =
 			request.values.device_name || haikuName.generate();
 		request.values.uuid =
-			request.values.uuid || (await pseudoRandomBytesAsync(31)).toString('hex');
+			request.values.uuid || (await randomUUID().replaceAll('-', ''));
 
 		if (!/^[a-f0-9]{32}([a-f0-9]{30})?$/.test(request.values.uuid)) {
 			throw new errors.BadRequestError(
