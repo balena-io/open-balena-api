@@ -6,6 +6,7 @@ import { sbvrUtils } from '@balena/pinejs';
 
 import {
 	API_VPN_SERVICE_API_KEY,
+	IGNORE_FROZEN_DEVICE_PERMISSIONS,
 	VPN_GUEST_API_KEY,
 	VPN_SERVICE_API_KEY,
 } from './config';
@@ -20,7 +21,18 @@ const writePerms = (
 
 const matchesActor = 'actor eq @__ACTOR_ID';
 const matchesUser = `user/any(u:u/${matchesActor})`;
-const ownsDevice = `owns__device/any(d:d/${matchesActor})`;
+const matchesNonFrozenDeviceActor = (alias = '') => {
+	if (alias) {
+		alias += '/';
+	}
+	const andIsNotFrozen = !IGNORE_FROZEN_DEVICE_PERMISSIONS
+		? ` and ${alias}is_frozen eq false`
+		: '';
+	return `${alias}${matchesActor}${andIsNotFrozen}`;
+};
+const ownsNonFrozenDevice = `owns__device/any(d:${matchesNonFrozenDeviceActor(
+	'd',
+)})`;
 
 export const ROLES: {
 	[roleName: string]: string[];
@@ -68,22 +80,29 @@ export const ROLES: {
 
 export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.device_type.read?describes__device/canAccess()',
-	`resin.device.read?${matchesActor}`,
-	`resin.device.update?${matchesActor}`,
+	`resin.device.read?${matchesNonFrozenDeviceActor()}`,
+	`resin.device.update?${matchesNonFrozenDeviceActor()}`,
 	'resin.application.read?owns__device/canAccess() or (is_public eq true and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
 	'resin.application_tag.read?application/canAccess()',
 	'resin.device_config_variable.read?device/canAccess()',
-	`resin.device_config_variable.create?device/any(d:d/${matchesActor})`,
-	`resin.device_config_variable.update?device/any(d:d/${matchesActor})`,
-	`resin.device_tag.read?device/any(d:d/${matchesActor})`,
-	...writePerms('resin.device_tag', `device/any(d:d/${matchesActor})`),
+	`resin.device_config_variable.create?device/any(d:${matchesNonFrozenDeviceActor(
+		'd',
+	)})`,
+	`resin.device_config_variable.update?device/any(d:${matchesNonFrozenDeviceActor(
+		'd',
+	)})`,
+	`resin.device_tag.read?device/canAccess()`,
+	...writePerms(
+		'resin.device_tag',
+		`device/any(d:${matchesNonFrozenDeviceActor('d')})`,
+	),
 	'resin.application_config_variable.read?application/canAccess()',
 	'resin.release.read?should_be_running_on__device/canAccess() or belongs_to__application/canAccess()',
 	'resin.release_tag.read?release/canAccess()',
 	'resin.device_environment_variable.read?device/canAccess()',
 	...writePerms(
 		'resin.device_environment_variable',
-		`device/any(d:d/${matchesActor})`,
+		`device/any(d:${matchesNonFrozenDeviceActor('d')})`,
 	),
 	'resin.application_environment_variable.read?application/canAccess()',
 
@@ -91,19 +110,28 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 
 	'resin.service_install.read?device/canAccess()',
 	// Should be created for the device itself, and it should be for a service of the app that the device belongs to or for a service of the supervisor release that manages the device.
-	`resin.service_install.create?device/any(d:d/${matchesActor}) and installs__service/any(s:s/application/any(a:a/owns__device/any(d:d/${matchesActor}) or (a/is_public eq true and a/owns__release/any(r:r/should_manage__device/any(d:d/${matchesActor})))))`,
+	`resin.service_install.create?device/any(d:${matchesNonFrozenDeviceActor(
+		'd',
+	)}) and installs__service/any(s:s/application/any(a:a/owns__device/any(d:${matchesNonFrozenDeviceActor(
+		'd',
+	)}) or (a/is_public eq true and a/owns__release/any(r:r/should_manage__device/any(d:${matchesNonFrozenDeviceActor(
+		'd',
+	)})))))`,
 	// A device should be able to manage its own service installs, even from apps its not or no longer part of (past/supervisor/os)
-	...writePerms('resin.service_install', `device/any(d:d/${matchesActor})`, [
-		'update',
-		'delete',
-	]),
+	...writePerms(
+		'resin.service_install',
+		`device/any(d:${matchesNonFrozenDeviceActor('d')})`,
+		['update', 'delete'],
+	),
 
 	'resin.service_environment_variable.read?service/canAccess()',
 
 	'resin.device_service_environment_variable.read?service_install/canAccess()',
 	...writePerms(
 		'resin.device_service_environment_variable',
-		`service_install/any(si:si/device/any(d:d/${matchesActor}))`,
+		`service_install/any(si:si/device/any(d:${matchesNonFrozenDeviceActor(
+			'd',
+		)}))`,
 	),
 
 	'resin.image__is_part_of__release.read?is_part_of__release/canAccess()',
@@ -111,8 +139,12 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.image.read?image_install/canAccess() or image__is_part_of__release/canAccess()',
 
 	'resin.image_install.read?device/canAccess()',
-	`resin.image_install.create?device/any(d:d/${matchesActor}) and installs__image/any(i:i/image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/belongs_to__application/any(a:a/${ownsDevice} or a/is_public eq true))))`,
-	`resin.image_install.update?device/any(d:d/${matchesActor})`,
+	`resin.image_install.create?device/any(d:${matchesNonFrozenDeviceActor(
+		'd',
+	)}) and installs__image/any(i:i/image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/belongs_to__application/any(a:a/${ownsNonFrozenDevice} or a/is_public eq true))))`,
+	`resin.image_install.update?device/any(d:${matchesNonFrozenDeviceActor(
+		'd',
+	)})`,
 
 	'resin.image_label.read?release_image/canAccess()',
 
@@ -123,7 +155,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	// So that requests do not get rejected with 401 but still do not have any effect.
 	`resin.gateway_download.all?1 eq 0`,
 
-	`resin.device.write-log?${matchesActor}`,
+	`resin.device.write-log?${matchesNonFrozenDeviceActor()}`,
 ];
 
 ROLES['device-api-key'] = [
