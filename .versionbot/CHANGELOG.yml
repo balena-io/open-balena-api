@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add a delay before repeating failed device state fetches
+      hash: 58a0d793a880f3e255108814b6530e5bd7b0a799
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 9.1.1
+  title: ""
+  date: 2023-03-07T13:53:57.505Z
+- commits:
     - subject: Block device api key permissions of frozen devices
       hash: ee01e00e91555790fa6406d76ec0bb76bacd8b78
       body: ""
