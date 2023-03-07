@@ -6,8 +6,9 @@ import type {
 	SupervisorLog,
 } from './struct';
 
+import * as _ from 'lodash';
 import onFinished from 'on-finished';
-import { sbvrUtils, errors } from '@balena/pinejs';
+import { sbvrUtils, errors, permissions } from '@balena/pinejs';
 import { Supervisor } from './supervisor';
 import { createGunzip } from 'zlib';
 import ndjson from 'ndjson';
@@ -26,11 +27,16 @@ import {
 import { SetupOptions } from '../../..';
 import { Device, PickDeferred } from '../../../balena-model';
 import {
+	DEVICE_LOGS_WRITE_AUTH_CACHE_TIMEOUT,
 	LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL,
 	LOGS_STREAM_FLUSH_INTERVAL,
 	LOGS_WRITE_BUFFER_LIMIT,
 	NDJSON_CTYPE,
 } from '../../../lib/config';
+import {
+	multiCacheMemoizee,
+	reqPermissionNormalizer,
+} from '../../../infra/cache';
 
 const {
 	NotFoundError,
@@ -56,7 +62,7 @@ const getWriteContext = async (req: Request): Promise<LogContext> => {
 		if (!device) {
 			throw new NotFoundError('No device with uuid ' + uuid);
 		}
-		await checkWritePermissions(resinApi, device);
+		await checkDeviceLogsWritePermissions(device, req, tx);
 		return addRetentionLimit<LogContext>({
 			id: device.id,
 			belongs_to__application: device.belongs_to__application!.__id,
@@ -65,21 +71,47 @@ const getWriteContext = async (req: Request): Promise<LogContext> => {
 	});
 };
 
-async function checkWritePermissions(
-	resinApi: sbvrUtils.PinejsClient,
-	ctx: { id: number },
-): Promise<void> {
-	const allowedDevices = (await resinApi.post({
-		resource: 'device',
-		id: ctx.id,
-		body: { action: 'write-log' },
-		url: `device(${ctx.id})/canAccess`,
-	})) as { d?: Array<{ id: number }> };
-	const device = allowedDevices.d && allowedDevices.d[0];
-	if (!device || device.id !== ctx.id) {
-		throw new UnauthorizedError('Not allowed to write device logs');
-	}
-}
+const checkDeviceLogsWritePermissions = (() => {
+	const authQuery = _.once(() =>
+		api.resin.prepare<{ id: number }>({
+			method: 'POST',
+			url: `device(@id)/canAccess`,
+			body: { action: 'write-log' },
+		}),
+	);
+	const hasWritePermissions = multiCacheMemoizee(
+		async (
+			id: number,
+			req: permissions.PermissionReq,
+			tx: Tx,
+		): Promise<boolean> => {
+			try {
+				await authQuery()({ id }, undefined, { req, tx });
+				return true;
+			} catch {
+				return false;
+			}
+		},
+		{
+			cacheKey: 'checkDeviceLogsWritePermissions',
+			promise: true,
+			primitive: true,
+			maxAge: DEVICE_LOGS_WRITE_AUTH_CACHE_TIMEOUT,
+			normalizer: ([id, req]) => {
+				return `${id}$${reqPermissionNormalizer(req)}`;
+			},
+		},
+	);
+	return async (
+		ctx: { id: number },
+		req: permissions.PermissionReq,
+		tx: Tx,
+	) => {
+		if (!(await hasWritePermissions(ctx.id, req, tx))) {
+			throw new UnauthorizedError();
+		}
+	};
+})();
 
 export const store: RequestHandler = async (req: Request, res: Response) => {
 	try {
