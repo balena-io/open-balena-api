@@ -16,21 +16,18 @@ const { api } = sbvrUtils;
 const checkAuth = (() => {
 	const authQuery = _.once(() =>
 		api.resin.prepare<{ uuid: string }>({
-			resource: 'device',
-			id: {
-				uuid: { '@': 'uuid' },
-			},
-			options: {
-				$select: 'id',
-			},
+			method: 'POST',
+			url: `device(uuid=@uuid)/canAccess`,
+			body: { action: 'cloudlink' },
 		}),
 	);
 	return multiCacheMemoizee(
 		async (uuid: string, req: permissions.PermissionReq): Promise<number> => {
 			try {
-				const device = await authQuery()({ uuid }, undefined, { req });
-				// for now if the api key is able to read the device then it has vpn access
-				return device != null ? 200 : 403;
+				await authQuery()({ uuid }, undefined, {
+					req,
+				});
+				return 200;
 			} catch (err) {
 				if (err instanceof errors.UnauthorizedError) {
 					// We handle `UnauthorizedError` specially so that we can cache it as it's a relatively
