@@ -66,7 +66,7 @@ describe('vpn authentication endpoint', function () {
 				.expect(200);
 			await supertest(device2.api_key)
 				.get(`/services/vpn/auth/${this.device.uuid}`)
-				.expect(403);
+				.expect(401);
 		});
 
 		it('should not authorize the device to access the VPN if a randomstring is used as the device key', async function () {
