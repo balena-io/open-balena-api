@@ -1,4 +1,16 @@
 - commits:
+    - subject: Create a separate cloudlink device permission
+      hash: bf479e00e246e6d9e43e79edb3d3bdf81b5ce7f3
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 9.1.2
+  title: ""
+  date: 2023-03-07T15:08:28.752Z
+- commits:
     - subject: Add a delay before repeating failed device state fetches
       hash: 58a0d793a880f3e255108814b6530e5bd7b0a799
       body: ""
