@@ -16,11 +16,11 @@ import {
 	rejectUiConfig,
 	varListInsert,
 	ConfigurationVarsToLabels,
+	getStateDelayingEmpty,
 } from '../state-get-utils';
-import { sbvrUtils, errors } from '@balena/pinejs';
+import { sbvrUtils } from '@balena/pinejs';
 import { events } from '..';
 
-const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
 
 type CompositionService = AnyObject;
@@ -286,17 +286,12 @@ export const stateV2: RequestHandler = async (req, res) => {
 	}
 };
 
-const getDevice = async (req: Request, uuid: string) => {
-	const device = await readTransaction((tx) =>
-		stateQuery()({ uuid }, undefined, { req, tx }),
-	);
-
-	if (!device) {
-		throw new UnauthorizedError();
-	}
-
-	return device;
-};
+const getDevice = getStateDelayingEmpty(
+	async (req, uuid) =>
+		await readTransaction((tx) =>
+			stateQuery()({ uuid }, undefined, { req, tx }),
+		),
+);
 
 const getConfig = (device: AnyObject) => {
 	const config: Dictionary<string> = {};

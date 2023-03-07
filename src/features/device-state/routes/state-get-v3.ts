@@ -11,17 +11,17 @@ import {
 	filterDeviceConfig,
 	formatImageLocation,
 	getReleaseForDevice,
+	getStateDelayingEmpty,
 	readTransaction,
 	rejectUiConfig,
 	serviceInstallFromImage,
 	setDefaultConfigVariables,
 	varListInsert,
 } from '../state-get-utils';
-import { sbvrUtils, errors } from '@balena/pinejs';
+import { sbvrUtils } from '@balena/pinejs';
 import { events } from '..';
 import { Expand } from 'pinejs-client-core';
 
-const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
 
 type LocalStateApp = StateV3[string]['apps'][string];
@@ -328,17 +328,12 @@ export const stateV3: RequestHandler = async (req, res) => {
 	}
 };
 
-const getDevice = async (req: Request, uuid: string) => {
-	const device = await readTransaction((tx) =>
-		stateQuery()({ uuid }, undefined, { req, tx }),
-	);
-
-	if (!device) {
-		throw new UnauthorizedError();
-	}
-
-	return device;
-};
+const getDevice = getStateDelayingEmpty(
+	async (req, uuid) =>
+		await readTransaction((tx) =>
+			stateQuery()({ uuid }, undefined, { req, tx }),
+		),
+);
 
 export const getConfig = (
 	device: AnyObject | undefined,

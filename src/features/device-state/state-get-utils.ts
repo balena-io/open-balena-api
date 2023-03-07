@@ -1,6 +1,13 @@
 import _ from 'lodash';
-import { sbvrUtils, dbModule } from '@balena/pinejs';
-import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from '../../lib/config';
+import { sbvrUtils, dbModule, permissions, errors } from '@balena/pinejs';
+import {
+	DEFAULT_SUPERVISOR_POLL_INTERVAL,
+	EMPTY_DEVICE_STATE_GET_DELAY_SECONDS,
+} from '../../lib/config';
+import {
+	createMultiLevelStore,
+	reqPermissionNormalizer,
+} from '../../infra/cache';
 
 const defaultConfigVariableFns: Array<(config: Dictionary<string>) => void> = [
 	function setMinPollInterval(config) {
@@ -111,3 +118,48 @@ export const ConfigurationVarsToLabels = {
 	RESIN_SUPERVISOR_UPDATE_STRATEGY: 'io.resin.update.strategy',
 	RESIN_SUPERVISOR_HANDOVER_TIMEOUT: 'io.resin.update.handover-timeout',
 };
+
+export const getStateDelayingEmpty = (() => {
+	const lastFailedDeviceStateTime = createMultiLevelStore<number>(
+		'lastFailedDeviceStateTime',
+		{
+			ttl: EMPTY_DEVICE_STATE_GET_DELAY_SECONDS,
+		},
+		false,
+	);
+	const EMPTY_DEVICE_STATE_GET_DELAY =
+		EMPTY_DEVICE_STATE_GET_DELAY_SECONDS * 1000;
+
+	/**
+	 * This runs the provided getStateFn and returns the result, with a timeout before repeating the
+	 * request for a null/empty response. It also throws an UnauthorizedError if the result is null
+	 * Note: This only caches empty responses as they have succeeded but the requester is not able to
+	 * see the specific device, vs a thrown error which might happen due to some outside issue (eg db timeouts)
+	 */
+	return <T>(
+			getStateFn: (
+				req: permissions.PermissionReq,
+				uuid: string,
+			) => Promise<T | undefined>,
+		) =>
+		async (req: permissions.PermissionReq, uuid: string): Promise<T> => {
+			const key = `${uuid}$${reqPermissionNormalizer(req)}`;
+			const lastFail = await lastFailedDeviceStateTime.get(key);
+			// If the entry has expired then it means we should actually do the fetch
+			if (
+				lastFail == null ||
+				lastFail + EMPTY_DEVICE_STATE_GET_DELAY < Date.now()
+			) {
+				const result = await getStateFn(req, uuid);
+				if (result == null) {
+					// If the fetch failed we add a new entry to delay the next attempt
+					await lastFailedDeviceStateTime.set(key, Date.now());
+					// And throw an unauthorized error for the failure
+					throw new errors.UnauthorizedError();
+				}
+
+				return result;
+			}
+			throw new errors.UnauthorizedError();
+		};
+})();

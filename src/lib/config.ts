@@ -277,6 +277,15 @@ export const DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS = intVar(
 	'DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS',
 	30,
 );
+/**
+ * The time between the end of an empty state get and the start of the next
+ */
+export const EMPTY_DEVICE_STATE_GET_DELAY_SECONDS = intVar(
+	'EMPTY_DEVICE_STATE_GET_DELAY_SECONDS',
+	// Default to the default state poll interval so that an empty request only repeats
+	// at the same rate as standard polling
+	DEFAULT_SUPERVISOR_POLL_INTERVAL,
+);
 
 // Cache timeouts
 export const IMAGE_INSTALL_CACHE_TIMEOUT = intVar(
