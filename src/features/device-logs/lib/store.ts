@@ -73,10 +73,12 @@ const getWriteContext = (() => {
 			req: permissions.PermissionReq,
 		): Promise<false | LogContext> => {
 			return await sbvrUtils.db.readTransaction(async (tx) => {
-				const resinApi = api.resin.clone({ passthrough: { req, tx } });
-				const device = (await resinApi.get({
+				const device = (await api.resin.get({
 					resource: 'device',
 					id: { uuid },
+					// We can use root permissions for converting uuid -> id as `hasDeviceLogsWritePermissions` below
+					// is the bit that handles checking we are allowed to write logs for this device
+					passthrough: { req: permissions.root, tx },
 					options: {
 						$select: ['id', 'belongs_to__application'],
 					},
