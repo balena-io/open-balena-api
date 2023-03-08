@@ -12,13 +12,13 @@ export const LOKI_ENABLED = LOKI_HOST && LOKI_WRITE_PCT > 0;
 export const shouldPublishToLoki = () =>
 	LOKI_ENABLED && LOKI_WRITE_PCT > Math.random() * 100;
 
-export function addRetentionLimit<T extends LogContext>(
-	ctx: Omit<T, 'retention_limit'>,
-): T {
+export function addRetentionLimit(
+	ctx: Omit<LogContext, 'retention_limit'>,
+): LogContext {
 	return {
 		...ctx,
 		retention_limit: LOGS_DEFAULT_RETENTION_LIMIT,
-	} as T;
+	};
 }
 
 export const getBackend = _.once((): DeviceLogsBackend => new RedisBackend());
