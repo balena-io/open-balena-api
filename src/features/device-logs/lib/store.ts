@@ -39,7 +39,6 @@ import {
 } from '../../../infra/cache';
 
 const {
-	NotFoundError,
 	UnauthorizedError,
 	ServiceUnavailableError,
 	UnsupportedMediaTypeError,
@@ -48,30 +47,7 @@ const { api } = sbvrUtils;
 
 const supervisor = new Supervisor();
 
-const getWriteContext = async (req: Request): Promise<LogContext> => {
-	const { uuid } = req.params;
-	return await sbvrUtils.db.readTransaction(async (tx) => {
-		const resinApi = api.resin.clone({ passthrough: { req, tx } });
-		const device = (await resinApi.get({
-			resource: 'device',
-			id: { uuid },
-			options: {
-				$select: ['id', 'belongs_to__application'],
-			},
-		})) as PickDeferred<Device, 'id' | 'belongs_to__application'> | undefined;
-		if (!device) {
-			throw new NotFoundError('No device with uuid ' + uuid);
-		}
-		await checkDeviceLogsWritePermissions(device, req, tx);
-		return addRetentionLimit<LogContext>({
-			id: device.id,
-			belongs_to__application: device.belongs_to__application!.__id,
-			uuid,
-		});
-	});
-};
-
-const checkDeviceLogsWritePermissions = (() => {
+const getWriteContext = (() => {
 	const authQuery = _.once(() =>
 		api.resin.prepare<{ id: number }>({
 			method: 'POST',
@@ -79,37 +55,64 @@ const checkDeviceLogsWritePermissions = (() => {
 			body: { action: 'write-log' },
 		}),
 	);
-	const hasWritePermissions = multiCacheMemoizee(
-		async (
-			id: number,
-			req: permissions.PermissionReq,
-			tx: Tx,
-		): Promise<boolean> => {
-			try {
-				await authQuery()({ id }, undefined, { req, tx });
-				return true;
-			} catch {
-				return false;
-			}
-		},
-		{
-			cacheKey: 'checkDeviceLogsWritePermissions',
-			promise: true,
-			primitive: true,
-			maxAge: DEVICE_LOGS_WRITE_AUTH_CACHE_TIMEOUT,
-			normalizer: ([id, req]) => {
-				return `${id}$${reqPermissionNormalizer(req)}`;
-			},
-		},
-	);
-	return async (
-		ctx: { id: number },
+	const hasDeviceLogsWritePermissions = async (
+		{ id }: { id: number },
 		req: permissions.PermissionReq,
 		tx: Tx,
 	) => {
-		if (!(await hasWritePermissions(ctx.id, req, tx))) {
+		try {
+			await authQuery()({ id }, undefined, { req, tx });
+			return true;
+		} catch {
+			return false;
+		}
+	};
+	const $getWriteContext = multiCacheMemoizee(
+		async (
+			uuid: string,
+			req: permissions.PermissionReq,
+		): Promise<false | LogContext> => {
+			return await sbvrUtils.db.readTransaction(async (tx) => {
+				const resinApi = api.resin.clone({ passthrough: { req, tx } });
+				const device = (await resinApi.get({
+					resource: 'device',
+					id: { uuid },
+					options: {
+						$select: ['id', 'belongs_to__application'],
+					},
+				})) as
+					| PickDeferred<Device, 'id' | 'belongs_to__application'>
+					| undefined;
+				if (!device) {
+					return false;
+				}
+				if (!(await hasDeviceLogsWritePermissions(device, req, tx))) {
+					return false;
+				}
+				return addRetentionLimit({
+					id: device.id,
+					belongs_to__application: device.belongs_to__application!.__id,
+					uuid,
+				});
+			});
+		},
+		{
+			cacheKey: 'getDeviceLogsWriteContext',
+			promise: true,
+			primitive: true,
+			maxAge: DEVICE_LOGS_WRITE_AUTH_CACHE_TIMEOUT,
+			normalizer: ([uuid, req]) => {
+				return `${uuid}$${reqPermissionNormalizer(req)}`;
+			},
+		},
+	);
+	return async (req: Request): Promise<LogContext> => {
+		const { uuid } = req.params;
+		const maybeLogContext = await $getWriteContext(uuid, req);
+		if (maybeLogContext === false) {
 			throw new UnauthorizedError();
 		}
+		return maybeLogContext;
 	};
 })();
 

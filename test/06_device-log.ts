@@ -57,8 +57,7 @@ describe('device log', () => {
 		supertest(ctx.device.apiKey)
 			.post(`/device/v2/${ctx.device2.uuid}/logs`)
 			.send([createLog()])
-			// Yields 404 because fetching device2 by uuid yields nothing
-			.expect(404));
+			.expect(401));
 
 	it('should accept and store batches where some logs have serviceId', () =>
 		supertest(ctx.device.apiKey)
