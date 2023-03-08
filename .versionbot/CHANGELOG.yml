@@ -1,4 +1,18 @@
 - commits:
+    - subject: Cache the entirety of the device logs write context
+      hash: 1bc6edacfcf6b50788614c78a29e70bdc381a39a
+      body: |
+        This will have more impact than caching only the permissions checking
+        part.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 9.1.4
+  title: ""
+  date: 2023-03-08T15:15:36.642Z
+- commits:
     - subject: Add a cache for checking logs write permissions
       hash: d8084363d55bdcf2204792a6403865e49be9ef2d
       body: ""
