@@ -1,4 +1,16 @@
 - commits:
+    - subject: Block deleting releases that are tracked by devices or apps
+      hash: c93ea0129aeb661dad9afd12388cb471feb701ad
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: myarmolinsky
+      nested: []
+  version: 10.1.0
+  title: ""
+  date: 2023-03-09T17:02:32.021Z
+- commits:
     - subject: Drop gateway_download and some other dependent devices remnants
       hash: 39434099d7a0a9d60926f23bd92b7814ffd198f0
       body: ""
