@@ -16,7 +16,7 @@ import {
 } from '../api-keys/lib';
 import { getDeviceTypeBySlug } from '../device-types/device-types';
 import { checkInt } from '../../lib/utils';
-import { checkDeviceExists } from '../device-state/middleware';
+import { checkDeviceExistsIsFrozen } from '../device-state/middleware';
 
 const { BadRequestError, ConflictError } = errors;
 const { api } = sbvrUtils;
@@ -96,7 +96,7 @@ export const register: RequestHandler = async (req, res) => {
 		});
 		// Clear the device existence cache for the just registered device
 		// in case it tried to communicate with the API before registering
-		checkDeviceExists.delete(response.uuid);
+		checkDeviceExistsIsFrozen.delete(response.uuid);
 
 		res.status(201).json(response);
 	} catch (err) {
