@@ -92,6 +92,20 @@ const fetchData = async (
 		const resinApiTx = api.resin.clone({
 			passthrough: { req, custom, tx },
 		});
+		const imgInstallLocationFilters: Filter[] = [];
+		for (const { imageLocations } of Object.values(appReleaseUuids)) {
+			imgInstallLocationFilters.push(
+				...imageLocations.map((imgLocation) => {
+					const [location, contentHash] = imgLocation.split('@');
+					const filter: Filter = { is_stored_at__image_location: location };
+					if (contentHash) {
+						filter.content_hash = contentHash;
+					}
+					return filter;
+				}),
+			);
+		}
+
 		const devices = (await resinApiTx.get({
 			resource: 'device',
 			options: {
@@ -103,11 +117,34 @@ const fetchData = async (
 					belongs_to__application: {
 						$select: 'uuid',
 					},
+					...(imgInstallLocationFilters.length > 0 && {
+						image_install: {
+							$select: ['id', 'installs__image'],
+							$filter: {
+								image: {
+									$any: {
+										$alias: 'i',
+										$expr:
+											imgInstallLocationFilters.length === 1
+												? { i: imgInstallLocationFilters[0] }
+												: {
+														$or: imgInstallLocationFilters.map((ilf) => ({
+															i: ilf,
+														})),
+												  },
+									},
+								},
+							},
+						},
+					}),
 				},
 			},
 		})) as Array<
 			Pick<Device, 'id' | 'uuid'> & {
 				belongs_to__application: Array<Pick<Application, 'uuid'>>;
+				image_install?: Array<
+					PickDeferred<ImageInstall, 'id' | 'installs__image'>
+				>;
 			}
 		>;
 		if (devices.length !== uuids.length) {
@@ -379,20 +416,8 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 
 					updateFns.push(async (resinApiTx) => {
 						if (imageIds.length > 0) {
-							const existingImgInstalls = (await resinApiTx.get({
-								resource: 'image_install',
-								options: {
-									$select: ['id', 'installs__image'],
-									$filter: {
-										device: device.id,
-										installs__image: { $in: imageIds },
-									},
-								},
-							})) as Array<
-								PickDeferred<ImageInstall, 'id' | 'installs__image'>
-							>;
 							const existingImgInstallsByImage = _.keyBy(
-								existingImgInstalls,
+								device.image_install,
 								({ installs__image }) => installs__image.__id,
 							);
 
