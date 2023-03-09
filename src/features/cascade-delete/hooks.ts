@@ -22,13 +22,11 @@ setupDeleteCascade('device', {
 	device_tag: 'device',
 	image_install: 'device',
 	service_install: 'device',
-	gateway_download: 'is_downloaded_by__device',
 });
 
 setupDeleteCascade('image', {
 	image_install: 'installs__image',
 	image__is_part_of__release: 'image',
-	gateway_download: 'image',
 });
 
 setupDeleteCascade('image__is_part_of__release', {

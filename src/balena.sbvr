@@ -398,11 +398,6 @@ Fact type: release has tag key
 	Database Table Name: release tag
 	Necessity: each release tag has a tag key that has a Length (Type) that is greater than 0.
 
-Fact type: image is downloaded by device
-	Synonymous Form: device downloads image
-	Term form: gateway download
-	Database Table Name: gateway download
-
 Fact type: image is part of release
 	Synonymous Form: release contains image
 	Term Form: release image
@@ -817,14 +812,6 @@ Fact type: image install has status
 Fact type: image install is provided by release
 	Synonymous Form: release provides image install
 	Necessity: each image install is provided by exactly one release.
-
-
--- gateway download
-
-Fact type: gateway download has status
-	Necessity: each gateway download has exactly one status.
-Fact type: gateway download has download progress
-	Necessity: each gateway download has at most one download progress.
 
 
 -- config

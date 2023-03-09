@@ -122,7 +122,7 @@ const resolveReadAccess = (() => {
 			tx: Tx,
 		): Promise<boolean> => {
 			// This is a performance optimization impactful when using device API key permissions,
-			// in which case emitting the OR checks for the dependent & public device access
+			// in which case emitting the OR checks for the public device access
 			// in a nested subquery didn't perform as well.
 			// TODO: Should be converted back to a simple GET to the image resource once
 			// the performance of that query improves.
