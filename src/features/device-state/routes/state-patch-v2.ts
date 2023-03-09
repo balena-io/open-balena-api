@@ -1,5 +1,4 @@
 import type { RequestHandler } from 'express';
-import type { Filter } from 'pinejs-client-core';
 
 import _ from 'lodash';
 import {
@@ -8,11 +7,7 @@ import {
 } from '../../../infra/error-handling';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils';
-import type {
-	GatewayDownload,
-	ImageInstall,
-	PickDeferred,
-} from '../../../balena-model';
+import type { ImageInstall, PickDeferred } from '../../../balena-model';
 import {
 	shouldUpdateMetrics,
 	metricsPatchFields,
@@ -25,74 +20,6 @@ import type { ResolveDeviceInfoCustomObject } from '../middleware';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
-
-const upsertGatewayDownload = async (
-	resinApi: sbvrUtils.PinejsClient,
-	gatewayDownload: Pick<GatewayDownload, 'id'>,
-	deviceId: number,
-	{
-		imageId,
-		status,
-		downloadProgress,
-	}: {
-		imageId: number;
-		status: unknown;
-		downloadProgress: unknown;
-	},
-): Promise<void> => {
-	if (gatewayDownload == null) {
-		await resinApi.post({
-			resource: 'gateway_download',
-			body: {
-				image: imageId,
-				is_downloaded_by__device: deviceId,
-				status,
-				download_progress: downloadProgress,
-			},
-			options: { returnResource: false },
-		});
-	} else {
-		const body: AnyObject = {
-			status,
-			download_progress: downloadProgress,
-		};
-		await resinApi.patch({
-			resource: 'gateway_download',
-			id: gatewayDownload.id,
-			body,
-			options: {
-				$filter: {
-					$not: body,
-				},
-			},
-		});
-	}
-};
-
-const deleteOldGatewayDownloads = async (
-	resinApi: sbvrUtils.PinejsClient,
-	deviceId: number,
-	imageIds: number[],
-): Promise<void> => {
-	const body = { status: 'deleted', download_progress: null };
-	const filter: Filter = {
-		is_downloaded_by__device: deviceId,
-	};
-
-	if (imageIds.length !== 0) {
-		filter.$not = [body, { image: { $in: imageIds } }];
-	} else {
-		filter.$not = body;
-	}
-
-	await resinApi.patch({
-		resource: 'gateway_download',
-		body,
-		options: {
-			$filter: filter,
-		},
-	});
-};
 
 type LocalBody = NonNullable<StatePatchV2Body['local']>;
 /**
@@ -139,20 +66,11 @@ export type StatePatchV2Body = {
 			};
 		}>;
 	};
-	dependent?: {
-		apps?: {
-			[id: string]: {
-				images: {
-					[imageId: string]: { status: string; download_progress: number };
-				};
-			};
-		};
-	};
 };
 
 const appAndReleaseOfDeviceQuery = _.once(() =>
 	// This is a performance optimization impactful when using device API key permissions,
-	// in which case emitting the OR checks for the dependent & public device access
+	// in which case emitting the OR checks for the public device access
 	// in a nested subquery didn't perform as well.
 	// TODO: Should be converted back to a simple GET to the release resource once
 	// the performance of that query improves.
@@ -211,7 +129,7 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 
 		// Every field that is passed to the endpoint is the same, except
 		// device name
-		const { local, dependent } = values as StatePatchV2Body;
+		const { local } = values as StatePatchV2Body;
 
 		const updateFns: Array<
 			(resinApiTx: sbvrUtils.PinejsClient) => Promise<void>
@@ -346,57 +264,6 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 					await deleteOldImageInstalls(resinApiTx, deviceId, imageIds);
 				});
 			}
-		}
-
-		if (dependent?.apps != null && Object.keys(dependent.apps).length > 0) {
-			// Handle dependent devices if necessary
-			const gatewayDownloads = _.flatMap(dependent.apps, ({ images }) =>
-				_.map(images, ({ status, download_progress }, imageIdStr) => {
-					const imageId = parseInt(imageIdStr, 10);
-					if (!Number.isFinite(imageId)) {
-						throw new BadRequestError('Invalid image ID value in request');
-					}
-
-					return {
-						imageId,
-						status,
-						downloadProgress: download_progress,
-					};
-				}),
-			);
-			const imageIds = gatewayDownloads.map(({ imageId }) => imageId);
-
-			updateFns.push(async (resinApiTx) => {
-				if (imageIds.length > 0) {
-					const existingGatewayDownloads = (await resinApiTx.get({
-						resource: 'gateway_download',
-						options: {
-							$select: ['id', 'image'],
-							$filter: {
-								is_downloaded_by__device: deviceId,
-								image: { $in: imageIds },
-							},
-						},
-					})) as Array<PickDeferred<GatewayDownload, 'id' | 'image'>>;
-					const existingGatewayDownloadsByImage = _.keyBy(
-						existingGatewayDownloads,
-						({ image }) => image.__id,
-					);
-
-					await Promise.all(
-						gatewayDownloads.map(async (gatewayDownload) => {
-							await upsertGatewayDownload(
-								resinApiTx,
-								existingGatewayDownloadsByImage[gatewayDownload.imageId],
-								deviceId,
-								gatewayDownload,
-							);
-						}),
-					);
-				}
-
-				await deleteOldGatewayDownloads(resinApiTx, deviceId, imageIds);
-			});
 		}
 
 		if (updateFns.length > 0) {

@@ -88,10 +88,6 @@ ON "device type" ("belongs to-device family");
 
 -- "device service environment variable"."service install" is the first part of an automated unique index
 
--- "gateway download"."image" is the first part of an automated unique index
-CREATE INDEX IF NOT EXISTS "gateway_download_device_idx"
-ON "gateway download" ("is downloaded by-device");
-
 CREATE INDEX IF NOT EXISTS "image_is_build_of_service_id_idx"
 ON "image" ("is a build of-service", "id");
 

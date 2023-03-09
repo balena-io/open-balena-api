@@ -216,12 +216,9 @@ export interface Image {
 	device__installs__image?: ImageInstall[];
 	image_install?: ImageInstall[];
 	is_installed_on__device?: ImageInstall[];
-	is_downloaded_by__device?: GatewayDownload[];
-	image__is_downloaded_by__device?: GatewayDownload[];
-	gateway_download?: GatewayDownload[];
+	is_part_of__release?: ImageIsPartOfRelease[];
 	image__is_part_of__release?: ImageIsPartOfRelease[];
 	release_image?: ImageIsPartOfRelease[];
-	is_part_of__release?: ImageIsPartOfRelease[];
 }
 
 export interface Organization {
@@ -397,9 +394,6 @@ export interface Device {
 	service_install?: ServiceInstall[];
 	installs__image?: ImageInstall[];
 	installs__application__has__service_name?: ServiceInstall[];
-	image__is_downloaded_by__device?: GatewayDownload[];
-	gateway_download?: GatewayDownload[];
-	downloads__image?: GatewayDownload[];
 }
 
 export interface DeviceEnvironmentVariable {
@@ -513,16 +507,6 @@ export interface ReleaseTag {
 	tag_key: string;
 	id: number;
 	value: string;
-}
-
-export interface GatewayDownload {
-	created_at: DateString;
-	modified_at: DateString;
-	image: { __id: number } | [Image];
-	is_downloaded_by__device: { __id: number } | [Device];
-	id: number;
-	status: string;
-	download_progress: number | null;
 }
 
 export interface ImageIsPartOfRelease {

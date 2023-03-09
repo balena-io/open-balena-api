@@ -56,7 +56,6 @@ export const ROLES: {
 		'resin.device_environment_variable.all',
 		'resin.device_tag.all',
 		'resin.device_service_environment_variable.all',
-		'resin.gateway_download.all',
 		'resin.image.all',
 		'resin.image__is_part_of__release.all',
 		'resin.image_environment_variable.all',
@@ -145,9 +144,6 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.service_label.read?service/canAccess()',
 
 	'resin.image_environment_variable.read?release_image/canAccess()',
-
-	// So that requests do not get rejected with 401 but still do not have any effect.
-	`resin.gateway_download.all?1 eq 0`,
 
 	`resin.device.cloudlink?${matchesActor}`,
 	`resin.device.write-log?${matchesNonFrozenDeviceActor()}`,
