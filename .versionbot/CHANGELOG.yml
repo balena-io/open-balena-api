@@ -1,4 +1,16 @@
 - commits:
+    - subject: Extend `resolveOrGracefullyDenyDevices` to also check for frozen status
+      hash: 316ca72e4d610f6c45af70a5ac13bd4c3879544e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 9.1.7
+  title: ""
+  date: 2023-03-09T11:49:25.999Z
+- commits:
     - subject: Remove duplicate is_frozen check from service install insert permission
       hash: d268e71c55bdd717f16a1802d36a032b25e08910
       body: ""
