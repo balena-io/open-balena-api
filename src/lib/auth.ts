@@ -30,9 +30,7 @@ const matchesNonFrozenDeviceActor = (alias = '') => {
 		: '';
 	return `${alias}${matchesActor}${andIsNotFrozen}`;
 };
-const ownsNonFrozenDevice = `owns__device/any(d:${matchesNonFrozenDeviceActor(
-	'd',
-)})`;
+const ownsDevice = `owns__device/any(d:d/${matchesActor})`;
 
 export const ROLES: {
 	[roleName: string]: string[];
@@ -141,7 +139,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.image_install.read?device/canAccess()',
 	`resin.image_install.create?device/any(d:${matchesNonFrozenDeviceActor(
 		'd',
-	)}) and installs__image/any(i:i/image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/belongs_to__application/any(a:a/${ownsNonFrozenDevice} or a/is_public eq true))))`,
+	)}) and installs__image/any(i:i/image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/belongs_to__application/any(a:a/${ownsDevice} or a/is_public eq true))))`,
 	`resin.image_install.update?device/any(d:${matchesNonFrozenDeviceActor(
 		'd',
 	)})`,
