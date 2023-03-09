@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use root permissions to resolve uuids for device logs write context
+      hash: 4f2a1f7b5d550ad5618d17b323e222e53b48ba2c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 9.1.9
+  title: ""
+  date: 2023-03-09T14:08:39.586Z
+- commits:
     - subject: Update cache key for `checkDeviceExistsIsFrozen`
       hash: 4195f1c0c9e93b15ba15336eb6f7769ed013d45c
       body: ""
