@@ -301,6 +301,8 @@ describe(`Tracking latest release`, () => {
 
 	describe('given an app that does not track the latest release', function () {
 		let app3ReleaseId: number;
+		let app4ReleaseId: number;
+		let app5ReleaseId: number;
 
 		before(async function () {
 			await supertest(admin)
@@ -319,8 +321,31 @@ describe(`Tracking latest release`, () => {
 				source: '',
 				status: 'running',
 				start_timestamp: Date.now(),
+				semver: '9.9.9',
 			});
 			app3ReleaseId = app3Release.id;
+			const app4Release = await addReleaseToApp(admin, {
+				belongs_to__application: application3Id,
+				is_created_by__user: admin.id!,
+				build_log: '',
+				commit: `deadbeef2`,
+				composition: {},
+				source: '',
+				status: 'running',
+				start_timestamp: Date.now(),
+			});
+			app4ReleaseId = app4Release.id;
+			const app5Release = await addReleaseToApp(admin, {
+				belongs_to__application: application3Id,
+				is_created_by__user: admin.id!,
+				build_log: '',
+				commit: `deadbeef3`,
+				composition: {},
+				source: '',
+				status: 'running',
+				start_timestamp: Date.now(),
+			});
+			app5ReleaseId = app5Release.id;
 
 			const { id: serviceId } = await addServiceToApp(
 				admin,
@@ -338,9 +363,25 @@ describe(`Tracking latest release`, () => {
 				status: 'success',
 			});
 			await addImageToRelease(admin, imageId, app3ReleaseId);
+			await addImageToRelease(admin, imageId, app4ReleaseId);
+			await addImageToRelease(admin, imageId, app5ReleaseId);
 
 			await supertest(admin)
 				.patch(`/${version}/release(${app3ReleaseId})`)
+				.send({
+					status: 'success',
+					end_timestamp: Date.now(),
+				})
+				.expect(200);
+			await supertest(admin)
+				.patch(`/${version}/release(${app4ReleaseId})`)
+				.send({
+					status: 'success',
+					end_timestamp: Date.now(),
+				})
+				.expect(200);
+			await supertest(admin)
+				.patch(`/${version}/release(${app5ReleaseId})`)
 				.send({
 					status: 'success',
 					end_timestamp: Date.now(),
@@ -461,6 +502,27 @@ describe(`Tracking latest release`, () => {
 					})
 					.expect(200);
 			});
+		});
+
+		it('should not be able to delete a release if a fleet is pinned to it', async function () {
+			await supertest(admin)
+				.delete(`/${version}/release(${app3ReleaseId})`)
+				.expect(
+					400,
+					'"Unable to delete release 9.9.9 because it is the fleet\'s target release."',
+				);
+		});
+
+		it('should not be able to delete a release if a device is pinned to it', async function () {
+			await supertest(admin)
+				.patch(`/${version}/device(${device4.id})`)
+				.send({ should_be_running__release: app4ReleaseId });
+			await supertest(admin)
+				.delete(`/${version}/release(${app4ReleaseId})`)
+				.expect(
+					400,
+					'"Unable to delete a release because device(s) are pinned to it."',
+				);
 		});
 	});
 });

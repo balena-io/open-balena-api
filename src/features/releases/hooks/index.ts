@@ -1,0 +1,1 @@
+import './restrict-release-deletion';
