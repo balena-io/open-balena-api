@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove duplicate is_frozen check on image install insert permission
+      hash: 4fa2e489460d6280d0759785e3a3cf5e6f1429cc
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 9.1.5
+  title: ""
+  date: 2023-03-09T07:16:42.212Z
+- commits:
     - subject: Cache the entirety of the device logs write context
       hash: 1bc6edacfcf6b50788614c78a29e70bdc381a39a
       body: |
