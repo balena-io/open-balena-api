@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove duplicate is_frozen check from service install insert permission
+      hash: d268e71c55bdd717f16a1802d36a032b25e08910
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 9.1.6
+  title: ""
+  date: 2023-03-09T07:32:36.427Z
+- commits:
     - subject: Remove duplicate is_frozen check on image install insert permission
       hash: 4fa2e489460d6280d0759785e3a3cf5e6f1429cc
       body: ""
