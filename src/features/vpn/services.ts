@@ -9,7 +9,7 @@ import {
 } from '../../infra/error-handling';
 import { multiCacheMemoizee, reqPermissionNormalizer } from '../../infra/cache';
 import { VPN_AUTH_CACHE_TIMEOUT } from '../../lib/config';
-import { checkDeviceExists } from '../device-state/middleware';
+import { checkDeviceExistsIsFrozen } from '../device-state/middleware';
 
 const { api } = sbvrUtils;
 
@@ -54,7 +54,7 @@ const checkAuth = (() => {
  * This shares the deleted device cache with device-state
  */
 export const denyDeletedDevices: RequestHandler = async (req, res, next) => {
-	const device = await checkDeviceExists(req.params.uuid);
+	const device = await checkDeviceExistsIsFrozen(req.params.uuid);
 	if (device == null) {
 		// Deny deleted devices
 		res.status(401).end();
