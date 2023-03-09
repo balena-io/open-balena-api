@@ -1,4 +1,16 @@
 - commits:
+    - subject: Drop gateway_download and some other dependent devices remnants
+      hash: 39434099d7a0a9d60926f23bd92b7814ffd198f0
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+  version: 10.0.0
+  title: ""
+  date: 2023-03-09T14:32:49.089Z
+- commits:
     - subject: Use root permissions to resolve uuids for device logs write context
       hash: 4f2a1f7b5d550ad5618d17b323e222e53b48ba2c
       body: ""
