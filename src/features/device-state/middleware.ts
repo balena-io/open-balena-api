@@ -30,7 +30,7 @@ export const checkDeviceExistsIsFrozen = multiCacheMemoizee(
 			| undefined;
 	},
 	{
-		cacheKey: 'checkDeviceExists',
+		cacheKey: 'checkDeviceExistsIsFrozen',
 		promise: true,
 		primitive: true,
 		undefinedAs: false,
