@@ -1,4 +1,18 @@
 - commits:
+    - subject: Block proxy actions on frozen devices
+      hash: 9256c9bcf89aaf3168e06d2051bc5994f627c1f6
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://balena.zulipchat.com/#narrow/stream/346007-balena-io.2FbalenaCloud/topic/high.20VPN.20cpu.20alerts
+        see: https://balena.zulipchat.com/#narrow/stream/346007-balena-io.2FbalenaCloud/topic/high.20VPN.20cpu.20alerts
+      author: Thodoris Greasidis
+      nested: []
+  version: 10.2.0
+  title: ""
+  date: 2023-03-10T08:04:39.324Z
+- commits:
     - subject: Block deleting releases that are tracked by devices or apps
       hash: c93ea0129aeb661dad9afd12388cb471feb701ad
       body: ""
