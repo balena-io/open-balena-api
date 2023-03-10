@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use the graceful deny mechanism for device-logs
+      hash: d2911aebe2455770aeb712c3447a8042ebbab353
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 10.3.0
+  title: ""
+  date: 2023-03-10T19:11:49.279Z
+- commits:
     - subject: Block proxy actions on frozen devices
       hash: 9256c9bcf89aaf3168e06d2051bc5994f627c1f6
       body: ""
