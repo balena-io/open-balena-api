@@ -90,7 +90,7 @@ import {
 	assignUserRole,
 } from './infra/auth/permissions';
 import { createScopedAccessToken, createJwt } from './infra/auth/jwt';
-import { resolveOrGracefullyDenyDevices } from './features/device-state/middleware';
+import { resolveOrDenyDevicesWithStatus } from './features/device-state/middleware';
 import { middleware as authMiddleware } from './infra/auth';
 import { isApiKeyWithRole } from './features/api-keys/lib';
 import { setupDeleteCascade as addDeleteHookForDependents } from './features/cascade-delete/setup-delete-cascade';
@@ -208,7 +208,7 @@ export const rateLimiting = {
 };
 export const middleware = {
 	...authMiddleware,
-	resolveOrGracefullyDenyDevices,
+	resolveOrDenyDevicesWithStatus,
 	loginRateLimiter,
 	skipLogging,
 };

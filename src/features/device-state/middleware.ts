@@ -43,32 +43,31 @@ export interface ResolveDeviceInfoCustomObject {
 }
 
 /**
- * This checks if a device is deleted or frozen and responds accordingly:
- * Device is deleted and it's a GET request = 304
- * Device is deleted and it's a non-GET request = 200
- * Device is frozen and it's a GET request = 304
- * Device is frozen and it's a non-GET request = 401
+ * This checks if a device is deleted or frozen and responds according to the passed statusCode(s)
  */
-export const resolveOrGracefullyDenyDevices: RequestHandler = async (
-	req,
-	res,
-	next,
-) => {
-	const device = await checkDeviceExistsIsFrozen(req.params.uuid);
-	if (device == null) {
-		// Gracefully deny deleted devices
-		const returnCode = req.method === 'GET' ? 304 : 200;
-		res.status(returnCode).end();
-		return;
-	}
-	if (device.is_frozen) {
-		// Gracefully deny frozen devices
-		const returnCode = req.method === 'GET' ? 304 : 401;
-		res.status(returnCode).end();
-		return;
-	}
+export const resolveOrDenyDevicesWithStatus = (
+	statusCode: number | { deleted: number; frozen: number },
+): RequestHandler => {
+	const deletedStatusCode =
+		typeof statusCode === 'number' ? statusCode : statusCode.deleted;
+	const frozenStatusCode =
+		typeof statusCode === 'number' ? statusCode : statusCode.frozen;
 
-	req.custom ??= {};
-	(req.custom as ResolveDeviceInfoCustomObject).resolvedDevice = device.id;
-	next();
+	return async (req, res, next) => {
+		const device = await checkDeviceExistsIsFrozen(req.params.uuid);
+		if (device == null) {
+			// Gracefully deny deleted devices
+			res.status(deletedStatusCode).end();
+			return;
+		}
+		if (device.is_frozen) {
+			// Gracefully deny frozen devices
+			res.status(frozenStatusCode).end();
+			return;
+		}
+
+		req.custom ??= {};
+		(req.custom as ResolveDeviceInfoCustomObject).resolvedDevice = device.id;
+		next();
+	};
 };
