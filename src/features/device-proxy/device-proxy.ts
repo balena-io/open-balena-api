@@ -198,6 +198,7 @@ async function requestDevices({
 						$and: [
 							{
 								is_connected_to_vpn: true,
+								is_frozen: false,
 							},
 							filter,
 						],
