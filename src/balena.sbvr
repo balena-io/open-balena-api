@@ -552,6 +552,7 @@ Fact type: device has cpu id
 Fact type: device is running release
 	Synonymous Form: release is running on device
 	Necessity: each device is running at most one release.
+	Reference Type: informative
 Fact type: device has download progress
 	Necessity: each device has at most one download progress.
 Fact type: device has status

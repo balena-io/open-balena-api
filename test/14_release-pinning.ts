@@ -13,10 +13,12 @@ import {
 	addImageToRelease,
 } from './test-lib/api-helpers';
 import { Release } from '../src/balena-model';
+import { pineTest } from './test-lib/pinetest';
 
 describe(`Tracking latest release`, () => {
 	let fx: fixtures.Fixtures;
 	let admin: UserObjectParam;
+	let pineUser: typeof pineTest;
 	let applicationId: number;
 	let application2Id: number;
 	let application3Id: number;
@@ -32,6 +34,11 @@ describe(`Tracking latest release`, () => {
 		fx = await fixtures.load('14-release-pinning');
 
 		admin = fx.users.admin;
+
+		pineUser = pineTest.clone({
+			passthrough: { user: admin },
+		});
+
 		applicationId = fx.applications.app1.id;
 		application2Id = fx.applications.app2.id;
 		application3Id = fx.applications.app3.id;
@@ -523,6 +530,21 @@ describe(`Tracking latest release`, () => {
 					400,
 					'"Unable to delete a release because device(s) are pinned to it."',
 				);
+		});
+
+		it('should be able to delete a release that is reported to be running on a device if the device is not pinned to it and the application is not tracking it', async function () {
+			await pineUser
+				.patch({
+					resource: 'device',
+					id: device4.id,
+					body: {
+						is_running__release: app5ReleaseId,
+					},
+				})
+				.expect(200);
+			await pineUser
+				.delete({ resource: 'release', id: app5ReleaseId })
+				.expect(200);
 		});
 	});
 });
