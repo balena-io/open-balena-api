@@ -12,7 +12,7 @@ import {
 	addServiceToApp,
 	addImageToRelease,
 } from './test-lib/api-helpers';
-import { Release } from '../src/balena-model';
+import { Application, DeviceType, Release } from '../src/balena-model';
 import { pineTest } from './test-lib/pinetest';
 
 describe(`Tracking latest release`, () => {
@@ -29,6 +29,8 @@ describe(`Tracking latest release`, () => {
 	let device2: fakeDevice.Device;
 	let device3: fakeDevice.Device;
 	let device4: fakeDevice.Device;
+	let device5: fakeDevice.Device;
+	let applicationToDelete: Application;
 
 	before(async () => {
 		fx = await fixtures.load('14-release-pinning');
@@ -310,8 +312,31 @@ describe(`Tracking latest release`, () => {
 		let app3ReleaseId: number;
 		let app4ReleaseId: number;
 		let app5ReleaseId: number;
+		let appToDeleteRelease1Id: number;
 
 		before(async function () {
+			const org = await fx.organizations.admin;
+			const { body: deviceType } = await pineUser
+				.get<DeviceType>({
+					resource: 'device_type',
+					id: { slug: 'intel-nuc' },
+					options: { $select: 'id' },
+				})
+				.expect(200);
+			const { body: application } = await pineUser
+				.post({
+					resource: 'application',
+					body: {
+						app_name: 'application_to_delete',
+						organization: org.id,
+						is_for__device_type: deviceType.id,
+					},
+				})
+				.expect(201);
+			applicationToDelete = application as Application;
+
+			device5 = await fakeDevice.provisionDevice(admin, applicationToDelete.id);
+
 			await supertest(admin)
 				.patch(`/${version}/application(${application3Id})`)
 				.send({
@@ -353,6 +378,17 @@ describe(`Tracking latest release`, () => {
 				start_timestamp: Date.now(),
 			});
 			app5ReleaseId = app5Release.id;
+			const appToDeleteRelease1 = await addReleaseToApp(admin, {
+				belongs_to__application: applicationToDelete.id,
+				is_created_by__user: admin.id!,
+				build_log: '',
+				commit: `deadbeef4`,
+				composition: {},
+				source: '',
+				status: 'running',
+				start_timestamp: Date.now(),
+			});
+			appToDeleteRelease1Id = appToDeleteRelease1.id;
 
 			const { id: serviceId } = await addServiceToApp(
 				admin,
@@ -389,6 +425,13 @@ describe(`Tracking latest release`, () => {
 				.expect(200);
 			await supertest(admin)
 				.patch(`/${version}/release(${app5ReleaseId})`)
+				.send({
+					status: 'success',
+					end_timestamp: Date.now(),
+				})
+				.expect(200);
+			await supertest(admin)
+				.patch(`/${version}/release(${appToDeleteRelease1Id})`)
 				.send({
 					status: 'success',
 					end_timestamp: Date.now(),
@@ -544,6 +587,26 @@ describe(`Tracking latest release`, () => {
 				.expect(200);
 			await pineUser
 				.delete({ resource: 'release', id: app5ReleaseId })
+				.expect(200);
+		});
+
+		it('should be able to delete an application1 where a device that is running application1.release has been moved to another application2', async function () {
+			await pineUser
+				.patch({
+					resource: 'device',
+					id: device5.id,
+					body: {
+						is_running__release: appToDeleteRelease1Id,
+					},
+				})
+				.expect(200);
+			await pineUser.patch({
+				resource: 'device',
+				id: device5.id,
+				body: { belongs_to__application: application3Id },
+			});
+			await pineUser
+				.delete({ resource: 'application', id: applicationToDelete.id })
 				.expect(200);
 		});
 	});
