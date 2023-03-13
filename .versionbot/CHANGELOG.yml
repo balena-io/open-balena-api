@@ -1,4 +1,17 @@
 - commits:
+    - subject: Remodel `device` `is_running__release` to be informative reference type
+      hash: 0cc8340ef30cb6fd876faaae5003cf004cf4991d
+      body: |
+        Drop foreign key constraint migration
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: myarmolinsky
+      nested: []
+  version: 10.3.1
+  title: ""
+  date: 2023-03-13T12:45:44.856Z
+- commits:
     - subject: Use the graceful deny mechanism for device-logs
       hash: d2911aebe2455770aeb712c3447a8042ebbab353
       body: ""
