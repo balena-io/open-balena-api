@@ -1,4 +1,21 @@
 - commits:
+    - subject: Allow deleting applications when a device is running its release in
+        another application
+      hash: 4595c3f541766d307d1df431f8d97e3d26c99ee8
+      body: ""
+      footer:
+        Changelog-entry: Allow deleting applications when a device is running its
+          release in another application
+        changelog-entry: Allow deleting applications when a device is running its
+          release in another application
+        Change-type: minor
+        change-type: minor
+      author: myarmolinsky
+      nested: []
+  version: 10.4.0
+  title: ""
+  date: 2023-03-14T17:30:03.609Z
+- commits:
     - subject: Remodel `device` `is_running__release` to be informative reference type
       hash: 0cc8340ef30cb6fd876faaae5003cf004cf4991d
       body: |
