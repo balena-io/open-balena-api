@@ -1,4 +1,24 @@
 - commits:
+    - subject: Optimize the app type web url support check to fix TS error
+      hash: 044a357c8a5b74e0273592b3c7c1c441f50e622c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Update TypeScript to 5.0.2
+      hash: d32a33c6da1a6cee791664f6edfb8088f06ac967
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 10.4.1
+  title: ""
+  date: 2023-03-16T18:58:55.107Z
+- commits:
     - subject: Allow deleting applications when a device is running its release in
         another application
       hash: 4595c3f541766d307d1df431f8d97e3d26c99ee8
