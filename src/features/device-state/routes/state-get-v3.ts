@@ -277,7 +277,8 @@ const stateQuery = _.once(() =>
 );
 
 const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
-	const deviceId = (req.custom as ResolveDeviceInfoCustomObject).resolvedDevice;
+	const [deviceId] = (req.custom as ResolveDeviceInfoCustomObject)
+		.resolvedDeviceIds;
 
 	const device = await getDevice(req, uuid);
 	const config = getConfig(device);

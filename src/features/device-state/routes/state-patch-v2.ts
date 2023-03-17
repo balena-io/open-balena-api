@@ -116,8 +116,9 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 		if (!uuid) {
 			throw new BadRequestError();
 		}
-		const { resolvedDevice: deviceId } =
-			req.custom as ResolveDeviceInfoCustomObject;
+		const {
+			resolvedDeviceIds: [deviceId],
+		} = req.custom as ResolveDeviceInfoCustomObject;
 		if (deviceId == null) {
 			// We are supposed to have already checked this.
 			throw new UnauthorizedError();
