@@ -8,7 +8,11 @@ import { resolveOrDenyDevicesWithStatus } from './middleware';
 import { stateV2 } from './routes/state-get-v2';
 import { stateV3 } from './routes/state-get-v3';
 import { statePatchV2 } from './routes/state-patch-v2';
-import { statePatchV3 } from './routes/state-patch-v3';
+import {
+	StatePatchV3Body,
+	resolveDeviceUuids,
+	statePatchV3,
+} from './routes/state-patch-v3';
 import { fleetStateV3 } from './routes/fleet-state-get-v3';
 import { Device } from '../../balena-model';
 
@@ -49,7 +53,14 @@ export const setup = (app: Application) => {
 		middleware.authenticatedApiKey,
 		statePatchV2,
 	);
-	app.patch('/device/v3/state', middleware.authenticatedApiKey, statePatchV3);
+	app.patch(
+		'/device/v3/state',
+		resolveOrDenyDevicesWithStatus(401, (req) =>
+			resolveDeviceUuids(req.body as StatePatchV3Body),
+		),
+		middleware.authenticatedApiKey,
+		statePatchV3,
+	);
 	app.get(
 		'/device/v3/fleet/:fleetUuid/state',
 		middleware.authenticated,
