@@ -233,6 +233,9 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 				const imageIds = imgInstalls.map(({ imageId }) => imageId);
 
 				updateFns.push(async (resinApiTx) => {
+					// Mark the deleted image installs first so the we don't insert image installs with new ids we don't know about and then immediately mark them deleted
+					await deleteOldImageInstalls(resinApiTx, deviceId, imageIds);
+
 					if (imageIds.length > 0) {
 						const existingImgInstalls = (await resinApiTx.get({
 							resource: 'image_install',
@@ -260,8 +263,6 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 							}),
 						);
 					}
-
-					await deleteOldImageInstalls(resinApiTx, deviceId, imageIds);
 				});
 			}
 		}
