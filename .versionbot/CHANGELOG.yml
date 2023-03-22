@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update open-balena-base to 14.7.2
+      hash: 0163c73541d941d39b7dbe428cf932391c4a49d5
+      body: |
+        Update open-balena-base from 14.5.4 to 14.7.2
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 10.5.0
+  title: ""
+  date: 2023-03-22T16:14:41.640Z
+- commits:
     - subject: Optimize the app type web url support check to fix TS error
       hash: 044a357c8a5b74e0273592b3c7c1c441f50e622c
       body: ""
