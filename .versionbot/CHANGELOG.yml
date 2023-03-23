@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update image install cache timeout to reflect that it is in seconds
+      hash: b1f8895f45572826dadc5104315ccc5c126627b5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 10.5.1
+  title: ""
+  date: 2023-03-23T14:50:09.164Z
+- commits:
     - subject: Update open-balena-base to 14.7.2
       hash: 0163c73541d941d39b7dbe428cf932391c4a49d5
       body: |
