@@ -4,7 +4,7 @@ import { StatePatchV2Body } from './routes/state-patch-v2';
 import { StatePatchV3Body } from './routes/state-patch-v3';
 import {
 	DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
-	IMAGE_INSTALL_CACHE_TIMEOUT,
+	IMAGE_INSTALL_CACHE_TIMEOUT_SECONDS,
 	METRICS_MAX_REPORT_INTERVAL_SECONDS,
 } from '../../lib/config';
 import { createMultiLevelStore } from '../../infra/cache';
@@ -128,7 +128,7 @@ const shouldUpdateImageInstall = (() => {
 		'lastImageInstallUpdate',
 		{
 			default: {
-				ttl: IMAGE_INSTALL_CACHE_TIMEOUT,
+				ttl: IMAGE_INSTALL_CACHE_TIMEOUT_SECONDS,
 			},
 			// Do not have a local cache to avoid skipping updates based on an
 			// outdated local cache
