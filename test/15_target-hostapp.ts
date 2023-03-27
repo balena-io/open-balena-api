@@ -140,7 +140,7 @@ describe('target hostapps', () => {
 						.expect(200);
 					const uuid =
 						'f716a3e020bd444b885cb394453917520c3cf82e69654f84be0d33e31a0e15';
-					return await await supertest()
+					return await supertest()
 						.post(`/device/register?apikey=${provisioningKey}`)
 						.send({
 							user: admin.id,
