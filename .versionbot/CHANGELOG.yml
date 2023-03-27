@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove double await from test case
+      hash: 2ca52a993e7d263af2a9dc5e647cac7ef0fbdeb5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 10.5.2
+  title: ""
+  date: 2023-03-27T10:20:50.133Z
+- commits:
     - subject: Update image install cache timeout to reflect that it is in seconds
       hash: b1f8895f45572826dadc5104315ccc5c126627b5
       body: ""
