@@ -233,6 +233,16 @@ export interface Organization {
 	application?: Application[];
 }
 
+export interface ScheduledJobRun {
+	created_at: DateString;
+	modified_at: DateString;
+	id: number;
+	name: string;
+	start_timestamp: DateString;
+	end_timestamp: DateString | null;
+	status: 'running' | 'success' | 'error';
+}
+
 export interface ServiceInstance {
 	created_at: DateString;
 	modified_at: DateString;

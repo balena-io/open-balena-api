@@ -179,3 +179,6 @@ ON "device" ("belongs to-application", "actor");
 -- Optimizes supervisor app rule
 CREATE INDEX "application_slug_public_host_idx"
 ON "application" ("slug" varchar_pattern_ops, "is public", "is host");
+
+CREATE INDEX IF NOT EXISTS "scheduled_job_run_start_timestamp_idx"
+ON "scheduled job run" (DATE_TRUNC('milliseconds', "start timestamp"));
