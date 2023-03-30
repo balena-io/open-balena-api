@@ -17,17 +17,22 @@
 			- upon completion the lock is released.
 */
 
+import { sbvrUtils, permissions } from '@balena/pinejs';
 import _ from 'lodash';
 import schedule from 'node-schedule';
 import Redlock from 'redlock';
+import type { ScheduledJobRun } from '../../balena-model';
 import { captureException } from '../error-handling';
 import { redis, redisRO } from '../redis';
 
 export { Job } from 'node-schedule';
 
+const { api } = sbvrUtils;
+
 export type JobFunction = (
 	fireDate: Date,
 	lock: Redlock.Lock,
+	scheduledJobRun: ScheduledJobRun,
 ) => PromiseLike<void>;
 
 interface JobInfo {
@@ -105,6 +110,10 @@ export const scheduleJob = (
 		async (fireDate: Date) => {
 			try {
 				const lock: Redlock.Lock = await locker.lock(jobLockKey, ttl);
+				const rootApi = api.resin.clone({
+					passthrough: { req: permissions.root },
+				});
+				let scheduledJobRun: ScheduledJobRun | undefined;
 
 				try {
 					const shouldRun = await checkJobShouldExecute(
@@ -115,15 +124,50 @@ export const scheduleJob = (
 
 					if (shouldRun) {
 						console.log(`[Scheduler] Running job: ${jobId}`);
-						await jobFunction(fireDate, lock);
+						scheduledJobRun = (await rootApi.post({
+							resource: 'scheduled_job_run',
+							body: {
+								name: jobId,
+								start_timestamp: Date.now(),
+								status: 'running',
+							},
+						})) as ScheduledJobRun;
+
+						await jobFunction(fireDate, lock, scheduledJobRun);
 
 						console.log(
 							`[Scheduler] Finished job: ${jobId}, next run at ${job.nextInvocation()}`,
 						);
+						await rootApi.patch({
+							resource: 'scheduled_job_run',
+							id: scheduledJobRun.id,
+							body: {
+								status: 'success',
+								end_timestamp: Date.now(),
+							},
+						});
 						await updateJobInfoExecute(jobInfoKey, job);
 					}
 				} catch (err) {
 					captureException(err, `[Scheduler] Scheduled job failed: ${jobId}`);
+					if (scheduledJobRun != null) {
+						await rootApi.patch({
+							resource: 'scheduled_job_run',
+							id: scheduledJobRun.id,
+							options: {
+								$filter: {
+									// If the job managed to run up to the point that was marked as
+									// successful, then don't mark it as failed since the actual
+									// jobFunction invocation did complete.
+									status: { $ne: 'success' },
+								},
+							},
+							body: {
+								status: 'error',
+								end_timestamp: Date.now(),
+							},
+						});
+					}
 					await updateJobInfoExecute(jobInfoKey, job);
 				} finally {
 					try {

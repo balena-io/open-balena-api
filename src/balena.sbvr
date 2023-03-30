@@ -321,6 +321,7 @@ Term: device manufacturer
 Term: device type
 Term: image
 Term: organization
+Term: scheduled job run
 Term: service instance
 
 Term: application
@@ -825,6 +826,22 @@ Fact type: config has scope
 	Necessity: each config has at most one scope.
 Fact type: config has description (Auth)
 	Necessity: each config has at most one description (Auth).
+
+-- scheduled job run
+
+Fact Type: scheduled job run has name (Auth)
+	Necessity: each scheduled job run has exactly one name (Auth)
+
+Fact Type: scheduled job run has start timestamp
+	Necessity: each scheduled job run has exactly one start timestamp
+
+Fact Type: scheduled job run has end timestamp
+	Necessity: each scheduled job run has at most one end timestamp
+
+Fact Type: scheduled job run has status
+	Necessity: each scheduled job run has exactly one status
+	Definition: "running" or "success" or "error"
+	Necessity: each scheduled job run that has a status that is equal to "success", has an end timestamp.
 
 
 -- Rules
