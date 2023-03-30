@@ -1,4 +1,18 @@
 - commits:
+    - subject: Track scheduled job runs in the model
+      hash: 5bb372ed74485914ce2539bc010e0b54a3e8d2b7
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://github.com/balena-io/balena-api/pull/4348#discussion_r1151560771
+        see: https://github.com/balena-io/balena-api/pull/4348#discussion_r1151560771
+      author: Thodoris Greasidis
+      nested: []
+  version: 10.6.0
+  title: ""
+  date: 2023-03-30T16:50:03.588Z
+- commits:
     - subject: Remove double await from test case
       hash: 2ca52a993e7d263af2a9dc5e647cac7ef0fbdeb5
       body: ""
