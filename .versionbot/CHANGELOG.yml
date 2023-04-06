@@ -1,4 +1,18 @@
 - commits:
+    - subject: Revert "Enforce that for a release to be marked "successful" all its
+        images must have been successfully built"
+      hash: f6c4546a614299226d44bd7146edc9fa7df52dde
+      body: |
+        This reverts commit 4cdddd2d65c682e405d958f532826c74af182ae5.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+      nested: []
+  version: 10.6.2
+  title: ""
+  date: 2023-04-06T13:52:39.958Z
+- commits:
     - subject: Enforce that for a release to be marked "successful" all its images
         must have been successfully built
       hash: 4cdddd2d65c682e405d958f532826c74af182ae5
