@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add a cache for looking up api key roles
+      hash: 50a69c910e3ea56fb942f78680cc79e54b9a8d0d
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 10.7.0
+  title: ""
+  date: 2023-04-06T16:47:11.450Z
+- commits:
     - subject: Revert "Enforce that for a release to be marked "successful" all its
         images must have been successfully built"
       hash: f6c4546a614299226d44bd7146edc9fa7df52dde
