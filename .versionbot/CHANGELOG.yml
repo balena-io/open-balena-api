@@ -1,4 +1,17 @@
 - commits:
+    - subject: Enforce that for a release to be marked "successful" all its images
+        must have been successfully built
+      hash: 4cdddd2d65c682e405d958f532826c74af182ae5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Akis Kesoglou
+      nested: []
+  version: 10.6.1
+  title: ""
+  date: 2023-04-06T13:17:08.064Z
+- commits:
     - subject: Track scheduled job runs in the model
       hash: 5bb372ed74485914ce2539bc010e0b54a3e8d2b7
       body: ""
