@@ -1,4 +1,18 @@
 - commits:
+    - subject: "vars-schema: Add custom DTB support for Jetson Orin NX"
+      hash: 60fb7cb47d9cf2ea1269b2881b381677bbd25caf
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Alexandru Costache <alexandru@balena.io>
+        signed-off-by: Alexandru Costache <alexandru@balena.io>
+      author: Alexandru
+      nested: []
+  version: 10.8.0
+  title: ""
+  date: 2023-04-07T18:48:30.471Z
+- commits:
     - subject: Add a cache for looking up api key roles
       hash: 50a69c910e3ea56fb942f78680cc79e54b9a8d0d
       body: ""
