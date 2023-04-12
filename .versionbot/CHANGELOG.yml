@@ -1,4 +1,20 @@
 - commits:
+    - subject: "device-logs: Fix streaming suppressed logs warnings out of order"
+      hash: 76766536d46282d8d4b4ca9b404f8f8d7b03c9ed
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Connects-to: https://github.com/balena-io/open-balena-api/issues/1305
+        connects-to: https://github.com/balena-io/open-balena-api/issues/1305
+        See: https://balena.zulipchat.com/#narrow/stream/346007-balena-io.2FbalenaCloud/topic/Random.20missing.20logs
+        see: https://balena.zulipchat.com/#narrow/stream/346007-balena-io.2FbalenaCloud/topic/Random.20missing.20logs
+      author: Thodoris Greasidis
+      nested: []
+  version: 10.8.1
+  title: ""
+  date: 2023-04-12T16:16:22.308Z
+- commits:
     - subject: "vars-schema: Add custom DTB support for Jetson Orin NX"
       hash: 60fb7cb47d9cf2ea1269b2881b381677bbd25caf
       body: ""
