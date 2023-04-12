@@ -95,7 +95,12 @@ async function handleStreamingRead(
 		if (state === StreamState.Closed) {
 			return;
 		}
-		state = StreamState.Writable;
+		// Do not change to Writable, unless we are in a Saturated state.
+		// Eg: We shouldn't change state if we are still Buffering, waiting for
+		// getHistory to finish.
+		if (state === StreamState.Saturated) {
+			state = StreamState.Writable;
+		}
 		if (dropped) {
 			const now = Date.now();
 			onLog({
