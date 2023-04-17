@@ -183,8 +183,8 @@ const sqlConcatFactory = (
 	return function sqlConcat(
 		[start, ...strings]: TemplateStringsArray,
 		...nodes: Array<TextTypeNodes | string>
-	) {
-		const concats: ConcatenateNode = ['Concatenate'];
+	): ConcatenateNode {
+		const concats: TextTypeNodes[] = [];
 		const addNode = (node: (typeof nodes)[number]) => {
 			node = transformers.reduce((acc, transformer) => transformer(acc), node);
 			if (typeof node === 'string') {
@@ -201,7 +201,7 @@ const sqlConcatFactory = (
 			addNode(strings[i]);
 		}
 
-		return concats;
+		return ['Concatenate', ...(concats as [TextTypeNodes, ...TextTypeNodes[]])];
 	};
 };
 
@@ -228,13 +228,13 @@ export const joinTextParts = (
 	return [
 		'ConcatenateWithSeparator',
 		['EmbeddedText', separator],
-		...parts.map(
+		...(parts.map(
 			([showPart, partValue]): CastNode => [
 				'Cast',
 				['Case', ['When', showPart, partValue], ['Else', ['Null']]],
 				'Text',
 			],
-		),
+		) as [CastNode, ...CastNode[]]),
 	];
 };
 
