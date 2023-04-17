@@ -1,4 +1,16 @@
 - commits:
+    - subject: Avoid unnecessarily fetching the var name when getting a poll interval
+      hash: 351616558d61548e39aa439405d5852aa35e31d7
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 10.8.4
+  title: ""
+  date: 2023-04-17T13:29:26.960Z
+- commits:
     - subject: Stop unnecessarily fetching `os_version` for state queries
       hash: 9326a37406eaa0c84459c6e33022a9f576e015ca
       body: ""
