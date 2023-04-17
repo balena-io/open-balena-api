@@ -25,7 +25,7 @@ const getPollIntervalForDevice = _.once(() =>
 		resource: 'device_config_variable',
 		passthrough: { req: permissions.root },
 		options: {
-			$select: ['name', 'value'],
+			$select: ['value'],
 			$top: 1,
 			$filter: {
 				device: {
@@ -54,7 +54,7 @@ const getPollIntervalForParentApplication = _.once(() =>
 		resource: 'application_config_variable',
 		passthrough: { req: permissions.root },
 		options: {
-			$select: ['name', 'value'],
+			$select: ['value'],
 			$top: 1,
 			$filter: {
 				application: {
