@@ -1,4 +1,16 @@
 - commits:
+    - subject: Stop unnecessarily fetching `os_version` for state queries
+      hash: 9326a37406eaa0c84459c6e33022a9f576e015ca
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 10.8.3
+  title: ""
+  date: 2023-04-17T12:23:19.538Z
+- commits:
     - subject: Remove unnecessary `$orderby`s in the state queries
       hash: 2a1b04bb041f394b1847265b29a4cfad88e432e2
       body: ""
