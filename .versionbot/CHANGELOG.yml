@@ -1,4 +1,17 @@
 - commits:
+    - subject: Switch from uuids to device ids for the device-heartbeat mechanism
+      hash: a2730e283d7e2196ab4fb12df69015f2090f76ec
+      body: |
+        This allows for faster queries when applying the device heartbeats
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+  version: 11.0.0
+  title: ""
+  date: 2023-04-17T16:28:15.548Z
+- commits:
     - subject: Use a $any for filtering the device uuid when getting the poll interval
       hash: 0faea77c61bd4337c0692e8786318251d53f981c
       body: ""
