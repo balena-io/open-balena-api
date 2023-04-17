@@ -1,4 +1,46 @@
 - commits:
+    - subject: Update dependencies
+      hash: 73b7cddc7756fa5b59030882c9c6488c028db0cf
+      body: |
+        Update @balena/pinejs from 14.62.4 to 14.62.6
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Guard against translations aliasing to a field that does not exist
+              hash: ad7d4cbc5b08df254b086495e1a1bd75239ab8df
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-14.62.6
+          title: ""
+          date: 2023-04-11T10:50:23.109Z
+        - commits:
+            - subject: Fix resourceName to resourceName native translation
+              hash: 6deffd6681f2d037776f352033867f408d2f9f04
+              body: >
+                Permissions lookup need to know the modifyName if the resource needs
+                translations for looking up the permissions from the destination
+                permissions table
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: fisehara <harald@balena.io>
+                signed-off-by: fisehara <harald@balena.io>
+              author: fisehara
+              nested: []
+          version: pinejs-14.62.5
+          title: ""
+          date: 2023-03-23T11:14:58.896Z
+  version: 11.0.1
+  title: ""
+  date: 2023-04-17T17:21:32.095Z
+- commits:
     - subject: Switch from uuids to device ids for the device-heartbeat mechanism
       hash: a2730e283d7e2196ab4fb12df69015f2090f76ec
       body: |
