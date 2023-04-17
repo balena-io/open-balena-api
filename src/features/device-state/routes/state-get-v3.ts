@@ -269,7 +269,7 @@ const stateQuery = _.once(() =>
 		resource: 'device',
 		id: { uuid: { '@': 'uuid' } },
 		options: {
-			$select: ['device_name', 'os_version'],
+			$select: ['device_name'],
 			$expand: deviceExpand,
 		},
 	}),
