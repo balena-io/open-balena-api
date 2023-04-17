@@ -23,13 +23,13 @@ const TIMEOUT_SEC = 1;
 const { DeviceOnlineStates } = stateMock;
 
 class StateTracker {
-	public states: Dictionary<stateMock.DeviceOnlineStates> = {};
+	public states: { [key: number]: stateMock.DeviceOnlineStates } = {};
 
 	public stateUpdated = (
-		uuid: string,
+		deviceId: number,
 		newState: stateMock.DeviceOnlineStates,
 	) => {
-		this.states[uuid] = newState;
+		this.states[deviceId] = newState;
 	};
 }
 
@@ -62,11 +62,11 @@ mockery.registerMock('../src/lib/config', configMock);
 			device = await fakeDevice.provisionDevice(admin, applicationId);
 
 			stateMock.getInstance()['updateDeviceModel'] = function (
-				uuid: string,
+				deviceId: number,
 				newState: stateMock.DeviceOnlineStates,
 			) {
-				tracker.stateUpdated(uuid, newState);
-				return updateDeviceModel.call(this, uuid, newState);
+				tracker.stateUpdated(deviceId, newState);
+				return updateDeviceModel.call(this, deviceId, newState);
 			};
 
 			mockery.registerMock('../src/lib/device-online-state', stateMock);
@@ -82,7 +82,7 @@ mockery.registerMock('../src/lib/config', configMock);
 		describe(`API heartbeat state`, () => {
 			describe('Poll Interval Acquisition', () => {
 				it('Should see default value when not overridden', async () => {
-					const pollInterval = await stateMock.getPollInterval(device.uuid);
+					const pollInterval = await stateMock.getPollInterval(device.id);
 					expect(pollInterval).to.equal(
 						POLL_MSEC * stateMock.POLL_JITTER_FACTOR,
 					);
@@ -98,7 +98,7 @@ mockery.registerMock('../src/lib/config', configMock);
 						})
 						.expect(201);
 
-					const pollInterval = await stateMock.getPollInterval(device.uuid);
+					const pollInterval = await stateMock.getPollInterval(device.id);
 					expect(pollInterval).to.equal(123000 * stateMock.POLL_JITTER_FACTOR);
 				});
 
@@ -112,7 +112,7 @@ mockery.registerMock('../src/lib/config', configMock);
 						})
 						.expect(201);
 
-					const pollInterval = await stateMock.getPollInterval(device.uuid);
+					const pollInterval = await stateMock.getPollInterval(device.id);
 					expect(pollInterval).to.equal(321000 * stateMock.POLL_JITTER_FACTOR);
 				});
 
@@ -126,7 +126,7 @@ mockery.registerMock('../src/lib/config', configMock);
 						})
 						.expect(200);
 
-					const pollInterval = await stateMock.getPollInterval(device.uuid);
+					const pollInterval = await stateMock.getPollInterval(device.id);
 					expect(pollInterval).to.equal(
 						POLL_MSEC * stateMock.POLL_JITTER_FACTOR,
 					);
@@ -148,7 +148,7 @@ mockery.registerMock('../src/lib/config', configMock);
 						})
 						.expect(200);
 
-					const pollInterval = await stateMock.getPollInterval(device.uuid);
+					const pollInterval = await stateMock.getPollInterval(device.id);
 					expect(pollInterval).to.equal(
 						POLL_MSEC * stateMock.POLL_JITTER_FACTOR,
 					);
@@ -176,7 +176,7 @@ mockery.registerMock('../src/lib/config', configMock);
 
 					stateMock.getInstance().on('change', (args) => {
 						if (
-							![device.uuid, deviceUserRequestedState.uuid].includes(args.uuid)
+							![device.id, deviceUserRequestedState.id].includes(args.deviceId)
 						) {
 							return;
 						}
@@ -242,7 +242,7 @@ mockery.registerMock('../src/lib/config', configMock);
 									expect(stateChangeEventSpy.called).to.be.false;
 								}
 
-								expect(tracker.states[getDevice().uuid]).to.equal(
+								expect(tracker.states[getDevice().id]).to.equal(
 									heartbeatAfterGet !== DeviceOnlineStates.Unknown
 										? heartbeatAfterGet
 										: undefined,
@@ -272,7 +272,7 @@ mockery.registerMock('../src/lib/config', configMock);
 
 								await waitFor({ checkFn: () => stateChangeEventSpy.called });
 
-								expect(tracker.states[getDevice().uuid]).to.equal(
+								expect(tracker.states[getDevice().id]).to.equal(
 									DeviceOnlineStates.Timeout,
 								);
 
@@ -295,7 +295,7 @@ mockery.registerMock('../src/lib/config', configMock);
 
 								await waitFor({ checkFn: () => stateChangeEventSpy.called });
 
-								expect(tracker.states[getDevice().uuid]).to.equal(
+								expect(tracker.states[getDevice().id]).to.equal(
 									DeviceOnlineStates.Online,
 								);
 
@@ -323,7 +323,7 @@ mockery.registerMock('../src/lib/config', configMock);
 									checkFn: () => stateChangeEventSpy.calledTwice,
 								});
 
-								expect(tracker.states[getDevice().uuid]).to.equal(
+								expect(tracker.states[getDevice().id]).to.equal(
 									DeviceOnlineStates.Offline,
 								);
 
@@ -371,7 +371,7 @@ mockery.registerMock('../src/lib/config', configMock);
 							`The stateChangeEventSpy shouldn't have been called.`,
 						);
 
-						expect(tracker.states[device.uuid]).to.equal(
+						expect(tracker.states[device.id]).to.equal(
 							DeviceOnlineStates.Offline,
 						);
 
@@ -409,7 +409,7 @@ mockery.registerMock('../src/lib/config', configMock);
 							checkFn: () => stateChangeEventSpy.called,
 						});
 
-						expect(tracker.states[device.uuid]).to.equal(
+						expect(tracker.states[device.id]).to.equal(
 							DeviceOnlineStates.Online,
 						);
 

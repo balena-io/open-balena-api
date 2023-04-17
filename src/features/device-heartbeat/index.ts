@@ -21,23 +21,14 @@ import { setTimeout } from 'timers/promises';
 const { api } = sbvrUtils;
 
 const getPollIntervalForDevice = _.once(() =>
-	api.resin.prepare<{ uuid: string }>({
+	api.resin.prepare<{ deviceId: number }>({
 		resource: 'device_config_variable',
 		passthrough: { req: permissions.root },
 		options: {
 			$select: ['value'],
 			$top: 1,
 			$filter: {
-				device: {
-					$any: {
-						$alias: 'd',
-						$expr: {
-							d: {
-								uuid: { '@': 'uuid' },
-							},
-						},
-					},
-				},
+				device: { '@': 'deviceId' },
 				name: {
 					$in: [
 						'BALENA_SUPERVISOR_POLL_INTERVAL',
@@ -56,7 +47,7 @@ const getPollIntervalForDevice = _.once(() =>
 
 const getPollIntervalForParentApplication = _.once(() =>
 	api.resin.prepare<{
-		uuid: string;
+		deviceId: number;
 	}>({
 		resource: 'application_config_variable',
 		passthrough: { req: permissions.root },
@@ -74,7 +65,7 @@ const getPollIntervalForParentApplication = _.once(() =>
 										$alias: 'd',
 										$expr: {
 											d: {
-												uuid: { '@': 'uuid' },
+												id: { '@': 'deviceId' },
 											},
 										},
 									},
@@ -99,14 +90,16 @@ const getPollIntervalForParentApplication = _.once(() =>
 	}),
 );
 
-export const getPollInterval = async (uuid: string) => {
-	let pollIntervals = (await getPollIntervalForDevice()({ uuid })) as Array<{
+export const getPollInterval = async (deviceId: number) => {
+	let pollIntervals = (await getPollIntervalForDevice()({
+		deviceId,
+	})) as Array<{
 		value: string;
 	}>;
 
 	if (pollIntervals.length === 0) {
 		pollIntervals = (await getPollIntervalForParentApplication()({
-			uuid,
+			deviceId,
 		})) as Array<{ value: string }>;
 	}
 
@@ -141,42 +134,19 @@ interface MetricEventArgs {
 	err?: any;
 }
 
-export declare interface DeviceOnlineStateManager {
-	emit(
-		event: 'change',
-		args: MetricEventArgs & { uuid: string; newState: DeviceOnlineStates },
-	): boolean;
-	emit(
-		event: 'stats',
+export class DeviceOnlineStateManager extends EventEmitter<{
+	change: (
+		args: MetricEventArgs & { deviceId: number; newState: DeviceOnlineStates },
+	) => void;
+	stats: (
 		args: MetricEventArgs & {
 			totalsent: number;
 			totalrecv: number;
 			msgs: number;
 			hiddenmsgs: number;
 		},
-	): boolean;
-
-	on(
-		event: 'change',
-		listener: (
-			args: MetricEventArgs & { uuid: string; newState: DeviceOnlineStates },
-		) => void,
-	): this;
-	on(
-		event: 'stats',
-		listener: (
-			args: MetricEventArgs & {
-				totalsent: number;
-				totalrecv: number;
-				msgs: number;
-				hiddenmsgs: number;
-			},
-		) => void,
-	): this;
-	on(event: string, listener: (args: AnyObject) => void): this;
-}
-
-export class DeviceOnlineStateManager extends EventEmitter {
+	) => void;
+}> {
 	private static readonly REDIS_NAMESPACE = 'device-online-state';
 	private static readonly EXPIRED_QUEUE = 'expired';
 	private static readonly RSMQ_READ_TIMEOUT = 30;
@@ -246,7 +216,7 @@ export class DeviceOnlineStateManager extends EventEmitter {
 	}
 
 	private async updateDeviceModel(
-		uuid: string,
+		deviceId: number,
 		newState: DeviceOnlineStates,
 	): Promise<boolean> {
 		const startAt = Date.now();
@@ -260,9 +230,7 @@ export class DeviceOnlineStateManager extends EventEmitter {
 			await api.resin.patch({
 				resource: 'device',
 				passthrough: { req: permissions.root },
-				id: {
-					uuid,
-				},
+				id: deviceId,
 				options: {
 					$filter: {
 						$not: body,
@@ -280,7 +248,7 @@ export class DeviceOnlineStateManager extends EventEmitter {
 			return false;
 		} finally {
 			this.emit('change', {
-				uuid,
+				deviceId,
 				newState,
 				startAt,
 				endAt: Date.now(),
@@ -304,8 +272,8 @@ export class DeviceOnlineStateManager extends EventEmitter {
 
 				const { id, message } = msg;
 				try {
-					const { uuid, nextState } = JSON.parse(message) as {
-						uuid: string;
+					const { deviceId, nextState } = JSON.parse(message) as {
+						deviceId: number;
 						nextState: DeviceOnlineStates;
 					};
 
@@ -314,16 +282,19 @@ export class DeviceOnlineStateManager extends EventEmitter {
 						case DeviceOnlineStates.Timeout:
 							await Promise.all([
 								this.scheduleChangeOfStateForDevice(
-									uuid,
+									deviceId,
 									DeviceOnlineStates.Timeout,
 									DeviceOnlineStates.Offline,
 									API_HEARTBEAT_STATE_TIMEOUT_SECONDS, // put the device into a timeout state if it misses it's scheduled heartbeat window... then mark as offline
 								),
-								this.updateDeviceModel(uuid, DeviceOnlineStates.Timeout),
+								this.updateDeviceModel(deviceId, DeviceOnlineStates.Timeout),
 							]);
 							break;
 						case DeviceOnlineStates.Offline:
-							await this.updateDeviceModel(uuid, DeviceOnlineStates.Offline);
+							await this.updateDeviceModel(
+								deviceId,
+								DeviceOnlineStates.Offline,
+							);
 							break;
 						default:
 							throw new Error(
@@ -354,14 +325,14 @@ export class DeviceOnlineStateManager extends EventEmitter {
 	}
 
 	private async scheduleChangeOfStateForDevice(
-		uuid: string,
+		deviceId: number,
 		currentState: DeviceOnlineStates,
 		nextState: DeviceOnlineStates,
 		delay: number, // in seconds
 	) {
 		// remove the old queued state...
 		const value = await redisRO.get(
-			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
+			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${deviceId}`,
 		);
 
 		if (value != null) {
@@ -382,14 +353,14 @@ export class DeviceOnlineStateManager extends EventEmitter {
 		const newId = await this.rsmq.sendMessageAsync({
 			qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
 			message: JSON.stringify({
-				uuid,
+				deviceId,
 				nextState,
 			}),
 			delay,
 		});
 
 		await redis.set(
-			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${uuid}`,
+			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${deviceId}`,
 			JSON.stringify({
 				id: newId,
 				currentState,
@@ -407,7 +378,7 @@ export class DeviceOnlineStateManager extends EventEmitter {
 		this.isConsuming = true;
 		this.consume();
 
-		deviceStateEvents.on('get-state', async (uuid, { apiKey }) => {
+		deviceStateEvents.on('get-state', async (deviceId, { apiKey }) => {
 			try {
 				const key = apiKey?.key;
 				if (typeof key !== 'string') {
@@ -416,34 +387,34 @@ export class DeviceOnlineStateManager extends EventEmitter {
 
 				const [isDeviceApiKey, pollInterval] = await Promise.all([
 					isApiKeyWithRole(key, 'device-api-key'),
-					getPollInterval(uuid),
+					getPollInterval(deviceId),
 				]);
 
 				if (!isDeviceApiKey) {
 					return;
 				}
 
-				await this.captureEventFor(uuid, pollInterval / 1000);
+				await this.captureEventFor(deviceId, pollInterval / 1000);
 			} catch (err) {
 				captureException(
 					err,
-					`Unable to capture the API heartbeat event for device: ${uuid}`,
+					`Unable to capture the API heartbeat event for device: ${deviceId}`,
 				);
 			}
 		});
 	}
 
-	public async captureEventFor(uuid: string, timeoutSeconds: number) {
+	public async captureEventFor(deviceId: number, timeoutSeconds: number) {
 		if (!this.featureIsEnabled) {
 			return;
 		}
 
 		// update the device model...
-		await this.updateDeviceModel(uuid, DeviceOnlineStates.Online);
+		await this.updateDeviceModel(deviceId, DeviceOnlineStates.Online);
 
 		// record the activity...
 		await this.scheduleChangeOfStateForDevice(
-			uuid,
+			deviceId,
 			DeviceOnlineStates.Online,
 			DeviceOnlineStates.Timeout,
 			Math.ceil(timeoutSeconds), // always make this a whole number of seconds, and round up to make sure we dont expire too soon...
