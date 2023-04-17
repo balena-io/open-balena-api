@@ -30,9 +30,6 @@ type FleetStateV3 = {
 const fleetExpand: Expand = {
 	application_config_variable: {
 		$select: ['name', 'value'],
-		$orderby: {
-			name: 'asc',
-		},
 	},
 	application_environment_variable: {
 		$select: ['name', 'value'],

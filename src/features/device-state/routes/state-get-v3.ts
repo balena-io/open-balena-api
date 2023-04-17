@@ -218,9 +218,6 @@ const appExpand: Expand = {
 const deviceExpand: Expand = {
 	device_config_variable: {
 		$select: ['name', 'value'],
-		$orderby: {
-			name: 'asc',
-		},
 	},
 	device_environment_variable: {
 		$select: ['name', 'value'],
@@ -251,9 +248,6 @@ const deviceExpand: Expand = {
 			...appExpand,
 			application_config_variable: {
 				$select: ['name', 'value'],
-				$orderby: {
-					name: 'asc',
-				},
 			},
 			should_be_running__release: releaseExpand,
 		},
