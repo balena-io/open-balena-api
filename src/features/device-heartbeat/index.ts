@@ -29,7 +29,14 @@ const getPollIntervalForDevice = _.once(() =>
 			$top: 1,
 			$filter: {
 				device: {
-					uuid: { '@': 'uuid' },
+					$any: {
+						$alias: 'd',
+						$expr: {
+							d: {
+								uuid: { '@': 'uuid' },
+							},
+						},
+					},
 				},
 				name: {
 					$in: [
