@@ -20,6 +20,7 @@ import {
 } from '../state-get-utils';
 import { sbvrUtils } from '@balena/pinejs';
 import { events } from '..';
+import { ResolveDeviceInfoCustomObject } from '../middleware';
 
 const { api } = sbvrUtils;
 
@@ -238,9 +239,11 @@ const stateQuery = _.once(() =>
 );
 
 const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
+	const deviceId = (req.custom as ResolveDeviceInfoCustomObject).resolvedDevice;
+
 	const device = await getDevice(req, uuid);
 	// At this point we are sure that the api key is valid and not expired.
-	events.emit('get-state', uuid, { apiKey: req.apiKey });
+	events.emit('get-state', deviceId, { apiKey: req.apiKey });
 	const config = getConfig(device);
 
 	const userApp = getUserAppForState(device, config);
