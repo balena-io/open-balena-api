@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove unnecessary `$orderby`s in the state queries
+      hash: 2a1b04bb041f394b1847265b29a4cfad88e432e2
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 10.8.2
+  title: ""
+  date: 2023-04-17T11:40:10.108Z
+- commits:
     - subject: "device-logs: Fix streaming suppressed logs warnings out of order"
       hash: 76766536d46282d8d4b4ca9b404f8f8d7b03c9ed
       body: ""
