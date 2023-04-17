@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use a $any for filtering the device uuid when getting the poll interval
+      hash: 0faea77c61bd4337c0692e8786318251d53f981c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 10.8.5
+  title: ""
+  date: 2023-04-17T13:47:32.173Z
+- commits:
     - subject: Avoid unnecessarily fetching the var name when getting a poll interval
       hash: 351616558d61548e39aa439405d5852aa35e31d7
       body: ""
