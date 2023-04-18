@@ -1,4 +1,16 @@
 - commits:
+    - subject: Avoid fetching the poll interval if it is not a device key request
+      hash: 4f62cda91f724bb8f10da0aeda6797ea06e0a6ed
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 11.0.2
+  title: ""
+  date: 2023-04-18T12:52:24.417Z
+- commits:
     - subject: Update dependencies
       hash: 73b7cddc7756fa5b59030882c9c6488c028db0cf
       body: |
