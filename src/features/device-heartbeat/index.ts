@@ -147,6 +147,11 @@ interface MetricEventArgs {
 	err?: any;
 }
 
+interface DeviceOnlineStateManagerMessage {
+	id: string;
+	currentState: DeviceOnlineStates;
+}
+
 export class DeviceOnlineStateManager extends EventEmitter<{
 	change: (
 		args: MetricEventArgs & { deviceId: number; newState: DeviceOnlineStates },
@@ -296,6 +301,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 							await Promise.all([
 								this.scheduleChangeOfStateForDevice(
 									deviceId,
+									await this.getDeviceOnlineState(deviceId),
 									DeviceOnlineStates.Timeout,
 									DeviceOnlineStates.Offline,
 									API_HEARTBEAT_STATE_TIMEOUT_SECONDS, // put the device into a timeout state if it misses it's scheduled heartbeat window... then mark as offline
@@ -337,29 +343,36 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		return null;
 	}
 
+	private async getDeviceOnlineState(deviceId: number) {
+		try {
+			const value = await redisRO.get(
+				`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${deviceId}`,
+			);
+			if (value == null) {
+				return;
+			}
+			return JSON.parse(value) as DeviceOnlineStateManagerMessage;
+		} catch {
+			// Ignore
+		}
+	}
+
 	private async scheduleChangeOfStateForDevice(
 		deviceId: number,
+		previousManagerState: DeviceOnlineStateManagerMessage | undefined,
 		currentState: DeviceOnlineStates,
 		nextState: DeviceOnlineStates,
 		delay: number, // in seconds
 	) {
-		// remove the old queued state...
-		const value = await redisRO.get(
-			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${deviceId}`,
-		);
-
-		if (value != null) {
-			const { id } = JSON.parse(value) as { id: string };
-
-			if (id) {
-				try {
-					await this.rsmq.deleteMessageAsync({
-						qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-						id,
-					});
-				} catch {
-					// ignore errors when deleting the old queued state, it may have already expired...
-				}
+		if (previousManagerState?.id != null) {
+			try {
+				// remove the old queued state...
+				await this.rsmq.deleteMessageAsync({
+					qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
+					id: previousManagerState.id,
+				});
+			} catch {
+				// ignore errors when deleting the old queued state, it may have already expired...
 			}
 		}
 
@@ -377,7 +390,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 			JSON.stringify({
 				id: newId,
 				currentState,
-			}),
+			} satisfies DeviceOnlineStateManagerMessage),
 			'EX',
 			delay + 5,
 		);
@@ -419,12 +432,20 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 			return;
 		}
 
-		// update the device model...
-		await this.updateDeviceModel(deviceId, DeviceOnlineStates.Online);
+		const previousDeviceOnlineState = await this.getDeviceOnlineState(deviceId);
+		// If redis still has a valid message about the device being online we can avoid reaching to the DB...
+		if (
+			previousDeviceOnlineState == null ||
+			previousDeviceOnlineState.currentState !== DeviceOnlineStates.Online
+		) {
+			// otherwise update the device model...
+			await this.updateDeviceModel(deviceId, DeviceOnlineStates.Online);
+		}
 
 		// record the activity...
 		await this.scheduleChangeOfStateForDevice(
 			deviceId,
+			previousDeviceOnlineState,
 			DeviceOnlineStates.Online,
 			DeviceOnlineStates.Timeout,
 			Math.ceil(timeoutSeconds), // always make this a whole number of seconds, and round up to make sure we dont expire too soon...
