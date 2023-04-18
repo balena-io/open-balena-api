@@ -242,9 +242,12 @@ const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 	const deviceId = (req.custom as ResolveDeviceInfoCustomObject).resolvedDevice;
 
 	const device = await getDevice(req, uuid);
-	// At this point we are sure that the api key is valid and not expired.
-	events.emit('get-state', deviceId, { apiKey: req.apiKey });
 	const config = getConfig(device);
+	// At this point we are sure that the api key is valid and not expired.
+	events.emit('get-state', deviceId, {
+		apiKey: req.apiKey,
+		config,
+	});
 
 	const userApp = getUserAppForState(device, config);
 	const userAppFromApi: AnyObject = device.belongs_to__application[0];
