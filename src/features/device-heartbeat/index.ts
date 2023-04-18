@@ -385,14 +385,11 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 					return;
 				}
 
-				const [isDeviceApiKey, pollInterval] = await Promise.all([
-					isApiKeyWithRole(key, 'device-api-key'),
-					getPollInterval(deviceId),
-				]);
-
+				const isDeviceApiKey = await isApiKeyWithRole(key, 'device-api-key');
 				if (!isDeviceApiKey) {
 					return;
 				}
+				const pollInterval = await getPollInterval(deviceId);
 
 				await this.captureEventFor(deviceId, pollInterval / 1000);
 			} catch (err) {
