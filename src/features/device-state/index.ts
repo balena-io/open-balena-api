@@ -10,6 +10,7 @@ import { stateV3 } from './routes/state-get-v3';
 import { statePatchV2 } from './routes/state-patch-v2';
 import { statePatchV3 } from './routes/state-patch-v3';
 import { fleetStateV3 } from './routes/fleet-state-get-v3';
+import { Device } from '../../balena-model';
 
 export {
 	setReadTransaction,
@@ -61,6 +62,7 @@ export interface Events {
 		info: Pick<Request, 'apiKey'> & {
 			config?: Dictionary<string>;
 			ipAddress: string | undefined;
+			storedPublicAddress: Device['public_address'];
 		},
 	) => void;
 }
