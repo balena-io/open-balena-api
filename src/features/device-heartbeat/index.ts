@@ -90,25 +90,38 @@ const getPollIntervalForParentApplication = _.once(() =>
 	}),
 );
 
-export const getPollInterval = async (deviceId: number) => {
-	let pollIntervals = (await getPollIntervalForDevice()({
-		deviceId,
-	})) as Array<{
-		value: string;
-	}>;
+export const getPollInterval = async (
+	deviceId: number,
+	config?: Dictionary<string>,
+) => {
+	let pollIntervalString: string | undefined;
+	if (config != null) {
+		// The order needs to be matching the above `$orderby: name: 'desc'`
+		pollIntervalString =
+			config['RESIN_SUPERVISOR_POLL_INTERVAL'] ??
+			config['BALENA_SUPERVISOR_POLL_INTERVAL'];
+	} else {
+		pollIntervalString ??= (
+			(await getPollIntervalForDevice()({
+				deviceId,
+			})) as Array<{
+				value: string;
+			}>
+		)[0]?.value;
 
-	if (pollIntervals.length === 0) {
-		pollIntervals = (await getPollIntervalForParentApplication()({
-			deviceId,
-		})) as Array<{ value: string }>;
+		pollIntervalString ??= (
+			(await getPollIntervalForParentApplication()({
+				deviceId,
+			})) as Array<{ value: string }>
+		)[0]?.value;
 	}
 
 	let pollInterval;
-	if (pollIntervals.length === 0) {
+	if (pollIntervalString == null) {
 		pollInterval = DEFAULT_SUPERVISOR_POLL_INTERVAL;
 	} else {
 		pollInterval = Math.max(
-			parseInt(pollIntervals[0].value, 10) || 0,
+			parseInt(pollIntervalString, 10) || 0,
 			DEFAULT_SUPERVISOR_POLL_INTERVAL,
 		);
 	}
@@ -378,7 +391,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		this.isConsuming = true;
 		this.consume();
 
-		deviceStateEvents.on('get-state', async (deviceId, { apiKey }) => {
+		deviceStateEvents.on('get-state', async (deviceId, { apiKey, config }) => {
 			try {
 				const key = apiKey?.key;
 				if (typeof key !== 'string') {
@@ -389,7 +402,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 				if (!isDeviceApiKey) {
 					return;
 				}
-				const pollInterval = await getPollInterval(deviceId);
+				const pollInterval = await getPollInterval(deviceId, config);
 
 				await this.captureEventFor(deviceId, pollInterval / 1000);
 			} catch (err) {

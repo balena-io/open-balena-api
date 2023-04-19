@@ -56,7 +56,10 @@ export const setup = (app: Application) => {
 };
 
 export interface Events {
-	'get-state': (deviceId: number, req: Pick<Request, 'apiKey'>) => void;
+	'get-state': (
+		deviceId: number,
+		req: Pick<Request, 'apiKey'> & { config?: Dictionary<string> },
+	) => void;
 }
 export const events: StrictEventEmitter<EventEmitter, Events> =
 	new EventEmitter();
