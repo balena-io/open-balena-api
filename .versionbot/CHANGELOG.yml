@@ -1,4 +1,16 @@
 - commits:
+    - subject: Be more specific with `reqHasPermission` typing
+      hash: b87de410f418950108219aa210bc9199c7fe42bd
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 11.1.1
+  title: ""
+  date: 2023-04-19T15:02:06.404Z
+- commits:
     - subject: Include the ipAddress in 'get-state' event
       hash: 1cbf6b525cfc35705dddff080c5153268048e8ff
       body: ""
