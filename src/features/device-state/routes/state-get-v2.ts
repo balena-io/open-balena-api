@@ -21,6 +21,7 @@ import {
 import { sbvrUtils } from '@balena/pinejs';
 import { events } from '..';
 import { ResolveDeviceInfoCustomObject } from '../middleware';
+import { getIP } from '../../../lib/utils';
 
 const { api } = sbvrUtils;
 
@@ -247,6 +248,7 @@ const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 	events.emit('get-state', deviceId, {
 		apiKey: req.apiKey,
 		config,
+		ipAddress: getIP(req),
 	});
 
 	const userApp = getUserAppForState(device, config);

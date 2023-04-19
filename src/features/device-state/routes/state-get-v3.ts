@@ -22,6 +22,7 @@ import { sbvrUtils } from '@balena/pinejs';
 import { events } from '..';
 import { Expand } from 'pinejs-client-core';
 import { ResolveDeviceInfoCustomObject } from '../middleware';
+import { getIP } from '../../../lib/utils';
 
 const { api } = sbvrUtils;
 
@@ -285,6 +286,7 @@ const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
 	events.emit('get-state', deviceId, {
 		apiKey: req.apiKey,
 		config,
+		ipAddress: getIP(req),
 	});
 
 	let apps = getUserAppState(device, config);
