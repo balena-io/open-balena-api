@@ -137,8 +137,10 @@ export const checkUserPassword = async (
 	}
 };
 
-export const reqHasPermission = (req: Request, permission: string): boolean =>
-	userHasPermission(req.apiKey || req.user, permission);
+export const reqHasPermission = (
+	req: Pick<Request, 'apiKey' | 'user'>,
+	permission: string,
+): boolean => userHasPermission(req.apiKey || req.user, permission);
 
 // If adding/removing fields, please also update `User`
 // in "typings/common.d.ts".
