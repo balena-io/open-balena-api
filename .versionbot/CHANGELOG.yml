@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add the device's stored `public_address` to the get-state event args
+      hash: 065b4ca09d3d5055fdbf4d6e5303dd093dab5baf
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 11.2.0
+  title: ""
+  date: 2023-04-19T17:00:02.444Z
+- commits:
     - subject: Be more specific with `reqHasPermission` typing
       hash: b87de410f418950108219aa210bc9199c7fe42bd
       body: ""
