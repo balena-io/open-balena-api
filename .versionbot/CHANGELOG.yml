@@ -1,4 +1,18 @@
 - commits:
+    - subject: "heartbeat: Reuse the poll interval from the State GET result"
+      hash: 16fb00b0fe8ecbfbd03f263888139cb486aabfd8
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://balena.zulipchat.com/#narrow/stream/346007-balena-io.2FbalenaCloud/topic/Device.20heartbeat
+        see: https://balena.zulipchat.com/#narrow/stream/346007-balena-io.2FbalenaCloud/topic/Device.20heartbeat
+      author: Thodoris Greasidis
+      nested: []
+  version: 11.0.3
+  title: ""
+  date: 2023-04-19T10:20:25.893Z
+- commits:
     - subject: Avoid fetching the poll interval if it is not a device key request
       hash: 4f62cda91f724bb8f10da0aeda6797ea06e0a6ed
       body: ""
