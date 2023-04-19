@@ -1,4 +1,16 @@
 - commits:
+    - subject: Include the ipAddress in 'get-state' event
+      hash: 1cbf6b525cfc35705dddff080c5153268048e8ff
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 11.1.0
+  title: ""
+  date: 2023-04-19T14:39:03.785Z
+- commits:
     - subject: "heartbeat: Reuse the poll interval from the State GET result"
       hash: 16fb00b0fe8ecbfbd03f263888139cb486aabfd8
       body: ""
