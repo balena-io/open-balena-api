@@ -23,6 +23,7 @@ import { events } from '..';
 import { Expand } from 'pinejs-client-core';
 import { ResolveDeviceInfoCustomObject } from '../middleware';
 import { getIP } from '../../../lib/utils';
+import { Device } from '../../../balena-model';
 
 const { api } = sbvrUtils;
 
@@ -271,7 +272,7 @@ const stateQuery = _.once(() =>
 		resource: 'device',
 		id: { uuid: { '@': 'uuid' } },
 		options: {
-			$select: ['device_name'],
+			$select: ['device_name', 'public_address'],
 			$expand: deviceExpand,
 		},
 	}),
@@ -287,6 +288,7 @@ const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
 		apiKey: req.apiKey,
 		config,
 		ipAddress: getIP(req),
+		storedPublicAddress: device.public_address as Device['public_address'],
 	});
 
 	let apps = getUserAppState(device, config);

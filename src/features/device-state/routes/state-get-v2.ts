@@ -22,6 +22,7 @@ import { sbvrUtils } from '@balena/pinejs';
 import { events } from '..';
 import { ResolveDeviceInfoCustomObject } from '../middleware';
 import { getIP } from '../../../lib/utils';
+import { Device } from '../../../balena-model';
 
 const { api } = sbvrUtils;
 
@@ -194,7 +195,7 @@ const stateQuery = _.once(() =>
 		resource: 'device',
 		id: { uuid: { '@': 'uuid' } },
 		options: {
-			$select: ['device_name'],
+			$select: ['device_name', 'public_address'],
 			$expand: {
 				device_config_variable: {
 					$select: ['name', 'value'],
@@ -249,6 +250,7 @@ const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 		apiKey: req.apiKey,
 		config,
 		ipAddress: getIP(req),
+		storedPublicAddress: device.public_address as Device['public_address'],
 	});
 
 	const userApp = getUserAppForState(device, config);
