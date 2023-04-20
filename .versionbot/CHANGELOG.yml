@@ -1,4 +1,24 @@
 - commits:
+    - subject: Combine checking write-log permission with uuid -> id resolution
+      hash: 0f7e5d1319e6d2ef5471f81ea830868956084bfd
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Separate loki specific log context
+      hash: d714440f889b3def1be8b8a480d41712a23d8a8b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 11.2.1
+  title: ""
+  date: 2023-04-20T12:56:17.488Z
+- commits:
     - subject: Add the device's stored `public_address` to the get-state event args
       hash: 065b4ca09d3d5055fdbf4d6e5303dd093dab5baf
       body: ""
