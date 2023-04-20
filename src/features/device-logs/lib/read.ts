@@ -12,7 +12,7 @@ import { DeviceLog, LogContext, StreamState } from './struct';
 import { addRetentionLimit, getBackend } from './config';
 import { getNanoTimestamp } from '../../../lib/utils';
 import { SetupOptions } from '../../..';
-import { Device, PickDeferred } from '../../../balena-model';
+import { Device } from '../../../balena-model';
 import {
 	LOGS_DEFAULT_HISTORY_COUNT,
 	LOGS_DEFAULT_SUBSCRIPTION_COUNT,
@@ -214,16 +214,15 @@ async function getReadContext(req: Request): Promise<LogContext> {
 		id: { uuid },
 		passthrough: { req },
 		options: {
-			$select: ['id', 'belongs_to__application'],
+			$select: ['id'],
 		},
-	})) as PickDeferred<Device, 'id' | 'belongs_to__application'> | undefined;
+	})) as Pick<Device, 'id'> | undefined;
 
 	if (!device) {
 		throw new NotFoundError('No device with uuid ' + uuid);
 	}
 	return addRetentionLimit({
 		id: device.id,
-		belongs_to__application: device.belongs_to__application!.__id,
 		uuid,
 	});
 }

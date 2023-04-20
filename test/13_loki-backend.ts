@@ -3,7 +3,7 @@ import Bluebird from 'bluebird';
 import { expect } from 'chai';
 import { LokiBackend } from '../src/features/device-logs/lib/backends/loki';
 import { getNanoTimestamp } from '../src/lib/utils';
-import { LogContext } from '../src/features/device-logs/lib/struct';
+import { LokiLogContext } from '../src/features/device-logs/lib/struct';
 import { setTimeout } from 'timers/promises';
 
 const createLog = (extra = {}) => {
@@ -18,7 +18,7 @@ const createLog = (extra = {}) => {
 	};
 };
 
-const createContext = (extra = {}): LogContext => {
+const createContext = (extra = {}): LokiLogContext => {
 	return {
 		id: 1,
 		uuid: '1',

@@ -20,12 +20,13 @@ import {
 	TailResponse,
 	Timestamp,
 } from 'loki-grpc-client';
-import { errors } from '@balena/pinejs';
+import { errors, sbvrUtils } from '@balena/pinejs';
 import { LOKI_HOST, LOKI_PORT } from '../../../../lib/config';
 import {
 	DeviceLog,
 	DeviceLogsBackend,
 	LogContext,
+	LokiLogContext,
 	Subscription,
 } from '../struct';
 import { captureException } from '../../../../infra/error-handling';
@@ -42,6 +43,9 @@ import {
 	incrementPublishCallTotal,
 } from './metrics';
 import { setTimeout } from 'timers/promises';
+import { root } from '@balena/pinejs/out/sbvr-api/permissions';
+import { Device, PickDeferred } from '../../../../balena-model';
+import { RequiredField } from '@balena/pinejs/out/sbvr-api/common-types';
 
 const { BadRequestError } = errors;
 
@@ -94,6 +98,34 @@ function backoff<T extends (...args: any[]) => any>(
 	};
 }
 
+/**
+ * This converts a standard log context to a loki context, if a loki context is the most common
+ * then it would make sense to combine this fetch in the initial context fetch but currently that
+ * is not the case anywhere
+ */
+async function assertLokiLogContext(
+	ctx: LogContext & Partial<LokiLogContext>,
+): Promise<LokiLogContext> {
+	if ('belongs_to__application' in ctx) {
+		return ctx as RequiredField<typeof ctx, 'belongs_to__application'>;
+	}
+
+	const device = (await sbvrUtils.api.resin.get({
+		resource: 'device',
+		id: ctx.id,
+		passthrough: { req: root },
+		options: {
+			$select: ['belongs_to__application'],
+		},
+	})) as PickDeferred<Device, 'belongs_to__application'> | undefined;
+
+	// Mutate so that we don't have to repeatedly amend the same context and instead cache it
+	(ctx as Writable<typeof ctx>).belongs_to__application =
+		device?.belongs_to__application!.__id;
+
+	return ctx as RequiredField<typeof ctx, 'belongs_to__application'>;
+}
+
 export class LokiBackend implements DeviceLogsBackend {
 	private subscriptions: EventEmitter;
 	private querier: QuerierClient;
@@ -135,7 +167,8 @@ export class LokiBackend implements DeviceLogsBackend {
 	 * @param ctx
 	 * @param count
 	 */
-	public async history(ctx: LogContext, count: number): Promise<DeviceLog[]> {
+	public async history($ctx: LogContext, count: number): Promise<DeviceLog[]> {
+		const ctx = await assertLokiLogContext($ctx);
 		const oneHourAgo = new Date(Date.now() - 10000 * 60);
 
 		const queryRequest = new QueryRequest();
@@ -173,9 +206,10 @@ export class LokiBackend implements DeviceLogsBackend {
 	}
 
 	public async publish(
-		ctx: LogContext,
+		$ctx: LogContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	): Promise<any> {
+		const ctx = await assertLokiLogContext($ctx);
 		const countLogs = logs.length;
 		incrementPublishCallTotal();
 		incrementPublishLogMessagesTotal(countLogs);
@@ -218,7 +252,8 @@ export class LokiBackend implements DeviceLogsBackend {
 		}).finally(() => updateLokiPushDurationHistogram(Date.now() - startAt));
 	}
 
-	public subscribe(ctx: LogContext, subscription: Subscription) {
+	public async subscribe($ctx: LogContext, subscription: Subscription) {
+		const ctx = await assertLokiLogContext($ctx);
 		const key = this.getKey(ctx);
 		if (!this.tailCalls.has(key)) {
 			const request = new TailRequest();
@@ -261,7 +296,8 @@ export class LokiBackend implements DeviceLogsBackend {
 		this.subscriptions.on(key, subscription);
 	}
 
-	public unsubscribe(ctx: LogContext) {
+	public async unsubscribe($ctx: LogContext) {
+		const ctx = await assertLokiLogContext($ctx);
 		const key = this.getKey(ctx);
 		const call = this.tailCalls.get(key);
 		call?.cancel();
@@ -271,7 +307,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		return `{device_id="${ctx.id}"}`;
 	}
 
-	private getKey(ctx: LogContext, suffix = 'logs') {
+	private getKey(ctx: LokiLogContext, suffix = 'logs') {
 		return `app:${ctx.belongs_to__application}:device:${ctx.id}:${suffix}`;
 	}
 

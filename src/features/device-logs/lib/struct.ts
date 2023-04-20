@@ -1,8 +1,10 @@
 export interface LogContext {
 	readonly id: number;
 	readonly uuid: string;
-	readonly belongs_to__application: number;
 	readonly retention_limit: number;
+}
+export interface LokiLogContext extends LogContext {
+	readonly belongs_to__application: number;
 }
 
 // This is the format we store and that we output to consumers

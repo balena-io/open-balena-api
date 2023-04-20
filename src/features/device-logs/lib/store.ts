@@ -25,7 +25,7 @@ import {
 	shouldPublishToLoki,
 } from './config';
 import { SetupOptions } from '../../..';
-import { Device, PickDeferred } from '../../../balena-model';
+import { Device } from '../../../balena-model';
 import {
 	DEVICE_LOGS_WRITE_AUTH_CACHE_TIMEOUT,
 	LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL,
@@ -73,6 +73,7 @@ const getWriteContext = (() => {
 			req: permissions.PermissionReq,
 		): Promise<false | LogContext> => {
 			return await sbvrUtils.db.readTransaction(async (tx) => {
+				// TODO: Optimize?
 				const device = (await api.resin.get({
 					resource: 'device',
 					id: { uuid },
@@ -80,11 +81,9 @@ const getWriteContext = (() => {
 					// is the bit that handles checking we are allowed to write logs for this device
 					passthrough: { req: permissions.root, tx },
 					options: {
-						$select: ['id', 'belongs_to__application'],
+						$select: ['id'],
 					},
-				})) as
-					| PickDeferred<Device, 'id' | 'belongs_to__application'>
-					| undefined;
+				})) as Pick<Device, 'id'> | undefined;
 				if (!device) {
 					return false;
 				}
@@ -93,7 +92,6 @@ const getWriteContext = (() => {
 				}
 				return addRetentionLimit({
 					id: device.id,
-					belongs_to__application: device.belongs_to__application!.__id,
 					uuid,
 				});
 			});
