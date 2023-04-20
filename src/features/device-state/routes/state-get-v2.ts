@@ -7,16 +7,14 @@ import {
 	handleHttpErrors,
 } from '../../../infra/error-handling';
 import {
-	filterDeviceConfig,
 	formatImageLocation,
 	readTransaction,
 	getReleaseForDevice,
 	serviceInstallFromImage,
-	setDefaultConfigVariables,
-	rejectUiConfig,
 	varListInsert,
 	ConfigurationVarsToLabels,
 	getStateDelayingEmpty,
+	getConfig,
 } from '../state-get-utils';
 import { sbvrUtils } from '@balena/pinejs';
 import { events } from '..';
@@ -296,25 +294,6 @@ const getDevice = getStateDelayingEmpty(
 			stateQuery()({ uuid }, undefined, { req, tx }),
 		),
 );
-
-const getConfig = (device: AnyObject) => {
-	const config: Dictionary<string> = {};
-
-	// add any app-specific config values...
-	const userAppFromApi: AnyObject = device.belongs_to__application[0];
-	varListInsert(
-		userAppFromApi.application_config_variable,
-		config,
-		rejectUiConfig,
-	);
-
-	// override with device-specific values...
-	varListInsert(device.device_config_variable, config, rejectUiConfig);
-	filterDeviceConfig(config);
-	setDefaultConfigVariables(config);
-
-	return config;
-};
 
 const getUserAppForState = (
 	device: AnyObject,
