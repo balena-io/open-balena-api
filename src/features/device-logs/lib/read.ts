@@ -138,7 +138,7 @@ async function handleStreamingRead(
 	// Subscribe in parallel so we don't miss logs in between
 	getBackend().subscribe(ctx, onLog);
 	try {
-		const logs = await getHistory(ctx, req, LOGS_DEFAULT_SUBSCRIPTION_COUNT);
+		let logs = await getHistory(ctx, req, LOGS_DEFAULT_SUBSCRIPTION_COUNT);
 
 		// We need this cast as typescript narrows to `StreamState.Buffering`
 		// because it ignores that during the `await` break it can be changed
@@ -149,15 +149,20 @@ async function handleStreamingRead(
 
 		const afterDate = logs.length && logs[logs.length - 1].createdAt;
 		// Append the subscription logs to the history queue
-		while (buffer.length) {
-			const log = buffer.shift();
-			if (log && log.createdAt > afterDate) {
-				logs.push(log);
-				// Ensure we don't send more than the retention limit
-				if (ctx.retention_limit && logs.length > ctx.retention_limit) {
-					logs.shift();
-				}
-			}
+		const firstAfterDateIndex = buffer.findIndex(
+			(log) => log.createdAt > afterDate,
+		);
+		if (firstAfterDateIndex > 0) {
+			buffer.splice(0, firstAfterDateIndex);
+		}
+		if (firstAfterDateIndex !== -1 && buffer.length > 0) {
+			logs = logs.concat(buffer);
+		}
+		// Clear the buffer
+		buffer.length = 0;
+		// Ensure we don't send more than the retention limit
+		if (ctx.retention_limit && logs.length > ctx.retention_limit) {
+			logs.splice(0, logs.length - ctx.retention_limit);
 		}
 
 		// Ensure we don't drop the history logs "burst"
