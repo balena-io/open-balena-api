@@ -25,7 +25,6 @@ import {
 	shouldPublishToLoki,
 } from './config';
 import { SetupOptions } from '../../..';
-import { Device, PickDeferred } from '../../../balena-model';
 import {
 	DEVICE_LOGS_WRITE_AUTH_CACHE_TIMEOUT,
 	LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL,
@@ -49,53 +48,31 @@ const supervisor = new Supervisor();
 
 const getWriteContext = (() => {
 	const authQuery = _.once(() =>
-		api.resin.prepare<{ id: number }>({
+		api.resin.prepare<{ uuid: string }>({
 			method: 'POST',
-			url: `device(@id)/canAccess`,
+			url: `device(uuid=@uuid)/canAccess`,
 			body: { action: 'write-log' },
 		}),
 	);
-	const hasDeviceLogsWritePermissions = async (
-		{ id }: { id: number },
-		req: permissions.PermissionReq,
-		tx: Tx,
-	) => {
-		try {
-			await authQuery()({ id }, undefined, { req, tx });
-			return true;
-		} catch {
-			return false;
-		}
-	};
 	const $getWriteContext = multiCacheMemoizee(
 		async (
 			uuid: string,
 			req: permissions.PermissionReq,
 		): Promise<false | LogContext> => {
 			return await sbvrUtils.db.readTransaction(async (tx) => {
-				const device = (await api.resin.get({
-					resource: 'device',
-					id: { uuid },
-					// We can use root permissions for converting uuid -> id as `hasDeviceLogsWritePermissions` below
-					// is the bit that handles checking we are allowed to write logs for this device
-					passthrough: { req: permissions.root, tx },
-					options: {
-						$select: ['id', 'belongs_to__application'],
-					},
-				})) as
-					| PickDeferred<Device, 'id' | 'belongs_to__application'>
-					| undefined;
-				if (!device) {
+				try {
+					const result = await authQuery()({ uuid }, undefined, { req, tx });
+					const deviceId: number | undefined = result?.d?.[0]?.id;
+					if (deviceId == null) {
+						return false;
+					}
+					return addRetentionLimit({
+						id: deviceId,
+						uuid,
+					});
+				} catch {
 					return false;
 				}
-				if (!(await hasDeviceLogsWritePermissions(device, req, tx))) {
-					return false;
-				}
-				return addRetentionLimit({
-					id: device.id,
-					belongs_to__application: device.belongs_to__application!.__id,
-					uuid,
-				});
 			});
 		},
 		{
