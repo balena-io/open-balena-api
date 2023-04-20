@@ -1,4 +1,16 @@
 - commits:
+    - subject: Reuse & export the helper that generates the config for device state GET
+      hash: c4fb3dd08d94f0f4f09a98a47803be8018818ec4
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 11.3.0
+  title: ""
+  date: 2023-04-20T14:00:37.535Z
+- commits:
     - subject: Combine checking write-log permission with uuid -> id resolution
       hash: 0f7e5d1319e6d2ef5471f81ea830868956084bfd
       body: ""
