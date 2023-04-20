@@ -1,4 +1,18 @@
 - commits:
+    - subject: Avoid device heartbeat updates when it's already in that state in Redis
+      hash: 1666360d55c4aaf834fb26e3bd669baf98fffa81
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://balena.zulipchat.com/#narrow/stream/346007-balena-io.2FbalenaCloud/topic/Device.20heartbeat
+        see: https://balena.zulipchat.com/#narrow/stream/346007-balena-io.2FbalenaCloud/topic/Device.20heartbeat
+      author: Thodoris Greasidis
+      nested: []
+  version: 11.5.1
+  title: ""
+  date: 2023-04-20T17:34:09.740Z
+- commits:
     - subject: "chore(deps): update grafana/loki docker tag to v2.8.0"
       hash: dfd86b67e8c5210feb7b53f2c9a76ef5afd9d325
       body: |
