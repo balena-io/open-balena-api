@@ -13,6 +13,7 @@ import { fleetStateV3 } from './routes/fleet-state-get-v3';
 import { Device } from '../../balena-model';
 
 export {
+	getConfig,
 	setReadTransaction,
 	filterDeviceConfig,
 	formatImageLocation,

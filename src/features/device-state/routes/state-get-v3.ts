@@ -8,14 +8,12 @@ import {
 } from '../../../infra/error-handling';
 import {
 	ConfigurationVarsToLabels,
-	filterDeviceConfig,
 	formatImageLocation,
+	getConfig,
 	getReleaseForDevice,
 	getStateDelayingEmpty,
 	readTransaction,
-	rejectUiConfig,
 	serviceInstallFromImage,
-	setDefaultConfigVariables,
 	varListInsert,
 } from '../state-get-utils';
 import { sbvrUtils } from '@balena/pinejs';
@@ -338,33 +336,6 @@ const getDevice = getStateDelayingEmpty(
 			stateQuery()({ uuid }, undefined, { req, tx }),
 		),
 );
-
-export const getConfig = (
-	device: AnyObject | undefined,
-	application: AnyObject = device?.belongs_to__application[0],
-) => {
-	const config: Dictionary<string> = {};
-
-	// add any app-specific config values...
-
-	if (application) {
-		varListInsert(
-			application.application_config_variable,
-			config,
-			rejectUiConfig,
-		);
-	}
-
-	// override with device-specific values...
-	if (device) {
-		varListInsert(device.device_config_variable, config, rejectUiConfig);
-	}
-
-	filterDeviceConfig(config);
-	setDefaultConfigVariables(config);
-
-	return config;
-};
 
 const getAppState = (
 	device: AnyObject,

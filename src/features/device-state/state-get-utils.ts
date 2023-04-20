@@ -31,6 +31,33 @@ export const setDefaultConfigVariables = (config: Dictionary<string>): void => {
 	}
 };
 
+export const getConfig = (
+	device: AnyObject | undefined,
+	application: AnyObject = device?.belongs_to__application[0],
+) => {
+	const config: Dictionary<string> = {};
+
+	// add any app-specific config values...
+
+	if (application) {
+		varListInsert(
+			application.application_config_variable,
+			config,
+			rejectUiConfig,
+		);
+	}
+
+	// override with device-specific values...
+	if (device) {
+		varListInsert(device.device_config_variable, config, rejectUiConfig);
+	}
+
+	filterDeviceConfig(config);
+	setDefaultConfigVariables(config);
+
+	return config;
+};
+
 export const getReleaseForDevice = (
 	device: AnyObject,
 ): AnyObject | undefined => {
