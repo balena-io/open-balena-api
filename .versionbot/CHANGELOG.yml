@@ -1,4 +1,56 @@
 - commits:
+    - subject: "chore(deps): update balena/open-balena-base docker tag to v14.8.0"
+      hash: b610de96852101bfa0aa746cc38bbb4796ca9846
+      body: |
+        Update balena/open-balena-base from 14.7.2 to 14.8.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency node to v18.16.0
+              hash: f37a37f174c62492c80922bcefed890dcd79ca63
+              body: |
+                Update node from 18.15.0 to 18.16.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.8.0
+          title: ""
+          date: 2023-04-13T01:30:31.432Z
+        - commits:
+            - subject: Update dependency npm to v9.6.4
+              hash: f462624984894f5b556b1c14596804f6f3775f10
+              body: |
+                Update npm from 9.6.3 to 9.6.4
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.7.4
+          title: ""
+          date: 2023-04-05T21:12:29.421Z
+        - commits:
+            - subject: Update dependency npm to v9.6.3
+              hash: da1fbbedb7fc0f2c3217dc6fc59ac0d5c53358ef
+              body: |
+                Update npm from 9.6.2 to 9.6.3
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.7.3
+          title: ""
+          date: 2023-03-30T21:50:19.246Z
+  version: 11.4.0
+  title: ""
+  date: 2023-04-20T15:14:37.609Z
+- commits:
     - subject: Reuse & export the helper that generates the config for device state GET
       hash: c4fb3dd08d94f0f4f09a98a47803be8018818ec4
       body: ""
