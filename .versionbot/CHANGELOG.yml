@@ -1,4 +1,18 @@
 - commits:
+    - subject: Narrow registered http methods on forwardRequests
+      hash: be5af0ecc946f98964a129ff90600c5f654df30d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested: []
+  version: 11.5.2
+  title: ""
+  date: 2023-04-21T07:31:06.798Z
+- commits:
     - subject: Avoid device heartbeat updates when it's already in that state in Redis
       hash: 1666360d55c4aaf834fb26e3bd669baf98fffa81
       body: ""
