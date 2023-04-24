@@ -1,4 +1,17 @@
 - commits:
+    - subject: "device-logs: Reduce the memory operations on initial stream GET
+        response"
+      hash: f2773697936f3de147e93113391785d7bf40fc47
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 11.5.4
+  title: ""
+  date: 2023-04-24T14:02:38.396Z
+- commits:
     - subject: Add test for streaming read of device logs
       hash: e1c6d9315283bd8d21d6cc5566ecbee163f7b098
       body: ""
