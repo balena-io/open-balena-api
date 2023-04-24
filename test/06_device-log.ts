@@ -152,11 +152,74 @@ describe('device log', () => {
 		expect(res.body).to.have.lengthOf(6);
 	});
 
-	it('should reject batches with more logs than allowed', () => {
+	it('should reject batches with more logs than allowed', async () => {
 		const logs = _.times(11, createLog);
-		return supertest(ctx.device.apiKey)
+		await supertest(ctx.device.apiKey)
 			.post(`/device/v2/${ctx.device.uuid}/logs`)
 			.send(logs)
 			.expect(400);
+	});
+
+	// Stream Reading Logs
+
+	it('should allow users to stream-read device logs with a JWT', async () => {
+		const logChunks: string[] = [];
+		let extraLogsSent = 0;
+		const req = supertest(ctx.user)
+			.get(`/device/v2/${ctx.device.uuid}/logs`)
+			.query({
+				stream: 1,
+				count: 2,
+			})
+			.expect('Content-type', 'application/octet-stream')
+			.expect('Content-encoding', 'gzip')
+			.parse(function (res, callback) {
+				const chunks: Buffer[] = [];
+				res.on('data', async (chunk) => {
+					const parsedChunk = Buffer.from(chunk);
+					chunks.push(parsedChunk);
+					logChunks.push(parsedChunk.toString());
+
+					// Emit 2 extra logs after retrieving the historical ones and stop listening.
+					if (logChunks.length >= 3) {
+						req.abort();
+						return;
+					}
+					// TODO: Change this to use the `/device/v2/:uuid/log-stream`` endpoint.
+					await supertest(ctx.device.apiKey)
+						.post(`/device/v2/${ctx.device.uuid}/logs`)
+						.send([
+							createLog({ message: `streamed log line ${extraLogsSent++}` }),
+						])
+						.expect(201);
+				});
+				res.on('end', () => callback(null, Buffer.concat(chunks)));
+			})
+			.expect(200);
+
+		try {
+			await req;
+			throw new Error('Stream-reading device logs unexpectedly succeeded!');
+		} catch (error) {
+			// Ignore abort errors, since we intentionally aborted
+			// this infinitely streaming request.
+			if (error.code !== 'ABORTED') {
+				throw error;
+			}
+		}
+
+		const logs = logChunks
+			.flatMap((chunk) => chunk.split('\n'))
+			.filter((l) => l !== '')
+			.map((l) => JSON.parse(l) as ReturnType<typeof createLog>);
+
+		expect(logs).to.have.lengthOf(4);
+		expect(extraLogsSent).to.equal(2);
+		expect(logs.map((l) => l.message)).to.deep.equal([
+			'a log line',
+			'a log line',
+			'streamed log line 0',
+			'streamed log line 1',
+		]);
 	});
 });
