@@ -198,7 +198,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 				description:
 					'Allows GPIO pins to be set to specific modes and values at boot time.',
 				will_reboot: true,
-				examples: ['"gpio=19=op,dh","gpio=0-25=a2"'],
+				examples: ['"19=op,dh","0-25=a2"'],
 			},
 			BALENA_HOST_CONFIG_hdmi_cvt: {
 				type: 'string',
