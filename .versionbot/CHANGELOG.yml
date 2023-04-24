@@ -1,4 +1,20 @@
 - commits:
+    - subject: Correct gpio example env var
+      hash: e7d8da1510538db4809a1a2539378f165b379c2e
+      body: |
+        Corrected from `"gpio=19=op,dh","gpio=0-25=a2"` which will result in
+        `gpio=gpio=...` in config.txt being applied by the Supervisor.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Christina Wang <christina@balena.io>
+        signed-off-by: Christina Wang <christina@balena.io>
+      author: Christina Wang
+      nested: []
+  version: 11.5.5
+  title: ""
+  date: 2023-04-24T18:10:07.572Z
+- commits:
     - subject: "device-logs: Reduce the memory operations on initial stream GET
         response"
       hash: f2773697936f3de147e93113391785d7bf40fc47
