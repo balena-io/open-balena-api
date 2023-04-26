@@ -1,4 +1,61 @@
 - commits:
+    - subject: Update dependencies
+      hash: 2c609b9d6d08038a59aaff8f235d85867704f130
+      body: |
+        Update @balena/abstract-sql-compiler from 8.3.12 to 8.4.1
+        Update @balena/pinejs from 14.62.6 to 14.62.9
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Narrow the registered express HTTP methods
+              hash: ce5efad6e3ff0c1f1a12c3c0fe15a6f78e14e515
+              body: |
+                app.all registers too many not needed HTTP methods.
+                As documented here:
+                https://expressjs.com/en/4x/api.html#app.METHOD
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: fisehara <harald@balena.io>
+                signed-off-by: fisehara <harald@balena.io>
+              author: fisehara
+              nested: []
+          version: pinejs-14.62.9
+          title: ""
+          date: 2023-04-21T07:22:00.375Z
+        - commits:
+            - subject: Add test cases for native translations
+              hash: 35c1a124be99c9a050a52da1624e23c7216f2fac
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-14.62.8
+          title: ""
+          date: 2023-04-19T16:11:50.941Z
+        - commits:
+            - subject: Update select sql typing
+              hash: 8c04a099dc0739b65b2576a3cb48aa17565d2da2
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Josh Bowling
+              nested: []
+          version: pinejs-14.62.7
+          title: ""
+          date: 2023-04-18T07:16:59.301Z
+  version: 11.5.6
+  title: ""
+  date: 2023-04-26T10:40:43.940Z
+- commits:
     - subject: Correct gpio example env var
       hash: e7d8da1510538db4809a1a2539378f165b379c2e
       body: |
