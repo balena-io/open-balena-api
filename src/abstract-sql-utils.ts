@@ -11,7 +11,6 @@ import type {
 	RelationshipInternalNode,
 	TextTypeNodes,
 	BooleanTypeNodes,
-	UnknownTypeNodes,
 } from '@balena/abstract-sql-compiler';
 
 import { sbvrUtils } from '@balena/pinejs';
@@ -210,7 +209,7 @@ export const oneLineTrimSqlConcat = sqlConcatFactory((node) =>
 	typeof node === 'string' ? node.replace(/\s*\n\s*/g, '') : node,
 );
 
-export const splitStringParts = (field: UnknownTypeNodes, separator = '.') =>
+export const splitStringParts = (field: TextTypeNodes, separator = '.') =>
 	oneLineTrimSqlConcat`"${[
 		'Replace',
 		field,
@@ -220,7 +219,7 @@ export const splitStringParts = (field: UnknownTypeNodes, separator = '.') =>
 
 export const joinTextParts = (
 	separator: string,
-	...parts: Array<[showPart: BooleanTypeNodes, partValue: UnknownTypeNodes]>
+	...parts: Array<[showPart: BooleanTypeNodes, partValue: TextTypeNodes]>
 ): ConcatenateWithSeparatorNode => {
 	if (parts.length < 2) {
 		throw new Error('joinTextParts requires at least two parts to join');
@@ -241,7 +240,7 @@ export const joinTextParts = (
 export const joinTextPartsAndPrefix = (
 	prefix: string,
 	separator: string,
-	...parts: Array<[showPart: BooleanTypeNodes, partValue: UnknownTypeNodes]>
+	...parts: Array<[showPart: BooleanTypeNodes, partValue: TextTypeNodes]>
 ): ConcatenateNode | ConcatenateWithSeparatorNode => {
 	const joinedParts = joinTextParts(separator, ...parts);
 	if (prefix === '') {
