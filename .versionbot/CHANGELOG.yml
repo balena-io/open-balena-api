@@ -1,4 +1,56 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v14.9.1
+      hash: 05871e0e82f3f54f5acd800ab24a5ef0660f8dbf
+      body: |
+        Update balena/open-balena-base from 14.8.0 to 14.9.1
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency npm to v9.6.5
+              hash: c37855ad87d4a11093ca5397667148c2560b0521
+              body: |
+                Update npm from 9.6.4 to 9.6.5
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.9.1
+          title: ""
+          date: 2023-05-01T16:11:19.988Z
+        - commits:
+            - subject: Update Node.js to v18.16.0
+              hash: b8ea22dc19d4ae3fcb039fe9f1abac9e6dec53c8
+              body: |
+                Update node from 18.15.0 to 18.16.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.9.0
+          title: ""
+          date: 2023-05-01T15:08:39.437Z
+        - commits:
+            - subject: lock to prevent concurrent config updates
+              hash: 7c43074805b0ef670bbe4654cb727d4fd3a4998a
+              body: >
+                * leading to duplicate entries and
+                https://github.com/balena-io/balena-cloud/actions/runs/4801183207/jobs/8543115448
+              footer:
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-14.8.1
+          title: ""
+          date: 2023-05-01T14:48:09.368Z
+  version: 11.6.0
+  title: ""
+  date: 2023-05-01T18:16:31.527Z
+- commits:
     - subject: Update grafana/loki Docker tag to v2.8.1
       hash: bf3ec26f942c0d9da4a393dfaaea18b7c37ca2ce
       body: |
