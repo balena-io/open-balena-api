@@ -11,6 +11,7 @@ import { events as deviceStateEvents } from '../device-state';
 
 import {
 	API_HEARTBEAT_STATE_ENABLED,
+	API_HEARTBEAT_STATE_ONLINE_UPDATE_OPTIMIZATION_ENABLED,
 	API_HEARTBEAT_STATE_TIMEOUT_SECONDS,
 	DEFAULT_SUPERVISOR_POLL_INTERVAL,
 	REDIS,
@@ -435,6 +436,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		const previousDeviceOnlineState = await this.getDeviceOnlineState(deviceId);
 		// If redis still has a valid message about the device being online we can avoid reaching to the DB...
 		if (
+			!API_HEARTBEAT_STATE_ONLINE_UPDATE_OPTIMIZATION_ENABLED ||
 			previousDeviceOnlineState == null ||
 			previousDeviceOnlineState.currentState !== DeviceOnlineStates.Online
 		) {
