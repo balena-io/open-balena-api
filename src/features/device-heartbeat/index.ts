@@ -12,6 +12,7 @@ import { events as deviceStateEvents } from '../device-state';
 import {
 	API_HEARTBEAT_STATE_ENABLED,
 	API_HEARTBEAT_STATE_TIMEOUT_SECONDS,
+	API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TTL,
 	DEFAULT_SUPERVISOR_POLL_INTERVAL,
 	REDIS,
 } from '../../lib/config';
@@ -150,6 +151,7 @@ interface MetricEventArgs {
 interface DeviceOnlineStateManagerMessage {
 	id: string;
 	currentState: DeviceOnlineStates;
+	ttl?: number;
 }
 
 export class DeviceOnlineStateManager extends EventEmitter<{
@@ -396,6 +398,17 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 			JSON.stringify({
 				id: newId,
 				currentState,
+				...(API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TTL != null &&
+					currentState === DeviceOnlineStates.Online && {
+						ttl:
+							previousManagerState?.ttl == null || previousManagerState.ttl <= 0
+								? API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TTL
+								: // So that old records get updated if we later reduce the TTL config
+								  Math.min(
+										previousManagerState.ttl - 1,
+										API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TTL,
+								  ),
+					}),
 			} satisfies DeviceOnlineStateManagerMessage),
 			'EX',
 			delay + 5,
@@ -442,7 +455,10 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		// If redis still has a valid message about the device being online we can avoid reaching to the DB...
 		if (
 			previousDeviceOnlineState == null ||
-			previousDeviceOnlineState.currentState !== DeviceOnlineStates.Online
+			previousDeviceOnlineState.currentState !== DeviceOnlineStates.Online ||
+			(API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TTL != null &&
+				(previousDeviceOnlineState.ttl == null ||
+					previousDeviceOnlineState.ttl <= 0))
 		) {
 			// otherwise update the device model...
 			await this.updateDeviceModel(deviceId, DeviceOnlineStates.Online);

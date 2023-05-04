@@ -45,10 +45,12 @@ mockery.registerMock('../src/lib/config', configMock);
 (['v2', 'v3'] as const).forEach((stateVersion) =>
 	describe(`Device State ${stateVersion}`, () => {
 		let fx: fixtures.Fixtures;
+		let pineUser: typeof pineTest;
 		let admin: UserObjectParam;
 		let applicationId: number;
 		let device: fakeDevice.Device;
 
+		/** Tracks updateDeviceModel() calls */
 		const tracker = new StateTracker();
 		const updateDeviceModel = stateMock.getInstance()['updateDeviceModel'];
 
@@ -56,6 +58,11 @@ mockery.registerMock('../src/lib/config', configMock);
 			fx = await fixtures.load('03-device-state');
 
 			admin = fx.users.admin;
+			pineUser = pineTest.clone({
+				passthrough: {
+					user: admin,
+				},
+			});
 			applicationId = fx.applications.app1.id;
 
 			// create a new device in this test application...
@@ -423,6 +430,143 @@ mockery.registerMock('../src/lib/config', configMock);
 							DeviceOnlineStates.Online,
 							'API heartbeat state is not online',
 						);
+					});
+				});
+			});
+
+			describe('Online Update Cache', () => {
+				let device2: fakeDevice.Device;
+				const device2ChangeEventSpy = sinon.spy();
+				before(async () => {
+					device2 = await fakeDevice.provisionDevice(admin, applicationId);
+					stateMock.getInstance().on('change', (args) => {
+						if (device2.id === args.deviceId) {
+							device2ChangeEventSpy(args);
+						}
+					});
+					await expectResourceToMatch(pineUser, 'device', device2.id, {
+						api_heartbeat_state: DeviceOnlineStates.Unknown,
+					});
+				});
+				beforeEach(function () {
+					device2ChangeEventSpy.resetHistory();
+					delete tracker.states[device2.id];
+				});
+
+				describe('When API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TTL = null', function () {
+					before(function () {
+						// @ts-expect-error mock the value...
+						configMock['API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TTL'] = null;
+					});
+
+					it('The initial state poll should update the DB heartbeat to Online', async () => {
+						await fakeDevice.getState(device2, device2.uuid, stateVersion);
+						await waitFor({ checkFn: () => device2ChangeEventSpy.called });
+						await expectResourceToMatch(pineUser, 'device', device2.id, {
+							api_heartbeat_state: DeviceOnlineStates.Online,
+						});
+					});
+
+					it('should not update the DB heartbeat on subsequent polls', async () => {
+						await fakeDevice.getState(device2, device2.uuid, stateVersion);
+						await fakeDevice.getState(device2, device2.uuid, stateVersion);
+						await setTimeout(1000);
+						expect(tracker.states[device2.id]).to.be.undefined;
+						expect(device2ChangeEventSpy.called).to.be.false;
+					});
+
+					it('will trust Redis and not update the DB heartbeat on subsequent polls even if the DB has diverged :(', async () => {
+						await pineUser.patch({
+							resource: 'device',
+							id: device2.id,
+							body: {
+								api_heartbeat_state: DeviceOnlineStates.Offline,
+							},
+						});
+						await fakeDevice.getState(device2, device2.uuid, stateVersion);
+						await setTimeout(1000);
+						expect(tracker.states[device2.id]).to.be.undefined;
+						expect(device2ChangeEventSpy.called).to.be.false;
+						await expectResourceToMatch(pineUser, 'device', device2.id, {
+							api_heartbeat_state: DeviceOnlineStates.Offline,
+						});
+					});
+				});
+
+				describe('When API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TTL = 3', function () {
+					before(async function () {
+						// @ts-expect-error mock the value...
+						configMock['API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TTL'] = 3;
+						// Set a different value to make sure that it indeed gets updated
+						await pineUser.patch({
+							resource: 'device',
+							id: device2.id,
+							body: {
+								api_heartbeat_state: DeviceOnlineStates.Unknown,
+							},
+						});
+					});
+
+					it('should update the DB heartbeat on the first request that finds the ttl being null', async () => {
+						await fakeDevice.getState(device2, device2.uuid, stateVersion);
+						await waitFor({ checkFn: () => device2ChangeEventSpy.called });
+						await expectResourceToMatch(pineUser, 'device', device2.id, {
+							api_heartbeat_state: DeviceOnlineStates.Online,
+						});
+					});
+
+					it(`should not update the DB heartbeat on the subsequent 3 polls`, async () => {
+						// Set a different value to make sure that it indeed gets updated
+						await pineUser.patch({
+							resource: 'device',
+							id: device2.id,
+							body: {
+								api_heartbeat_state: DeviceOnlineStates.Unknown,
+							},
+						});
+						for (let i = 0; i < 3; i++) {
+							await fakeDevice.getState(device2, device2.uuid, stateVersion);
+						}
+						await setTimeout(1000);
+						expect(tracker.states[device2.id]).to.be.undefined;
+						expect(device2ChangeEventSpy.called).to.be.false;
+						await expectResourceToMatch(pineUser, 'device', device2.id, {
+							api_heartbeat_state: DeviceOnlineStates.Unknown,
+						});
+					});
+
+					it(`should then update the DB heartbeat on the 4th poll`, async () => {
+						await fakeDevice.getState(device2, device2.uuid, stateVersion);
+						await waitFor({ checkFn: () => device2ChangeEventSpy.called });
+						await expectResourceToMatch(pineUser, 'device', device2.id, {
+							api_heartbeat_state: DeviceOnlineStates.Online,
+						});
+					});
+				});
+
+				describe('When API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TTL = 0', function () {
+					before(async function () {
+						// @ts-expect-error mock the value...
+						configMock['API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TTL'] = 0;
+						// Set a different value to make sure that it indeed gets updated
+						await pineUser.patch({
+							resource: 'device',
+							id: device2.id,
+							body: {
+								api_heartbeat_state: DeviceOnlineStates.Unknown,
+							},
+						});
+					});
+
+					it(`should update the DB heartbeat on every poll`, async () => {
+						for (let i = 0; i < 3; i++) {
+							await fakeDevice.getState(device2, device2.uuid, stateVersion);
+							await waitFor({ checkFn: () => device2ChangeEventSpy.called });
+							device2ChangeEventSpy.resetHistory();
+						}
+						await expectResourceToMatch(pineUser, 'device', device2.id, {
+							api_heartbeat_state: DeviceOnlineStates.Online,
+						});
 					});
 				});
 			});
