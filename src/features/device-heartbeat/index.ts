@@ -236,7 +236,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 	private async updateDeviceModel(
 		deviceId: number,
 		newState: DeviceOnlineStates,
-	): Promise<boolean> {
+	): Promise<void> {
 		const startAt = Date.now();
 		let err;
 
@@ -256,14 +256,13 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 				},
 				body,
 			});
-			return true;
 		} catch ($err) {
 			err = $err;
 			captureException(
 				$err,
-				'DeviceStateManager: Error updating the API with the device new state.',
+				`DeviceStateManager: Error updating the API state of device ${deviceId} to ${newState}.`,
 			);
-			return false;
+			throw err;
 		} finally {
 			this.emit('change', {
 				deviceId,
@@ -306,14 +305,21 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 									DeviceOnlineStates.Offline,
 									API_HEARTBEAT_STATE_TIMEOUT_SECONDS, // put the device into a timeout state if it misses it's scheduled heartbeat window... then mark as offline
 								),
-								this.updateDeviceModel(deviceId, DeviceOnlineStates.Timeout),
+								this.updateDeviceModel(
+									deviceId,
+									DeviceOnlineStates.Timeout,
+								).catch(() => {
+									// Ignore errors
+								}),
 							]);
 							break;
 						case DeviceOnlineStates.Offline:
 							await this.updateDeviceModel(
 								deviceId,
 								DeviceOnlineStates.Offline,
-							);
+							).catch(() => {
+								// Ignore errors
+							});
 							break;
 						default:
 							throw new Error(
