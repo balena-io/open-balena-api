@@ -12,6 +12,7 @@ import { events as deviceStateEvents } from '../device-state';
 import {
 	API_HEARTBEAT_STATE_ENABLED,
 	API_HEARTBEAT_STATE_TIMEOUT_SECONDS,
+	API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT,
 	DEFAULT_SUPERVISOR_POLL_INTERVAL,
 	REDIS,
 } from '../../lib/config';
@@ -150,6 +151,8 @@ interface MetricEventArgs {
 interface DeviceOnlineStateManagerMessage {
 	id: string;
 	currentState: DeviceOnlineStates;
+	/** The timestamp that the DB heartbeat was last updated */
+	updatedAt?: number;
 }
 
 export class DeviceOnlineStateManager extends EventEmitter<{
@@ -363,6 +366,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		currentState: DeviceOnlineStates,
 		nextState: DeviceOnlineStates,
 		delay: number, // in seconds
+		updatedAt?: number,
 	) {
 		if (previousManagerState?.id != null) {
 			try {
@@ -385,11 +389,23 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 			delay,
 		});
 
+		// if we didn't just update the heartbeat and are in still the same state,
+		// then carry over the original change timestamp.
+		if (
+			API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT != null &&
+			previousManagerState?.currentState === currentState
+		) {
+			updatedAt ??= previousManagerState.updatedAt;
+		}
+
 		await redis.set(
 			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${deviceId}`,
 			JSON.stringify({
 				id: newId,
 				currentState,
+				...(updatedAt != null && {
+					updatedAt,
+				}),
 			} satisfies DeviceOnlineStateManagerMessage),
 			'EX',
 			delay + 5,
@@ -432,14 +448,23 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 			return;
 		}
 
+		let updatedAt: number | undefined;
 		const previousDeviceOnlineState = await this.getDeviceOnlineState(deviceId);
 		// If redis still has a valid message about the device being online we can avoid reaching to the DB...
 		if (
 			previousDeviceOnlineState == null ||
-			previousDeviceOnlineState.currentState !== DeviceOnlineStates.Online
+			previousDeviceOnlineState.currentState !== DeviceOnlineStates.Online ||
+			(API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT != null &&
+				(previousDeviceOnlineState.updatedAt == null ||
+					Date.now() >
+						previousDeviceOnlineState.updatedAt +
+							API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT))
 		) {
 			// otherwise update the device model...
 			await this.updateDeviceModel(deviceId, DeviceOnlineStates.Online);
+			if (API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT != null) {
+				updatedAt = Date.now();
+			}
 		}
 
 		// record the activity...
@@ -449,6 +474,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 			DeviceOnlineStates.Online,
 			DeviceOnlineStates.Timeout,
 			Math.ceil(timeoutSeconds), // always make this a whole number of seconds, and round up to make sure we dont expire too soon...
+			updatedAt,
 		);
 	}
 }
