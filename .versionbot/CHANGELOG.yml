@@ -1,4 +1,16 @@
 - commits:
+    - subject: Don't delete the heartbeat expiry entry if updating the db failed
+      hash: 2536532766738eb23d896fa8987401a317107b2f
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 11.6.2
+  title: ""
+  date: 2023-05-05T10:46:40.972Z
+- commits:
     - subject: Fix device heartbeat being stuck to offline when the DB update fails
       hash: f63d510d775ad64d0636ab24a4e0ddd67045599c
       body: |
