@@ -67,6 +67,15 @@ export const API_HEARTBEAT_STATE_TIMEOUT_SECONDS = intVar(
 	'API_HEARTBEAT_STATE_TIMEOUT_SECONDS',
 	15,
 );
+/**
+ * null:do not update the DB's device heartbeat to Online, if Redis says it's already Online
+ * 0: always run DB device heartbeat updates to Online
+ * >0: skip updating the DB's device heartbeat to Online for N ms, if Redis says it's already Online
+ */
+export const API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT = intVar(
+	'API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT',
+	null,
+);
 export const API_VPN_SERVICE_API_KEY = requiredVar('API_VPN_SERVICE_API_KEY');
 export const VPN_CONNECT_PROXY_PORT = intVar('VPN_CONNECT_PROXY_PORT', 3128);
 export const AUTH_RESINOS_REGISTRY_CODE = optionalVar(
