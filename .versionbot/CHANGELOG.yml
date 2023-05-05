@@ -1,4 +1,18 @@
 - commits:
+    - subject: Add configurable validity Timeout for the Online heartbeat update cache
+      hash: 899c3cf35c778bdc5a266b75c6e593482a70bdd4
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://balena.zulipchat.com/#narrow/stream/345882-_help/topic/device.20state.20stuck.20at.20VPN.20only
+        see: https://balena.zulipchat.com/#narrow/stream/345882-_help/topic/device.20state.20stuck.20at.20VPN.20only
+      author: Thodoris Greasidis
+      nested: []
+  version: 11.7.0
+  title: ""
+  date: 2023-05-05T14:05:00.009Z
+- commits:
     - subject: Don't delete the heartbeat expiry entry if updating the db failed
       hash: 2536532766738eb23d896fa8987401a317107b2f
       body: ""
