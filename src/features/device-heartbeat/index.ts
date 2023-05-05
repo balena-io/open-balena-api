@@ -297,29 +297,23 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 					// raise and event for the state change...
 					switch (nextState) {
 						case DeviceOnlineStates.Timeout:
-							await Promise.all([
-								this.scheduleChangeOfStateForDevice(
-									deviceId,
-									await this.getDeviceOnlineState(deviceId),
-									DeviceOnlineStates.Timeout,
-									DeviceOnlineStates.Offline,
-									API_HEARTBEAT_STATE_TIMEOUT_SECONDS, // put the device into a timeout state if it misses it's scheduled heartbeat window... then mark as offline
-								),
-								this.updateDeviceModel(
-									deviceId,
-									DeviceOnlineStates.Timeout,
-								).catch(() => {
-									// Ignore errors
-								}),
-							]);
+							await this.updateDeviceModel(
+								deviceId,
+								DeviceOnlineStates.Timeout,
+							);
+							this.scheduleChangeOfStateForDevice(
+								deviceId,
+								await this.getDeviceOnlineState(deviceId),
+								DeviceOnlineStates.Timeout,
+								DeviceOnlineStates.Offline,
+								API_HEARTBEAT_STATE_TIMEOUT_SECONDS, // put the device into a timeout state if it misses it's scheduled heartbeat window... then mark as offline
+							);
 							break;
 						case DeviceOnlineStates.Offline:
 							await this.updateDeviceModel(
 								deviceId,
 								DeviceOnlineStates.Offline,
-							).catch(() => {
-								// Ignore errors
-							});
+							);
 							break;
 						default:
 							throw new Error(
