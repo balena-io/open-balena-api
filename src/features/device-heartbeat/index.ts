@@ -165,7 +165,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		},
 	) => void;
 }> {
-	private static readonly REDIS_NAMESPACE = 'device-online-state';
+	private static readonly REDIS_NAMESPACE = 'device-heartbeat-state';
 	private static readonly EXPIRED_QUEUE = 'expired';
 	private static readonly RSMQ_READ_TIMEOUT = 30;
 	private static readonly QUEUE_STATS_INTERVAL_MSEC = 10000;
