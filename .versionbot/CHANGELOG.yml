@@ -1,4 +1,20 @@
 - commits:
+    - subject: Add optional LOGS_HOST env var for log-stream subdomain
+      hash: 94fc7a05ba2aa75d0dc4cb8d0013c3a91ef33c3a
+      body: ""
+      footer:
+        Depends-on: https://github.com/balena-io/environment-production/pull/1102
+        depends-on: https://github.com/balena-io/environment-production/pull/1102
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Christina Ying Wang <christina@balena.io>
+        signed-off-by: Christina Ying Wang <christina@balena.io>
+      author: Christina Ying Wang
+      nested: []
+  version: 11.8.0
+  title: ""
+  date: 2023-05-08T20:51:38.050Z
+- commits:
     - subject: Add configurable validity Timeout for the Online heartbeat update cache
       hash: 899c3cf35c778bdc5a266b75c6e593482a70bdd4
       body: ""
