@@ -91,5 +91,20 @@ describe('generate device config', function () {
 				`Provisioning Key for app ${this.application.id}`,
 			);
 		});
+
+		it('should contain logsEndpoint in response config', async function () {
+			const { body } = await supertest(this.user)
+				.post('/download-config')
+				.send({
+					appId: this.application.id,
+					version: 'v2.24.0',
+					deviceType: 'raspberrypi3',
+				})
+				.expect(200)
+				.expect('content-type', /^application\/json/);
+
+			expect(body).to.have.a.property('logsEndpoint');
+			expect(body.logsEndpoint).to.match(/^https\:\/\//);
+		});
 	});
 });

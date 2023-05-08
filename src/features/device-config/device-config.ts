@@ -27,6 +27,7 @@ import {
 	REGISTRY2_HOST,
 	VPN_HOST,
 	VPN_PORT,
+	LOGS_HOST,
 } from '../../lib/config';
 
 // `osVersion == null` means assume "latest"
@@ -120,6 +121,8 @@ export const generateConfig = async (
 				delta: `https://${DELTA_HOST}`,
 				registry: REGISTRY2_HOST,
 				vpn: VPN_HOST,
+				// If undefined, balena-device-config won't generate a logs endpoint
+				logs: LOGS_HOST != null ? `https://${LOGS_HOST}` : undefined,
 			},
 			version: osVersion,
 		},
