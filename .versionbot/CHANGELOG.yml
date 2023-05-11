@@ -1,4 +1,16 @@
 - commits:
+    - subject: Test that setting a failed release to be operating a device is blocked
+      hash: f67cd977c561d2f9968432ec5dd8d8ba9fc7adf7
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 11.8.2
+  title: ""
+  date: 2023-05-11T13:29:57.379Z
+- commits:
     - subject: Add `TRUST_PROXY` environment variable
       hash: 405efd217a896d20a20c0cbdc2034585c37e0e4b
       body: ""
