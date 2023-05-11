@@ -35,6 +35,18 @@
 		"tag_key": "version",
 		"value": "2.50.1+rev1"
 	},
+	"releaseIntelNucFailedTag2-variant": {
+		"user": "admin",
+		"release": "releaseIntelNucFailed",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"releaseIntelNucFailedTag2-version": {
+		"user": "admin",
+		"release": "releaseIntelNucFailed",
+		"tag_key": "version",
+		"value": "2.50.1+rev1"
+	},
 	"releasetag3-variant": {
 		"user": "admin",
 		"release": "release3",

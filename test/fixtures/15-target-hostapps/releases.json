@@ -20,6 +20,13 @@
 		"status": "success",
 		"user": "admin"
 	},
+	"releaseIntelNucFailed": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "failed",
+		"user": "admin"
+	},
 	"release3": {
 		"application": "intel-nuc-esr",
 		"composition": {},
