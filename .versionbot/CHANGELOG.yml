@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add `TRUST_PROXY` environment variable
+      hash: 405efd217a896d20a20c0cbdc2034585c37e0e4b
+      body: ""
+      footer:
+        Change-Type: patch
+        change-type: patch
+      author: Bart Versluijs
+      nested: []
+  version: 11.8.1
+  title: ""
+  date: 2023-05-11T10:47:24.748Z
+- commits:
     - subject: Add optional LOGS_HOST env var for log-stream subdomain
       hash: 94fc7a05ba2aa75d0dc4cb8d0013c3a91ef33c3a
       body: ""
