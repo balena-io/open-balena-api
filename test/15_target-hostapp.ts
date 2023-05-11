@@ -19,6 +19,7 @@ describe('target hostapps', () => {
 	let invalidatedReleaseDevice: fakeDevice.Device;
 	let prodNucHostappReleaseId: number;
 	let raspberryPiHostappReleaseId: number;
+	let failedIntelNucHostAppReleaseId: number;
 	let upgradeReleaseId: number;
 	let esrHostappReleaseId: number;
 	let invalidatedReleaseId: number;
@@ -42,6 +43,7 @@ describe('target hostapps', () => {
 		);
 		prodNucHostappReleaseId = fx.releases.release0.id;
 		raspberryPiHostappReleaseId = fx.releases.release1.id;
+		failedIntelNucHostAppReleaseId = fx.releases.releaseIntelNucFailed.id;
 		upgradeReleaseId = fx.releases.release2.id;
 		esrHostappReleaseId = fx.releases.release3.id;
 		invalidatedReleaseId = fx.releases.release5.id;
@@ -266,6 +268,17 @@ describe('target hostapps', () => {
 			.expect(
 				400,
 				'"It is necessary that each release that should operate a device that is of a device type, belongs to an application that is host and is for the device type."',
+			);
+	});
+
+	it('should fail to PATCH intel-nuc device to a failed hostapp release', async () => {
+		await supertest(admin)
+			.patch(`/${version}/device(${device.id})`)
+			.send({ should_be_operated_by__release: failedIntelNucHostAppReleaseId })
+			.expect(
+				400,
+				// TODO: This should ideally be: '"It is necessary that each release that should operate a device, has a status that is equal to \\"success\\"."'
+				`"Could not find a hostapp release with this ID ${failedIntelNucHostAppReleaseId}"`,
 			);
 	});
 
