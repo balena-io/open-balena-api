@@ -1,4 +1,23 @@
 - commits:
+    - subject: Add partial index to optimize the unique release_version rule
+      hash: bb78ee588d5d899607ee5ea7e3e3ab00942127ec
+      body: |
+        Currently that rule does a full table scan and
+        needs 2s, so adding a partial index on the
+        deprecated release_version, fields should
+        greatly improve its performance, while having
+        small DB size & index maintenance work load.
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://explain.dalibo.com/plan/594c634725b2684e w/o index
+        see: https://explain.dalibo.com/plan/594c634725b2684e w/o index
+      author: Thodoris Greasidis
+      nested: []
+  version: 11.8.3
+  title: ""
+  date: 2023-05-12T13:03:22.901Z
+- commits:
     - subject: Test that setting a failed release to be operating a device is blocked
       hash: f67cd977c561d2f9968432ec5dd8d8ba9fc7adf7
       body: ""
