@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add device type yocto properties to typings
+      hash: ea501686fb9447353f1f4e0a00b16c68c25e7422
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otávio Jacobi
+      nested: []
+  version: 11.8.4
+  title: ""
+  date: 2023-05-16T07:40:46.183Z
+- commits:
     - subject: Add partial index to optimize the unique release_version rule
       hash: bb78ee588d5d899607ee5ea7e3e3ab00942127ec
       body: |
