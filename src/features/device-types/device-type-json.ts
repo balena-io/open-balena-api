@@ -23,6 +23,13 @@ export interface DeviceTypeJson {
 	yocto: {
 		fstype?: string;
 		deployArtifact: string;
+		machine?: string;
+		image?: string;
+		version?: string;
+		deployFlasherArtifact?: string;
+		deployRawArtifact?: string;
+		compressed?: boolean;
+		archive?: boolean;
 	};
 	// Holds the latest resinOS version
 	buildId: string;
