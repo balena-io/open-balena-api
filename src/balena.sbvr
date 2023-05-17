@@ -846,7 +846,7 @@ Fact Type: scheduled job run has status
 
 -- Rules
 
-Rule: It is necessary that each release that has a release version1 and has a status that is equal to "success" and is not invalidated, belongs to an application that owns exactly one release that has a release version2 that is equal to the release version1 and has a status that is equal to "success" and is not invalidated.
+Rule: It is necessary that each application that owns a release1 that has a status that is equal to "success" and is not invalidated and has a release version, owns at most one release2 that has a status that is equal to "success" and is not invalidated and has a release version that is of the release1.
 Rule: It is necessary that each image that has a status that is equal to "success", has a push timestamp.
 Rule: It is necessary that each application that owns a release1 that has a status that is equal to "success" and has a commit1, owns at most one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.
 Rule: It is necessary that each application that owns a release1 that has a revision, owns at most one release2 that has a semver major that is of the release1 and has a semver minor that is of the release1 and has a semver patch that is of the release1 and has a semver prerelease that is of the release1 and has a variant that is of the release1 and has a revision that is of the release1.
