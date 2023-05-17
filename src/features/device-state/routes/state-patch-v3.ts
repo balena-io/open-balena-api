@@ -287,6 +287,16 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 				metricsBody = {};
 			}
 
+			if (deviceBody.cpu_id != null) {
+				if (/[^\x20-\x7E]/.test(deviceBody.cpu_id)) {
+					// if the CPU id is not in the character range of 0x20 (SPACE) to 0x7e (~) we drop the CPU ID
+					// this cpu id wouldn't be rendered anyway
+					delete deviceBody.cpu_id;
+				} else {
+					deviceBody.cpu_id = deviceBody.cpu_id.toLowerCase();
+				}
+			}
+
 			if (apps != null || Object.keys(deviceBody).length > 0) {
 				// We lazily fetch the necessary data only if we absolutely must to avoid unnecessary work if it turns out we don't need it
 				data ??= await fetchData(req, custom, uuids, appReleasesCriteria);
@@ -312,9 +322,6 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 					deviceBody = truncateShortTextFields(deviceBody);
 					// If we're updating anyway then ensure the metrics data is included
 					deviceBody = { ...deviceBody, ...metricsBody };
-					if (deviceBody.cpu_id != null) {
-						deviceBody.cpu_id = deviceBody.cpu_id.toLowerCase();
-					}
 					updateFns.push(async (resinApiTx) => {
 						await resinApiTx.patch({
 							resource: 'device',
