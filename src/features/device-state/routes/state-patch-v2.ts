@@ -157,6 +157,15 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 			if (local.name != null) {
 				deviceBody.device_name = local.name;
 			}
+			if (deviceBody.cpu_id != null) {
+				if (/[^\x20-\x7E]/.test(deviceBody.cpu_id)) {
+					// if the CPU id is not in the character range of 0x20 (SPACE) to 0x7e (~) we drop the CPU ID
+					// this cpu id wouldn't be rendered anyway
+					delete deviceBody.cpu_id;
+				} else {
+					deviceBody.cpu_id = deviceBody.cpu_id.toLowerCase();
+				}
+			}
 
 			if (
 				local.is_on__commit !== undefined ||
@@ -191,9 +200,6 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 						deviceBody = truncateShortTextFields(deviceBody);
 						// If we're updating anyway then ensure the metrics data is included
 						deviceBody = { ...deviceBody, ...metricsBody };
-						if (deviceBody.cpu_id != null) {
-							deviceBody.cpu_id = deviceBody.cpu_id.toLowerCase();
-						}
 						await resinApiTx.patch({
 							resource: 'device',
 							id: deviceId,
