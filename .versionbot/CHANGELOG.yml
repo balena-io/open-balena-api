@@ -1,4 +1,24 @@
 - commits:
+    - subject: Optimize the unique release_version rule
+      hash: e70930dbb2146c9f50ca635f38a7223e0b042fe9
+      body: |
+        Enables row narrowing when the rule is
+        triggered by application changes, but more
+        importantly allows bC to rewrite the rule using
+        a GROUP BY.
+        Also reduces slightly the full rule runtime from
+        ~200ms to ~180ms.
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://explain.dalibo.com/plan/6f1hd8f4ee0ada6d
+        see: https://explain.dalibo.com/plan/6f1hd8f4ee0ada6d
+      author: Thodoris Greasidis
+      nested: []
+  version: 11.8.5
+  title: ""
+  date: 2023-05-17T08:37:37.697Z
+- commits:
     - subject: Add device type yocto properties to typings
       hash: ea501686fb9447353f1f4e0a00b16c68c25e7422
       body: ""
