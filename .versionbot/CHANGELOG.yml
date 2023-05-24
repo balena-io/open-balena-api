@@ -1,4 +1,18 @@
 - commits:
+    - subject: Add a CPU ID readable character filter
+      hash: 545b3d9100dad2c6cdda6c4cf89e472c6e98faa4
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: fisehara <harald@balena.io>
+        signed-off-by: fisehara <harald@balena.io>
+      author: fisehara
+      nested: []
+  version: 12.0.3
+  title: ""
+  date: 2023-05-24T13:34:29.016Z
+- commits:
     - subject: Update grafana/loki Docker tag to v2.8.2
       hash: 4bb921e9f2c632eb4f295ee6712abd58270f9a23
       body: |
