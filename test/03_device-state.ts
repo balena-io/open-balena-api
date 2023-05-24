@@ -780,6 +780,49 @@ mockery.registerMock('../src/lib/config', configMock);
 			await expectResourceToMatch(pineUser, 'device', device.id, expectedData);
 		});
 
+		it('should not save an invalid CPU ID', async () => {
+			const devicePatchBodyCorrect = {
+				[stateKey]: {
+					name: 'correctCPUID',
+					cpu_id: '\x20\x7e',
+				},
+			};
+
+			await fakeDevice.patchState(
+				device,
+				device.uuid,
+				devicePatchBodyCorrect,
+				stateVersion,
+			);
+
+			const devicePatchBodyInvalid = {
+				[stateKey]: {
+					name: 'invalidCPUID',
+					cpu_id: '\x19\x80',
+				},
+			};
+
+			await fakeDevice.patchState(
+				device,
+				device.uuid,
+				devicePatchBodyInvalid,
+				stateVersion,
+			);
+
+			devicePatchBodyInvalid[stateKey].cpu_id = '\x20\x7e';
+			const expectedData =
+				stateVersion === 'v2'
+					? _.mapKeys(devicePatchBodyInvalid[stateKey], (_v, key) =>
+							key === 'name' ? 'device_name' : key,
+					  )
+					: _.pickBy(
+							devicePatchBodyInvalid[stateKey],
+							(_v, key) => key !== 'name',
+					  );
+
+			await expectResourceToMatch(pineUser, 'device', device.id, expectedData);
+		});
+
 		it('should accept addresses longer than 255 chars and truncate at space delimiters', async () => {
 			const generateValidAddress = (
 				addr: string,
