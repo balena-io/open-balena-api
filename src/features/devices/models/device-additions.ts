@@ -2,6 +2,7 @@ import type {
 	AbstractSqlModel,
 	AbstractSqlQuery,
 	AndNode,
+	BooleanTypeNodes,
 	EqualsNode,
 } from '@balena/abstract-sql-compiler';
 
@@ -43,17 +44,13 @@ export const addToModel = (
 	// it'll generate a dummy case (the equivalent of 1 == 2, which is always
 	// false), otherwise it'll generate a case that looks into the actual model
 	// field.
-	const isInactive: EqualsNode = addShims
-		? ['Equals', ['Boolean', true], ['Boolean', false]]
-		: [
-				'Equals',
-				['ReferencedField', 'device', 'is active'],
-				['Boolean', false],
-		  ];
+	const isInactive: BooleanTypeNodes = addShims
+		? ['Boolean', false]
+		: ['Not', ['ReferencedField', 'device', 'is active']];
 
 	const isOverallOffline: AndNode = [
 		'And',
-		['Equals', ['ReferencedField', 'device', 'is online'], ['Boolean', false]],
+		['Not', ['ReferencedField', 'device', 'is online']],
 		[
 			'In',
 			['ReferencedField', 'device', 'api heartbeat state'],
@@ -66,7 +63,7 @@ export const addToModel = (
 	// so it's still provisioning.
 	const isPreProvisioning: AndNode = [
 		'And',
-		['Equals', ['ReferencedField', 'device', 'is online'], ['Boolean', false]],
+		['Not', ['ReferencedField', 'device', 'is online']],
 		['NotExists', ['ReferencedField', 'device', 'last connectivity event']],
 		[
 			'Equals',
@@ -99,11 +96,7 @@ export const addToModel = (
 					],
 					[
 						'And',
-						[
-							'Equals',
-							['ReferencedField', 'device', 'is online'],
-							['Boolean', false],
-						],
+						['Not', ['ReferencedField', 'device', 'is online']],
 						[
 							'Equals',
 							['ReferencedField', 'device', 'status'],
@@ -188,11 +181,7 @@ export const addToModel = (
 					],
 					[
 						'And',
-						[
-							'Equals',
-							['ReferencedField', 'device', 'is online'],
-							['Boolean', false],
-						],
+						['Not', ['ReferencedField', 'device', 'is online']],
 						[
 							'Equals',
 							['ReferencedField', 'device', 'status'],

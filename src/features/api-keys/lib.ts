@@ -43,7 +43,7 @@ const $createApiKey = async (
 		  }
 		| undefined;
 
-	const actorID = actorable?.actor;
+	const actorID = actorable?.actor.__id;
 	if (actorID == null) {
 		throw new Error(`No ${actorType} found to associate with the api key`);
 	}
