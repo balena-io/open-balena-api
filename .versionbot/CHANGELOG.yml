@@ -1,4 +1,43 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v14.9.3
+      hash: 9ac0d952e6ef0bffd91dce3419e36d80edcd94ed
+      body: |
+        Update balena/open-balena-base from 14.9.1 to 14.9.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency npm to v9.6.7
+              hash: bac91d35160c081c4724034f4c49f26079119b04
+              body: |
+                Update npm from 9.6.6 to 9.6.7
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.9.3
+          title: ""
+          date: 2023-05-18T15:18:26.274Z
+        - commits:
+            - subject: Update dependency npm to v9.6.6
+              hash: 87d78dfed5c1dc471dfa6499485b9fa52d81a0ab
+              body: |
+                Update npm from 9.6.5 to 9.6.6
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.9.2
+          title: ""
+          date: 2023-05-03T21:18:50.684Z
+  version: 12.0.1
+  title: ""
+  date: 2023-05-24T11:25:18.432Z
+- commits:
     - subject: Update to pinejs 15
       hash: 6db4a7e42a3f2d6acc47fa148b3f3ed425c3867f
       body: |
