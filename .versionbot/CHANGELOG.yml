@@ -1,4 +1,29 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v14.9.4
+      hash: 4a0bce8b8b2fa5aa6cb3841b6b58e6ce287c7477
+      body: |
+        Update balena/open-balena-base from 14.9.3 to 14.9.4
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Set systemd stopsignal to SIGRTMIN+3
+              hash: 5c69245959e57bcb4c033bc027d817801f7a1428
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-14.9.4
+          title: ""
+          date: 2023-05-31T16:09:26.999Z
+  version: 12.0.4
+  title: ""
+  date: 2023-05-31T17:12:42.008Z
+- commits:
     - subject: Add a CPU ID readable character filter
       hash: 545b3d9100dad2c6cdda6c4cf89e472c6e98faa4
       body: ""
