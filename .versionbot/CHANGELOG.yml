@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update TypeScript to 5.1.3
+      hash: 754ff8ccced059c197cde47d98c8c17a184cbbff
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 12.0.5
+  title: ""
+  date: 2023-06-02T06:29:39.793Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v14.9.4
       hash: 4a0bce8b8b2fa5aa6cb3841b6b58e6ce287c7477
       body: |
