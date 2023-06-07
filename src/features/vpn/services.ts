@@ -137,6 +137,7 @@ export const clientDisconnect = async (
 			},
 			body: {
 				is_connected_to_vpn: false,
+				is_managed_by__service_instance: null,
 			},
 		});
 		res.status(200).end();
