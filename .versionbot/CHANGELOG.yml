@@ -1,4 +1,30 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v14.10.0
+      hash: a776b9f02e7a60d2c1636706a7c234e3f36a136d
+      body: |
+        Update balena/open-balena-base from 14.9.4 to 14.10.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency npm to v9.7.1
+              hash: 6af4dabea40287d9bac00f001ea5cb2e228d2277
+              body: |
+                Update npm from 9.6.7 to 9.7.1
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-14.10.0
+          title: ""
+          date: 2023-06-07T16:02:28.180Z
+  version: 12.1.0
+  title: ""
+  date: 2023-06-07T17:11:51.484Z
+- commits:
     - subject: Clear the associated service instance when a device disconnects from it
       hash: 870eebd9561d567a5926eb9fe048d8fb314285ec
       body: ""
