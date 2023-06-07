@@ -1,4 +1,16 @@
 - commits:
+    - subject: Clear the associated service instance when a device disconnects from it
+      hash: 870eebd9561d567a5926eb9fe048d8fb314285ec
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 12.0.6
+  title: ""
+  date: 2023-06-07T15:15:01.857Z
+- commits:
     - subject: Update TypeScript to 5.1.3
       hash: 754ff8ccced059c197cde47d98c8c17a184cbbff
       body: ""
