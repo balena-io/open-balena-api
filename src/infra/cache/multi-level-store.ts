@@ -34,7 +34,7 @@ export function createMultiLevelStore<T extends Defined>(
 	get: (key: string) => Promise<T | undefined>;
 	set: (key: string, value: T) => Promise<void>;
 	delete: (key: string) => Promise<void>;
-	wrap: (key: string, fn: () => T) => Promise<T>;
+	wrap: (key: string, fn: () => T | Promise<T>) => Promise<T>;
 } {
 	if (usedCacheKeys[cacheKey] === true) {
 		throw new Error(`Cache key '${cacheKey}' has already been taken`);

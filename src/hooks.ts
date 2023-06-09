@@ -4,6 +4,7 @@ import './features/application-types/hooks';
 import './features/ci-cd/hooks';
 import './features/cascade-delete/hooks';
 import './features/devices/hooks';
+import './features/device-provisioning/hooks';
 import './features/device-types/hooks';
 import './features/device-urls/hooks';
 import './features/hostapp/hooks';
