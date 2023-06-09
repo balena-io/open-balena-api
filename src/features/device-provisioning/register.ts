@@ -1,7 +1,5 @@
 import type { RequestHandler } from 'express';
-import _ from 'lodash';
 import randomstring from 'randomstring';
-
 import { sbvrUtils, errors } from '@balena/pinejs';
 
 import {
@@ -17,6 +15,7 @@ import {
 import { getDeviceTypeBySlug } from '../device-types/device-types';
 import { checkInt } from '../../lib/utils';
 import { checkDeviceExistsIsFrozen } from '../device-state/middleware';
+import { gracefullyDenyConflictingRegistrations } from './gracefully-deny-conflicting-registrations';
 
 const { BadRequestError, ConflictError } = errors;
 const { api } = sbvrUtils;
@@ -42,6 +41,8 @@ export const register: RequestHandler = async (req, res) => {
 		if (uuid == null) {
 			throw new BadRequestError('UUID must be specified');
 		}
+
+		await gracefullyDenyConflictingRegistrations(uuid, req.body.api_key);
 
 		const {
 			supervisor_version: supervisorVersion,
@@ -94,6 +95,7 @@ export const register: RequestHandler = async (req, res) => {
 				api_key: apiKey,
 			};
 		});
+
 		// Clear the device existence cache for the just registered device
 		// in case it tried to communicate with the API before registering
 		checkDeviceExistsIsFrozen.delete(response.uuid);
