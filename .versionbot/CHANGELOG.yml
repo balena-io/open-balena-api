@@ -1,4 +1,16 @@
 - commits:
+    - subject: Drop unused `device has vpn address` property
+      hash: 9e170fe32190032218289dec6321058aaebcd1eb
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+  version: 13.0.0
+  title: ""
+  date: 2023-06-12T12:37:06.268Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v14.10.0
       hash: a776b9f02e7a60d2c1636706a7c234e3f36a136d
       body: |
