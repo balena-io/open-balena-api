@@ -362,7 +362,6 @@ export interface Device {
 	last_vpn_event: DateString | null;
 	is_locked_until__date: DateString | null;
 	public_address: string | null;
-	vpn_address: string | null;
 	ip_address: string | null;
 	mac_address: string | null;
 	memory_usage: number | null;
