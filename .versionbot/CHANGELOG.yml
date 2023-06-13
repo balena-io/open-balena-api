@@ -1,4 +1,18 @@
 - commits:
+    - subject: Gracefully deny device registrations with duplicate api key
+      hash: 87f6127fb9f529b8ca8a4d264c5a5175db0aac1a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://balena.zulipchat.com/#narrow/stream/346855-_announcements/topic/balenaCloud.20end-to-end.20tests
+        see: https://balena.zulipchat.com/#narrow/stream/346855-_announcements/topic/balenaCloud.20end-to-end.20tests
+      author: Thodoris Greasidis
+      nested: []
+  version: 13.0.1
+  title: ""
+  date: 2023-06-13T14:48:38.288Z
+- commits:
     - subject: Drop unused `device has vpn address` property
       hash: 9e170fe32190032218289dec6321058aaebcd1eb
       body: ""
