@@ -1,4 +1,18 @@
 - commits:
+    - subject: Combine two of the rules about supervisor releases managing devices
+      hash: 1dd8e416c5c6f7be9f36a02d8e0d673a152f0447
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+        signed-off-by: Thodoris Greasidis <thodoris@balena.io>
+      author: Thodoris Greasidis
+      nested: []
+  version: 13.0.2
+  title: ""
+  date: 2023-06-14T10:30:11.516Z
+- commits:
     - subject: Gracefully deny device registrations with duplicate api key
       hash: 87f6127fb9f529b8ca8a4d264c5a5175db0aac1a
       body: ""
