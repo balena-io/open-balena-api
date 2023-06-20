@@ -157,6 +157,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			'raspberrypi3',
 			'raspberrypi3-64',
 			'raspberrypi4-64',
+			'raspberrypi4-superhub',
 			'raspberrypi400-64',
 			'raspberrypicm4-ioboard',
 			'revpi-core-3',
