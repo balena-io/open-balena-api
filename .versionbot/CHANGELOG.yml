@@ -1,4 +1,30 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v14.10.1
+      hash: 10d1814c0b6c03045254a49fe920c5c083512ef1
+      body: |
+        Update balena/open-balena-base from 14.10.0 to 14.10.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency node to v18.16.1
+              hash: 37279e28a319d6594b1c5bc6e74ee779b8210ab0
+              body: |
+                Update node from 18.16.0 to 18.16.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-14.10.1
+          title: ""
+          date: 2023-06-21T11:03:53.581Z
+  version: 13.0.4
+  title: ""
+  date: 2023-06-21T12:13:16.747Z
+- commits:
     - subject: "device-provisioning: Stop reporting conflict errors"
       hash: 972230888fddc193ceec10f086af593fd692ad2a
       body: ""
