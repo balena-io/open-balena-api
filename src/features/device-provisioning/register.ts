@@ -16,6 +16,7 @@ import { getDeviceTypeBySlug } from '../device-types/device-types';
 import { checkInt } from '../../lib/utils';
 import { checkDeviceExistsIsFrozen } from '../device-state/middleware';
 import { gracefullyDenyConflictingRegistrations } from './gracefully-deny-conflicting-registrations';
+import onFinished from 'on-finished';
 
 const { BadRequestError, ConflictError } = errors;
 const { api } = sbvrUtils;
@@ -67,6 +68,13 @@ export const register: RequestHandler = async (req, res) => {
 		);
 
 		const response = await sbvrUtils.db.transaction(async (tx) => {
+			// TODO: Replace this manual rollback on request closure with a more generic/automated version
+			onFinished(res, () => {
+				if (!tx.isClosed()) {
+					tx.rollback();
+				}
+			});
+
 			const resinApiTx = api.resin.clone({ passthrough: { req, tx } });
 			const deviceType = await getDeviceTypeBySlug(resinApiTx, deviceTypeSlug);
 			const device = await resinApiTx.post({
