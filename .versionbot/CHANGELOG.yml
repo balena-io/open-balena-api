@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency semver to v7.5.2 [SECURITY]
+      hash: 2b8ce87e54352b04c99e3050f507366747e54ef1
+      body: |
+        Update semver from 7.5.1 to 7.5.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 13.0.7
+  title: ""
+  date: 2023-07-01T09:07:42.248Z
+- commits:
     - subject: Rollback device registration if the request ends/is aborted midway
       hash: 828c5aedeb235f2da392bd786a1fcab167e7b51d
       body: ""
