@@ -218,7 +218,7 @@ async function requestDevices({
 			console.log('*** device-proxy');
 			// npm run fasttest 20 to test this
 			const res = (await resinApi.post({
-				url: `device($action=update)/canAccess?$filter=id in (${deviceIds.join(
+				url: `device(action='update')/canAccess?$filter=id in (${deviceIds.join(
 					',',
 				)})`,
 				body: {},
