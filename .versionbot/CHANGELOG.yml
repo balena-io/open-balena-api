@@ -1,4 +1,30 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v14.11.0
+      hash: 1d2438a962c1199b40bc7d1b54cb37f9e704cb2d
+      body: |
+        Update balena/open-balena-base from 14.10.2 to 14.11.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency npm to v9.8.0
+              hash: 08daab22e7497506c6d426900952ed186d273b0b
+              body: |
+                Update npm from 9.7.2 to 9.8.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-14.11.0
+          title: ""
+          date: 2023-07-05T21:02:09.040Z
+  version: 13.2.0
+  title: ""
+  date: 2023-07-05T21:28:44.796Z
+- commits:
     - subject: Expose the RPi family config vars to Revolution Pi Connect and
         Revolution Pi Connect S
       hash: ee8d2128a8502fb5b73014dffbef9ab5f3bc3acf
