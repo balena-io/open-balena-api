@@ -1,4 +1,19 @@
 - commits:
+    - subject: Expose the RPi family config vars to Revolution Pi Connect and
+        Revolution Pi Connect S
+      hash: ee8d2128a8502fb5b73014dffbef9ab5f3bc3acf
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Florin Sarbu <florin@balena.io>
+        signed-off-by: Florin Sarbu <florin@balena.io>
+      author: Florin Sarbu
+      nested: []
+  version: 13.1.0
+  title: ""
+  date: 2023-07-05T12:15:57.993Z
+- commits:
     - subject: Update dependency semver to v7.5.2 [SECURITY]
       hash: 2b8ce87e54352b04c99e3050f507366747e54ef1
       body: |
