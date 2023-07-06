@@ -10,18 +10,21 @@ import { getIP } from '../../../lib/utils';
 import {
 	Application,
 	Device,
+	DeviceMetricsRecord,
 	Image,
 	ImageInstall,
 	PickDeferred,
 	Release,
 } from '../../../balena-model';
 import type { Filter } from 'pinejs-client-core';
-import { metricsPatchFields, v3ValidPatchFields } from '..';
+import { v3ValidDevicePatchFields } from '..';
 import {
 	deleteOldImageInstalls,
 	upsertImageInstall,
 	shouldUpdateMetrics,
 	truncateShortTextFields,
+	StatePatchDeviceMetricsRecordBody,
+	validDeviceMetricsRecordPatchFields,
 } from '../state-patch-utils';
 
 const { BadRequestError, UnauthorizedError, InternalRequestError } = errors;
@@ -31,7 +34,7 @@ const { api } = sbvrUtils;
  * These typings should be used as a guide to what should be sent, but cannot be trusted as what actually *is* sent.
  */
 export type StatePatchV3Body = {
-	[uuid: string]: {
+	[uuid: string]: StatePatchDeviceMetricsRecordBody & {
 		status?: string;
 		os_version?: string;
 		os_variant?: string;
@@ -42,15 +45,7 @@ export type StatePatchV3Body = {
 		mac_address?: string;
 		api_port?: number;
 		api_secret?: string;
-		memory_usage?: number;
-		memory_total?: number;
-		storage_block_device?: string;
-		storage_usage?: number;
-		storage_total?: number;
-		cpu_temp?: number;
-		cpu_usage?: number;
-		cpu_id?: string;
-		is_undervolted?: boolean;
+
 		/**
 		 * Used for setting dependent devices as online
 		 */
@@ -103,11 +98,13 @@ const fetchData = async (
 					belongs_to__application: {
 						$select: 'uuid',
 					},
+					reports__device_metrics_record: {},
 				},
 			},
 		})) as Array<
 			Pick<Device, 'id' | 'uuid'> & {
 				belongs_to__application: Array<Pick<Application, 'uuid'>>;
+				reports__device_metrics_record: DeviceMetricsRecord[];
 			}
 		>;
 		if (devices.length !== uuids.length) {
@@ -269,23 +266,14 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 			let deviceBody:
 				| Pick<
 						StatePatchV3Body[string],
-						(typeof v3ValidPatchFields)[number]
+						(typeof v3ValidDevicePatchFields)[number]
 				  > & {
 						is_running__release?: number | null;
-				  } = _.pick(state, v3ValidPatchFields);
+				  } = _.pick(state, v3ValidDevicePatchFields);
 			let metricsBody: Pick<
 				StatePatchV3Body[string],
-				(typeof metricsPatchFields)[number]
-			> = _.pick(state, metricsPatchFields);
-			if (
-				Object.keys(metricsBody).length > 0 &&
-				(await shouldUpdateMetrics(uuid))
-			) {
-				// If we should force a metrics update then merge the two together and clear `metricsBody` so
-				// that we don't try to merge it again later
-				deviceBody = { ...deviceBody, ...metricsBody };
-				metricsBody = {};
-			}
+				(typeof validDeviceMetricsRecordPatchFields)[number]
+			> = _.pick(state, validDeviceMetricsRecordPatchFields);
 
 			if (deviceBody.cpu_id != null) {
 				if (/[^\x20-\x7E]/.test(deviceBody.cpu_id)) {
@@ -297,12 +285,25 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 				}
 			}
 
-			if (apps != null || Object.keys(deviceBody).length > 0) {
+			if (
+				Object.keys(metricsBody).length > 0 &&
+				!(await shouldUpdateMetrics(uuid))
+			) {
+				// If we don't want to update the metrics then clear them
+				metricsBody = {};
+			}
+
+			if (
+				apps != null ||
+				Object.keys(deviceBody).length > 0 ||
+				Object.keys(metricsBody).length > 0
+			) {
 				// We lazily fetch the necessary data only if we absolutely must to avoid unnecessary work if it turns out we don't need it
 				data ??= await fetchData(req, custom, uuids, appReleasesCriteria);
 				const { images, releasesByAppUuid } = data;
 				const device = data.devicesByUuid[uuid];
-
+				const [latestDeviceMetricsRecord] =
+					device.reports__device_metrics_record;
 				if (apps != null) {
 					const userAppUuid = device.belongs_to__application[0].uuid;
 					if (releasesByAppUuid[userAppUuid] != null) {
@@ -321,7 +322,6 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 					// sbvr-types does not export SHORT TEXT VARCHAR length 255 to import.
 					deviceBody = truncateShortTextFields(deviceBody);
 					// If we're updating anyway then ensure the metrics data is included
-					deviceBody = { ...deviceBody, ...metricsBody };
 					updateFns.push(async (resinApiTx) => {
 						await resinApiTx.patch({
 							resource: 'device',
@@ -331,6 +331,26 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 							},
 							body: deviceBody,
 						});
+					});
+				}
+
+				if (Object.keys(metricsBody).length > 0) {
+					updateFns.push(async (resinApiTx) => {
+						if (latestDeviceMetricsRecord == null) {
+							await resinApiTx.post({
+								resource: 'device_metrics_record',
+								body: {
+									...metricsBody,
+									...{ is_reported_by__device: device.id },
+								},
+							});
+						} else {
+							await resinApiTx.patch({
+								resource: 'device_metrics_record',
+								id: { is_reported_by__device: device.id },
+								body: metricsBody,
+							});
+						}
 					});
 				}
 

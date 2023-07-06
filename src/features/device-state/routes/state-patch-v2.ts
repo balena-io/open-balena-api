@@ -10,11 +10,12 @@ import { getIP } from '../../../lib/utils';
 import type { ImageInstall, PickDeferred } from '../../../balena-model';
 import {
 	shouldUpdateMetrics,
-	metricsPatchFields,
-	v2ValidPatchFields,
 	upsertImageInstall,
 	deleteOldImageInstalls,
 	truncateShortTextFields,
+	StatePatchDeviceMetricsRecordBody,
+	validDeviceMetricsRecordPatchFields,
+	v2ValidDevicePatchFields,
 } from '../state-patch-utils';
 import type { ResolveDeviceInfoCustomObject } from '../middleware';
 
@@ -26,7 +27,7 @@ type LocalBody = NonNullable<StatePatchV2Body['local']>;
  * These typings should be used as a guide to what should be sent, but cannot be trusted as what actually *is* sent.
  */
 export type StatePatchV2Body = {
-	local?: {
+	local?: StatePatchDeviceMetricsRecordBody & {
 		should_be_running__release?: number;
 		name?: string;
 		/**
@@ -46,15 +47,6 @@ export type StatePatchV2Body = {
 		download_progress?: number | null;
 		api_port?: number;
 		api_secret?: string;
-		memory_usage?: number;
-		memory_total?: number;
-		storage_block_device?: string;
-		storage_usage?: number;
-		storage_total?: number;
-		cpu_temp?: number;
-		cpu_usage?: number;
-		cpu_id?: string;
-		is_undervolted?: boolean;
 		is_on__commit?: string | null;
 		apps?: Array<{
 			services?: {
@@ -139,20 +131,13 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 			const { apps } = local;
 
 			let deviceBody:
-				| Pick<LocalBody, (typeof v2ValidPatchFields)[number]> & {
+				| Pick<LocalBody, (typeof v2ValidDevicePatchFields)[number]> & {
 						is_running__release?: number | null;
-				  } = _.pick(local, v2ValidPatchFields);
-			let metricsBody: Pick<LocalBody, (typeof metricsPatchFields)[number]> =
-				_.pick(local, metricsPatchFields);
-			if (
-				Object.keys(metricsBody).length > 0 &&
-				(await shouldUpdateMetrics(uuid))
-			) {
-				// If we should force a metrics update then merge the two together and clear `metricsBody` so
-				// that we don't try to merge it again later
-				deviceBody = { ...deviceBody, ...metricsBody };
-				metricsBody = {};
-			}
+				  } = _.pick(local, v2ValidDevicePatchFields);
+			const metricsBody: Pick<
+				LocalBody,
+				(typeof validDeviceMetricsRecordPatchFields)[number]
+			> = _.pick(local, validDeviceMetricsRecordPatchFields);
 
 			if (local.name != null) {
 				deviceBody.device_name = local.name;
@@ -191,15 +176,13 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 						}
 					}
 				}
-
-				updateFns.push(async (resinApiTx) => {
-					if (Object.keys(deviceBody).length > 0) {
+				if (Object.keys(deviceBody).length > 0) {
+					updateFns.push(async (resinApiTx) => {
 						// truncate for resilient legacy compatible device state patch so that supervisors don't fail
 						// to update b/c of length violation of 255 (SBVR SHORT TEXT type) for ip and mac address.
 						// sbvr-types does not export SHORT TEXT VARCHAR length 255 to import.
 						deviceBody = truncateShortTextFields(deviceBody);
 						// If we're updating anyway then ensure the metrics data is included
-						deviceBody = { ...deviceBody, ...metricsBody };
 						await resinApiTx.patch({
 							resource: 'device',
 							id: deviceId,
@@ -207,6 +190,32 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 								$filter: { $not: deviceBody },
 							},
 							body: deviceBody,
+						});
+					});
+				}
+			}
+			if (
+				Object.keys(metricsBody).length > 0 &&
+				(await shouldUpdateMetrics(uuid))
+			) {
+				updateFns.push(async (resinApiTx) => {
+					const latestDeviceMetricsRecord = await resinApiTx.get({
+						resource: 'device_metrics_record',
+						id: { is_reported_by__device: deviceId },
+					});
+					if (latestDeviceMetricsRecord == null) {
+						await resinApiTx.post({
+							resource: 'device_metrics_record',
+							id: { is_reported_by__device: deviceId },
+							body: {
+								...metricsBody,
+							},
+						});
+					} else {
+						await resinApiTx.patch({
+							resource: 'device_metrics_record',
+							id: { is_reported_by__device: deviceId },
+							body: metricsBody,
 						});
 					}
 				});

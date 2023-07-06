@@ -10,7 +10,32 @@ import {
 import { createMultiLevelStore } from '../../infra/cache';
 import { permissions, sbvrUtils } from '@balena/pinejs';
 
-export const v3ValidPatchFields: Array<
+export type StatePatchDeviceMetricsRecordBody = {
+	memory_usage?: number;
+	memory_total?: number;
+	storage_block_device?: string;
+	storage_usage?: number;
+	storage_total?: number;
+	cpu_temp?: number;
+	cpu_usage?: number;
+	cpu_id?: string;
+	is_undervolted?: boolean;
+};
+
+export const validDeviceMetricsRecordPatchFields: Array<
+	keyof StatePatchDeviceMetricsRecordBody
+> = [
+	'memory_usage',
+	'memory_total',
+	'storage_block_device',
+	'storage_usage',
+	'storage_total',
+	'cpu_temp',
+	'cpu_usage',
+	'is_undervolted',
+];
+
+export const v3ValidDevicePatchFields: Array<
 	Exclude<keyof StatePatchV3Body[string], 'apps'>
 > = [
 	'status',
@@ -25,18 +50,25 @@ export const v3ValidPatchFields: Array<
 	'api_port',
 	'api_secret',
 	'cpu_id',
-	'is_undervolted',
 ];
 
-export const v2ValidPatchFields: Array<
+export const v3ValidPatchFields: Array<
+	Exclude<keyof StatePatchV3Body[string], 'apps'>
+> = [...v3ValidDevicePatchFields, ...validDeviceMetricsRecordPatchFields];
+
+export const v2ValidDevicePatchFields: Array<
 	Exclude<keyof NonNullable<StatePatchV2Body['local']>, 'apps'>
 > = [
-	...v3ValidPatchFields,
+	...v3ValidDevicePatchFields,
 	'should_be_running__release',
 	'device_name',
 	'note',
 	'download_progress',
 ];
+
+export const v2ValidPatchFields: Array<
+	Exclude<keyof NonNullable<StatePatchV2Body['local']>, 'apps'>
+> = [...v2ValidDevicePatchFields, ...validDeviceMetricsRecordPatchFields];
 
 const SHORT_TEXT_LENGTH = 255;
 const ADDRESS_DELIMITER = ' ';
@@ -79,16 +111,6 @@ export const truncateShortTextFields = (
 	}
 	return object;
 };
-
-export const metricsPatchFields = [
-	'memory_usage',
-	'memory_total',
-	'storage_block_device',
-	'storage_usage',
-	'storage_total',
-	'cpu_temp',
-	'cpu_usage',
-] as const;
 
 export const shouldUpdateMetrics = (() => {
 	const lastMetricsReportTime = createMultiLevelStore<number>(

@@ -23,9 +23,11 @@ export {
 	serviceInstallFromImage,
 } from './state-get-utils';
 export {
-	metricsPatchFields,
+	validDeviceMetricsRecordPatchFields,
 	v2ValidPatchFields,
+	v2ValidDevicePatchFields,
 	v3ValidPatchFields,
+	v3ValidDevicePatchFields,
 } from './state-patch-utils';
 
 const gracefulGet = resolveOrDenyDevicesWithStatus(304);

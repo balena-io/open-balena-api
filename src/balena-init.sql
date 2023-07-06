@@ -188,3 +188,6 @@ ON "application" ("slug" varchar_pattern_ops, "is public", "is host");
 
 CREATE INDEX IF NOT EXISTS "scheduled_job_run_start_timestamp_idx"
 ON "scheduled job run" (DATE_TRUNC('milliseconds', "start timestamp"));
+
+CREATE INDEX IF NOT EXISTS "device_metrics_record_by_device_idx"
+ON "device metrics record" ("is reported by-device");

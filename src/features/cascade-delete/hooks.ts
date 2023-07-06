@@ -22,6 +22,7 @@ setupDeleteCascade('device', {
 	device_tag: 'device',
 	image_install: 'device',
 	service_install: 'device',
+	device_metrics_record: 'is_reported_by__device',
 });
 
 setupDeleteCascade('image', {

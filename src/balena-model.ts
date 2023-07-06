@@ -364,14 +364,6 @@ export interface Device {
 	public_address: string | null;
 	ip_address: string | null;
 	mac_address: string | null;
-	memory_usage: number | null;
-	memory_total: number | null;
-	storage_block_device: string | null;
-	storage_usage: number | null;
-	storage_total: number | null;
-	cpu_usage: number | null;
-	cpu_temp: number | null;
-	is_undervolted: boolean;
 	cpu_id: string | null;
 	is_running__release: { __id: number } | [Release?] | null;
 	download_progress: number | null;
@@ -403,6 +395,7 @@ export interface Device {
 	service_install?: ServiceInstall[];
 	installs__image?: ImageInstall[];
 	installs__application__has__service_name?: ServiceInstall[];
+	reports__device_metrics_record?: DeviceMetricsRecord[];
 }
 
 export interface DeviceEnvironmentVariable {
@@ -563,6 +556,21 @@ export interface UserHasPublicKey {
 	public_key: string;
 	id: number;
 	title: string;
+}
+
+export interface DeviceMetricsRecord {
+	created_at: DateString;
+	modified_at: DateString;
+	id: number;
+	is_reported_by__device: { __id: number } | [Device];
+	memory_usage: number | null;
+	memory_total: number | null;
+	storage_block_device: string | null;
+	storage_usage: number | null;
+	storage_total: number | null;
+	cpu_usage: number | null;
+	cpu_temp: number | null;
+	is_undervolted: boolean;
 }
 
 export interface DeviceTypeAlias {
