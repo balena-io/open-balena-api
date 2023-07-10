@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update open-balena-base to 15.0.0
+      hash: d7e618f38ff0f9f0f383dd2df337b26184d33227
+      body: |
+        Update open-balena-base from 14.11.1 to 15.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 13.2.2
+  title: ""
+  date: 2023-07-10T16:06:27.594Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v14.11.1
       hash: 0235be114f64719b152021f660bec696fa93c602
       body: |
