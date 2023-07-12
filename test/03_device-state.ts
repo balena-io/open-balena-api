@@ -15,6 +15,7 @@ import { expectResourceToMatch } from './test-lib/api-helpers';
 import { redis, redisRO } from '../src/infra/redis';
 import { setTimeout } from 'timers/promises';
 import { MINUTES, SECONDS } from '@balena/env-parsing';
+import { validDeviceMetricsRecordPatchFields } from '../src/features/device-state/state-patch-utils';
 
 const { api } = sbvrUtils;
 
@@ -777,7 +778,24 @@ mockery.registerMock('../src/lib/config', configMock);
 					  )
 					: _.pickBy(devicePatchBody[stateKey], (_v, key) => key !== 'name');
 
-			await expectResourceToMatch(pineUser, 'device', device.id, expectedData);
+			await expectResourceToMatch(
+				pineUser,
+				'device',
+				device.id,
+				_.omit(expectedData, validDeviceMetricsRecordPatchFields),
+			);
+
+			const expectedMetrics = _.pick(
+				devicePatchBody[stateKey],
+				validDeviceMetricsRecordPatchFields,
+			);
+
+			await expectResourceToMatch(
+				pineUser,
+				'device_metrics_record',
+				{ is_reported_by__device: device.id },
+				expectedMetrics,
+			);
 		});
 
 		it('should not save an invalid CPU ID', async () => {
@@ -891,10 +909,15 @@ mockery.registerMock('../src/lib/config', configMock);
 			);
 			await setTimeout(200);
 
-			await expectResourceToMatch(pineUser, 'device', device.id, {
-				cpu_usage: 34,
-				cpu_temp: 56,
-			});
+			await expectResourceToMatch(
+				pineUser,
+				'device_metrics_record',
+				{ is_reported_by__device: device.id },
+				{
+					cpu_usage: 34,
+					cpu_temp: 56,
+				},
+			);
 		});
 
 		it('should clear the throttling key from redis after the throttling window passes', async () => {
@@ -920,8 +943,8 @@ mockery.registerMock('../src/lib/config', configMock);
 
 			await expectResourceToMatch(
 				pineUser,
-				'device',
-				device.id,
+				'device_metrics_record',
+				{ is_reported_by__device: device.id },
 				devicePatchBody[stateKey],
 			);
 		});
@@ -953,10 +976,15 @@ mockery.registerMock('../src/lib/config', configMock);
 				stateVersion,
 			);
 
-			await expectResourceToMatch(pineUser, 'device', device.id, {
-				cpu_usage: 20,
-				cpu_temp: 20,
-			});
+			await expectResourceToMatch(
+				pineUser,
+				'device_metrics_record',
+				{ is_reported_by__device: device.id },
+				{
+					cpu_usage: 20,
+					cpu_temp: 20,
+				},
+			);
 		});
 
 		it('should save the update progress of the device state', async () => {

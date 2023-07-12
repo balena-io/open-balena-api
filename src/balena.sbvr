@@ -581,6 +581,31 @@ Fact type: device should be managed by release
 	Necessity: each device should be managed by at most one release
 
 
+Term: device metrics record
+
+-- device metrics record
+Fact type: device metrics record is reported by device
+    Synonymous Form: device reports device metrics record
+    Necessity: each device metrics record is reported by exactly one device
+	Necessity: each device reports exactly one device metrics record
+
+Fact type: device metrics record has memory usage
+	Necessity: each device metrics record has at most one memory usage
+Fact type: device metrics record has memory total
+	Necessity: each device metrics record has at most one memory total
+Fact type: device metrics record has storage block device
+	Necessity: each device metrics record has at most one storage block device
+Fact type: device metrics record has storage usage
+	Necessity: each device metrics record has at most one storage usage
+Fact type: device metrics record has storage total
+	Necessity: each device metrics record has at most one storage total
+Fact type: device metrics record has cpu usage
+	Necessity: each device metrics record has at most one cpu usage
+Fact type: device metrics record has cpu temp
+	Necessity: each device metrics record has at most one cpu temp
+Fact type: device metrics record is undervolted
+
+
 -- application config variable
 
 Fact type: application config variable has value

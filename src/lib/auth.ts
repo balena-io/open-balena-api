@@ -51,6 +51,7 @@ export const ROLES: {
 		'resin.application_tag.all',
 		'resin.application_type.all',
 		'resin.device.all',
+		'resin.device_metrics_record.all',
 		'resin.device.tunnel-22222',
 		'resin.device_config_variable.all',
 		'resin.device_environment_variable.all',
@@ -79,6 +80,13 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.device_type.read?describes__device/canAccess()',
 	`resin.device.read?${matchesNonFrozenDeviceActor()}`,
 	`resin.device.update?${matchesNonFrozenDeviceActor()}`,
+	'resin.device_metrics_record.read?is_reported_by__device/canAccess()',
+	`resin.device_metrics_record.create?is_reported_by__device/any(d:${matchesNonFrozenDeviceActor(
+		'd',
+	)})`,
+	`resin.device_metrics_record.update?is_reported_by__device/any(d:${matchesNonFrozenDeviceActor(
+		'd',
+	)})`,
 	'resin.application.read?owns__device/canAccess() or (is_public eq true and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
 	'resin.application_tag.read?application/canAccess()',
 	'resin.device_config_variable.read?device/canAccess()',
