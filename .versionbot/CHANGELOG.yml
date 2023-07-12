@@ -1,4 +1,18 @@
 - commits:
+    - subject: "vars-schema: Add custom DTB support for Jetson Orin Nano"
+      hash: 9e2d0888c62721c8ba2da3f74e515a34135c3aa7
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Alexandru Costache <alexandru@balena.io>
+        signed-off-by: Alexandru Costache <alexandru@balena.io>
+      author: Alexandru Costache
+      nested: []
+  version: 13.3.0
+  title: ""
+  date: 2023-07-12T12:39:17.390Z
+- commits:
     - subject: Update open-balena-base to 15.0.0
       hash: d7e618f38ff0f9f0f383dd2df337b26184d33227
       body: |
