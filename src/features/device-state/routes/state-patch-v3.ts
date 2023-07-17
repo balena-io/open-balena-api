@@ -23,6 +23,7 @@ import {
 	shouldUpdateMetrics,
 	truncateShortTextFields,
 } from '../state-patch-utils';
+import { ResolveDeviceInfoCustomObject } from '../middleware';
 
 const { BadRequestError, UnauthorizedError, InternalRequestError } = errors;
 const { api } = sbvrUtils;
@@ -80,7 +81,7 @@ export type StatePatchV3Body = {
 const fetchData = async (
 	req: Express.Request,
 	custom: AnyObject,
-	uuids: string[],
+	deviceIds: number[],
 	appReleaseUuids: {
 		[appUuid: string]: {
 			releaseUuids: Set<string>;
@@ -97,7 +98,7 @@ const fetchData = async (
 			options: {
 				$select: ['id', 'uuid'],
 				$filter: {
-					uuid: { $in: uuids },
+					id: { $in: deviceIds },
 				},
 				$expand: {
 					belongs_to__application: {
@@ -110,7 +111,7 @@ const fetchData = async (
 				belongs_to__application: Array<Pick<Application, 'uuid'>>;
 			}
 		>;
-		if (devices.length !== uuids.length) {
+		if (devices.length !== deviceIds.length) {
 			throw new UnauthorizedError();
 		}
 
@@ -205,6 +206,9 @@ const fetchData = async (
 		return { devicesByUuid, images, releasesByAppUuid };
 	});
 
+export const resolveDeviceUuids = (body: StatePatchV3Body) =>
+	Object.keys(body).filter((uuid) => body[uuid] != null);
+
 export const statePatchV3: RequestHandler = async (req, res) => {
 	try {
 		const body = req.body as StatePatchV3Body;
@@ -215,7 +219,7 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 			custom.ipAddress = getIP(req);
 		}
 
-		const uuids = Object.keys(body).filter((uuid) => body[uuid] != null);
+		const uuids = resolveDeviceUuids(body);
 		if (uuids.length === 0) {
 			throw new BadRequestError();
 		}
@@ -298,8 +302,15 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 			}
 
 			if (apps != null || Object.keys(deviceBody).length > 0) {
+				const { resolvedDeviceIds } =
+					req.custom as ResolveDeviceInfoCustomObject;
 				// We lazily fetch the necessary data only if we absolutely must to avoid unnecessary work if it turns out we don't need it
-				data ??= await fetchData(req, custom, uuids, appReleasesCriteria);
+				data ??= await fetchData(
+					req,
+					custom,
+					resolvedDeviceIds,
+					appReleasesCriteria,
+				);
 				const { images, releasesByAppUuid } = data;
 				const device = data.devicesByUuid[uuid];
 
