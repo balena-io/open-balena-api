@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use the graceful deny mechanism for device state PATCH v3
+      hash: 87ecf8b1c517e16024a19cf7e6d670962b1ad411
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.0.0
+  title: ""
+  date: 2023-07-17T09:17:28.212Z
+- commits:
     - subject: "vars-schema: Add custom DTB support for Jetson Orin Nano"
       hash: 9e2d0888c62721c8ba2da3f74e515a34135c3aa7
       body: ""
