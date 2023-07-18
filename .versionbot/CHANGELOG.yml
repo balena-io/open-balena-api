@@ -1,4 +1,30 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v15.0.1
+      hash: b5b8dade6fc6d4d29fe3bac89bea74a6920759ea
+      body: |
+        Update balena/open-balena-base from 15.0.0 to 15.0.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency node to v18.17.0
+              hash: e3470e98ffc31cd64dc59a1e3590ee2733e3263b
+              body: |
+                Update node from 18.16.1 to 18.17.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-15.0.1
+          title: ""
+          date: 2023-07-18T20:02:23.624Z
+  version: 14.0.1
+  title: ""
+  date: 2023-07-18T21:23:29.210Z
+- commits:
     - subject: Use the graceful deny mechanism for device state PATCH v3
       hash: 87ecf8b1c517e16024a19cf7e6d670962b1ad411
       body: ""
