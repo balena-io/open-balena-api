@@ -58,14 +58,13 @@ export const register: RequestHandler = async (req, res) => {
 		 * - Fetch the device we create & create an api key for it
 		 * - Read the hostApp releases that should be operating the device
 		 */
-		req = augmentReqApiKeyPermissions(
-			req,
+		req = augmentReqApiKeyPermissions(req, [
 			'resin.device.read',
 			'resin.device.create-device-api-key',
 			`resin.application.read?is_public eq true and is_host eq true and is_for__device_type/canAccess()`,
 			'resin.release.read?belongs_to__application/canAccess()',
 			`resin.release_tag.read?release/canAccess()`,
-		);
+		]);
 
 		const response = await sbvrUtils.db.transaction(async (tx) => {
 			// TODO: Replace this manual rollback on request closure with a more generic/automated version

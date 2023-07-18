@@ -335,10 +335,27 @@ export const augmentReqApiKeyPermissions = <
 	T extends permissions.PermissionReq,
 >(
 	req: T,
-	...extraPermissions: string[]
+	extraPermissions: string[],
+	/**
+	 * When mutateRequestObject is
+	 * false: A new request object with augmented permissions is returned to be used for specific tasks,
+	 *   while the rest of the code (eg: middleware & hooks) still runs with permissions the original request.
+	 * true: The permissions are augmented for the whole lifetime of the request.
+	 */
+	mutateRequestObject = false,
 ): T => {
-	const augmentedReq = _.clone(req);
-	augmentedReq.apiKey = _.cloneDeep(augmentedReq.apiKey);
+	let augmentedReq = req;
+
+	if (!mutateRequestObject) {
+		augmentedReq = _.clone(req);
+		augmentedReq.apiKey = _.cloneDeep(augmentedReq.apiKey);
+	} else if (augmentedReq.apiKey?.permissions) {
+		// When mutateRequestObject === true we still need to clone
+		// the permissions array rather than modifying it directly
+		// so that we do not pollute pine's apiKeyPermissions cache.
+		augmentedReq.apiKey.permissions = [...augmentedReq.apiKey.permissions];
+	}
+
 	augmentedReq.apiKey?.permissions?.push(...extraPermissions);
 	return augmentedReq;
 };
