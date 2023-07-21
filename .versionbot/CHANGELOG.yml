@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update grafana/loki Docker tag to v2.8.3
+      hash: 752dd1e116eca02572866f844e42329739bb1699
+      body: |
+        Update grafana/loki from 2.8.2 to 2.8.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 14.0.4
+  title: ""
+  date: 2023-07-21T16:19:36.316Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v15.0.3
       hash: 34c422b827051979ef41c06a6306b83a09fcdbc3
       body: |
