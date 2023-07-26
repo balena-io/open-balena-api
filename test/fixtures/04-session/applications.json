@@ -1,0 +1,7 @@
+{
+	"app1": {
+		"user": "admin",
+		"app_name": "test_actor_whoami",
+		"device_type": "raspberry-pi"
+	}
+}
