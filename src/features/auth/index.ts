@@ -10,7 +10,7 @@ import { middleware } from '../../infra/auth';
 import { login } from './login';
 import { getUserPublicKeys } from './public-keys';
 import { refreshToken } from './refresh-token';
-import { whoami } from './whoami';
+import { whoami, actorWhoami } from './whoami';
 
 export * from './handles';
 export { refreshToken };
@@ -28,6 +28,7 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 	app.post('/login_', loginRateLimiter('body.username'), login(onLogin));
 
 	app.get('/user/v1/whoami', middleware.fullyAuthenticatedUser, whoami);
+	app.get('/actor/v1/whoami', middleware.authenticated, actorWhoami);
 
 	app.get(
 		'/auth/v1/public-keys/:username',
