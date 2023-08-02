@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add /actor/v1/whoami endpoint
+      hash: aad908f4deb012c804947778878cbdddb05bccd7
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Otávio Jacobi
+      nested: []
+  version: 14.1.0
+  title: ""
+  date: 2023-08-02T15:30:09.471Z
+- commits:
     - subject: Update grafana/loki Docker tag to v2.8.3
       hash: 752dd1e116eca02572866f844e42329739bb1699
       body: |
