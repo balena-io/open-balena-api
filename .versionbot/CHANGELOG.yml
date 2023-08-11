@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update grafana/loki Docker tag to v2.8.4
+      hash: abc4f73b0875b66d1b5d234696f89996372a6943
+      body: |
+        Update grafana/loki from 2.8.3 to 2.8.4
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 14.1.1
+  title: ""
+  date: 2023-08-11T23:16:16.935Z
+- commits:
     - subject: Add /actor/v1/whoami endpoint
       hash: aad908f4deb012c804947778878cbdddb05bccd7
       body: ""
