@@ -1,9 +1,23 @@
 import { strict as assert } from 'assert';
 import fs from 'fs';
 import _ from 'lodash';
+import { execSync } from 'node:child_process';
 import path from 'path';
-import parser from 'libpg-query';
 import configJson from '../config';
+
+// Validate SQL files using squawk
+function validateSql(files: string[]): void {
+	try {
+		execSync(
+			`npx squawk --pg-version=15.0 --dump-ast parsed ${files.join(' ')}`,
+			{
+				stdio: ['ignore', 'ignore', 'pipe'],
+			},
+		);
+	} catch (e) {
+		throw new Error(`Invalid SQL: ${e.stderr.toString()}`);
+	}
+}
 
 describe('migrations', () => {
 	_(configJson.models)
@@ -32,20 +46,7 @@ describe('migrations', () => {
 					const fileNames = await fileNamesPromise;
 
 					// Sanity check SQL files
-					const fullSqlPaths = fileNames
-						.filter((fileName) => fileName.endsWith('.sql'))
-						.map((fileName) => path.join(migrationsPath!, fileName));
-					for (const fullSqlPath of fullSqlPaths) {
-						try {
-							const sql = await fs.promises.readFile(fullSqlPath, 'utf8');
-							await parser.parseQuery(sql);
-						} catch (e) {
-							const [migrationKey] = path.basename(fullSqlPath).split('-', 1);
-							throw new Error(
-								`Invalid sql for migration ${migrationKey}: ${e} `,
-							);
-						}
-					}
+					validateSql([`${migrationsPath}/*.sql`]);
 
 					// Sanity check async migrations
 					const asyncMigrationPaths = fileNames
@@ -61,13 +62,23 @@ describe('migrations', () => {
 								'Missing required async migration options',
 							);
 							try {
-								await parser.parseQuery(
+								const asyncPath = `/tmp/async-${path.basename(
+									asyncMigrationPath,
+								)}.sql`;
+								const syncPath = `/tmp/sync-${path.basename(
+									asyncMigrationPath,
+								)}.sql`;
+								fs.writeFileSync(
+									asyncPath,
 									migration.asyncSql.replaceAll(
 										'%%ASYNC_BATCH_SIZE%%',
 										migration.asyncBatchSize,
 									),
 								);
-								await parser.parseQuery(migration.syncSql);
+								fs.writeFileSync(syncPath, migration.syncSql);
+								validateSql([asyncPath, syncPath]);
+								fs.unlinkSync(asyncPath);
+								fs.unlinkSync(syncPath);
 							} catch (e) {
 								const [migrationKey] = path
 									.basename(asyncMigrationPath)
@@ -85,14 +96,6 @@ describe('migrations', () => {
 
 describe('balena-init.sql', () => {
 	it('should have valid sql', async () => {
-		try {
-			const sql = await fs.promises.readFile(
-				require.resolve('../src/balena-init.sql'),
-				'utf8',
-			);
-			await parser.parseQuery(sql);
-		} catch (e) {
-			throw new Error(`Invalid sql: ${e} `);
-		}
+		validateSql(['src/balena-init.sql']);
 	});
 });

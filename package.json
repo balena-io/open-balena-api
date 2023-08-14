@@ -130,7 +130,6 @@
     "chai": "^4.3.7",
     "copyfiles": "^2.4.1",
     "husky": "^8.0.3",
-    "libpg-query": "^15.0.2",
     "lint-staged": "^13.2.1",
     "mocha": "^10.2.0",
     "mockery": "^2.1.0",
@@ -138,6 +137,7 @@
     "pinejs-client-supertest": "^1.4.0",
     "rimraf": "^5.0.0",
     "sinon": "^15.0.4",
+    "squawk-cli": "^0.24.0",
     "supertest": "^6.3.3"
   },
   "engines": {
