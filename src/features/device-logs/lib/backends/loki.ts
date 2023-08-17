@@ -20,7 +20,7 @@ import {
 	TailResponse,
 	Timestamp,
 } from 'loki-grpc-client';
-import { errors, sbvrUtils } from '@balena/pinejs';
+import { errors, sbvrUtils, permissions, types } from '@balena/pinejs';
 import { LOKI_HOST, LOKI_PORT } from '../../../../lib/config';
 import {
 	DeviceLog,
@@ -43,9 +43,7 @@ import {
 	incrementPublishCallTotal,
 } from './metrics';
 import { setTimeout } from 'timers/promises';
-import { root } from '@balena/pinejs/out/sbvr-api/permissions';
 import { Device, PickDeferred } from '../../../../balena-model';
-import { RequiredField } from '@balena/pinejs/out/sbvr-api/common-types';
 
 const { BadRequestError } = errors;
 
@@ -107,13 +105,13 @@ async function assertLokiLogContext(
 	ctx: LogContext & Partial<LokiLogContext>,
 ): Promise<LokiLogContext> {
 	if ('belongs_to__application' in ctx) {
-		return ctx as RequiredField<typeof ctx, 'belongs_to__application'>;
+		return ctx as types.RequiredField<typeof ctx, 'belongs_to__application'>;
 	}
 
 	const device = (await sbvrUtils.api.resin.get({
 		resource: 'device',
 		id: ctx.id,
-		passthrough: { req: root },
+		passthrough: { req: permissions.root },
 		options: {
 			$select: ['belongs_to__application'],
 		},
@@ -123,7 +121,7 @@ async function assertLokiLogContext(
 	(ctx as Writable<typeof ctx>).belongs_to__application =
 		device?.belongs_to__application!.__id;
 
-	return ctx as RequiredField<typeof ctx, 'belongs_to__application'>;
+	return ctx as types.RequiredField<typeof ctx, 'belongs_to__application'>;
 }
 
 export class LokiBackend implements DeviceLogsBackend {

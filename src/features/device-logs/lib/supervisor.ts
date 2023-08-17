@@ -4,7 +4,6 @@ import { errors } from '@balena/pinejs';
 
 import type { DeviceLog, OldSupervisorLog, SupervisorLog } from './struct';
 import { getNanoTimestamp } from '../../../lib/utils';
-import { BadRequestError } from '@balena/pinejs/out/sbvr-api/errors';
 
 const MAX_LOGS_PER_BATCH = 10;
 
@@ -26,7 +25,7 @@ export class Supervisor {
 	private convertAnyLog(log: SupervisorLog): DeviceLog | undefined {
 		if (this.isOldLog(log)) {
 			// Old format supervisor logs are no longer supported
-			throw new BadRequestError();
+			throw new errors.BadRequestError();
 		}
 		return this.convertLog(log);
 	}
