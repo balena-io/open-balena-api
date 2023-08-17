@@ -1,4 +1,171 @@
 - commits:
+    - subject: Adds webresource typing
+      hash: b917b310dccf6715b9b99be008b6feebcaae65b6
+      body: |
+        Update @balena/pinejs from 15.0.0 to 15.3.0
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Otávio Jacobi
+      nested:
+        - commits:
+            - subject: Add support to WebResrouce type
+              hash: 9d17553b52bd105211d6c2619ccf7eeabfe4da01
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Otávio Jacobi
+              nested: []
+          version: pinejs-15.3.0
+          title: ""
+          date: 2023-08-16T21:54:26.306Z
+        - commits:
+            - subject: Mark that `tx` is always passed to `POSTRUN-ERROR` hooks
+              hash: 29982a40eddb816f25c61ae47b1e6a7433c2f583
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-15.2.1
+          title: ""
+          date: 2023-08-14T15:07:28.239Z
+        - commits:
+            - subject: Return a response even when the request resolves to an HTTP error
+              hash: d1d68a068778a617d7b14b12a2657fb44511ee52
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: myarmolinsky
+              nested: []
+          version: pinejs-15.2.0
+          title: ""
+          date: 2023-08-02T12:11:45.279Z
+        - commits:
+            - subject: Throw a Bad Request error when passing unknown vocabulary in a request
+              hash: 1fb238a13d68d881a8c541845f6432480acfae9d
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: myarmolinsky
+              nested: []
+          version: pinejs-15.1.1
+          title: ""
+          date: 2023-08-02T12:00:01.570Z
+        - commits:
+            - subject: Update pinejs-client-core to 6.13.0
+              hash: 9757808e1422074b805c57fd5b629f5b3ef6f779
+              body: |
+                Update pinejs-client-core from 6.12.3 to 6.13.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Thodoris Greasidis
+              nested:
+                - commits:
+                    - subject: Add support for $duration
+                      hash: 05edeeea86147ac49dd864ae6e0b46ffc73f6fc4
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Thodoris Greasidis
+                      nested: []
+                  version: pinejs-client-js-6.13.0
+                  title: ""
+                  date: 2023-07-11T13:16:05.245Z
+                - commits:
+                    - subject: Avoid an unnecessary function creation on each get() call
+                      hash: 782e43ef40a22fa4c8e0f3d64917b03e07c77522
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Thodoris Greasidis
+                      nested: []
+                  version: pinejs-client-js-6.12.4
+                  title: ""
+                  date: 2023-05-09T13:11:13.136Z
+          version: pinejs-15.1.0
+          title: ""
+          date: 2023-07-11T14:03:07.450Z
+        - commits:
+            - subject: Mark the bin scripts as executable
+              hash: b530c6d4f5c599e517345084f2db3c544118186e
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Thodoris Greasidis
+              nested: []
+          version: pinejs-15.0.5
+          title: ""
+          date: 2023-07-07T15:40:24.029Z
+        - commits:
+            - subject: Add transaction cancelation tests for properly hooked custom endpoints
+              hash: dfe17f5933b2da276633ee713de5c2a0d714b656
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Thodoris Greasidis
+              nested: []
+            - subject: Add OData request transaction cancelation tests
+              hash: e6a3cb5d9b6b0be45ae77f6217d4112b6c5fa0a7
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Thodoris Greasidis
+              nested: []
+          version: pinejs-15.0.4
+          title: ""
+          date: 2023-06-27T15:50:39.665Z
+        - commits:
+            - subject: Fix pinejs 15 migrations for the migrations model
+              hash: 2705ae109fdef70777a38aa1000d117c32b84d2f
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-15.0.3
+          title: ""
+          date: 2023-06-15T12:32:07.075Z
+        - commits:
+            - subject: Update TypeScript to 5.1.3
+              hash: 67487ebc958401c7b20dc3b4052f2374b36548c4
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Thodoris Greasidis
+              nested: []
+          version: pinejs-15.0.2
+          title: ""
+          date: 2023-06-02T14:43:20.273Z
+        - commits:
+            - subject: "Migrations.md: Add marking the sbvr field as optional on the 2nd
+                deploy"
+              hash: d6d0ded8eccc6eadb2492f4697918cf0afd00215
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Thodoris Greasidis
+              nested: []
+          version: pinejs-15.0.1
+          title: ""
+          date: 2023-05-23T09:41:23.575Z
+  version: 14.2.0
+  title: ""
+  date: 2023-08-17T14:47:58.548Z
+- commits:
     - subject: Update grafana/loki Docker tag to v2.8.4
       hash: abc4f73b0875b66d1b5d234696f89996372a6943
       body: |
