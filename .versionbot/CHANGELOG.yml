@@ -1,4 +1,16 @@
 - commits:
+    - subject: "CI: Use pglast to validate SQL"
+      hash: 928a789c37918328713fa4a84d3b8a547bc5cd85
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Josh Bowling
+      nested: []
+  version: 14.2.1
+  title: ""
+  date: 2023-08-18T04:27:10.038Z
+- commits:
     - subject: Adds webresource typing
       hash: b917b310dccf6715b9b99be008b6feebcaae65b6
       body: |
