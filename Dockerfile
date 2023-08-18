@@ -16,6 +16,10 @@ RUN systemctl enable open-balena-api.service
 # Set up a test image that can be reused
 FROM runtime as test
 
+RUN apt update && apt install \
+	&& apt install python3-pglast \
+	&& rm -rf /var/lib/apt/lists/*
+
 RUN npm ci && npm run lint
 
 # Make the default output be the runtime image
