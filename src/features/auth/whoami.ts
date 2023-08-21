@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express';
 
-import { sbvrUtils, permissions } from '@balena/pinejs';
+import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
 import { getUser } from '../../infra/auth/auth';
 import {
@@ -10,7 +10,6 @@ import {
 } from '../../infra/error-handling';
 
 import type { User, Application, Device } from '../../balena-model';
-import { UnauthorizedError } from '@balena/pinejs/out/sbvr-api/errors';
 
 const { api } = sbvrUtils;
 
@@ -128,14 +127,14 @@ export const actorWhoami: RequestHandler = async (req, res) => {
 				})) as Array<Pick<User, 'id'>>;
 
 				if (userWithId == null) {
-					throw new UnauthorizedError();
+					throw new errors.UnauthorizedError();
 				}
 			}
 
 			const actorId = req.apiKey?.actor ?? req.user?.actor;
 
 			if (actorId == null) {
-				throw new UnauthorizedError(
+				throw new errors.UnauthorizedError(
 					'Request API Key or Token has no associated actor',
 				);
 			}
@@ -218,7 +217,7 @@ const validateRawActorInfo = (rawActorInfo: ExpandedActor) => {
 	}
 
 	if (amountAssociatedResources < 1) {
-		throw new UnauthorizedError(
+		throw new errors.UnauthorizedError(
 			`Actor ${rawActorInfo.id} is not associated to any resource`,
 		);
 	}
