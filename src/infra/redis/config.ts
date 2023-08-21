@@ -41,11 +41,13 @@ export const getRedisOptions = ({
 				enableOfflineQueue: false,
 				scaleReads: 'slave',
 				redisOptions,
+				...r.auth,
 			},
 		};
 	} else {
 		return {
 			...(readOnly ? r.roHost : r.host),
+			...(readOnly ? r.roAuth : r.auth),
 			...redisOptions,
 		};
 	}
