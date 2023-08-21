@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove imports from pinejs/out directory
+      hash: 9ac66a26f0ac83096875a8e541a51b6b6099e991
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otávio Jacobi
+      nested: []
+  version: 14.2.2
+  title: ""
+  date: 2023-08-21T22:43:57.731Z
+- commits:
     - subject: "CI: Use pglast to validate SQL"
       hash: 928a789c37918328713fa4a84d3b8a547bc5cd85
       body: ""
