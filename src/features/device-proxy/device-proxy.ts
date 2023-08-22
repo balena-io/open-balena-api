@@ -63,7 +63,7 @@ const validateSupervisorResponse = (
 			}
 			res.status(statusCode).json(jsonBody);
 		} else if (/^text\/(plain|html)/.test(contentType)) {
-			if (/^([A-Za-z0-9\s:'\.\?!,\/-])*$/g.test(body)) {
+			if (/^([A-Za-z0-9\s:'.?!,/-])*$/g.test(body)) {
 				res.status(statusCode).set('Content-Type', 'text/plain').send(body);
 			} else {
 				badSupervisorResponse(req, res, filter, 'Invalid TEXT data');

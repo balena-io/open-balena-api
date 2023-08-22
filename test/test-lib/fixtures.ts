@@ -181,8 +181,7 @@ const loaders: Dictionary<LoaderFunc> = {
 				belongs_to__user: user.id,
 				start_timestamp: Date.now(),
 				end_timestamp: Date.now(),
-				commit:
-					jsonData.commit ?? randomUUID().replace(/\-/g, '').toLowerCase(),
+				commit: jsonData.commit ?? randomUUID().replace(/-/g, '').toLowerCase(),
 				..._.pick(
 					jsonData,
 					'app_name',
