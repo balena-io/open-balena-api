@@ -132,10 +132,8 @@ export const proxy = async (req: Request, res: Response) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		if (err?.body != null) {
-			err = err.body;
-		}
-		res.status(502).send(translateError(err));
+		const errorToReturn = err?.body ?? err;
+		res.status(502).send(translateError(errorToReturn));
 	}
 };
 
