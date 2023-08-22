@@ -34,7 +34,7 @@ const RESINOS_REPOSITORY = 'resin/resinos';
 const SUPERVISOR_REPOSITORIES = /^resin\/(?:[a-zA-Z0-9]+-)+supervisor$/;
 
 // match v2/randomhash image
-const NEW_REGISTRY_REGEX = /(^(\d+)\/[\d\-]+$|^(v2\/[a-z0-9]+)(-[0-9]+)?)/;
+const NEW_REGISTRY_REGEX = /(^(\d+)\/[\d-]+$|^(v2\/[a-z0-9]+)(-[0-9]+)?)/;
 
 /*
  * Group 1: application slug (org/app)
@@ -45,7 +45,7 @@ const NEW_REGISTRY_REGEX = /(^(\d+)\/[\d\-]+$|^(v2\/[a-z0-9]+)(-[0-9]+)?)/;
  * - Group 5: service name
  */
 const APP_RELEASE_REGEX =
-	/^(([a-z0-9_-]+)\/([a-z0-9_-]+))(?:\/([a-z0-9_\.-]+))?(?:\/([a-z0-9_-]+))?$/;
+	/^(([a-z0-9_-]+)\/([a-z0-9_-]+))(?:\/([a-z0-9_.-]+))?(?:\/([a-z0-9_-]+))?$/;
 
 const TARGET_RELEASE_KEYWORDS = [`latest`, `current`, `default`, `pinned`];
 
@@ -64,7 +64,7 @@ const TARGET_RELEASE_KEYWORDS = [`latest`, `current`, `default`, `pinned`];
 // 		push
 // 		push,pull
 const SCOPE_PARSE_REGEX =
-	/^([a-z]+):([a-z0-9_-]+\/[a-z0-9_-]+(?:\/[a-z0-9_\.-]+)?(?:\/[a-z0-9_-]+)?|\d+\/[\d\-]+|v2\/[a-z0-9]+-[0-9]+)(?::[a-z0-9]+|@sha256:[a-f0-9]+)?:((?:push|pull|,)+)$/;
+	/^([a-z]+):([a-z0-9_-]+\/[a-z0-9_-]+(?:\/[a-z0-9_.-]+)?(?:\/[a-z0-9_-]+)?|\d+\/[\d-]+|v2\/[a-z0-9]+-[0-9]+)(?::[a-z0-9]+|@sha256:[a-f0-9]+)?:((?:push|pull|,)+)$/;
 
 export interface Access {
 	name: string;

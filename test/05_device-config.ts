@@ -104,7 +104,7 @@ describe('generate device config', function () {
 				.expect('content-type', /^application\/json/);
 
 			expect(body).to.have.a.property('logsEndpoint');
-			expect(body.logsEndpoint).to.match(/^https\:\/\//);
+			expect(body.logsEndpoint).to.match(/^https:\/\//);
 		});
 	});
 });
