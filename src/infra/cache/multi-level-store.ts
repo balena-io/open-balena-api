@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import cacheManager from 'cache-manager';
 import redisStore from 'cache-manager-ioredis';
 import { version } from '../../lib/config';

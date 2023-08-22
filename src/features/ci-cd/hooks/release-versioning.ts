@@ -7,7 +7,6 @@ import {
 } from '@balena/pinejs';
 import type { FilterObj } from 'pinejs-client-core';
 import semverLib from 'semver';
-import _ from 'lodash';
 import { ADVISORY_LOCK_NAMESPACES } from '../../../lib/config';
 import { groupByMap } from '../../../lib/utils';
 import type { PickDeferred, Release } from '../../../balena-model';
