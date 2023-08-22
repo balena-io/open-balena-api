@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency lint-staged to v14
+      hash: 646a0cb697e508cee6a9f214670f1508b8d217d0
+      body: |
+        Update lint-staged from 13.2.1 to 14.0.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 14.2.3
+  title: ""
+  date: 2023-08-22T07:42:13.156Z
+- commits:
     - subject: Remove imports from pinejs/out directory
       hash: 9ac66a26f0ac83096875a8e541a51b6b6099e991
       body: ""
