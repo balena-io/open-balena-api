@@ -1,4 +1,18 @@
 - commits:
+    - subject: Add support for Redis auth
+      hash: 614db90f0bd25bee972b51c4924ec6872aaef481
+      body: ""
+      footer:
+        Resolves: "#1397"
+        resolves: "#1397"
+        Change-type: minor
+        change-type: minor
+      author: Shaun Cooley
+      nested: []
+  version: 14.3.0
+  title: ""
+  date: 2023-08-22T22:00:51.387Z
+- commits:
     - subject: Update dependency lint-staged to v14
       hash: 646a0cb697e508cee6a9f214670f1508b8d217d0
       body: |
