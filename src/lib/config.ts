@@ -148,15 +148,23 @@ export const RATE_LIMIT_MEMORY_BACKEND = optionalVar(
 	'RATE_LIMIT_MEMORY_BACKEND',
 );
 
+type RedisAuth = {
+	username?: string;
+	password?: string;
+};
+
 type RedisOpts =
 	| {
 			isCluster: true;
 			hosts: HostPort[];
+			auth: RedisAuth;
 	  }
 	| {
 			isCluster: false;
 			host: HostPort;
+			auth: RedisAuth;
 			roHost: HostPort;
+			roAuth: RedisAuth;
 	  };
 function redisOpts(prefix: string): RedisOpts;
 function redisOpts(
@@ -170,9 +178,12 @@ function redisOpts(
 	defaultIsCluster?: boolean,
 ): RedisOpts {
 	const hostVarName = `${prefix}_HOST`;
+	const authVarName = `${prefix}_AUTH`;
 	const roHostVarName = `${prefix}_RO_HOST`;
+	const roAuthVarName = `${prefix}_RO_AUTH`;
 	const isCluster = boolVar(`${prefix}_IS_CLUSTER`, defaultIsCluster);
 	const hosts = hostPortsVar(hostVarName, defaultHosts);
+	const auth = redisAuthVar(authVarName);
 	if (isCluster == null) {
 		throw new Error(`Missing env: '${prefix}_IS_CLUSTER'`);
 	}
@@ -183,9 +194,16 @@ function redisOpts(
 				`'${prefix}_RO_HOST' must be empty when in cluster mode `,
 			);
 		}
+		const roAuthCheck = process.env[roAuthVarName];
+		if (roAuthCheck != null && roAuthCheck !== '') {
+			throw new Error(
+				`'${prefix}_RO_AUTH' must be empty when in cluster mode `,
+			);
+		}
 		return {
 			isCluster,
 			hosts,
+			auth,
 		};
 	}
 	if (hosts.length > 1) {
@@ -197,10 +215,13 @@ function redisOpts(
 	if (roHosts.length > 1) {
 		throw new Error(`'${roHostVarName}' must contain at most one entry`);
 	}
+	const roAuth = redisAuthVar(roHostVarName, auth);
 	return {
 		isCluster,
 		host: hosts[0],
+		auth,
 		roHost: roHosts[0],
+		roAuth,
 	};
 }
 const generalRedis = redisOpts('REDIS');
@@ -393,3 +414,37 @@ export const IGNORE_FROZEN_DEVICE_PERMISSIONS = boolVar(
 	'IGNORE_FROZEN_DEVICE_PERMISSIONS',
 	false,
 );
+
+/**
+ * Splits an env var in the format of `${username}:${password}`
+ * into a RedisAuth object. Auth is optional, so this can return
+ * an empty RedisAuth object.
+ */
+export const redisAuthVar = (
+	varName: string | string[],
+	defaultAuth?: RedisAuth,
+): RedisAuth => {
+	const authPair = optionalVar(varName);
+	if (authPair == null) {
+		if (defaultAuth == null) {
+			return {};
+		}
+		return defaultAuth;
+	}
+
+	// Valid auth is of the form `${username}:${password}`, `${password}`, `:${password}`, or `${username}:`
+	const parts = authPair.trim().split(':');
+	switch (parts.length) {
+		case 1:
+			return {
+				password: parts[0],
+			};
+		case 2:
+			return {
+				username: parts[0],
+				password: parts[1],
+			};
+	}
+
+	return {};
+};
