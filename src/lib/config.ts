@@ -420,10 +420,10 @@ export const IGNORE_FROZEN_DEVICE_PERMISSIONS = boolVar(
  * into a RedisAuth object. Auth is optional, so this can return
  * an empty RedisAuth object.
  */
-export const redisAuthVar = (
+function redisAuthVar(
 	varName: string | string[],
 	defaultAuth?: RedisAuth,
-): RedisAuth => {
+): RedisAuth {
 	const authPair = optionalVar(varName);
 	if (authPair == null) {
 		if (defaultAuth == null) {
@@ -447,4 +447,4 @@ export const redisAuthVar = (
 	}
 
 	return {};
-};
+}

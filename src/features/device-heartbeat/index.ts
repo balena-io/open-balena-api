@@ -190,6 +190,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		this.rsmq = new RedisSMQ({
 			// TODO: RSMQ does not currently support a redis cluster
 			...REDIS.general.host,
+			...REDIS.general.auth,
 			ns: DeviceOnlineStateManager.REDIS_NAMESPACE,
 		});
 
