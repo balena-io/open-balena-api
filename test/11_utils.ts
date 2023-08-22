@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { withRetries } from '../src/lib/utils';
 import { expect } from 'chai';
 

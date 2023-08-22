@@ -18,7 +18,6 @@
 */
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import _ from 'lodash';
 import schedule from 'node-schedule';
 import Redlock from 'redlock';
 import type { ScheduledJobRun } from '../../balena-model';

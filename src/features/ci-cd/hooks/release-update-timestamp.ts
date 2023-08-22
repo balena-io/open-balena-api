@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import { hooks } from '@balena/pinejs';
 
 const releaseUpdateTimestampHook: hooks.Hooks = {
