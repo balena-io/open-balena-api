@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const numWorkers = process.env.NUM_WORKERS || require('os').cpus().length;
 if (numWorkers > 1) {
 	const cluster = require('cluster');

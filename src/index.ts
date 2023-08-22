@@ -478,6 +478,7 @@ async function runCommand(
 	cmd: string,
 	argv: string[],
 ): Promise<void> {
+	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	const script = require(path.join(__dirname, 'commands', cmd));
 	await script.execute(app, argv);
 	process.exit(0);
