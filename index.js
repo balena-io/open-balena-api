@@ -5,7 +5,6 @@ if (numWorkers > 1) {
 	if (cluster.isPrimary) {
 		// Setup the RateLimiterCluster store on the master worker
 		const { RateLimiterClusterMaster } = require('rate-limiter-flexible');
-		// tslint:disable-next-line:no-unused-expression-chai
 		new RateLimiterClusterMaster();
 
 		console.log(`Forking ${numWorkers} workers`);

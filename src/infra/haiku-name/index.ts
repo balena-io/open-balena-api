@@ -258,6 +258,5 @@ const bigNumber = Math.pow(2, 12);
 export const generate = () => {
 	const adjRnd = Math.floor(Math.random() * bigNumber);
 	const nounRnd = Math.floor(Math.random() * bigNumber);
-	// tslint:disable-next-line:no-bitwise
 	return `${adjs[adjRnd % adjsCount]}-${nouns[nounRnd % nounsCount]}`;
 };

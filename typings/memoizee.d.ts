@@ -1,3 +1,4 @@
 declare module 'memoizee/normalizers/primitive' {
-	export = (args: any[]) => string;
+	function PrimitiveNormalizer(args: any[]): string;
+	export = PrimitiveNormalizer;
 }

@@ -830,12 +830,11 @@ mockery.registerMock('../src/lib/config', configMock);
 				delimiter: string = '',
 			): string => {
 				let validAddress = '';
-				while (true) {
-					if (validAddress.length + addr.length + delimiter.length > truncLen) {
-						break;
-					} else {
-						validAddress += addr + delimiter;
-					}
+				while (
+					validAddress.length + addr.length + delimiter.length <=
+					truncLen
+				) {
+					validAddress += addr + delimiter;
 				}
 				return validAddress.trim();
 			};
