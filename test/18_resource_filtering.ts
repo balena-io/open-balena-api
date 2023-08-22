@@ -119,7 +119,7 @@ describe('Resource Filtering', () => {
 				resource: 'application',
 				options: {
 					$filter: {
-						created_at: { $le: testTimes[testTimes.length - 1].created_at },
+						created_at: { $le: testTimes.at(-1)!.created_at },
 					},
 				},
 			});
