@@ -147,7 +147,7 @@ async function handleStreamingRead(
 			return;
 		}
 
-		const afterDate = logs.length && logs[logs.length - 1].createdAt;
+		const afterDate = logs.at(-1)?.createdAt ?? 0;
 		// Append the subscription logs to the history queue
 		const firstAfterDateIndex = buffer.findIndex(
 			(log) => log.createdAt > afterDate,
