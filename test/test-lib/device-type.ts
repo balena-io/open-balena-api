@@ -14,7 +14,10 @@ export const loadDefaultFixtures = () =>
 		'deviceTypes',
 		new Proxy({} as Dictionary<DeviceType>, {
 			get: async (obj, slug) => {
-				if (typeof slug === 'string' && !obj.hasOwnProperty(slug)) {
+				if (
+					typeof slug === 'string' &&
+					!Object.prototype.hasOwnProperty.call(obj, slug)
+				) {
 					if (slug === 'then') {
 						// Something is checking if we're a thenable
 						return;

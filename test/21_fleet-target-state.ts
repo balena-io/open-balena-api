@@ -20,7 +20,7 @@ mockery.registerMock('../src/lib/config', configMock);
 
 // test fleet default state helper
 const appMatcherFunc = (svc: AnyObject, fxProp: AnyObject) =>
-	svc.hasOwnProperty('environment') && !!fxProp;
+	Object.prototype.hasOwnProperty.call(svc, 'environment') && !!fxProp;
 const svcMatcherFunc = (svc: AnyObject, fxProp: AnyObject) =>
 	svc.id === fxProp.service.__id;
 const imgMatcherFunc = (svc: AnyObject, fxProp: AnyObject) =>
