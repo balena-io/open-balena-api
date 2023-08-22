@@ -407,9 +407,8 @@ const loaders: Dictionary<LoaderFunc> = {
 		if (user == null) {
 			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
 		}
-		const application = await fixtures.applications[
-			jsonData.belongs_to__application
-		];
+		const application =
+			await fixtures.applications[jsonData.belongs_to__application];
 		if (application == null) {
 			logErrorAndThrow(
 				`Could not find application: ${jsonData.belongs_to__application}`,

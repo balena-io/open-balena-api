@@ -65,9 +65,8 @@ export const createStrategy = (
 				}
 				if ('service' in jwtUser && jwtUser.service) {
 					const { service, apikey } = jwtUser;
-					const apiKeyPermissions = await permissions.getApiKeyPermissions(
-						apikey,
-					);
+					const apiKeyPermissions =
+						await permissions.getApiKeyPermissions(apikey);
 					return { service, apikey, permissions: apiKeyPermissions };
 				} else if (
 					'access' in jwtUser &&
