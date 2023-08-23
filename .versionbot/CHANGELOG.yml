@@ -1,4 +1,17 @@
 - commits:
+    - subject: One additional Redis AUTH location also fixed possible 'redisAuthVar'
+        use before initialization
+      hash: 40562d2b4388f5cc529e4ae8ec27a262e58d6dff
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Shaun Cooley
+      nested: []
+  version: 14.3.1
+  title: ""
+  date: 2023-08-23T13:26:51.035Z
+- commits:
     - subject: Add support for Redis auth
       hash: 614db90f0bd25bee972b51c4924ec6872aaef481
       body: ""
