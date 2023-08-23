@@ -1,4 +1,16 @@
 - commits:
+    - subject: Make use of `.at(-1)` instead of `.length - 1`
+      hash: f544badbef5352db5539c48b4e71c9b3b7b15810
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 14.3.2
+  title: ""
+  date: 2023-08-23T14:04:31.358Z
+- commits:
     - subject: One additional Redis AUTH location also fixed possible 'redisAuthVar'
         use before initialization
       hash: 40562d2b4388f5cc529e4ae8ec27a262e58d6dff
