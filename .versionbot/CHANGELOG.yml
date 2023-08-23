@@ -1,4 +1,16 @@
 - commits:
+    - subject: Enable external PRs to run custom actions
+      hash: ee329ee856e81db3a3bec289d002a4e2ad784e20
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 14.3.3
+  title: ""
+  date: 2023-08-23T15:34:26.019Z
+- commits:
     - subject: Make use of `.at(-1)` instead of `.length - 1`
       hash: f544badbef5352db5539c48b4e71c9b3b7b15810
       body: ""
