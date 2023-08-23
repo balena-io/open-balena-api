@@ -42,7 +42,7 @@ describe('loki backend', () => {
 		const response = await loki.publish(ctx, [_.clone(log)]);
 		expect(response).to.be.not.null;
 		const history = await loki.history(ctx, 1000);
-		expect(history[history.length - 1]).to.deep.equal(log);
+		expect(history.at(-1)).to.deep.equal(log);
 	});
 
 	it('should convert multiple logs with different labels to streams and then back to logs', function () {
