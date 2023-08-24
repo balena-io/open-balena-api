@@ -1,4 +1,51 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v15.0.4
+      hash: 67b529d9957f79e75aa713d4cf27df61d2b96bb5
+      body: |
+        Update balena/open-balena-base from 15.0.3 to 15.0.4
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Use renovate regex annotations to manage confd releases
+              hash: eedbc17be7ea813b8b6880acff6bc85740559cc5
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+            - subject: Install node and npm manually in no-systemd variant
+              hash: b3b1b2bcb75c6ce18dafa97b6f922ea73f88986d
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+            - subject: Use renovate regex annotations to version node and npm
+              hash: 62907af9882c43306bcc2592385977550c64c022
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-15.0.4
+          title: ""
+          date: 2023-08-24T14:21:05.702Z
+  version: 14.3.4
+  title: ""
+  date: 2023-08-24T15:17:29.984Z
+- commits:
     - subject: Enable external PRs to run custom actions
       hash: ee329ee856e81db3a3bec289d002a4e2ad784e20
       body: ""
