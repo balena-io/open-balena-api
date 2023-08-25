@@ -1,4 +1,29 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v15.1.0
+      hash: c31603ee27f4994e64a288f7b9b85e7bdc033c7e
+      body: |
+        Update balena/open-balena-base from 15.0.5 to 15.1.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Add WEBRESOURCES_S3 ACCESS_KEY, SECRET_KEY and HOST to en configuration
+              hash: fddc756fe24a0e097d440da362ddc074d54bda1b
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Otávio Jacobi
+              nested: []
+          version: open-balena-base-15.1.0
+          title: ""
+          date: 2023-08-24T16:35:11.511Z
+  version: 14.3.6
+  title: ""
+  date: 2023-08-25T19:12:16.574Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v15.0.5
       hash: 34373974f8b57596826c643aab72d028c576215e
       body: |
