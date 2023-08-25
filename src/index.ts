@@ -403,6 +403,9 @@ function fixProtocolMiddleware(skipUrls: string[] = []): Handler {
 		if (req.protocol === 'https' || skipUrls.includes(req.url)) {
 			return next();
 		}
+		if (req.headers['x-forwarded-proto'] == 'https') {
+			return next();
+		}
 		if (req.headers['x-forwarded-for'] == null) {
 			const trust = req.app.get('trust proxy fn') as ReturnType<
 				typeof import('proxy-addr').compile
