@@ -194,7 +194,7 @@ export interface DeviceType {
 	name: string;
 	is_of__cpu_architecture: { __id: number } | [CpuArchitecture];
 	logo: string | null;
-	contract: {} | null;
+	contract: object | null;
 	belongs_to__device_family: { __id: number } | [DeviceFamily?] | null;
 	is_default_for__application?: Application[];
 	describes__device?: Device[];
@@ -219,7 +219,7 @@ export interface Image {
 	push_timestamp: DateString | null;
 	status: string;
 	content_hash: string | null;
-	contract: {} | null;
+	contract: object | null;
 	device__installs__image?: ImageInstall[];
 	image_install?: ImageInstall[];
 	is_installed_on__device?: ImageInstall[];
@@ -476,7 +476,7 @@ export interface Release {
 	id: number;
 	belongs_to__application: { __id: number } | [Application];
 	commit: string;
-	composition: {};
+	composition: object;
 	status: string;
 	source: string;
 	build_log: string | null;
@@ -485,7 +485,7 @@ export interface Release {
 	end_timestamp: DateString | null;
 	update_timestamp: DateString;
 	release_version: string | null;
-	contract: {} | null;
+	contract: object | null;
 	is_passing_tests: boolean;
 	is_finalized_at__date: DateString | null;
 	phase: 'next' | 'current' | 'sunset' | 'end-of-life' | null;
@@ -502,7 +502,7 @@ export interface Release {
 	is_final: boolean;
 	semver: string;
 	raw_version: string;
-	version: {};
+	version: object;
 	release__has__tag_key?: ReleaseTag[];
 	release_tag?: ReleaseTag[];
 	image__is_part_of__release?: ImageIsPartOfRelease[];
