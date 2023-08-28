@@ -1,5 +1,6 @@
 import type { ConfigLoader } from '@balena/pinejs';
 import * as balenaModel from './src/balena';
+import { getFileUploadHandler } from './src/fileupload-handler';
 
 export = {
 	models: [balenaModel],
@@ -25,4 +26,5 @@ export = {
 			],
 		},
 	],
+	webResourceHandler: getFileUploadHandler(),
 } as ConfigLoader.Config;
