@@ -181,11 +181,14 @@ export class RedisBackend implements DeviceLogsBackend {
 		const key = this.getKey(ctx);
 		if (!this.subscriptions.listenerCount(key)) {
 			const subscribersKey = this.getKey(ctx, 'subscribers');
+			// eslint-disable-next-line @typescript-eslint/no-floating-promises
 			pubSub[SUBSCRIBECMD](key);
 			// Increment the subscribers counter to recognize we've subscribed
+			// eslint-disable-next-line @typescript-eslint/no-floating-promises
 			redis.incrSubscribers(subscribersKey);
 			// Start a heartbeat to ensure the subscribers counter stays alive whilst we're subscribed
 			this.subscriptionHeartbeats[key] = setInterval(() => {
+				// eslint-disable-next-line @typescript-eslint/no-floating-promises
 				redis.expire(subscribersKey, LOGS_SUBSCRIPTION_EXPIRY_SECONDS);
 			}, LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS);
 		}
@@ -200,6 +203,7 @@ export class RedisBackend implements DeviceLogsBackend {
 			// Clear the heartbeat
 			clearInterval(this.subscriptionHeartbeats[key]);
 			// And decrement the subscribers counter
+			// eslint-disable-next-line @typescript-eslint/no-floating-promises
 			redis.decrSubscribers(subscribersKey).then((n) => {
 				if (n < 0) {
 					captureException(
@@ -208,6 +212,7 @@ export class RedisBackend implements DeviceLogsBackend {
 					);
 				}
 			});
+			// eslint-disable-next-line @typescript-eslint/no-floating-promises
 			pubSub[UNSUBSCRIBECMD](key);
 		}
 	}
