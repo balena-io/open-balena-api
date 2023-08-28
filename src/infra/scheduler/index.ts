@@ -170,7 +170,7 @@ export const scheduleJob = (
 					await updateJobInfoExecute(jobInfoKey, job);
 				} finally {
 					try {
-						lock.unlock();
+						await lock.unlock();
 					} catch (err) {
 						console.error(`[Scheduler] Failed to unlock job: ${jobId}`, err);
 						captureException(err);
