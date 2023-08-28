@@ -31,6 +31,7 @@ const setupCacheInvalidation = <K extends string>(
 			tx.on('end', () => {
 				for (const affectedItem of affectedItems) {
 					// Run in the background as this is not a reason to fail the request
+					// eslint-disable-next-line @typescript-eslint/no-floating-promises
 					(async () => {
 						try {
 							await cache.delete(affectedItem[keyProperty]);
