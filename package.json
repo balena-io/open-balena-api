@@ -37,7 +37,7 @@
     "@balena/env-parsing": "^1.1.5",
     "@balena/es-version": "^1.0.2",
     "@balena/node-metrics-gatherer": "^6.0.3",
-    "@balena/pinejs": "^15.3.0",
+    "@balena/pinejs": "15.3.3-build-fisehara-fix-skipped-migrations-f0ecc3bd40d3cc0486a377c6910b921f14922d1f-1",
     "@sentry/node": "^7.49.0",
     "@types/basic-auth": "^1.1.3",
     "@types/bluebird": "^3.5.38",
