@@ -1,4 +1,18 @@
 - commits:
+    - subject: Fix the construction of the Redis RO auth options in non-cluster mode
+      hash: f6d7b019ca13a76fda063b5a2766089694192a02
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://github.com/balena-io/open-balena-api/pull/1399
+        see: https://github.com/balena-io/open-balena-api/pull/1399
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.3.7
+  title: ""
+  date: 2023-08-29T09:51:19.877Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v15.1.0
       hash: c31603ee27f4994e64a288f7b9b85e7bdc033c7e
       body: |
