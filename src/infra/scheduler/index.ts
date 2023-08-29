@@ -18,7 +18,6 @@
 */
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import _ from 'lodash';
 import schedule from 'node-schedule';
 import Redlock from 'redlock';
 import type { ScheduledJobRun } from '../../balena-model';
@@ -47,7 +46,7 @@ const JOB_INFO_PREFIX = 'api:jobs:info:';
 const JOB_DEFAULT_TTL = 5000;
 
 declare module 'ioredis' {
-	interface RedisCommander<Context> {
+	interface RedisCommander {
 		// This overload exists specifically to retain compatibility to `redlock`
 		eval(
 			args: Array<string | number>,
@@ -171,7 +170,7 @@ export const scheduleJob = (
 					await updateJobInfoExecute(jobInfoKey, job);
 				} finally {
 					try {
-						lock.unlock();
+						await lock.unlock();
 					} catch (err) {
 						console.error(`[Scheduler] Failed to unlock job: ${jobId}`, err);
 						captureException(err);

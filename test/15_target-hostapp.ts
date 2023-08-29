@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import * as fixtures from './test-lib/fixtures';
 import * as fakeDevice from './test-lib/fake-device';
 import { expect } from 'chai';

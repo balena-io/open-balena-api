@@ -195,6 +195,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		});
 
 		// create the RedisMQ queue and start consuming messages...
+		// eslint-disable-next-line @typescript-eslint/no-floating-promises
 		this.rsmq
 			.createQueueAsync({ qname: DeviceOnlineStateManager.EXPIRED_QUEUE })
 			.catch((err) => {
@@ -209,7 +210,8 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 			);
 	}
 
-	private async setupQueueStatsEmitter(interval: number) {
+	private setupQueueStatsEmitter(interval: number) {
+		// eslint-disable-next-line @typescript-eslint/no-floating-promises
 		setTimeout(interval, undefined, { ref: false }).then(async () => {
 			try {
 				const startAt = Date.now();
@@ -280,6 +282,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 
 	private consume() {
 		// pull a message from the queue...
+		// eslint-disable-next-line @typescript-eslint/no-floating-promises
 		this.rsmq
 			.receiveMessageAsync({
 				qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
@@ -305,6 +308,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 								deviceId,
 								DeviceOnlineStates.Timeout,
 							);
+							// eslint-disable-next-line @typescript-eslint/no-floating-promises
 							this.scheduleChangeOfStateForDevice(
 								deviceId,
 								await this.getDeviceOnlineState(deviceId),

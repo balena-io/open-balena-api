@@ -393,7 +393,9 @@ export async function setup(app: Application, options: SetupOptions) {
 	return {
 		app,
 		startServer: _.partial(startServer, app),
+		/** @deprecated */
 		runCommand: _.partial(runCommand, app),
+		/** @deprecated */
 		runFromCommandLine: _.partial(runFromCommandLine, app),
 	};
 }
@@ -440,8 +442,7 @@ function setupMiddleware(app: Application) {
 	);
 	app.use(AUTH_PATH, cookieParser());
 
-	const JSON_REGEXP =
-		/^application\/(([\w!//\$%&\*`\-\.\^~]*\+)?json|csp-report)/i;
+	const JSON_REGEXP = /^application\/(([\w!//$%&*`\-.^~]*\+)?json|csp-report)/i;
 	const isJson: bodyParser.Options['type'] = (req) => {
 		const contentType = req.headers['content-type'];
 		if (contentType == null) {
@@ -473,16 +474,19 @@ async function startServer(
 	return server!;
 }
 
+// TODO: Drop me in the next major since we atm only have a dummy command
 async function runCommand(
 	app: Application,
 	cmd: string,
 	argv: string[],
 ): Promise<void> {
+	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	const script = require(path.join(__dirname, 'commands', cmd));
 	await script.execute(app, argv);
 	process.exit(0);
 }
 
+// TODO: Drop me in the next major since we atm only have a dummy command
 function runFromCommandLine(app: Application): Promise<void> {
 	const cmd = process.argv[2];
 	const args = process.argv.slice(3);

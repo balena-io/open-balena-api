@@ -122,7 +122,6 @@ describe('session', () => {
 		});
 
 		it('should refresh & update the authTime with a POST to /user/v1/refresh-token using a correct password', async function () {
-			let initialAuthTime: number;
 			const res = await supertest(token)
 				.get('/user/v1/refresh-token')
 				.expect(200);
@@ -136,7 +135,7 @@ describe('session', () => {
 			expect(payload).to.have.property('username');
 			expect(payload).to.have.property('email');
 			expect(payload).to.have.property('authTime');
-			initialAuthTime = payload.authTime;
+			const initialAuthTime: number = payload.authTime;
 
 			const res1 = await supertest(token)
 				.post('/user/v1/refresh-token')
@@ -157,7 +156,6 @@ describe('session', () => {
 		});
 
 		it('should not update the authTime with a POST to /user/v1/refresh-token w/o a password', async function () {
-			let initialAuthTime: number;
 			const res = await supertest(token)
 				.get('/user/v1/refresh-token')
 				.expect(200);
@@ -170,7 +168,7 @@ describe('session', () => {
 			expect(payload).to.have.property('username');
 			expect(payload).to.have.property('email');
 			expect(payload).to.have.property('authTime');
-			initialAuthTime = payload.authTime;
+			const initialAuthTime: number = payload.authTime;
 
 			const res1 = await supertest(token)
 				.post('/user/v1/refresh-token')

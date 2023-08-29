@@ -57,9 +57,7 @@ export const generateConfig = async (
 					// Older ones have to use the old "user api keys"
 					return await createUserApiKey(
 						req,
-						(
-							await userPromise
-						).id,
+						(await userPromise).id,
 						apiKeyOptions,
 					);
 				}

@@ -137,7 +137,8 @@ async function onInitHooks() {
 		},
 	});
 
-	// this will pre-fetch the device types and populate the cache...
+	// Pre-fetch the device types and populate the cache w/o blocking the API startup
+	// eslint-disable-next-line @typescript-eslint/no-floating-promises
 	getAccessibleDeviceTypes(sbvrUtils.api.resin);
 
 	await sbvrUtils.db.transaction((tx) =>
@@ -256,4 +257,5 @@ const init = async () => {
 		process.exit(1);
 	}
 };
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
 init();

@@ -63,7 +63,7 @@ const validateSupervisorResponse = (
 			}
 			res.status(statusCode).json(jsonBody);
 		} else if (/^text\/(plain|html)/.test(contentType)) {
-			if (/^([A-Za-z0-9\s:'\.\?!,\/-])*$/g.test(body)) {
+			if (/^([A-Za-z0-9\s:'.?!,/-])*$/g.test(body)) {
 				res.status(statusCode).set('Content-Type', 'text/plain').send(body);
 			} else {
 				badSupervisorResponse(req, res, filter, 'Invalid TEXT data');
@@ -132,10 +132,8 @@ export const proxy = async (req: Request, res: Response) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		if (err?.body != null) {
-			err = err.body;
-		}
-		res.status(502).send(translateError(err));
+		const errorToReturn = err?.body ?? err;
+		res.status(502).send(translateError(errorToReturn));
 	}
 };
 

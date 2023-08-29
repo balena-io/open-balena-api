@@ -71,13 +71,14 @@ export const downloadImageConfig: RequestHandler = async (req, res) => {
 
 		res.json(config);
 	} catch (err) {
-		if (err instanceof UnauthorizedError) {
-			err = new NotFoundError(err);
+		let errorToReturn = err;
+		if (errorToReturn instanceof UnauthorizedError) {
+			errorToReturn = new NotFoundError(errorToReturn);
 		}
-		if (handleHttpErrors(req, res, err)) {
+		if (handleHttpErrors(req, res, errorToReturn)) {
 			return;
 		}
-		captureException(err, 'Error generating config', { req });
-		res.status(500).send(translateError(err));
+		captureException(errorToReturn, 'Error generating config', { req });
+		res.status(500).send(translateError(errorToReturn));
 	}
 };

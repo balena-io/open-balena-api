@@ -181,8 +181,7 @@ const loaders: Dictionary<LoaderFunc> = {
 				belongs_to__user: user.id,
 				start_timestamp: Date.now(),
 				end_timestamp: Date.now(),
-				commit:
-					jsonData.commit ?? randomUUID().replace(/\-/g, '').toLowerCase(),
+				commit: jsonData.commit ?? randomUUID().replace(/-/g, '').toLowerCase(),
 				..._.pick(
 					jsonData,
 					'app_name',
@@ -407,9 +406,8 @@ const loaders: Dictionary<LoaderFunc> = {
 		if (user == null) {
 			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
 		}
-		const application = await fixtures.applications[
-			jsonData.belongs_to__application
-		];
+		const application =
+			await fixtures.applications[jsonData.belongs_to__application];
 		if (application == null) {
 			logErrorAndThrow(
 				`Could not find application: ${jsonData.belongs_to__application}`,
@@ -517,7 +515,10 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 		.filter(
 			(file) =>
 				file.endsWith('.json') &&
-				loaders.hasOwnProperty(file.slice(0, -'.json'.length)),
+				Object.prototype.hasOwnProperty.call(
+					loaders,
+					file.slice(0, -'.json'.length),
+				),
 		)
 		.map((file) => file.slice(0, -'.json'.length).trim());
 

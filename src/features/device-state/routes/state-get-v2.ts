@@ -58,8 +58,9 @@ export type StateV2 = {
 		};
 	};
 	dependent: {
-		apps: {};
-		devices: {};
+		// Empty objects since we dropped support for dependent devices
+		apps: Record<string, never>;
+		devices: Record<string, never>;
 	};
 };
 

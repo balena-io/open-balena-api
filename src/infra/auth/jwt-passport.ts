@@ -1,7 +1,6 @@
 import Bluebird from 'bluebird';
 import type { RequestHandler } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
-import _ from 'lodash';
 import passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { TypedError } from 'typed-error';
@@ -65,9 +64,8 @@ export const createStrategy = (
 				}
 				if ('service' in jwtUser && jwtUser.service) {
 					const { service, apikey } = jwtUser;
-					const apiKeyPermissions = await permissions.getApiKeyPermissions(
-						apikey,
-					);
+					const apiKeyPermissions =
+						await permissions.getApiKeyPermissions(apikey);
 					return { service, apikey, permissions: apiKeyPermissions };
 				} else if (
 					'access' in jwtUser &&

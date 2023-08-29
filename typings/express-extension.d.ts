@@ -1,11 +1,11 @@
 // Augment express.js with balena-specific attributes via declaration merging.
-
-// tslint:disable-next-line:no-namespace
 declare namespace Express {
 	type ApiUser = import('../src/infra/auth/jwt-passport').User;
 
-	// tslint:disable-next-line:no-empty-interface
+	// Augment Express.User to include the props of our ApiUser.
+	// eslint-disable-next-line @typescript-eslint/no-empty-interface
 	interface User extends ApiUser {}
+
 	export interface Request {
 		prefetchApiKey?: Resolvable<ApiKey>;
 
