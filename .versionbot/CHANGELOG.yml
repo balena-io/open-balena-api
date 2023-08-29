@@ -1,4 +1,88 @@
 - commits:
+    - subject: Mark runCommand & runFromCommandLine as deprecated
+      hash: 6f2510b24bc67b022761e0f39030e593a67ab0f3
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://github.com/balena-io/open-balena-api/pull/22#pullrequestreview-171985037
+        see: https://github.com/balena-io/open-balena-api/pull/22#pullrequestreview-171985037
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Fix the remaining eslint errors
+      hash: 1d55da407633a056723187af1a65459d812e56f1
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Properly mark floating-promise errors
+      hash: d5508d6bb6f8d9a519ca1489c1b02dd2b178f466
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: "scheduler: Add missing await to the unlocking phase"
+      hash: 08344acd3ccf8b482c9399054121f595589a61b7
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://github.com/balena-io/balena-api/pull/2344/commits/a8ecb8bb36597a6cc7eea48458f23f3e8c7ff6c7
+        see: https://github.com/balena-io/balena-api/pull/2344/commits/a8ecb8bb36597a6cc7eea48458f23f3e8c7ff6c7
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Stop using {} as a type
+      hash: b362cde9fdd1da21318fdf19c18a6e1608570304
+      body: |
+        Update @balena/abstract-sql-to-typescript to 2.1.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Switch hasOwnProperty() to Object.prototype.hasOwnProperty.call
+      hash: 56553f821d1beb07369398b3db7856c1a87ea82b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Remove unnecessary escaping from regexes
+      hash: 09a361909cc28145b5c06e3b80045436f8c89a9f
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Remove not used lodash imports
+      hash: 663193ace07f100399e267dae14798732e624588
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Update @balena/lint to 7.0.2
+      hash: 83d96438d4998e5b694d194aef2ecb7b07248c59
+      body: |
+        Update @balena/lint from 6.2.2 to 7.0.2
+      footer:
+        Depends-on: https://github.com/balena-io-modules/node-balena-lint/pull/85
+        depends-on: https://github.com/balena-io-modules/node-balena-lint/pull/85
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.3.9
+  title: ""
+  date: 2023-08-29T13:32:24.240Z
+- commits:
     - subject: "config: Refactor the cluster mode Redis auth env var checks"
       hash: 5e48b01dfe0b8e9aedb346f10f0add8603e323f1
       body: ""
