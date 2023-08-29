@@ -393,7 +393,9 @@ export async function setup(app: Application, options: SetupOptions) {
 	return {
 		app,
 		startServer: _.partial(startServer, app),
+		/** @deprecated */
 		runCommand: _.partial(runCommand, app),
+		/** @deprecated */
 		runFromCommandLine: _.partial(runFromCommandLine, app),
 	};
 }
@@ -472,6 +474,7 @@ async function startServer(
 	return server!;
 }
 
+// TODO: Drop me in the next major since we atm only have a dummy command
 async function runCommand(
 	app: Application,
 	cmd: string,
@@ -483,6 +486,7 @@ async function runCommand(
 	process.exit(0);
 }
 
+// TODO: Drop me in the next major since we atm only have a dummy command
 function runFromCommandLine(app: Application): Promise<void> {
 	const cmd = process.argv[2];
 	const args = process.argv.slice(3);
