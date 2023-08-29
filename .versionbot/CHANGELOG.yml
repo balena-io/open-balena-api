@@ -1,4 +1,20 @@
 - commits:
+    - subject: "device-logs: Import the Loki backend asyncronoushly"
+      hash: fbaacfa4c856d53ea8f4ad012725cfb21e02eada
+      body: ""
+      footer:
+        Depends-on: https://github.com/balena-io/open-balena-api/pull/1396
+        depends-on: https://github.com/balena-io/open-balena-api/pull/1396
+        Change-type: patch
+        change-type: patch
+        See: https://github.com/balena-io/open-balena-api/pull/1396#discussion_r1308491416
+        see: https://github.com/balena-io/open-balena-api/pull/1396#discussion_r1308491416
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.3.11
+  title: ""
+  date: 2023-08-29T14:11:51.126Z
+- commits:
     - subject: Update TypeScript to 5.2.2
       hash: 6743cfa7cb21ee3275de5e23c789f66a42d6b5c6
       body: ""
