@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use snappy compression for device logs
+      hash: 7bb118fd388ddf157e3e74a17208047d1673f6ff
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 14.4.0
+  title: ""
+  date: 2023-08-29T15:17:02.753Z
+- commits:
     - subject: "device-logs: Import the Loki backend asyncronoushly"
       hash: fbaacfa4c856d53ea8f4ad012725cfb21e02eada
       body: ""
