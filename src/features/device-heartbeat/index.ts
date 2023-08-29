@@ -195,8 +195,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		});
 
 		// create the RedisMQ queue and start consuming messages...
-		// eslint-disable-next-line @typescript-eslint/no-floating-promises
-		this.rsmq
+		void this.rsmq
 			.createQueueAsync({ qname: DeviceOnlineStateManager.EXPIRED_QUEUE })
 			.catch((err) => {
 				if (err.name !== 'queueExists') {
@@ -211,8 +210,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 	}
 
 	private setupQueueStatsEmitter(interval: number) {
-		// eslint-disable-next-line @typescript-eslint/no-floating-promises
-		setTimeout(interval, undefined, { ref: false }).then(async () => {
+		void setTimeout(interval, undefined, { ref: false }).then(async () => {
 			try {
 				const startAt = Date.now();
 				const queueAttributes = await this.rsmq.getQueueAttributesAsync({
@@ -282,8 +280,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 
 	private consume() {
 		// pull a message from the queue...
-		// eslint-disable-next-line @typescript-eslint/no-floating-promises
-		this.rsmq
+		void this.rsmq
 			.receiveMessageAsync({
 				qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
 				vt: DeviceOnlineStateManager.RSMQ_READ_TIMEOUT, // prevent other consumers seeing the same message (if any) preventing multiple API agents from processing it...
@@ -308,8 +305,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 								deviceId,
 								DeviceOnlineStates.Timeout,
 							);
-							// eslint-disable-next-line @typescript-eslint/no-floating-promises
-							this.scheduleChangeOfStateForDevice(
+							void this.scheduleChangeOfStateForDevice(
 								deviceId,
 								await this.getDeviceOnlineState(deviceId),
 								DeviceOnlineStates.Timeout,
