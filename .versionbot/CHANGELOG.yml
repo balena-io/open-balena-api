@@ -1,4 +1,32 @@
 - commits:
+    - subject: "config: Refactor the cluster mode Redis auth env var checks"
+      hash: 5e48b01dfe0b8e9aedb346f10f0add8603e323f1
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Throw when the redis auth env vars are not in the expected format
+      hash: 847b08a2f1551c68b9cbbb695d35dee0dc841452
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Annotate a few type-only ioredis imports as such
+      hash: 62bd2bcc42a96fdc47c3623d2b8402857bb2eeb8
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.3.8
+  title: ""
+  date: 2023-08-29T13:09:04.798Z
+- commits:
     - subject: Fix the construction of the Redis RO auth options in non-cluster mode
       hash: f6d7b019ca13a76fda063b5a2766089694192a02
       body: ""
