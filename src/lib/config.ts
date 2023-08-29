@@ -446,5 +446,7 @@ function redisAuthVar(
 			};
 	}
 
-	return {};
+	throw new Error(
+		`'${varName}' must be in one of the following forms 'username:password', 'password', ':password', or 'username:'`,
+	);
 }
