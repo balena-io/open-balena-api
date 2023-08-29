@@ -215,7 +215,7 @@ function redisOpts(
 	if (roHosts.length > 1) {
 		throw new Error(`'${roHostVarName}' must contain at most one entry`);
 	}
-	const roAuth = redisAuthVar(roHostVarName, auth);
+	const roAuth = redisAuthVar(roAuthVarName, auth);
 	return {
 		isCluster,
 		host: hosts[0],
