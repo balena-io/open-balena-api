@@ -105,7 +105,7 @@ export const store: RequestHandler = async (req: Request, res: Response) => {
 			await Promise.all([
 				getBackend().publish(ctx, logs),
 				shouldPublishToLoki()
-					? getLokiBackend()
+					? (await getLokiBackend())
 							.publish(ctx, logs)
 							.catch((err) =>
 								captureException(err, 'Failed to publish logs to Loki'),
@@ -149,7 +149,7 @@ const publishBackend = LOKI_ENABLED
 	  ) => {
 			const publishingToRedis = backend.publish(ctx, buffer);
 			const publishingToLoki = shouldPublishToLoki()
-				? getLokiBackend()
+				? (await getLokiBackend())
 						.publish(ctx, buffer)
 						.catch((err) =>
 							captureException(err, 'Failed to publish logs to Loki'),
