@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import * as Redis from 'ioredis';
+import type * as Redis from 'ioredis';
 import { REDIS } from '../../lib/config';
 
 /*
