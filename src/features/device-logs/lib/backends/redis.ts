@@ -20,7 +20,7 @@ import {
 	newSubscribeInstance,
 	createIsolatedRedis,
 } from '../../../../infra/redis';
-import { Result } from 'ioredis';
+import type { Result } from 'ioredis';
 
 const SUBSCRIBECMD = REDIS_LOGS_SHARDED_PUBSUB ? 'ssubscribe' : 'subscribe';
 const UNSUBSCRIBECMD = REDIS_LOGS_SHARDED_PUBSUB
