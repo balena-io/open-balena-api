@@ -23,9 +23,7 @@ export function addRetentionLimit(
 
 export const getBackend = _.once((): DeviceLogsBackend => new RedisBackend());
 
-export const getLokiBackend = _.once((): DeviceLogsBackend => {
-	const { LokiBackend } =
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		require('./backends/loki') as typeof import('./backends/loki');
+export const getLokiBackend = _.once(async (): Promise<DeviceLogsBackend> => {
+	const { LokiBackend } = await import('./backends/loki');
 	return new LokiBackend();
 });
