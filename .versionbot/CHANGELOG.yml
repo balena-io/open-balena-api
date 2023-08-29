@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update TypeScript to 5.2.2
+      hash: 6743cfa7cb21ee3275de5e23c789f66a42d6b5c6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.3.10
+  title: ""
+  date: 2023-08-29T13:44:59.187Z
+- commits:
     - subject: Mark runCommand & runFromCommandLine as deprecated
       hash: 6f2510b24bc67b022761e0f39030e593a67ab0f3
       body: ""
