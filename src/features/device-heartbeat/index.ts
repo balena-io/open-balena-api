@@ -299,30 +299,32 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 					};
 
 					// raise and event for the state change...
-					switch (nextState) {
-						case DeviceOnlineStates.Timeout:
-							await this.updateDeviceModel(
-								deviceId,
-								DeviceOnlineStates.Timeout,
-							);
-							this.scheduleChangeOfStateForDevice(
-								deviceId,
-								await this.getDeviceOnlineState(deviceId),
-								DeviceOnlineStates.Timeout,
-								DeviceOnlineStates.Offline,
-								API_HEARTBEAT_STATE_TIMEOUT_SECONDS, // put the device into a timeout state if it misses it's scheduled heartbeat window... then mark as offline
-							);
-							break;
-						case DeviceOnlineStates.Offline:
-							await this.updateDeviceModel(
-								deviceId,
-								DeviceOnlineStates.Offline,
-							);
-							break;
-						default:
-							throw new Error(
-								`An unexpected value was encountered for the target device state: ${nextState}`,
-							);
+					if (deviceId) {
+						switch (nextState) {
+							case DeviceOnlineStates.Timeout:
+								await this.updateDeviceModel(
+									deviceId,
+									DeviceOnlineStates.Timeout,
+								);
+								this.scheduleChangeOfStateForDevice(
+									deviceId,
+									await this.getDeviceOnlineState(deviceId),
+									DeviceOnlineStates.Timeout,
+									DeviceOnlineStates.Offline,
+									API_HEARTBEAT_STATE_TIMEOUT_SECONDS, // put the device into a timeout state if it misses it's scheduled heartbeat window... then mark as offline
+								);
+								break;
+							case DeviceOnlineStates.Offline:
+								await this.updateDeviceModel(
+									deviceId,
+									DeviceOnlineStates.Offline,
+								);
+								break;
+							default:
+								throw new Error(
+									`An unexpected value was encountered for the target device state: ${nextState}`,
+								);
+						}
 					}
 
 					await this.rsmq.deleteMessageAsync({
