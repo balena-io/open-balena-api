@@ -188,17 +188,11 @@ function redisOpts(
 		throw new Error(`Missing env: '${prefix}_IS_CLUSTER'`);
 	}
 	if (isCluster) {
-		const roHost = process.env[roHostVarName];
-		if (roHost != null && roHost !== '') {
-			throw new Error(
-				`'${prefix}_RO_HOST' must be empty when in cluster mode `,
-			);
-		}
-		const roAuthCheck = process.env[roAuthVarName];
-		if (roAuthCheck != null && roAuthCheck !== '') {
-			throw new Error(
-				`'${prefix}_RO_AUTH' must be empty when in cluster mode `,
-			);
+		const varsIncompatibleWithClusterMode = [roHostVarName, roAuthVarName];
+		for (const varName of varsIncompatibleWithClusterMode) {
+			if (optionalVar(varName) != null) {
+				throw new Error(`'${varName}' must be empty when in cluster mode `);
+			}
 		}
 		return {
 			isCluster,
@@ -446,5 +440,7 @@ function redisAuthVar(
 			};
 	}
 
-	return {};
+	throw new Error(
+		`'${varName}' must be in one of the following forms 'username:password', 'password', ':password', or 'username:'`,
+	);
 }
