@@ -99,8 +99,7 @@ describe('loki backend', () => {
 		const loki = new LokiBackend();
 		const log = createLog();
 		const incomingLog = await new Bluebird(async (resolve) => {
-			// eslint-disable-next-line @typescript-eslint/no-floating-promises
-			loki.subscribe(ctx, resolve);
+			void loki.subscribe(ctx, resolve);
 			await setTimeout(100); // wait for the subscription to connect
 			await loki.publish(ctx, [_.clone(log)]);
 		}).timeout(5000, 'Subscription did not receive log');
@@ -112,8 +111,7 @@ describe('loki backend', () => {
 		const loki = new LokiBackend();
 		await new Bluebird(async (resolve) => {
 			let countLogs = 0;
-			// eslint-disable-next-line @typescript-eslint/no-floating-promises
-			loki.subscribe(ctx, () => {
+			void loki.subscribe(ctx, () => {
 				countLogs += 1;
 				if (countLogs === 5) {
 					resolve();
