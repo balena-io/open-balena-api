@@ -92,7 +92,10 @@ import {
 import { createScopedAccessToken, createJwt } from './infra/auth/jwt';
 import { resolveOrDenyDevicesWithStatus } from './features/device-state/middleware';
 import { middleware as authMiddleware } from './infra/auth';
-import { isApiKeyWithRole } from './features/api-keys/lib';
+import {
+	augmentReqApiKeyPermissions,
+	isApiKeyWithRole,
+} from './features/api-keys/lib';
 import { setupDeleteCascade as addDeleteHookForDependents } from './features/cascade-delete/setup-delete-cascade';
 import {
 	updateOrInsertModel,
@@ -225,6 +228,7 @@ export const utils = {
 	throttledForEach,
 };
 export const apiKeys = {
+	augmentReqApiKeyPermissions,
 	isApiKeyWithRole,
 };
 export const application = {

@@ -16,7 +16,7 @@ export const getUserPublicKeys: RequestHandler = async (req, res) => {
 		// Augment with the ability to resolve the user's username for this request only, there's no need
 		// for device keys to have the ability by default. Access to the public key will still be restricted
 		// by `user__has__public_key` so this only affects the ability to resolve the username they apply to
-		req = augmentReqApiKeyPermissions(req, 'resin.user.read');
+		req = augmentReqApiKeyPermissions(req, ['resin.user.read']);
 		const data = (await sbvrUtils.api.resin.get({
 			resource: 'user__has__public_key',
 			options: {
