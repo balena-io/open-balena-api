@@ -40,6 +40,7 @@ export const ALLOWED_NAMES = addReservedPrefixes([
 	'SUPERVISOR_PERSISTENT_LOGGING',
 	'SUPERVISOR_INSTANT_UPDATE_TRIGGER',
 	'SUPERVISOR_HARDWARE_METRICS',
+	'TERMINATE_TLS_ONDEVICE',
 ]);
 
 // Config variable namespaces that are allowed to be set by frontend components
@@ -140,6 +141,11 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 		description:
 			'Enable / Disable reporting device metrics such as CPU usage for bandwidth conservation. Only supported by supervisor versions >= v12.8.0.',
 		default: 'true',
+	},
+	BALENA_HOST_TERMINATE_TLS_ONDEVICE: {
+		enum: ['false', 'true'],
+		description: 'Enable / Disable public web URL TLS termination on device.',
+		default: 'false',
 	},
 };
 
