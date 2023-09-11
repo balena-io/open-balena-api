@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update open-balena-base package.json to specify nodejs 20
+      hash: 30849b3c6dd1f0f8b2a275f32e0a70ef27f71013
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 14.5.4
+  title: ""
+  date: 2023-09-11T11:50:00.716Z
+- commits:
     - subject: Update open-balena-base to 16.0.0
       hash: 5fccc00a761600e78fa69de9949377f0e94db432
       body: |
