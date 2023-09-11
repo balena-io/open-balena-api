@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update open-balena-base to 16.0.0
+      hash: 5fccc00a761600e78fa69de9949377f0e94db432
+      body: |
+        Update open-balena-base from 15.1.0 to 16.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 14.5.3
+  title: ""
+  date: 2023-09-11T11:01:24.594Z
+- commits:
     - subject: Update grafana/loki Docker tag to v2.9.0
       hash: cb249b39d22cc6ba1431a868f1d3850729021754
       body: |
