@@ -1,4 +1,30 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v16.0.1
+      hash: e64df56c0da52e2c517ebb7cc90c69fa506dae5d
+      body: |
+        Update balena/open-balena-base from 16.0.0 to 16.0.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: don't clobber existing values
+              hash: c7f97c2749f0b3c638a8a8686ccf9b4e36154502
+              body: >
+                - don't overwrite existing non-null values in the API_KEYS array
+                with null values
+              footer:
+                change-type: patch
+              author: Anton Belodedenko
+              nested: []
+          version: open-balena-base-16.0.1
+          title: ""
+          date: 2023-09-12T23:15:08.184Z
+  version: 14.5.5
+  title: ""
+  date: 2023-09-13T00:20:51.197Z
+- commits:
     - subject: Update open-balena-base package.json to specify nodejs 20
       hash: 30849b3c6dd1f0f8b2a275f32e0a70ef27f71013
       body: ""
