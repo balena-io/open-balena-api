@@ -22,6 +22,18 @@ const deviceLogsRateLimiter = createRateLimitMiddleware(
 	},
 );
 
+// Rate limit device log get requests
+const streamableDeviceLogsRateLimiter = createRateLimitMiddleware(
+	createRateLimiter('get-device-logs', {
+		points: 10, // allow 10 device log streams / get requests
+		blockDuration: 60, // seconds
+		duration: 60, // reset counter after 60 seconds (from the first batch of the window)
+	}),
+	{
+		ignoreIP: true,
+	},
+);
+
 export const setup = (
 	app: Application,
 	onLogWriteStreamInitialized: SetupOptions['onLogWriteStreamInitialized'],
@@ -30,6 +42,7 @@ export const setup = (
 	app.get(
 		'/device/v2/:uuid/logs',
 		middleware.fullyAuthenticatedUser,
+		streamableDeviceLogsRateLimiter(['params.uuid', 'query.stream']),
 		read(onLogReadStreamInitialized),
 	);
 	app.post(

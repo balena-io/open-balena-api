@@ -97,7 +97,7 @@ export type RateLimitKeyFn = (
 	req: Request,
 	res: Response,
 ) => Resolvable<string>;
-export type RateLimitKey = string | RateLimitKeyFn;
+export type RateLimitKey = string | RateLimitKeyFn | string[];
 
 export type RateLimitMiddleware = (
 	...args: Parameters<RequestHandler>
@@ -126,14 +126,22 @@ const $createRateLimitMiddleware = (
 		ignoreIP = false,
 		allowReset = true,
 	}: { ignoreIP?: boolean; allowReset?: boolean } = {},
-	field?: RateLimitKey,
+	fields?: RateLimitKey,
 ): RateLimitMiddleware => {
 	let fieldFn: RateLimitKeyFn;
-	if (field != null) {
-		if (typeof field === 'function') {
-			fieldFn = field;
+	if (fields != null) {
+		if (typeof fields === 'function') {
+			fieldFn = fields;
+		} else if (Array.isArray(fields)) {
+			fieldFn = (req) =>
+				fields
+					.map((field) => {
+						const path = _.toPath(field);
+						return _.get(req, path);
+					})
+					.join('$');
 		} else {
-			const path = _.toPath(field);
+			const path = _.toPath(fields);
 			fieldFn = (req) => _.get(req, path);
 		}
 	} else {

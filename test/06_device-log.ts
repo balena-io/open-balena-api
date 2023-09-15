@@ -222,4 +222,80 @@ describe('device log', () => {
 			'streamed log line 1',
 		]);
 	});
+
+	it('should rate limit device logs read streams', async () => {
+		const dummyLogs = [createLog({ message: 'not rate limited' })];
+		await supertest(ctx.device.apiKey)
+			.post(`/device/v2/${ctx.device.uuid}/logs`)
+			.send(dummyLogs)
+			.expect(201);
+
+		async function testRatelimitedDeviceLogsStream() {
+			let evalValue;
+			const req = supertest(ctx.user)
+				.get(`/device/v2/${ctx.device.uuid}/logs`)
+				.query({
+					stream: 1,
+					count: 1,
+				})
+				.parse(function (res, callback) {
+					res.on('data', async function (chunk) {
+						const parsedChunk = JSON.parse(Buffer.from(chunk).toString());
+						evalValue = parsedChunk;
+						// if data stream provides proper data terminate the stream (abort)
+						if (
+							typeof parsedChunk === 'object' &&
+							parsedChunk?.message === 'not rate limited'
+						) {
+							req.abort();
+						}
+					});
+					res.on('close', () => callback(null, null));
+				});
+
+			try {
+				await req;
+			} catch (error) {
+				if (error.code !== 'ABORTED') {
+					throw error;
+				}
+			}
+			return evalValue;
+		}
+
+		const notLimited = await testRatelimitedDeviceLogsStream();
+		expect(notLimited?.['message']).to.deep.equal(dummyLogs[0].message);
+
+		while ((await testRatelimitedDeviceLogsStream()) !== 'Too Many Requests') {
+			// no empty block
+		}
+		const rateLimited = await testRatelimitedDeviceLogsStream();
+		expect(rateLimited).to.be.string('Too Many Requests');
+	});
+
+	it('should rate limit device logs get requests', async () => {
+		const dummyLogs = [createLog({ message: 'not rate limited' })];
+		await supertest(ctx.device.apiKey)
+			.post(`/device/v2/${ctx.device.uuid}/logs`)
+			.send(dummyLogs)
+			.expect(201);
+
+		async function testRatelimitedDeviceLogs() {
+			return supertest(ctx.user)
+				.get(`/device/v2/${ctx.device.uuid}/logs`)
+				.query({
+					stream: 0,
+					count: 1,
+				});
+		}
+
+		const notLimited = await testRatelimitedDeviceLogs();
+		expect(notLimited.status).to.be.equal(200);
+
+		while ((await testRatelimitedDeviceLogs()).status !== 429) {
+			// no empty block
+		}
+		const rateLimited = await testRatelimitedDeviceLogs();
+		expect(rateLimited.status).to.be.equal(429);
+	});
 });
