@@ -12,6 +12,7 @@ import {
 	getConfig,
 	getReleaseForDevice,
 	getStateDelayingEmpty,
+	getStateEventAdditionalFields,
 	readTransaction,
 	serviceInstallFromImage,
 	varListInsert,
@@ -270,7 +271,7 @@ const stateQuery = _.once(() =>
 		resource: 'device',
 		id: { uuid: { '@': 'uuid' } },
 		options: {
-			$select: ['device_name', 'public_address'],
+			$select: ['device_name', ...getStateEventAdditionalFields],
 			$expand: deviceExpand,
 		},
 	}),
@@ -287,7 +288,9 @@ const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
 		apiKey: req.apiKey,
 		config,
 		ipAddress: getIP(req),
+		// TODO: Drop in the next major in favor of storedDeviceFields
 		storedPublicAddress: device.public_address as Device['public_address'],
+		storedDeviceFields: _.pick(device, getStateEventAdditionalFields),
 	});
 
 	let apps = getUserAppState(device, config);

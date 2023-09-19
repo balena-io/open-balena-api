@@ -3,6 +3,7 @@ import type StrictEventEmitter from 'strict-event-emitter-types';
 
 import { EventEmitter } from 'events';
 import { middleware } from '../../infra/auth';
+import type { Device } from '../../balena-model';
 
 import { resolveOrDenyDevicesWithStatus } from './middleware';
 import { stateV2 } from './routes/state-get-v2';
@@ -14,9 +15,10 @@ import {
 	statePatchV3,
 } from './routes/state-patch-v3';
 import { fleetStateV3 } from './routes/fleet-state-get-v3';
-import { Device } from '../../balena-model';
+import type { GetStateEventStoredDeviceFields } from './state-get-utils';
 
 export {
+	getStateEventAdditionalFields,
 	getConfig,
 	setReadTransaction,
 	filterDeviceConfig,
@@ -74,7 +76,10 @@ export interface Events {
 		info: Pick<Request, 'apiKey'> & {
 			config?: Dictionary<string>;
 			ipAddress: string | undefined;
+			// TODO: Drop in the next major
+			/** @deprecated use the storedDeviceFields */
 			storedPublicAddress: Device['public_address'];
+			storedDeviceFields: GetStateEventStoredDeviceFields;
 		},
 	) => void;
 }
