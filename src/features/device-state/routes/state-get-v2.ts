@@ -15,6 +15,7 @@ import {
 	ConfigurationVarsToLabels,
 	getStateDelayingEmpty,
 	getConfig,
+	getStateEventAdditionalFields,
 } from '../state-get-utils';
 import { sbvrUtils } from '@balena/pinejs';
 import { events } from '..';
@@ -194,7 +195,7 @@ const stateQuery = _.once(() =>
 		resource: 'device',
 		id: { uuid: { '@': 'uuid' } },
 		options: {
-			$select: ['device_name', 'public_address'],
+			$select: ['device_name', ...getStateEventAdditionalFields],
 			$expand: {
 				device_config_variable: {
 					$select: ['name', 'value'],
@@ -250,7 +251,9 @@ const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 		apiKey: req.apiKey,
 		config,
 		ipAddress: getIP(req),
+		// TODO: Drop in the next major in favor of storedDeviceFields
 		storedPublicAddress: device.public_address as Device['public_address'],
+		storedDeviceFields: _.pick(device, getStateEventAdditionalFields),
 	});
 
 	const userApp = getUserAppForState(device, config);
