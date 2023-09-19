@@ -82,6 +82,23 @@ export const AUTH_RESINOS_REGISTRY_CODE = optionalVar(
 	'AUTH_RESINOS_REGISTRY_CODE',
 );
 export const COOKIE_SESSION_SECRET = requiredVar('COOKIE_SESSION_SECRET');
+
+/**
+ * null: include all device type and device contract slugs
+ * "x;y;z": include only the specified device type and contract slugs - note that you MUST list
+ *          all dependent slugs as well so for hw.device-type/asus-tinker-board-s you would need:
+ *          `arch.sw/armv7hf;hw.device-manufacturer/asus;hw.device-family/tinkerboard;hw.device-type/asus-tinker-board-s`
+ * 		    For something like hw.device-type/iot-gate-imx8 you would need:
+ * 			`arch.sw/aarch64;hw.device-type/iot-gate-imx8`
+ *          (the order of the slugs in this variable does not matter)
+ */
+export const CONTRACT_ALLOWLIST = new Set(
+	optionalVar('CONTRACT_ALLOWLIST', '')
+		.split(';')
+		.map((slug) => slug.trim())
+		.filter((slug) => slug.length > 0),
+);
+
 export const CONTRACTS_PUBLIC_REPO_OWNER = optionalVar(
 	'CONTRACTS_PUBLIC_REPO_OWNER',
 	'balena-io',
