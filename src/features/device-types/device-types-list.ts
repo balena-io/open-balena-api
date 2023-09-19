@@ -14,6 +14,7 @@ import { multiCacheMemoizee } from '../../infra/cache';
 import {
 	DEVICE_TYPES_CACHE_LOCAL_TIMEOUT,
 	DEVICE_TYPES_CACHE_TIMEOUT,
+	CONTRACT_ALLOWLIST,
 } from '../../lib/config';
 
 export interface DeviceTypeInfo {
@@ -58,7 +59,20 @@ const getFirstValidBuild = async (
 export const getDeviceTypes = multiCacheMemoizee(
 	async (): Promise<Dictionary<DeviceTypeInfo>> => {
 		const result: Dictionary<DeviceTypeInfo> = {};
-		const slugs = await listFolders(IMAGE_STORAGE_PREFIX);
+		let slugs = await listFolders(IMAGE_STORAGE_PREFIX);
+
+		// If there are explicit includes, then everything else is excluded so we need to
+		// filter the slugs list to include only contracts that are in the CONTRACT_ALLOWLIST map
+		if (CONTRACT_ALLOWLIST.size > 0) {
+			const before = slugs.length;
+			slugs = slugs.filter((slug) =>
+				CONTRACT_ALLOWLIST.has(`hw.device-type/${slug}`),
+			);
+			console.log(
+				`CONTRACT_ALLOWLIST reduced device type slugs from ${before} to ${slugs.length}`,
+			);
+		}
+
 		await Promise.all(
 			slugs.map(async (slug) => {
 				try {
