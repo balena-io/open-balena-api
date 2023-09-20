@@ -170,11 +170,13 @@ function redisOpts(prefix: string): RedisOpts;
 function redisOpts(
 	prefix: string,
 	defaultHosts: HostPort[],
+	defaultAuth: RedisAuth,
 	defaultIsCluster: boolean,
 ): RedisOpts;
 function redisOpts(
 	prefix: string,
 	defaultHosts?: HostPort[],
+	defaultAuth?: RedisAuth,
 	defaultIsCluster?: boolean,
 ): RedisOpts {
 	const hostVarName = `${prefix}_HOST`;
@@ -183,7 +185,7 @@ function redisOpts(
 	const roAuthVarName = `${prefix}_RO_AUTH`;
 	const isCluster = boolVar(`${prefix}_IS_CLUSTER`, defaultIsCluster);
 	const hosts = hostPortsVar(hostVarName, defaultHosts);
-	const auth = redisAuthVar(authVarName);
+	const auth = redisAuthVar(authVarName, defaultAuth);
 	if (isCluster == null) {
 		throw new Error(`Missing env: '${prefix}_IS_CLUSTER'`);
 	}
@@ -229,7 +231,12 @@ if (generalRedis.isCluster) {
 
 export const REDIS = {
 	general: generalRedis,
-	logs: redisOpts('REDIS_LOGS', [generalRedis.host], generalRedis.isCluster),
+	logs: redisOpts(
+		'REDIS_LOGS',
+		[generalRedis.host],
+		generalRedis.auth,
+		generalRedis.isCluster,
+	),
 };
 export const REDIS_LOGS_SHARDED_PUBSUB = boolVar(
 	'REDIS_LOGS_SHARDED_PUBSUB',
