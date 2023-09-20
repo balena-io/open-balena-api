@@ -1,4 +1,18 @@
 - commits:
+    - subject: Use general Redis auth when also using the general Redis host
+      hash: 9d8252d80be726e69c533795a5ef19facbb76fa2
+      body: ""
+      footer:
+        Resolves: balena-io#1424
+        resolves: balena-io#1424
+        Change-type: minor
+        change-type: minor
+      author: Shaun Cooley
+      nested: []
+  version: 14.6.0
+  title: ""
+  date: 2023-09-20T13:27:49.310Z
+- commits:
     - subject: Update grafana/loki Docker tag to v2.9.1
       hash: d5f9712ca10d320aef3e3617956728585c82005a
       body: |
