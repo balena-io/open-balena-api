@@ -1,4 +1,19 @@
 - commits:
+    - subject: Mark expected floating promises with the `void` operator
+      hash: b818913e9e0165b40dc2d07f76eadeceac2521f3
+      body: |
+        Update @balena/lint from 7.0.2 to 7.1.1
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://github.com/balena-io/pinejs/pull/682#discussion_r1308867996
+        see: https://github.com/balena-io/pinejs/pull/682#discussion_r1308867996
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.6.1
+  title: ""
+  date: 2023-09-27T14:31:33.890Z
+- commits:
     - subject: Use general Redis auth when also using the general Redis host
       hash: 9d8252d80be726e69c533795a5ef19facbb76fa2
       body: ""
