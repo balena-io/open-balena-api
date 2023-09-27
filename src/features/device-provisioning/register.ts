@@ -70,8 +70,7 @@ export const register: RequestHandler = async (req, res) => {
 			// TODO: Replace this manual rollback on request closure with a more generic/automated version
 			onFinished(res, () => {
 				if (!tx.isClosed()) {
-					// eslint-disable-next-line @typescript-eslint/no-floating-promises
-					tx.rollback();
+					void tx.rollback();
 				}
 			});
 
@@ -106,8 +105,7 @@ export const register: RequestHandler = async (req, res) => {
 
 		// Clear the device existence cache for the just registered device
 		// in case it tried to communicate with the API before registering
-		// eslint-disable-next-line @typescript-eslint/no-floating-promises
-		checkDeviceExistsIsFrozen.delete(response.uuid);
+		void checkDeviceExistsIsFrozen.delete(response.uuid);
 
 		res.status(201).json(response);
 	} catch (err) {
