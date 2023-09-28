@@ -1,0 +1,40 @@
+{
+  "slug": "up-board",
+  "version": "1",
+  "type": "hw.device-type",
+  "aliases": [],
+  "name": "UP Board",
+  "assets": {
+    "logo": {
+      "url": "./up-board.svg",
+      "name": "logo"
+    }
+  },
+  "data": {
+    "arch": "amd64",
+    "family": "family-upboard",
+    "hdmi": true,
+    "led": true,
+    "connectivity": {
+      "bluetooth": false,
+      "wifi": false
+    },
+    "storage": {
+      "internal": true
+    },
+    "media": {
+      "defaultBoot": "internal",
+      "altBoot": ["usb_mass_storage"]
+    },
+    "is_private": false
+  },
+  "partials": {
+    "bootDeviceExternal": [
+      "Power on the {{name}} with a keyboard connected.",
+      "Press the F7 key while BIOS is loading to enter the boot menu.",
+      "Select the \"UEFI:\" option from the boot menu."
+    ],
+    "flashIndicator": ["all LEDs are off"],
+    "bootDevice": ["Power up the {{name}}"]
+  }
+}

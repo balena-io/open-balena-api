@@ -90,7 +90,7 @@ describe('device type resource', () => {
 			expect(deviceType).to.have.property('name').that.is.a('string');
 		});
 
-		expect(res.body.d).to.have.property('length', 14);
+		expect(res.body.d).to.have.property('length', 16);
 	});
 });
 
@@ -217,7 +217,7 @@ describe('device type endpoints', () => {
 		it('should return a proper result', async () => {
 			const res = await supertest().get('/device-types/v1').expect(200);
 			expect(res.body).to.be.an('array');
-			expect(res.body).to.have.property('length', 15);
+			expect(res.body).to.have.property('length', 17);
 			const rpi3config = _.find(res.body, { slug: 'raspberrypi3' });
 			expect(rpi3config).to.be.an('object');
 			expect(rpi3config).to.have.property('buildId', '2.19.0+rev1.prod');
