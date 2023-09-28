@@ -1,4 +1,16 @@
 - commits:
+    - subject: Support extending the device fields populated in the "get-state" event
+      hash: 9fe1e79fd23618dd374f4a9f913710ebda387954
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.7.0
+  title: ""
+  date: 2023-09-28T07:11:57.106Z
+- commits:
     - subject: Mark expected floating promises with the `void` operator
       hash: b818913e9e0165b40dc2d07f76eadeceac2521f3
       body: |
