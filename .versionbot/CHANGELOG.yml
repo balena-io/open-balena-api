@@ -1,4 +1,18 @@
 - commits:
+    - subject: Check user access to the device type provided to /config/vars
+      hash: a0c5b7053490842dc55a657c9c7d749664cbff85
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://balena.zulipchat.com/#narrow/stream/345889-balena-io.2Fos/topic/balenaOS.20for.20RPi.205.20.5BUnder.20NDA.5D/near/393642691
+        see: https://balena.zulipchat.com/#narrow/stream/345889-balena-io.2Fos/topic/balenaOS.20for.20RPi.205.20.5BUnder.20NDA.5D/near/393642691
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.7.1
+  title: ""
+  date: 2023-09-28T10:29:54.567Z
+- commits:
     - subject: Support extending the device fields populated in the "get-state" event
       hash: 9fe1e79fd23618dd374f4a9f913710ebda387954
       body: ""
