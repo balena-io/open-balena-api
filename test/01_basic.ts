@@ -109,6 +109,14 @@ describe('Basic', () => {
 			checkBaseVarsResult(vars);
 		});
 
+		it(`should return the base vars when device type is not found`, async () => {
+			const { body: vars } = await supertest()
+				.get(`/config/vars?deviceType=wrong-device-type`)
+				.expect(200);
+
+			checkBaseVarsResult(vars);
+		});
+
 		[
 			{ deviceType: 'beaglebone-black' },
 			{
