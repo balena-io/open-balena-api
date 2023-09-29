@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add S3 webresource handler
+      hash: a27f4b5f79da6e996063b29908cbc3008386c14d
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Otávio Jacobi
+      nested: []
+  version: 14.9.0
+  title: ""
+  date: 2023-09-29T19:49:04.807Z
+- commits:
     - subject: Expose the RPi family config vars to raspberrypi5 board
       hash: d266a77dff93a82c9fdaac48fe198fa2b6966372
       body: ""
