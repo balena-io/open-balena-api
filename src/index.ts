@@ -164,6 +164,7 @@ export * as scheduler from './infra/scheduler';
 export * as cache from './infra/cache';
 export * as config from './lib/config';
 export * as abstractSql from './abstract-sql-utils';
+export { getFileUploadHandler } from './fileupload-handler';
 
 export * as deviceState from './features/device-state';
 export const errors = {

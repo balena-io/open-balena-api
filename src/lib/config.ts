@@ -416,6 +416,29 @@ export const IGNORE_FROZEN_DEVICE_PERMISSIONS = boolVar(
 	false,
 );
 
+export const WEBRESOURCES_S3_HOST = optionalVar('WEBRESOURCES_S3_HOST');
+export const WEBRESOURCES_S3_REGION = optionalVar('WEBRESOURCES_S3_REGION');
+export const WEBRESOURCES_S3_ACCESS_KEY = optionalVar(
+	'WEBRESOURCES_S3_ACCESS_KEY',
+);
+export const WEBRESOURCES_S3_SECRET_KEY = optionalVar(
+	'WEBRESOURCES_S3_SECRET_KEY',
+);
+export const WEBRESOURCES_S3_BUCKET = optionalVar('WEBRESOURCES_S3_BUCKET');
+export const WEBRESOURCES_S3_MAX_FILESIZE = intVar(
+	'WEBRESOURCES_S3_MAX_FILESIZE',
+	10000000,
+);
+export const WEBRESOURCES_CLOUDFRONT_PRIVATEKEY_PATH = optionalVar(
+	'WEBRESOURCES_CLOUDFRONT_PRIVATEKEY_PATH',
+);
+export const WEBRESOURCES_CLOUDFRONT_PUBLICKEY = optionalVar(
+	'WEBRESOURCES_CLOUDFRONT_PUBLICKEY',
+);
+export const WEBRESOURCES_CLOUDFRONT_HOST = optionalVar(
+	'WEBRESOURCES_CLOUDFRONT_HOST',
+);
+
 /**
  * Splits an env var in the format of `${username}:${password}`
  * into a RedisAuth object. Auth is optional, so this can return
