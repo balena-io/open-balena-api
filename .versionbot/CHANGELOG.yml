@@ -1,4 +1,88 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v16.0.6
+      hash: e919ffc74ca14e90317e1afafdeafbcf05971c7b
+      body: |
+        Update balena/open-balena-base from 16.0.1 to 16.0.6
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency node to v20.8.0
+              hash: 84dcf871b68935e6c4c43682edd24b53f5c34e2e
+              body: |
+                Update node from 20.7.0 to 20.8.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.6
+          title: ""
+          date: 2023-09-29T04:01:35.850Z
+        - commits:
+            - subject: Build confd from source to avoid upx issues in released binaries
+              hash: 96e9eb4d3e94c2848ef6a5e83d51d9c71835139f
+              body: >
+                upx v3.96 (2020) fixes this issue, but that was released after
+                the
+
+                v0.16.0 confd release in 2018
+              footer:
+                Resolves: https://github.com/balena-io/balena-monitor/issues/549
+                resolves: https://github.com/balena-io/balena-monitor/issues/549
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-16.0.5
+          title: ""
+          date: 2023-09-21T13:03:29.817Z
+        - commits:
+            - subject: Bump no-systemd image to node 20/npm 10 matching systemd
+              hash: 9240224742ab2b6bd0694a709df53bebd88295da
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Page-
+              nested: []
+          version: open-balena-base-16.0.4
+          title: ""
+          date: 2023-09-21T11:00:30.491Z
+        - commits:
+            - subject: Update dependency node to v18.18.0
+              hash: 9c41d0beafb959c21ffadbc8f8cb0cb8cf58ad8d
+              body: |
+                Update node from 18.17.1 to 18.18.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.3
+          title: ""
+          date: 2023-09-18T23:00:07.081Z
+        - commits:
+            - subject: Update dependency node to v20.7.0
+              hash: 4e0c577fe7372e90b0a8787b72a5fff41f48e4d8
+              body: |
+                Update node from 20.6.1 to 20.7.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.2
+          title: ""
+          date: 2023-09-18T19:08:54.386Z
+  version: 14.9.3
+  title: ""
+  date: 2023-10-01T11:09:31.061Z
+- commits:
     - subject: Bump protobufjs from 7.2.2 to 7.2.5
       hash: 5fd34df187d5c93fc880e4732b6b8b2b28e55003
       body: >
