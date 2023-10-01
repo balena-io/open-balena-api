@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency sinon to v16
+      hash: 4fb8a726ae15010385d23a17ea2c59510fb95fba
+      body: |
+        Update sinon from 15.0.4 to 16.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 14.9.1
+  title: ""
+  date: 2023-10-01T10:20:27.680Z
+- commits:
     - subject: Add S3 webresource handler
       hash: a27f4b5f79da6e996063b29908cbc3008386c14d
       body: ""
