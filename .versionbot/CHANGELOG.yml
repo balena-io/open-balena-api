@@ -1,4 +1,35 @@
 - commits:
+    - subject: Bump protobufjs from 7.2.2 to 7.2.5
+      hash: 5fd34df187d5c93fc880e4732b6b8b2b28e55003
+      body: >
+        Bumps [protobufjs](https://github.com/protobufjs/protobuf.js) from 7.2.2
+        to 7.2.5.
+
+        - [Release notes](https://github.com/protobufjs/protobuf.js/releases)
+
+        - [Changelog](https://github.com/protobufjs/protobuf.js/blob/master/CHANGELOG.md)
+
+        - [Commits](https://github.com/protobufjs/protobuf.js/compare/protobufjs-v7.2.2...protobufjs-v7.2.5)
+
+
+        ---
+
+        updated-dependencies:
+
+        - dependency-name: protobufjs
+          dependency-type: indirect
+        ...
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: dependabot[bot] <support@github.com>
+        signed-off-by: dependabot[bot] <support@github.com>
+      author: dependabot[bot]
+      nested: []
+  version: 14.9.2
+  title: ""
+  date: 2023-10-01T10:51:21.867Z
+- commits:
     - subject: Update dependency sinon to v16
       hash: 4fb8a726ae15010385d23a17ea2c59510fb95fba
       body: |
