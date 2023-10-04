@@ -1,4 +1,35 @@
 - commits:
+    - subject: Bump postcss from 8.4.21 to 8.4.31
+      hash: bbb3b654f57c975c5d916a99c3755e647b1b04db
+      body: >
+        Bumps [postcss](https://github.com/postcss/postcss) from 8.4.21 to
+        8.4.31.
+
+        - [Release notes](https://github.com/postcss/postcss/releases)
+
+        - [Changelog](https://github.com/postcss/postcss/blob/main/CHANGELOG.md)
+
+        - [Commits](https://github.com/postcss/postcss/compare/8.4.21...8.4.31)
+
+
+        ---
+
+        updated-dependencies:
+
+        - dependency-name: postcss
+          dependency-type: indirect
+        ...
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: dependabot[bot] <support@github.com>
+        signed-off-by: dependabot[bot] <support@github.com>
+      author: dependabot[bot]
+      nested: []
+  version: 14.9.7
+  title: ""
+  date: 2023-10-04T06:50:19.095Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v16.0.8
       hash: 3097de578c740a8592b63538e13f575bc12a914f
       body: |
