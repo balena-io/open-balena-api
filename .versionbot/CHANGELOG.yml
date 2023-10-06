@@ -1,4 +1,18 @@
 - commits:
+    - subject: New CONTRACT_ALLOWLIST option to limit device types/contracts
+      hash: 0fd8048baacc0b4327c2e370f59495adae5aaad7
+      body: ""
+      footer:
+        Resolves: "#1433"
+        resolves: "#1433"
+        Change-type: minor
+        change-type: minor
+      author: Shaun Cooley
+      nested: []
+  version: 14.10.0
+  title: ""
+  date: 2023-10-06T16:48:03.200Z
+- commits:
     - subject: Bump postcss from 8.4.21 to 8.4.31
       hash: bbb3b654f57c975c5d916a99c3755e647b1b04db
       body: >
