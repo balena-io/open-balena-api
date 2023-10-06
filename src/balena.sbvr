@@ -88,6 +88,9 @@ Term: api port
 Term: api secret
 	Concept Type: Short Text (Type)
 
+Term: asset
+	Concept Type: WebResource (Type)
+
 Term: app name
 	Concept Type: Text (Type)
 
@@ -703,6 +706,12 @@ Fact type: release has note
 Fact type: release has invalidation reason
 	Necessity: each release has at most one invalidation reason.
 	Necessity: each release that has an invalidation reason, is invalidated.
+Fact type: release has asset
+	Synonymous Form: asset belongs to release
+	Term Form: release asset
+	Database Table Name: release asset
+	Necessity: each release has at most 5 asset.
+	Necessity: each asset belongs to exactly one release.
 
 
 -- service environment variable
