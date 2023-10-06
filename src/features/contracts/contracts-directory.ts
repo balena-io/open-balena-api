@@ -11,6 +11,7 @@ import validator from 'validator';
 import type { RepositoryInfo, Contract } from './index';
 import { getBase64DataUri } from '../../lib/utils';
 import { captureException } from '../../infra/error-handling';
+import { CONTRACT_ALLOWLIST } from '../../lib/config';
 
 const pipeline = util.promisify(stream.pipeline);
 const exists = util.promisify(fs.exists);
@@ -177,11 +178,32 @@ export const getContracts = async (type: string): Promise<Contract[]> => {
 		return [];
 	}
 
-	const contractFiles = await glob(
+	let contractFiles = await glob(
 		`${CONTRACTS_BASE_DIR}/**/contracts/${type}/**/*.json`,
 	);
 	if (!contractFiles.length) {
 		return [];
+	}
+
+	// If there are explicit includes, then everything else is excluded so we need to
+	// filter the contractFiles list to include only contracts that are in the CONTRACT_ALLOWLIST map
+	if (CONTRACT_ALLOWLIST.size > 0) {
+		const slugRegex = new RegExp(`/contracts/(${_.escapeRegExp(type)}/[^/]+)/`);
+		const before = contractFiles.length;
+		contractFiles = contractFiles.filter((file) => {
+			// Get the contract slug from the file path
+			const deviceTypeSlug = file.match(slugRegex)?.[1];
+			if (!deviceTypeSlug) {
+				return false;
+			}
+
+			// Check if this slug is included in the map
+			return CONTRACT_ALLOWLIST.has(deviceTypeSlug);
+		});
+
+		console.log(
+			`CONTRACT_ALLOWLIST reduced ${type} contract slugs from ${before} to ${contractFiles.length}`,
+		);
 	}
 
 	const contracts = await Promise.all(
