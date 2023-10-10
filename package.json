@@ -136,7 +136,7 @@
     "mocha": "^10.2.0",
     "mockery": "^2.1.0",
     "nock": "^13.3.0",
-    "pinejs-client-supertest": "^1.4.0",
+    "pinejs-client-supertest": "^2.0.1",
     "rimraf": "^5.0.0",
     "sinon": "^16.0.0",
     "supertest": "^6.3.3"
