@@ -1,4 +1,20 @@
 - commits:
+    - subject: Update /os/v1/config endpoint for config.json migration
+      hash: 572692e301f656abdc02a0ab5ed245d3b21f3a75
+      body: ""
+      footer:
+        See: https://balena.fibery.io/Work/Improvement/os-config-improving-the-interface-for-config.json-modification-901
+        see: https://balena.fibery.io/Work/Improvement/os-config-improving-the-interface-for-config.json-modification-901
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Christina Ying Wang <christina@balena.io>
+        signed-off-by: Christina Ying Wang <christina@balena.io>
+      author: Christina Ying Wang
+      nested: []
+  version: 14.11.0
+  title: ""
+  date: 2023-10-10T18:33:15.344Z
+- commits:
     - subject: "Augment supertest .expect(status) to log the response body when
         failing  Change-type: patch"
       hash: f35ff3a1a95bd47e8154e7ed49c36506cbc8d005
