@@ -1,6 +1,10 @@
 import jsonwebtoken from 'jsonwebtoken';
 import * as fixtures from './fixtures';
-import { supertest, UserObjectParam } from './supertest';
+import {
+	supertest,
+	augmentStatusAssertionError,
+	UserObjectParam,
+} from './supertest';
 import { version } from './versions';
 import {
 	getContractRepos,
@@ -8,6 +12,7 @@ import {
 } from '../../src/features/contracts';
 
 export const preInit = async () => {
+	augmentStatusAssertionError();
 	await import('./aws-mock');
 	await import('./contracts-mock');
 
