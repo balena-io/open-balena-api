@@ -1,0 +1,20 @@
+{
+	"release1": {
+		"user": "admin",
+		"application": "app1",
+		"composition": {
+			"services": {
+				"image1": {
+					"build": "./image1/"
+				},
+				"image2": {
+					"build": "./image2/"
+				}
+			}
+		},
+		"status": "success",
+		"source": "cloud",
+		"commit": "00000001",
+		"is_final": false
+	}
+}

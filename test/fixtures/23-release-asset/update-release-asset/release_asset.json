@@ -1,0 +1,14 @@
+{
+    "releaseasset1": {
+        "user": "admin",
+        "release": "release1",
+        "asset_key": "update_release_asset.txt",
+        "asset": "update_release_asset.txt"
+    },
+    "releaseasset2": {
+        "user": "admin",
+        "release": "release1",
+        "asset_key": "update_release_asset2.txt",
+        "asset": "update_release_asset2.txt"
+    }
+}

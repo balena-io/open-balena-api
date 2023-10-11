@@ -1,0 +1,8 @@
+{
+    "releaseasset1": {
+        "user": "admin",
+        "release": "release1",
+        "asset_key": "delete_release_asset.txt",
+        "asset": "delete_release_asset.txt"
+    }
+}

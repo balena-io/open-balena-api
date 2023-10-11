@@ -37,7 +37,7 @@ if [[ ! -f ".materialized-config.json" ]]; then
 	touch .materialized-config.json
 fi
 
-docker compose -f docker-compose.test-custom.yml up --renew-anon-volumes --force-recreate --detach redis db
+docker compose -f docker-compose.test-custom.yml up --renew-anon-volumes --force-recreate --detach redis db minio-server minio-client
 if [[ -z "$test_files" ]]; then
 	echo "Running all tests"
 else
