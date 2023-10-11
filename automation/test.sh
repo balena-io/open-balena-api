@@ -15,5 +15,5 @@ docker compose -f docker-compose.test-custom.yml run \
 	sut bash -c "npx mocha && npm run check-model-types-generated"
 
 # ensure redis and db have clean volumes
-docker compose -f docker-compose.test-custom.yml up --force-recreate --renew-anon-volumes -d db redis loki
+docker compose -f docker-compose.test-custom.yml up --force-recreate --renew-anon-volumes -d db redis loki minio-server minio-client
 docker compose -f docker-compose.test-custom.yml run --env NODE_ENV=production sut npx mocha

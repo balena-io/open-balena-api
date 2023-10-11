@@ -9,6 +9,7 @@ import { Headers } from 'request';
 import { API_HOST } from '../../src/lib/config';
 import { requestAsync } from '../../src/infra/request-promise';
 import { version } from './versions';
+import { supertest } from './supertest';
 
 const { api } = sbvrUtils;
 
@@ -205,6 +206,28 @@ const loaders: Dictionary<LoaderFunc> = {
 			);
 		}
 		return release;
+	},
+	release_asset: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+		const release = await fixtures.releases[jsonData.release];
+		if (release == null) {
+			logErrorAndThrow(`Could not find release: ${jsonData.release}`);
+		}
+
+		let req = supertest(user).post('/v6/release_asset');
+
+		req = req.field('release', release.id);
+		req = req.field('asset_key', jsonData.asset_key);
+		req = req.attach('asset', Buffer.from([1, 2, 3]), {
+			filename: jsonData.asset,
+			contentType: 'image/png',
+		});
+
+		const res = await req.expect(201);
+		return res.body;
 	},
 	release_tags: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.user];
@@ -450,6 +473,7 @@ const deleteResource = (resource: string) => async (obj: { id: number }) => {
 
 const modelUnloadOrder = [
 	'devices',
+	'release_asset',
 	'applications',
 	'releases',
 	'image_install',
@@ -464,6 +488,7 @@ const unloaders: {
 	applications: deleteResource('application'),
 	releases: deleteResource('release'),
 	image_install: deleteResource('image_install'),
+	release_asset: deleteResource('release_asset'),
 };
 
 export const clean = async (fixtures: AnyObject) => {

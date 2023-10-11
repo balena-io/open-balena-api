@@ -1,0 +1,12 @@
+{
+	"app1": {
+		"user": "admin",
+		"app_name": "test_retrieve_release_asset",
+		"device_type": "raspberry-pi"
+	},
+	"app2": {
+		"user": "admin",
+		"app_name": "test_retrieve_release_asset_other",
+		"device_type": "raspberry-pi"
+	}
+}
