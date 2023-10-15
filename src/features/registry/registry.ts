@@ -22,6 +22,7 @@ import {
 	TOKEN_AUTH_BUILDER_TOKEN,
 } from '../../lib/config';
 import type { Image, User as DbUser } from '../../balena-model';
+import { incrementRegistryImagePulls } from './metrics';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -591,6 +592,17 @@ export const token: RequestHandler = async (req, res) => {
 					authorizeRequest(req, scopes, tx),
 				]),
 		);
+
+		access.forEach((ac) =>
+			incrementRegistryImagePulls(1, {
+				subject: sub,
+				audience: REGISTRY2_HOST,
+				name: ac.name,
+				alias: ac.alias,
+				type: ac.type,
+			}),
+		);
+
 		res.json({
 			token: generateToken(sub, REGISTRY2_HOST, access!),
 		});
