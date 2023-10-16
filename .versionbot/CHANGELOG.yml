@@ -1,4 +1,16 @@
 - commits:
+    - subject: Increase max webresource file
+      hash: 8f1e91c21ad750ba8475d5ccd2ea565b0a67b71f
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otávio Jacobi
+      nested: []
+  version: 14.11.4
+  title: ""
+  date: 2023-10-16T16:00:14.853Z
+- commits:
     - subject: Bump @babel/traverse from 7.21.2 to 7.23.2
       hash: 19f8a7b4f13ed649f2ed0c6f86f7543ba3c84aaa
       body: >
