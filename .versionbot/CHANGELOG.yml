@@ -1,4 +1,36 @@
 - commits:
+    - subject: Bump @babel/traverse from 7.21.2 to 7.23.2
+      hash: 19f8a7b4f13ed649f2ed0c6f86f7543ba3c84aaa
+      body: >
+        Bumps
+        [@babel/traverse](https://github.com/babel/babel/tree/HEAD/packages/babel-traverse)
+        from 7.21.2 to 7.23.2.
+
+        - [Release notes](https://github.com/babel/babel/releases)
+
+        - [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
+
+        - [Commits](https://github.com/babel/babel/commits/v7.23.2/packages/babel-traverse)
+
+
+        ---
+
+        updated-dependencies:
+
+        - dependency-name: "@babel/traverse"
+          dependency-type: indirect
+        ...
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: dependabot[bot] <support@github.com>
+        signed-off-by: dependabot[bot] <support@github.com>
+      author: dependabot[bot]
+      nested: []
+  version: 14.11.3
+  title: ""
+  date: 2023-10-16T15:04:28.560Z
+- commits:
     - subject: Update grafana/loki Docker tag to v2.9.2
       hash: 8d4b57291b025566c940bb3333868b937143ab96
       body: |
