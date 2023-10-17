@@ -72,6 +72,7 @@ export const ROLES: {
 		'resin.service_label.all',
 		'resin.user.read',
 		`resin.user__has__public_key.all?${matchesUser}`,
+		'resin.release_asset.all',
 	],
 };
 

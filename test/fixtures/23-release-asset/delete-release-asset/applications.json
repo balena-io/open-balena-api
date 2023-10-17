@@ -1,0 +1,7 @@
+{
+	"app1": {
+		"user": "admin",
+		"app_name": "test_delete_release_asset",
+		"device_type": "raspberry-pi"
+	}
+}

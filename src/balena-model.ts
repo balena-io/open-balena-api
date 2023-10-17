@@ -505,6 +505,8 @@ export interface Release {
 	version: object;
 	release__has__tag_key?: ReleaseTag[];
 	release_tag?: ReleaseTag[];
+	release__has__asset_key?: ReleaseAsset[];
+	release_asset?: ReleaseAsset[];
 	image__is_part_of__release?: ImageIsPartOfRelease[];
 	release_image?: ImageIsPartOfRelease[];
 	contains__image?: ImageIsPartOfRelease[];
@@ -578,6 +580,15 @@ export interface DeviceTypeAlias {
 	device_type: { __id: number } | [DeviceType];
 	is_referenced_by__alias: string;
 	id: number;
+}
+
+export interface ReleaseAsset {
+	created_at: DateString;
+	modified_at: DateString;
+	release: { __id: number } | [Release];
+	asset_key: string;
+	id: number;
+	asset: WebResource;
 }
 
 export interface MyApplication {
