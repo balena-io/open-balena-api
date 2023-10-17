@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add release_asset
+      hash: 113d05d4d3efe7e46f6f5cd5e7f37c17a1f7f867
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Otávio Jacobi
+      nested: []
+  version: 14.12.0
+  title: ""
+  date: 2023-10-17T14:51:35.643Z
+- commits:
     - subject: Increase max webresource file
       hash: 8f1e91c21ad750ba8475d5ccd2ea565b0a67b71f
       body: ""
