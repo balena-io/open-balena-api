@@ -86,6 +86,11 @@ export function multiCacheMemoizee<
 			'cacheKey cannot be empty, this can happen if you use an anonymous function and do not manually specify a cacheKey',
 		);
 	}
+	if (!opts.maxAge && !sharedCacheOpts?.maxAge) {
+		throw new Error(
+			'maxAge has to be a positive number in at least of the default or shared cache options',
+		);
+	}
 
 	const convertToMultiStoreOpts = (
 		options: MultiCacheMemoizeeOpts<T>,
@@ -105,6 +110,7 @@ export function multiCacheMemoizee<
 
 	const multiCacheOpts: Parameters<typeof createMultiLevelStore>[1] = {
 		default: { ...convertToMultiStoreOpts(opts), isCacheableValue: () => true },
+		...(opts.maxAge === 0 && { local: false }),
 		global: convertToMultiStoreOpts({ ...opts, ...sharedCacheOpts }),
 	};
 
