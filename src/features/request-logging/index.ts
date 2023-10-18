@@ -18,14 +18,17 @@ export const skipLogging: RequestHandler = (req, _res, next) => {
 // - u/ - user ID; used whenever we can extract a user info about the calls (both for API key and JWT auth);
 // - s/ - service name; used when an internal balena service is making an API request.
 const getCallerId = (req: Request) => {
-	if (req.creds?.service || req.apiKey?.permissions?.includes('service')) {
+	if (
+		(req.creds != null && 'service' in req.creds && req.creds.service) ||
+		req.apiKey?.permissions?.includes('service')
+	) {
 		return `s/${getServiceFromRequest(req) || 'unknown'}`;
 	}
-	if (req.creds) {
-		if (req.creds.actor) {
+	if (req.creds != null) {
+		if ('actor' in req.creds && req.creds.actor) {
 			return `a/${req.creds.actor}`;
 		}
-		if (req.creds.id) {
+		if ('id' in req.creds && req.creds.id) {
 			return `u/${req.creds.id}`;
 		}
 	}
