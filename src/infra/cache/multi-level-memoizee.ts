@@ -16,42 +16,130 @@ type MultiCacheMemoizeeOpts<T extends (...args: any[]) => any> = {
 	max?: MemoizeeOptions<T>['max'];
 } & Pick<MemoizeeOptions<T>, 'preFetch' | 'normalizer'>;
 
-const memoizeeSharedOptionsKeys = ['max', 'maxAge', 'preFetch'] as const;
+const memoizeeExtraOptionsKeys = ['max', 'maxAge', 'preFetch'] as const;
 
-type MultiCacheMemoizeeSharedOpts<T extends (...args: any[]) => any> = Pick<
-	Exclude<MultiCacheMemoizeeOpts<T>, 'max'>,
-	(typeof memoizeeSharedOptionsKeys)[number]
+type AnyFunction = (...args: any[]) => any;
+
+type SharedMultiCacheMemoizeeExtraOpts<T extends AnyFunction> = Exclude<
+	Partial<MultiCacheMemoizeeExtraOpts<T>>,
+	'max'
 >;
+
+type MultiCacheMemoizeeExtraOpts<T extends AnyFunction> = Pick<
+	MultiCacheMemoizeeOpts<T>,
+	(typeof memoizeeExtraOptionsKeys)[number]
+>;
+
+const checkUnsupportedExtraCacheKeys = (
+	opts: Partial<MultiCacheMemoizeeExtraOpts<any>> | undefined,
+	cacheType: string,
+) => {
+	if (opts == null) {
+		return;
+	}
+	const remainingKeys = _.without(
+		Object.keys(opts),
+		...memoizeeExtraOptionsKeys,
+	);
+	if (remainingKeys != null && remainingKeys.length > 0) {
+		throw new Error(`Unsupported ${cacheType} cache options: ${remainingKeys}`);
+	}
+};
 
 export interface MemoizedFn<T extends (...args: any[]) => Promise<any>> {
 	(...args: Parameters<T>): Promise<ResolvableReturnType<T>>;
 	delete: (...args: Parameters<T>) => Promise<void>;
 }
 
+// TODO: Move these to common-types.ts once we make them part of the build output.
+// This makes TS emit a union of `Record<K, T[K]>` for each `keyof T`.
+type ToSinglePropUnions<T> = { [K in keyof T]: Record<K, T[K]> }[keyof T];
+// Requires at least one of the properties of T to be defined aka NonEmptyPartial.
+type AtLeastOneProp<T> = Partial<T> & ToSinglePropUnions<T>;
+
+// The AtLeastOneProp makes the empty object only assignable to SharedMultiCacheMemoizeeExtraOpts so that
+// we can use use `'local'|'global' in opts` to discriminate which of the two types of the union we have on hand.
+type ExtraCacheOptsByType<T extends AnyFunction> = AtLeastOneProp<{
+	local: Partial<MultiCacheMemoizeeExtraOpts<T>> | false;
+	global: SharedMultiCacheMemoizeeExtraOpts<T>;
+}>;
+
+type ExtraCacheOpts<T extends AnyFunction> =
+	| ExtraCacheOptsByType<T>
+	// TODO: Drop SharedMultiCacheMemoizeeExtraOpts from the union in the next major and switch AtLeastOneProp to a plain Partial
+	/**
+	 * @deprecated
+	 */
+	| SharedMultiCacheMemoizeeExtraOpts<T>;
+
 /**
  * A multi layer cache compatible with a subset of memoizee options
  * Note: `undefined`/`null` can only be locally cached so avoid if possible
+ *
+ * @example
+ * multiCacheMemoizee('test', {
+ * 	maxAge: 24 * HOURS,
+ * }, {
+ * 	local: false, // Disable the local cache
+ * });
+ *
+ * @example
+ * multiCacheMemoizee('test', {
+ * 	maxAge: 1 * HOURS,
+ * }, {
+ * 	global: {
+ * 		maxAge: 24 * HOURS, // override the shared cache (redis) ttl
+ * 	}
+ * });
+ *
+ * @example
+ * // deprecated extraCacheOpts notation
+ * multiCacheMemoizee('test', {
+ * 	maxAge: 1 * HOURS,
+ * }, {
+ * 	maxAge: 24 * HOURS, // override the shared cache (redis) ttl
+ * });
  */
 export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined | undefined>,
 >(
 	fn: T,
 	opts: types.RequiredField<MultiCacheMemoizeeOpts<T>, 'undefinedAs'>,
-	sharedCacheOpts?: Partial<MultiCacheMemoizeeSharedOpts<T>>,
+	extraCacheOpts?: ExtraCacheOptsByType<T>,
 ): MemoizedFn<T>;
 export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined>,
 >(
 	fn: T,
 	opts: MultiCacheMemoizeeOpts<T>,
-	sharedCacheOpts?: Partial<MultiCacheMemoizeeSharedOpts<T>>,
+	extraCacheOpts?: ExtraCacheOptsByType<T>,
+): MemoizedFn<T>;
+/**
+ * @deprecated
+ */
+export function multiCacheMemoizee<
+	T extends (...args: any[]) => Promise<Defined | undefined>,
+>(
+	fn: T,
+	opts: types.RequiredField<MultiCacheMemoizeeOpts<T>, 'undefinedAs'>,
+	extraCacheOpts?: SharedMultiCacheMemoizeeExtraOpts<T>,
+): MemoizedFn<T>;
+/**
+ * @deprecated
+ */
+export function multiCacheMemoizee<
+	T extends (...args: any[]) => Promise<Defined>,
+>(
+	fn: T,
+	opts: MultiCacheMemoizeeOpts<T>,
+	extraCacheOpts?: SharedMultiCacheMemoizeeExtraOpts<T>,
 ): MemoizedFn<T>;
 export function multiCacheMemoizee<
 	T extends (...args: any[]) => Promise<Defined | undefined>,
 >(
 	fn: T,
 	opts: MultiCacheMemoizeeOpts<T>,
-	sharedCacheOpts?: Partial<MultiCacheMemoizeeSharedOpts<T>>,
+	extraCacheOpts?: ExtraCacheOpts<T>,
 ): MemoizedFn<T> {
 	const {
 		cacheKey = fn.name,
@@ -68,13 +156,22 @@ export function multiCacheMemoizee<
 	if (remainingKeys.length > 0) {
 		throw new Error(`Unsupported options: ${remainingKeys}`);
 	}
-	const remainingSharedCacheKeys =
-		sharedCacheOpts != null
-			? _.without(Object.keys(sharedCacheOpts), ...memoizeeSharedOptionsKeys)
-			: null;
-	if (remainingSharedCacheKeys != null && remainingSharedCacheKeys.length > 0) {
-		throw new Error(`Unsupported shared cache options: ${remainingKeys}`);
+
+	if (
+		extraCacheOpts != null &&
+		!('local' in extraCacheOpts) &&
+		!('global' in extraCacheOpts)
+	) {
+		extraCacheOpts = {
+			global: extraCacheOpts,
+		};
 	}
+
+	if (extraCacheOpts?.local !== false) {
+		checkUnsupportedExtraCacheKeys(extraCacheOpts?.local, 'local');
+	}
+	checkUnsupportedExtraCacheKeys(extraCacheOpts?.global, 'shared');
+
 	if (promise !== true) {
 		throw new Error('Only promise mode memoization is supported');
 	}
@@ -105,7 +202,11 @@ export function multiCacheMemoizee<
 
 	const multiCacheOpts: Parameters<typeof createMultiLevelStore>[1] = {
 		default: { ...convertToMultiStoreOpts(opts), isCacheableValue: () => true },
-		global: convertToMultiStoreOpts({ ...opts, ...sharedCacheOpts }),
+		local:
+			extraCacheOpts?.local === false
+				? false
+				: convertToMultiStoreOpts({ ...opts, ...extraCacheOpts?.local }),
+		global: convertToMultiStoreOpts({ ...opts, ...extraCacheOpts?.global }),
 	};
 
 	return multiCache(fn, cacheKey, normalizer, multiCacheOpts, undefinedAs);
