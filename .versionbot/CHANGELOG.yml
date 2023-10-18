@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix the request.creds typings
+      hash: 1e6e116e14957ed516335d04a1c41473aa4e1be4
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.12.2
+  title: ""
+  date: 2023-10-18T08:16:42.935Z
+- commits:
     - subject: Update dependency lint-staged to v15
       hash: a1d068f4de02ec0821a68d344a1c91adb5abfb55
       body: |
