@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add release_asset update asset_key tests
+      hash: 032f5d4c42554fd94dcec6e7b24f4fe1ba33cc51
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otávio Jacobi
+      nested: []
+  version: 14.12.6
+  title: ""
+  date: 2023-10-19T14:35:33.930Z
+- commits:
     - subject: Add cascade deletes for release assets
       hash: ea858b69aafc4948ad5005b88470d670849e52b5
       body: ""
