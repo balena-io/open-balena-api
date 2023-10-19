@@ -264,6 +264,31 @@ describe('release asset', function () {
 				.field('asset_key', this.releaseasset2.asset_key)
 				.expect(409, '"\\"release\\" and \\"asset_key\\" must be unique."');
 		});
+
+		it('should fail to update key if another key has the same name with application/json body', async function () {
+			await supertest(this.user)
+				.patch(`/${version}/release_asset(${this.releaseasset1.id})`)
+				.send({
+					asset_key: this.releaseasset2.asset_key,
+				})
+				.expect(409, '"\\"release\\" and \\"asset_key\\" must be unique."');
+		});
+
+		it('should succeed to update key with a different asset_key name with application/json body', async function () {
+			await supertest(this.user)
+				.patch(`/${version}/release_asset(${this.releaseasset1.id})`)
+				.send({
+					asset_key: 'another_asset_key',
+				})
+				.expect(200);
+
+			const res = await supertest(this.user)
+				.get(
+					`/${version}/release_asset(${this.releaseasset1.id})?$select=id,asset_key`,
+				)
+				.expect(200);
+			expect(res.body.d[0].asset_key).to.be.eq('another_asset_key');
+		});
 	});
 
 	describe('delete release asset', function () {
