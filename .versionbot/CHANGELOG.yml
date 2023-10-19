@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add cascade deletes for release assets
+      hash: ea858b69aafc4948ad5005b88470d670849e52b5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.12.5
+  title: ""
+  date: 2023-10-19T13:36:08.866Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v16.0.10
       hash: 4a6796cde94e65b00d5a44f199d218866557daf5
       body: |
