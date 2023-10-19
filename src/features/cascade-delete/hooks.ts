@@ -35,6 +35,7 @@ setupDeleteCascade('image__is_part_of__release', {
 });
 
 setupDeleteCascade('release', {
+	release_asset: 'release',
 	release_tag: 'release',
 	image__is_part_of__release: 'is_part_of__release',
 	image_install: 'is_provided_by__release',
