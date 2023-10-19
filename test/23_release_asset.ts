@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { sbvrUtils, permissions } from '@balena/pinejs';
 import * as fixtures from './test-lib/fixtures';
 import { supertest } from './test-lib/supertest';
 import {
@@ -7,8 +6,6 @@ import {
 	expectEqualBlobs,
 } from './test-lib/fileupload-helper';
 import { version } from './test-lib/versions';
-
-const { api } = sbvrUtils;
 
 describe('release asset', function () {
 	describe('create release asset', function () {
@@ -23,17 +20,6 @@ describe('release asset', function () {
 		});
 
 		after(async function () {
-			await api.resin.delete({
-				resource: 'release_asset',
-				passthrough: { req: permissions.root },
-				options: {
-					$filter: {
-						release: {
-							$in: [this.release1.id, this.release2.id, this.release3.id],
-						},
-					},
-				},
-			});
 			await fixtures.clean(this.loadedFixtures);
 		});
 
