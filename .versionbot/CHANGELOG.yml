@@ -1,4 +1,17 @@
 - commits:
+    - subject: "multi-level-memoizee: Support local & global specific extra Cache
+        options"
+      hash: 3869ab9cbfda8e6e7a76be19cc3cb0a74ef743e9
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.13.0
+  title: ""
+  date: 2023-10-20T09:48:47.384Z
+- commits:
     - subject: Add release_asset update asset_key tests
       hash: 032f5d4c42554fd94dcec6e7b24f4fe1ba33cc51
       body: ""
