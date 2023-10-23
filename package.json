@@ -138,7 +138,7 @@
     "nock": "^13.3.0",
     "pinejs-client-supertest": "^2.0.1",
     "rimraf": "^5.0.0",
-    "sinon": "^16.0.0",
+    "sinon": "^17.0.0",
     "supertest": "^6.3.3"
   },
   "engines": {
