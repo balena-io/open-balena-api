@@ -1,4 +1,17 @@
 - commits:
+    - subject: Lock file maintenance
+      hash: 38e8e235f4ceef457caae3e2dc58762d31b897b6
+      body: |
+        Update
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 14.13.1
+  title: ""
+  date: 2023-10-23T00:10:25.372Z
+- commits:
     - subject: "multi-level-memoizee: Support local & global specific extra Cache
         options"
       hash: 3869ab9cbfda8e6e7a76be19cc3cb0a74ef743e9
