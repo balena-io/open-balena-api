@@ -1,4 +1,56 @@
 - commits:
+    - subject: Update @balena/pinejs dependency
+      hash: a00a9749356a4e44b7aa1bd95c783e64d49fc31e
+      body: |
+        Update @balena/pinejs from 15.3.10 to 15.3.13
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otávio Jacobi
+      nested:
+        - commits:
+            - subject: Blocks updating and creating webresources with non multipart-formdata
+                requests
+              hash: c3d6262661f2680f824790ab0d855caaeb89ec29
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otávio Jacobi
+              nested: []
+          version: pinejs-15.3.13
+          title: ""
+          date: 2023-10-23T15:35:39.739Z
+        - commits:
+            - subject: Update dependency @types/websql to ^0.0.28
+              hash: f1fc571c6340aaecb591ffaee446a59642bad1af
+              body: |
+                Update @types/websql from 0.0.27 to 0.0.28
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: pinejs-15.3.12
+          title: ""
+          date: 2023-10-20T01:33:45.209Z
+        - commits:
+            - subject: Update dependency @types/method-override to ^0.0.33
+              hash: c3266ad791bcc11bed607657af460b87cdba2053
+              body: |
+                Update @types/method-override from 0.0.32 to 0.0.33
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: pinejs-15.3.11
+          title: ""
+          date: 2023-10-20T00:15:28.695Z
+  version: 14.13.2
+  title: ""
+  date: 2023-10-23T16:32:30.561Z
+- commits:
     - subject: Lock file maintenance
       hash: 38e8e235f4ceef457caae3e2dc58762d31b897b6
       body: |
