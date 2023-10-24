@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency sinon to v17
+      hash: 3446a47101418744af03ed2389bee785537ded7d
+      body: |
+        Update sinon from 16.1.3 to 17.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 14.13.3
+  title: ""
+  date: 2023-10-24T06:52:58.825Z
+- commits:
     - subject: Update @balena/pinejs dependency
       hash: a00a9749356a4e44b7aa1bd95c783e64d49fc31e
       body: |
