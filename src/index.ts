@@ -158,7 +158,6 @@ export type { ApplicationType } from './features/application-types/application-t
 export type { DeviceTypeJson } from './features/device-types/device-type-json';
 
 export { DefaultApplicationType } from './features/application-types/application-types';
-export * as request from './infra/request-promise';
 export * as redis from './infra/redis';
 export * as scheduler from './infra/scheduler';
 export * as cache from './infra/cache';
