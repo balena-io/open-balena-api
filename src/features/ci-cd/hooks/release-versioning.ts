@@ -164,6 +164,16 @@ hooks.addPureHook('POST', 'resin', 'release', {
 		const custom = request.custom as CustomObjectBase;
 		// Releases are by final by default
 		custom.is_final ??= true;
+		// Handle case where contracts provided as stringified object
+		if (typeof request.values.contract === 'string') {
+			try {
+				request.values.contract = JSON.parse(request.values.contract);
+			} catch (err) {
+				throw new BadRequestError(
+					'Invalid contract format. Must be a valid JSON object.',
+				);
+			}
+		}
 	},
 	POSTRUN: async ({ api, request, result: releaseId, tx }) => {
 		const custom = request.custom as CustomObjectBase;
