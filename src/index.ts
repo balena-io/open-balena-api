@@ -7,6 +7,7 @@ import compressible from 'compressible';
 import cookieParser from 'cookie-parser';
 import cookieSession from 'cookie-session';
 import type { Application, Handler, Request } from 'express';
+import * as fs from 'node:fs';
 import type { Server } from 'http';
 import _ from 'lodash';
 import methodOverride from 'method-override';
@@ -52,6 +53,7 @@ import {
 	BROTLI_COMPRESSION_QUALITY,
 	GZIP_COMPRESSION_QUALITY,
 	BROTLI_COMPRESSION_WINDOW_BITS,
+	PINE_INIT_FLAG_FILE_PATH,
 } from './lib/config';
 
 import {
@@ -387,8 +389,29 @@ export async function setup(app: Application, options: SetupOptions) {
 	await setupMiddleware(app);
 	await options.onInitMiddleware?.(app);
 
+	console.info('*** pine.init staring');
+	if (PINE_INIT_FLAG_FILE_PATH != null) {
+		console.info(
+			'*** pine.init fs.writeFileSync(PINE_INIT_FLAG_FILE_PATH)',
+			PINE_INIT_FLAG_FILE_PATH,
+		);
+		fs.writeFileSync(PINE_INIT_FLAG_FILE_PATH, '');
+		console.info(
+			'*** pine.init fs.writeFileSync(PINE_INIT_FLAG_FILE_PATH) done',
+		);
+	}
 	await pine.init(app, options.config, options.databaseOptions);
+	if (PINE_INIT_FLAG_FILE_PATH != null) {
+		console.info(
+			'*** pine.init fs.unlinkSync(PINE_INIT_FLAG_FILE_PATH)',
+			PINE_INIT_FLAG_FILE_PATH,
+		);
+		fs.unlinkSync(PINE_INIT_FLAG_FILE_PATH);
+		console.info('*** pine.init fs.unlinkSync(PINE_INIT_FLAG_FILE_PATH) done');
+	}
+	console.info('*** pine.init done');
 	await options.onInitModel?.(app);
+	console.info('*** options.onInitModel done');
 
 	if (options.getNewUserRole) {
 		setRegistrationRoleFunc(options.getNewUserRole);

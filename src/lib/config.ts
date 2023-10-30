@@ -293,6 +293,8 @@ export const LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL = intVar(
 );
 export const LOGS_WRITE_BUFFER_LIMIT = intVar('LOGS_WRITE_BUFFER_LIMIT', 50);
 
+export const PINE_INIT_FLAG_FILE_PATH = optionalVar('PINE_INIT_FLAG_FILE_PATH');
+
 export const REGISTRY2_HOST = requiredVar('REGISTRY2_HOST');
 export const SENTRY_DSN = optionalVar('SENTRY_DSN');
 export const SUPERUSER_EMAIL = optionalVar('SUPERUSER_EMAIL', '');
