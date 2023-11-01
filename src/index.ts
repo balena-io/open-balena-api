@@ -339,6 +339,9 @@ export async function setup(app: Application, options: SetupOptions) {
 		const origin = req.get('Origin') || '*';
 		res.header('Access-Control-Allow-Origin', origin);
 		res.header('Access-Control-Allow-Credentials', 'true');
+		// Indicates the response headers that should be made available to js code running in browsers,
+		// on top of the default CORS-safelisted ones.
+		res.header('Access-Control-Expose-Headers', 'Retry-After');
 
 		if (req.method !== 'OPTIONS') {
 			// If we're not a preflight request then carry on to the real implementation
