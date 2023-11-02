@@ -1,4 +1,30 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v16.0.13
+      hash: 8993ad8591a9e1ad0d14557160851aee9ce024e9
+      body: |
+        Update balena/open-balena-base from 16.0.12 to 16.0.13
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency npm to v10.2.3
+              hash: 01f85340e6131d54f8c6eed7a74c37ff68b8d902
+              body: |
+                Update npm from 10.2.2 to 10.2.3
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.13
+          title: ""
+          date: 2023-11-02T21:00:19.215Z
+  version: 14.13.8
+  title: ""
+  date: 2023-11-02T22:10:39.569Z
+- commits:
     - subject: "rate-limiting: Use the ceiling of ms values for the Retry-After header"
       hash: bdae2895e3ef0c91cd45793417169b2300a4dec9
       body: |
