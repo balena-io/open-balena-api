@@ -1,4 +1,19 @@
 - commits:
+    - subject: "rate-limiting: Use the ceiling of ms values for the Retry-After header"
+      hash: bdae2895e3ef0c91cd45793417169b2300a4dec9
+      body: |
+        Previously we were rounding the value, which
+        could make clients relying on it to be hitting
+        unexpected 429s.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.13.7
+  title: ""
+  date: 2023-11-02T16:24:08.397Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v16.0.12
       hash: 4b8702496e7fd36bac5c85463a489ee51373bc46
       body: |
