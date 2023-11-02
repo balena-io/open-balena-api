@@ -66,7 +66,7 @@ export const createRateLimiter = (
 				if (e instanceof RateLimiterRes) {
 					const headers: { [header: string]: string } = {};
 					if (e.msBeforeNext) {
-						headers['Retry-After'] = `${Math.round(e.msBeforeNext / 1000)}`;
+						headers['Retry-After'] = `${Math.ceil(e.msBeforeNext / 1000)}`;
 					}
 					throw new TooManyRequestsError(
 						'Too Many Requests',
