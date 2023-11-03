@@ -1,4 +1,18 @@
 - commits:
+    - subject: Make Retry-After available to CORS browser requests
+      hash: 7b9734ab00613ac881ea97c63b2313e1691ca5f6
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Expose-Headers
+        see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Expose-Headers
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.14.0
+  title: ""
+  date: 2023-11-03T15:01:49.539Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v16.0.13
       hash: 8993ad8591a9e1ad0d14557160851aee9ce024e9
       body: |
