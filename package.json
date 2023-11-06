@@ -126,7 +126,7 @@
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.1",
     "@types/mockery": "^1.4.30",
-    "@types/sinon": "^10.0.14",
+    "@types/sinon": "^17.0.0",
     "@types/supertest": "^2.0.12",
     "@types/temp": "^0.9.1",
     "chai": "^4.3.7",
