@@ -1,4 +1,17 @@
 - commits:
+    - subject: Lock file maintenance
+      hash: 49d93cc13e8a05d6fb6ed56e5a3a0b26d1bc2d6c
+      body: |
+        Update
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 14.14.1
+  title: ""
+  date: 2023-11-06T01:30:50.799Z
+- commits:
     - subject: Make Retry-After available to CORS browser requests
       hash: 7b9734ab00613ac881ea97c63b2313e1691ca5f6
       body: ""
