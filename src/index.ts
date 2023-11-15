@@ -152,7 +152,7 @@ import { apiRoot } from './balena';
 
 export * as tags from './features/tags/validation';
 
-export type { Creds, User } from './infra/auth/jwt-passport';
+export type { Creds, TokenPayload } from './infra/auth/jwt-passport';
 export type { Access } from './features/registry/registry';
 export type { ApplicationType } from './features/application-types/application-types';
 export type { DeviceTypeJson } from './features/device-types/device-type-json';

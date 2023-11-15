@@ -694,7 +694,12 @@ const getSubject = async (
 	if (req.apiKey != null && !_.isEmpty(req.apiKey.permissions)) {
 		return await $getSubject(req.apiKey.key, req.params.subject, tx);
 	} else if (req.user) {
-		// If there's no api key then try to use the username from the JWT
-		return req.user.username;
+		// If there's no api key then use jwt userId to fetch username
+		const user = (await api.resin.get({
+			resource: 'user',
+			id: req.user.id,
+			options: { $select: 'username' },
+		})) as DbUser;
+		return user.username;
 	}
 };

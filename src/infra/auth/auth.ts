@@ -4,11 +4,11 @@ import _ from 'lodash';
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
 import { retrieveAPIKey } from './api-keys';
-import { User } from './jwt-passport';
 
 import { getIP } from '../../lib/utils';
 import type { PickDeferred, User as DbUser } from '../../balena-model';
 import { PreparedFn } from 'pinejs-client-core';
+import { TokenPayload } from '../..';
 
 const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
@@ -144,6 +144,15 @@ export const reqHasPermission = (
 
 // If adding/removing fields, please also update `User`
 // in "typings/common.d.ts".
+interface AuthenticatedUser
+	extends Pick<
+			DbUser,
+			'id' | 'username' | 'email' | 'created_at' | 'jwt_secret'
+		>,
+		TokenPayload {
+	actor: number;
+}
+
 export const userFields = [
 	'id',
 	'actor',
@@ -190,19 +199,19 @@ export function getUser(
 	req: Request | hooks.HookReq,
 	txParam: Tx | undefined,
 	required?: true,
-): Promise<User>;
+): Promise<AuthenticatedUser>;
 export function getUser(
 	req: Request | hooks.HookReq,
 	txParam: Tx | undefined,
 	required: false,
-): Promise<User | undefined>;
+): Promise<AuthenticatedUser | undefined>;
 export async function getUser(
 	req: hooks.HookReq & Pick<Request, 'user' | 'creds'>,
 	/** You should always be passing a Tx, unless you are using this in a middleware. */
 	txParam: Tx | undefined,
 	required = true,
-): Promise<Express.User | undefined> {
-	const $getUser = async (tx: Tx) => {
+): Promise<AuthenticatedUser | undefined> {
+	const $getUser = async (tx: Tx): Promise<AuthenticatedUser | undefined> => {
 		// This shouldn't happen but it does for some internal PineJS requests
 		if (req.user && !req.creds) {
 			req.creds = req.user;
@@ -214,7 +223,35 @@ export async function getUser(
 				throw new UnauthorizedError('User has not been authorized');
 			}
 			// If partial user, promise will resolve to `null` user
-			return req.user;
+
+			if ('id' in req.creds) {
+				const dbuser = (await api.resin.get({
+					resource: 'user',
+					id: req.creds?.id,
+					passthrough: { tx, req },
+					options: { $select: userFields },
+				})) as PickDeferred<DbUser, (typeof userFields)[number]>;
+
+				return {
+					...req.creds,
+					..._.pick(dbuser, userFields),
+					actor: dbuser.actor.__id,
+				};
+			}
+
+			if ('actor' in req.creds) {
+				const [dbuser] = (await api.resin.get({
+					resource: 'user',
+					passthrough: { tx, req },
+					options: { $select: userFields, $filter: { actor: req.creds.actor } },
+				})) as Array<PickDeferred<DbUser, (typeof userFields)[number]>>;
+
+				return {
+					...req.creds,
+					..._.pick(dbuser, userFields),
+					actor: dbuser.actor.__id,
+				};
+			}
 		}
 
 		await retrieveAPIKey(req, tx);
@@ -236,7 +273,11 @@ export async function getUser(
 		} else if (required) {
 			throw new UnauthorizedError('User not found for API key');
 		}
-		return req.user;
+		return {
+			...req.creds,
+			..._.pick(user, userFields),
+			actor: user.actor.__id,
+		};
 	};
 
 	if (txParam == null) {
