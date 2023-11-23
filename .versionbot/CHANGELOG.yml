@@ -1,4 +1,84 @@
 - commits:
+    - subject: Update @balena/pinejs
+      hash: 97f3279ded5aea0a8517d1a04ec30d7a69a913a7
+      body: |
+        Update @balena/pinejs from 15.3.13 to 15.3.17
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested:
+        - commits:
+            - subject: Update @balena/lint
+              hash: 079f1a9438c61b7642088470818ead9580eb1f85
+              body: |
+                Update @balena/lint from 7.1.1 to 7.2.4
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-15.3.17
+          title: ""
+          date: 2023-11-23T19:26:45.288Z
+        - commits:
+            - subject: Handling typing changes of @types/pg
+              hash: f7520efb9e2c44ab5ae341ad8fdd635814819eb0
+              body: >
+                rowCount can be NULL in the case of PG returning from `LOCK`
+
+
+                Refernece:
+
+                https://github.com/DefinitelyTyped/DefinitelyTyped/pull/66990
+
+                https://github.com/brianc/node-postgres/pull/2967
+
+
+                In pinejs the case is handled and as of now we don't want to populate a breaking change by transparently push the types to callers.
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Harald Fischer <harald@balena.io>
+                signed-off-by: Harald Fischer <harald@balena.io>
+              author: Harald Fischer
+              nested: []
+          version: pinejs-15.3.16
+          title: ""
+          date: 2023-11-09T13:56:00.178Z
+        - commits:
+            - subject: Do not force storage class on s3 upload
+              hash: e72ffa55f21408996c04eab44d0013bf7a3f905d
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otávio Jacobi
+              nested: []
+          version: pinejs-15.3.15
+          title: ""
+          date: 2023-10-25T22:46:52.289Z
+        - commits:
+            - subject: Update dependency @types/node to v20
+              hash: 86536af590e8b408e9cae3ee6e30621d6e2ae97e
+              body: |
+                Update @types/node from 18.18.6 to 20.8.7
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: pinejs-15.3.14
+          title: ""
+          date: 2023-10-24T02:14:39.535Z
+  version: 14.14.4
+  title: ""
+  date: 2023-11-23T22:57:58.394Z
+- commits:
     - subject: Lock file maintenance
       hash: 0d77904c6730ad37c71d4c8a0f10d10987818569
       body: |
