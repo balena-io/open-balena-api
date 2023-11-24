@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency rate-limiter-flexible to v3
+      hash: 90efa8ab203694a2fb59dd0059d4d016b26318f5
+      body: |
+        Update rate-limiter-flexible from 2.4.2 to 3.0.4
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 14.14.5
+  title: ""
+  date: 2023-11-24T11:57:13.497Z
+- commits:
     - subject: Update @balena/pinejs
       hash: 97f3279ded5aea0a8517d1a04ec30d7a69a913a7
       body: |
