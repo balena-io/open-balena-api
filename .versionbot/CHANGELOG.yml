@@ -1,4 +1,18 @@
 - commits:
+    - subject: Publish `balena/open-balena-api` for ARM64
+      hash: fa8380615f7315b5dc85ed61d5b7e0594930ceea
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: fisehara <harald@balena.io>
+        signed-off-by: fisehara <harald@balena.io>
+      author: fisehara
+      nested: []
+  version: 14.15.0
+  title: ""
+  date: 2023-11-28T10:50:32.427Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v16.0.15
       hash: ebbc33a9e41e8298d00dd287d153155a8b2846cd
       body: |
