@@ -21,5 +21,10 @@ jobs:
     secrets: inherit
     with:
       docker_images: balena/open-balena-api
+      docker_runs_on: >
+        {
+          "linux/amd64": ["self-hosted","X64"],
+          "linux/arm64": ["self-hosted","ARM64"]
+        }
       # This allows external PRs to run custom actions so the custom actions must be safe to run in that context
       restrict_custom_actions: false
