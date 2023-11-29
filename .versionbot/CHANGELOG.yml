@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update TypeScript to 5.3.2
+      hash: 91b97a16f9c8cdc56349eac14bb2fb6bc9bc470d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.15.1
+  title: ""
+  date: 2023-11-29T22:13:24.338Z
+- commits:
     - subject: Publish `balena/open-balena-api` for ARM64
       hash: fa8380615f7315b5dc85ed61d5b7e0594930ceea
       body: ""
