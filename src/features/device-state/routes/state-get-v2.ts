@@ -16,6 +16,7 @@ import {
 	getStateDelayingEmpty,
 	getConfig,
 	getStateEventAdditionalFields,
+	EnvVarList,
 } from '../state-get-utils';
 import { sbvrUtils } from '@balena/pinejs';
 import { events } from '..';
@@ -100,6 +101,20 @@ function buildAppFromRelease(
 			);
 		}
 		const svc = si.service[0];
+
+		const findDontRunVar = (vars: EnvVarList) =>
+			vars.find(
+				({ name }) => name === 'xBALENA_DONT_RUN_THIS_SERVICE_THING_THINGY',
+			);
+		const dontRunVar =
+			findDontRunVar(si.device_service_environment_variable) ??
+			findDontRunVar(svc.service_environment_variable) ??
+			findDontRunVar(ipr.image_environment_variable);
+		const dontRunThisService = dontRunVar?.value === 'true';
+
+		if (dontRunThisService) {
+			continue;
+		}
 
 		const environment: Dictionary<string> = {};
 		varListInsert(ipr.image_environment_variable, environment);

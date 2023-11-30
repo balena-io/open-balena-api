@@ -1,0 +1,8 @@
+{
+	"envVar1": {
+		"service": "service1",
+		"name": "xBALENA_DONT_RUN_THIS_SERVICE_THING_THINGY",
+		"value": "true",
+		"user": "admin"
+	}
+}
