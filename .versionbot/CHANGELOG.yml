@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update @balena/pinejs to 15.3.28 Update @balena/pinejs from 15.3.17 to
+        15.3.28
+      hash: af2b69ad53be65d9f9ddb896a2a02893293585b2
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otávio Jacobi
+      nested: []
+  version: 14.15.2
+  title: ""
+  date: 2023-11-30T19:39:57.253Z
+- commits:
     - subject: Update TypeScript to 5.3.2
       hash: 91b97a16f9c8cdc56349eac14bb2fb6bc9bc470d
       body: ""
