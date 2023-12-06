@@ -243,7 +243,7 @@ function handleStreamingWrite(
 					});
 				}
 				// Even if the connection was closed, still flush the buffer
-				const publishPromise = publishBackend(backend, ctx, buffer);
+				const publishPromise = publishBackend(backend, ctx, [...buffer]);
 				// Clear the buffer
 				buffer.length = 0;
 				// Resume in case it was paused due to buffering
