@@ -1,4 +1,18 @@
 - commits:
+    - subject: Avoid any async operations for loki publish before processing logs
+      hash: 79bf42cb5fa44ab1be868df2440c546a205bb780
+      body: |
+        This means the logs are processed before being cleared as is expected
+        by the interface
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 14.15.6
+  title: ""
+  date: 2023-12-12T10:36:45.708Z
+- commits:
     - subject: Update grafana/loki Docker tag to v2.9.3
       hash: 91113decff4d243587dcda8b1e59235c0a7589b4
       body: |
