@@ -204,16 +204,16 @@ export class LokiBackend implements DeviceLogsBackend {
 	}
 
 	public async publish(
-		$ctx: LogContext,
+		ctx: LogContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	): Promise<any> {
-		const ctx = await assertLokiLogContext($ctx);
 		const countLogs = logs.length;
 		incrementPublishCallTotal();
 		incrementPublishLogMessagesTotal(countLogs);
 		const streams = this.fromDeviceLogsToStreams(ctx, logs);
+		const lokiCtx = await assertLokiLogContext(ctx);
 		try {
-			await this.push(ctx.belongs_to__application, streams);
+			await this.push(lokiCtx.belongs_to__application, streams);
 			incrementPublishCallSuccessTotal();
 		} catch (err) {
 			incrementPublishCallFailedTotal();
