@@ -11,6 +11,13 @@ import type {
 	RelationshipInternalNode,
 	TextTypeNodes,
 	BooleanTypeNodes,
+	ReferencedFieldNode,
+	SelectQueryNode,
+	NumberTypeNodes,
+	UnknownTypeNodes,
+	NullNode,
+	SelectNode,
+	AliasNode,
 } from '@balena/abstract-sql-compiler';
 
 import { sbvrUtils } from '@balena/pinejs';
@@ -264,4 +271,69 @@ export const joinTextPartsAndPrefix = (
 		],
 		joinedParts,
 	];
+};
+
+export const overrideFieldType = (
+	abstractSqlModel: AbstractSqlModel,
+	resourceName: string,
+	fieldName: string,
+	newFieldType: string,
+) => {
+	if (abstractSqlModel.tables[resourceName] == null) {
+		throw new Error(
+			`Could not find resource "${resourceName}" while trying to override field type for "${fieldName}"`,
+		);
+	}
+	const targetField = abstractSqlModel.tables[resourceName].fields.find(
+		(field) => field.fieldName === fieldName,
+	);
+	if (targetField == null) {
+		throw new Error(
+			`Could not find field "${fieldName}" on resource "${resourceName}" while trying to change its type to "${newFieldType}"`,
+		);
+	}
+	if (targetField.dataType === newFieldType) {
+		throw new Error(
+			`Field "${fieldName}" on resource "${resourceName}" is already of type "${newFieldType}"`,
+		);
+	}
+	targetField.dataType = newFieldType;
+};
+
+export type AliasValidNodeType =
+	| ReferencedFieldNode
+	| SelectQueryNode
+	| NumberTypeNodes
+	| BooleanTypeNodes
+	| UnknownTypeNodes
+	| NullNode;
+
+export const aliasFields = (
+	abstractSqlModel: AbstractSqlModel,
+	resourceName: string,
+	aliases: Dictionary<string | AliasValidNodeType>,
+): SelectNode[1] => {
+	const fieldNames = abstractSqlModel.tables[resourceName].fields.map(
+		({ fieldName }) => fieldName,
+	);
+	const nonexistentFields = _.difference(Object.keys(aliases), fieldNames, [
+		'$toResource',
+	]);
+	if (nonexistentFields.length > 0) {
+		throw new Error(
+			`Tried to alias non-existent fields: '${nonexistentFields.join(', ')}'`,
+		);
+	}
+	return fieldNames.map(
+		(fieldName): AliasNode<AliasValidNodeType> | ReferencedFieldNode => {
+			const alias = aliases[fieldName];
+			if (alias) {
+				if (typeof alias === 'string') {
+					return ['Alias', ['ReferencedField', resourceName, alias], fieldName];
+				}
+				return ['Alias', alias, fieldName];
+			}
+			return ['ReferencedField', resourceName, fieldName];
+		},
+	);
 };

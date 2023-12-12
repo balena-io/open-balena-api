@@ -3,19 +3,11 @@ import { sbvrUtils, errors, types } from '@balena/pinejs';
 import express from 'express';
 import _ from 'lodash';
 import config = require('./config');
-import { apiRoot } from './src/balena';
 import packageJson from './package.json';
 import { promises as fs } from 'fs';
 import { TRUST_PROXY, PORT } from './src/lib/config';
 
-export const EXPOSED_API_VERSION = 'v6';
-
 const getUrl = (req: express.Request) => req.url;
-
-async function onInitMiddleware(initApp: express.Application) {
-	const { forwardRequests } = await import('./src/infra/versions');
-	forwardRequests(initApp, EXPOSED_API_VERSION, apiRoot);
-}
 
 async function onInitModel() {
 	const { updateOrInsertModel } = await import(
@@ -241,7 +233,6 @@ const init = async () => {
 			config,
 			version: packageJson.version,
 			getUrl,
-			onInitMiddleware,
 			onInitModel,
 			onInitHooks,
 		});
