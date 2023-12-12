@@ -46,7 +46,9 @@ export type Subscription = (log: DeviceLog) => void;
 export interface DeviceLogsBackend {
 	history(ctx: LogContext, count: number): Promise<DeviceLog[]>;
 	available: boolean;
-	// `logs` will be mutated to empty and so must be handled synchronously
+	/**
+	 * `logs` will be mutated to empty and so must be handled synchronously
+	 */
 	publish(ctx: LogContext, logs: DeviceLog[]): Promise<any>;
 	subscribe(ctx: LogContext, subscription: Subscription): void;
 	unsubscribe(ctx: LogContext, subscription: Subscription): void;
