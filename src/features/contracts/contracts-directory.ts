@@ -3,7 +3,6 @@ import request from 'request';
 import tar from 'tar';
 import glob from 'fast-glob';
 import fs from 'fs';
-import util from 'util';
 import stream from 'stream';
 import path from 'path';
 import os from 'os';
@@ -12,9 +11,6 @@ import type { RepositoryInfo, Contract } from './index';
 import { getBase64DataUri } from '../../lib/utils';
 import { captureException } from '../../infra/error-handling';
 import { CONTRACT_ALLOWLIST } from '../../lib/config';
-
-const pipeline = util.promisify(stream.pipeline);
-const exists = util.promisify(fs.exists);
 
 const CONTRACTS_BASE_DIR = path.join(os.tmpdir(), 'contracts');
 
@@ -118,7 +114,10 @@ const prepareContractDirectory = async (repo: RepositoryInfo) => {
 		CONTRACTS_BASE_DIR,
 		`${repo.owner}-${repo.name}`,
 	);
-	if (!(await exists(archiveDir))) {
+	try {
+		await fs.promises.access(archiveDir);
+	} catch {
+		// If the directory doesn't exist, create it
 		await fs.promises.mkdir(archiveDir, { recursive: true });
 	}
 
@@ -163,7 +162,7 @@ export const fetchContractsLocally = async (repos: RepositoryInfo[]) => {
 					}
 				}) as unknown as NodeJS.ReadableStream;
 
-			await pipeline(get, untar);
+			await stream.promises.pipeline(get, untar);
 		}),
 	);
 };
