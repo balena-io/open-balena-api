@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use native promisified nodejs interfaces instead of `util.promisify`
+      hash: 6d5b2aad86b69e68d638fa8c819398175e84bbda
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 14.15.8
+  title: ""
+  date: 2023-12-13T14:42:53.770Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v16.0.18
       hash: 6855d004046a85160fbca72e000f390e6f68c351
       body: |
