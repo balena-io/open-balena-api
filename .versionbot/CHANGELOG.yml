@@ -1,4 +1,16 @@
 - commits:
+    - subject: Improve the supervisor app state GET v3 tests
+      hash: 94e515256e59159edcd0544cc1ccb8630e1c908b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.15.9
+  title: ""
+  date: 2023-12-14T13:10:20.788Z
+- commits:
     - subject: Use native promisified nodejs interfaces instead of `util.promisify`
       hash: 6d5b2aad86b69e68d638fa8c819398175e84bbda
       body: ""
