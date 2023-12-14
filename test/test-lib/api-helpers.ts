@@ -1,8 +1,9 @@
+import type { PinejsClient } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
 import { Release } from '../../src/balena-model';
 import { supertest, UserObjectParam } from '../test-lib/supertest';
 import { expect } from 'chai';
 import { version } from './versions';
-import type { PineTest } from './pinetest';
+import { pineTest, PineTest } from './pinetest';
 
 interface MockReleaseParams {
 	belongs_to__application: number;
@@ -81,8 +82,8 @@ export const addImageToRelease = async (
 		.expect(201);
 };
 
-export const expectResourceToMatch = async (
-	pineUser: PineTest,
+export const expectResourceToMatch = async <T = AnyObject>(
+	pineUser: PineTest | PinejsClient | { token: string } | string,
 	resource: string,
 	id: number | AnyObject,
 	expectations: Dictionary<
@@ -90,24 +91,42 @@ export const expectResourceToMatch = async (
 		| string
 		| number
 		| boolean
-		| ((chaiPropertyAssetion: Chai.Assertion) => void)
+		| object
+		| ((chaiPropertyAssertion: Chai.Assertion) => void)
 	>,
-) => {
-	const { body: result } = await pineUser
-		.get({
-			resource,
-			id,
-			options: {
-				$select: Object.keys(expectations),
-			},
-		})
-		.expect(200);
+): Promise<T> => {
+	if (typeof pineUser === 'string' || 'token' in pineUser) {
+		pineUser = pineTest.clone({ passthrough: { user: pineUser } });
+	}
+
+	const requestPromise = pineUser.get({
+		resource,
+		id,
+		options: {
+			$select: Object.keys(expectations),
+		},
+	});
+
+	const result =
+		// When providing a pinejs-client-supertest instance the promise will also have the `.expect*()` method
+		// in which case we use it as an extra check that everything went fine.
+		(
+			'expect' in requestPromise
+				? (await requestPromise.expect(200)).body
+				: await requestPromise
+		) as T | undefined;
+	expect(result).to.be.an('object');
 	for (const [key, valueOrAssertion] of Object.entries(expectations)) {
 		if (typeof valueOrAssertion === 'function') {
 			valueOrAssertion(expect(result).to.have.property(key));
+		} else if (
+			typeof valueOrAssertion === 'object' &&
+			valueOrAssertion != null
+		) {
+			expect(result).to.have.property(key).to.deep.equal(valueOrAssertion);
 		} else {
 			expect(result).to.have.property(key, valueOrAssertion);
 		}
 	}
-	return result;
+	return result!;
 };

@@ -4,14 +4,17 @@ import * as fixtures from './test-lib/fixtures';
 import * as fakeDevice from './test-lib/fake-device';
 
 import * as configMock from '../src/lib/config';
-import { UserObjectParam } from './test-lib/supertest';
+import type { UserObjectParam } from './test-lib/supertest';
+import type { Application, Release } from '../src/balena-model';
+import { expectResourceToMatch } from './test-lib/api-helpers';
 
 describe('Apps', function () {
 	describe('Supervisor app', () => {
 		let fx: fixtures.Fixtures;
 		let admin: UserObjectParam;
-		let applicationId: number;
-		let supervisorAppUuid: string;
+		let userApp: Application;
+		let supervisorApp: Application;
+		let supervisorRelease2: Release;
 		let deviceWithSupervisor: fakeDevice.Device;
 		let deviceWithoutSupervisor: fakeDevice.Device;
 
@@ -20,23 +23,28 @@ describe('Apps', function () {
 			fx = await fixtures.load('19-apps');
 
 			admin = fx.users.admin;
-			applicationId = fx.applications.app1.id;
-
-			supervisorAppUuid = fx.applications.supervisorApp.uuid;
+			userApp = fx.applications.app1;
+			supervisorApp = fx.applications.supervisorApp;
+			supervisorRelease2 = fx.releases.supervisorRelease2;
 
 			deviceWithSupervisor = await fakeDevice.provisionDevice(
 				admin,
-				applicationId,
+				userApp.id,
 				'balenaOS 2.3.0+rev1',
 				'1.0.1',
-				fx.releases.supervisorRelease1.id,
 			);
+			await expectResourceToMatch(admin, 'device', deviceWithSupervisor.id, {
+				should_be_managed_by__release: { __id: supervisorRelease2.id },
+			});
 			deviceWithoutSupervisor = await fakeDevice.provisionDevice(
 				admin,
-				applicationId,
+				userApp.id,
 				'balenaOS 2.3.0+rev1',
 				'3.1.4',
 			);
+			await expectResourceToMatch(admin, 'device', deviceWithoutSupervisor.id, {
+				should_be_managed_by__release: null,
+			});
 		});
 
 		after(async () => {
@@ -47,26 +55,42 @@ describe('Apps', function () {
 
 		it('should have a supervisor app if managed by release', async () => {
 			const state = await deviceWithSupervisor.getStateV3();
+			expect(
+				Object.keys(state[deviceWithSupervisor.uuid].apps).sort(),
+				'wrong number of apps',
+			).to.deep.equal([supervisorApp.uuid, userApp.uuid].sort());
+
+			expect(state[deviceWithSupervisor.uuid].apps)
+				.to.have.property(supervisorApp.uuid)
+				.that.is.an('object');
 			const supervisorApp1 =
-				state[deviceWithSupervisor.uuid].apps?.[`${supervisorAppUuid}`];
+				state[deviceWithSupervisor.uuid].apps?.[supervisorApp.uuid];
+			expect(supervisorApp1).to.have.property('name', supervisorApp.app_name);
+			expect(supervisorApp1).to.have.property('is_host', false);
+			expect(supervisorApp1).to.have.property('class', 'app');
+			expect(supervisorApp1)
+				.to.have.nested.property('releases')
+				.that.has.property(supervisorRelease2.commit)
+				.that.is.an('object');
+			expect(supervisorApp1.releases?.[supervisorRelease2.commit])
+				.to.have.property('services')
+				.that.has.property('resin-supervisor')
+				.that.is.an('object');
 
 			expect(supervisorApp1, 'supervisor is undefined').to.not.be.undefined;
-			expect(
-				Object.keys(state[deviceWithSupervisor.uuid].apps).length,
-				'wrong number of apps',
-			).to.be.equal(2);
 		});
 
 		it('should not have a supervisor app if not managed by release', async () => {
 			const state = await deviceWithoutSupervisor.getStateV3();
-			const supervisorApp1 =
-				state[deviceWithoutSupervisor.uuid].apps?.[`${supervisorAppUuid}`];
-
-			expect(supervisorApp1, 'supervisor is undefined').to.be.undefined;
 			expect(
-				Object.keys(state[deviceWithoutSupervisor.uuid].apps).length,
+				Object.keys(state[deviceWithoutSupervisor.uuid].apps),
 				'wrong number of apps',
-			).to.be.equal(1);
+			).to.deep.equal([userApp.uuid]);
+
+			expect(
+				state[deviceWithoutSupervisor.uuid].apps,
+				'supervisor app should not be included',
+			).to.not.have.property(supervisorApp.uuid);
 		});
 	});
 });
