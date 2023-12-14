@@ -1,4 +1,20 @@
 - commits:
+    - subject: Update @balena/lint & its eslint dependencies
+      hash: 1ebb5481ceced30f27771c6fc0fcb935c9b6fae7
+      body: |
+        Update @balena/lint from 7.1.1 to 7.2.4
+
+        Also removes the unknown TS version
+        warning and makes linting a bit faster.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.15.10
+  title: ""
+  date: 2023-12-14T16:00:19.949Z
+- commits:
     - subject: Improve the supervisor app state GET v3 tests
       hash: 94e515256e59159edcd0544cc1ccb8630e1c908b
       body: ""
