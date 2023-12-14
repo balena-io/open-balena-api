@@ -3,7 +3,7 @@ import $supertest from 'supertest';
 import { User } from '../../src/infra/auth/jwt-passport';
 import { ThisShouldNeverHappenError } from '../../src/infra/error-handling';
 
-export type UserObjectParam = Partial<User & { token: string }>;
+export type UserObjectParam = Partial<User> & { token: string };
 
 export const augmentStatusAssertionError = () => {
 	const originalExpect: $supertest.Test['expect'] =

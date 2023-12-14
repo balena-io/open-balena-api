@@ -10,6 +10,7 @@
 		"user": "admin",
 		"device_type": "intel-nuc",
 		"is_public": true,
+		"is_of__class": "app",
 		"app_name": "amd64-supervisor",
 		"organization": "balena_os"
 	},
@@ -18,6 +19,7 @@
 		"user": "admin",
 		"device_type": "raspberrypi3",
 		"is_public": true,
+		"is_of__class": "app",
 		"app_name": "armv7hf-supervisor",
 		"organization": "balena_os"
 	}

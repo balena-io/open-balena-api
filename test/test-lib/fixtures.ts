@@ -78,6 +78,7 @@ const loaders: Dictionary<LoaderFunc> = {
 			'application_type',
 			'is_public',
 			'is_host',
+			'is_of__class',
 			'uuid',
 		);
 
