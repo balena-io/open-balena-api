@@ -1,4 +1,16 @@
 - commits:
+    - subject: "test-lib/api-helpers: Remove deep pinejs import"
+      hash: 818072d75ce662d991039f78681181820724116e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.15.11
+  title: ""
+  date: 2023-12-15T13:26:29.976Z
+- commits:
     - subject: Update @balena/lint & its eslint dependencies
       hash: 1ebb5481ceced30f27771c6fc0fcb935c9b6fae7
       body: |
