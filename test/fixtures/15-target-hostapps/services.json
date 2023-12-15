@@ -1,0 +1,22 @@
+{
+	"intel-nuc_service1": {
+		"service_name": "main",
+		"application": "intel-nuc",
+		"user": "admin"
+	},
+	"intel-nuc-esr_service1": {
+		"service_name": "main",
+		"application": "intel-nuc-esr",
+		"user": "admin"
+	},
+	"raspberrypi3_service1": {
+		"service_name": "main",
+		"application": "raspberrypi3",
+		"user": "admin"
+	},
+	"user-app1_service1": {
+		"service_name": "main",
+		"application": "user-app1",
+		"user": "admin"
+	}
+}

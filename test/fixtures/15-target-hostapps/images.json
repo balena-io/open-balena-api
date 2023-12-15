@@ -1,0 +1,58 @@
+{
+	"nucRelease0Image": {
+		"user": "admin",
+		"service": "intel-nuc_service1",
+		"releases": [ "release0" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"release1Image": {
+		"user": "admin",
+		"service": "raspberrypi3_service1",
+		"releases": [ "release1" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"nucRelease2Image": {
+		"user": "admin",
+		"service": "intel-nuc_service1",
+		"releases": [ "release2" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"release3Image": {
+		"user": "admin",
+		"service": "intel-nuc-esr_service1",
+		"releases": [ "release3" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"nucRelease4Image": {
+		"user": "admin",
+		"service": "intel-nuc_service1",
+		"releases": [ "release4" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"nucRelease5Image": {
+		"user": "admin",
+		"service": "intel-nuc_service1",
+		"releases": [ "release5" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"nucRelease6Image": {
+		"user": "admin",
+		"service": "intel-nuc_service1",
+		"releases": [ "release6" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"nucUnifiedReleaseImage": {
+		"user": "admin",
+		"service": "intel-nuc_service1",
+		"releases": [ "unifiedRelease" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	}
+}

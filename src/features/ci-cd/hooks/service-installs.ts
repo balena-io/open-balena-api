@@ -278,36 +278,46 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	},
 });
 
-hooks.addPureHook('POST', 'resin', 'device', {
-	POSTRUN: async ({ request, api, tx, result: deviceId }) => {
-		// Don't try to add service installs if the device wasn't created
-		if (deviceId == null) {
-			return;
-		}
+const addSystemAppServiceInstallHooks = (
+	fieldName: 'should_be_managed_by__release' | 'should_be_operated_by__release',
+) => {
+	hooks.addPureHook('POST', 'resin', 'device', {
+		POSTRUN: async ({ request, api, tx, result: deviceId }) => {
+			// Don't try to add service installs if the device wasn't created
+			if (deviceId == null) {
+				return;
+			}
 
-		const rootApi = api.clone({ passthrough: { tx, req: permissions.root } });
+			const releaseId = request.values[fieldName];
+			// Create supervisor/hostApp service installs when the supervisor/hostApp is pinned on device creation
+			if (releaseId != null) {
+				const rootApi = api.clone({
+					passthrough: { tx, req: permissions.root },
+				});
+				await createReleaseServiceInstalls(rootApi, [deviceId], {
+					id: releaseId,
+				});
+			}
+		},
+	});
 
-		// Create supervisor service installs when the supervisor is pinned on device creation
-		if (request.values.should_be_managed_by__release != null) {
-			await createReleaseServiceInstalls(rootApi, [deviceId], {
-				id: request.values.should_be_managed_by__release,
-			});
-		}
-	},
-});
+	hooks.addPureHook('PATCH', 'resin', 'device', {
+		POSTRUN: async ({ api, request }) => {
+			const affectedIds = request.affectedIds!;
+			const releaseId = request.values[fieldName];
+			// Create supervisor/hostApp service installs when the supervisor/hostApp is pinned on device update
+			if (releaseId != null && affectedIds.length !== 0) {
+				await createReleaseServiceInstalls(api, affectedIds, {
+					id: releaseId,
+				});
+			}
+		},
+	});
+};
 
-hooks.addPureHook('PATCH', 'resin', 'device', {
-	POSTRUN: async ({ api, request }) => {
-		const affectedIds = request.affectedIds!;
-
-		// Create supervisor service installs when the supervisor is pinned on device update
-		if (
-			request.values.should_be_managed_by__release != null &&
-			affectedIds.length !== 0
-		) {
-			await createReleaseServiceInstalls(api, affectedIds, {
-				id: request.values.should_be_managed_by__release,
-			});
-		}
-	},
-});
+for (const fieldName of [
+	'should_be_managed_by__release',
+	'should_be_operated_by__release',
+] as const) {
+	addSystemAppServiceInstallHooks(fieldName);
+}
