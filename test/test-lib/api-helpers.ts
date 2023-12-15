@@ -1,9 +1,9 @@
-import type { sbvrUtils } from '@balena/pinejs';
+import type { PineTest } from 'pinejs-client-supertest';
+import type { Release } from '../../src/balena-model';
 import { expect } from 'chai';
-import { Release } from '../../src/balena-model';
 import { supertest, UserObjectParam } from '../test-lib/supertest';
-import { version } from './versions';
-import { pineTest, PineTest } from './pinetest';
+
+const version = 'resin';
 
 interface MockReleaseParams {
 	belongs_to__application: number;
@@ -83,7 +83,7 @@ export const addImageToRelease = async (
 };
 
 export const expectResourceToMatch = async <T = AnyObject>(
-	pineUser: PineTest | sbvrUtils.PinejsClient | { token: string } | string,
+	pineUser: PineTest,
 	resource: string,
 	id: number | AnyObject,
 	expectations: Dictionary<
@@ -95,10 +95,6 @@ export const expectResourceToMatch = async <T = AnyObject>(
 		| ((chaiPropertyAssertion: Chai.Assertion) => void)
 	>,
 ): Promise<T> => {
-	if (typeof pineUser === 'string' || 'token' in pineUser) {
-		pineUser = pineTest.clone({ passthrough: { user: pineUser } });
-	}
-
 	const requestPromise = pineUser.get({
 		resource,
 		id,

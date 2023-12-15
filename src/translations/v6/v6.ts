@@ -3,16 +3,21 @@ import type { ConfigLoader } from '@balena/pinejs';
 
 import {
 	aliasFields,
+	aliasTable,
 	generateAbstractSqlModel,
 	overrideFieldType,
 	renameResourceField,
 } from '../../abstract-sql-utils';
+import * as userHasDirectAccessToApplication from '../../features/applications/models/user__has_direct_access_to__application';
 
 export const toVersion = 'resin';
 
 export const v6AbstractSqlModel = generateAbstractSqlModel(
 	__dirname + '/v6.sbvr',
 );
+
+aliasTable(v6AbstractSqlModel, 'application', 'my application');
+userHasDirectAccessToApplication.addToModel(v6AbstractSqlModel);
 
 overrideFieldType(v6AbstractSqlModel, 'release', 'version', 'JSON');
 
@@ -26,6 +31,56 @@ for (const resource of ['device', 'application']) {
 }
 
 export const v6Translations: ConfigLoader.Model['translations'] = {
+	'my application': {
+		$toResource: `application$${toVersion}`,
+		abstractSql: [
+			'SelectQuery',
+			[
+				'Select',
+				aliasFields(v6AbstractSqlModel, 'application', {
+					'depends on-application': ['Cast', ['Null'], 'Integer'],
+				}),
+			],
+			[
+				'From',
+				['Alias', ['Resource', `application$${toVersion}`], 'application'],
+			],
+			[
+				'Where',
+				[
+					'Exists',
+					[
+						'SelectQuery',
+						['Select', []],
+						[
+							'From',
+							[
+								'Alias',
+								[
+									'Resource',
+									`user-has direct access to-application$${toVersion}`,
+								],
+								'user-has direct access to-application',
+							],
+						],
+						[
+							'Where',
+							[
+								'Equals',
+								[
+									'ReferencedField',
+									'user-has direct access to-application',
+									'has direct access to-application',
+								],
+								['ReferencedField', 'application', 'id'],
+							],
+						],
+					],
+				],
+			],
+		],
+		'depends on-application': ['Cast', ['Null'], 'Integer'],
+	},
 	application: {
 		'depends on-application': ['Cast', ['Null'], 'Integer'],
 	},

@@ -52,12 +52,16 @@ export const mockRepo = (
 	};
 };
 
-export const removeContractInterceptors = mockRepo(
-	{
-		owner: CONTRACTS_PUBLIC_REPO_OWNER,
-		name: CONTRACTS_PUBLIC_REPO_NAME,
-		branch: CONTRACTS_PUBLIC_REPO_BRANCH,
-	},
-	'base-contracts',
-	true,
-);
+export let removeContractInterceptors: () => void;
+export const addContractInterceptors = () => {
+	removeContractInterceptors = mockRepo(
+		{
+			owner: CONTRACTS_PUBLIC_REPO_OWNER,
+			name: CONTRACTS_PUBLIC_REPO_NAME,
+			branch: CONTRACTS_PUBLIC_REPO_BRANCH,
+		},
+		'base-contracts',
+		true,
+	);
+};
+addContractInterceptors();

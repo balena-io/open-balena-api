@@ -1,7 +1,7 @@
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import _ from 'lodash';
 import { expect } from 'chai';
-import { version } from './test-lib/versions';
+import * as versions from './test-lib/versions';
 
 import { supertest } from './test-lib/supertest';
 // All of these test device types are not part of the contracts, so we have to include them manually until we stop syncing with S3.
@@ -80,17 +80,19 @@ const addFakeDeviceTypes = () => {
 	});
 };
 
-describe('device type resource', () => {
-	it('should succeed to return a result', async () => {
-		const res = await supertest().get(`/${version}/device_type`).expect(200);
-		expect(res.body.d).to.be.an('array');
-		res.body.d.forEach((deviceType: any) => {
-			expect(deviceType).to.be.an('object');
-			expect(deviceType).to.have.property('slug').that.is.a('string');
-			expect(deviceType).to.have.property('name').that.is.a('string');
-		});
+versions.test((version) => {
+	describe('device type resource', () => {
+		it('should succeed to return a result', async () => {
+			const res = await supertest().get(`/${version}/device_type`).expect(200);
+			expect(res.body.d).to.be.an('array');
+			res.body.d.forEach((deviceType: any) => {
+				expect(deviceType).to.be.an('object');
+				expect(deviceType).to.have.property('slug').that.is.a('string');
+				expect(deviceType).to.have.property('name').that.is.a('string');
+			});
 
-		expect(res.body.d).to.have.property('length', 16);
+			expect(res.body.d).to.have.property('length', 16);
+		});
 	});
 });
 

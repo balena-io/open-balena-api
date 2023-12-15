@@ -3,7 +3,6 @@ import _ from 'lodash';
 import { expect } from 'chai';
 import * as fakeDevice from '../test-lib/fake-device';
 import { supertest, UserObjectParam } from '../test-lib/supertest';
-import { version } from '../test-lib/versions';
 
 import * as fixtures from '../test-lib/fixtures';
 import {
@@ -12,6 +11,8 @@ import {
 	addServiceToApp,
 	addImageToRelease,
 } from '../test-lib/api-helpers';
+
+const version = 'resin';
 
 describe('Device with missing service installs', () => {
 	let fx: fixtures.Fixtures;
