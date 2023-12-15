@@ -1,7 +1,7 @@
-import type { PinejsClient } from '@balena/pinejs/out/sbvr-api/sbvr-utils';
+import type { sbvrUtils } from '@balena/pinejs';
+import { expect } from 'chai';
 import { Release } from '../../src/balena-model';
 import { supertest, UserObjectParam } from '../test-lib/supertest';
-import { expect } from 'chai';
 import { version } from './versions';
 import { pineTest, PineTest } from './pinetest';
 
@@ -83,7 +83,7 @@ export const addImageToRelease = async (
 };
 
 export const expectResourceToMatch = async <T = AnyObject>(
-	pineUser: PineTest | PinejsClient | { token: string } | string,
+	pineUser: PineTest | sbvrUtils.PinejsClient | { token: string } | string,
 	resource: string,
 	id: number | AnyObject,
 	expectations: Dictionary<
