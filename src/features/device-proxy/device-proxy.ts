@@ -15,7 +15,8 @@ import {
 	API_VPN_SERVICE_API_KEY,
 	VPN_CONNECT_PROXY_PORT,
 } from '../../lib/config';
-import { requestAsync, RequestResponse } from '../../infra/request-promise';
+import axios, { AxiosResponse as RequestResponse, AxiosInstance } from 'axios';
+import tunnel from 'tunnel';
 import { checkInt, throttledForEach } from '../../lib/utils';
 
 // Degraded network, slow devices, compressed docker binaries and any combination of these factors
@@ -47,24 +48,24 @@ const validateSupervisorResponse = (
 	res: Response,
 	filter: Filter,
 ) => {
-	const [{ statusCode, headers }, body] = response;
+	const { status: statusCode, headers, data } = response;
 	const contentType = headers?.['content-type'];
 	if (contentType != null) {
 		if (/^application\/json/i.test(contentType)) {
 			let jsonBody;
-			if (_.isObject(body)) {
-				jsonBody = body;
+			if (_.isObject(data)) {
+				jsonBody = data;
 			} else {
 				try {
-					jsonBody = JSON.parse(body);
+					jsonBody = JSON.parse(data);
 				} catch (e) {
 					return badSupervisorResponse(req, res, filter, 'Invalid JSON data');
 				}
 			}
 			res.status(statusCode).json(jsonBody);
 		} else if (/^text\/(plain|html)/.test(contentType)) {
-			if (/^([A-Za-z0-9\s:'.?!,/-])*$/g.test(body)) {
-				res.status(statusCode).set('Content-Type', 'text/plain').send(body);
+			if (/^([A-Za-z0-9\s:'.?!,/-])*$/g.test(data)) {
+				res.status(statusCode).set('Content-Type', 'text/plain').send(data);
 			} else {
 				badSupervisorResponse(req, res, filter, 'Invalid TEXT data');
 			}
@@ -82,7 +83,7 @@ const validateSupervisorResponse = (
 };
 
 const multiResponse = (responses: RequestResponse[]) =>
-	responses.map(([response]) => _.pick(response, 'statusCode', 'body'));
+	responses.map((response) => _.pick(response, 'statusCode', 'body'));
 
 export const proxy = async (req: Request, res: Response) => {
 	const filter: Filter = {};
@@ -266,14 +267,24 @@ async function requestDevices({
 				device.api_port || 80
 			}${url}?apikey=${device.api_secret}`;
 			try {
-				return await requestAsync({
-					uri: deviceUrl,
-					json: data,
-					proxy: `http://resin_api:${API_VPN_SERVICE_API_KEY}@${vpnIp}:${VPN_CONNECT_PROXY_PORT}`,
-					tunnel: true,
+				const agent = tunnel.httpsOverHttp({
+					proxy: {
+						host: `http://resin_api:${API_VPN_SERVICE_API_KEY}@${vpnIp}`,
+						port: VPN_CONNECT_PROXY_PORT,
+					},
+				});
+				const axiosClient: AxiosInstance = axios.create({
+					httpsAgent: agent,
+					proxy: false,
+				});
+				const test = await axiosClient({
 					method,
+					data,
+					url: deviceUrl,
 					timeout: DEVICE_REQUEST_TIMEOUT,
 				});
+				console.log(`test:${JSON.stringify(test, null, 2)}`);
+				return test;
 			} catch (err) {
 				if (!wait) {
 					// If we don't care about waiting for the request then we just ignore the error and continue
