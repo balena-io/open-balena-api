@@ -493,6 +493,9 @@ const unloaders: {
 };
 
 export const clean = async (fixtures: AnyObject) => {
+	if (fixtures == null) {
+		throw new Error('You must pass in loaded fixtures to clean');
+	}
 	for (const model of modelUnloadOrder) {
 		const objs = fixtures[model];
 		if (objs != null) {
