@@ -218,7 +218,7 @@ const loaders: Dictionary<LoaderFunc> = {
 			logErrorAndThrow(`Could not find release: ${jsonData.release}`);
 		}
 
-		let req = supertest(user).post('/v6/release_asset');
+		let req = supertest(user).post(`/${version}/release_asset`);
 
 		req = req.field('release', release.id);
 		req = req.field('asset_key', jsonData.asset_key);
