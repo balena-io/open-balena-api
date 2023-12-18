@@ -3,4 +3,5 @@
 # And then reset all the files with extensions back to default
 *.* -eol
 
+test/fixtures/23-release-asset/sample.txt text eol=lf
 *.sh text eol=lf

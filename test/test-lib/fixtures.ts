@@ -218,7 +218,7 @@ const loaders: Dictionary<LoaderFunc> = {
 			logErrorAndThrow(`Could not find release: ${jsonData.release}`);
 		}
 
-		let req = supertest(user).post('/v6/release_asset');
+		let req = supertest(user).post(`/${version}/release_asset`);
 
 		req = req.field('release', release.id);
 		req = req.field('asset_key', jsonData.asset_key);
@@ -493,6 +493,9 @@ const unloaders: {
 };
 
 export const clean = async (fixtures: AnyObject) => {
+	if (fixtures == null) {
+		throw new Error('You must pass in loaded fixtures to clean');
+	}
 	for (const model of modelUnloadOrder) {
 		const objs = fixtures[model];
 		if (objs != null) {

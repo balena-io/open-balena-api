@@ -183,7 +183,7 @@ describe('session', () => {
 			expect(payload1).to.have.property('email');
 			expect(payload1)
 				.to.have.property('authTime')
-				.to.be.equal(initialAuthTime);
+				.that.equals(initialAuthTime);
 		});
 
 		it('should not be refreshable with /user/v1/refresh-token and invalid password', async function () {
