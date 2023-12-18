@@ -42,10 +42,10 @@ describe('release asset', function () {
 			expect(res.body)
 				.to.have.nested.property('release.__id')
 				.that.equals(this.release1.id);
-			expect(res.body.asset_key).to.be.equal('unique_key_1');
+			expect(res.body.asset_key).to.equal('unique_key_1');
 
 			const href = res.body.asset.href;
-			expect(await checkFileExists(href, 450)).to.be.eq(true);
+			expect(await checkFileExists(href, 450)).to.be.true;
 			await expectEqualBlobs(href, filePath);
 		});
 
@@ -67,10 +67,10 @@ describe('release asset', function () {
 			expect(res.body)
 				.to.have.nested.property('release.__id')
 				.that.equals(this.release3.id);
-			expect(res.body.asset_key).to.be.equal('unique_key_1');
+			expect(res.body.asset_key).to.equal('unique_key_1');
 
 			const href = res.body.asset.href;
-			expect(await checkFileExists(href, 450)).to.be.eq(true);
+			expect(await checkFileExists(href, 450)).to.be.true;
 			await expectEqualBlobs(href, filePath);
 		});
 
@@ -129,8 +129,10 @@ describe('release asset', function () {
 				)
 				.expect(200);
 
-			expect(res.body).to.have.property('d').that.is.an('array');
-			expect(res.body).to.have.nested.property('d.length', 3);
+			expect(res.body)
+				.to.have.property('d')
+				.that.is.an('array')
+				.and.has.length(3);
 			expect(res.body).to.have.nested.property('d[0].id').that.is.a('number');
 			expect(res.body)
 				.to.have.nested.property('d[0].release.__id')
@@ -163,8 +165,10 @@ describe('release asset', function () {
 				)
 				.expect(200);
 
-			expect(res.body).to.have.property('d').that.is.an('array');
-			expect(res.body).to.have.nested.property('d.length', 1);
+			expect(res.body)
+				.to.have.property('d')
+				.that.is.an('array')
+				.and.has.length(1);
 			expect(res.body)
 				.to.have.nested.property('d[0].id')
 				.that.equals(this.releaseasset1.id);
@@ -183,13 +187,17 @@ describe('release asset', function () {
 				)
 				.expect(200);
 
-			expect(res.body).to.have.property('d').that.is.an('array');
-			expect(res.body).to.have.nested.property('d.length', 1);
+			expect(res.body)
+				.to.have.property('d')
+				.that.is.an('array')
+				.and.has.length(1);
 			expect(res.body).to.have.nested.property('d[0]').that.is.an('object');
 			expect(res.body)
 				.to.have.nested.property('d[0].release_asset')
 				.that.is.an('array');
-			expect(res.body).to.have.nested.property('d[0].release_asset.length', 2);
+			expect(res.body)
+				.to.have.nested.property('d[0].release_asset')
+				.that.has.length(2);
 			expect(res.body)
 				.to.have.nested.property('d[0].release_asset[0].id')
 				.that.is.a('number');
@@ -205,8 +213,10 @@ describe('release asset', function () {
 				)
 				.expect(200);
 
-			expect(res.body).to.have.property('d').that.is.an('array');
-			expect(res.body).to.have.nested.property('d.length', 1);
+			expect(res.body)
+				.to.have.property('d')
+				.that.is.an('array')
+				.and.has.length(1);
 			expect(res.body)
 				.to.have.nested.property('d[0].release[0].id')
 				.that.equals(this.releaseasset1.release.__id);
@@ -242,19 +252,20 @@ describe('release asset', function () {
 				)
 				.expect(200);
 
-			expect(res.body).to.have.property('d').that.is.an('array');
-			expect(res.body).to.have.nested.property('d.length', 1);
 			expect(res.body)
-				.to.have.nested.property('d[0].id')
-				.that.equals(this.releaseasset1.id);
-			expect(res.body)
-				.to.have.nested.property('d[0].release.__id')
+				.to.have.property('d')
+				.that.is.an('array')
+				.and.has.length(1);
+			const result = res.body.d[0];
+			expect(result).to.have.property('id').that.equals(this.releaseasset1.id);
+			expect(result)
+				.to.have.nested.property('release.__id')
 				.that.equals(this.releaseasset1.release.__id);
 
-			const href = res.body.d[0].asset.href;
+			const href = result.asset.href;
 
-			expect(res.body.d[0].asset.size).to.equals(39);
-			expect(await checkFileExists(href, 450)).to.be.eq(true);
+			expect(result.asset.size).to.equal(39);
+			expect(await checkFileExists(href, 450)).to.be.true;
 			await expectEqualBlobs(href, filePath);
 		});
 
@@ -287,7 +298,7 @@ describe('release asset', function () {
 					`/${version}/release_asset(${this.releaseasset1.id})?$select=id,asset_key`,
 				)
 				.expect(200);
-			expect(res.body.d[0].asset_key).to.be.eq('another_asset_key');
+			expect(res.body.d[0].asset_key).to.equal('another_asset_key');
 		});
 	});
 
@@ -312,7 +323,7 @@ describe('release asset', function () {
 				.get(`/${version}/release_asset(${this.releaseasset1.id})`)
 				.expect(200);
 
-			expect(res.body).to.have.nested.property('d.length', 0);
+			expect(res.body).to.have.property('d').that.has.length(0);
 		});
 	});
 });

@@ -29,9 +29,9 @@ export async function expectEqualBlobs(url: string, localBlobPath: string) {
 		encoding: null,
 	});
 
-	expect(response.statusCode).to.be.eq(200);
+	expect(response.statusCode).to.equal(200);
 
 	const originalFile = await fs.readFile(localBlobPath);
 	const diff = originalFile.compare(fileRes);
-	expect(diff).to.be.eq(0);
+	expect(diff).to.equal(0);
 }
