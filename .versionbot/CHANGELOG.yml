@@ -1,4 +1,41 @@
 - commits:
+    - subject: "Tests: improve readability of bdd assertions"
+      hash: 2d0e136a8051125d6a70527ac416c557793cc2a0
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: "Tests: improve error when trying to clean up empty fixtures"
+      hash: 178e52cec6956c401d1abb609826a3461c4625d9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: "Tests: Use the same version for release assets fixtures as everything
+        else"
+      hash: 2db5fd9fdca8aa5a062310fe2522586dd75feb52
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: "Tests: Ensure sample file uses lf line breaks for consistent size"
+      hash: 8d1b2e466c61e38de3296f4373cda357a5a82b7a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 14.15.12
+  title: ""
+  date: 2023-12-18T21:02:07.881Z
+- commits:
     - subject: "test-lib/api-helpers: Remove deep pinejs import"
       hash: 818072d75ce662d991039f78681181820724116e
       body: ""
