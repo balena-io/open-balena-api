@@ -88,6 +88,7 @@ export function buildAppFromRelease(
 	application: AnyObject,
 	release: AnyObject,
 	config: Dictionary<string>,
+	defaultLabels?: Dictionary<string>,
 ): NonNullable<LocalStateApp['releases']> {
 	let composition: AnyObject = {};
 	const services: NonNullable<LocalStateApp['releases']>[string]['services'] =
@@ -135,7 +136,9 @@ export function buildAppFromRelease(
 			varListInsert(si.device_service_environment_variable, environment);
 		}
 
-		const labels: Dictionary<string> = {};
+		const labels: Dictionary<string> = {
+			...defaultLabels,
+		};
 		for (const { label_name, value } of [
 			...ipr.image_label,
 			...svc.service_label,
@@ -305,7 +308,14 @@ const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
 
 	const apps = {
 		...getSystemAppState(device, 'should_be_managed_by__release'),
-		...getSystemAppState(device, 'should_be_operated_by__release'),
+		...getSystemAppState(device, 'should_be_operated_by__release', {
+			// This label is necessary for older supervisors to properly detect the hostApp
+			// and ignore it, sinc `is_host: true` wasn't enough. W/o this the device would
+			// try to install the hostApp container like a normal user app and restart it
+			// constantly b/c the image doesn't have a CMD specified.
+			// See: https://github.com/balena-os/balena-supervisor/blob/v15.2.0/src/compose/app.ts#L839
+			'io.balena.image.store': 'root',
+		}),
 		...getUserAppState(device, config),
 	};
 
@@ -353,6 +363,7 @@ const getAppState = (
 	application: AnyObject,
 	release: AnyObject | undefined,
 	config: Dictionary<string>,
+	defaultLabels?: Dictionary<string>,
 ): StateV3[string]['apps'] => {
 	return {
 		[application.uuid]: {
@@ -361,7 +372,13 @@ const getAppState = (
 			is_host: application.is_host,
 			class: application.is_of__class,
 			...(release != null && {
-				releases: buildAppFromRelease(device, application, release, config),
+				releases: buildAppFromRelease(
+					device,
+					application,
+					release,
+					config,
+					defaultLabels,
+				),
 			}),
 		},
 	};
@@ -380,6 +397,7 @@ const getSystemAppState = (
 	targetReleaseField:
 		| 'should_be_managed_by__release'
 		| 'should_be_operated_by__release',
+	defaultLabels?: Dictionary<string>,
 ): StateV3[string]['apps'] | null => {
 	const release = device[targetReleaseField][0];
 	if (!release) {
@@ -387,5 +405,5 @@ const getSystemAppState = (
 	}
 	const app = release.belongs_to__application[0];
 	// We use an empty config as we don't want any labels applied to the supervisor/hostApp due to user app config
-	return getAppState(device, app, release, {});
+	return getAppState(device, app, release, {}, defaultLabels);
 };

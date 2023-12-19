@@ -195,7 +195,9 @@ versions.test((version, pineTest) => {
 				expect(stateGetHostApp.releases?.[intelNucHostAppRelease1.commit])
 					.to.have.property('services')
 					.that.has.property('main')
-					.that.is.an('object');
+					.that.is.an('object')
+					.and.has.property('labels')
+					.that.has.property('io.balena.image.store', 'root');
 
 				expect(stateGetHostApp, 'hostApp is undefined').to.not.be.undefined;
 			});
