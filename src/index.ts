@@ -149,6 +149,7 @@ import { getApplicationSlug } from './features/applications';
 import * as deviceAdditions from './features/devices/models/device-additions';
 import { addToModel as addReleaseAdditionsToModel } from './features/ci-cd/models/release-additions';
 import { apiRoot } from './balena';
+import { v6Translations } from './translations/v6/v6';
 
 export * as tags from './features/tags/validation';
 
@@ -260,6 +261,13 @@ export const envVarsConfig = {
 	BLOCKED_NAMES,
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
 	DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES,
+};
+
+export const translations = {
+	v6: {
+		translations: v6Translations,
+		loadHooks: () => import('./translations/v6/hooks'),
+	},
 };
 
 export const AUTH_PATH = '/auth';
