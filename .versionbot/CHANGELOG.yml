@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add v6 translations
+      hash: 325eb82a797f405e2a2e8654de3f3b7728864122
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 14.17.0
+  title: ""
+  date: 2023-12-20T15:43:14.145Z
+- commits:
     - subject: Create service installs for hostApps
       hash: af07b24db375adf7d4a12f1f51dff8533f00cd0b
       body: ""
