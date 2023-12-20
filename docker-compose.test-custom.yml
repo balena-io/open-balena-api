@@ -79,6 +79,7 @@ services:
       DEVICE_CONFIG_SSH_AUTHORIZED_KEYS: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCc5cLVsu7b52tzxwa8A6cs4LC2I+IMtyKeVZFVAWdhfEWGEJL78rn0tC4YmHBSWW0hBeZmn8f7ZKcZ/r1W2RpuH7wpUc56/3hffJ0GoktMOX69pjNsE3rWr8/cZbl/LaJjeHBpyFZ6VimYl5KiYyHJH7RZwlEYYiJ2YDCbte51jvmotFTqiOJNPCM3SXWFjsUGDOWwNi7GDxG+ulb0cBnYzyYlHTj5dS/uya0v8S267TYO2jZ9lUvZHYYQBilYoN3qT79B/lRJq/AKsaSPI2VWkwoAWLObJRjQjoIsClxcfaSfRg6fgdezv3saeorVMIdEYAj3CQVmLszCNGC8dgqB9OoKdjd/OUG/bFUc86S+y0dZX3vqKBfZjE1dHNzNkQeulsbRj0FGFTxFYL0Ng7jlr98iXusnNg236LGsBTeod2MLfMRsrOc0Utfc5Pq2Zkyak4aJ6URBFqZnKlJwvI3AFznxvHD1PmIrwzCCmLA409v3WbXEK4KZrUIs81wlQWAK3919ViozdnR23f4hZtq3P5M6AbnMMdIOB1jDjPK//eaTMf3erHVa0nTMMwScBDnrT86yJBBEwpUVpIp6YUBFaVMQscX3gBTd+RyOU9jOvyinGjosJfF38qsMJTNHh48zgic5sSLhtPQgkUjWhpcnfjqrLRewKbVd+VZQc1WsdQ=='
       FILES_HOST: files_host.com
       GENERATE_CONFIG: ${GENERATE_CONFIG:-}
+      HIDE_UNVERSIONED_ENDPOINT: false
       IMAGE_STORAGE_BUCKET: balena-dev-img
       IMAGE_STORAGE_ENDPOINT: s3.balenadev.io
       IMAGE_STORAGE_PREFIX: images
@@ -148,6 +149,7 @@ services:
         - /usr/src/app/node_modules/node-addon-api
         - ./package.json:/usr/src/app/package.json
         - ./package-lock.json:/usr/src/app/package-lock.json
+        - ./config.ts:/usr/src/app/config.ts
         - ./src:/usr/src/app/src
         - ./test:/usr/src/app/test
         - ./typings:/usr/src/app/typings

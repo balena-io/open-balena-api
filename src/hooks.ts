@@ -14,3 +14,4 @@ import './features/supervisor-app/hooks';
 import './features/tags/hooks';
 import './features/vars-schema/hooks';
 import './features/vpn/hooks';
+import './translations/v6/hooks';

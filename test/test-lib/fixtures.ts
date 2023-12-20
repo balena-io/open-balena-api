@@ -8,10 +8,10 @@ import { randomUUID } from 'crypto';
 import { Headers } from 'request';
 import { API_HOST } from '../../src/lib/config';
 import { requestAsync } from '../../src/infra/request-promise';
-import { version } from './versions';
 import { supertest } from './supertest';
 
 const { api } = sbvrUtils;
+const version = 'resin';
 
 type PendingFixtures = Dictionary<PromiseLike<Dictionary<PromiseLike<any>>>>;
 type PartiallyAppliedFixtures = Dictionary<Dictionary<PromiseLike<any>>>;

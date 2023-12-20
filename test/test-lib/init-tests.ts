@@ -5,11 +5,12 @@ import {
 	augmentStatusAssertionError,
 	UserObjectParam,
 } from './supertest';
-import { version } from './versions';
 import {
 	getContractRepos,
 	synchronizeContracts,
 } from '../../src/features/contracts';
+
+const version = 'resin';
 
 export const preInit = async () => {
 	augmentStatusAssertionError();

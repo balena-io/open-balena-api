@@ -1,11 +1,11 @@
 import * as mockery from 'mockery';
 import { expect } from 'chai';
 import { supertest, UserObjectParam } from './test-lib/supertest';
-import { version } from './test-lib/versions';
 import * as configMock from '../src/lib/config';
 import * as fixtures from './test-lib/fixtures';
 import { Application } from '../src/balena-model';
 
+const version = 'resin';
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
 
