@@ -1,4 +1,16 @@
 - commits:
+    - subject: Create service installs for hostApps
+      hash: af07b24db375adf7d4a12f1f51dff8533f00cd0b
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.16.0
+  title: ""
+  date: 2023-12-20T07:49:43.418Z
+- commits:
     - subject: "Tests: improve readability of bdd assertions"
       hash: 2d0e136a8051125d6a70527ac416c557793cc2a0
       body: ""
