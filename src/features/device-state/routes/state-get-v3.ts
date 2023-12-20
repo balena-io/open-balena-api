@@ -264,6 +264,16 @@ const deviceExpand: Expand = {
 			},
 		},
 	},
+	should_be_operated_by__release: {
+		...releaseExpand,
+		$expand: {
+			...releaseExpand.$expand,
+			belongs_to__application: {
+				$select: ['id', 'uuid', 'app_name', 'is_host', 'is_of__class'],
+				$expand: appExpand,
+			},
+		},
+	},
 };
 
 const stateQuery = _.once(() =>
@@ -293,15 +303,12 @@ const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
 		storedDeviceFields: _.pick(device, getStateEventAdditionalFields),
 	});
 
-	let apps = getUserAppState(device, config);
+	const apps = {
+		...getSystemAppState(device, 'should_be_managed_by__release'),
+		...getSystemAppState(device, 'should_be_operated_by__release'),
+		...getUserAppState(device, config),
+	};
 
-	const supervisorRelease = device.should_be_managed_by__release[0];
-	if (supervisorRelease) {
-		apps = {
-			...getSupervisorAppState(device),
-			...apps,
-		};
-	}
 	const state: StateV3 = {
 		[uuid]: {
 			name: device.device_name,
@@ -368,12 +375,17 @@ const getUserAppState = (
 	const userAppRelease = getReleaseForDevice(device);
 	return getAppState(device, userApp, userAppRelease, config);
 };
-const getSupervisorAppState = (device: AnyObject): StateV3[string]['apps'] => {
-	const supervisorRelease = device.should_be_managed_by__release[0];
-	if (!supervisorRelease) {
-		return {};
+const getSystemAppState = (
+	device: AnyObject,
+	targetReleaseField:
+		| 'should_be_managed_by__release'
+		| 'should_be_operated_by__release',
+): StateV3[string]['apps'] | null => {
+	const release = device[targetReleaseField][0];
+	if (!release) {
+		return null;
 	}
-	const supervisorApp = supervisorRelease.belongs_to__application[0];
-	// We use an empty config as we don't want any labels applied to the supervisor due to user app config
-	return getAppState(device, supervisorApp, supervisorRelease, {});
+	const app = release.belongs_to__application[0];
+	// We use an empty config as we don't want any labels applied to the supervisor/hostApp due to user app config
+	return getAppState(device, app, release, {});
 };

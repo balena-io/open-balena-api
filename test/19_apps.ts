@@ -116,5 +116,102 @@ versions.test((version, pineTest) => {
 				).to.not.have.property(supervisorApp.uuid);
 			});
 		});
+
+		describe('HostApps', () => {
+			let fx: fixtures.Fixtures;
+			let admin: UserObjectParam;
+			let pineAdmin: PineTest;
+			let userApp: Application;
+			let intelNucHostApp: Application;
+			let intelNucHostAppRelease1: Release;
+			let deviceWithHostApp: fakeDevice.Device;
+			let deviceWithoutHostApp: fakeDevice.Device;
+
+			before(async () => {
+				mockery.registerMock('../src/lib/config', configMock);
+				fx = await fixtures.load('19-apps');
+
+				admin = fx.users.admin;
+				pineAdmin = pineTest.clone({
+					passthrough: {
+						user: admin,
+					},
+				});
+				userApp = fx.applications.app1;
+				intelNucHostApp = fx.applications['intel-nuc'];
+				intelNucHostAppRelease1 = fx.releases.intelNucHostAppRelease1;
+
+				deviceWithHostApp = await fakeDevice.provisionDevice(
+					admin,
+					userApp.id,
+					'balenaOS 2.50.1+rev1',
+				);
+				await expectResourceToMatch(pineAdmin, 'device', deviceWithHostApp.id, {
+					should_be_operated_by__release: { __id: intelNucHostAppRelease1.id },
+				});
+				deviceWithoutHostApp = await fakeDevice.provisionDevice(
+					admin,
+					userApp.id,
+					'balenaOS 2.3.0+rev1',
+				);
+				await expectResourceToMatch(
+					pineAdmin,
+					'device',
+					deviceWithoutHostApp.id,
+					{
+						should_be_operated_by__release: null,
+					},
+				);
+			});
+
+			after(async () => {
+				await fixtures.clean({ devices: [deviceWithHostApp] });
+				await fixtures.clean(fx);
+				mockery.deregisterMock('../src/lib/config');
+			});
+
+			it('should have a host app if operated by a release', async () => {
+				const state = await deviceWithHostApp.getStateV3();
+				expect(
+					Object.keys(state[deviceWithHostApp.uuid].apps).sort(),
+					'wrong number of apps',
+				).to.deep.equal([intelNucHostApp.uuid, userApp.uuid].sort());
+
+				expect(state[deviceWithHostApp.uuid].apps)
+					.to.have.property(intelNucHostApp.uuid)
+					.that.is.an('object');
+				const stateGetHostApp =
+					state[deviceWithHostApp.uuid].apps?.[intelNucHostApp.uuid];
+				expect(stateGetHostApp).to.have.property(
+					'name',
+					intelNucHostApp.app_name,
+				);
+				expect(stateGetHostApp).to.have.property('is_host', true);
+				expect(stateGetHostApp).to.have.property('class', 'app');
+				expect(stateGetHostApp)
+					.to.have.nested.property('releases')
+					.that.has.property(intelNucHostAppRelease1.commit)
+					.that.is.an('object');
+				expect(stateGetHostApp.releases?.[intelNucHostAppRelease1.commit])
+					.to.have.property('services')
+					.that.has.property('main')
+					.that.is.an('object');
+
+				expect(stateGetHostApp, 'hostApp is undefined').to.not.be.undefined;
+			});
+
+			it('should not have a host app if not operated by a release', async () => {
+				const state = await deviceWithoutHostApp.getStateV3();
+				expect(
+					Object.keys(state[deviceWithoutHostApp.uuid].apps),
+					'wrong number of apps',
+				).to.deep.equal([userApp.uuid]);
+
+				expect(
+					state[deviceWithoutHostApp.uuid].apps,
+					'host app should not be included',
+				).to.not.have.property(intelNucHostApp.uuid);
+			});
+		});
 	});
 });

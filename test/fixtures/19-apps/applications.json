@@ -5,6 +5,33 @@
 		"device_type": "intel-nuc",
 		"app_name": "test-app-1"
 	},
+	"raspberrypi3": {
+		"user": "admin",
+		"is_host": true,
+		"is_public": true,
+		"is_of__class": "app",
+		"device_type": "raspberrypi3",
+		"app_name": "raspberrypi3",
+		"organization": "balena_os"
+	},
+	"intel-nuc": {
+		"user": "admin",
+		"is_host": true,
+		"is_public": true,
+		"is_of__class": "app",
+		"device_type": "intel-nuc",
+		"app_name": "intel-nuc",
+		"organization": "balena_os"
+	},
+	"intel-nuc-esr": {
+		"user": "admin",
+		"is_host": true,
+		"is_public": true,
+		"is_of__class": "app",
+		"device_type": "intel-nuc",
+		"app_name": "intel-nuc-esr",
+		"organization": "balena_os"
+	},
 	"supervisorApp": {
 		"uuid": "031f48d8f47b4062ad2d67b8de933711",
 		"user": "admin",

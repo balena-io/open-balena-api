@@ -80,7 +80,7 @@ export const generateDeviceUuid = () => randomUUID().replaceAll('-', '');
 export async function provisionDevice(
 	admin: UserObjectParam,
 	appId: number,
-	osVersion?: string,
+	osVersion?: string | { os_version: string; os_variant?: string },
 	supervisorVersion?: string,
 	supervisorReleaseId?: number,
 ) {
@@ -139,9 +139,18 @@ export async function provisionDevice(
 		})
 		.expect(200);
 
+	if (typeof osVersion === 'string') {
+		osVersion = {
+			os_version: osVersion,
+		};
+	}
+	if (osVersion != null) {
+		osVersion.os_variant ??= 'prod';
+	}
+
 	await device.patchStateV2({
 		local: {
-			os_version: osVersion,
+			...osVersion,
 			supervisor_version: supervisorVersion,
 		},
 	});
