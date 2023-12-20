@@ -107,10 +107,10 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.service.read?application/canAccess() or service_install/canAccess()',
 
 	'resin.service_install.read?device/canAccess()',
-	// Should be created for the device itself, and it should be for a service of the app that the device belongs to or for a service of the supervisor release that manages the device.
+	// Should be created for the device itself, and it should be for a service of the app that the device belongs to or for a service of the supervisor/hostApp release that manages/operates the device.
 	`resin.service_install.create?device/any(d:${matchesNonFrozenDeviceActor(
 		'd',
-	)}) and installs__service/any(s:s/application/any(a:a/owns__device/any(d:d/${matchesActor}) or (a/is_public eq true and a/owns__release/any(r:r/should_manage__device/any(d:d/${matchesActor})))))`,
+	)}) and installs__service/any(s:s/application/any(a:a/owns__device/any(d:d/${matchesActor}) or (a/is_public eq true and a/owns__release/any(r:r/should_manage__device/any(d:d/${matchesActor}) or r/should_operate__device/any(d:d/${matchesActor})))))`,
 	// A device should be able to manage its own service installs, even from apps its not or no longer part of (past/supervisor/os)
 	...writePerms(
 		'resin.service_install',

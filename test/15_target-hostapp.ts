@@ -5,11 +5,14 @@ import { pineTest } from './test-lib/pinetest';
 
 import { supertest, UserObjectParam } from './test-lib/supertest';
 import { version } from './test-lib/versions';
+import { Application, Device } from '../src/balena-model';
 
 describe('target hostapps', () => {
 	let fx: fixtures.Fixtures;
 	let admin: UserObjectParam;
+	let pineUser: typeof pineTest;
 	let applicationId: number;
+	let nucHostApp: Application;
 	let device: fakeDevice.Device;
 	let device2: fakeDevice.Device;
 	let preprovisionedDevice: fakeDevice.Device;
@@ -27,7 +30,13 @@ describe('target hostapps', () => {
 	before(async () => {
 		fx = await fixtures.load('15-target-hostapps');
 		admin = fx.users.admin;
+		pineUser = pineTest.clone({
+			passthrough: {
+				user: admin,
+			},
+		});
 		applicationId = fx.applications['user-app1'].id;
+		nucHostApp = fx.applications['intel-nuc'];
 		device = await fakeDevice.provisionDevice(admin, applicationId);
 		device2 = await fakeDevice.provisionDevice(admin, applicationId);
 		preprovisionedDevice = await fakeDevice.provisionDevice(
@@ -196,49 +205,95 @@ describe('target hostapps', () => {
 			});
 		});
 
-		it(`should provision with a linked prod hostapp (using ${titlePart})`, async () => {
-			const res = await provisionFn({
-				belongs_to__application: applicationId,
-				device_type: 'intel-nuc',
-				os_version: 'balenaOS 2.50.0+rev1',
-				os_variant: 'prod',
-			});
-			const { body } = await supertest(admin)
-				.get(
-					`/${version}/device(${res.body.id})?$select=should_be_operated_by__release`,
-				)
-				.expect(200);
-			expect(body.d[0]).to.not.be.undefined;
-			expect(body.d[0]).to.have.nested.property(
-				'should_be_operated_by__release.__id',
-				prodNucHostappReleaseId,
-			);
-			await fixtures.clean({
-				devices: [res.body],
-			});
-		});
+		(
+			[
+				[
+					'prod',
+					{
+						os_version: 'balenaOS 2.50.0+rev1',
+						os_variant: 'prod',
+					},
+					() => prodNucHostappReleaseId,
+				],
+				[
+					'unified',
+					{
+						os_version: 'balenaOS 2.88.4',
+						os_variant: 'prod',
+					},
+					() => unifiedHostAppReleaseId,
+				],
+			] as const
+		).forEach(
+			([osTypeTitlePart, osVersionVariantParams, getHostAppReleaseId]) => {
+				describe(`provisioning with a ${osTypeTitlePart} OS (using ${titlePart})`, function () {
+					let registeredDevice: Device;
 
-		it(`should provision with a linked unified hostapp (using ${titlePart})`, async () => {
-			const res = await provisionFn({
-				belongs_to__application: applicationId,
-				device_type: 'intel-nuc',
-				os_version: 'balenaOS 2.88.4',
-				os_variant: 'prod',
-			});
-			const { body } = await supertest(admin)
-				.get(
-					`/${version}/device(${res.body.id})?$select=should_be_operated_by__release`,
-				)
-				.expect(200);
-			expect(body.d[0]).to.not.be.undefined;
-			expect(body.d[0]).to.have.nested.property(
-				'should_be_operated_by__release.__id',
-				unifiedHostAppReleaseId,
-			);
-			await fixtures.clean({
-				devices: [res.body],
-			});
-		});
+					after(async function () {
+						await fixtures.clean({
+							devices: [registeredDevice],
+						});
+					});
+
+					it(`should provision with a linked hostapp`, async () => {
+						({ body: registeredDevice } = await provisionFn({
+							belongs_to__application: applicationId,
+							device_type: 'intel-nuc',
+							...osVersionVariantParams,
+						}));
+						const {
+							body: {
+								d: [fetchedDevice],
+							},
+						} = await supertest(admin)
+							.get(
+								`/${version}/device(${registeredDevice.id})?$select=should_be_operated_by__release`,
+							)
+							.expect(200);
+						const hostappReleaseId = getHostAppReleaseId();
+						expect(fetchedDevice).to.have.nested.property(
+							'should_be_operated_by__release.__id',
+							hostappReleaseId,
+						);
+					});
+
+					it(`should create a service install for the linked hostapp`, async () => {
+						const { body: serviceInstalls } = await pineUser
+							.get({
+								resource: 'service_install',
+								options: {
+									$expand: {
+										installs__service: {
+											$select: ['id', 'service_name'],
+										},
+									},
+									$filter: {
+										device: registeredDevice.id,
+										installs__service: {
+											$any: {
+												$alias: 'is',
+												$expr: {
+													is: {
+														application: nucHostApp.id,
+													},
+												},
+											},
+										},
+									},
+								},
+							})
+							.expect(200);
+						expect(serviceInstalls).to.have.lengthOf(1);
+						const [service] = serviceInstalls[0].installs__service;
+						expect(service).to.have.property(
+							'id',
+							fx.services['intel-nuc_service1'].id,
+						);
+						expect(service).to.have.property('service_name', 'main');
+					});
+				});
+			},
+		);
 	});
 
 	it('should provision with a linked ESR hostapp', async () => {
