@@ -79,7 +79,6 @@ export const v6Translations: ConfigLoader.Model['translations'] = {
 				],
 			],
 		],
-		'depends on-application': ['Cast', ['Null'], 'Integer'],
 	},
 	application: {
 		'depends on-application': ['Cast', ['Null'], 'Integer'],
