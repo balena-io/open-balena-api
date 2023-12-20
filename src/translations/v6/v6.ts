@@ -1,4 +1,3 @@
-import type { Definition } from '@balena/abstract-sql-compiler';
 import type { ConfigLoader } from '@balena/pinejs';
 
 import {
@@ -30,7 +29,7 @@ for (const resource of ['device', 'application']) {
 	renameResourceField(v6AbstractSqlModel, resource, 'env var name', 'name');
 }
 
-export const v6Translations: ConfigLoader.Model['translations'] = {
+export const v6Translations = {
 	'my application': {
 		$toResource: `application$${toVersion}`,
 		abstractSql: [
@@ -79,7 +78,6 @@ export const v6Translations: ConfigLoader.Model['translations'] = {
 				],
 			],
 		],
-		'depends on-application': ['Cast', ['Null'], 'Integer'],
 	},
 	application: {
 		'depends on-application': ['Cast', ['Null'], 'Integer'],
@@ -143,7 +141,7 @@ export const v6Translations: ConfigLoader.Model['translations'] = {
 			],
 			['Where', ['Boolean', false]],
 		],
-	} as Definition,
-};
+	},
+} satisfies ConfigLoader.Model['translations'];
 
 export const abstractSqlModel = v6AbstractSqlModel;
