@@ -102,7 +102,7 @@
     "ndjson": "^2.0.0",
     "node-schedule": "^2.1.1",
     "on-finished": "^2.4.1",
-    "passport": "^0.6.0",
+    "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "proxy-addr": "^2.0.7",
     "randomstring": "^1.2.3",
