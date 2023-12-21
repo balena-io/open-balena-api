@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency rate-limiter-flexible to v4
+      hash: 4b16e93d9ab6cf616343df1766b6e988d3c83bcc
+      body: |
+        Update rate-limiter-flexible from 3.0.4 to 4.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 14.17.4
+  title: ""
+  date: 2023-12-21T15:01:38.759Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v17
       hash: cede01199056a2269eccde46b3f75cb8b07bd5cc
       body: |
