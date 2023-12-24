@@ -129,7 +129,7 @@
     "@types/mocha": "^10.0.1",
     "@types/mockery": "^1.4.30",
     "@types/sinon": "^17.0.0",
-    "@types/supertest": "^2.0.12",
+    "@types/supertest": "^6.0.0",
     "@types/temp": "^0.9.1",
     "chai": "^4.3.7",
     "copyfiles": "^2.4.1",
