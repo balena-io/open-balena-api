@@ -1,4 +1,19 @@
 - commits:
+    - subject: Update dependencies
+      hash: 840d65aba6aeb3bba5fbe452dc688d29938e5581
+      body: |
+        Update @balena/env-parsing from 1.1.5 to 1.1.10
+        Update @balena/es-version from 1.0.2 to 1.0.3
+        Update balena-semver from 2.3.2 to 2.3.5
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 14.17.5
+  title: ""
+  date: 2023-12-29T15:25:01.649Z
+- commits:
     - subject: Update dependency rate-limiter-flexible to v4
       hash: 4b16e93d9ab6cf616343df1766b6e988d3c83bcc
       body: |
