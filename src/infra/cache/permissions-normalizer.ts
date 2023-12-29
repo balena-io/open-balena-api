@@ -5,7 +5,7 @@ export const reqPermissionNormalizer = (req: permissions.PermissionReq) => {
 		req.user?.permissions != null
 			? req.user
 			: req.apiKey?.permissions != null
-			? req.apiKey
-			: null;
+				? req.apiKey
+				: null;
 	return `${userOrApiKey?.actor}$${userOrApiKey?.permissions}`;
 };

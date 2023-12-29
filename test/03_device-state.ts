@@ -723,7 +723,7 @@ versions.test((version, pineTest) => {
 											},
 										},
 									})),
-							  }
+								}
 							: {
 									apps: {
 										[applicationUuid]: {
@@ -743,7 +743,7 @@ versions.test((version, pineTest) => {
 											},
 										},
 									},
-							  },
+								},
 				};
 			};
 
@@ -789,7 +789,7 @@ versions.test((version, pineTest) => {
 					stateVersion === 'v2'
 						? _.mapKeys(devicePatchBody[stateKey], (_v, key) =>
 								key === 'name' ? 'device_name' : key,
-						  )
+							)
 						: _.pickBy(devicePatchBody[stateKey], (_v, key) => key !== 'name');
 
 				await expectResourceToMatch(
@@ -834,11 +834,11 @@ versions.test((version, pineTest) => {
 					stateVersion === 'v2'
 						? _.mapKeys(devicePatchBodyInvalid[stateKey], (_v, key) =>
 								key === 'name' ? 'device_name' : key,
-						  )
+							)
 						: _.pickBy(
 								devicePatchBodyInvalid[stateKey],
 								(_v, key) => key !== 'name',
-						  );
+							);
 
 				await expectResourceToMatch(
 					pineUser,
@@ -1020,14 +1020,14 @@ versions.test((version, pineTest) => {
 							stateVersion === 'v2'
 								? {
 										is_on__commit: r.commit,
-								  }
+									}
 								: {
 										apps: {
 											[applicationUuid]: {
 												release_uuid: r.commit,
 											},
 										},
-								  },
+									},
 					};
 
 					await fakeDevice.patchState(

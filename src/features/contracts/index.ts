@@ -167,7 +167,7 @@ const upsertEntries = async (
 					? {
 							...entryFieldData,
 							contract: JSON.stringify(entryFieldData.contract),
-					  }
+						}
 					: entryFieldData;
 			try {
 				const uniqueFieldValue = entryFieldData[uniqueKey];

@@ -316,6 +316,6 @@ const getUserAppForState = (
 				services: {},
 				networks: {},
 				volumes: {},
-		  }
+			}
 		: buildAppFromRelease(device, userAppFromApi, release, config);
 };

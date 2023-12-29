@@ -93,7 +93,7 @@ const createReleaseServiceInstalls = async (
 					? missingServiceFilters[0]
 					: {
 							$or: missingServiceFilters,
-					  }),
+						}),
 			},
 		},
 	})) as Array<

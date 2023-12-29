@@ -146,7 +146,7 @@ const publishBackend = LOKI_ENABLED
 			backend: DeviceLogsBackend,
 			ctx: LogContext,
 			buffer: DeviceLog[],
-	  ) => {
+		) => {
 			const publishingToRedis = backend.publish(ctx, buffer);
 			const publishingToLoki = shouldPublishToLoki()
 				? (await getLokiBackend())
@@ -156,14 +156,14 @@ const publishBackend = LOKI_ENABLED
 						)
 				: undefined;
 			await Promise.all([publishingToRedis, publishingToLoki]);
-	  }
+		}
 	: async (
 			backend: DeviceLogsBackend,
 			ctx: LogContext,
 			buffer: DeviceLog[],
-	  ) => {
+		) => {
 			await backend.publish(ctx, buffer);
-	  };
+		};
 
 function handleStreamingWrite(
 	ctx: LogContext,

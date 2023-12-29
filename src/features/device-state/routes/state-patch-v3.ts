@@ -161,7 +161,7 @@ const fetchData = async (
 															$or: imgLocationFilter.map((ilf) => ({
 																i: ilf,
 															})),
-													  },
+														},
 										},
 									},
 								},

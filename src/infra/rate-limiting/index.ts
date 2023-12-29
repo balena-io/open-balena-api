@@ -158,7 +158,7 @@ const $createRateLimitMiddleware = (
 						});
 					}
 				};
-		  };
+			};
 	return async (req, res, next) => {
 		try {
 			const key = await keyFn(req, res);
