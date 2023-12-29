@@ -49,10 +49,10 @@ export const supertest = function (user?: string | UserObjectParam) {
 	}
 	// We have to cast `as any` because the types are poorly maintained
 	// and don't support setting defaults
-	const req: any = $supertest.agent(app);
+	const req = $supertest.agent(app);
 
 	if (typeof token === 'string') {
 		req.set('Authorization', `Bearer ${token}`);
 	}
-	return req as ReturnType<typeof $supertest.agent>;
+	return req;
 };
