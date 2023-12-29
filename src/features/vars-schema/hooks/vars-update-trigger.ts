@@ -46,7 +46,7 @@ const addEnvHooks = (
 						return _.chunk(affectedIds, MAX_SAFE_SQL_BINDS).map((ids) =>
 							filterBuilder(ids),
 						);
-				  })()
+					})()
 				: [filter];
 			const deviceIds = (
 				await Promise.all(

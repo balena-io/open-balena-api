@@ -266,7 +266,7 @@ const setReleasesToSetRevision = async (
 					? filters[0]
 					: {
 							$or: filters,
-					  }),
+						}),
 			},
 			$orderby: [
 				// order first by application, so that the advisory locks are picked
@@ -327,7 +327,7 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 				: groupByMap(
 						releasesToSetRevision,
 						(r) => r.belongs_to__application.__id,
-				  );
+					);
 
 		const releasesByAppEntries = Array.from(releasesByApp.entries());
 

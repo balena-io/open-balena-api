@@ -6,8 +6,9 @@ import { ThisShouldNeverHappenError } from '../../src/infra/error-handling';
 export type UserObjectParam = Partial<User> & { token: string };
 
 export const augmentStatusAssertionError = () => {
-	const originalExpect: $supertest.Test['expect'] =
-		$supertest.Test.prototype.expect;
+	// We need to cast this because otherwise the supertest-extension `_assertStatus` method isn't included
+	const originalExpect = $supertest.Test.prototype
+		.expect as $supertest.Test['expect'];
 	/**
 	 * This enhances `.expect(statusCode, ...)` to also log the response body when
 	 * the statusCode is different than expected, to make the original error more useful.

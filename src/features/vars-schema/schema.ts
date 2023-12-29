@@ -59,7 +59,7 @@ export const schema: RequestHandler = async (req, res) => {
 			...(deviceTypeSlug != null
 				? DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES.filter((config) =>
 						config.capableDeviceTypes.includes(deviceTypeSlug),
-				  ).map((config) => config.properties)
+					).map((config) => config.properties)
 				: []),
 		),
 	};

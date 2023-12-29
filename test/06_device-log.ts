@@ -182,7 +182,7 @@ describe('device log', () => {
 
 					// Emit 2 extra logs after retrieving the historical ones and stop listening.
 					if (logChunks.length >= 3) {
-						req.abort();
+						await req.abort();
 						return;
 					}
 					// TODO: Change this to use the `/device/v2/:uuid/log-stream`` endpoint.
