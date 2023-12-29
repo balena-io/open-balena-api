@@ -1,4 +1,16 @@
 - commits:
+    - subject: "Tests: remove an `any` typing"
+      hash: 697c60c1017d46279e3aa1affdca8010639344b3
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 14.17.6
+  title: ""
+  date: 2023-12-29T15:35:51.519Z
+- commits:
     - subject: Update dependencies
       hash: 840d65aba6aeb3bba5fbe452dc688d29938e5581
       body: |
