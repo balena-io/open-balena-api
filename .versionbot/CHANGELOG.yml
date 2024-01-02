@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update pinejs-client-supertest to 2.0.2
+      hash: e47c13d982bda8756de5960492349c1f9edb6a91
+      body: |
+        Update pinejs-client-supertest from 2.0.1 to 2.0.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 14.17.7
+  title: ""
+  date: 2024-01-02T09:17:52.635Z
+- commits:
     - subject: "Tests: remove an `any` typing"
       hash: 697c60c1017d46279e3aa1affdca8010639344b3
       body: ""
