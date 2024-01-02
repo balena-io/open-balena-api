@@ -5,9 +5,8 @@ import _ from 'lodash';
 import path from 'path';
 import { randomUUID } from 'crypto';
 
-import { Headers } from 'request';
 import { API_HOST } from '../../src/lib/config';
-import { requestAsync } from '../../src/infra/request-promise';
+import axios, { AxiosHeaders } from 'axios';
 import { version } from './versions';
 import { supertest } from './supertest';
 
@@ -34,26 +33,22 @@ const createResource = async (args: {
 	user?: { token: string };
 }) => {
 	const { resource, method = 'POST', body = {}, user } = args;
-	const headers: Headers = {};
+	const headers = new AxiosHeaders();
 
 	if (user != null) {
 		headers.Authorization = `Bearer ${user.token}`;
 	}
-
-	const [response, responseBody] = await requestAsync({
+	const { data: responseBody, status: statusCode } = await axios({
 		url: `http://${API_HOST}/${version}/${resource}`,
 		headers,
 		method,
-		json: true,
-		body,
+		data: body,
+		responseEncoding: 'utf-8',
+		responseType: 'json',
 	});
 
-	if (response.statusCode !== 201) {
-		logErrorAndThrow(
-			`Failed to create: ${resource}`,
-			response.statusCode,
-			responseBody,
-		);
+	if (statusCode !== 201) {
+		logErrorAndThrow(`Failed to create: ${resource}`, statusCode, responseBody);
 	}
 
 	return responseBody;

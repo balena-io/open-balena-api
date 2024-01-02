@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import request from 'request';
 import tar from 'tar';
 import glob from 'fast-glob';
 import fs from 'fs';
@@ -12,6 +11,7 @@ import type { RepositoryInfo, Contract } from './index';
 import { getBase64DataUri } from '../../lib/utils';
 import { captureException } from '../../infra/error-handling';
 import { CONTRACT_ALLOWLIST } from '../../lib/config';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 const pipeline = util.promisify(stream.pipeline);
 const exists = util.promisify(fs.exists);
@@ -125,16 +125,16 @@ const prepareContractDirectory = async (repo: RepositoryInfo) => {
 	return archiveDir;
 };
 
-const getRequestOptions = (repo: RepositoryInfo) => {
+const getRequestOptions = (repo: RepositoryInfo): AxiosRequestConfig => {
 	const auth = repo.token
 		? `Basic ${Buffer.from(repo.token).toString('base64')}`
 		: '';
 	return {
-		followRedirect: true,
 		headers: {
 			'User-Agent': 'balena',
 			Authorization: auth,
 		},
+		responseType: 'stream',
 	};
 };
 
@@ -148,22 +148,27 @@ export const fetchContractsLocally = async (repos: RepositoryInfo[]) => {
 			});
 
 			// We cast to ReadableStream explicitly because `request.get is of type `request.Request` and it controls whether it is a readable or writable stream internally so it is not typings-compatible with ReadableStream, even though it it functionally equivalent.
-			const get = request
-				.get(getArchiveLinkForRepo(repo), getRequestOptions(repo))
-				.on('response', function (this: request.Request, response) {
-					if (response.statusCode !== 200) {
-						// On any non-200 responses just error and abort the request
-						this.emit(
-							'error',
-							new Error(
-								`Invalid response while fetching contracts: ${response.statusMessage}`,
-							),
-						);
-						this.abort();
-					}
-				}) as unknown as NodeJS.ReadableStream;
+			const streamResponse = await axios.get(
+				getArchiveLinkForRepo(repo),
+				getRequestOptions(repo),
+			);
 
-			await pipeline(get, untar);
+			const readableStream =
+				streamResponse.data as unknown as NodeJS.ReadableStream;
+
+			readableStream.on('data', (response: AxiosResponse) => {
+				if (response.status !== 200) {
+					// On any non-200 responses just error and abort the request
+					readableStream.emit(
+						'error',
+						new Error(
+							`Invalid response while fetching contracts: ${response.statusText}`,
+						),
+					);
+				}
+			});
+
+			await pipeline(readableStream, untar);
 		}),
 	);
 };
