@@ -1,8 +1,6 @@
-import AWSWrapper from './aws-sdk-wrapper.cjs';
+import { S3 } from '@aws-sdk/client-s3';
 import _ from 'lodash';
 import path from 'path';
-
-const { AWS } = AWSWrapper;
 
 import {
 	IMAGE_STORAGE_ACCESS_KEY,
@@ -14,75 +12,53 @@ import {
 
 export const getKey = (...parts: string[]): string => parts.join('/');
 
-class UnauthenticatedS3Facade {
-	constructor(private s3: AWS.S3) {}
+const s3Client = new S3({
+	// The transformation for endpoint is not implemented.
+	// Refer to UPGRADING.md on aws-sdk-js-v3 for changes needed.
+	// Please create/upvote feature request on aws-sdk-js-codemod for endpoint.
+	endpoint: IMAGE_STORAGE_ENDPOINT,
 
-	public headObject(
-		params: AWS.S3.Types.HeadObjectRequest,
-	): ReturnType<AWS.S3['headObject']> {
-		return this.s3.makeUnauthenticatedRequest('headObject', params);
-	}
+	region: 'us-east-1',
 
-	public getObject(
-		params: AWS.S3.Types.GetObjectRequest,
-	): ReturnType<AWS.S3['getObject']> {
-		return this.s3.makeUnauthenticatedRequest('getObject', params);
-	}
+	// The key s3ForcePathStyle is renamed to forcePathStyle.
+	forcePathStyle: IMAGE_STORAGE_FORCE_PATH_STYLE,
 
-	public listObjectsV2(
-		params: AWS.S3.Types.ListObjectsV2Request,
-	): ReturnType<AWS.S3['listObjectsV2']> {
-		return this.s3.makeUnauthenticatedRequest('listObjectsV2', params);
-	}
-}
-
-function createS3Client() {
-	if (!IMAGE_STORAGE_ACCESS_KEY || !IMAGE_STORAGE_SECRET_KEY) {
-		return new UnauthenticatedS3Facade(
-			new AWS.S3({
-				endpoint: IMAGE_STORAGE_ENDPOINT,
-				s3ForcePathStyle: IMAGE_STORAGE_FORCE_PATH_STYLE,
-				signatureVersion: 'v4',
+	...(!IMAGE_STORAGE_ACCESS_KEY || !IMAGE_STORAGE_SECRET_KEY
+		? {
+				// makes the requests being unauthenticated
+				signer: { sign: async (request) => request },
+			}
+		: {
+				credentials: {
+					accessKeyId: IMAGE_STORAGE_ACCESS_KEY,
+					secretAccessKey: IMAGE_STORAGE_SECRET_KEY,
+				},
 			}),
-		);
-	}
-	return new AWS.S3({
-		endpoint: IMAGE_STORAGE_ENDPOINT,
-		s3ForcePathStyle: IMAGE_STORAGE_FORCE_PATH_STYLE,
-		signatureVersion: 'v4',
-		accessKeyId: IMAGE_STORAGE_ACCESS_KEY,
-		secretAccessKey: IMAGE_STORAGE_SECRET_KEY,
-	});
-}
-
-const s3Client = createS3Client();
+});
 
 async function getFileInfo(s3Path: string) {
-	const req = s3Client.headObject({
+	return await s3Client.headObject({
 		Bucket: S3_BUCKET,
 		Key: s3Path,
 	});
-	return await req.promise();
 }
 
 export async function getFile(s3Path: string) {
-	const req = s3Client.getObject({
+	return await s3Client.getObject({
 		Bucket: S3_BUCKET,
 		Key: s3Path,
 	});
-	return await req.promise();
 }
 
 export async function getFolderSize(
 	folder: string,
 	marker?: string,
 ): Promise<number> {
-	const req = s3Client.listObjectsV2({
+	const res = await s3Client.listObjectsV2({
 		Bucket: S3_BUCKET,
 		Prefix: `${folder}/`,
 		ContinuationToken: marker,
 	});
-	const res = await req.promise();
 
 	const size = _.sumBy(res.Contents, 'Size');
 	const nextMarker = res.NextContinuationToken;
@@ -97,14 +73,12 @@ export async function listFolders(
 	folder: string,
 	marker?: string,
 ): Promise<string[]> {
-	const req = s3Client.listObjectsV2({
+	const res = await s3Client.listObjectsV2({
 		Bucket: S3_BUCKET,
 		Prefix: `${folder}/`,
 		Delimiter: '/',
 		ContinuationToken: marker,
 	});
-
-	const res = await req.promise();
 
 	const objects = _(res.CommonPrefixes)
 		.map(({ Prefix }) => Prefix)
