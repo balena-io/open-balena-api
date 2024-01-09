@@ -149,7 +149,7 @@ import { getApplicationSlug } from './features/applications';
 import * as deviceAdditions from './features/devices/models/device-additions';
 import { addToModel as addReleaseAdditionsToModel } from './features/ci-cd/models/release-additions';
 import { apiRoot } from './balena';
-import { v6Translations } from './translations/v6/v6';
+import { getV6Translations } from './translations/v6/v6';
 
 export * as tags from './features/tags/validation';
 
@@ -265,7 +265,7 @@ export const envVarsConfig = {
 
 export const translations = {
 	v6: {
-		translations: v6Translations,
+		getTranslations: getV6Translations,
 		loadHooks: () => import('./translations/v6/hooks'),
 	},
 };
