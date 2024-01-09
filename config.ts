@@ -1,6 +1,9 @@
 import type { ConfigLoader } from '@balena/pinejs';
 import * as balenaModel from './src/balena';
-import { v6AbstractSqlModel, v6Translations } from './src/translations/v6/v6';
+import {
+	v6AbstractSqlModel,
+	getV6Translations,
+} from './src/translations/v6/v6';
 import { getFileUploadHandler } from './src/fileupload-handler';
 
 export = {
@@ -11,7 +14,7 @@ export = {
 			modelName: 'v6',
 			abstractSql: v6AbstractSqlModel,
 			translateTo: 'resin',
-			translations: v6Translations,
+			translations: getV6Translations(),
 		},
 	],
 	users: [
