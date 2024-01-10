@@ -1,4 +1,24 @@
 - commits:
+    - subject: Add `generateAbstractSqlModelFromSE` that accepts an se model directly
+      hash: 98142628e517a06f2d93fcfe597158a0ceda3daa
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+    - subject: Add `URL` to accepted path types for `generateAbstractSqlModel`
+      hash: af5cb241821e5a63a27a45454bc9907105aee010
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 15.1.0
+  title: ""
+  date: 2024-01-10T09:26:05.465Z
+- commits:
     - subject: Change v6 translations to a get function accepting an abstractSqlModel
       hash: 3ebd1b9a173d411772ec1e4e0a1cc1f16e756ff3
       body: ""
