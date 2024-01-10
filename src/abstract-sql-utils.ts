@@ -26,9 +26,13 @@ import * as AbstractSqlCompiler from '@balena/abstract-sql-compiler';
 export const { optimizeSchema } = AbstractSqlCompiler.postgres;
 
 export const generateAbstractSqlModel = (
-	seModelPath: string,
+	seModelPath: string | URL,
+): AbstractSqlModel =>
+	generateAbstractSqlModelFromSE(readFileSync(seModelPath, 'utf8'));
+
+export const generateAbstractSqlModelFromSE = (
+	seModel: string,
 ): AbstractSqlModel => {
-	const seModel = readFileSync(seModelPath, 'utf8');
 	const lfModel = sbvrUtils.generateLfModel(seModel);
 	return sbvrUtils.generateAbstractSqlModel(lfModel);
 };
