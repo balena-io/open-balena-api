@@ -315,14 +315,14 @@ export const registerUser = async (
 	},
 	tx: Tx,
 	req?: Request,
-): Promise<AnyObject> => {
+) => {
 	let clientIP;
 	if (req) {
 		clientIP = getIP(req);
 	}
 
 	// Create the user in the platform
-	const user = await api.resin.post({
+	const user = (await api.resin.post({
 		resource: 'user',
 		body: {
 			...userData,
@@ -334,7 +334,7 @@ export const registerUser = async (
 				clientIP,
 			},
 		},
-	});
+	})) as PickDeferred<DbUser, keyof DbUser>;
 
 	if (user.id == null) {
 		throw new Error('Error creating user in the platform');
