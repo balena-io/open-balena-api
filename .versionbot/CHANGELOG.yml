@@ -1,4 +1,16 @@
 - commits:
+    - subject: Improve typing of `registerUser`
+      hash: 4a305ba82228553e1f8ce92404757b3e2b380015
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 15.1.1
+  title: ""
+  date: 2024-01-16T14:31:32.466Z
+- commits:
     - subject: Add `generateAbstractSqlModelFromSE` that accepts an se model directly
       hash: 98142628e517a06f2d93fcfe597158a0ceda3daa
       body: ""
