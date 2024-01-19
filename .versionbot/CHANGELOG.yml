@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update @balena/pinejs to 15.4.5 Update @balena/pinejs from 15.3.28 to
+        15.4.5
+      hash: 71df477fd00ed829e96da5fb8c59b9e0eadbd668
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otávio Jacobi
+      nested: []
+  version: 15.1.2
+  title: ""
+  date: 2024-01-19T12:57:13.292Z
+- commits:
     - subject: Improve typing of `registerUser`
       hash: 4a305ba82228553e1f8ce92404757b3e2b380015
       body: ""
