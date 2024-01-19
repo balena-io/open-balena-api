@@ -9,7 +9,7 @@ import {
 import { middleware } from '../../infra/auth';
 import { login } from './login';
 import { getUserPublicKeys } from './public-keys';
-import { refreshToken } from './refresh-token';
+import { refreshToken, setOnTokenRefresh } from './refresh-token';
 import { whoami, actorWhoami } from './whoami';
 
 export * from './handles';
@@ -24,7 +24,12 @@ export const loginRateLimiter = createRateLimitMiddleware(
 	}),
 );
 
-export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
+export const setup = (
+	app: Application,
+	onLogin: SetupOptions['onLogin'],
+	onTokenRefresh: SetupOptions['onTokenRefresh'],
+) => {
+	setOnTokenRefresh(onTokenRefresh);
 	app.post('/login_', loginRateLimiter('body.username'), login(onLogin));
 
 	app.get('/user/v1/whoami', middleware.fullyAuthenticatedUser, whoami);
