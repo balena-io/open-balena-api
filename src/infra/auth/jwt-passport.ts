@@ -28,7 +28,7 @@ export interface ApiKey extends sbvrUtils.ApiKey {
 	key: string;
 }
 
-export interface User extends sbvrUtils.User {
+export interface TokenUserPayload extends sbvrUtils.User {
 	username: string;
 	email: string | null;
 	created_at: string;
@@ -38,7 +38,7 @@ export interface User extends sbvrUtils.User {
 	authTime?: number;
 }
 
-export type Creds = ServiceToken | User | ScopedToken;
+export type Creds = ServiceToken | TokenUserPayload | ScopedToken;
 export type JwtUser = Creds | ScopedAccessToken;
 const TOKEN_BODY_FIELD = '_token';
 
@@ -149,7 +149,7 @@ export const middleware: RequestHandler = (req, res, next) => {
 					twoFactorRequired: true;
 				};
 			} else {
-				req.user = auth as User & {
+				req.user = auth as TokenUserPayload & {
 					twoFactorRequired: false;
 				};
 			}

@@ -1,6 +1,6 @@
 import { app } from '../../init';
 import $supertest from 'supertest';
-import { User as TokenUserPayload } from '../../src/infra/auth/jwt-passport';
+import type { TokenUserPayload } from '../../src/infra/auth/jwt-passport';
 import { ThisShouldNeverHappenError } from '../../src/infra/error-handling';
 
 export type UserObjectParam = Partial<TokenUserPayload> & { token: string };

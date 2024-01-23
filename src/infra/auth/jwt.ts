@@ -7,7 +7,7 @@ import jsonwebtoken from 'jsonwebtoken';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
-import type { SignOptions, User as TokenUserPayload } from './jwt-passport';
+import type { SignOptions, TokenUserPayload } from './jwt-passport';
 import type { User as DbUser, PickDeferred } from '../../balena-model';
 import { pseudoRandomBytesAsync } from '../../lib/utils';
 import { getUser, userFields } from './auth';

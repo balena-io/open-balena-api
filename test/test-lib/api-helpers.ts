@@ -3,7 +3,7 @@ import type { PineTest } from 'pinejs-client-supertest';
 import type { Release } from '../../src/balena-model';
 import { expect } from 'chai';
 import { supertest, UserObjectParam } from '../test-lib/supertest';
-import type { User as TokenUserPayload } from '../../src';
+import type { TokenUserPayload } from '../../src';
 
 const version = 'resin';
 
