@@ -1,4 +1,34 @@
 - commits:
+    - subject: "state-get-v3: Unify the user,SV&hostApp app state generation helpers"
+      hash: 5cf3ced97a827d027884910adcad599a56f94f85
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: "state-get-v3: Add the 'io.balena.image.store': 'root' label to hostApps"
+      hash: e3540634cdb78fffdc8ac7916f6d4d605e568a66
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Add the hostApp to the state GET v3 result
+      hash: b74eaa65c43f5149bc7273cc37f7dc0d266a9ae8
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://balena.fibery.io/Work/Task/Add-hostOS-to-target-state-endpoint-1615
+        see: https://balena.fibery.io/Work/Task/Add-hostOS-to-target-state-endpoint-1615
+      author: Thodoris Greasidis
+      nested: []
+  version: 16.1.0
+  title: ""
+  date: 2024-01-23T15:41:36.641Z
+- commits:
     - subject: "auth: Rename the exported User type to TokenUserPayload"
       hash: 93595602607b31782ce11f0c36d6c5cdc6be03e1
       body: ""
