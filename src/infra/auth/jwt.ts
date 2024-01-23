@@ -7,8 +7,8 @@ import jsonwebtoken from 'jsonwebtoken';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
-import { SignOptions, User } from './jwt-passport';
-
+import type { SignOptions, User as TokenUserPayload } from './jwt-passport';
+import type { User as DbUser, PickDeferred } from '../../balena-model';
 import { pseudoRandomBytesAsync } from '../../lib/utils';
 import { getUser, userFields } from './auth';
 import {
@@ -21,7 +21,9 @@ const { api } = sbvrUtils;
 
 const SUDO_TOKEN_VALIDITY = 20 * 60 * 1000;
 
-export const checkSudoValidity = async (user: User): Promise<boolean> => {
+export const checkSudoValidity = async (
+	user: TokenUserPayload,
+): Promise<boolean> => {
 	const notAuthBefore = Date.now() - SUDO_TOKEN_VALIDITY;
 	return user.authTime != null && user.authTime > notAuthBefore;
 };
@@ -36,14 +38,14 @@ export const generateNewJwtSecret = async (): Promise<string> => {
 export const tokenFields = [...userFields];
 
 export interface ExtraParams {
-	existingToken?: Partial<User>;
+	existingToken?: Partial<TokenUserPayload>;
 	jwtOptions?: SignOptions;
 	tx: Tx;
 }
 
 export type GetUserTokenDataFn = (
 	userId: number,
-	existingToken: Partial<User> | undefined,
+	existingToken: Partial<TokenUserPayload> | undefined,
 	tx: Tx,
 ) => PromiseLike<AnyObject>;
 
@@ -55,7 +57,7 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 	userId,
 	existingToken,
 	tx: Tx,
-): Promise<User> => {
+): Promise<TokenUserPayload> => {
 	const [userData, permissionData] = await Promise.all([
 		api.resin.get({
 			resource: 'user',
@@ -64,26 +66,29 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 			options: {
 				$select: tokenFields,
 			},
-		}) as Promise<AnyObject>,
+		}) as Promise<PickDeferred<DbUser, (typeof tokenFields)[number]>>,
 		permissions.getUserPermissions(userId, tx),
 	]);
 	if (!userData || !permissionData) {
 		throw new Error('No data found?!');
 	}
-	const newTokenData: Partial<User> = _.pick(userData, tokenFields);
+	const newTokenData = {
+		..._.pick(userData, tokenFields),
+		actor: userData.actor.__id,
+	};
 
-	const tokenData = {
+	const tokenData: TokenUserPayload = {
 		...existingToken,
 		...newTokenData,
 		permissions: permissionData,
-	} as User;
+	};
 
 	if (!Number.isFinite(tokenData.authTime!)) {
 		tokenData.authTime = Date.now();
 	}
 
 	// skip nullish attributes
-	return _.omitBy(tokenData, _.isNil) as User;
+	return _.omitBy(tokenData, _.isNil) as TokenUserPayload;
 };
 
 export const createSessionToken = async (
