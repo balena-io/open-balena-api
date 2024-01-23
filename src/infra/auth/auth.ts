@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
 import { retrieveAPIKey } from './api-keys';
-import { User } from './jwt-passport';
+import type { TokenUserPayload } from './jwt-passport';
 
 import { getIP } from '../../lib/utils';
 import type { PickDeferred, User as DbUser } from '../../balena-model';
@@ -190,12 +190,12 @@ export function getUser(
 	req: Request | hooks.HookReq,
 	txParam: Tx | undefined,
 	required?: true,
-): Promise<User>;
+): Promise<TokenUserPayload>;
 export function getUser(
 	req: Request | hooks.HookReq,
 	txParam: Tx | undefined,
 	required: false,
-): Promise<User | undefined>;
+): Promise<TokenUserPayload | undefined>;
 export async function getUser(
 	req: hooks.HookReq & Pick<Request, 'user' | 'creds'>,
 	/** You should always be passing a Tx, unless you are using this in a middleware. */

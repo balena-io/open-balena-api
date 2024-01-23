@@ -1,4 +1,3 @@
-import jsonwebtoken from 'jsonwebtoken';
 import * as fixtures from './fixtures';
 import {
 	supertest,
@@ -9,6 +8,7 @@ import {
 	getContractRepos,
 	synchronizeContracts,
 } from '../../src/features/contracts';
+import { expectJwt } from './api-helpers';
 
 const version = 'resin';
 
@@ -47,11 +47,10 @@ const loadAdminUserAndOrganization = async () => {
 			.expect(200)
 	).text;
 
-	const user = (await jsonwebtoken.decode(token)) as UserObjectParam;
-	user.token = token;
-	user.actor = (
-		await supertest(user).get(`/${version}/user(${user.id})`).expect(200)
-	).body.d[0].actor as number;
+	const user: UserObjectParam = {
+		...(await expectJwt(token)),
+		token,
+	};
 
 	const org = (
 		await supertest(user)

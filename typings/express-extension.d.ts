@@ -3,7 +3,7 @@ declare namespace Express {
 	import type { Creds } from '../src/infra/auth/jwt-passport';
 	// For some reason TS doesn't like v so we had to use `import()`
 	// import type { User as ApiUser } from '../src/infra/auth/jwt-passport';
-	type ApiUser = import('../src/infra/auth/jwt-passport').User;
+	type ApiUser = import('../src/infra/auth/jwt-passport').TokenUserPayload;
 
 	// Augment Express.User to include the props of our ApiUser.
 	// eslint-disable-next-line @typescript-eslint/no-empty-interface

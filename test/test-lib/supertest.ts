@@ -1,9 +1,9 @@
 import { app } from '../../init';
 import $supertest from 'supertest';
-import { User } from '../../src/infra/auth/jwt-passport';
+import type { TokenUserPayload } from '../../src/infra/auth/jwt-passport';
 import { ThisShouldNeverHappenError } from '../../src/infra/error-handling';
 
-export type UserObjectParam = Partial<User> & { token: string };
+export type UserObjectParam = Partial<TokenUserPayload> & { token: string };
 
 export const augmentStatusAssertionError = () => {
 	// We need to cast this because otherwise the supertest-extension `_assertStatus` method isn't included
