@@ -1,4 +1,26 @@
 - commits:
+    - subject: "auth: Rename the exported User type to TokenUserPayload"
+      hash: 93595602607b31782ce11f0c36d6c5cdc6be03e1
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Thodoris Greasidis
+      nested: []
+    - subject: "auth: Fix the JWT's actor being a deferred navigation resource"
+      hash: 8090d8ae03a492e1680e4650cf2bd6da514f5948
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+        See: https://github.com/balena-io/balena-api/pull/4852
+        see: https://github.com/balena-io/balena-api/pull/4852
+      author: Thodoris Greasidis
+      nested: []
+  version: 16.0.0
+  title: ""
+  date: 2024-01-23T15:22:10.160Z
+- commits:
     - subject: Update @balena/pinejs to 15.4.5 Update @balena/pinejs from 15.3.28 to
         15.4.5
       hash: 71df477fd00ed829e96da5fb8c59b9e0eadbd668
