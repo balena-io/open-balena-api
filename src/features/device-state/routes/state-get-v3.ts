@@ -88,6 +88,7 @@ export function buildAppFromRelease(
 	application: AnyObject,
 	release: AnyObject,
 	config: Dictionary<string>,
+	defaultLabels?: Dictionary<string>,
 ): NonNullable<LocalStateApp['releases']> {
 	let composition: AnyObject = {};
 	const services: NonNullable<LocalStateApp['releases']>[string]['services'] =
@@ -135,7 +136,9 @@ export function buildAppFromRelease(
 			varListInsert(si.device_service_environment_variable, environment);
 		}
 
-		const labels: Dictionary<string> = {};
+		const labels: Dictionary<string> = {
+			...defaultLabels,
+		};
 		for (const { label_name, value } of [
 			...ipr.image_label,
 			...svc.service_label,
@@ -264,6 +267,16 @@ const deviceExpand: Expand = {
 			},
 		},
 	},
+	should_be_operated_by__release: {
+		...releaseExpand,
+		$expand: {
+			...releaseExpand.$expand,
+			belongs_to__application: {
+				$select: ['id', 'uuid', 'app_name', 'is_host', 'is_of__class'],
+				$expand: appExpand,
+			},
+		},
+	},
 };
 
 const stateQuery = _.once(() =>
@@ -293,15 +306,26 @@ const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
 		storedDeviceFields: _.pick(device, getStateEventAdditionalFields),
 	});
 
-	let apps = getUserAppState(device, config);
+	// We use an empty config for the supervisor & hostApp as we don't want any labels applied to them due to user app config
+	const svAndHostAppConfig = {};
+	const apps = {
+		...getAppState(device, 'should_be_managed_by__release', svAndHostAppConfig),
+		...getAppState(
+			device,
+			'should_be_operated_by__release',
+			svAndHostAppConfig,
+			{
+				// This label is necessary for older supervisors to properly detect the hostApp
+				// and ignore it, sinc `is_host: true` wasn't enough. W/o this the device would
+				// try to install the hostApp container like a normal user app and restart it
+				// constantly b/c the image doesn't have a CMD specified.
+				// See: https://github.com/balena-os/balena-supervisor/blob/v15.2.0/src/compose/app.ts#L839
+				'io.balena.image.store': 'root',
+			},
+		),
+		...getAppState(device, 'should_be_running__release', config),
+	};
 
-	const supervisorRelease = device.should_be_managed_by__release[0];
-	if (supervisorRelease) {
-		apps = {
-			...getSupervisorAppState(device),
-			...apps,
-		};
-	}
 	const state: StateV3 = {
 		[uuid]: {
 			name: device.device_name,
@@ -343,10 +367,26 @@ const getDevice = getStateDelayingEmpty(
 
 const getAppState = (
 	device: AnyObject,
-	application: AnyObject,
-	release: AnyObject | undefined,
+	targetReleaseField:
+		| 'should_be_running__release'
+		| 'should_be_managed_by__release'
+		| 'should_be_operated_by__release',
 	config: Dictionary<string>,
-): StateV3[string]['apps'] => {
+	defaultLabels?: Dictionary<string>,
+): StateV3[string]['apps'] | null => {
+	let application: AnyObject;
+	let release: AnyObject | undefined;
+	if (targetReleaseField === 'should_be_running__release') {
+		application = device.belongs_to__application[0];
+		release = getReleaseForDevice(device);
+	} else {
+		release = device[targetReleaseField][0];
+		if (!release) {
+			return null;
+		}
+		application = release.belongs_to__application[0];
+	}
+
 	return {
 		[application.uuid]: {
 			id: application.id,
@@ -354,26 +394,14 @@ const getAppState = (
 			is_host: application.is_host,
 			class: application.is_of__class,
 			...(release != null && {
-				releases: buildAppFromRelease(device, application, release, config),
+				releases: buildAppFromRelease(
+					device,
+					application,
+					release,
+					config,
+					defaultLabels,
+				),
 			}),
 		},
 	};
-};
-
-const getUserAppState = (
-	device: AnyObject,
-	config: Dictionary<string>,
-): StateV3[string]['apps'] => {
-	const userApp = device.belongs_to__application[0];
-	const userAppRelease = getReleaseForDevice(device);
-	return getAppState(device, userApp, userAppRelease, config);
-};
-const getSupervisorAppState = (device: AnyObject): StateV3[string]['apps'] => {
-	const supervisorRelease = device.should_be_managed_by__release[0];
-	if (!supervisorRelease) {
-		return {};
-	}
-	const supervisorApp = supervisorRelease.belongs_to__application[0];
-	// We use an empty config as we don't want any labels applied to the supervisor due to user app config
-	return getAppState(device, supervisorApp, supervisorRelease, {});
 };

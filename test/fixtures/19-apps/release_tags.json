@@ -22,5 +22,71 @@
 		"release": "supervisorRelease2",
 		"tag_key": "BALENA_REQUIRED_SUPERVISOR_v1.0.1",
 		"value": "v1.0.1"
+	},
+	"rpi3HostAppRelease0tag-variant": {
+		"user": "admin",
+		"release": "rpi3HostAppRelease0",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"rpi3HostAppRelease0tag-version": {
+		"user": "admin",
+		"release": "rpi3HostAppRelease0",
+		"tag_key": "version",
+		"value": "2.50.0+rev1"
+	},
+	"intelNucHostAppRelease0Tag-variant": {
+		"user": "admin",
+		"release": "intelNucHostAppRelease0",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"intelNucHostAppRelease0Tag-version": {
+		"user": "admin",
+		"release": "intelNucHostAppRelease0",
+		"tag_key": "version",
+		"value": "2.50.0+rev1"
+	},
+	"intelNucHostAppRelease1Tag-variant": {
+		"user": "admin",
+		"release": "intelNucHostAppRelease1",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"intelNucHostAppRelease1Tag-version": {
+		"user": "admin",
+		"release": "intelNucHostAppRelease1",
+		"tag_key": "version",
+		"value": "2.50.1+rev1"
+	},
+	"intelNucHostAppReleaseFailedTag-variant": {
+		"user": "admin",
+		"release": "intelNucHostAppReleaseFailed",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"intelNucHostAppReleaseFailedTag-version": {
+		"user": "admin",
+		"release": "intelNucHostAppReleaseFailed",
+		"tag_key": "version",
+		"value": "2.50.1+rev1"
+	},
+	"intelNucHostAppUnifiedRelease1Tag-version": {
+		"user": "admin",
+		"release": "intelNucHostAppUnifiedRelease1",
+		"tag_key": "version",
+		"value": "2.88.4"
+	},
+	"intelNucEsrHostAppRelease0Tag-variant": {
+		"user": "admin",
+		"release": "intelNucEsrHostAppRelease0",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"intelNucEsrHostAppRelease0Tag-version": {
+		"user": "admin",
+		"release": "intelNucEsrHostAppRelease0",
+		"tag_key": "version",
+		"value": "2021.01.0"
 	}
 }

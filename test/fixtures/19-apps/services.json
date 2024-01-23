@@ -8,5 +8,15 @@
 		"user": "admin",
 		"application": "supervisorApp",
 		"service_name": "resin-supervisor"
+	},
+	"rpi3HostAppService": {
+		"user": "admin",
+		"service_name": "main",
+		"application": "raspberrypi3"
+	},
+	"intelNucHostAppService": {
+		"user": "admin",
+		"service_name": "main",
+		"application": "intel-nuc"
 	}
 }

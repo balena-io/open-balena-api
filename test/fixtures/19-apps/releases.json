@@ -61,5 +61,47 @@
 			}
 		},
 		"source": "cloud"
+	},
+	"rpi3HostAppRelease0": {
+		"application": "raspberrypi3",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	},
+	"intelNucHostAppRelease0": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	},
+	"intelNucHostAppRelease1": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	},
+	"intelNucHostAppReleaseFailed": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "failed",
+		"user": "admin"
+	},
+	"intelNucEsrHostAppRelease0": {
+		"application": "intel-nuc-esr",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	},
+	"intelNucHostAppUnifiedRelease1": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
 	}
 }
