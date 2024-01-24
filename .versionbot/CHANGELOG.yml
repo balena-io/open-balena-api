@@ -1,4 +1,33 @@
 - commits:
+    - subject: Update @balena/pinejs to 15.5.0
+      hash: 3c0445a86df2f0bd94065315be31539e8823c94d
+      body: |
+        Update @balena/pinejs from 15.4.5 to 15.5.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Use `Node16` module resolution for typescript
+              hash: 32a73b7a08fac700d10b2606c04383ab05608c9b
+              body: >
+                This continues to expose only commonjs but makes it decided by
+                more
+
+                standard nodejs means
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-15.5.0
+          title: ""
+          date: 2024-01-23T16:04:00.628Z
+  version: 16.1.1
+  title: ""
+  date: 2024-01-24T13:37:14.980Z
+- commits:
     - subject: "state-get-v3: Unify the user,SV&hostApp app state generation helpers"
       hash: 5cf3ced97a827d027884910adcad599a56f94f85
       body: ""
