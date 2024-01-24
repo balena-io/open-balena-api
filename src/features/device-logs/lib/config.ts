@@ -24,6 +24,6 @@ export function addRetentionLimit(
 export const getBackend = _.once((): DeviceLogsBackend => new RedisBackend());
 
 export const getLokiBackend = _.once(async (): Promise<DeviceLogsBackend> => {
-	const { LokiBackend } = await import('./backends/loki');
+	const { LokiBackend } = (await import('./backends/loki.js')).default;
 	return new LokiBackend();
 });

@@ -68,7 +68,7 @@ versions.test((version, pineTest) => {
 			await synchronizeContracts([contractRepository]);
 			// Reload the device-type fixtures, since after
 			// synchronizeContracts() the DB IDs have changed.
-			(await import('./test-lib/device-type')).loadDefaultFixtures();
+			(await import('./test-lib/device-type.js')).default.loadDefaultFixtures();
 		});
 
 		beforeEach(async () => {

@@ -156,6 +156,8 @@ services:
         - ./bin:/usr/src/app/bin
         - ./index.js:/usr/src/app/index.js
         - ./init.ts:/usr/src/app/init.ts
+        - ./tsconfig.json:/usr/src/app/tsconfig.json
+        - ./tsconfig.build.json:/usr/src/app/tsconfig.build.json
         - ./.materialized-config.json:/usr/src/app/.materialized-config.json
       privileged: true
       environment:

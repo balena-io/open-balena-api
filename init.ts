@@ -10,12 +10,12 @@ import { TRUST_PROXY, PORT } from './src/lib/config';
 const getUrl = (req: express.Request) => req.url;
 
 async function onInitModel() {
-	const { updateOrInsertModel } = await import(
-		'./src/infra/pinejs-client-helpers'
-	);
-	const appTypes = await import(
-		'./src/features/application-types/application-types'
-	);
+	const { updateOrInsertModel } = (
+		await import('./src/infra/pinejs-client-helpers/index.js')
+	).default;
+	const appTypes = (
+		await import('./src/features/application-types/application-types.js')
+	).default;
 	const insert: types.OptionalField<ApplicationType, 'slug'> = _.cloneDeep(
 		appTypes.DefaultApplicationType,
 	);
@@ -33,18 +33,20 @@ async function onInitModel() {
 }
 
 async function onInitHooks() {
-	const { createAllPermissions: createAll } = await import(
-		'./src/infra/auth/permissions'
-	);
-	const auth = await import('./src/lib/auth');
+	const { createAllPermissions: createAll } = (
+		await import('./src/infra/auth/permissions.js')
+	).default;
+	const auth = (await import('./src/lib/auth.js')).default;
 	const permissionNames = _.union(
 		_.flatMap(auth.ROLES),
 		_.flatMap(auth.KEYS, 'permissions'),
 	);
-	const { setSyncSettings } = await import('./src/features/contracts');
-	const { getAccessibleDeviceTypes } = await import(
-		'./src/features/device-types/device-types'
-	);
+	const { setSyncSettings } = (
+		await import('./src/features/contracts/index.js')
+	).default;
+	const { getAccessibleDeviceTypes } = (
+		await import('./src/features/device-types/device-types.js')
+	).default;
 
 	setSyncSettings({
 		'hw.device-type': {
@@ -138,9 +140,9 @@ async function onInitHooks() {
 }
 
 async function createSuperuser() {
-	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } = await import(
-		'./src/lib/config'
-	);
+	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } = (
+		await import('./src/lib/config.js')
+	).default;
 
 	if (!SUPERUSER_EMAIL || !SUPERUSER_PASSWORD) {
 		return;
@@ -148,13 +150,13 @@ async function createSuperuser() {
 
 	console.log('Creating superuser account...');
 
-	const { getOrInsertModelId } = await import(
-		'./src/infra/pinejs-client-helpers'
-	);
+	const { getOrInsertModelId } = (
+		await import('./src/infra/pinejs-client-helpers/index.js')
+	).default;
 
-	const { findUser, registerUser, updatePasswordIfNeeded } = await import(
-		'./src/infra/auth/auth'
-	);
+	const { findUser, registerUser, updatePasswordIfNeeded } = (
+		await import('./src/infra/auth/auth.js')
+	).default;
 	const { ConflictError } = errors;
 
 	const data = {
@@ -220,7 +222,7 @@ const init = async () => {
 
 		const doRunTests =
 			(process.env.RUN_TESTS || '').trim() === '1'
-				? await import('./test/test-lib/init-tests')
+				? (await import('./test/test-lib/init-tests.js')).default
 				: undefined;
 
 		// we have to load some mocks before the app starts...
@@ -228,7 +230,7 @@ const init = async () => {
 			console.log('Loading mocks...');
 			await doRunTests.preInit();
 		}
-		const { setup } = await import('./src');
+		const { setup } = (await import('./src/index.js')).default;
 		const { startServer } = await setup(app, {
 			config,
 			version: packageJson.version,

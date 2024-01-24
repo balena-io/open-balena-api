@@ -14,21 +14,21 @@ const version = 'resin';
 
 export const preInit = async () => {
 	augmentStatusAssertionError();
-	await import('./aws-mock');
-	await import('./contracts-mock');
+	await import('./aws-mock.js');
+	await import('./contracts-mock.js');
 
 	// override the interval used to emit the queue stats event...
-	const { DeviceOnlineStateManager } = await import(
-		'../../src/features/device-heartbeat'
-	);
+	const { DeviceOnlineStateManager } = (
+		await import('../../src/features/device-heartbeat/index.js')
+	).default;
 	(DeviceOnlineStateManager as any)['QUEUE_STATS_INTERVAL_MSEC'] = 1000;
 };
 
 const loadAdminUserAndOrganization = async () => {
 	// any user we try to create will be the superuser...
-	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } = await import(
-		'../../src/lib/config'
-	);
+	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } = (
+		await import('../../src/lib/config.js')
+	).default;
 
 	if (!SUPERUSER_EMAIL || !SUPERUSER_PASSWORD) {
 		console.error(
@@ -65,7 +65,7 @@ const loadAdminUserAndOrganization = async () => {
 
 export const postInit = async () => {
 	await synchronizeContracts(getContractRepos());
-	(await import('./device-type')).loadDefaultFixtures();
+	(await import('./device-type.js')).default.loadDefaultFixtures();
 
 	const { user, org } = await loadAdminUserAndOrganization();
 	const balenaOsFx = await fixtures.load('00-balena_os');
@@ -79,5 +79,5 @@ export const postInit = async () => {
 			]),
 		),
 	});
-	await import('../00_init');
+	await import('../00_init.js');
 };
