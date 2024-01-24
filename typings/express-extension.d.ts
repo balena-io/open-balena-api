@@ -4,13 +4,14 @@ declare namespace Express {
 	// For some reason TS doesn't like v so we had to use `import()`
 	// import type { User as ApiUser } from '../src/infra/auth/jwt-passport';
 	type ApiUser = import('../src/infra/auth/jwt-passport').TokenUserPayload;
+	type ApiKey = import('@balena/pinejs').sbvrUtils.ApiKey;
 
 	// Augment Express.User to include the props of our ApiUser.
 	// eslint-disable-next-line @typescript-eslint/no-empty-interface
 	interface User extends ApiUser {}
 
 	export interface Request {
-		prefetchApiKey?: Resolvable<ApiKey>;
+		prefetchApiKey?: Resolvable<ApiKey | undefined>;
 
 		creds?: Creds;
 
