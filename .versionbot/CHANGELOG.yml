@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix typing of `req.prefetchApiKey`
+      hash: 54647bdf9c55fa456a350047a9e6109ea9ee9dfb
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 16.1.4
+  title: ""
+  date: 2024-01-24T14:55:42.564Z
+- commits:
     - subject: Switch from array-sort to native array.sort
       hash: c38cddb8a8fff970835b14dda2e529a093b254e6
       body: ""
