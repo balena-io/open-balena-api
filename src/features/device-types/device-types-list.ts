@@ -1,4 +1,3 @@
-import arraySort from 'array-sort';
 import _ from 'lodash';
 
 import type { DeviceTypeJson } from './device-type-json';
@@ -23,13 +22,14 @@ export interface DeviceTypeInfo {
 }
 
 function sortBuildIds(ids: string[]): string[] {
-	return arraySort(
-		ids,
-		(a: string, b: string) => {
-			return (semver.prerelease(a) ? 1 : 0) - (semver.prerelease(b) ? 1 : 0);
-		},
-		semver.rcompare,
-	);
+	return ids.sort((a, b) => {
+		return (
+			// First sort prerelease versions to the end
+			(semver.prerelease(a) ? 1 : 0) - (semver.prerelease(b) ? 1 : 0) ||
+			// And if neither are prerelease, sort them by descending semver
+			semver.rcompare(a, b)
+		);
+	});
 }
 
 const getFirstValidBuild = async (
