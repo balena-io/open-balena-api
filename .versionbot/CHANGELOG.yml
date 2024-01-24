@@ -1,4 +1,16 @@
 - commits:
+    - subject: Switch from array-sort to native array.sort
+      hash: c38cddb8a8fff970835b14dda2e529a093b254e6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 16.1.3
+  title: ""
+  date: 2024-01-24T14:37:44.755Z
+- commits:
     - subject: Remove now unnecessary cluster typings
       hash: 190a0ba544c781892e60fbd9f455f9e6fee9e253
       body: ""
