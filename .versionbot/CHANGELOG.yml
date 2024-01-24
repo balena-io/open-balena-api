@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove now unnecessary cluster typings
+      hash: 190a0ba544c781892e60fbd9f455f9e6fee9e253
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 16.1.2
+  title: ""
+  date: 2024-01-24T14:17:21.238Z
+- commits:
     - subject: Update @balena/pinejs to 15.5.0
       hash: 3c0445a86df2f0bd94065315be31539e8823c94d
       body: |
