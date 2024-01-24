@@ -4,10 +4,7 @@ declare global {
 	type AnyObject = types.AnyObject;
 	type Resolvable<R> = types.Resolvable<R>;
 	type Tx = dbModule.Tx;
-
-	interface Dictionary<T> {
-		[key: string]: T;
-	}
+	type Dictionary<T> = types.Dictionary<T>;
 
 	type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
 	type Writable<T> = { -readonly [K in keyof T]: T[K] };

@@ -1,3 +1,5 @@
+/// <reference path="./typings/index.ts" />
+
 import Bluebird from 'bluebird';
 import bodyParser from 'body-parser';
 import compression from 'compression-next';

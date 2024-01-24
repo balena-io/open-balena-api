@@ -1,6 +1,5 @@
-import type { JwtFromRequestFunction } from 'passport-jwt';
-
 declare module 'passport-jwt' {
+	// eslint-disable-next-line @typescript-eslint/no-namespace
 	export namespace ExtractJwt {
 		export function versionOneCompatibility(opts: {
 			tokenBodyField: string;

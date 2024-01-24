@@ -1,3 +1,5 @@
+/// <reference path="./typings/supertest-extension.ts" />
+
 import Bluebird from 'bluebird';
 import fs from 'fs';
 import _ from 'lodash';
