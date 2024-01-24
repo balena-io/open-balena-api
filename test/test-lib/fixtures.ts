@@ -1,4 +1,4 @@
-import { sbvrUtils, permissions } from '@balena/pinejs';
+import { sbvrUtils, permissions, types } from '@balena/pinejs';
 import Bluebird from 'bluebird';
 import fs from 'fs';
 import _ from 'lodash';
@@ -13,12 +13,16 @@ import { supertest } from './supertest';
 const { api } = sbvrUtils;
 const version = 'resin';
 
-type PendingFixtures = Dictionary<PromiseLike<Dictionary<PromiseLike<any>>>>;
-type PartiallyAppliedFixtures = Dictionary<Dictionary<PromiseLike<any>>>;
-export type Fixtures = Dictionary<Dictionary<any>>;
+type PendingFixtures = types.Dictionary<
+	PromiseLike<types.Dictionary<PromiseLike<any>>>
+>;
+type PartiallyAppliedFixtures = types.Dictionary<
+	types.Dictionary<PromiseLike<any>>
+>;
+export type Fixtures = types.Dictionary<types.Dictionary<any>>;
 
 type LoaderFunc = (
-	jsonData: AnyObject,
+	jsonData: types.AnyObject,
 	fixtures: PartiallyAppliedFixtures,
 ) => PromiseLike<any>;
 
@@ -30,7 +34,7 @@ const logErrorAndThrow = (message: string, ...args: any[]) => {
 const createResource = async (args: {
 	resource: string;
 	method?: string;
-	body?: AnyObject;
+	body?: types.AnyObject;
 	user?: { token: string };
 }) => {
 	const { resource, method = 'POST', body = {}, user } = args;
@@ -59,7 +63,7 @@ const createResource = async (args: {
 	return responseBody;
 };
 
-const loaders: Dictionary<LoaderFunc> = {
+const loaders: types.Dictionary<LoaderFunc> = {
 	applications: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.user];
 		if (user == null) {
@@ -492,7 +496,7 @@ const unloaders: {
 	release_asset: deleteResource('release_asset'),
 };
 
-export const clean = async (fixtures: AnyObject) => {
+export const clean = async (fixtures: types.AnyObject) => {
 	if (fixtures == null) {
 		throw new Error('You must pass in loaded fixtures to clean');
 	}
@@ -507,7 +511,7 @@ export const clean = async (fixtures: AnyObject) => {
 const loadFixtureModel = (
 	loader: LoaderFunc,
 	fixtures: PendingFixtures,
-	data: AnyObject,
+	data: types.AnyObject,
 ) => {
 	return _.mapValues(data, async (d) =>
 		loader(d, await Bluebird.props(fixtures)),
@@ -518,7 +522,7 @@ const defaultFixtures: PendingFixtures = {};
 
 export const setDefaultFixtures = (
 	type: string,
-	value: Dictionary<PromiseLike<any>>,
+	value: types.Dictionary<PromiseLike<any>>,
 ) => {
 	defaultFixtures[type] = Promise.resolve(value);
 };
@@ -554,7 +558,10 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 	for (const model of models) {
 		fixtures[model] = (async () => {
 			const { default: fromJson } = await import(
-				path.join('../fixtures', fixtureName, `${model}.json`)
+				path.join('../fixtures', fixtureName, `${model}.json`),
+				{
+					assert: { type: 'json' },
+				}
 			);
 			return await loadFixtureModel(loaders[model], fixtures, fromJson);
 		})();

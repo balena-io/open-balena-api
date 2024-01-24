@@ -7,6 +7,7 @@
     "type": "git",
     "url": "https://github.com/balena-io/open-balena-api"
   },
+  "type": "commonjs",
   "main": "dist/index",
   "files": [
     "dist/"
@@ -152,7 +153,8 @@
     "timeout": 20000,
     "delay": true,
     "exit": true,
-    "_": "index.js"
+    "_": "index.js",
+    "loader": "ts-node/esm/transpile-only"
   },
   "versionist": {
     "publishedAt": "2024-01-24T14:55:43.388Z"

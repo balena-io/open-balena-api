@@ -266,7 +266,7 @@ export const envVarsConfig = {
 export const translations = {
 	v6: {
 		getTranslations: getV6Translations,
-		loadHooks: () => import('./translations/v6/hooks'),
+		loadHooks: () => import('./translations/v6/hooks.js'),
 	},
 };
 
@@ -392,10 +392,10 @@ export async function setup(app: Application, options: SetupOptions) {
 		setRegistrationRoleFunc(options.getNewUserRole);
 	}
 
-	await import('./hooks');
+	await import('./hooks.js');
 	await options.onInitHooks?.(app);
 
-	const routes = await import('./routes');
+	const routes = (await import('./routes.js')).default;
 	routes.setup(app, options);
 	await options.onInitRoutes?.(app);
 
