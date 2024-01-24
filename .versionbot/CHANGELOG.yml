@@ -1,4 +1,16 @@
 - commits:
+    - subject: Switch to using typescript's `Node16` module resolution
+      hash: 00b4bc44c946ce25dffbbb9570b21a2356dc7086
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 16.1.5
+  title: ""
+  date: 2024-01-24T15:55:15.171Z
+- commits:
     - subject: Fix typing of `req.prefetchApiKey`
       hash: 54647bdf9c55fa456a350047a9e6109ea9ee9dfb
       body: ""
