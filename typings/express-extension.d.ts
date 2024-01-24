@@ -15,17 +15,13 @@ declare namespace Express {
 		creds?: Creds;
 
 		user?: User & {
-			twoFactorRequired: false;
+			twoFactorRequired: false | undefined;
 		};
 
 		partialUser: User & {
 			twoFactorRequired: true;
 		};
 
-		untranslatedUrl?: string;
-
-		error?: any;
-		subject?: string;
 		custom?: AnyObject;
 
 		resetRatelimit?: () => Promise<void>;
