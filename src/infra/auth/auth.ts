@@ -231,6 +231,8 @@ export async function getUser(
 			// Store it in `req` to be compatible with JWTs and for caching
 			req.user = req.creds = {
 				..._.pick(user, userFields),
+				// Explicitly mark that we didn't run 2fa checks if it's eg an api key
+				twoFactorRequired: undefined,
 				actor: user.actor.__id,
 			};
 		} else if (required) {
