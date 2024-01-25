@@ -27,7 +27,6 @@ declare module 'balena-device-config' {
 
 	export interface GenerateParams {
 		appUpdatePollInterval?: number;
-		network?: any[];
 		ip?: string;
 		gateway?: string;
 		netmask?: string;
@@ -35,7 +34,7 @@ declare module 'balena-device-config' {
 		wifiKey?: string;
 		connectivity?: string;
 		network?:
-			| wifi
+			| 'wifi'
 			| Array<{
 					wifiSsid?: string;
 					wifiKey?: string;
