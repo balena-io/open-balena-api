@@ -201,7 +201,7 @@ export async function getUser(
 	/** You should always be passing a Tx, unless you are using this in a middleware. */
 	txParam: Tx | undefined,
 	required = true,
-): Promise<Express.User | undefined> {
+): Promise<TokenUserPayload | undefined> {
 	const $getUser = async (tx: Tx) => {
 		// This shouldn't happen but it does for some internal PineJS requests
 		if (req.user && !req.creds) {
