@@ -1,4 +1,16 @@
 - commits:
+    - subject: Ensure typings files are type-checked despite skipLibCheck
+      hash: 054d41e14b00c3fca325490f078d39b5efda28f4
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 16.1.7
+  title: ""
+  date: 2024-01-26T13:51:04.697Z
+- commits:
     - subject: Fix some typing issues that are normally hidden by `skipLibCheck`
       hash: 1a123bc7ab8cd3e449d26df9347050c3440f0606
       body: ""
