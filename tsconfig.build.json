@@ -19,11 +19,11 @@
 		"esModuleInterop": true
 	},
 	"include": [
-		"src/**/*.ts",
-		"typings/**/*.d.ts"
+		"src/**/*.ts"
 	],
 	"exclude": [
-		"node_modules"
+		"node_modules",
+		"**/*.d.ts"
 	],
 	"ts-node": {
 		"esm": true,

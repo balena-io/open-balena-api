@@ -1,3 +1,5 @@
+import './balena-device-config-shim';
+
 declare module 'balena-device-config' {
 	export interface GenerateOptions {
 		application: {
