@@ -21,7 +21,7 @@ import {
 	RESOLVE_IMAGE_READ_ACCESS_CACHE_TIMEOUT,
 	TOKEN_AUTH_BUILDER_TOKEN,
 } from '../../lib/config';
-import type { Image, User as DbUser } from '../../balena-model';
+import type { Image, User } from '../../balena-model';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -673,7 +673,7 @@ const $getSubject = multiCacheMemoizee(
 				},
 				$top: 1,
 			},
-		})) as [Pick<DbUser, 'username'>?];
+		})) as [Pick<User, 'username'>?];
 		if (user) {
 			return user.username;
 		}
@@ -694,7 +694,15 @@ const getSubject = async (
 	if (req.apiKey != null && !_.isEmpty(req.apiKey.permissions)) {
 		return await $getSubject(req.apiKey.key, req.params.subject, tx);
 	} else if (req.user) {
-		// If there's no api key then try to use the username from the JWT
-		return req.user.username;
+		// If there's no api key then try to fetch the user from JWT credentials and get the username
+		const user = (await api.resin.get({
+			resource: 'user',
+			passthrough: { req, tx },
+			id: req.user.id,
+			options: {
+				$select: 'username',
+			},
+		})) as Pick<User, 'username'> | null;
+		return user?.username;
 	}
 };

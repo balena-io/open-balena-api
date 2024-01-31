@@ -144,14 +144,9 @@ export const reqHasPermission = (
 
 // If adding/removing fields, please also update `User`
 // in "typings/common.d.ts".
-export const userFields = [
-	'id',
-	'actor',
-	'username',
-	'email',
-	'created_at',
-	'jwt_secret',
-] satisfies Array<keyof DbUser>;
+export const userFields = ['id', 'actor', 'jwt_secret'] satisfies Array<
+	keyof DbUser
+>;
 
 const getUserQuery = _.once(
 	() =>

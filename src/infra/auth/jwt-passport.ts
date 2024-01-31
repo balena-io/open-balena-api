@@ -28,17 +28,20 @@ export interface ApiKey extends sbvrUtils.ApiKey {
 	key: string;
 }
 
-export interface TokenUserPayload extends sbvrUtils.User {
-	username: string;
-	email: string | null;
-	created_at: string;
+// The content of the JWT that we give to users, other than the standard JWT props (eg iat,exp,...).
+export interface TokenUserPayload extends Pick<sbvrUtils.User, 'id' | 'actor'> {
 	jwt_secret: string | null;
-
 	twoFactorRequired?: boolean;
 	authTime?: number;
 }
 
+// What pine expects on Creds after a JWT is parsed so that everything works.
+type ParsedTokenUserPayload = TokenUserPayload & sbvrUtils.User;
+
+// What decoded content of Passport finds on the Authorization header
 export type Creds = ServiceToken | TokenUserPayload | ScopedToken;
+// The result after JwtStrategy runs
+export type ParsedCreds = ServiceToken | ParsedTokenUserPayload | ScopedToken;
 export type JwtUser = Creds | ScopedAccessToken;
 const TOKEN_BODY_FIELD = '_token';
 
@@ -58,7 +61,7 @@ export const createStrategy = (
 			jwtFromRequest,
 		},
 		(jwtUser: JwtUser, done) =>
-			Bluebird.try(async (): Promise<Creds> => {
+			Bluebird.try(async (): Promise<ParsedCreds> => {
 				if (jwtUser == null) {
 					throw new InvalidJwtSecretError();
 				}
@@ -93,8 +96,9 @@ export const createStrategy = (
 						jwtUser.id,
 					);
 
-					jwtUser.permissions = userPermissions;
-					return jwtUser;
+					const processedJwtUser = jwtUser as ParsedTokenUserPayload;
+					processedJwtUser.permissions = userPermissions;
+					return processedJwtUser;
 				} else {
 					throw new Error('Invalid JWT');
 				}
