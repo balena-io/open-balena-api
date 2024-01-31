@@ -58,18 +58,15 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 	existingToken,
 	tx: Tx,
 ): Promise<TokenUserPayload> => {
-	const [userData, permissionData] = await Promise.all([
-		api.resin.get({
-			resource: 'user',
-			id: userId,
-			passthrough: { req: permissions.root, tx },
-			options: {
-				$select: tokenFields,
-			},
-		}) as Promise<PickDeferred<DbUser, (typeof tokenFields)[number]>>,
-		permissions.getUserPermissions(userId, tx),
-	]);
-	if (!userData || !permissionData) {
+	const userData = (await api.resin.get({
+		resource: 'user',
+		id: userId,
+		passthrough: { req: permissions.root, tx },
+		options: {
+			$select: tokenFields,
+		},
+	})) as PickDeferred<DbUser, (typeof tokenFields)[number]>;
+	if (!userData) {
 		throw new Error('No data found?!');
 	}
 	const newTokenData = {
@@ -80,7 +77,6 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 	const tokenData: TokenUserPayload = {
 		...existingToken,
 		...newTokenData,
-		permissions: permissionData,
 	};
 
 	if (!Number.isFinite(tokenData.authTime!)) {

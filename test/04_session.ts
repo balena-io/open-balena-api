@@ -125,8 +125,8 @@ versions.test((version) => {
 				expect(tokenParts).to.have.property('length', 3);
 				const payload = parseJwt(token);
 				expect(payload).to.have.property('id');
-				expect(payload).to.have.property('username');
-				expect(payload).to.have.property('email');
+				expect(payload).to.not.have.property('username');
+				expect(payload).to.not.have.property('email');
 			});
 
 			it('should refresh & update the authTime with a POST to /user/v1/refresh-token using a correct password', async function () {
@@ -140,8 +140,8 @@ versions.test((version) => {
 				expect(tokenParts).to.have.property('length', 3);
 				const payload = parseJwt(token);
 				expect(payload).to.have.property('id');
-				expect(payload).to.have.property('username');
-				expect(payload).to.have.property('email');
+				expect(payload).to.not.have.property('username');
+				expect(payload).to.not.have.property('email');
 				expect(payload).to.have.property('authTime');
 				const initialAuthTime: number = payload.authTime;
 
@@ -156,8 +156,8 @@ versions.test((version) => {
 				expect(tokenParts1).to.have.property('length', 3);
 				const payload1 = parseJwt(token);
 				expect(payload1).to.have.property('id');
-				expect(payload1).to.have.property('username');
-				expect(payload1).to.have.property('email');
+				expect(payload1).to.not.have.property('username');
+				expect(payload1).to.not.have.property('email');
 				expect(payload1)
 					.to.have.property('authTime')
 					.to.be.above(initialAuthTime);
@@ -173,8 +173,8 @@ versions.test((version) => {
 				expect(tokenParts).to.have.property('length', 3);
 				const payload = parseJwt(token);
 				expect(payload).to.have.property('id');
-				expect(payload).to.have.property('username');
-				expect(payload).to.have.property('email');
+				expect(payload).to.not.have.property('username');
+				expect(payload).to.not.have.property('email');
 				expect(payload).to.have.property('authTime');
 				const initialAuthTime: number = payload.authTime;
 
@@ -187,8 +187,8 @@ versions.test((version) => {
 				expect(tokenParts1).to.have.property('length', 3);
 				const payload1 = parseJwt(token);
 				expect(payload1).to.have.property('id');
-				expect(payload1).to.have.property('username');
-				expect(payload1).to.have.property('email');
+				expect(payload1).to.not.have.property('username');
+				expect(payload1).to.not.have.property('email');
 				expect(payload1)
 					.to.have.property('authTime')
 					.that.equals(initialAuthTime);

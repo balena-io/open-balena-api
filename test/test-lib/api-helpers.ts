@@ -129,18 +129,7 @@ export const expectResourceToMatch = async <T = AnyObject>(
 	return result!;
 };
 
-const validJwtProps = [
-	'id',
-	'actor',
-	'username',
-	'email',
-	'created_at',
-	'jwt_secret',
-	'authTime',
-	'permissions',
-	'iat',
-	'exp',
-];
+const validJwtProps = ['id', 'actor', 'jwt_secret', 'authTime', 'iat', 'exp'];
 
 export function expectJwt(tokenOrJwt: string | AnyObject) {
 	const decoded = (
@@ -149,18 +138,18 @@ export function expectJwt(tokenOrJwt: string | AnyObject) {
 			: tokenOrJwt
 	) as TokenUserPayload;
 	expect(decoded).to.have.property('id').that.is.a('number');
-	expect(decoded).to.have.property('username').that.is.a.string;
 	expect(decoded).to.have.property('jwt_secret').that.is.a.string;
 	expect(decoded).to.have.property('authTime').that.is.a('number');
 	expect(decoded).to.have.property('iat').that.is.a('number');
 	expect(decoded).to.have.property('exp').that.is.a('number');
 	expect(decoded).to.have.property('actor').that.is.a('number');
-	expect(decoded).to.have.property('email').that.is.a.string;
-	expect(decoded).to.have.property('created_at').that.is.a.string;
-	expect(decoded).to.have.property('permissions').that.is.an('array');
 
 	const unexpectedKeys = new Set(Object.keys(decoded));
-	validJwtProps.forEach((key) => unexpectedKeys.delete(key));
+	validJwtProps.forEach((key) => {
+		expect(decoded).to.have.property(key);
+		unexpectedKeys.delete(key);
+	});
+
 	expect(
 		[...unexpectedKeys],
 		'expect there are no unexpected keys',
