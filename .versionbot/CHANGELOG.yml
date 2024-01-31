@@ -1,4 +1,24 @@
 - commits:
+    - subject: Reduce `TokenUserPayload` by removing `username`, `email`,
+        `created_at`, `permissions`
+      hash: c75a7fc305d630bfb7a564753c5ea5f58097468a
+      body: >
+        Improves performance for encoding, decoding and bandwith as JWT token
+        length is reduced.
+
+
+        Co-authored-by: Thodoris Greasidis <thgreasi@users.noreply.github.com>
+      footer:
+        Change-type: major
+        change-type: major
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested: []
+  version: 17.0.0
+  title: ""
+  date: 2024-01-31T16:23:28.954Z
+- commits:
     - subject: Ensure typings files are type-checked despite skipLibCheck
       hash: 054d41e14b00c3fca325490f078d39b5efda28f4
       body: ""
