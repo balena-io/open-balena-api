@@ -333,7 +333,8 @@ export const EMPTY_DEVICE_STATE_GET_DELAY_SECONDS = intVar(
 	'EMPTY_DEVICE_STATE_GET_DELAY_SECONDS',
 	// Default to the default state poll interval so that an empty request only repeats
 	// at the same rate as standard polling
-	DEFAULT_SUPERVISOR_POLL_INTERVAL,
+	// DEFAULT_SUPERVISOR_POLL_INTERVAL is in ms, so we need to divide by 1000
+	DEFAULT_SUPERVISOR_POLL_INTERVAL / SECONDS,
 );
 
 // Cache timeouts
