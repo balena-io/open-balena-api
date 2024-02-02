@@ -1,4 +1,19 @@
 - commits:
+    - subject: Improve internal JWT typings.
+      hash: 61be948e4e41e5f8310642d1a1887ac38ec35435
+      body: |
+        Co-authored-by: Thodoris Greasidis <thgreasi@users.noreply.github.com>
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested: []
+  version: 17.0.3
+  title: ""
+  date: 2024-02-02T16:03:51.414Z
+- commits:
     - subject: Fix the gracefully-deny-conflicting-registrations ttl being in ms
       hash: 09e5e509ac0de6479e6e82853762229940b0799c
       body: ""
