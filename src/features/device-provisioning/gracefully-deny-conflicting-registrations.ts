@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { SECONDS } from '@balena/env-parsing';
 import { sbvrUtils, errors, permissions } from '@balena/pinejs';
 import { API_KEY_EXISTS_CACHE_TIMEOUT } from '../../lib/config';
 import { createMultiLevelStore } from '../../infra/cache';
@@ -27,7 +28,9 @@ export const checkApiKeyExistsStore = createMultiLevelStore<boolean>(
 			// We only care to cache the api keys that already exist,
 			// so that we throw a conflict error earlier.
 			isCacheableValue: (value: any) => value === true,
-			ttl: API_KEY_EXISTS_CACHE_TIMEOUT,
+			// API_KEY_EXISTS_CACHE_TIMEOUT is in seconds (for consistency with DEVICE_EXISTS_CACHE_TIMEOUT),
+			// so we need to divide by 1000
+			ttl: API_KEY_EXISTS_CACHE_TIMEOUT / SECONDS,
 		},
 		local: false,
 	},
