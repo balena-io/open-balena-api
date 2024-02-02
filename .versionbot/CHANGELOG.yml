@@ -1,4 +1,17 @@
 - commits:
+    - subject: "device-state: Fix the default ttl of the lastFailedDeviceStateTime
+        cache"
+      hash: 7585a5aa538bf2da47eb74f15261f8a2216f4d56
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 17.0.1
+  title: ""
+  date: 2024-02-02T12:19:22.708Z
+- commits:
     - subject: Reduce `TokenUserPayload` by removing `username`, `email`,
         `created_at`, `permissions`
       hash: c75a7fc305d630bfb7a564753c5ea5f58097468a
