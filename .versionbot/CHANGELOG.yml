@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix the gracefully-deny-conflicting-registrations ttl being in ms
+      hash: 09e5e509ac0de6479e6e82853762229940b0799c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 17.0.2
+  title: ""
+  date: 2024-02-02T14:43:30.399Z
+- commits:
     - subject: "device-state: Fix the default ttl of the lastFailedDeviceStateTime
         cache"
       hash: 7585a5aa538bf2da47eb74f15261f8a2216f4d56
