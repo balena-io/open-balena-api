@@ -36,13 +36,12 @@ export interface TokenUserPayload extends Pick<sbvrUtils.User, 'id' | 'actor'> {
 }
 
 // What pine expects on Creds after a JWT is parsed so that everything works.
-type ParsedTokenUserPayload = TokenUserPayload & sbvrUtils.User;
+type ResolvedUserToken = TokenUserPayload & sbvrUtils.User;
 
 // What decoded content of Passport finds on the Authorization header
-export type Creds = ServiceToken | TokenUserPayload | ScopedToken;
+type UnparsedCreds = ServiceToken | TokenUserPayload | ScopedAccessToken;
 // The result after JwtStrategy runs
-export type ParsedCreds = ServiceToken | ParsedTokenUserPayload | ScopedToken;
-export type JwtUser = Creds | ScopedAccessToken;
+export type Creds = ServiceToken | ResolvedUserToken | ScopedToken;
 const TOKEN_BODY_FIELD = '_token';
 
 const jwtFromRequest = ExtractJwt.versionOneCompatibility({
@@ -60,8 +59,8 @@ export const createStrategy = (
 			secretOrKey: JSON_WEB_TOKEN_SECRET,
 			jwtFromRequest,
 		},
-		(jwtUser: JwtUser, done) =>
-			Bluebird.try(async (): Promise<ParsedCreds> => {
+		(jwtUser: UnparsedCreds, done) =>
+			Bluebird.try(async (): Promise<Creds> => {
 				if (jwtUser == null) {
 					throw new InvalidJwtSecretError();
 				}
@@ -96,7 +95,7 @@ export const createStrategy = (
 						jwtUser.id,
 					);
 
-					const processedJwtUser = jwtUser as ParsedTokenUserPayload;
+					const processedJwtUser = jwtUser as ResolvedUserToken;
 					processedJwtUser.permissions = userPermissions;
 					return processedJwtUser;
 				} else {
