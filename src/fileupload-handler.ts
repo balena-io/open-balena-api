@@ -1,8 +1,6 @@
 import { webResourceHandler } from '@balena/pinejs';
-import {
-	CloudFrontHandler,
-	CloudFrontHandlerProps,
-} from '@balena/pinejs-webresource-cloudfront';
+import type { CloudFrontHandlerProps } from '@balena/pinejs-webresource-cloudfront';
+import { CloudFrontHandler } from '@balena/pinejs-webresource-cloudfront';
 import * as fs from 'fs';
 
 import {

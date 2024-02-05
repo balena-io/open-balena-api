@@ -8,7 +8,8 @@ import type {
 
 import * as _ from 'lodash';
 import onFinished from 'on-finished';
-import { sbvrUtils, errors, permissions } from '@balena/pinejs';
+import type { permissions } from '@balena/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 import { Supervisor } from './supervisor';
 import { createGunzip } from 'zlib';
 import ndjson from 'ndjson';
@@ -24,7 +25,7 @@ import {
 	LOKI_ENABLED,
 	shouldPublishToLoki,
 } from './config';
-import { SetupOptions } from '../../..';
+import type { SetupOptions } from '../../..';
 import {
 	DEVICE_LOGS_WRITE_AUTH_CACHE_TIMEOUT,
 	LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL,

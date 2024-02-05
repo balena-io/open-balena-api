@@ -1,4 +1,4 @@
-import jsonwebtoken from 'jsonwebtoken';
+import type jsonwebtoken from 'jsonwebtoken';
 
 import {
 	TOKEN_AUTH_CERT_ISSUER,

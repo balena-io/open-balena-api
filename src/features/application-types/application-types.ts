@@ -1,4 +1,5 @@
-import { sbvrUtils, errors, permissions } from '@balena/pinejs';
+import type { sbvrUtils } from '@balena/pinejs';
+import { errors, permissions } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 
 export interface ApplicationType {

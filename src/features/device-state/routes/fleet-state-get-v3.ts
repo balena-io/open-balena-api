@@ -6,11 +6,12 @@ import {
 	captureException,
 	handleHttpErrors,
 } from '../../../infra/error-handling';
-import { Expand } from 'pinejs-client-core';
+import type { Expand } from 'pinejs-client-core';
 
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { getConfig, readTransaction } from '../state-get-utils';
-import { buildAppFromRelease, releaseExpand, StateV3 } from './state-get-v3';
+import type { StateV3 } from './state-get-v3';
+import { buildAppFromRelease, releaseExpand } from './state-get-v3';
 const { api } = sbvrUtils;
 const { UnauthorizedError } = errors;
 

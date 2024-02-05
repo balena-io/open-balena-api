@@ -3,7 +3,13 @@ import randomstring from 'randomstring';
 import _ from 'lodash';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
-import { Deferred, Application, Device, Role, User } from '../../balena-model';
+import type {
+	Deferred,
+	Application,
+	Device,
+	Role,
+	User,
+} from '../../balena-model';
 import { multiCacheMemoizee } from '../../infra/cache';
 import { API_KEY_ROLE_CACHE_TIMEOUT } from '../../lib/config';
 

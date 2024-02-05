@@ -8,8 +8,8 @@ import {
 	translateError,
 } from '../../infra/error-handling';
 
+import type { ApiKeyParameters } from './lib';
 import {
-	ApiKeyParameters,
 	createGenericApiKey as $createGenericApiKey,
 	createDeviceApiKey as $createDeviceApiKey,
 	createNamedUserApiKey as $createNamedUserApiKey,

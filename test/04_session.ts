@@ -3,10 +3,11 @@ import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from '../src/lib/config';
 import { createScopedAccessToken } from '../src/infra/auth/jwt';
 
 import * as fixtures from './test-lib/fixtures';
-import { supertest, UserObjectParam } from './test-lib/supertest';
+import type { UserObjectParam } from './test-lib/supertest';
+import { supertest } from './test-lib/supertest';
 import * as versions from './test-lib/versions';
-import { Device } from './test-lib/fake-device';
-import { Application } from '../src/balena-model';
+import type { Device } from './test-lib/fake-device';
+import type { Application } from '../src/balena-model';
 
 const atob = (x: string) => Buffer.from(x, 'base64').toString('binary');
 const parseJwt = (t: string) => JSON.parse(atob(t.split('.')[1]));

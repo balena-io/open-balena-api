@@ -5,13 +5,14 @@ import passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { TypedError } from 'typed-error';
 
-import { sbvrUtils, permissions } from '@balena/pinejs';
+import type { sbvrUtils } from '@balena/pinejs';
+import { permissions } from '@balena/pinejs';
 
 import { JSON_WEB_TOKEN_SECRET } from '../../lib/config';
 
 import { captureException } from '../error-handling';
-import { ScopedAccessToken, ScopedToken } from './jwt';
-import { PickDeferred, User as DbUser } from '../../balena-model';
+import type { ScopedAccessToken, ScopedToken } from './jwt';
+import type { PickDeferred, User as DbUser } from '../../balena-model';
 import { getGuestActorId } from './permissions';
 
 export { SignOptions } from 'jsonwebtoken';

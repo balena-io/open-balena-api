@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import { sbvrUtils, dbModule, permissions, errors } from '@balena/pinejs';
+import type { dbModule, permissions } from '@balena/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 import {
 	DEFAULT_SUPERVISOR_POLL_INTERVAL,
 	EMPTY_DEVICE_STATE_GET_DELAY_SECONDS,

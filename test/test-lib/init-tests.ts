@@ -1,9 +1,6 @@
 import * as fixtures from './fixtures';
-import {
-	supertest,
-	augmentStatusAssertionError,
-	UserObjectParam,
-} from './supertest';
+import type { UserObjectParam } from './supertest';
+import { supertest, augmentStatusAssertionError } from './supertest';
 import {
 	getContractRepos,
 	synchronizeContracts,

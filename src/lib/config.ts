@@ -1,6 +1,6 @@
+import type { HostPort } from '@balena/env-parsing';
 import {
 	boolVar,
-	HostPort,
 	HOURS,
 	intVar,
 	MINUTES,

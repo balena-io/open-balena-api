@@ -8,11 +8,12 @@ import {
 	handleHttpErrors,
 } from '../../../infra/error-handling';
 
-import { DeviceLog, LogContext, StreamState } from './struct';
+import type { DeviceLog, LogContext } from './struct';
+import { StreamState } from './struct';
 import { addRetentionLimit, getBackend } from './config';
 import { getNanoTimestamp } from '../../../lib/utils';
-import { SetupOptions } from '../../..';
-import { Device } from '../../../balena-model';
+import type { SetupOptions } from '../../..';
+import type { Device } from '../../../balena-model';
 import {
 	LOGS_DEFAULT_HISTORY_COUNT,
 	LOGS_DEFAULT_SUBSCRIPTION_COUNT,

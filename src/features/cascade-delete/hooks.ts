@@ -1,5 +1,5 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
-import { PickDeferred, User } from '../../balena-model';
+import type { PickDeferred, User } from '../../balena-model';
 import { captureException } from '../../infra/error-handling';
 import { setupDeleteCascade } from './setup-delete-cascade';
 

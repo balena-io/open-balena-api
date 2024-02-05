@@ -5,7 +5,8 @@ import type { Release } from '../src/balena-model';
 import { expectResourceToMatch } from './test-lib/api-helpers';
 import * as fixtures from './test-lib/fixtures';
 import { expect } from 'chai';
-import { supertest, UserObjectParam } from './test-lib/supertest';
+import type { UserObjectParam } from './test-lib/supertest';
+import { supertest } from './test-lib/supertest';
 import * as versions from './test-lib/versions';
 import { setTimeout } from 'timers/promises';
 

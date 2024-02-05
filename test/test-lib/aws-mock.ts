@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk';
+import type AWS from 'aws-sdk';
 import Bluebird from 'bluebird';
 import { assert } from 'chai';
 import _ from 'lodash';

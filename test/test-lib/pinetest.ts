@@ -1,6 +1,7 @@
 import { PineTest } from 'pinejs-client-supertest';
 import { app } from '../../init';
-import { versions, ValidVersion } from './versions';
+import type { ValidVersion } from './versions';
+import { versions } from './versions';
 
 const pineTest: {
 	[version in ValidVersion]: PineTest;

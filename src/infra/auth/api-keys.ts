@@ -1,6 +1,7 @@
 import type { Request } from 'express';
 
-import { hooks, permissions, sbvrUtils } from '@balena/pinejs';
+import type { hooks, sbvrUtils } from '@balena/pinejs';
+import { permissions } from '@balena/pinejs';
 
 import { isJWT } from './jwt-passport';
 

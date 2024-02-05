@@ -5,7 +5,7 @@ import * as semver from 'balena-semver';
 
 import { reqHasPermission } from '../../infra/auth/auth';
 import { captureException } from '../../infra/error-handling';
-import { Device } from '../../balena-model';
+import type { Device } from '../../balena-model';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;

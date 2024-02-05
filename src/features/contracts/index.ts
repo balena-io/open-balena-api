@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import Bluebird from 'bluebird';
 import { fetchContractsLocally, getContracts } from './contracts-directory';
-import { sbvrUtils, permissions, types } from '@balena/pinejs';
+import type { types } from '@balena/pinejs';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 import {
 	CONTRACTS_PRIVATE_REPO_BRANCH,
 	CONTRACTS_PRIVATE_REPO_NAME,

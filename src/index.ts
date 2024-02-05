@@ -18,7 +18,10 @@ import * as zlib from 'node:zlib';
 import * as pine from '@balena/pinejs';
 
 import type { PickDeferred, User as DbUser } from './balena-model';
-import type { defaultFindUser$select } from './infra/auth/auth';
+import type {
+	defaultFindUser$select,
+	GetNewUserRoleFunction,
+} from './infra/auth/auth';
 import * as jwt from './infra/auth/jwt-passport';
 
 const { api } = pine.sbvrUtils;
@@ -69,7 +72,6 @@ import {
 	comparePassword,
 	registerUser,
 	setPassword,
-	GetNewUserRoleFunction,
 	setRegistrationRoleFunc,
 	validatePassword,
 	checkUserPassword,
@@ -136,11 +138,8 @@ import {
 import * as baseAuth from './lib/auth';
 // TODO: This should not be exported
 import { varListInsert } from './features/device-state/state-get-utils';
-import {
-	GetUrlFunction,
-	setupRequestLogging,
-	skipLogging,
-} from './features/request-logging';
+import type { GetUrlFunction } from './features/request-logging';
+import { setupRequestLogging, skipLogging } from './features/request-logging';
 import {
 	startContractSynchronization,
 	setSyncSettings,

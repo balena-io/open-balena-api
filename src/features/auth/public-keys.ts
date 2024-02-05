@@ -3,7 +3,7 @@ import type { RequestHandler } from 'express';
 import { sbvrUtils } from '@balena/pinejs';
 
 import { captureException, handleHttpErrors } from '../../infra/error-handling';
-import { UserHasPublicKey } from '../../balena-model';
+import type { UserHasPublicKey } from '../../balena-model';
 import { augmentReqApiKeyPermissions } from '../api-keys/lib';
 
 export const getUserPublicKeys: RequestHandler = async (req, res) => {

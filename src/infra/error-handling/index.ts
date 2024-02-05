@@ -2,7 +2,8 @@ import _ from 'lodash';
 import * as Sentry from '@sentry/node';
 import escapeHtml from 'escape-html';
 
-import { hooks, errors, sbvrUtils } from '@balena/pinejs';
+import type { hooks } from '@balena/pinejs';
+import { errors, sbvrUtils } from '@balena/pinejs';
 
 const { InternalRequestError, HttpError } = errors;
 

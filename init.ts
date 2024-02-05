@@ -1,5 +1,6 @@
 import type { ApplicationType } from './src';
-import { sbvrUtils, errors, types } from '@balena/pinejs';
+import type { types } from '@balena/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 import express from 'express';
 import _ from 'lodash';
 import config = require('./config');

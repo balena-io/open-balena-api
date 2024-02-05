@@ -2,7 +2,8 @@ import * as fixtures from './test-lib/fixtures';
 import * as fakeDevice from './test-lib/fake-device';
 import { expect } from 'chai';
 
-import { supertest, UserObjectParam } from './test-lib/supertest';
+import type { UserObjectParam } from './test-lib/supertest';
+import { supertest } from './test-lib/supertest';
 import * as versions from './test-lib/versions';
 import type { Application, Device } from '../src/balena-model';
 

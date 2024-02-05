@@ -1,9 +1,10 @@
 import * as mockery from 'mockery';
 import { expect } from 'chai';
-import { supertest, UserObjectParam } from './test-lib/supertest';
+import type { UserObjectParam } from './test-lib/supertest';
+import { supertest } from './test-lib/supertest';
 import * as configMock from '../src/lib/config';
 import * as fixtures from './test-lib/fixtures';
-import { Application } from '../src/balena-model';
+import type { Application } from '../src/balena-model';
 
 const version = 'resin';
 const POLL_MSEC = 2000;
