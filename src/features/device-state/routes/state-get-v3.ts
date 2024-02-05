@@ -5,7 +5,7 @@ import _ from 'lodash';
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../../infra/error-handling';
+} from '../../../infra/error-handling/index.js';
 import {
 	ConfigurationVarsToLabels,
 	formatImageLocation,
@@ -16,12 +16,12 @@ import {
 	readTransaction,
 	serviceInstallFromImage,
 	varListInsert,
-} from '../state-get-utils';
+} from '../state-get-utils.js';
 import { sbvrUtils } from '@balena/pinejs';
-import { events } from '..';
+import { events } from '../index.js';
 import type { Expand } from 'pinejs-client-core';
-import type { ResolveDeviceInfoCustomObject } from '../middleware';
-import { getIP } from '../../../lib/utils';
+import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
+import { getIP } from '../../../lib/utils.js';
 
 const { api } = sbvrUtils;
 

@@ -2,7 +2,7 @@
  * Update "release"."contract" fields with text that has been stringified
  * multiple times to contain text that has only been stringified once.
  */
-export = {
+export default {
 	asyncSql: `\
 	UPDATE "release" SET "contract" = "release"."contract"::jsonb#>>'{}' WHERE id IN (
 		SELECT id FROM "release" WHERE STARTS_WITH("contract", '"') LIMIT %%ASYNC_BATCH_SIZE%% FOR UPDATE SKIP LOCKED

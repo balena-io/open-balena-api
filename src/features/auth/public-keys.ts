@@ -2,9 +2,12 @@ import type { RequestHandler } from 'express';
 
 import { sbvrUtils } from '@balena/pinejs';
 
-import { captureException, handleHttpErrors } from '../../infra/error-handling';
-import type { UserHasPublicKey } from '../../balena-model';
-import { augmentReqApiKeyPermissions } from '../api-keys/lib';
+import {
+	captureException,
+	handleHttpErrors,
+} from '../../infra/error-handling/index.js';
+import type { UserHasPublicKey } from '../../balena-model.js';
+import { augmentReqApiKeyPermissions } from '../api-keys/lib.js';
 
 export const getUserPublicKeys: RequestHandler = async (req, res) => {
 	const { username } = req.params;

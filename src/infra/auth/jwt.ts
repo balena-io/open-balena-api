@@ -7,14 +7,14 @@ import jsonwebtoken from 'jsonwebtoken';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
-import type { SignOptions, TokenUserPayload } from './jwt-passport';
-import type { User as DbUser, PickDeferred } from '../../balena-model';
-import { pseudoRandomBytesAsync } from '../../lib/utils';
-import { getUser, userFields } from './auth';
+import type { SignOptions, TokenUserPayload } from './jwt-passport.js';
+import type { User as DbUser, PickDeferred } from '../../balena-model.js';
+import { randomBytesAsync } from '../../lib/utils.js';
+import { getUser, userFields } from './auth.js';
 import {
 	JSON_WEB_TOKEN_EXPIRY_MINUTES,
 	JSON_WEB_TOKEN_SECRET,
-} from '../../lib/config';
+} from '../../lib/config.js';
 
 const { InternalRequestError } = errors;
 const { api } = sbvrUtils;
@@ -31,7 +31,7 @@ export const checkSudoValidity = async (
 export const generateNewJwtSecret = async (): Promise<string> => {
 	// Generate a new secret and save it, to invalidate sessions using the old secret.
 	// Length is a multiple of 20 to encode without padding.
-	const key = await pseudoRandomBytesAsync(20);
+	const key = await randomBytesAsync(20);
 	return base32.encode(key).toString();
 };
 

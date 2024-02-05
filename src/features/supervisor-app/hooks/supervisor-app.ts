@@ -11,7 +11,7 @@ import type {
 	DeviceType,
 	PickDeferred,
 	Release,
-} from '../../../balena-model';
+} from '../../../balena-model.js';
 
 const { BadRequestError } = pinejsErrors;
 

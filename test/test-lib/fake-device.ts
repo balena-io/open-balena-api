@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import randomstring from 'randomstring';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
-import type { UserObjectParam } from './supertest';
-import { supertest } from './supertest';
-import type { StateV2 } from '../../src/features/device-state/routes/state-get-v2';
-import type { StateV3 } from '../../src/features/device-state/routes/state-get-v3';
-import type { StatePatchV2Body } from '../../src/features/device-state/routes/state-patch-v2';
-import type { StatePatchV3Body } from '../../src/features/device-state/routes/state-patch-v3';
+import type { UserObjectParam } from './supertest.js';
+import { supertest } from './supertest.js';
+import type { StateV2 } from '../../src/features/device-state/routes/state-get-v2.js';
+import type { StateV3 } from '../../src/features/device-state/routes/state-get-v3.js';
+import type { StatePatchV2Body } from '../../src/features/device-state/routes/state-patch-v2.js';
+import type { StatePatchV3Body } from '../../src/features/device-state/routes/state-patch-v3.js';
 
 const version = 'resin';
 

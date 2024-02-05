@@ -13,7 +13,7 @@ import {
 	WEBRESOURCES_CLOUDFRONT_PRIVATEKEY_PATH,
 	WEBRESOURCES_CLOUDFRONT_PUBLICKEY,
 	WEBRESOURCES_CLOUDFRONT_HOST,
-} from './lib/config';
+} from './lib/config.js';
 
 const getEndpointFromHost = (host: string): string => {
 	return host.startsWith('http') ? host : `https://${host}`;

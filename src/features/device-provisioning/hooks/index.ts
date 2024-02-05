@@ -1,1 +1,1 @@
-import './cache-invalidation';
+import './cache-invalidation.js';

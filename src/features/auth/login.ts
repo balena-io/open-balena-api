@@ -1,10 +1,10 @@
 import type { RequestHandler } from 'express';
 import { errors, sbvrUtils } from '@balena/pinejs';
-import { comparePassword, findUser } from '../../infra/auth/auth';
-import { loginUserXHR } from '../../infra/auth/jwt';
-import { captureException } from '../../infra/error-handling';
+import { comparePassword, findUser } from '../../infra/auth/auth.js';
+import { loginUserXHR } from '../../infra/auth/jwt.js';
+import { captureException } from '../../infra/error-handling/index.js';
 
-import type { SetupOptions } from '../..';
+import type { SetupOptions } from '../../index.js';
 
 const { BadRequestError, NotFoundError } = errors;
 

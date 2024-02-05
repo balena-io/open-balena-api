@@ -1,1 +1,1 @@
-export * as middleware from './middleware';
+export * as middleware from './middleware.js';

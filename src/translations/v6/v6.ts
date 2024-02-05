@@ -1,18 +1,17 @@
 import type { ConfigLoader } from '@balena/pinejs';
-
 import {
 	aliasFields,
 	aliasTable,
 	generateAbstractSqlModel,
 	overrideFieldType,
 	renameResourceField,
-} from '../../abstract-sql-utils';
-import * as userHasDirectAccessToApplication from '../../features/applications/models/user__has_direct_access_to__application';
+} from '../../abstract-sql-utils.js';
+import * as userHasDirectAccessToApplication from '../../features/applications/models/user__has_direct_access_to__application.js';
 
 export const toVersion = 'resin';
 
 export const v6AbstractSqlModel = generateAbstractSqlModel(
-	__dirname + '/v6.sbvr',
+	new URL('v6.sbvr', import.meta.url),
 );
 
 aliasTable(v6AbstractSqlModel, 'application', 'my application');

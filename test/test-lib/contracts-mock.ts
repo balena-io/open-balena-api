@@ -1,11 +1,11 @@
+import { fileURLToPath } from 'node:url';
 import {
 	CONTRACTS_PUBLIC_REPO_OWNER,
 	CONTRACTS_PUBLIC_REPO_NAME,
 	CONTRACTS_PUBLIC_REPO_BRANCH,
-} from '../../src/lib/config';
-import type { RepositoryInfo } from '../../src/features/contracts';
+} from '../../src/lib/config.js';
+import type { RepositoryInfo } from '../../src/features/contracts/index.js';
 import nock from 'nock';
-import path from 'path';
 import tar from 'tar';
 
 export const mockRepo = (
@@ -35,7 +35,7 @@ export const mockRepo = (
 			return tar.create(
 				{
 					gzip: true,
-					cwd: path.join(__dirname, `../fixtures/contracts`),
+					cwd: fileURLToPath(new URL('../fixtures/contracts', import.meta.url)),
 				},
 				[filename],
 			);

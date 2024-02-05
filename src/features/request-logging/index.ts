@@ -1,7 +1,7 @@
 import type { Application, Request, RequestHandler } from 'express';
 import morgan from 'morgan';
-import { getServiceFromRequest } from '../../lib/auth';
-import { getIP } from '../../lib/utils';
+import { getServiceFromRequest } from '../../lib/auth.js';
+import { getIP } from '../../lib/utils.js';
 
 export type GetUrlFunction = (req: Request) => string;
 

@@ -7,10 +7,13 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../../infra/error-handling';
-import { multiCacheMemoizee, reqPermissionNormalizer } from '../../infra/cache';
-import { VPN_AUTH_CACHE_TIMEOUT } from '../../lib/config';
-import { checkDeviceExistsIsFrozen } from '../device-state/middleware';
+} from '../../infra/error-handling/index.js';
+import {
+	multiCacheMemoizee,
+	reqPermissionNormalizer,
+} from '../../infra/cache/index.js';
+import { VPN_AUTH_CACHE_TIMEOUT } from '../../lib/config.js';
+import { checkDeviceExistsIsFrozen } from '../device-state/middleware.js';
 
 const { api } = sbvrUtils;
 

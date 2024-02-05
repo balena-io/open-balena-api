@@ -1,21 +1,21 @@
 import { errors, sbvrUtils } from '@balena/pinejs';
 import type { RequestHandler } from 'express';
 
-import { getUser } from '../../infra/auth/auth';
+import { getUser } from '../../infra/auth/auth.js';
 import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../../infra/error-handling';
+} from '../../infra/error-handling/index.js';
 
-import type { ApiKeyParameters } from './lib';
+import type { ApiKeyParameters } from './lib.js';
 import {
 	createGenericApiKey as $createGenericApiKey,
 	createDeviceApiKey as $createDeviceApiKey,
 	createNamedUserApiKey as $createNamedUserApiKey,
 	createProvisioningApiKey as $createProvisioningApiKey,
 	createUserApiKey as $createUserApiKey,
-} from './lib';
+} from './lib.js';
 
 export const createGenericApiKey: RequestHandler = async (req, res) => {
 	const body = req.body as ApiKeyParameters;

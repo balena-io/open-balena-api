@@ -1,11 +1,11 @@
-import * as fixtures from './test-lib/fixtures';
-import * as fakeDevice from './test-lib/fake-device';
+import * as fixtures from './test-lib/fixtures.js';
+import * as fakeDevice from './test-lib/fake-device.js';
 import { expect } from 'chai';
 
-import type { UserObjectParam } from './test-lib/supertest';
-import { supertest } from './test-lib/supertest';
-import * as versions from './test-lib/versions';
-import type { Application, Device } from '../src/balena-model';
+import type { UserObjectParam } from './test-lib/supertest.js';
+import { supertest } from './test-lib/supertest.js';
+import * as versions from './test-lib/versions.js';
+import type { Application, Device } from '../src/balena-model.js';
 
 export default () => {
 	versions.test((version, pineTest) => {

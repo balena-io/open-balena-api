@@ -1,10 +1,10 @@
 import type { types } from '@balena/pinejs';
 import _ from 'lodash';
 import type { Options as MemoizeeOptions } from 'memoizee';
-import primitiveKey from 'memoizee/normalizers/primitive';
+import primitiveKey from 'memoizee/normalizers/primitive.js';
 import { SECONDS } from '@balena/env-parsing';
-import type { Defined, MultiStoreOpt } from '.';
-import { createMultiLevelStore } from '.';
+import type { Defined, MultiStoreOpt } from './index.js';
+import { createMultiLevelStore } from './index.js';
 
 type MultiCacheMemoizeeOpts<T extends (...args: any[]) => any> = {
 	cacheKey?: string;

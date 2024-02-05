@@ -1,12 +1,12 @@
 import type { ConfigLoader } from '@balena/pinejs';
-import * as balenaModel from './src/balena';
+import { model as balenaModel } from './src/balena.js';
 import {
 	v6AbstractSqlModel,
 	getV6Translations,
-} from './src/translations/v6/v6';
-import { getFileUploadHandler } from './src/fileupload-handler';
+} from './src/translations/v6/v6.js';
+import { getFileUploadHandler } from './src/fileupload-handler.js';
 
-export = {
+export default {
 	models: [
 		balenaModel,
 		{

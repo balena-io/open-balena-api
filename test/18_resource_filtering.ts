@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import type { UserObjectParam } from './test-lib/supertest';
-import * as versions from './test-lib/versions';
-import * as fixtures from './test-lib/fixtures';
+import type { UserObjectParam } from './test-lib/supertest.js';
+import * as versions from './test-lib/versions.js';
+import * as fixtures from './test-lib/fixtures.js';
 import _ from 'lodash';
-import type { Application } from '../src/balena-model';
+import type { Application } from '../src/balena-model.js';
 import { setTimeout } from 'timers/promises';
 import type { PineTest } from 'pinejs-client-supertest';
 

@@ -5,9 +5,9 @@ import memoize from 'memoizee';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
-import { findUser } from './auth';
-import { captureException } from '../error-handling';
-import { getOrInsertId } from '../pinejs-client-helpers';
+import { findUser } from './auth.js';
+import { captureException } from '../error-handling/index.js';
+import { getOrInsertId } from '../pinejs-client-helpers/index.js';
 
 const { api } = sbvrUtils;
 

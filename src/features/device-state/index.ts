@@ -1,18 +1,18 @@
 import type { Application, Request } from 'express';
-import type StrictEventEmitter from 'strict-event-emitter-types';
+import type { StrictEventEmitter } from 'strict-event-emitter-types';
 
 import { EventEmitter } from 'events';
-import { middleware } from '../../infra/auth';
+import { middleware } from '../../infra/auth/index.js';
 
-import { resolveOrDenyDevicesWithStatus } from './middleware';
-import { stateV2 } from './routes/state-get-v2';
-import { stateV3 } from './routes/state-get-v3';
-import { statePatchV2 } from './routes/state-patch-v2';
-import type { StatePatchV3Body } from './routes/state-patch-v3';
-import { resolveDeviceUuids, statePatchV3 } from './routes/state-patch-v3';
-import { fleetStateV3 } from './routes/fleet-state-get-v3';
-import type { GetStateEventStoredDeviceFields } from './state-get-utils';
-export type { GetStateEventStoredDeviceFields } from './state-get-utils';
+import { resolveOrDenyDevicesWithStatus } from './middleware.js';
+import { stateV2 } from './routes/state-get-v2.js';
+import { stateV3 } from './routes/state-get-v3.js';
+import { statePatchV2 } from './routes/state-patch-v2.js';
+import type { StatePatchV3Body } from './routes/state-patch-v3.js';
+import { resolveDeviceUuids, statePatchV3 } from './routes/state-patch-v3.js';
+import { fleetStateV3 } from './routes/fleet-state-get-v3.js';
+import type { GetStateEventStoredDeviceFields } from './state-get-utils.js';
+export type { GetStateEventStoredDeviceFields } from './state-get-utils.js';
 
 export {
 	getStateEventAdditionalFields,
@@ -24,12 +24,12 @@ export {
 	setDefaultConfigVariables,
 	getReleaseForDevice,
 	serviceInstallFromImage,
-} from './state-get-utils';
+} from './state-get-utils.js';
 export {
 	metricsPatchFields,
 	v2ValidPatchFields,
 	v3ValidPatchFields,
-} from './state-patch-utils';
+} from './state-patch-utils.js';
 
 const gracefulGet = resolveOrDenyDevicesWithStatus(304);
 

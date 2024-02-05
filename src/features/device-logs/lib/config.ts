@@ -1,12 +1,12 @@
-import type { DeviceLogsBackend, LogContext } from './struct';
+import type { DeviceLogsBackend, LogContext } from './struct.js';
 
 import _ from 'lodash';
-import { RedisBackend } from './backends/redis';
+import { RedisBackend } from './backends/redis.js';
 import {
 	LOGS_DEFAULT_RETENTION_LIMIT,
 	LOKI_HOST,
 	LOKI_WRITE_PCT,
-} from '../../../lib/config';
+} from '../../../lib/config.js';
 
 export const LOKI_ENABLED = LOKI_HOST && LOKI_WRITE_PCT > 0;
 export const shouldPublishToLoki = () =>
@@ -24,6 +24,6 @@ export function addRetentionLimit(
 export const getBackend = _.once((): DeviceLogsBackend => new RedisBackend());
 
 export const getLokiBackend = _.once(async (): Promise<DeviceLogsBackend> => {
-	const { LokiBackend } = (await import('./backends/loki.js')).default;
+	const { LokiBackend } = await import('./backends/loki.js');
 	return new LokiBackend();
 });

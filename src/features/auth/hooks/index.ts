@@ -1,8 +1,8 @@
-import './assign-default-user-role';
-import './create-application-actor';
-import './create-device-actor';
-import './create-user-actor';
-import './fetch-api-key';
-import './restrict-user-deletion';
-import './update-jwt-secret';
-import './validate-username-email';
+import './assign-default-user-role.js';
+import './create-application-actor.js';
+import './create-device-actor.js';
+import './create-user-actor.js';
+import './fetch-api-key.js';
+import './restrict-user-deletion.js';
+import './update-jwt-secret.js';
+import './validate-username-email.js';

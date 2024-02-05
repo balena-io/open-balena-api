@@ -3,12 +3,12 @@ import type { Application } from 'express';
 import {
 	createRateLimiter,
 	createRateLimitMiddleware,
-} from '../../infra/rate-limiting';
-import { middleware } from '../../infra/auth';
-import { read } from './lib/read';
-import { store, storeStream } from './lib/store';
-import type { SetupOptions } from '../..';
-import { resolveOrDenyDevicesWithStatus } from '../device-state/middleware';
+} from '../../infra/rate-limiting/index.js';
+import { middleware } from '../../infra/auth/index.js';
+import { read } from './lib/read.js';
+import { store, storeStream } from './lib/store.js';
+import type { SetupOptions } from '../../index.js';
+import { resolveOrDenyDevicesWithStatus } from '../device-state/middleware.js';
 
 // Rate limit for device log creation, a maximum of 15 batches every 10 second window
 const deviceLogsRateLimiter = createRateLimitMiddleware(

@@ -23,7 +23,7 @@ const testFiles = _(process.env.TEST_FILES)
 
 const prefixes: Dictionary<true> = {};
 
-Bluebird.resolve(fs.promises.readdir(__dirname))
+Bluebird.resolve(fs.promises.readdir(new URL('.', import.meta.url)))
 	.call('sort')
 	.each(async (fileName) => {
 		const ext = path.extname(fileName);
@@ -46,12 +46,12 @@ Bluebird.resolve(fs.promises.readdir(__dirname))
 			// Don't double load this file
 			return;
 		}
-		const { default: initFn } = (await import(`./${fileName}.js`)).default;
+		const { default: initFn } = await import(`./${fileName}.js`);
 		describe(fileName, () => {
 			initFn();
 		});
 	})
-	.then(() => fs.promises.readdir(path.join(__dirname, 'scenarios')))
+	.then(() => fs.promises.readdir(new URL('scenarios/', import.meta.url)))
 	.each(async (fileName) => {
 		const ext = path.extname(fileName);
 		if (ext !== '.ts') {
@@ -66,8 +66,7 @@ Bluebird.resolve(fs.promises.readdir(__dirname))
 			return;
 		}
 
-		const { default: initFn } = (await import(`./scenarios/${fileName}.js`))
-			.default;
+		const { default: initFn } = await import(`./scenarios/${fileName}.js`);
 		describe(`Scenario: ${fileName}`, () => {
 			initFn();
 		});

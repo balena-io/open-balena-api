@@ -1,18 +1,18 @@
 import type { Application } from 'express';
-import type { SetupOptions } from '../..';
+import type { SetupOptions } from '../../index.js';
 
 import { SECONDS_PER_HOUR } from '@balena/env-parsing';
 import {
 	createRateLimiter,
 	createRateLimitMiddleware,
-} from '../../infra/rate-limiting';
-import { middleware } from '../../infra/auth';
-import { login } from './login';
-import { getUserPublicKeys } from './public-keys';
-import { refreshToken } from './refresh-token';
-import { whoami, actorWhoami } from './whoami';
+} from '../../infra/rate-limiting/index.js';
+import { middleware } from '../../infra/auth/index.js';
+import { login } from './login.js';
+import { getUserPublicKeys } from './public-keys.js';
+import { refreshToken } from './refresh-token.js';
+import { whoami, actorWhoami } from './whoami.js';
 
-export * from './handles';
+export * from './handles.js';
 export { refreshToken };
 
 // Rate limit for unauthenticated access

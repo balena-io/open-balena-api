@@ -3,9 +3,9 @@ import type { RequestHandler } from 'express';
 
 import { errors } from '@balena/pinejs';
 
-import { retrieveAPIKey } from '../../infra/auth/api-keys';
+import { retrieveAPIKey } from '../../infra/auth/api-keys.js';
 
-import { TOKEN_AUTH_BUILDER_TOKEN } from '../../lib/config';
+import { TOKEN_AUTH_BUILDER_TOKEN } from '../../lib/config.js';
 
 export class NoAuthProvidedError extends errors.UnauthorizedError {}
 

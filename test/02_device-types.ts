@@ -1,9 +1,9 @@
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import _ from 'lodash';
 import { expect } from 'chai';
-import * as versions from './test-lib/versions';
+import * as versions from './test-lib/versions.js';
 
-import { supertest } from './test-lib/supertest';
+import { supertest } from './test-lib/supertest.js';
 // All of these test device types are not part of the contracts, so we have to include them manually until we stop syncing with S3.
 const addFakeDeviceTypes = () => {
 	let fakeDeviceTypeIds: number[];

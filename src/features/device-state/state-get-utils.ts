@@ -4,12 +4,12 @@ import { sbvrUtils, errors } from '@balena/pinejs';
 import {
 	DEFAULT_SUPERVISOR_POLL_INTERVAL,
 	EMPTY_DEVICE_STATE_GET_DELAY_SECONDS,
-} from '../../lib/config';
+} from '../../lib/config.js';
 import {
 	createMultiLevelStore,
 	reqPermissionNormalizer,
-} from '../../infra/cache';
-import type { Device } from '../../balena-model';
+} from '../../infra/cache/index.js';
+import type { Device } from '../../balena-model.js';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface -- This needs to be an interface so that downstream projects can extend it.
 export interface GetStateEventStoredDeviceFields

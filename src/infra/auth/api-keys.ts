@@ -3,7 +3,7 @@ import type { Request } from 'express';
 import type { hooks, sbvrUtils } from '@balena/pinejs';
 import { permissions } from '@balena/pinejs';
 
-import { isJWT } from './jwt-passport';
+import { isJWT } from './jwt-passport.js';
 
 const isRequest = (req: hooks.HookReq | Request): req is Request =>
 	'get' in req;

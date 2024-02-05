@@ -2,8 +2,8 @@ import _ from 'lodash';
 
 import { errors } from '@balena/pinejs';
 
-import type { DeviceLog, OldSupervisorLog, SupervisorLog } from './struct';
-import { getNanoTimestamp } from '../../../lib/utils';
+import type { DeviceLog, OldSupervisorLog, SupervisorLog } from './struct.js';
+import { getNanoTimestamp } from '../../../lib/utils.js';
 
 const MAX_LOGS_PER_BATCH = 10;
 

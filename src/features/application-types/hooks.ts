@@ -1,5 +1,5 @@
 import { hooks } from '@balena/pinejs';
-import { checkDeviceCanBeInApplication } from './application-types';
+import { checkDeviceCanBeInApplication } from './application-types.js';
 
 hooks.addPureHook('POST', 'resin', 'device', {
 	POSTRUN: async ({ api, request }) => {

@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import { SECONDS } from '@balena/env-parsing';
 import { sbvrUtils, errors, permissions } from '@balena/pinejs';
-import { API_KEY_EXISTS_CACHE_TIMEOUT } from '../../lib/config';
-import { createMultiLevelStore } from '../../infra/cache';
-import { checkDeviceExistsIsFrozen } from '../device-state/middleware';
+import { API_KEY_EXISTS_CACHE_TIMEOUT } from '../../lib/config.js';
+import { createMultiLevelStore } from '../../infra/cache/index.js';
+import { checkDeviceExistsIsFrozen } from '../device-state/middleware.js';
 
 const { ConflictError } = errors;
 const { api } = sbvrUtils;

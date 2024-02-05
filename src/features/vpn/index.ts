@@ -1,11 +1,11 @@
 import type { Application } from 'express';
-import { middleware } from '../../infra/auth';
+import { middleware } from '../../infra/auth/index.js';
 import {
 	authDevice,
 	clientConnect,
 	clientDisconnect,
 	denyDeletedDevices,
-} from './services';
+} from './services.js';
 
 export const setup = (app: Application) => {
 	app.get(

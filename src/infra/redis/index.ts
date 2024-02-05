@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import Redis from 'ioredis';
-import type { REDIS } from '../../lib/config';
+import { Redis } from 'ioredis';
+import type { REDIS } from '../../lib/config.js';
 import { MINUTES } from '@balena/env-parsing';
-import { captureException } from '../error-handling';
-import { getRedisOptions } from './config';
+import { captureException } from '../error-handling/index.js';
+import { getRedisOptions } from './config.js';
 
 export const createIsolatedRedis = (
 	...args: Parameters<typeof getRedisOptions>

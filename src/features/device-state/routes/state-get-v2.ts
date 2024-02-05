@@ -5,7 +5,7 @@ import _ from 'lodash';
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../../infra/error-handling';
+} from '../../../infra/error-handling/index.js';
 import {
 	formatImageLocation,
 	readTransaction,
@@ -16,11 +16,11 @@ import {
 	getStateDelayingEmpty,
 	getConfig,
 	getStateEventAdditionalFields,
-} from '../state-get-utils';
+} from '../state-get-utils.js';
 import { sbvrUtils } from '@balena/pinejs';
-import { events } from '..';
-import type { ResolveDeviceInfoCustomObject } from '../middleware';
-import { getIP } from '../../../lib/utils';
+import { events } from '../index.js';
+import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
+import { getIP } from '../../../lib/utils.js';
 
 const { api } = sbvrUtils;
 

@@ -1,7 +1,7 @@
 import { sbvrUtils, permissions, hooks } from '@balena/pinejs';
-import { checkApiKeyExistsStore } from '../gracefully-deny-conflicting-registrations';
-import { checkDeviceExistsIsFrozen } from '../../device-state/middleware';
-import { captureException } from '../../../infra/error-handling';
+import { checkApiKeyExistsStore } from '../gracefully-deny-conflicting-registrations.js';
+import { checkDeviceExistsIsFrozen } from '../../device-state/middleware.js';
+import { captureException } from '../../../infra/error-handling/index.js';
 
 const setupCacheInvalidation = <K extends string>(
 	model: string,

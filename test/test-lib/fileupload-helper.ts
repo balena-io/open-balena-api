@@ -1,5 +1,5 @@
 import * as fs from 'fs/promises';
-import { requestAsync } from '../../src/infra/request-promise';
+import { requestAsync } from '../../src/infra/request-promise/index.js';
 import { expect } from 'chai';
 
 export async function checkFileExists(

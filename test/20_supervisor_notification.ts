@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { expect } from 'chai';
-import { connectDeviceAndWaitForUpdate } from './test-lib/connect-device-and-wait';
-import * as fakeDevice from './test-lib/fake-device';
-import type { UserObjectParam } from './test-lib/supertest';
-import * as versions from './test-lib/versions';
-import * as fixtures from './test-lib/fixtures';
-import type { Application } from '../src/balena-model';
+import { connectDeviceAndWaitForUpdate } from './test-lib/connect-device-and-wait.js';
+import * as fakeDevice from './test-lib/fake-device.js';
+import type { UserObjectParam } from './test-lib/supertest.js';
+import * as versions from './test-lib/versions.js';
+import * as fixtures from './test-lib/fixtures.js';
+import type { Application } from '../src/balena-model.js';
 import { sbvrUtils } from '@balena/pinejs';
 import type { PineTest } from 'pinejs-client-supertest';
 

@@ -4,14 +4,20 @@
 import type { Request, RequestHandler } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import _ from 'lodash';
-import { multiCacheMemoizee, reqPermissionNormalizer } from '../../infra/cache';
-import { randomUUID } from 'crypto';
+import {
+	multiCacheMemoizee,
+	reqPermissionNormalizer,
+} from '../../infra/cache/index.js';
+import { randomUUID } from 'node:crypto';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
-import { captureException, handleHttpErrors } from '../../infra/error-handling';
+import {
+	captureException,
+	handleHttpErrors,
+} from '../../infra/error-handling/index.js';
 
-import { registryAuth as CERT } from './certs';
+import { registryAuth as CERT } from './certs.js';
 import {
 	AUTH_RESINOS_REGISTRY_CODE,
 	GET_SUBJECT_CACHE_TIMEOUT,
@@ -20,8 +26,8 @@ import {
 	RESOLVE_IMAGE_LOCATION_CACHE_TIMEOUT,
 	RESOLVE_IMAGE_READ_ACCESS_CACHE_TIMEOUT,
 	TOKEN_AUTH_BUILDER_TOKEN,
-} from '../../lib/config';
-import type { Image, User } from '../../balena-model';
+} from '../../lib/config.js';
+import type { Image, User } from '../../balena-model.js';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;

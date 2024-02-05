@@ -1,7 +1,7 @@
 import { hooks, permissions, errors } from '@balena/pinejs';
 
-import { REGISTRY2_HOST } from '../../../lib/config';
-import { pseudoRandomBytesAsync } from '../../../lib/utils';
+import { REGISTRY2_HOST } from '../../../lib/config.js';
+import { randomBytesAsync } from '../../../lib/utils.js';
 
 const { InternalRequestError } = errors;
 
@@ -12,7 +12,7 @@ hooks.addPureHook('POST', 'resin', 'image', {
 			const candidate =
 				REGISTRY2_HOST +
 				'/v2/' +
-				(await pseudoRandomBytesAsync(16)).toString('hex').toLowerCase();
+				(await randomBytesAsync(16)).toString('hex').toLowerCase();
 
 			const count = await api.get({
 				resource: 'image',

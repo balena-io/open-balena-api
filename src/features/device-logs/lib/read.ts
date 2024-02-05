@@ -6,21 +6,21 @@ import { sbvrUtils, errors } from '@balena/pinejs';
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../../infra/error-handling';
+} from '../../../infra/error-handling/index.js';
 
-import type { DeviceLog, LogContext } from './struct';
-import { StreamState } from './struct';
-import { addRetentionLimit, getBackend } from './config';
-import { getNanoTimestamp } from '../../../lib/utils';
-import type { SetupOptions } from '../../..';
-import type { Device } from '../../../balena-model';
+import type { DeviceLog, LogContext } from './struct.js';
+import { StreamState } from './struct.js';
+import { addRetentionLimit, getBackend } from './config.js';
+import { getNanoTimestamp } from '../../../lib/utils.js';
+import type { SetupOptions } from '../../../index.js';
+import type { Device } from '../../../balena-model.js';
 import {
 	LOGS_DEFAULT_HISTORY_COUNT,
 	LOGS_DEFAULT_SUBSCRIPTION_COUNT,
 	LOGS_HEARTBEAT_INTERVAL,
 	LOGS_READ_STREAM_FLUSH_INTERVAL,
 	NDJSON_CTYPE,
-} from '../../../lib/config';
+} from '../../../lib/config.js';
 
 const { NotFoundError } = errors;
 const { api } = sbvrUtils;

@@ -1,6 +1,6 @@
 import statuses from 'statuses';
 import { errors, hooks, sbvrUtils } from '@balena/pinejs';
-import { getDeviceTypeBySlug } from '../../features/device-types/device-types';
+import { getDeviceTypeBySlug } from '../../features/device-types/device-types.js';
 
 const addReadOnlyHook = (
 	methods: Array<Parameters<typeof hooks.addHook>[0]>,

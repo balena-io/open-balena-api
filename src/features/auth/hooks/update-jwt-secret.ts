@@ -1,5 +1,5 @@
 import { hooks } from '@balena/pinejs';
-import { generateNewJwtSecret } from '../../../infra/auth/jwt';
+import { generateNewJwtSecret } from '../../../infra/auth/jwt.js';
 
 hooks.addPureHook('POST', 'resin', 'user', {
 	/**

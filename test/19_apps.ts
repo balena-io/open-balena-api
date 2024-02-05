@@ -1,12 +1,12 @@
 import { expect } from 'chai';
-import * as fixtures from './test-lib/fixtures';
-import * as fakeDevice from './test-lib/fake-device';
+import * as fixtures from './test-lib/fixtures.js';
+import * as fakeDevice from './test-lib/fake-device.js';
 
-import type { UserObjectParam } from './test-lib/supertest';
-import type { Application, Release } from '../src/balena-model';
-import { expectResourceToMatch } from './test-lib/api-helpers';
+import type { UserObjectParam } from './test-lib/supertest.js';
+import type { Application, Release } from '../src/balena-model.js';
+import { expectResourceToMatch } from './test-lib/api-helpers.js';
 import type { PineTest } from 'pinejs-client-supertest';
-import * as versions from './test-lib/versions';
+import * as versions from './test-lib/versions.js';
 
 export default () => {
 	versions.test((version, pineTest) => {

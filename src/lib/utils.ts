@@ -1,4 +1,4 @@
-import { pseudoRandomBytes } from 'crypto';
+import { randomBytes } from 'node:crypto';
 import type { Request } from 'express';
 import ipaddr from 'ipaddr.js';
 import fs from 'fs';
@@ -13,7 +13,7 @@ export function getNanoTimestamp() {
 	return loadNs + process.hrtime.bigint();
 }
 
-export const pseudoRandomBytesAsync = promisify(pseudoRandomBytes);
+export const randomBytesAsync = promisify(randomBytes);
 
 export const isValidInteger = (num: any): num is number => {
 	const n = checkInt(num);

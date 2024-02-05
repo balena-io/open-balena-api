@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import type * as Redis from 'ioredis';
-import { REDIS } from '../../lib/config';
+import { REDIS } from '../../lib/config.js';
 
 /*
  Retry to connect to the redis server every 200 ms. To allow recovering

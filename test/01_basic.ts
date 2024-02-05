@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { supertest } from './test-lib/supertest';
+import { supertest } from './test-lib/supertest.js';
 
 const checkBaseVarsResult = (
 	vars: AnyObject,

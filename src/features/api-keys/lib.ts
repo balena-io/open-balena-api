@@ -9,9 +9,9 @@ import type {
 	Device,
 	Role,
 	User,
-} from '../../balena-model';
-import { multiCacheMemoizee } from '../../infra/cache';
-import { API_KEY_ROLE_CACHE_TIMEOUT } from '../../lib/config';
+} from '../../balena-model.js';
+import { multiCacheMemoizee } from '../../infra/cache/index.js';
+import { API_KEY_ROLE_CACHE_TIMEOUT } from '../../lib/config.js';
 
 const { api } = sbvrUtils;
 const { BadRequestError } = errors;

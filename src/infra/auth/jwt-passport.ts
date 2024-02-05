@@ -8,14 +8,14 @@ import { TypedError } from 'typed-error';
 import type { sbvrUtils } from '@balena/pinejs';
 import { permissions } from '@balena/pinejs';
 
-import { JSON_WEB_TOKEN_SECRET } from '../../lib/config';
+import { JSON_WEB_TOKEN_SECRET } from '../../lib/config.js';
 
-import { captureException } from '../error-handling';
-import type { ScopedAccessToken, ScopedToken } from './jwt';
-import type { PickDeferred, User as DbUser } from '../../balena-model';
-import { getGuestActorId } from './permissions';
+import { captureException } from '../error-handling/index.js';
+import type { ScopedAccessToken, ScopedToken } from './jwt.js';
+import type { PickDeferred, User as DbUser } from '../../balena-model.js';
+import { getGuestActorId } from './permissions.js';
 
-export { SignOptions } from 'jsonwebtoken';
+export type { SignOptions } from 'jsonwebtoken';
 
 class InvalidJwtSecretError extends TypedError {}
 

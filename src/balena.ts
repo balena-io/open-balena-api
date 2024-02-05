@@ -1,19 +1,27 @@
+import { fileURLToPath } from 'node:url';
 import {
 	aliasTable,
 	generateAbstractSqlModel,
 	renameVarResourcesName,
 	optimizeSchema,
-} from './abstract-sql-utils';
+} from './abstract-sql-utils.js';
 
-import * as userHasDirectAccessToApplication from './features/applications/models/user__has_direct_access_to__application';
-import * as deviceAdditions from './features/devices/models/device-additions';
-import * as releaseAdditions from './features/ci-cd/models/release-additions';
+import * as userHasDirectAccessToApplication from './features/applications/models/user__has_direct_access_to__application.js';
+import * as deviceAdditions from './features/devices/models/device-additions.js';
+import * as releaseAdditions from './features/ci-cd/models/release-additions.js';
+import type { ConfigLoader } from '@balena/pinejs';
 
-export const apiRoot = 'resin';
-export const modelName = 'balena';
-export const migrationsPath = __dirname + '/migrations/';
-export const initSqlPath = __dirname + '/balena-init.sql';
-export const abstractSql = generateAbstractSqlModel(__dirname + '/balena.sbvr');
+const abstractSql = generateAbstractSqlModel(
+	new URL('balena.sbvr', import.meta.url),
+);
+
+export const model = {
+	apiRoot: 'resin',
+	modelName: 'balena',
+	migrationsPath: fileURLToPath(new URL('migrations/', import.meta.url)),
+	initSqlPath: fileURLToPath(new URL('balena-init.sql', import.meta.url)),
+	abstractSql,
+} satisfies ConfigLoader.Model;
 
 aliasTable(abstractSql, 'application', 'my application', {
 	binds: [],

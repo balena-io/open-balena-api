@@ -1,15 +1,15 @@
 import _ from 'lodash';
 
-import type { DeviceTypeJson } from './device-type-json';
+import type { DeviceTypeJson } from './device-type-json.js';
 import type { sbvrUtils } from '@balena/pinejs';
 import { errors } from '@balena/pinejs';
 const { InternalRequestError } = errors;
 
-import { captureException } from '../../infra/error-handling';
+import { captureException } from '../../infra/error-handling/index.js';
 
-import { getCompressedSize, getDeviceTypeJson } from './build-info-facade';
-import type { DeviceTypeInfo } from './device-types-list';
-import { getDeviceTypes } from './device-types-list';
+import { getCompressedSize, getDeviceTypeJson } from './build-info-facade.js';
+import type { DeviceTypeInfo } from './device-types-list.js';
+import { getDeviceTypes } from './device-types-list.js';
 const { BadRequestError, NotFoundError } = errors;
 export type { NotFoundError };
 
