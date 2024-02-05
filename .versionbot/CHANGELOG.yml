@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update dependencies
+      hash: cd7ec76938f19527c7987e01775770a5b8ecd30e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 17.0.4
+  title: ""
+  date: 2024-02-05T14:28:26.230Z
+- commits:
     - subject: Improve internal JWT typings.
       hash: 61be948e4e41e5f8310642d1a1887ac38ec35435
       body: |
