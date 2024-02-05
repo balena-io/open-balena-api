@@ -11,10 +11,8 @@ import {
 	mockRepo,
 	addContractInterceptors,
 } from './test-lib/contracts-mock';
-import {
-	RepositoryInfo,
-	synchronizeContracts,
-} from '../src/features/contracts';
+import type { RepositoryInfo } from '../src/features/contracts';
+import { synchronizeContracts } from '../src/features/contracts';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import type { DeviceType, DeviceTypeAlias } from '../src/balena-model';
 

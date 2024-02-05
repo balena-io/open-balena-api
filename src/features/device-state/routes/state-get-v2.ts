@@ -19,9 +19,9 @@ import {
 } from '../state-get-utils';
 import { sbvrUtils } from '@balena/pinejs';
 import { events } from '..';
-import { ResolveDeviceInfoCustomObject } from '../middleware';
+import type { ResolveDeviceInfoCustomObject } from '../middleware';
 import { getIP } from '../../../lib/utils';
-import { Device } from '../../../balena-model';
+import type { Device } from '../../../balena-model';
 
 const { api } = sbvrUtils;
 

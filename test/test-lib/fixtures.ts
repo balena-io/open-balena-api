@@ -1,11 +1,12 @@
-import { sbvrUtils, permissions, types } from '@balena/pinejs';
+import type { types } from '@balena/pinejs';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 import Bluebird from 'bluebird';
 import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
 import { randomUUID } from 'crypto';
 
-import { Headers } from 'request';
+import type { Headers } from 'request';
 import { API_HOST } from '../../src/lib/config';
 import { requestAsync } from '../../src/infra/request-promise';
 import { supertest } from './supertest';

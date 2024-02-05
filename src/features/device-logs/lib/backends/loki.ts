@@ -1,28 +1,31 @@
 import _ from 'lodash';
 import { EventEmitter } from 'events';
 
-import {
+import type {
 	ClientReadableStream,
+	PushResponse,
+	QueryResponse,
+	ServiceError,
+	TailResponse,
+} from 'loki-grpc-client';
+import {
 	createInsecureCredentials,
 	createOrgIdMetadata,
 	Direction,
 	EntryAdapter,
 	PusherClient,
 	PushRequest,
-	PushResponse,
 	QuerierClient,
 	QueryRequest,
-	QueryResponse,
-	ServiceError,
 	status,
 	StreamAdapter,
 	TailRequest,
-	TailResponse,
 	Timestamp,
 } from 'loki-grpc-client';
-import { errors, sbvrUtils, permissions, types } from '@balena/pinejs';
+import type { types } from '@balena/pinejs';
+import { errors, sbvrUtils, permissions } from '@balena/pinejs';
 import { LOKI_HOST, LOKI_PORT } from '../../../../lib/config';
-import {
+import type {
 	DeviceLog,
 	DeviceLogsBackend,
 	LogContext,
@@ -43,7 +46,7 @@ import {
 	incrementPublishCallTotal,
 } from './metrics';
 import { setTimeout } from 'timers/promises';
-import { Device, PickDeferred } from '../../../../balena-model';
+import type { Device, PickDeferred } from '../../../../balena-model';
 
 const { BadRequestError } = errors;
 

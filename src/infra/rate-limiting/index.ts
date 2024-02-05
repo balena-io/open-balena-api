@@ -1,8 +1,8 @@
 import cluster from 'cluster';
 import type { Request, Response, RequestHandler } from 'express';
 import _ from 'lodash';
+import type { IRateLimiterOptions } from 'rate-limiter-flexible';
 import {
-	IRateLimiterOptions,
 	RateLimiterCluster,
 	RateLimiterMemory,
 	RateLimiterRedis,

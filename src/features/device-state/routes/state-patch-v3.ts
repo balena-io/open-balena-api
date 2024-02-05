@@ -7,7 +7,7 @@ import {
 } from '../../../infra/error-handling';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils';
-import {
+import type {
 	Application,
 	Device,
 	Image,
@@ -23,7 +23,7 @@ import {
 	shouldUpdateMetrics,
 	truncateShortTextFields,
 } from '../state-patch-utils';
-import { ResolveDeviceInfoCustomObject } from '../middleware';
+import type { ResolveDeviceInfoCustomObject } from '../middleware';
 
 const { BadRequestError, UnauthorizedError, InternalRequestError } = errors;
 const { api } = sbvrUtils;

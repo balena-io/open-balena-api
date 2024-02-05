@@ -9,11 +9,8 @@ import { resolveOrDenyDevicesWithStatus } from './middleware';
 import { stateV2 } from './routes/state-get-v2';
 import { stateV3 } from './routes/state-get-v3';
 import { statePatchV2 } from './routes/state-patch-v2';
-import {
-	StatePatchV3Body,
-	resolveDeviceUuids,
-	statePatchV3,
-} from './routes/state-patch-v3';
+import type { StatePatchV3Body } from './routes/state-patch-v3';
+import { resolveDeviceUuids, statePatchV3 } from './routes/state-patch-v3';
 import { fleetStateV3 } from './routes/fleet-state-get-v3';
 import type { GetStateEventStoredDeviceFields } from './state-get-utils';
 

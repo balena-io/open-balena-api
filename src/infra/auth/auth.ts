@@ -1,14 +1,15 @@
 import type { Request } from 'express';
 import _ from 'lodash';
 
-import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
+import type { hooks } from '@balena/pinejs';
+import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
 import { retrieveAPIKey } from './api-keys';
 import type { TokenUserPayload } from './jwt-passport';
 
 import { getIP } from '../../lib/utils';
 import type { PickDeferred, User as DbUser } from '../../balena-model';
-import { PreparedFn } from 'pinejs-client-core';
+import type { PreparedFn } from 'pinejs-client-core';
 
 const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;

@@ -1,4 +1,5 @@
-import { sbvrUtils, hooks } from '@balena/pinejs';
+import type { sbvrUtils } from '@balena/pinejs';
+import { hooks } from '@balena/pinejs';
 
 // We only track releases that are successful, final, not invalid, and passing tests
 const trackableReleaseFilter = {

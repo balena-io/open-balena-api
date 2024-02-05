@@ -7,7 +7,7 @@ import {
 import { middleware } from '../../infra/auth';
 import { read } from './lib/read';
 import { store, storeStream } from './lib/store';
-import { SetupOptions } from '../..';
+import type { SetupOptions } from '../..';
 import { resolveOrDenyDevicesWithStatus } from '../device-state/middleware';
 
 // Rate limit for device log creation, a maximum of 15 batches every 10 second window

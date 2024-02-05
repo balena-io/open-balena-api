@@ -5,7 +5,7 @@ import {
 	errors as pinejsErrors,
 } from '@balena/pinejs';
 import * as semver from 'balena-semver';
-import { Device, ReleaseTag, PickDeferred } from '../../../balena-model';
+import type { Device, ReleaseTag, PickDeferred } from '../../../balena-model';
 import { groupByMap } from '../../../lib/utils';
 const { BadRequestError } = pinejsErrors;
 

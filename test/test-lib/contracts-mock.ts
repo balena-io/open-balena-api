@@ -3,7 +3,7 @@ import {
 	CONTRACTS_PUBLIC_REPO_NAME,
 	CONTRACTS_PUBLIC_REPO_BRANCH,
 } from '../../src/lib/config';
-import { RepositoryInfo } from '../../src/features/contracts';
+import type { RepositoryInfo } from '../../src/features/contracts';
 import nock from 'nock';
 import path from 'path';
 import tar from 'tar';

@@ -1,8 +1,9 @@
-import _ from 'lodash';
+import type _ from 'lodash';
 
 import { expect } from 'chai';
 import * as fakeDevice from '../test-lib/fake-device';
-import { supertest, UserObjectParam } from '../test-lib/supertest';
+import type { UserObjectParam } from '../test-lib/supertest';
+import { supertest } from '../test-lib/supertest';
 
 import * as fixtures from '../test-lib/fixtures';
 import {

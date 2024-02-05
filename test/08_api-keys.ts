@@ -2,10 +2,11 @@ import { VPN_SERVICE_API_KEY } from '../src/lib/config';
 import { expect } from 'chai';
 import * as fixtures from './test-lib/fixtures';
 import { generateDeviceUuid } from './test-lib/fake-device';
-import { supertest, UserObjectParam } from './test-lib/supertest';
+import type { UserObjectParam } from './test-lib/supertest';
+import { supertest } from './test-lib/supertest';
 import * as versions from './test-lib/versions';
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import { DateString } from '../src/balena-model';
+import type { DateString } from '../src/balena-model';
 
 const { api } = sbvrUtils;
 

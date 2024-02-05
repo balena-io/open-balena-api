@@ -2,10 +2,10 @@ import _ from 'lodash';
 import { expect } from 'chai';
 import { connectDeviceAndWaitForUpdate } from './test-lib/connect-device-and-wait';
 import * as fakeDevice from './test-lib/fake-device';
-import { UserObjectParam } from './test-lib/supertest';
+import type { UserObjectParam } from './test-lib/supertest';
 import * as versions from './test-lib/versions';
 import * as fixtures from './test-lib/fixtures';
-import { Application } from '../src/balena-model';
+import type { Application } from '../src/balena-model';
 import { sbvrUtils } from '@balena/pinejs';
 import type { PineTest } from 'pinejs-client-supertest';
 

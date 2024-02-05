@@ -1,4 +1,5 @@
-import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
+import type { hooks } from '@balena/pinejs';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 
 export const createActor = async ({
 	request,

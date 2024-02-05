@@ -2,7 +2,8 @@ import { expect } from 'chai';
 
 import { connectDeviceAndWaitForUpdate } from './test-lib/connect-device-and-wait';
 import * as fakeDevice from './test-lib/fake-device';
-import { supertest, UserObjectParam } from './test-lib/supertest';
+import type { UserObjectParam } from './test-lib/supertest';
+import { supertest } from './test-lib/supertest';
 import * as versions from './test-lib/versions';
 
 import * as fixtures from './test-lib/fixtures';
@@ -12,7 +13,7 @@ import {
 	addServiceToApp,
 	addImageToRelease,
 } from './test-lib/api-helpers';
-import { Application, DeviceType, Release } from '../src/balena-model';
+import type { Application, DeviceType, Release } from '../src/balena-model';
 
 versions.test((version, pineTest) => {
 	describe(`Tracking latest release`, () => {

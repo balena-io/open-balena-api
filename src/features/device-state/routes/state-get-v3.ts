@@ -19,10 +19,10 @@ import {
 } from '../state-get-utils';
 import { sbvrUtils } from '@balena/pinejs';
 import { events } from '..';
-import { Expand } from 'pinejs-client-core';
-import { ResolveDeviceInfoCustomObject } from '../middleware';
+import type { Expand } from 'pinejs-client-core';
+import type { ResolveDeviceInfoCustomObject } from '../middleware';
 import { getIP } from '../../../lib/utils';
-import { Device } from '../../../balena-model';
+import type { Device } from '../../../balena-model';
 
 const { api } = sbvrUtils;
 

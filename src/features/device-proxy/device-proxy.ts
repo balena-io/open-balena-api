@@ -15,7 +15,8 @@ import {
 	API_VPN_SERVICE_API_KEY,
 	VPN_CONNECT_PROXY_PORT,
 } from '../../lib/config';
-import { requestAsync, RequestResponse } from '../../infra/request-promise';
+import type { RequestResponse } from '../../infra/request-promise';
+import { requestAsync } from '../../infra/request-promise';
 import { checkInt, throttledForEach } from '../../lib/utils';
 
 // Degraded network, slow devices, compressed docker binaries and any combination of these factors

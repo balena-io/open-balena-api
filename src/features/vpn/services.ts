@@ -1,7 +1,8 @@
 import type { Request, RequestHandler, Response } from 'express';
 
 import _ from 'lodash';
-import { sbvrUtils, permissions, errors } from '@balena/pinejs';
+import type { permissions } from '@balena/pinejs';
+import { sbvrUtils, errors } from '@balena/pinejs';
 import {
 	captureException,
 	handleHttpErrors,
