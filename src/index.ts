@@ -484,6 +484,11 @@ async function startServer(
 	port: string | number,
 ): Promise<Server> {
 	let server: Server;
+	// empty 404 error for undefined paths to avoid
+	// express creates default 404 error with html body
+	app.use((_request, response) => {
+		response.status(404).end();
+	});
 	await Bluebird.fromCallback((cb) => {
 		server = app.listen(port, cb as (...args: any[]) => void);
 	});

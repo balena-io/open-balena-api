@@ -102,6 +102,12 @@ describe('Basic', () => {
 		expect(res.text).to.equal('OK');
 	});
 
+	it('return empty 404 on invalid path', async () => {
+		const res = await supertest().get('/pong').expect(404);
+		console.log(`res:${JSON.stringify(res, null, 2)}`);
+		expect(res.text).to.be.empty;
+	});
+
 	describe('/config/vars', function () {
 		it('should be correct when no device type is provided', async () => {
 			const { body: vars } = await supertest().get('/config/vars').expect(200);
