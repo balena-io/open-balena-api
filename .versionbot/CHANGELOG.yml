@@ -1,4 +1,18 @@
 - commits:
+    - subject: Return empty 404 instead of expressjs default html
+      hash: 695d2533ee0dfdbaa95921f3aa739dfcd54996dc
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Harald Fischer <harald@balena.io>
+        signed-off-by: Harald Fischer <harald@balena.io>
+      author: Harald Fischer
+      nested: []
+  version: 17.0.5
+  title: ""
+  date: 2024-02-06T09:25:23.868Z
+- commits:
     - subject: Update dependencies
       hash: cd7ec76938f19527c7987e01775770a5b8ecd30e
       body: ""
