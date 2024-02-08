@@ -135,10 +135,7 @@ import * as baseAuth from './lib/auth';
 import { varListInsert } from './features/device-state/state-get-utils';
 import type { GetUrlFunction } from './features/request-logging';
 import { setupRequestLogging } from './features/request-logging';
-import {
-	startContractSynchronization,
-	setSyncSettings,
-} from './features/contracts';
+import { startContractSynchronization } from './features/contracts';
 
 import { addToModel as addUserHasDirectAccessToApplicationToModel } from './features/applications/models/user__has_direct_access_to__application';
 import { getApplicationSlug } from './features/applications';
@@ -244,9 +241,7 @@ export const deviceTypes = {
 	findBySlug,
 	getDeviceTypeBySlug,
 };
-export const contracts = {
-	setSyncSettings,
-};
+export * as contracts from './exports/contracts';
 export const envVarsConfig = {
 	ALLOWED_NAMES,
 	BLOCKED_NAMES,
