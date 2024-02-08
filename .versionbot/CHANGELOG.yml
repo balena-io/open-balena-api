@@ -1,4 +1,18 @@
 - commits:
+    - subject: "package.json: Add cache & config as exports/package entry points"
+      hash: 991abab9b79cb9110edfc89d2c727647f06c48ec
+      body: |
+        That's to allow consumers to access them
+        before the pine gets imported/initialized.
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 17.2.0
+  title: ""
+  date: 2024-02-08T09:38:23.786Z
+- commits:
     - subject: Add synchronizeContracts & RepositoryInfo to the contracts export
       hash: cd7f7cff7f971b3b815f7de2a7df37bfe6dc8a77
       body: ""
