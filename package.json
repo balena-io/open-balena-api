@@ -9,6 +9,12 @@
   },
   "type": "commonjs",
   "main": "dist/index",
+  "exports": {
+    ".": "./dist/index.js",
+    "./cache": "./dist/infra/cache/index.js",
+    "./config": "./dist/lib/config.js",
+    "./dist/*": "./dist/*"
+  },
   "files": [
     "dist/"
   ],
