@@ -94,7 +94,6 @@ import {
 	assignUserRole,
 } from './infra/auth/permissions';
 import { createScopedAccessToken, createJwt } from './infra/auth/jwt';
-import { resolveOrDenyDevicesWithStatus } from './features/device-state/middleware';
 import { middleware as authMiddleware } from './infra/auth';
 import {
 	augmentReqApiKeyPermissions,
@@ -105,11 +104,7 @@ import {
 	updateOrInsertModel,
 	getOrInsertModelId,
 } from './infra/pinejs-client-helpers';
-import {
-	loginRateLimiter,
-	normalizeHandle,
-	refreshToken,
-} from './features/auth';
+import { normalizeHandle, refreshToken } from './features/auth';
 import { getIP, getIPv4, isValidInteger, throttledForEach } from './lib/utils';
 import {
 	createRateLimitMiddleware,
@@ -139,7 +134,7 @@ import * as baseAuth from './lib/auth';
 // TODO: This should not be exported
 import { varListInsert } from './features/device-state/state-get-utils';
 import type { GetUrlFunction } from './features/request-logging';
-import { setupRequestLogging, skipLogging } from './features/request-logging';
+import { setupRequestLogging } from './features/request-logging';
 import {
 	startContractSynchronization,
 	setSyncSettings,
@@ -212,12 +207,7 @@ export const rateLimiting = {
 	createRateLimitMiddleware,
 	createRateLimiter,
 };
-export const middleware = {
-	...authMiddleware,
-	resolveOrDenyDevicesWithStatus,
-	loginRateLimiter,
-	skipLogging,
-};
+export * as middleware from './exports/middleware';
 export const hooks = {
 	addDeleteHookForDependents,
 };
