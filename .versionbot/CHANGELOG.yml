@@ -1,4 +1,24 @@
 - commits:
+    - subject: Add synchronizeContracts & RepositoryInfo to the contracts export
+      hash: cd7f7cff7f971b3b815f7de2a7df37bfe6dc8a77
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Add ResolveDeviceInfoCustomObject to the middleware export
+      hash: 304f55a083a3d15da181c40373489cbaaeb4de4b
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 17.1.0
+  title: ""
+  date: 2024-02-08T09:14:25.025Z
+- commits:
     - subject: Return empty 404 instead of expressjs default html
       hash: 695d2533ee0dfdbaa95921f3aa739dfcd54996dc
       body: ""
