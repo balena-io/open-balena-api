@@ -96,78 +96,82 @@ const checkBaseVarsResult = (
 	);
 };
 
-describe('Basic', () => {
-	it('check /ping route is OK', async () => {
-		const res = await supertest().get('/ping').expect(200);
-		expect(res.text).to.equal('OK');
-	});
-
-	it('return empty 404 on invalid path', async () => {
-		const res = await supertest().get('/pong').expect(404);
-		console.log(`res:${JSON.stringify(res, null, 2)}`);
-		expect(res.text).to.be.empty;
-	});
-
-	describe('/config/vars', function () {
-		it('should be correct when no device type is provided', async () => {
-			const { body: vars } = await supertest().get('/config/vars').expect(200);
-
-			checkBaseVarsResult(vars);
+export default () => {
+	describe('Basic', () => {
+		it('check /ping route is OK', async () => {
+			const res = await supertest().get('/ping').expect(200);
+			expect(res.text).to.equal('OK');
 		});
 
-		it(`should return the base vars when device type is not found`, async () => {
-			const { body: vars } = await supertest()
-				.get(`/config/vars?deviceType=wrong-device-type`)
-				.expect(200);
-
-			checkBaseVarsResult(vars);
+		it('return empty 404 on invalid path', async () => {
+			const res = await supertest().get('/pong').expect(404);
+			console.log(`res:${JSON.stringify(res, null, 2)}`);
+			expect(res.text).to.be.empty;
 		});
 
-		[
-			{ deviceType: 'beaglebone-black' },
-			{
-				deviceType: 'fincm3',
-				extraConfigVarSchemaProperties: [
-					'BALENA_HOST_CONFIG_display_rotate',
-					'BALENA_HOST_CONFIG_hdmi_cvt',
-					'BALENA_HOST_CONFIG_hdmi_force_hotplug',
-					'BALENA_HOST_CONFIG_hdmi_group',
-					'BALENA_HOST_CONFIG_hdmi_mode',
-					'RESIN_HOST_CONFIG_gpio',
-					'RESIN_HOST_CONFIG_disable_splash',
-					'RESIN_HOST_CONFIG_dtparam',
-					'RESIN_HOST_CONFIG_dtoverlay',
-					'RESIN_HOST_CONFIG_enable_uart',
-					'RESIN_HOST_CONFIG_gpu_mem',
-				],
-			},
-			{
-				deviceType: 'jetson-nano',
-				extraConfigVarSchemaProperties: [
-					'RESIN_HOST_EXTLINUX_fdt',
-					'RESIN_HOST_EXTLINUX_isolcpus',
-				],
-			},
-			{
-				deviceType: 'jetson-tx2',
-				extraConfigVarSchemaProperties: [
-					'RESIN_HOST_EXTLINUX_fdt',
-					'RESIN_HOST_EXTLINUX_isolcpus',
-					'RESIN_HOST_ODMDATA_configuration',
-				],
-			},
-			{
-				deviceType: 'up-board',
-				extraConfigVarSchemaProperties: ['RESIN_HOST_CONFIGFS_ssdt'],
-			},
-		].forEach(({ deviceType, extraConfigVarSchemaProperties }) => {
-			it(`should be correct when device type ${deviceType} is specified`, async () => {
+		describe('/config/vars', function () {
+			it('should be correct when no device type is provided', async () => {
 				const { body: vars } = await supertest()
-					.get(`/config/vars?deviceType=${deviceType}`)
+					.get('/config/vars')
 					.expect(200);
 
-				checkBaseVarsResult(vars, extraConfigVarSchemaProperties);
+				checkBaseVarsResult(vars);
+			});
+
+			it(`should return the base vars when device type is not found`, async () => {
+				const { body: vars } = await supertest()
+					.get(`/config/vars?deviceType=wrong-device-type`)
+					.expect(200);
+
+				checkBaseVarsResult(vars);
+			});
+
+			[
+				{ deviceType: 'beaglebone-black' },
+				{
+					deviceType: 'fincm3',
+					extraConfigVarSchemaProperties: [
+						'BALENA_HOST_CONFIG_display_rotate',
+						'BALENA_HOST_CONFIG_hdmi_cvt',
+						'BALENA_HOST_CONFIG_hdmi_force_hotplug',
+						'BALENA_HOST_CONFIG_hdmi_group',
+						'BALENA_HOST_CONFIG_hdmi_mode',
+						'RESIN_HOST_CONFIG_gpio',
+						'RESIN_HOST_CONFIG_disable_splash',
+						'RESIN_HOST_CONFIG_dtparam',
+						'RESIN_HOST_CONFIG_dtoverlay',
+						'RESIN_HOST_CONFIG_enable_uart',
+						'RESIN_HOST_CONFIG_gpu_mem',
+					],
+				},
+				{
+					deviceType: 'jetson-nano',
+					extraConfigVarSchemaProperties: [
+						'RESIN_HOST_EXTLINUX_fdt',
+						'RESIN_HOST_EXTLINUX_isolcpus',
+					],
+				},
+				{
+					deviceType: 'jetson-tx2',
+					extraConfigVarSchemaProperties: [
+						'RESIN_HOST_EXTLINUX_fdt',
+						'RESIN_HOST_EXTLINUX_isolcpus',
+						'RESIN_HOST_ODMDATA_configuration',
+					],
+				},
+				{
+					deviceType: 'up-board',
+					extraConfigVarSchemaProperties: ['RESIN_HOST_CONFIGFS_ssdt'],
+				},
+			].forEach(({ deviceType, extraConfigVarSchemaProperties }) => {
+				it(`should be correct when device type ${deviceType} is specified`, async () => {
+					const { body: vars } = await supertest()
+						.get(`/config/vars?deviceType=${deviceType}`)
+						.expect(200);
+
+					checkBaseVarsResult(vars, extraConfigVarSchemaProperties);
+				});
 			});
 		});
 	});
-});
+};

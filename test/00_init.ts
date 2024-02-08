@@ -25,7 +25,7 @@ const prefixes: Dictionary<true> = {};
 
 Bluebird.resolve(fs.promises.readdir(__dirname))
 	.call('sort')
-	.each((fileName) => {
+	.each(async (fileName) => {
 		const ext = path.extname(fileName);
 		if (ext !== '.ts') {
 			return;
@@ -42,27 +42,34 @@ Bluebird.resolve(fs.promises.readdir(__dirname))
 			throw new Error(`Prefix ${prefix} has already been used`);
 		}
 		prefixes[prefix] = true;
+		if (prefix === '00') {
+			// Don't double load this file
+			return;
+		}
+		const { default: initFn } = (await import(`./${fileName}.js`)).default;
 		describe(fileName, () => {
-			require(`./${fileName}`);
+			initFn();
 		});
 	})
 	.then(() => fs.promises.readdir(path.join(__dirname, 'scenarios')))
-	.each((filename) => {
-		const ext = path.extname(filename);
+	.each(async (fileName) => {
+		const ext = path.extname(fileName);
 		if (ext !== '.ts') {
 			return;
 		}
-		filename = path.basename(filename, ext);
+		fileName = path.basename(fileName, ext);
 
 		if (
 			testFiles.length > 0 &&
-			!testFiles.some((testFile) => testFile(filename))
+			!testFiles.some((testFile) => testFile(fileName))
 		) {
 			return;
 		}
 
-		describe(`Scenario: ${filename}`, () => {
-			require(path.join(__dirname, 'scenarios', filename));
+		const { default: initFn } = (await import(`./scenarios/${fileName}.js`))
+			.default;
+		describe(`Scenario: ${fileName}`, () => {
+			initFn();
 		});
 	})
 	.done(run);
