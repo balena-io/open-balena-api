@@ -693,7 +693,7 @@ const getSubject = async (
 ): Promise<undefined | string> => {
 	if (req.apiKey != null && !_.isEmpty(req.apiKey.permissions)) {
 		return await $getSubject(req.apiKey.key, req.params.subject, tx);
-	} else if (req.user) {
+	} else if (req.user && 'id' in req.user) {
 		// If there's no api key then try to fetch the user from JWT credentials and get the username
 		const user = (await api.resin.get({
 			resource: 'user',
