@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency @types/passport-jwt to v4
+      hash: 0dbedea931d28aa1027f74dd352bf3724c1b186a
+      body: |
+        Update @types/passport-jwt from 3.0.13 to 4.0.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 17.2.3
+  title: ""
+  date: 2024-02-09T15:01:27.804Z
+- commits:
     - subject: Switch test files to exporting an init function for ESM compatibility
       hash: b14d12e2d522531ae8ea10895352689e962b2da7
       body: ""
