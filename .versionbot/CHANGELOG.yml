@@ -1,4 +1,16 @@
 - commits:
+    - subject: Switch test files to exporting an init function for ESM compatibility
+      hash: b14d12e2d522531ae8ea10895352689e962b2da7
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 17.2.2
+  title: ""
+  date: 2024-02-09T14:24:05.188Z
+- commits:
     - subject: Fix getSubject username retrieval
       hash: a59041afdd70cacc24da48d62e78f07ec9ea27bf
       body: >
