@@ -67,7 +67,7 @@
     "@types/node": "^20.11.16",
     "@types/node-schedule": "^2.1.6",
     "@types/on-finished": "^2.3.4",
-    "@types/passport-jwt": "^3.0.13",
+    "@types/passport-jwt": "^4.0.0",
     "@types/proxy-addr": "^2.0.3",
     "@types/randomstring": "^1.1.11",
     "@types/redlock": "^4.0.7",
