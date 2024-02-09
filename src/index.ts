@@ -272,6 +272,7 @@ export interface SetupOptions {
 	onInitModel?: SetupFunction;
 	onInitHooks?: SetupFunction;
 	onInitRoutes?: SetupFunction;
+	onInitTasks?: SetupFunction;
 
 	onLogin?: (
 		user: Pick<DbUser, (typeof defaultFindUser$select)[number]>,
@@ -380,6 +381,7 @@ export async function setup(app: Application, options: SetupOptions) {
 
 	await import('./hooks.js');
 	await options.onInitHooks?.(app);
+	await options.onInitTasks?.(app);
 
 	const routes = (await import('./routes.js')).default;
 	routes.setup(app, options);
