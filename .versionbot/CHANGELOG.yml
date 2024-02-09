@@ -1,4 +1,17 @@
 - commits:
+    - subject: Lock file maintenance
+      hash: 5e901807cc793ccc227579a800dbbe2885fa21c8
+      body: |
+        Update
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 17.2.6
+  title: ""
+  date: 2024-02-09T18:05:00.614Z
+- commits:
     - subject: Update grafana/loki Docker tag to v2.9.4
       hash: d5872ac2a9b7c92471fef659122f4aadda500804
       body: |
