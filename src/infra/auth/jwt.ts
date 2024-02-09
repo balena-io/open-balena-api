@@ -40,6 +40,7 @@ export const tokenFields = [...userFields];
 export interface ExtraParams {
 	existingToken?: Partial<TokenUserPayload>;
 	jwtOptions?: SignOptions;
+	roleName?: string;
 	tx: Tx;
 }
 
@@ -89,9 +90,12 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 
 export const createSessionToken = async (
 	userId: number,
-	{ existingToken, jwtOptions, tx }: ExtraParams,
+	{ existingToken, jwtOptions, roleName, tx }: ExtraParams,
 ): Promise<string> => {
 	const tokenData = await $getUserTokenDataCallback(userId, existingToken, tx);
+	if (roleName != null) {
+		tokenData.role = roleName;
+	}
 	return createJwt(tokenData, jwtOptions);
 };
 

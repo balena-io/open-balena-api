@@ -34,6 +34,7 @@ export interface TokenUserPayload extends Pick<sbvrUtils.User, 'id' | 'actor'> {
 	jwt_secret: string | null;
 	twoFactorRequired?: boolean;
 	authTime?: number;
+	role?: string;
 }
 
 // What pine expects on Creds after a JWT is parsed so that everything works.
@@ -92,12 +93,15 @@ export const createStrategy = (
 					}
 
 					jwtUser.actor = user.actor.__id;
-					const userPermissions = await permissions.getUserPermissions(
-						jwtUser.id,
-					);
+
+					const role = jwtUser.role;
+					const tokenPermissions =
+						role != null
+							? await permissions.getUserPermissionsForRole(jwtUser.id, role)
+							: await permissions.getUserPermissions(jwtUser.id);
 
 					const processedJwtUser = jwtUser as ResolvedUserToken;
-					processedJwtUser.permissions = userPermissions;
+					processedJwtUser.permissions = tokenPermissions;
 					return processedJwtUser;
 				} else {
 					throw new Error('Invalid JWT');
