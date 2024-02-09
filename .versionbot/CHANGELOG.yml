@@ -1,4 +1,69 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v17.0.4
+      hash: 32064af11359a7098470e0116f64a64cb6a29635
+      body: |
+        Update balena/open-balena-base from 17.0.0 to 17.0.4
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency npm to v10.4.0
+              hash: ab28d3c271a489d71bee75462ac8a8b07b5c8d5f
+              body: |
+                Update npm from 10.3.0 to 10.4.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-17.0.4
+          title: ""
+          date: 2024-01-24T21:56:40.885Z
+        - commits:
+            - subject: Update dependency node to v21.6.1
+              hash: 69a03ecdae5888e144db5e3ffd267b981509b19b
+              body: |
+                Update node from 21.6.0 to 21.6.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-17.0.3
+          title: ""
+          date: 2024-01-22T19:59:24.604Z
+        - commits:
+            - subject: Update dependency node to v21.6.0
+              hash: 1c43994a6add6221e190b4ad7de5fd534fa4fcc0
+              body: |
+                Update node from 21.5.0 to 21.6.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-17.0.2
+          title: ""
+          date: 2024-01-15T15:56:04.244Z
+        - commits:
+            - subject: Update dependency npm to v10.3.0
+              hash: a48eb9226c1be9eb9298d9a5ef377a62a7fe9e96
+              body: |
+                Update npm from 10.2.5 to 10.3.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-17.0.1
+          title: ""
+          date: 2024-01-10T21:57:43.565Z
+  version: 17.2.4
+  title: ""
+  date: 2024-02-09T16:04:48.047Z
+- commits:
     - subject: Update dependency @types/passport-jwt to v4
       hash: 0dbedea931d28aa1027f74dd352bf3724c1b186a
       body: |
