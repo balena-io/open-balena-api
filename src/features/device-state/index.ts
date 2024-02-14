@@ -13,6 +13,7 @@ import type { StatePatchV3Body } from './routes/state-patch-v3';
 import { resolveDeviceUuids, statePatchV3 } from './routes/state-patch-v3';
 import { fleetStateV3 } from './routes/fleet-state-get-v3';
 import type { GetStateEventStoredDeviceFields } from './state-get-utils';
+export type { GetStateEventStoredDeviceFields } from './state-get-utils';
 
 export {
 	getStateEventAdditionalFields,
