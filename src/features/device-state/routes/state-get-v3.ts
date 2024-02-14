@@ -22,7 +22,6 @@ import { events } from '..';
 import type { Expand } from 'pinejs-client-core';
 import type { ResolveDeviceInfoCustomObject } from '../middleware';
 import { getIP } from '../../../lib/utils';
-import type { Device } from '../../../balena-model';
 
 const { api } = sbvrUtils;
 
@@ -301,8 +300,6 @@ const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
 		apiKey: req.apiKey,
 		config,
 		ipAddress: getIP(req),
-		// TODO: Drop in the next major in favor of storedDeviceFields
-		storedPublicAddress: device.public_address as Device['public_address'],
 		storedDeviceFields: _.pick(device, getStateEventAdditionalFields),
 	});
 
