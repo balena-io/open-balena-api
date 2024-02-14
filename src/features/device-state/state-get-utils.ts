@@ -18,10 +18,7 @@ export interface GetStateEventStoredDeviceFields
 // We do not use "satisfies" or "as const" so that downstream projects can augment this list.
 export const getStateEventAdditionalFields: Array<
 	keyof GetStateEventStoredDeviceFields
-> = [
-	// TODO: Remove the public_address from this list in the next major since it's not used by oB-api and downstream projects can set it if needed.
-	'public_address',
-];
+> = [];
 
 const defaultConfigVariableFns: Array<(config: Dictionary<string>) => void> = [
 	function setMinPollInterval(config) {
