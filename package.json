@@ -15,8 +15,7 @@
     "./config": "./dist/lib/config.js",
     "./models/balena.sbvr": "./dist/balena.sbvr",
     "./models/balena-init.sql": "./dist/balena-init.sql",
-    "./models/v6.sbvr": "./dist/translations/v6/v6.sbvr",
-    "./dist/*": "./dist/*"
+    "./models/v6.sbvr": "./dist/translations/v6/v6.sbvr"
   },
   "files": [
     "dist/"
