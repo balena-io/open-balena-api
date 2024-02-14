@@ -7,7 +7,7 @@ import * as fakeDevice from './test-lib/fake-device';
 import type { UserObjectParam } from './test-lib/supertest';
 import { supertest } from './test-lib/supertest';
 import * as versions from './test-lib/versions';
-import * as configMock from '../src/lib/config';
+import * as config from '../src/lib/config';
 import * as stateMock from '../src/features/device-heartbeat';
 import { waitFor } from './test-lib/common';
 import * as fixtures from './test-lib/fixtures';
@@ -35,14 +35,8 @@ class StateTracker {
 	};
 }
 
-// @ts-expect-error mock the value for the default poll interval...
-configMock['DEFAULT_SUPERVISOR_POLL_INTERVAL'] = POLL_MSEC;
-
-// @ts-expect-error mock the value for the timeout grace period...
-configMock['API_HEARTBEAT_STATE_TIMEOUT_SECONDS'] = TIMEOUT_SEC;
-
-// register the mocks...
-mockery.registerMock('../src/lib/config', configMock);
+config.TEST_MOCK_ONLY.DEFAULT_SUPERVISOR_POLL_INTERVAL = POLL_MSEC;
+config.TEST_MOCK_ONLY.API_HEARTBEAT_STATE_TIMEOUT_SECONDS = TIMEOUT_SEC;
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -86,7 +80,6 @@ export default () => {
 				after(async () => {
 					await fixtures.clean(fx);
 					mockery.deregisterMock('../src/lib/env-vars');
-					mockery.deregisterMock('../src/lib/config');
 					mockery.deregisterMock('../src/lib/device-online-state');
 				});
 
@@ -481,8 +474,7 @@ export default () => {
 
 						describe('When API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT = null', function () {
 							before(function () {
-								// @ts-expect-error mock the value...
-								configMock['API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT'] =
+								config.TEST_MOCK_ONLY.API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT =
 									null;
 							});
 
@@ -522,8 +514,7 @@ export default () => {
 
 						describe('When API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT = 2 seconds', function () {
 							before(async function () {
-								// @ts-expect-error mock the value...
-								configMock['API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT'] =
+								config.TEST_MOCK_ONLY.API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT =
 									2 * SECONDS;
 								// Set a different value to make sure that it indeed gets updated
 								await pineUser.patch({
@@ -579,9 +570,7 @@ export default () => {
 
 						describe('When API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT = 0', function () {
 							before(async function () {
-								// @ts-expect-error mock the value...
-								configMock['API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT'] =
-									0;
+								config.TEST_MOCK_ONLY.API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT = 0;
 								// Set a different value to make sure that it indeed gets updated
 								await pineUser.patch({
 									resource: 'device',
@@ -612,8 +601,7 @@ export default () => {
 
 						describe('When increasing the API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT', function () {
 							before(async function () {
-								// @ts-expect-error mock the value...
-								configMock['API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT'] =
+								config.TEST_MOCK_ONLY.API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT =
 									1 * MINUTES;
 								// Set a different value to make sure that it indeed gets updated
 								await pineUser.patch({
@@ -644,8 +632,7 @@ export default () => {
 
 						describe('When decreasing the API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT', function () {
 							before(async function () {
-								// @ts-expect-error mock the value...
-								configMock['API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT'] =
+								config.TEST_MOCK_ONLY.API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT =
 									2 * SECONDS;
 							});
 
@@ -951,9 +938,7 @@ export default () => {
 				});
 
 				it('should clear the throttling key from redis after the throttling window passes', async () => {
-					await setTimeout(
-						configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000,
-					);
+					await setTimeout(config.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
 					expect(
 						await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
 					).to.be.null;
@@ -984,9 +969,7 @@ export default () => {
 
 				it('should throttle metrics-only device state updates [cross-instance]', async () => {
 					// Wait for the local cache to expire
-					await setTimeout(
-						configMock.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000,
-					);
+					await setTimeout(config.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
 					// confirm that even the redis cache has expired
 					expect(
 						await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),
