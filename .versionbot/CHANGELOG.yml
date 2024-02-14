@@ -1,4 +1,16 @@
 - commits:
+    - subject: Export the GetStateEventStoredDeviceFields type under device-state
+      hash: 2f8026b7b3bfe614a3a70114b3efafd781ab1bbd
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 17.3.0
+  title: ""
+  date: 2024-02-14T13:55:03.378Z
+- commits:
     - subject: Lock file maintenance
       hash: 5e901807cc793ccc227579a800dbbe2885fa21c8
       body: |
