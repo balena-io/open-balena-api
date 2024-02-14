@@ -1,4 +1,16 @@
 - commits:
+    - subject: "Tests: mock config in an ESM compatible manner"
+      hash: 8665872d2ad2a766436d0d511fe1c3a7d95cd8bf
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 17.3.1
+  title: ""
+  date: 2024-02-14T15:57:44.977Z
+- commits:
     - subject: Export the GetStateEventStoredDeviceFields type under device-state
       hash: 2f8026b7b3bfe614a3a70114b3efafd781ab1bbd
       body: ""
