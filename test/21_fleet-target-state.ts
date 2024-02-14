@@ -1,8 +1,7 @@
-import * as mockery from 'mockery';
 import { expect } from 'chai';
 import type { UserObjectParam } from './test-lib/supertest';
 import { supertest } from './test-lib/supertest';
-import * as configMock from '../src/lib/config';
+import * as config from '../src/lib/config';
 import * as fixtures from './test-lib/fixtures';
 import type { Application } from '../src/balena-model';
 
@@ -10,14 +9,8 @@ const version = 'resin';
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
 
-// @ts-expect-error mock the value for the default poll interval...
-configMock['DEFAULT_SUPERVISOR_POLL_INTERVAL'] = POLL_MSEC;
-
-// @ts-expect-error mock the value for the timeout grace period...
-configMock['API_HEARTBEAT_STATE_TIMEOUT_SECONDS'] = TIMEOUT_SEC;
-
-// register the mocks...
-mockery.registerMock('../src/lib/config', configMock);
+config.TEST_MOCK_ONLY.DEFAULT_SUPERVISOR_POLL_INTERVAL = POLL_MSEC;
+config.TEST_MOCK_ONLY.API_HEARTBEAT_STATE_TIMEOUT_SECONDS = TIMEOUT_SEC;
 
 // test fleet default state helper
 const appMatcherFunc = (svc: AnyObject, fxProp: AnyObject) =>
@@ -69,7 +62,6 @@ export default () => {
 
 			after(async function () {
 				await fixtures.clean(fx);
-				mockery.deregisterMock('../src/lib/config');
 			});
 
 			describe(`Default State`, function () {

@@ -63,7 +63,7 @@ export const API_HEARTBEAT_STATE_ENABLED = intVar(
 	'API_HEARTBEAT_STATE_ENABLED',
 	1, // 1 = enabled, 0 = disabled
 );
-export const API_HEARTBEAT_STATE_TIMEOUT_SECONDS = intVar(
+export let API_HEARTBEAT_STATE_TIMEOUT_SECONDS = intVar(
 	'API_HEARTBEAT_STATE_TIMEOUT_SECONDS',
 	15,
 );
@@ -72,7 +72,7 @@ export const API_HEARTBEAT_STATE_TIMEOUT_SECONDS = intVar(
  * 0: always run DB device heartbeat updates to Online
  * >0: skip updating the DB's device heartbeat to Online for N ms, if Redis says it's already Online
  */
-export const API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT = intVar(
+export let API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT = intVar(
 	'API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT',
 	null,
 );
@@ -308,7 +308,7 @@ export const VPN_PORT = requiredVar('VPN_PORT');
 export const VPN_SERVICE_API_KEY = requiredVar('VPN_SERVICE_API_KEY');
 export const VPN_GUEST_API_KEY = optionalVar('VPN_GUEST_API_KEY');
 
-export const DEFAULT_SUPERVISOR_POLL_INTERVAL = intVar(
+export let DEFAULT_SUPERVISOR_POLL_INTERVAL = intVar(
 	'DEFAULT_SUPERVISOR_POLL_INTERVAL',
 	10 * MINUTES,
 );
@@ -492,3 +492,29 @@ function redisAuthVar(
 		`'${varName}' must be in one of the following forms 'username:password', 'password', ':password', or 'username:'`,
 	);
 }
+
+export const guardTestMockOnly = () => {
+	if (process.env.DEPLOYMENT !== 'TEST') {
+		throw new Error('Attempting to use TEST_MOCK_ONLY outside of tests');
+	}
+};
+export const TEST_MOCK_ONLY = {
+	set DEFAULT_SUPERVISOR_POLL_INTERVAL(
+		v: typeof DEFAULT_SUPERVISOR_POLL_INTERVAL,
+	) {
+		guardTestMockOnly();
+		DEFAULT_SUPERVISOR_POLL_INTERVAL = v;
+	},
+	set API_HEARTBEAT_STATE_TIMEOUT_SECONDS(
+		v: typeof API_HEARTBEAT_STATE_TIMEOUT_SECONDS,
+	) {
+		guardTestMockOnly();
+		API_HEARTBEAT_STATE_TIMEOUT_SECONDS = v;
+	},
+	set API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT(
+		v: typeof API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT,
+	) {
+		guardTestMockOnly();
+		API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT = v;
+	},
+};

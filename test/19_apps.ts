@@ -1,9 +1,7 @@
-import mockery from 'mockery';
 import { expect } from 'chai';
 import * as fixtures from './test-lib/fixtures';
 import * as fakeDevice from './test-lib/fake-device';
 
-import * as configMock from '../src/lib/config';
 import type { UserObjectParam } from './test-lib/supertest';
 import type { Application, Release } from '../src/balena-model';
 import { expectResourceToMatch } from './test-lib/api-helpers';
@@ -28,7 +26,6 @@ export default () => {
 				let deviceWithoutSupervisor: fakeDevice.Device;
 
 				before(async () => {
-					mockery.registerMock('../src/lib/config', configMock);
 					fx = await fixtures.load('19-apps');
 
 					admin = fx.users.admin;
@@ -74,7 +71,6 @@ export default () => {
 				after(async () => {
 					await fixtures.clean({ devices: [deviceWithSupervisor] });
 					await fixtures.clean(fx);
-					mockery.deregisterMock('../src/lib/config');
 				});
 
 				it('should have a supervisor app if managed by release', async () => {
@@ -132,7 +128,6 @@ export default () => {
 				let deviceWithoutHostApp: fakeDevice.Device;
 
 				before(async () => {
-					mockery.registerMock('../src/lib/config', configMock);
 					fx = await fixtures.load('19-apps');
 
 					admin = fx.users.admin;
@@ -178,7 +173,6 @@ export default () => {
 				after(async () => {
 					await fixtures.clean({ devices: [deviceWithHostApp] });
 					await fixtures.clean(fx);
-					mockery.deregisterMock('../src/lib/config');
 				});
 
 				it('should have a host app if operated by a release', async () => {
