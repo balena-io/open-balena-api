@@ -11,7 +11,6 @@ import type { Server } from 'http';
 import _ from 'lodash';
 import methodOverride from 'method-override';
 import passport from 'passport';
-import path from 'path';
 import * as Sentry from '@sentry/node';
 import * as zlib from 'node:zlib';
 
@@ -395,10 +394,6 @@ export async function setup(app: Application, options: SetupOptions) {
 	return {
 		app,
 		startServer: _.partial(startServer, app),
-		/** @deprecated */
-		runCommand: _.partial(runCommand, app),
-		/** @deprecated */
-		runFromCommandLine: _.partial(runFromCommandLine, app),
 	};
 }
 
@@ -479,23 +474,4 @@ async function startServer(
 	});
 	console.log(`Server listening in ${app.get('env')} mode on port ${port}`);
 	return server!;
-}
-
-// TODO: Drop me in the next major since we atm only have a dummy command
-async function runCommand(
-	app: Application,
-	cmd: string,
-	argv: string[],
-): Promise<void> {
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
-	const script = require(path.join(__dirname, 'commands', cmd));
-	await script.execute(app, argv);
-	process.exit(0);
-}
-
-// TODO: Drop me in the next major since we atm only have a dummy command
-function runFromCommandLine(app: Application): Promise<void> {
-	const cmd = process.argv[2];
-	const args = process.argv.slice(3);
-	return runCommand(app, cmd, args);
 }
