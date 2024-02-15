@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add exports for balena.sbvr balena-init.sql and v6.sbvr
+      hash: 5bb674cbd534de98be678f9b6b71b04a890a129c
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 17.4.0
+  title: ""
+  date: 2024-02-15T15:34:30.780Z
+- commits:
     - subject: "Tests: mock config in an ESM compatible manner"
       hash: 8665872d2ad2a766436d0d511fe1c3a7d95cd8bf
       body: ""
