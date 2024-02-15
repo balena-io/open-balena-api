@@ -1,12 +1,7 @@
 import _ from 'lodash';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import type { Filter, FilterObj } from 'pinejs-client-core';
-import type {
-	Device,
-	PickDeferred,
-	Service,
-	ServiceInstall,
-} from '../../../balena-model';
+import type { Device, Service } from '../../../balena-model';
 
 const createReleaseServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,
@@ -73,14 +68,6 @@ const createReleaseServiceInstalls = async (
 		resource: 'device',
 		options: {
 			$select: 'id',
-			$expand: {
-				service_install: {
-					$select: 'installs__service',
-					$filter: {
-						installs__service: { $in: serviceIds },
-					},
-				},
-			},
 			$filter: {
 				// Pass the device filters instead of IDs, since a using $in errors with `code: '08P01'` for more than 66k IDs.
 				...(Array.isArray(deviceFilterOrIds)
@@ -96,32 +83,35 @@ const createReleaseServiceInstalls = async (
 						}),
 			},
 		},
-	})) as Array<
-		Pick<Device, 'id'> & {
-			service_install: Array<PickDeferred<ServiceInstall, 'installs__service'>>;
-		}
-	>;
+	})) as Array<Pick<Device, 'id'>>;
+	if (devicesToAddServiceInstalls.length === 0) {
+		return;
+	}
 
-	await Promise.all(
-		devicesToAddServiceInstalls.map(async (device) => {
-			const existingServiceIds = device.service_install.map(
-				(si) => si.installs__service.__id,
-			);
-			const deviceServiceIds = _.difference(serviceIds, existingServiceIds);
-			await Promise.all(
-				deviceServiceIds.map(async (serviceId) => {
-					// Create a service_install for this pair of service and device
-					await api.post({
-						resource: 'service_install',
-						body: {
-							device: device.id,
-							installs__service: serviceId,
-						},
-						options: { returnResource: false },
-					});
-				}),
-			);
-		}),
+	const deviceIds = devicesToAddServiceInstalls.map((d) => d.id);
+
+	await api.passthrough.tx!.executeSql(
+		`\
+INSERT INTO "service install" ("device", "installs-service")
+SELECT d."id" AS "device", s."id" AS "installs-service"
+FROM "device" d
+CROSS JOIN "service" s
+WHERE d."id" IN (${_.range(1, deviceIds.length + 1)
+			.map((i) => `$${i}`)
+			.join(',')})
+AND s."id" IN (${_.range(
+			deviceIds.length + 1,
+			deviceIds.length + serviceIds.length + 1,
+		)
+			.map((i) => `$${i}`)
+			.join(',')})
+AND NOT EXISTS (
+	SELECT 1
+	FROM "service install" si
+	WHERE si."device" = d."id"
+	AND si."installs-service" = s."id"
+) ;`,
+		[...deviceIds, ...serviceIds],
 	);
 };
 
