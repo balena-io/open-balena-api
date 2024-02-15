@@ -1,4 +1,41 @@
 - commits:
+    - subject: Remove the public_address from the storedDeviceFields of the
+        'get-state' event
+      hash: 5e4b84879a40d7a07481a2dc308c017be0337105
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Remove the storedPublicAddress property from the 'get-state' event
+      hash: 5a05a17f9abf3f7288c37b4c14a26b6e0c52915b
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Drop the runCommand & runFromCommandLine exports
+      hash: 774d20bbe8695dc19bdbde6da9064804fd8d9c5b
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Drop dist from exports
+      hash: 6e71bf14eaeaec855dd6ba35e1ef36e369de6d4d
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Thodoris Greasidis
+      nested: []
+  version: 18.0.0
+  title: ""
+  date: 2024-02-15T16:07:23.165Z
+- commits:
     - subject: Add exports for balena.sbvr balena-init.sql and v6.sbvr
       hash: 5bb674cbd534de98be678f9b6b71b04a890a129c
       body: ""
