@@ -11,8 +11,7 @@ import { statePatchV2 } from './routes/state-patch-v2.js';
 import type { StatePatchV3Body } from './routes/state-patch-v3.js';
 import { resolveDeviceUuids, statePatchV3 } from './routes/state-patch-v3.js';
 import { fleetStateV3 } from './routes/fleet-state-get-v3.js';
-import type { GetStateEventStoredDeviceFields } from './state-get-utils.js';
-export type { GetStateEventStoredDeviceFields } from './state-get-utils.js';
+import type { Device } from '../../balena-model.js';
 
 export {
 	getStateEventAdditionalFields,
@@ -73,7 +72,7 @@ export interface Events {
 		info: Pick<Request, 'apiKey'> & {
 			config?: Dictionary<string>;
 			ipAddress: string | undefined;
-			storedDeviceFields: GetStateEventStoredDeviceFields;
+			storedDeviceFields: Partial<Device>;
 		},
 	) => void;
 }

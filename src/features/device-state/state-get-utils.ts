@@ -11,14 +11,7 @@ import {
 } from '../../infra/cache/index.js';
 import type { Device } from '../../balena-model.js';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface -- This needs to be an interface so that downstream projects can extend it.
-export interface GetStateEventStoredDeviceFields
-	extends Pick<Device, 'public_address'> {}
-
-// We do not use "satisfies" or "as const" so that downstream projects can augment this list.
-export const getStateEventAdditionalFields: Array<
-	keyof GetStateEventStoredDeviceFields
-> = [];
+export const getStateEventAdditionalFields: Array<keyof Device> = [];
 
 const defaultConfigVariableFns: Array<(config: Dictionary<string>) => void> = [
 	function setMinPollInterval(config) {
