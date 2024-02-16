@@ -1,4 +1,24 @@
 - commits:
+    - subject: Add exports for the balena-model typings
+      hash: 16aabffb90a8310450e08300c789e9829dcbaf92
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Type 'get-state's storedDeviceFields as Partial<Device>
+      hash: fd44764135ae3cf8b435d34be68e14368b302d8a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 19.1.0
+  title: ""
+  date: 2024-02-16T15:29:47.601Z
+- commits:
     - subject: Switch to ES modules
       hash: 54b5f54ac1db761d0a05aaaef8bc15f3dffe9b9c
       body: ""
