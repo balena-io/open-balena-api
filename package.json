@@ -14,6 +14,7 @@
     "./cache": "./dist/infra/cache/index.js",
     "./config": "./dist/lib/config.js",
     "./models/balena.sbvr": "./dist/balena.sbvr",
+    "./models/balena-model.d.ts": "./dist/balena-model.d.ts",
     "./models/balena-init.sql": "./dist/balena-init.sql",
     "./models/v6.sbvr": "./dist/translations/v6/v6.sbvr"
   },
