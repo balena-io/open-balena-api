@@ -1,4 +1,16 @@
 - commits:
+    - subject: Switch to ES modules
+      hash: 54b5f54ac1db761d0a05aaaef8bc15f3dffe9b9c
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+  version: 19.0.0
+  title: ""
+  date: 2024-02-16T13:10:12.139Z
+- commits:
     - subject: Remove the public_address from the storedDeviceFields of the
         'get-state' event
       hash: 5e4b84879a40d7a07481a2dc308c017be0337105
