@@ -416,10 +416,8 @@ if (typeof trustProxy === 'string') {
 	// Support comma-separated IPs
 	const trustProxyIPs = trustProxy.split(/ *, */);
 
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
-	const proxyAddr = require('proxy-addr') as typeof import('proxy-addr');
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
-	const memoizee = require('memoizee') as typeof import('memoizee');
+	const proxyAddr = await import('proxy-addr');
+	const { default: memoizee } = await import('memoizee');
 	trustProxyValue = memoizee(proxyAddr.compile(trustProxyIPs), {
 		primitive: true,
 		max: 1000,
