@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix a leftover commonjs require imports when using a TRUST_PROXY
+      hash: 5ed5deb33e1a67e49824e960a3b135718ad5e05a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 19.1.1
+  title: ""
+  date: 2024-02-16T16:59:37.802Z
+- commits:
     - subject: Add exports for the balena-model typings
       hash: 16aabffb90a8310450e08300c789e9829dcbaf92
       body: ""
