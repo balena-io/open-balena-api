@@ -4,9 +4,9 @@ import _ from 'lodash';
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../../infra/error-handling';
+} from '../../../infra/error-handling/index.js';
 import { sbvrUtils, errors } from '@balena/pinejs';
-import { getIP } from '../../../lib/utils';
+import { getIP } from '../../../lib/utils.js';
 import type {
 	Application,
 	Device,
@@ -14,16 +14,16 @@ import type {
 	ImageInstall,
 	PickDeferred,
 	Release,
-} from '../../../balena-model';
+} from '../../../balena-model.js';
 import type { Filter } from 'pinejs-client-core';
-import { metricsPatchFields, v3ValidPatchFields } from '..';
+import { metricsPatchFields, v3ValidPatchFields } from '../index.js';
 import {
 	deleteOldImageInstalls,
 	upsertImageInstall,
 	shouldUpdateMetrics,
 	truncateShortTextFields,
-} from '../state-patch-utils';
-import type { ResolveDeviceInfoCustomObject } from '../middleware';
+} from '../state-patch-utils.js';
+import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 
 const { BadRequestError, UnauthorizedError, InternalRequestError } = errors;
 const { api } = sbvrUtils;

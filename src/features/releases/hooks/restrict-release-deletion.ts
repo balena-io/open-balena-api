@@ -1,5 +1,9 @@
 import { sbvrUtils, hooks, errors } from '@balena/pinejs';
-import type { Application, Device, PickExpanded } from '../../../balena-model';
+import type {
+	Application,
+	Device,
+	PickExpanded,
+} from '../../../balena-model.js';
 const { BadRequestError } = errors;
 
 hooks.addPureHook('DELETE', 'resin', 'release', {

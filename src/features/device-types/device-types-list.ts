@@ -1,20 +1,24 @@
 import _ from 'lodash';
 
-import type { DeviceTypeJson } from './device-type-json';
+import type { DeviceTypeJson } from './device-type-json.js';
 import { errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 const { InternalRequestError } = errors;
 
-import { captureException } from '../../infra/error-handling';
+import { captureException } from '../../infra/error-handling/index.js';
 
-import { getDeviceTypeJson, getLogoUrl } from './build-info-facade';
-import { getImageKey, IMAGE_STORAGE_PREFIX, listFolders } from './storage';
-import { multiCacheMemoizee } from '../../infra/cache';
+import { getDeviceTypeJson, getLogoUrl } from './build-info-facade.js';
+import {
+	getImageKey,
+	IMAGE_STORAGE_PREFIX,
+	listFolders,
+} from './storage/index.js';
+import { multiCacheMemoizee } from '../../infra/cache/index.js';
 import {
 	DEVICE_TYPES_CACHE_LOCAL_TIMEOUT,
 	DEVICE_TYPES_CACHE_TIMEOUT,
 	CONTRACT_ALLOWLIST,
-} from '../../lib/config';
+} from '../../lib/config.js';
 
 export interface DeviceTypeInfo {
 	latest: DeviceTypeJson;

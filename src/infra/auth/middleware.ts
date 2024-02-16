@@ -1,8 +1,8 @@
 import type { RequestHandler } from 'express';
-import { checkSudoValidity } from './jwt';
+import { checkSudoValidity } from './jwt.js';
 
-import { prefetchAPIKey, retrieveAPIKey } from './api-keys';
-import { getUser, reqHasPermission } from './auth';
+import { prefetchAPIKey, retrieveAPIKey } from './api-keys.js';
+import { getUser, reqHasPermission } from './auth.js';
 
 /**
  * This checks that a user has provided credentials, they may not be fully authorized, ie they may still need to pass 2fa

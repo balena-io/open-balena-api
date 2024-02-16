@@ -1,8 +1,8 @@
 import cacheManager from 'cache-manager';
 import redisStore from 'cache-manager-ioredis';
-import { version } from '../../lib/config';
-import type { Defined } from '.';
-import { getRedisOptions } from '../redis/config';
+import { version } from '../../lib/config.js';
+import type { Defined } from './index.js';
+import { getRedisOptions } from '../redis/config.js';
 
 const usedCacheKeys: Dictionary<true> = {};
 

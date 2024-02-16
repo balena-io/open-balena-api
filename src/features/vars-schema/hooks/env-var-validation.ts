@@ -1,6 +1,9 @@
 import { hooks } from '@balena/pinejs';
 
-import { checkEnvVarNameValidity, checkEnvVarValueValidity } from '../env-vars';
+import {
+	checkEnvVarNameValidity,
+	checkEnvVarValueValidity,
+} from '../env-vars.js';
 
 const envVarHook: hooks.Hooks = {
 	POSTPARSE: async ({ request }) => {

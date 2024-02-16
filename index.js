@@ -1,10 +1,21 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const numWorkers = process.env.NUM_WORKERS || require('os').cpus().length;
+const start = async () => {
+	// Set the desired es version for downstream modules that support it
+	(await import('@balena/es-version')).set('es2022');
+
+	// Support import of *.cts files
+	(await import('ts-node')).register({ transpileOnly: true });
+
+	await import('./init.js');
+};
+
+const numWorkers =
+	parseInt(process.env.NUM_WORKERS ?? '0', 10) ||
+	(await import('os')).cpus().length;
 if (numWorkers > 1) {
-	const cluster = require('cluster');
+	const { default: cluster } = await import('cluster');
 	if (cluster.isPrimary) {
 		// Setup the RateLimiterCluster store on the master worker
-		const { RateLimiterClusterMaster } = require('rate-limiter-flexible');
+		const { RateLimiterClusterMaster } = await import('rate-limiter-flexible');
 		new RateLimiterClusterMaster();
 
 		console.log(`Forking ${numWorkers} workers`);
@@ -17,19 +28,9 @@ if (numWorkers > 1) {
 			console.log('Worker ' + worker.id + ' died, replacing it');
 			cluster.fork(process.env);
 		});
-		return;
+	} else {
+		await start();
 	}
+} else {
+	await start();
 }
-
-// Use fast-boot to cache require lookups, speeding up startup
-require('fast-boot2').start({
-	cacheFile: '.fast-boot.json',
-});
-
-// Set the desired es version for downstream modules that support it
-require('@balena/es-version').set('es2022');
-
-// Support `require()` of *.ts files
-require('ts-node/register/transpile-only');
-
-require('./init.ts');

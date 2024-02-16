@@ -1,7 +1,7 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
-import type { PickDeferred, User } from '../../balena-model';
-import { captureException } from '../../infra/error-handling';
-import { setupDeleteCascade } from './setup-delete-cascade';
+import type { PickDeferred, User } from '../../balena-model.js';
+import { captureException } from '../../infra/error-handling/index.js';
+import { setupDeleteCascade } from './setup-delete-cascade.js';
 
 const { api, getAffectedIds } = sbvrUtils;
 

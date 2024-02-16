@@ -2,14 +2,14 @@ import type { RequestHandler } from 'express';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
-import { getUser } from '../../infra/auth/auth';
+import { getUser } from '../../infra/auth/auth.js';
 import {
 	captureException,
 	handleHttpErrors,
 	ThisShouldNeverHappenError,
-} from '../../infra/error-handling';
+} from '../../infra/error-handling/index.js';
 
-import type { User, Application, Device } from '../../balena-model';
+import type { User, Application, Device } from '../../balena-model.js';
 
 const { api } = sbvrUtils;
 

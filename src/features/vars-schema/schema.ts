@@ -11,7 +11,7 @@ import {
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
 	ALLOWED_NAMES,
 	ALLOWED_NAMESPACES,
-} from './env-vars';
+} from './env-vars.js';
 
 const { api } = sbvrUtils;
 

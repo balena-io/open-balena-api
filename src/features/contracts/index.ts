@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import Bluebird from 'bluebird';
-import { fetchContractsLocally, getContracts } from './contracts-directory';
+import { fetchContractsLocally, getContracts } from './contracts-directory.js';
 import type { types } from '@balena/pinejs';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import {
@@ -11,10 +11,10 @@ import {
 	CONTRACTS_PUBLIC_REPO_BRANCH,
 	CONTRACTS_PUBLIC_REPO_NAME,
 	CONTRACTS_PUBLIC_REPO_OWNER,
-} from '../../lib/config';
+} from '../../lib/config.js';
 import { MINUTES } from '@balena/env-parsing';
-import { captureException } from '../../infra/error-handling';
-import { scheduleJob } from '../../infra/scheduler';
+import { captureException } from '../../infra/error-handling/index.js';
+import { scheduleJob } from '../../infra/scheduler/index.js';
 
 export interface RepositoryInfo {
 	owner: string;

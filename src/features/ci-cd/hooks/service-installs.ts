@@ -6,7 +6,7 @@ import type {
 	PickDeferred,
 	Service,
 	ServiceInstall,
-} from '../../../balena-model';
+} from '../../../balena-model.js';
 
 const createReleaseServiceInstalls = async (
 	api: sbvrUtils.PinejsClient,

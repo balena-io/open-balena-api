@@ -9,7 +9,7 @@ import {
 	IGNORE_FROZEN_DEVICE_PERMISSIONS,
 	VPN_GUEST_API_KEY,
 	VPN_SERVICE_API_KEY,
-} from './config';
+} from './config.js';
 
 const defaultWritePerms = ['create', 'update', 'delete'] as const;
 

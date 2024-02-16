@@ -1,13 +1,18 @@
-import { multiCacheMemoizee } from '../../infra/cache';
+import { multiCacheMemoizee } from '../../infra/cache/index.js';
 
-import type { DeviceTypeJson } from './device-type-json';
+import type { DeviceTypeJson } from './device-type-json.js';
 
 import {
 	BUILD_COMPRESSED_SIZE_CACHE_TIMEOUT,
 	BUILD_PROPERTY_CACHE_TIMEOUT,
 	FILES_HOST,
-} from '../../lib/config';
-import { fileExists, getFile, getFolderSize, getImageKey } from './storage';
+} from '../../lib/config.js';
+import {
+	fileExists,
+	getFile,
+	getFolderSize,
+	getImageKey,
+} from './storage/index.js';
 
 export const getLogoUrl = multiCacheMemoizee(
 	async (

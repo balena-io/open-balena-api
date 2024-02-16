@@ -1,10 +1,10 @@
 import jsonwebtoken from 'jsonwebtoken';
 import type { PineTest } from 'pinejs-client-supertest';
-import type { Release } from '../../src/balena-model';
+import type { Release } from '../../src/balena-model.js';
 import { expect } from 'chai';
-import type { UserObjectParam } from '../test-lib/supertest';
-import { supertest } from '../test-lib/supertest';
-import type { TokenUserPayload } from '../../src';
+import type { UserObjectParam } from '../test-lib/supertest.js';
+import { supertest } from '../test-lib/supertest.js';
+import type { TokenUserPayload } from '../../src/index.js';
 
 const version = 'resin';
 

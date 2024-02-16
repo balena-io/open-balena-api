@@ -1,7 +1,7 @@
 import { errors, sbvrUtils } from '@balena/pinejs';
-import { checkUserPassword, getUser } from '../../infra/auth/auth';
-import { updateUserXHR } from '../../infra/auth/jwt';
-import { captureException } from '../../infra/error-handling';
+import { checkUserPassword, getUser } from '../../infra/auth/auth.js';
+import { updateUserXHR } from '../../infra/auth/jwt.js';
+import { captureException } from '../../infra/error-handling/index.js';
 import type { RequestHandler } from 'express';
 
 const { BadRequestError } = errors;

@@ -1,13 +1,13 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import _ from 'lodash';
 import semverLib from 'semver';
-import type { Release } from '../src/balena-model';
-import { expectResourceToMatch } from './test-lib/api-helpers';
-import * as fixtures from './test-lib/fixtures';
+import type { Release } from '../src/balena-model.js';
+import { expectResourceToMatch } from './test-lib/api-helpers.js';
+import * as fixtures from './test-lib/fixtures.js';
 import { expect } from 'chai';
-import type { UserObjectParam } from './test-lib/supertest';
-import { supertest } from './test-lib/supertest';
-import * as versions from './test-lib/versions';
+import type { UserObjectParam } from './test-lib/supertest.js';
+import { supertest } from './test-lib/supertest.js';
+import * as versions from './test-lib/versions.js';
 import { setTimeout } from 'timers/promises';
 
 export default () => {

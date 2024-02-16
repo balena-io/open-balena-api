@@ -1,10 +1,10 @@
 import type { RequestHandler } from 'express';
 import _ from 'lodash';
-import { multiCacheMemoizee } from '../../infra/cache';
-import type { Device } from '../../balena-model';
+import { multiCacheMemoizee } from '../../infra/cache/index.js';
+import type { Device } from '../../balena-model.js';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import { DEVICE_EXISTS_CACHE_TIMEOUT } from '../../lib/config';
+import { DEVICE_EXISTS_CACHE_TIMEOUT } from '../../lib/config.js';
 import type { Request } from 'express-serve-static-core';
 
 const { api } = sbvrUtils;

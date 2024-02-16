@@ -1,8 +1,8 @@
 import randomstring from 'randomstring';
 import { expect } from 'chai';
-import * as fixtures from './test-lib/fixtures';
-import { generateDeviceUuid } from './test-lib/fake-device';
-import { supertest } from './test-lib/supertest';
+import * as fixtures from './test-lib/fixtures.js';
+import { generateDeviceUuid } from './test-lib/fake-device.js';
+import { supertest } from './test-lib/supertest.js';
 
 export default () => {
 	describe('vpn authentication endpoint', function () {

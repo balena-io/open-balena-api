@@ -1,4 +1,4 @@
-import { addDeleteHookForDependents } from '../../infra/cascade-delete';
+import { addDeleteHookForDependents } from '../../infra/cascade-delete/index.js';
 
 export const setupDeleteCascade = (
 	resource: string,

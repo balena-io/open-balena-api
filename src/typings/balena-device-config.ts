@@ -1,4 +1,4 @@
-import './balena-device-config-shim';
+import './balena-device-config-shim.js';
 
 declare module 'balena-device-config' {
 	export interface GenerateOptions {

@@ -11,7 +11,7 @@ import {
 	joinTextPartsAndPrefix,
 	oneLineTrimSqlConcat,
 	splitStringParts,
-} from '../../../abstract-sql-utils';
+} from '../../../abstract-sql-utils.js';
 
 export const addToModel = (abstractSql: AbstractSqlModel) => {
 	const [

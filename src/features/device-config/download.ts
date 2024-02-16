@@ -6,12 +6,12 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../../infra/error-handling';
-import type { Application, DeviceType } from '../../balena-model';
+} from '../../infra/error-handling/index.js';
+import type { Application, DeviceType } from '../../balena-model.js';
 
-import { generateConfig } from './device-config';
-import { findBySlug } from '../device-types/device-types';
-import { checkInt } from '../../lib/utils';
+import { generateConfig } from './device-config.js';
+import { findBySlug } from '../device-types/device-types.js';
+import { checkInt } from '../../lib/utils.js';
 
 const { UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;

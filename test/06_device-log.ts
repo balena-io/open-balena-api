@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { expect } from 'chai';
-import * as fixtures from './test-lib/fixtures';
-import { supertest } from './test-lib/supertest';
+import * as fixtures from './test-lib/fixtures.js';
+import { supertest } from './test-lib/supertest.js';
 
 const createLog = (extra = {}) => {
 	return {

@@ -1,38 +1,18 @@
 import _ from 'lodash';
 import { EventEmitter } from 'events';
 
-import type {
-	ClientReadableStream,
-	PushResponse,
-	QueryResponse,
-	ServiceError,
-	TailResponse,
-} from 'loki-grpc-client';
-import {
-	createInsecureCredentials,
-	createOrgIdMetadata,
-	Direction,
-	EntryAdapter,
-	PusherClient,
-	PushRequest,
-	QuerierClient,
-	QueryRequest,
-	status,
-	StreamAdapter,
-	TailRequest,
-	Timestamp,
-} from 'loki-grpc-client';
+import loki from 'loki-grpc-client';
 import type { types } from '@balena/pinejs';
 import { errors, sbvrUtils, permissions } from '@balena/pinejs';
-import { LOKI_HOST, LOKI_PORT } from '../../../../lib/config';
+import { LOKI_HOST, LOKI_PORT } from '../../../../lib/config.js';
 import type {
 	DeviceLog,
 	DeviceLogsBackend,
 	LogContext,
 	LokiLogContext,
 	Subscription,
-} from '../struct';
-import { captureException } from '../../../../infra/error-handling';
+} from '../struct.js';
+import { captureException } from '../../../../infra/error-handling/index.js';
 import {
 	setCurrentSubscriptions,
 	incrementSubscriptionTotal,
@@ -44,15 +24,15 @@ import {
 	incrementLokiPushTotal,
 	updateLokiPushDurationHistogram,
 	incrementPublishCallTotal,
-} from './metrics';
+} from './metrics.js';
 import { setTimeout } from 'timers/promises';
-import type { Device, PickDeferred } from '../../../../balena-model';
+import type { Device, PickDeferred } from '../../../../balena-model.js';
 
 const { BadRequestError } = errors;
 
 // invert status object for quick lookup of status identifier using status code
 const statusKeys = _.transform(
-	status,
+	loki.status,
 	function (result: Dictionary<string>, value, key) {
 		result[value] = key;
 	},
@@ -69,7 +49,7 @@ const VERSION = 2;
 const VERBOSE_ERROR_MESSAGE = false;
 
 function createTimestampFromDate(date = new Date()) {
-	const timestamp = new Timestamp();
+	const timestamp = new loki.Timestamp();
 	timestamp.fromDate(date);
 	return timestamp;
 }
@@ -129,30 +109,35 @@ async function assertLokiLogContext(
 
 export class LokiBackend implements DeviceLogsBackend {
 	private subscriptions: EventEmitter;
-	private querier: QuerierClient;
-	private pusher: PusherClient;
-	private tailCalls: Map<string, ClientReadableStream<TailResponse>>;
+	private querier: loki.QuerierClient;
+	private pusher: loki.PusherClient;
+	private tailCalls: Map<string, loki.ClientReadableStream<loki.TailResponse>>;
 
 	constructor() {
 		this.subscriptions = new EventEmitter();
-		this.querier = new QuerierClient(
+		this.querier = new loki.QuerierClient(
 			`${LOKI_HOST}:${LOKI_PORT}`,
-			createInsecureCredentials(),
+			loki.createInsecureCredentials(),
 		);
-		this.pusher = new PusherClient(
+		this.pusher = new loki.PusherClient(
 			`${LOKI_HOST}:${LOKI_PORT}`,
-			createInsecureCredentials(),
+			loki.createInsecureCredentials(),
 		);
 		this.tailCalls = new Map();
-		this.push = backoff(this.push.bind(this), (err: ServiceError): boolean => {
-			incrementLokiPushErrorTotal(
-				err.code ? statusKeys[err.code] : 'UNDEFINED',
-			);
-			return (
-				RETRIES_ENABLED &&
-				[status.UNAVAILABLE, status.RESOURCE_EXHAUSTED].includes(err.code ?? -1)
-			);
-		});
+		this.push = backoff(
+			this.push.bind(this),
+			(err: loki.ServiceError): boolean => {
+				incrementLokiPushErrorTotal(
+					err.code ? statusKeys[err.code] : 'UNDEFINED',
+				);
+				return (
+					RETRIES_ENABLED &&
+					[loki.status.UNAVAILABLE, loki.status.RESOURCE_EXHAUSTED].includes(
+						err.code ?? -1,
+					)
+				);
+			},
+		);
 	}
 
 	public get available(): boolean {
@@ -172,21 +157,21 @@ export class LokiBackend implements DeviceLogsBackend {
 		const ctx = await assertLokiLogContext($ctx);
 		const oneHourAgo = new Date(Date.now() - 10000 * 60);
 
-		const queryRequest = new QueryRequest();
+		const queryRequest = new loki.QueryRequest();
 		queryRequest.setSelector(this.getDeviceQuery(ctx));
 		queryRequest.setLimit(Number.isFinite(count) ? count : 1000);
 		queryRequest.setStart(createTimestampFromDate(oneHourAgo));
 		queryRequest.setEnd(createTimestampFromDate());
-		queryRequest.setDirection(Direction.BACKWARD);
+		queryRequest.setDirection(loki.Direction.BACKWARD);
 
-		const streams: StreamAdapter[] = [];
+		const streams: loki.StreamAdapter[] = [];
 		const call = this.querier.query(
 			queryRequest,
-			createOrgIdMetadata(String(ctx.belongs_to__application)),
+			loki.createOrgIdMetadata(String(ctx.belongs_to__application)),
 		);
-		const responseStreams: StreamAdapter[] = await new Promise(
+		const responseStreams: loki.StreamAdapter[] = await new Promise(
 			(resolve, reject) => {
-				call.on('data', (queryResponse: QueryResponse) => {
+				call.on('data', (queryResponse: loki.QueryResponse) => {
 					streams.push(...queryResponse.getStreamsList());
 				});
 				call.on('error', (error: Error & { details: string }) => {
@@ -236,15 +221,15 @@ export class LokiBackend implements DeviceLogsBackend {
 		}
 	}
 
-	private push(appId: number, streams: StreamAdapter[]): Promise<any> {
+	private push(appId: number, streams: loki.StreamAdapter[]): Promise<any> {
 		incrementLokiPushTotal();
-		const pushRequest = new PushRequest();
+		const pushRequest = new loki.PushRequest();
 		pushRequest.setStreamsList(streams);
 		const startAt = Date.now();
-		return new Promise<PushResponse>((resolve, reject) => {
+		return new Promise<loki.PushResponse>((resolve, reject) => {
 			this.pusher.push(
 				pushRequest,
-				createOrgIdMetadata(String(appId)),
+				loki.createOrgIdMetadata(String(appId)),
 				{
 					deadline: startAt + PUSH_TIMEOUT,
 				},
@@ -257,15 +242,15 @@ export class LokiBackend implements DeviceLogsBackend {
 		const ctx = await assertLokiLogContext($ctx);
 		const key = this.getKey(ctx);
 		if (!this.tailCalls.has(key)) {
-			const request = new TailRequest();
+			const request = new loki.TailRequest();
 			request.setQuery(this.getDeviceQuery(ctx));
 			request.setStart(createTimestampFromDate());
 
 			const call = this.querier.tail(
 				request,
-				createOrgIdMetadata(String(ctx.belongs_to__application)),
+				loki.createOrgIdMetadata(String(ctx.belongs_to__application)),
 			);
-			call.on('data', (response: TailResponse) => {
+			call.on('data', (response: loki.TailResponse) => {
 				const stream = response.getStream();
 				if (stream) {
 					const logs = this.fromStreamToDeviceLogs(stream);
@@ -335,15 +320,15 @@ export class LokiBackend implements DeviceLogsBackend {
 		}
 	}
 
-	private fromStreamsToDeviceLogs(streams: StreamAdapter[]): DeviceLog[] {
+	private fromStreamsToDeviceLogs(streams: loki.StreamAdapter[]): DeviceLog[] {
 		return streams.flatMap(this.fromStreamToDeviceLogs);
 	}
 
-	private fromStreamToDeviceLogs(stream: StreamAdapter): DeviceLog[] {
+	private fromStreamToDeviceLogs(stream: loki.StreamAdapter): DeviceLog[] {
 		try {
-			return stream.getEntriesList().map((entry: EntryAdapter) => {
+			return stream.getEntriesList().map((entry: loki.EntryAdapter) => {
 				const log = JSON.parse(entry.getLine());
-				const timestamp = entry.getTimestamp() as Timestamp;
+				const timestamp = entry.getTimestamp() as loki.Timestamp;
 				log.nanoTimestamp =
 					BigInt(timestamp.getSeconds()) * 1000000000n +
 					BigInt(timestamp.getNanos());
@@ -365,12 +350,12 @@ export class LokiBackend implements DeviceLogsBackend {
 		ctx: LogContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	) {
-		const streams: StreamAdapter[] = [];
-		const streamIndex: { [key: string]: StreamAdapter } = {}; // index streams by labels for fast lookup
+		const streams: loki.StreamAdapter[] = [];
+		const streamIndex: { [key: string]: loki.StreamAdapter } = {}; // index streams by labels for fast lookup
 		for (const log of logs) {
 			this.validateLog(log);
 			log.version = VERSION;
-			const timestamp = new Timestamp();
+			const timestamp = new loki.Timestamp();
 			timestamp.setSeconds(Math.floor(Number(log.nanoTimestamp / 1000000000n)));
 			timestamp.setNanos(Number(log.nanoTimestamp % 1000000000n));
 			// store log line as JSON
@@ -378,13 +363,15 @@ export class LokiBackend implements DeviceLogsBackend {
 				key === 'nanoTimestamp' ? undefined : value,
 			);
 			// create entry with labels, line and timestamp
-			const entry = new EntryAdapter().setLine(logJson).setTimestamp(timestamp);
+			const entry = new loki.EntryAdapter()
+				.setLine(logJson)
+				.setTimestamp(timestamp);
 			const labels = this.getLabels(ctx);
 			// append entry to stream
 			let stream = streamIndex[labels];
 			if (!stream) {
 				// new stream if none exist for labels
-				stream = new StreamAdapter();
+				stream = new loki.StreamAdapter();
 				stream.setLabels(labels);
 				streams.push(stream);
 				streamIndex[labels] = stream;

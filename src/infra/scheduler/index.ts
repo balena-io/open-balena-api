@@ -20,11 +20,11 @@
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import schedule from 'node-schedule';
 import Redlock from 'redlock';
-import type { ScheduledJobRun } from '../../balena-model';
-import { captureException } from '../error-handling';
-import { redis, redisRO } from '../redis';
+import type { ScheduledJobRun } from '../../balena-model.js';
+import { captureException } from '../error-handling/index.js';
+import { redis, redisRO } from '../redis/index.js';
 
-export { Job } from 'node-schedule';
+export type { Job } from 'node-schedule';
 
 const { api } = sbvrUtils;
 

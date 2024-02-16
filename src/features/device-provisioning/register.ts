@@ -6,16 +6,16 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../../infra/error-handling';
+} from '../../infra/error-handling/index.js';
 
 import {
 	augmentReqApiKeyPermissions,
 	createDeviceApiKey,
-} from '../api-keys/lib';
-import { getDeviceTypeBySlug } from '../device-types/device-types';
-import { checkInt } from '../../lib/utils';
-import { checkDeviceExistsIsFrozen } from '../device-state/middleware';
-import { gracefullyDenyConflictingRegistrations } from './gracefully-deny-conflicting-registrations';
+} from '../api-keys/lib.js';
+import { getDeviceTypeBySlug } from '../device-types/device-types.js';
+import { checkInt } from '../../lib/utils.js';
+import { checkDeviceExistsIsFrozen } from '../device-state/middleware.js';
+import { gracefullyDenyConflictingRegistrations } from './gracefully-deny-conflicting-registrations.js';
 import onFinished from 'on-finished';
 
 const { BadRequestError, ConflictError } = errors;

@@ -1,7 +1,7 @@
-import { app } from '../../init';
+import { app } from '../../init.js';
 import $supertest from 'supertest';
-import type { TokenUserPayload } from '../../src/infra/auth/jwt-passport';
-import { ThisShouldNeverHappenError } from '../../src/infra/error-handling';
+import type { TokenUserPayload } from '../../src/infra/auth/jwt-passport.js';
+import { ThisShouldNeverHappenError } from '../../src/infra/error-handling/index.js';
 
 export type UserObjectParam = Partial<TokenUserPayload> & { token: string };
 

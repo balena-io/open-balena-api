@@ -1,11 +1,12 @@
+import { fileURLToPath } from 'node:url';
 import { expect } from 'chai';
-import * as fixtures from './test-lib/fixtures';
-import { supertest } from './test-lib/supertest';
+import * as fixtures from './test-lib/fixtures.js';
+import { supertest } from './test-lib/supertest.js';
 import {
 	checkFileExists,
 	expectEqualBlobs,
-} from './test-lib/fileupload-helper';
-import * as versions from './test-lib/versions';
+} from './test-lib/fileupload-helper.js';
+import * as versions from './test-lib/versions.js';
 
 export default () => {
 	versions.test((version) => {
@@ -31,7 +32,9 @@ export default () => {
 					await fixtures.clean(this.loadedFixtures);
 				});
 
-				const filePath = `${__dirname}/fixtures/23-release-asset/sample.txt`;
+				const filePath = fileURLToPath(
+					new URL('fixtures/23-release-asset/sample.txt', import.meta.url),
+				);
 				it('should succeed with mandatory properties', async function () {
 					const res = await supertest(this.user)
 						.post(`/${version}/release_asset`)
@@ -254,7 +257,9 @@ export default () => {
 					await fixtures.clean(this.loadedFixtures);
 				});
 
-				const filePath = `${__dirname}/fixtures/23-release-asset/sample.txt`;
+				const filePath = fileURLToPath(
+					new URL('fixtures/23-release-asset/sample.txt', import.meta.url),
+				);
 				it('should succeed', async function () {
 					await supertest(this.user)
 						.patch(`/${version}/release_asset(${this.releaseasset1.id})`)

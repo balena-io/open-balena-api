@@ -1,6 +1,8 @@
-import AWS from 'aws-sdk';
+import AWSWrapper from './aws-sdk-wrapper.cjs';
 import _ from 'lodash';
 import path from 'path';
+
+const { AWS } = AWSWrapper;
 
 import {
 	IMAGE_STORAGE_ACCESS_KEY,
@@ -8,7 +10,7 @@ import {
 	IMAGE_STORAGE_ENDPOINT,
 	IMAGE_STORAGE_FORCE_PATH_STYLE,
 	IMAGE_STORAGE_SECRET_KEY,
-} from '../../../lib/config';
+} from '../../../lib/config.js';
 
 export const getKey = (...parts: string[]): string => parts.join('/');
 

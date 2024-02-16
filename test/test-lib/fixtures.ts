@@ -1,15 +1,16 @@
+import { fileURLToPath } from 'node:url';
 import type { types } from '@balena/pinejs';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import Bluebird from 'bluebird';
 import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
 import type { Headers } from 'request';
-import { API_HOST } from '../../src/lib/config';
-import { requestAsync } from '../../src/infra/request-promise';
-import { supertest } from './supertest';
+import { API_HOST } from '../../src/lib/config.js';
+import { requestAsync } from '../../src/infra/request-promise/index.js';
+import { supertest } from './supertest.js';
 
 const { api } = sbvrUtils;
 const version = 'resin';
@@ -542,7 +543,7 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 	}
 
 	const files = await fs.promises.readdir(
-		path.resolve(__dirname, '../fixtures', fixtureName),
+		fileURLToPath(new URL(`../fixtures/${fixtureName}`, import.meta.url)),
 	);
 
 	const models = files

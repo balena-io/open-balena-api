@@ -4,20 +4,20 @@ import _ from 'lodash';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
 
-import type { Device } from '../../balena-model';
+import type { Device } from '../../balena-model.js';
 import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../../infra/error-handling';
+} from '../../infra/error-handling/index.js';
 
 import {
 	API_VPN_SERVICE_API_KEY,
 	VPN_CONNECT_PROXY_PORT,
-} from '../../lib/config';
-import type { RequestResponse } from '../../infra/request-promise';
-import { requestAsync } from '../../infra/request-promise';
-import { checkInt, throttledForEach } from '../../lib/utils';
+} from '../../lib/config.js';
+import type { RequestResponse } from '../../infra/request-promise/index.js';
+import { requestAsync } from '../../infra/request-promise/index.js';
+import { checkInt, throttledForEach } from '../../lib/utils.js';
 
 // Degraded network, slow devices, compressed docker binaries and any combination of these factors
 // can cause proxied device requests to surpass the default timeout.

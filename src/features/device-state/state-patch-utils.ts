@@ -1,13 +1,13 @@
 import type { Filter } from 'pinejs-client-core';
-import type { ImageInstall } from '../../balena-model';
-import type { StatePatchV2Body } from './routes/state-patch-v2';
-import type { StatePatchV3Body } from './routes/state-patch-v3';
+import type { ImageInstall } from '../../balena-model.js';
+import type { StatePatchV2Body } from './routes/state-patch-v2.js';
+import type { StatePatchV3Body } from './routes/state-patch-v3.js';
 import {
 	DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
 	IMAGE_INSTALL_CACHE_TIMEOUT_SECONDS,
 	METRICS_MAX_REPORT_INTERVAL_SECONDS,
-} from '../../lib/config';
-import { createMultiLevelStore } from '../../infra/cache';
+} from '../../lib/config.js';
+import { createMultiLevelStore } from '../../infra/cache/index.js';
 import type { sbvrUtils } from '@balena/pinejs';
 import { permissions } from '@balena/pinejs';
 

@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import nock from 'nock';
-import { supertest } from './supertest';
+import { supertest } from './supertest.js';
 
-import { VPN_SERVICE_API_KEY } from '../../src/lib/config';
-import { waitFor, TimedOutError } from './common';
+import { VPN_SERVICE_API_KEY } from '../../src/lib/config.js';
+import { waitFor, TimedOutError } from './common.js';
 
 const registerService = async (version: string) => {
 	const res = await supertest()

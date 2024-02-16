@@ -6,12 +6,12 @@ import { errors, sbvrUtils } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 import deviceConfig from 'balena-device-config';
 
-import { getUser } from '../../infra/auth/auth';
-import { captureException } from '../../infra/error-handling';
+import { getUser } from '../../infra/auth/auth.js';
+import { captureException } from '../../infra/error-handling/index.js';
 
-import type { ApiKeyOptions } from '../api-keys/lib';
-import { createProvisioningApiKey, createUserApiKey } from '../api-keys/lib';
-import type { DeviceTypeJson } from '../device-types/device-type-json';
+import type { ApiKeyOptions } from '../api-keys/lib.js';
+import { createProvisioningApiKey, createUserApiKey } from '../api-keys/lib.js';
+import type { DeviceTypeJson } from '../device-types/device-type-json.js';
 
 const { BadRequestError } = errors;
 
@@ -25,7 +25,7 @@ import {
 	VPN_HOST,
 	VPN_PORT,
 	LOGS_HOST,
-} from '../../lib/config';
+} from '../../lib/config.js';
 
 // `osVersion == null` means assume "latest"
 export const generateConfig = async (

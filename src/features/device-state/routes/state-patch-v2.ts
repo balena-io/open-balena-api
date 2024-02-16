@@ -4,10 +4,10 @@ import _ from 'lodash';
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../../infra/error-handling';
+} from '../../../infra/error-handling/index.js';
 import { sbvrUtils, errors } from '@balena/pinejs';
-import { getIP } from '../../../lib/utils';
-import type { ImageInstall, PickDeferred } from '../../../balena-model';
+import { getIP } from '../../../lib/utils.js';
+import type { ImageInstall, PickDeferred } from '../../../balena-model.js';
 import {
 	shouldUpdateMetrics,
 	metricsPatchFields,
@@ -15,8 +15,8 @@ import {
 	upsertImageInstall,
 	deleteOldImageInstalls,
 	truncateShortTextFields,
-} from '../state-patch-utils';
-import type { ResolveDeviceInfoCustomObject } from '../middleware';
+} from '../state-patch-utils.js';
+import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;

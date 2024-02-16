@@ -2,7 +2,7 @@ import type { JSONSchema6 } from 'json-schema';
 
 import { errors } from '@balena/pinejs';
 
-import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from '../../lib/config';
+import { DEFAULT_SUPERVISOR_POLL_INTERVAL } from '../../lib/config.js';
 
 const { BadRequestError } = errors;
 

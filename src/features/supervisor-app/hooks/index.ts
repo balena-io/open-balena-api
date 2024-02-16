@@ -1,1 +1,1 @@
-import './supervisor-app';
+import './supervisor-app.js';

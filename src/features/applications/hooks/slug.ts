@@ -1,6 +1,6 @@
 import { hooks, permissions } from '@balena/pinejs';
-import { getApplicationSlug } from '..';
-import type { Application, Organization } from '../../../balena-model';
+import { getApplicationSlug } from '../index.js';
+import type { Application, Organization } from '../../../balena-model.js';
 
 hooks.addPureHook('POST', 'resin', 'application', {
 	POSTPARSE: ({ request }) => {

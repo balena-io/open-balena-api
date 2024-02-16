@@ -2,9 +2,9 @@ import { sbvrUtils, hooks } from '@balena/pinejs';
 import _ from 'lodash';
 import type { FilterObj } from 'pinejs-client-core';
 
-import { captureException } from '../../../infra/error-handling';
+import { captureException } from '../../../infra/error-handling/index.js';
 
-import { postDevices } from '../../device-proxy/device-proxy';
+import { postDevices } from '../../device-proxy/device-proxy.js';
 
 interface CustomObject {
 	affectedDevices?: number[];

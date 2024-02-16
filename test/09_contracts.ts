@@ -2,19 +2,19 @@ import {
 	fetchContractsLocally,
 	getContracts,
 	removeContractDirectory,
-} from '../src/features/contracts/contracts-directory';
+} from '../src/features/contracts/contracts-directory.js';
 import { expect } from 'chai';
-import { supertest } from './test-lib/supertest';
-import * as versions from './test-lib/versions';
+import { supertest } from './test-lib/supertest.js';
+import * as versions from './test-lib/versions.js';
 import {
 	removeContractInterceptors,
 	mockRepo,
 	addContractInterceptors,
-} from './test-lib/contracts-mock';
-import type { RepositoryInfo } from '../src/features/contracts';
-import { synchronizeContracts } from '../src/features/contracts';
+} from './test-lib/contracts-mock.js';
+import type { RepositoryInfo } from '../src/features/contracts/index.js';
+import { synchronizeContracts } from '../src/features/contracts/index.js';
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import type { DeviceType, DeviceTypeAlias } from '../src/balena-model';
+import type { DeviceType, DeviceTypeAlias } from '../src/balena-model.js';
 
 const contractRepository: RepositoryInfo = {
 	owner: 'balena-io',
@@ -67,9 +67,7 @@ export default () => {
 				await synchronizeContracts([contractRepository]);
 				// Reload the device-type fixtures, since after
 				// synchronizeContracts() the DB IDs have changed.
-				(
-					await import('./test-lib/device-type.js')
-				).default.loadDefaultFixtures();
+				(await import('./test-lib/device-type.js')).loadDefaultFixtures();
 			});
 
 			beforeEach(async () => {

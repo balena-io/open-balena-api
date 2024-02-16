@@ -1,19 +1,19 @@
 import { expect } from 'chai';
 
-import { connectDeviceAndWaitForUpdate } from './test-lib/connect-device-and-wait';
-import * as fakeDevice from './test-lib/fake-device';
-import type { UserObjectParam } from './test-lib/supertest';
-import { supertest } from './test-lib/supertest';
-import * as versions from './test-lib/versions';
+import { connectDeviceAndWaitForUpdate } from './test-lib/connect-device-and-wait.js';
+import * as fakeDevice from './test-lib/fake-device.js';
+import type { UserObjectParam } from './test-lib/supertest.js';
+import { supertest } from './test-lib/supertest.js';
+import * as versions from './test-lib/versions.js';
 
-import * as fixtures from './test-lib/fixtures';
+import * as fixtures from './test-lib/fixtures.js';
 import {
 	addReleaseToApp,
 	addImageToService,
 	addServiceToApp,
 	addImageToRelease,
-} from './test-lib/api-helpers';
-import type { Application, DeviceType, Release } from '../src/balena-model';
+} from './test-lib/api-helpers.js';
+import type { Application, DeviceType, Release } from '../src/balena-model.js';
 
 export default () => {
 	versions.test((version, pineTest) => {

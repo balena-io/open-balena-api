@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { supertest } from './test-lib/supertest';
-import { LOGS_HOST } from '../src/lib/config';
+import { supertest } from './test-lib/supertest.js';
+import { LOGS_HOST } from '../src/lib/config.js';
 
 export default () => {
 	describe('OS configuration endpoints', () => {

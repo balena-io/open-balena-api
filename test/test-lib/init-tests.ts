@@ -1,11 +1,11 @@
-import * as fixtures from './fixtures';
-import type { UserObjectParam } from './supertest';
-import { supertest, augmentStatusAssertionError } from './supertest';
+import * as fixtures from './fixtures.js';
+import type { UserObjectParam } from './supertest.js';
+import { supertest, augmentStatusAssertionError } from './supertest.js';
 import {
 	getContractRepos,
 	synchronizeContracts,
-} from '../../src/features/contracts';
-import { expectJwt } from './api-helpers';
+} from '../../src/features/contracts/index.js';
+import { expectJwt } from './api-helpers.js';
 
 const version = 'resin';
 
@@ -15,17 +15,17 @@ export const preInit = async () => {
 	await import('./contracts-mock.js');
 
 	// override the interval used to emit the queue stats event...
-	const { DeviceOnlineStateManager } = (
-		await import('../../src/features/device-heartbeat/index.js')
-	).default;
+	const { DeviceOnlineStateManager } = await import(
+		'../../src/features/device-heartbeat/index.js'
+	);
 	(DeviceOnlineStateManager as any)['QUEUE_STATS_INTERVAL_MSEC'] = 1000;
 };
 
 const loadAdminUserAndOrganization = async () => {
 	// any user we try to create will be the superuser...
-	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } = (
-		await import('../../src/lib/config.js')
-	).default;
+	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } = await import(
+		'../../src/lib/config.js'
+	);
 
 	if (!SUPERUSER_EMAIL || !SUPERUSER_PASSWORD) {
 		console.error(
@@ -62,7 +62,7 @@ const loadAdminUserAndOrganization = async () => {
 
 export const postInit = async () => {
 	await synchronizeContracts(getContractRepos());
-	(await import('./device-type.js')).default.loadDefaultFixtures();
+	(await import('./device-type.js')).loadDefaultFixtures();
 
 	const { user, org } = await loadAdminUserAndOrganization();
 	const balenaOsFx = await fixtures.load('00-balena_os');

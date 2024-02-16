@@ -1,6 +1,6 @@
-import './balena-device-config';
-import './common';
-import './express-extension';
-import './memoizee-normalizers-primitive';
-import './passport-jwt-extension';
-import './thirty-two';
+import './balena-device-config.js';
+import './common.js';
+import './express-extension.js';
+import './memoizee-normalizers-primitive.js';
+import './passport-jwt-extension.js';
+import './thirty-two.js';

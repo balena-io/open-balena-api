@@ -1,12 +1,15 @@
 import { PineTest } from 'pinejs-client-supertest';
-import { app } from '../../init';
-import type { ValidVersion } from './versions';
-import { versions } from './versions';
+import { app } from '../../init.js';
+import type { ValidVersion } from './versions.js';
 
-const pineTest: {
-	[version in ValidVersion]: PineTest;
-} = {} as any;
-for (const v of versions) {
-	pineTest[v] = new PineTest({ apiPrefix: `${v}/` }, { app });
-}
-export { pineTest };
+export const pineTest = new Proxy(
+	{} as {
+		[version in ValidVersion]: PineTest;
+	},
+	{
+		get(target, version: ValidVersion) {
+			target[version] ??= new PineTest({ apiPrefix: `${version}/` }, { app });
+			return target[version];
+		},
+	},
+);

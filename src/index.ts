@@ -16,12 +16,12 @@ import * as zlib from 'node:zlib';
 
 import * as pine from '@balena/pinejs';
 
-import type { PickDeferred, User as DbUser } from './balena-model';
+import type { PickDeferred, User as DbUser } from './balena-model.js';
 import type {
 	defaultFindUser$select,
 	GetNewUserRoleFunction,
-} from './infra/auth/auth';
-import * as jwt from './infra/auth/jwt-passport';
+} from './infra/auth/auth.js';
+import * as jwt from './infra/auth/jwt-passport.js';
 
 const { api } = pine.sbvrUtils;
 
@@ -54,14 +54,14 @@ import {
 	BROTLI_COMPRESSION_QUALITY,
 	GZIP_COMPRESSION_QUALITY,
 	BROTLI_COMPRESSION_WINDOW_BITS,
-} from './lib/config';
+} from './lib/config.js';
 
 import {
 	captureException,
 	handleHttpErrors,
 	ThisShouldNeverHappenError,
 	translateError,
-} from './infra/error-handling';
+} from './infra/error-handling/index.js';
 import {
 	findUser,
 	getUser,
@@ -74,7 +74,7 @@ import {
 	setRegistrationRoleFunc,
 	validatePassword,
 	checkUserPassword,
-} from './infra/auth/auth';
+} from './infra/auth/auth.js';
 import {
 	setUserTokenDataCallback,
 	tokenFields,
@@ -82,7 +82,7 @@ import {
 	loginUserXHR,
 	updateUserXHR,
 	createSessionToken,
-} from './infra/auth/jwt';
+} from './infra/auth/jwt.js';
 import {
 	createAllPermissions,
 	setApiKey,
@@ -91,75 +91,80 @@ import {
 	getOrInsertRoleId,
 	assignUserPermission,
 	assignUserRole,
-} from './infra/auth/permissions';
-import { createScopedAccessToken, createJwt } from './infra/auth/jwt';
-import { middleware as authMiddleware } from './infra/auth';
+} from './infra/auth/permissions.js';
+import { createScopedAccessToken, createJwt } from './infra/auth/jwt.js';
+import { middleware as authMiddleware } from './infra/auth/index.js';
 import {
 	augmentReqApiKeyPermissions,
 	isApiKeyWithRole,
-} from './features/api-keys/lib';
-import { setupDeleteCascade as addDeleteHookForDependents } from './features/cascade-delete/setup-delete-cascade';
+} from './features/api-keys/lib.js';
+import { setupDeleteCascade as addDeleteHookForDependents } from './features/cascade-delete/setup-delete-cascade.js';
 import {
 	updateOrInsertModel,
 	getOrInsertModelId,
-} from './infra/pinejs-client-helpers';
-import { normalizeHandle, refreshToken } from './features/auth';
-import { getIP, getIPv4, isValidInteger, throttledForEach } from './lib/utils';
+} from './infra/pinejs-client-helpers/index.js';
+import { normalizeHandle, refreshToken } from './features/auth/index.js';
+import {
+	getIP,
+	getIPv4,
+	isValidInteger,
+	throttledForEach,
+} from './lib/utils.js';
 import {
 	createRateLimitMiddleware,
 	createRateLimiter,
 	getUserIDFromCreds,
-} from './infra/rate-limiting';
+} from './infra/rate-limiting/index.js';
 import {
 	getAccessibleDeviceTypes,
 	findBySlug,
 	getDeviceTypeBySlug,
-} from './features/device-types/device-types';
-import { proxy as supervisorProxy } from './features/device-proxy/device-proxy';
-import { generateConfig } from './features/device-config/device-config';
+} from './features/device-types/device-types.js';
+import { proxy as supervisorProxy } from './features/device-proxy/device-proxy.js';
+import { generateConfig } from './features/device-config/device-config.js';
 import {
 	DeviceOnlineStates,
 	getPollInterval,
 	getInstance as getDeviceOnlineStateManager,
-} from './features/device-heartbeat';
-import { registryAuth } from './features/registry/certs';
+} from './features/device-heartbeat/index.js';
+import { registryAuth } from './features/registry/certs.js';
 import {
 	ALLOWED_NAMES,
 	BLOCKED_NAMES,
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
 	DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES,
-} from './features/vars-schema/env-vars';
-import * as baseAuth from './lib/auth';
+} from './features/vars-schema/env-vars.js';
+import * as baseAuth from './lib/auth.js';
 // TODO: This should not be exported
-import { varListInsert } from './features/device-state/state-get-utils';
-import type { GetUrlFunction } from './features/request-logging';
-import { setupRequestLogging } from './features/request-logging';
-import { startContractSynchronization } from './features/contracts';
+import { varListInsert } from './features/device-state/state-get-utils.js';
+import type { GetUrlFunction } from './features/request-logging/index.js';
+import { setupRequestLogging } from './features/request-logging/index.js';
+import { startContractSynchronization } from './features/contracts/index.js';
 
-import { addToModel as addUserHasDirectAccessToApplicationToModel } from './features/applications/models/user__has_direct_access_to__application';
-import { getApplicationSlug } from './features/applications';
-import * as deviceAdditions from './features/devices/models/device-additions';
-import { addToModel as addReleaseAdditionsToModel } from './features/ci-cd/models/release-additions';
-import { apiRoot } from './balena';
-import { getV6Translations } from './translations/v6/v6';
+import { addToModel as addUserHasDirectAccessToApplicationToModel } from './features/applications/models/user__has_direct_access_to__application.js';
+import { getApplicationSlug } from './features/applications/index.js';
+import * as deviceAdditions from './features/devices/models/device-additions.js';
+import { addToModel as addReleaseAdditionsToModel } from './features/ci-cd/models/release-additions.js';
+import { model as balenaModel } from './balena.js';
+import { getV6Translations } from './translations/v6/v6.js';
 
-export * as tags from './features/tags/validation';
+export * as tags from './features/tags/validation.js';
 
-export type { Creds, TokenUserPayload } from './infra/auth/jwt-passport';
-export type { Access } from './features/registry/registry';
-export type { ApplicationType } from './features/application-types/application-types';
-export type { DeviceTypeJson } from './features/device-types/device-type-json';
+export type { Creds, TokenUserPayload } from './infra/auth/jwt-passport.js';
+export type { Access } from './features/registry/registry.js';
+export type { ApplicationType } from './features/application-types/application-types.js';
+export type { DeviceTypeJson } from './features/device-types/device-type-json.js';
 
-export { DefaultApplicationType } from './features/application-types/application-types';
-export * as request from './infra/request-promise';
-export * as redis from './infra/redis';
-export * as scheduler from './infra/scheduler';
-export * as cache from './infra/cache';
-export * as config from './lib/config';
-export * as abstractSql from './abstract-sql-utils';
-export { getFileUploadHandler } from './fileupload-handler';
+export type { DefaultApplicationType } from './features/application-types/application-types.js';
+export * as request from './infra/request-promise/index.js';
+export * as redis from './infra/redis/index.js';
+export * as scheduler from './infra/scheduler/index.js';
+export * as cache from './infra/cache/index.js';
+export * as config from './lib/config.js';
+export * as abstractSql from './abstract-sql-utils.js';
+export { getFileUploadHandler } from './fileupload-handler.js';
 
-export * as deviceState from './features/device-state';
+export * as deviceState from './features/device-state/index.js';
 export const errors = {
 	captureException,
 	handleHttpErrors,
@@ -203,7 +208,7 @@ export const rateLimiting = {
 	createRateLimitMiddleware,
 	createRateLimiter,
 };
-export * as middleware from './exports/middleware';
+export * as middleware from './exports/middleware.js';
 export const hooks = {
 	addDeleteHookForDependents,
 };
@@ -240,7 +245,7 @@ export const deviceTypes = {
 	findBySlug,
 	getDeviceTypeBySlug,
 };
-export * as contracts from './exports/contracts';
+export * as contracts from './exports/contracts.js';
 export const envVarsConfig = {
 	ALLOWED_NAMES,
 	BLOCKED_NAMES,
@@ -358,7 +363,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	});
 
 	if (HIDE_UNVERSIONED_ENDPOINT) {
-		app.use(`/${apiRoot}/*`, (_req, res) => {
+		app.use(`/${balenaModel.apiRoot}/*`, (_req, res) => {
 			res.status(404).end();
 		});
 	}
@@ -380,7 +385,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	await import('./hooks.js');
 	await options.onInitHooks?.(app);
 
-	const routes = (await import('./routes.js')).default;
+	const routes = await import('./routes.js');
 	routes.setup(app, options);
 	await options.onInitRoutes?.(app);
 

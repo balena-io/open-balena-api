@@ -8,10 +8,13 @@ import {
 	RateLimiterRedis,
 	RateLimiterRes,
 } from 'rate-limiter-flexible';
-import { captureException, handleHttpErrors } from '../error-handling';
-import { RATE_LIMIT_FACTOR, RATE_LIMIT_MEMORY_BACKEND } from '../../lib/config';
+import { captureException, handleHttpErrors } from '../error-handling/index.js';
+import {
+	RATE_LIMIT_FACTOR,
+	RATE_LIMIT_MEMORY_BACKEND,
+} from '../../lib/config.js';
 import { errors } from '@balena/pinejs';
-import { redis } from '../redis';
+import { redis } from '../redis/index.js';
 
 const { TooManyRequestsError } = errors;
 

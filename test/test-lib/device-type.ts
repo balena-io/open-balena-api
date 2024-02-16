@@ -1,5 +1,5 @@
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import { setDefaultFixtures } from './fixtures';
+import { setDefaultFixtures } from './fixtures.js';
 
 const { api } = sbvrUtils;
 

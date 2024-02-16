@@ -4,11 +4,11 @@ import _ from 'lodash';
 import type { hooks } from '@balena/pinejs';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
-import { retrieveAPIKey } from './api-keys';
-import type { TokenUserPayload } from './jwt-passport';
+import { retrieveAPIKey } from './api-keys.js';
+import type { TokenUserPayload } from './jwt-passport.js';
 
-import { getIP } from '../../lib/utils';
-import type { PickDeferred, User as DbUser } from '../../balena-model';
+import { getIP } from '../../lib/utils.js';
+import type { PickDeferred, User as DbUser } from '../../balena-model.js';
 import type { PreparedFn } from 'pinejs-client-core';
 
 const { BadRequestError, UnauthorizedError, NotFoundError } = errors;

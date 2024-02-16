@@ -5,8 +5,12 @@ import {
 	errors as pinejsErrors,
 } from '@balena/pinejs';
 import * as semver from 'balena-semver';
-import type { Device, ReleaseTag, PickDeferred } from '../../../balena-model';
-import { groupByMap } from '../../../lib/utils';
+import type {
+	Device,
+	ReleaseTag,
+	PickDeferred,
+} from '../../../balena-model.js';
+import { groupByMap } from '../../../lib/utils.js';
 const { BadRequestError } = pinejsErrors;
 
 hooks.addPureHook('PATCH', 'resin', 'device', {

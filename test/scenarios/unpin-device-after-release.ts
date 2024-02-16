@@ -1,17 +1,17 @@
 import type _ from 'lodash';
 
 import { expect } from 'chai';
-import * as fakeDevice from '../test-lib/fake-device';
-import type { UserObjectParam } from '../test-lib/supertest';
-import { supertest } from '../test-lib/supertest';
+import * as fakeDevice from '../test-lib/fake-device.js';
+import type { UserObjectParam } from '../test-lib/supertest.js';
+import { supertest } from '../test-lib/supertest.js';
 
-import * as fixtures from '../test-lib/fixtures';
+import * as fixtures from '../test-lib/fixtures.js';
 import {
 	addReleaseToApp,
 	addImageToService,
 	addServiceToApp,
 	addImageToRelease,
-} from '../test-lib/api-helpers';
+} from '../test-lib/api-helpers.js';
 
 const version = 'resin';
 

@@ -1,17 +1,17 @@
 import type { RequestHandler } from 'express';
 import type { Request } from 'express';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../../infra/error-handling';
+} from '../../../infra/error-handling/index.js';
 import type { Expand } from 'pinejs-client-core';
 
 import { sbvrUtils, errors } from '@balena/pinejs';
-import { getConfig, readTransaction } from '../state-get-utils';
-import type { StateV3 } from './state-get-v3';
-import { buildAppFromRelease, releaseExpand } from './state-get-v3';
+import { getConfig, readTransaction } from '../state-get-utils.js';
+import type { StateV3 } from './state-get-v3.js';
+import { buildAppFromRelease, releaseExpand } from './state-get-v3.js';
 const { api } = sbvrUtils;
 const { UnauthorizedError } = errors;
 

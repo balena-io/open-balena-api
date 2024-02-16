@@ -1,5 +1,5 @@
 import { hooks } from '@balena/pinejs';
-import { getDeviceTypes } from '../device-types-list';
+import { getDeviceTypes } from '../device-types-list.js';
 
 hooks.addPureHook('POST', 'resin', 'application', {
 	POSTRUN: async ({ request }) => {

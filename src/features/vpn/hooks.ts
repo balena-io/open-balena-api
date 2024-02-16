@@ -3,8 +3,8 @@ import ipaddr from 'ipaddr.js';
 
 import { hooks, errors } from '@balena/pinejs';
 
-import { getServiceFromRequest } from '../../lib/auth';
-import { getIP } from '../../lib/utils';
+import { getServiceFromRequest } from '../../lib/auth.js';
+import { getIP } from '../../lib/utils.js';
 
 hooks.addPureHook('POST', 'resin', 'service_instance', {
 	POSTPARSE: ({ request, req }) => {

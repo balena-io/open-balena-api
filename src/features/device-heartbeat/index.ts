@@ -4,10 +4,10 @@ import RedisSMQ from 'rsmq';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
-import { captureException } from '../../infra/error-handling';
-import { isApiKeyWithRole } from '../api-keys/lib';
+import { captureException } from '../../infra/error-handling/index.js';
+import { isApiKeyWithRole } from '../api-keys/lib.js';
 
-import { events as deviceStateEvents } from '../device-state';
+import { events as deviceStateEvents } from '../device-state/index.js';
 
 import {
 	API_HEARTBEAT_STATE_ENABLED,
@@ -15,8 +15,8 @@ import {
 	API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT,
 	DEFAULT_SUPERVISOR_POLL_INTERVAL,
 	REDIS,
-} from '../../lib/config';
-import { redis, redisRO } from '../../infra/redis';
+} from '../../lib/config.js';
+import { redis, redisRO } from '../../infra/redis/index.js';
 import { setTimeout } from 'timers/promises';
 
 const { api } = sbvrUtils;

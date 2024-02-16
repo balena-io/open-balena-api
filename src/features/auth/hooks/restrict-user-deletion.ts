@@ -1,7 +1,7 @@
 import { sbvrUtils, hooks, errors } from '@balena/pinejs';
 
-import { getUser } from '../../../infra/auth/auth';
-import { checkSudoValidity } from '../../../infra/auth/jwt';
+import { getUser } from '../../../infra/auth/auth.js';
+import { checkSudoValidity } from '../../../infra/auth/jwt.js';
 
 const { BadRequestError, UnauthorizedError } = errors;
 

@@ -1,6 +1,6 @@
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 
-import { checkDevicesCanHaveDeviceURL } from '../../features/application-types/application-types';
+import { checkDevicesCanHaveDeviceURL } from '../../features/application-types/application-types.js';
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	PRERUN: async (args) => {

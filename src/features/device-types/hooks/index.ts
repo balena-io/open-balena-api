@@ -1,1 +1,1 @@
-import './device-types-cache-invalidation';
+import './device-types-cache-invalidation.js';

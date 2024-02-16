@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import * as fixtures from './test-lib/fixtures';
-import * as fakeDevice from './test-lib/fake-device';
-import { supertest } from './test-lib/supertest';
-import * as versions from './test-lib/versions';
+import * as fixtures from './test-lib/fixtures.js';
+import * as fakeDevice from './test-lib/fake-device.js';
+import { supertest } from './test-lib/supertest.js';
+import * as versions from './test-lib/versions.js';
 
 export default () => {
 	versions.test((version, pineTest) => {

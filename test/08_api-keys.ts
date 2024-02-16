@@ -1,12 +1,12 @@
-import { VPN_SERVICE_API_KEY } from '../src/lib/config';
+import { VPN_SERVICE_API_KEY } from '../src/lib/config.js';
 import { expect } from 'chai';
-import * as fixtures from './test-lib/fixtures';
-import { generateDeviceUuid } from './test-lib/fake-device';
-import type { UserObjectParam } from './test-lib/supertest';
-import { supertest } from './test-lib/supertest';
-import * as versions from './test-lib/versions';
+import * as fixtures from './test-lib/fixtures.js';
+import { generateDeviceUuid } from './test-lib/fake-device.js';
+import type { UserObjectParam } from './test-lib/supertest.js';
+import { supertest } from './test-lib/supertest.js';
+import * as versions from './test-lib/versions.js';
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import type { DateString } from '../src/balena-model';
+import type { DateString } from '../src/balena-model.js';
 
 const { api } = sbvrUtils;
 

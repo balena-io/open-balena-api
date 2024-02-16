@@ -1,9 +1,10 @@
+import { fileURLToPath } from 'node:url';
 import { strict as assert } from 'assert';
 import fs from 'fs';
 import _ from 'lodash';
 import { execSync } from 'node:child_process';
 import path from 'path';
-import configJson from '../config';
+import configJson from '../config.js';
 
 // Validate SQL files using squawk
 function validateSql(file: string): void {
@@ -23,7 +24,9 @@ export default () => {
 			.each(({ modelName, migrationsPath }) => {
 				describe(modelName!, () => {
 					if (!path.isAbsolute(migrationsPath!)) {
-						migrationsPath = __dirname + '/../src/' + migrationsPath;
+						migrationsPath = fileURLToPath(
+							new URL('../src/' + migrationsPath, import.meta.url),
+						);
 					}
 					const fileNames = fs.readdirSync(migrationsPath!);
 					it('should have unique prefixes', async () => {

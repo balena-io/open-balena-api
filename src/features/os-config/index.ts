@@ -5,8 +5,8 @@ import {
 	DEVICE_CONFIG_OPENVPN_CONFIG,
 	DEVICE_CONFIG_SSH_AUTHORIZED_KEYS,
 	LOGS_HOST,
-} from '../../lib/config';
-import { b64decode } from '../../lib/utils';
+} from '../../lib/config.js';
+import { b64decode } from '../../lib/utils.js';
 
 // OS service configurations
 const services = {

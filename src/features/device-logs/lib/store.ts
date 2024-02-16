@@ -4,39 +4,39 @@ import type {
 	DeviceLogsBackend,
 	LogContext,
 	SupervisorLog,
-} from './struct';
+} from './struct.js';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 import onFinished from 'on-finished';
 import type { permissions } from '@balena/pinejs';
 import { sbvrUtils, errors } from '@balena/pinejs';
-import { Supervisor } from './supervisor';
+import { Supervisor } from './supervisor.js';
 import { createGunzip } from 'zlib';
 import ndjson from 'ndjson';
 import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../../../infra/error-handling';
+} from '../../../infra/error-handling/index.js';
 import {
 	addRetentionLimit,
 	getBackend,
 	getLokiBackend,
 	LOKI_ENABLED,
 	shouldPublishToLoki,
-} from './config';
-import type { SetupOptions } from '../../..';
+} from './config.js';
+import type { SetupOptions } from '../../../index.js';
 import {
 	DEVICE_LOGS_WRITE_AUTH_CACHE_TIMEOUT,
 	LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL,
 	LOGS_STREAM_FLUSH_INTERVAL,
 	LOGS_WRITE_BUFFER_LIMIT,
 	NDJSON_CTYPE,
-} from '../../../lib/config';
+} from '../../../lib/config.js';
 import {
 	multiCacheMemoizee,
 	reqPermissionNormalizer,
-} from '../../../infra/cache';
+} from '../../../infra/cache/index.js';
 
 const {
 	UnauthorizedError,
