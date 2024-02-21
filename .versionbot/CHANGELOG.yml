@@ -1,4 +1,16 @@
 - commits:
+    - subject: "restrict-release-deletion: Remove unnecessary nested filtering"
+      hash: e2481bd746dbbb456b9713ed503837c12df720fe
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 19.1.2
+  title: ""
+  date: 2024-02-21T16:42:29.783Z
+- commits:
     - subject: Fix a leftover commonjs require imports when using a TRUST_PROXY
       hash: 5ed5deb33e1a67e49824e960a3b135718ad5e05a
       body: ""
