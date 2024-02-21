@@ -21,16 +21,7 @@ hooks.addPureHook('DELETE', 'resin', 'release', {
 				$select: 'is_of__class',
 				$expand: { should_be_running__release: { $select: 'raw_version' } },
 				$filter: {
-					should_be_running__release: {
-						$any: {
-							$alias: 'sbrr',
-							$expr: {
-								sbrr: {
-									id: { $in: affectedIds },
-								},
-							},
-						},
-					},
+					should_be_running__release: { $in: affectedIds },
 				},
 			},
 		})) as Array<
@@ -49,16 +40,7 @@ hooks.addPureHook('DELETE', 'resin', 'release', {
 				$top: 1,
 				$select: 'id',
 				$filter: {
-					should_be_running__release: {
-						$any: {
-							$alias: 'sbrr',
-							$expr: {
-								sbrr: {
-									id: { $in: affectedIds },
-								},
-							},
-						},
-					},
+					should_be_running__release: { $in: affectedIds },
 				},
 			},
 		})) as Array<PickExpanded<Device, 'id'>>;
