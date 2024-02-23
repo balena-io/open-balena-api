@@ -1,4 +1,2458 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v17.0.5
+      hash: 93c34c20023f42a2ee8566b0d8121b630624a073
+      body: |
+        Update balena/open-balena-base from no-systemd-17.0.4 to 17.0.5
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency node to v21.6.2
+              hash: faafec8bb43b315b2d565dfb924e4dc91195a6ec
+              body: |
+                Update node from 21.6.1 to 21.6.2
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-17.0.5
+          title: ""
+          date: 2024-02-14T17:58:16.053Z
+        - commits:
+            - subject: Update dependency npm to v10.4.0
+              hash: ab28d3c271a489d71bee75462ac8a8b07b5c8d5f
+              body: |
+                Update npm from 10.3.0 to 10.4.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-17.0.4
+          title: ""
+          date: 2024-01-24T21:56:40.885Z
+        - commits:
+            - subject: Update dependency node to v21.6.1
+              hash: 69a03ecdae5888e144db5e3ffd267b981509b19b
+              body: |
+                Update node from 21.6.0 to 21.6.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-17.0.3
+          title: ""
+          date: 2024-01-22T19:59:24.604Z
+        - commits:
+            - subject: Update dependency node to v21.6.0
+              hash: 1c43994a6add6221e190b4ad7de5fd534fa4fcc0
+              body: |
+                Update node from 21.5.0 to 21.6.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-17.0.2
+          title: ""
+          date: 2024-01-15T15:56:04.244Z
+        - commits:
+            - subject: Update dependency npm to v10.3.0
+              hash: a48eb9226c1be9eb9298d9a5ef377a62a7fe9e96
+              body: |
+                Update npm from 10.2.5 to 10.3.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-17.0.1
+          title: ""
+          date: 2024-01-10T21:57:43.565Z
+        - commits:
+            - subject: Update nodejs to 21.4.0
+              hash: f147a2856a8ee37f33ffa62edaa092909e2d0ad0
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-17.0.0
+          title: ""
+          date: 2023-12-20T12:04:24.926Z
+        - commits:
+            - subject: add missing data. host
+              hash: 76608ddf5578f54a4dda563f4c8a2a35f303110a
+              body: ""
+              footer:
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-16.0.18
+          title: ""
+          date: 2023-12-13T01:16:22.659Z
+        - commits:
+            - subject: Update dependency npm to v10.2.5
+              hash: 12dc1b4934e4a50fc68841717588b8704041b964
+              body: |
+                Update npm from 10.2.4 to 10.2.5
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.17
+          title: ""
+          date: 2023-12-06T22:58:31.184Z
+        - commits:
+            - subject: remove self-hosted Sentry config
+              hash: 3f390363034c3d9ceeacaa78c93ceee927a9aaff
+              body: |
+                * components can be manually configuired to point to SaaS Sentry
+              footer:
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-16.0.16
+          title: ""
+          date: 2023-12-05T00:24:26.689Z
+        - commits:
+            - subject: Update dependency node to v20.10.0
+              hash: c5a98cbac21692a085efd4d6118e080a1351222e
+              body: |
+                Update node from 20.9.0 to 20.10.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.15
+          title: ""
+          date: 2023-11-22T16:57:59.503Z
+        - commits:
+            - subject: Update dependency npm to v10.2.4
+              hash: a914500d0a42a83e73c3cf65d08749ce70d84d6d
+              body: |
+                Update npm from 10.2.3 to 10.2.4
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.14
+          title: ""
+          date: 2023-11-15T22:00:31.166Z
+        - commits:
+            - subject: Update dependency npm to v10.2.3
+              hash: 01f85340e6131d54f8c6eed7a74c37ff68b8d902
+              body: |
+                Update npm from 10.2.2 to 10.2.3
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.13
+          title: ""
+          date: 2023-11-02T21:00:19.215Z
+        - commits:
+            - subject: Update dependency node to v20.9.0
+              hash: 82aeef20c95240809512c443e59cb177db7a1f4f
+              body: |
+                Update node from 20.8.1 to 20.9.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.12
+          title: ""
+          date: 2023-10-31T19:59:20.031Z
+        - commits:
+            - subject: Update dependency npm to v10.2.2
+              hash: 157c6b4560483f893ef763e824e522c35f55927c
+              body: |
+                Update npm from 10.2.1 to 10.2.2
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.11
+          title: ""
+          date: 2023-10-31T19:06:09.574Z
+        - commits:
+            - subject: Update dependency node to v20.8.1
+              hash: 3944159d01d942aa9ccb8aa7b1f5ccf37264cfbe
+              body: |
+                Update node from 20.8.0 to 20.8.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.10
+          title: ""
+          date: 2023-10-18T21:58:04.157Z
+        - commits:
+            - subject: Update dependency npm to v10.2.1
+              hash: e2f7d7617d2941bafc41954c7538bef2a6909e10
+              body: |
+                Update npm from 10.2.0 to 10.2.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.9
+          title: ""
+          date: 2023-10-18T21:04:56.954Z
+        - commits:
+            - subject: Update dependency npm to v10.2.0
+              hash: f3008a7cbe68214b20c61b76c0e553a610466da2
+              body: |
+                Update npm from 10.1.0 to 10.2.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.8
+          title: ""
+          date: 2023-10-03T17:05:16.337Z
+        - commits:
+            - subject: Prefer using local env var values before falling back to defaults
+              hash: 3012af05ce93203768e661c77e4a322ac3147b85
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                See: https://github.com/balena-io-modules/open-balena-base/pull/316/files#diff-95ccd7ac2401d4f914cf825fabd8648b9db8a1f5436aafcedf3a640e9a1b73b6R376-R378
+                see: https://github.com/balena-io-modules/open-balena-base/pull/316/files#diff-95ccd7ac2401d4f914cf825fabd8648b9db8a1f5436aafcedf3a640e9a1b73b6R376-R378
+              author: Thodoris Greasidis
+              nested: []
+          version: open-balena-base-16.0.7
+          title: ""
+          date: 2023-10-02T14:41:18.394Z
+        - commits:
+            - subject: Update dependency node to v20.8.0
+              hash: 84dcf871b68935e6c4c43682edd24b53f5c34e2e
+              body: |
+                Update node from 20.7.0 to 20.8.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.6
+          title: ""
+          date: 2023-09-29T04:01:35.850Z
+        - commits:
+            - subject: Build confd from source to avoid upx issues in released binaries
+              hash: 96e9eb4d3e94c2848ef6a5e83d51d9c71835139f
+              body: >
+                upx v3.96 (2020) fixes this issue, but that was released after
+                the
+
+                v0.16.0 confd release in 2018
+              footer:
+                Resolves: https://github.com/balena-io/balena-monitor/issues/549
+                resolves: https://github.com/balena-io/balena-monitor/issues/549
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-16.0.5
+          title: ""
+          date: 2023-09-21T13:03:29.817Z
+        - commits:
+            - subject: Bump no-systemd image to node 20/npm 10 matching systemd
+              hash: 9240224742ab2b6bd0694a709df53bebd88295da
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Page-
+              nested: []
+          version: open-balena-base-16.0.4
+          title: ""
+          date: 2023-09-21T11:00:30.491Z
+        - commits:
+            - subject: Update dependency node to v18.18.0
+              hash: 9c41d0beafb959c21ffadbc8f8cb0cb8cf58ad8d
+              body: |
+                Update node from 18.17.1 to 18.18.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.3
+          title: ""
+          date: 2023-09-18T23:00:07.081Z
+        - commits:
+            - subject: Update dependency node to v20.7.0
+              hash: 4e0c577fe7372e90b0a8787b72a5fff41f48e4d8
+              body: |
+                Update node from 20.6.1 to 20.7.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-16.0.2
+          title: ""
+          date: 2023-09-18T19:08:54.386Z
+        - commits:
+            - subject: don't clobber existing values
+              hash: c7f97c2749f0b3c638a8a8686ccf9b4e36154502
+              body: >
+                - don't overwrite existing non-null values in the API_KEYS array
+                with null values
+              footer:
+                change-type: patch
+              author: Anton Belodedenko
+              nested: []
+          version: open-balena-base-16.0.1
+          title: ""
+          date: 2023-09-12T23:15:08.184Z
+        - commits:
+            - subject: Update nodejs to 20.6.1 and npm to 10.1.0
+              hash: 7de3033a0fdbfe7942718532a105321d532541d6
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-16.0.0
+          title: ""
+          date: 2023-09-11T10:26:55.870Z
+        - commits:
+            - subject: fix env var resolution from token map
+              hash: 1be02cb7bc4e3229c1d452caa638bc9739125e3c
+              body: ""
+              footer:
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-15.1.1
+          title: ""
+          date: 2023-09-07T18:25:15.173Z
+        - commits:
+            - subject: Add WEBRESOURCES_S3 ACCESS_KEY, SECRET_KEY and HOST to en configuration
+              hash: fddc756fe24a0e097d440da362ddc074d54bda1b
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Otávio Jacobi
+              nested: []
+          version: open-balena-base-15.1.0
+          title: ""
+          date: 2023-08-24T16:35:11.511Z
+        - commits:
+            - subject: Update dependency node to v18.17.1
+              hash: dcb6e3d103e646827312f7e33c8d5654511e25b7
+              body: |
+                Update node from 18.17.0 to 18.17.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-15.0.5
+          title: ""
+          date: 2023-08-24T15:48:28.223Z
+        - commits:
+            - subject: Use renovate regex annotations to manage confd releases
+              hash: eedbc17be7ea813b8b6880acff6bc85740559cc5
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+            - subject: Install node and npm manually in no-systemd variant
+              hash: b3b1b2bcb75c6ce18dafa97b6f922ea73f88986d
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+            - subject: Use renovate regex annotations to version node and npm
+              hash: 62907af9882c43306bcc2592385977550c64c022
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-15.0.4
+          title: ""
+          date: 2023-08-24T14:21:05.702Z
+        - commits:
+            - subject: Update Node.js to v18.17.0
+              hash: 43e3355c0dc3af6ccf96eb177f98762fb7ee0f69
+              body: |
+                Update node from 18.16.1 to 18.17.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-15.0.3
+          title: ""
+          date: 2023-07-19T22:04:43.417Z
+        - commits:
+            - subject: Update dependency npm to v9.8.1
+              hash: 14e64ec6eaccc3112f1d25a15ee1507db42c3fbb
+              body: |
+                Update npm from 9.8.0 to 9.8.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-15.0.2
+          title: ""
+          date: 2023-07-19T18:00:51.261Z
+        - commits:
+            - subject: Update dependency node to v18.17.0
+              hash: e3470e98ffc31cd64dc59a1e3590ee2733e3263b
+              body: |
+                Update node from 18.16.1 to 18.17.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-15.0.1
+          title: ""
+          date: 2023-07-18T20:02:23.624Z
+        - commits:
+            - subject: Upgrade to debian bookworm
+              hash: 492ce2808a7fafe6df99256948a6366fee6836fc
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-15.0.0
+          title: ""
+          date: 2023-07-06T16:19:57.969Z
+        - commits:
+            - subject: Update Node.js to v18.16.1
+              hash: f503c520c701649745a9f8fe16a9e00abe9330ca
+              body: |
+                Update node from 18.16.0 to 18.16.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-14.11.1
+          title: ""
+          date: 2023-07-05T22:04:23.263Z
+        - commits:
+            - subject: Update dependency npm to v9.8.0
+              hash: 08daab22e7497506c6d426900952ed186d273b0b
+              body: |
+                Update npm from 9.7.2 to 9.8.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-14.11.0
+          title: ""
+          date: 2023-07-05T21:02:09.040Z
+        - commits:
+            - subject: Update dependency npm to v9.7.2
+              hash: dc44055a7bae68fa173261103af949ca76448979
+              body: |
+                Update npm from 9.7.1 to 9.7.2
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-14.10.2
+          title: ""
+          date: 2023-06-21T19:00:56.925Z
+        - commits:
+            - subject: Update dependency node to v18.16.1
+              hash: 37279e28a319d6594b1c5bc6e74ee779b8210ab0
+              body: |
+                Update node from 18.16.0 to 18.16.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-14.10.1
+          title: ""
+          date: 2023-06-21T11:03:53.581Z
+        - commits:
+            - subject: Update dependency npm to v9.7.1
+              hash: 6af4dabea40287d9bac00f001ea5cb2e228d2277
+              body: |
+                Update npm from 9.6.7 to 9.7.1
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-14.10.0
+          title: ""
+          date: 2023-06-07T16:02:28.180Z
+        - commits:
+            - subject: Set systemd stopsignal to SIGRTMIN+3
+              hash: 5c69245959e57bcb4c033bc027d817801f7a1428
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-14.9.4
+          title: ""
+          date: 2023-05-31T16:09:26.999Z
+        - commits:
+            - subject: Update dependency npm to v9.6.7
+              hash: bac91d35160c081c4724034f4c49f26079119b04
+              body: |
+                Update npm from 9.6.6 to 9.6.7
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.9.3
+          title: ""
+          date: 2023-05-18T15:18:26.274Z
+        - commits:
+            - subject: Update dependency npm to v9.6.6
+              hash: 87d78dfed5c1dc471dfa6499485b9fa52d81a0ab
+              body: |
+                Update npm from 9.6.5 to 9.6.6
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.9.2
+          title: ""
+          date: 2023-05-03T21:18:50.684Z
+        - commits:
+            - subject: Update dependency npm to v9.6.5
+              hash: c37855ad87d4a11093ca5397667148c2560b0521
+              body: |
+                Update npm from 9.6.4 to 9.6.5
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.9.1
+          title: ""
+          date: 2023-05-01T16:11:19.988Z
+        - commits:
+            - subject: Update Node.js to v18.16.0
+              hash: b8ea22dc19d4ae3fcb039fe9f1abac9e6dec53c8
+              body: |
+                Update node from 18.15.0 to 18.16.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.9.0
+          title: ""
+          date: 2023-05-01T15:08:39.437Z
+        - commits:
+            - subject: lock to prevent concurrent config updates
+              hash: 7c43074805b0ef670bbe4654cb727d4fd3a4998a
+              body: >
+                * leading to duplicate entries and
+                https://github.com/balena-io/balena-cloud/actions/runs/4801183207/jobs/8543115448
+              footer:
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-14.8.1
+          title: ""
+          date: 2023-05-01T14:48:09.368Z
+        - commits:
+            - subject: Update dependency node to v18.16.0
+              hash: f37a37f174c62492c80922bcefed890dcd79ca63
+              body: |
+                Update node from 18.15.0 to 18.16.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.8.0
+          title: ""
+          date: 2023-04-13T01:30:31.432Z
+        - commits:
+            - subject: Update dependency npm to v9.6.4
+              hash: f462624984894f5b556b1c14596804f6f3775f10
+              body: |
+                Update npm from 9.6.3 to 9.6.4
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.7.4
+          title: ""
+          date: 2023-04-05T21:12:29.421Z
+        - commits:
+            - subject: Update dependency npm to v9.6.3
+              hash: da1fbbedb7fc0f2c3217dc6fc59ac0d5c53358ef
+              body: |
+                Update npm from 9.6.2 to 9.6.3
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.7.3
+          title: ""
+          date: 2023-03-30T21:50:19.246Z
+        - commits:
+            - subject: Maintain legacy docker tags behaviour
+              hash: 34b2de3df298c53120ad714329ab2344657a7078
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-14.7.2
+          title: ""
+          date: 2023-03-22T16:00:23.319Z
+        - commits:
+            - subject: Update dependency npm to v9.6.2
+              hash: 0761d839de2e00e3c0248b4cd386b02c24ed041b
+              body: |
+                Update npm from 9.6.0 to 9.6.2
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.7.1
+          title: ""
+          date: 2023-03-20T21:50:27.970Z
+        - commits:
+            - subject: Update dependency node
+              hash: 506cc28914b6e972a008ce4d4ec059bd03600eaf
+              body: |
+                Update node to 18.15.0
+
+                Update node from 18.14.2 to 18.15.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.7.0
+          title: ""
+          date: 2023-03-20T19:49:51.262Z
+        - commits:
+            - subject: Restart confd if it fails to start
+              hash: 016e1648f87140697929352e48e26268d3da6641
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Anton Belodedenko
+              nested: []
+          version: open-balena-base-14.6.1
+          title: ""
+          date: 2023-03-14T18:06:32.094Z
+        - commits:
+            - subject: Update dependency npm to 9.6.0
+              hash: 2690a6a9440f14a4342ed01e4084181e110fa705
+              body: |
+                Update npm to 9.6.0
+
+                Update npm from 9.5.1 to 9.6.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.6.0
+          title: ""
+          date: 2023-03-02T10:50:07.443Z
+        - commits:
+            - subject: Update Node.js to v18.14.2
+              hash: fecd463bab599ff231d4ce49a78a18ef93e7feeb
+              body: |
+                Update node to 18.14.2
+
+                Update node from 18.14.1 to 18.14.2
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.5.4
+          title: ""
+          date: 2023-02-22T22:50:04.025Z
+        - commits:
+            - subject: Update dependency npm to 9.5.1
+              hash: 0ebdfd84ae9b56b0f14936d0292f744156869f81
+              body: |
+                Update npm to 9.5.1
+
+                Update npm from 9.5.0 to 9.5.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.5.3
+          title: ""
+          date: 2023-02-22T20:50:21.405Z
+        - commits:
+            - subject: Update dependency node to 18.14.2
+              hash: e700e1d25da951c94f48e1656fafcf7c15a65f51
+              body: |
+                Update node to 18.14.2
+
+                Update node from 18.14.1 to 18.14.2
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.5.2
+          title: ""
+          date: 2023-02-21T20:50:44.948Z
+        - commits:
+            - subject: Update no-systemd nodejs to 18.14.1
+              hash: ca8e18a969db856881cbfedc23a3144747d2f782
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Page-
+              nested: []
+          version: open-balena-base-14.5.1
+          title: ""
+          date: 2023-02-20T11:20:13.039Z
+        - commits:
+            - subject: Update dependency npm to 9.5.0
+              hash: f3df618fb95a434b3777b3678c30bd0b9f83e37a
+              body: |
+                Update npm to 9.5.0
+
+                Update npm from 9.4.1 to 9.5.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.5.0
+          title: ""
+          date: 2023-02-17T10:50:35.397Z
+        - commits:
+            - subject: Update dependency node to 18.14.1
+              hash: 3441c2306d38f449eb30ae19d037bc11556b2dee
+              body: |
+                Update node to 18.14.1
+
+                Update node from 18.14.0 to 18.14.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.4.2
+          title: ""
+          date: 2023-02-16T23:51:09.734Z
+        - commits:
+            - subject: Resolve some apt warnings by adding protection flags
+              hash: e2209f980026ad64548587f35ddc5e0e2e102ad1
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+            - subject: Clear the npm cache manually before running cache clear
+              hash: 21ba9cdef0659106d034b04ac051400f7c043439
+              body: |
+                On emulated builds like arm64 the cache clear command
+                can fail and this seems to unblock it.
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-14.4.1
+          title: ""
+          date: 2023-02-03T22:36:31.788Z
+        - commits:
+            - subject: Update nodejs to 18.14.0 and npm to 9.4.1
+              hash: 8f8ff1c68b4d1973f3e6c03e4ac4b5ab8ee70592
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-14.4.0
+          title: ""
+          date: 2023-02-03T17:34:44.201Z
+        - commits:
+            - subject: Update dependency node to 18.14.0
+              hash: 94316b8e029eaf1a15ec303b5e6887261971c4a3
+              body: |
+                Update node to 18.14.0
+
+                Update node from 18.13.0 to 18.14.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-14.3.0
+          title: ""
+          date: 2023-02-02T20:01:11.681Z
+        - commits:
+            - subject: Update to nodejs 18.13.0
+              hash: 93d27af823100a75822e20f29f41dc4d576aa8e1
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-14.2.0
+          title: ""
+          date: 2023-01-09T15:46:31.806Z
+        - commits:
+            - subject: "no-systemd: Use official node base image"
+              hash: eb9e3e329a78fb29eb4351814b99be23be6d68c6
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-14.1.4
+          title: ""
+          date: 2022-12-14T00:44:36.849Z
+        - commits:
+            - subject: Update Flowzone workflow to support external contributions
+              hash: 3739ae929bdf588638b2f1849dff98c7f596c5c1
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+            - subject: Build systemd variant for both amd64 and arm64
+              hash: 983dd18bfc389faefeb9ccd54a152b1365824b81
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-14.1.3
+          title: ""
+          date: 2022-12-08T18:56:05.586Z
+        - commits:
+            - subject: Allow plain TLD certs without UUID
+              hash: 2101ccfcf256a0da7b9fda27ce390d655214d4db
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-14.1.2
+          title: ""
+          date: 2022-11-30T02:06:27.321Z
+        - commits:
+            - subject: Correct public|private cert. check
+              hash: a22b6b42b38c5423578117e8d03c3a25ce02cd5d
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-14.1.1
+          title: ""
+          date: 2022-11-29T22:26:31.026Z
+        - commits:
+            - subject: Enable builds of no-systemd variant for arm64
+              hash: eb0e7644ae148ef34901fefab6a9c45d22688a9a
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-14.1.0
+          title: ""
+          date: 2022-11-24T11:14:20.809Z
+        - commits:
+            - subject: Update nodejs to 18.12.1
+              hash: 27b5a62d68a121e4856aefeca6f575cb44b01d40
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-14.0.1
+          title: ""
+          date: 2022-11-09T03:53:17.490Z
+        - commits:
+            - subject: Update to nodejs 18
+              hash: 3d9cffff7898abf4d82b3f699b673bee76ea3e66
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-14.0.0
+          title: ""
+          date: 2022-10-27T11:48:16.274Z
+        - commits:
+            - subject: Update nodejs to 18.18.0
+              hash: 6e6ba93463f9020b200f242881fe5de27c1426fc
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.6.1
+          title: ""
+          date: 2022-10-24T09:22:00.512Z
+        - commits:
+            - subject: Update balenalib/amd64-debian-node Docker tag to v16.18.0
+              hash: 7f559f02f542427fe457175b974a6194038f6f6f
+              body: |
+                Update balenalib/amd64-debian-node to 16.18.0
+
+                Update balenalib/amd64-debian-node from 16.17.1 to 16.18.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-13.6.0
+          title: ""
+          date: 2022-10-14T18:09:18.515Z
+        - commits:
+            - subject: Switch to Flowzone for CI/CD
+              hash: 2723e0e9b01d81e2c41bb79232ab0d101f8ebe71
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-13.5.3
+          title: ""
+          date: 2022-10-14T17:47:53.889Z
+        - commits:
+            - subject: Update to nodejs 16.17.1
+              hash: e6e486ef5eb2a497c635701fceaba719af24f041
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.5.2
+          title: "'Update to nodejs 16.17.1'"
+          date: 2022-09-26T13:08:05.210Z
+        - commits:
+            - subject: Update nodejs to 16.17.0 and npm to 8.18.0
+              hash: 85d075b8f2e251515fd79500f72e4d8ab6fbb5d2
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.5.1
+          title: "'Update nodejs to 16.17.0 and npm to 8.18.0'"
+          date: 2022-08-22T12:32:31.002Z
+        - commits:
+            - subject: Update balenalib/amd64-debian-node Docker tag to v16.17.0
+              hash: def1d2e6db189ce01390bd48c3c99a2fadf5486a
+              body: |
+                Update balenalib/amd64-debian-node to 16.17.0
+
+                Update balenalib/amd64-debian-node from 16.16.0 to 16.17.0
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Renovate Bot
+              nested: []
+          version: open-balena-base-13.5.0
+          title: "'Update balenalib/amd64-debian-node Docker tag to v16.17.0'"
+          date: 2022-08-18T20:08:44.059Z
+        - commits:
+            - subject: Update nodejs to 16.16.0 and npm to 8.13.2
+              hash: 1e2f05bb44e7d25fbb52f8a738e2707d2915d340
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.4.0
+          title: "'Update nodejs to 16.16.0 and npm to 8.13.2'"
+          date: 2022-07-09T08:32:33.121Z
+        - commits:
+            - subject: Update nodejs to 16.15.1 and npm to 8.12.1
+              hash: af560ea9e6bd682c4c1eca56b5dce4ed95c56158
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.3.2
+          title: "'Update nodejs to 16.15.1 and npm to 8.12.1'"
+          date: 2022-06-08T15:00:20.717Z
+        - commits:
+            - subject: Add SystemMaxUse for journald.conf
+              hash: 59543bf6b8b1faf2914be1ff2302982c0d269b33
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.3.1
+          title: "'Add SystemMaxUse for journald.conf'"
+          date: 2022-05-05T09:33:37.847Z
+        - commits:
+            - subject: Update nodejs to 16.15.0 and npm to 8.8.0
+              hash: a7454fb62d845e444e3e798c577a264979da574a
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.3.0
+          title: "'Update nodejs to 16.15.0 and npm to 8.8.0'"
+          date: 2022-05-02T16:14:06.385Z
+        - commits:
+            - subject: Add support to map tokens from existing env
+              hash: e78d0887a9f859c0763f4875d990a3cc4186ac7e
+              body: >
+                * if global config already contains the value(s) for the map,
+                use them
+
+                * don't explicitly require BALENA_DEVICE_UID (openBalena/dockerd)
+
+                * add REGISTRY S3 secrets
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-13.2.3
+          title: "'Add support to map tokens from existing env'"
+          date: 2022-04-08T18:03:20.929Z
+        - commits:
+            - subject: Remove redundant package-lock.json
+              hash: 88a2c6f3315746b94d769bae81002482ba5d4b98
+              body: >
+                VersionBot used to create that file because of a bug. The bug
+                has long been fixed and the file is redundant.
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Akis Kesoglou
+              nested: []
+          version: open-balena-base-13.2.2
+          title: "'Remove redundant package-lock.json'"
+          date: 2022-04-05T18:47:41.535Z
+        - commits:
+            - subject: Update nodejs to 16.14.2 and npm to 8.5.5
+              hash: 165c44a52b291b9c335d3fe139d82ff0c99a5e96
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.2.1
+          title: "'Update nodejs to 16.14.2 and npm to 8.5.5'"
+          date: 2022-03-21T14:38:46.073Z
+        - commits:
+            - subject: Consistent SENTRY environment names
+              hash: 6677d1a2cc99657dc9070f2b392d39eddfe72a08
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: ab77
+              nested: []
+          version: open-balena-base-13.2.0
+          title: "'Consistent SENTRY environment names'"
+          date: 2022-02-22T23:30:35.932Z
+        - commits:
+            - subject: Update nodejs to 16.14.0 and npm to 8.5.1
+              hash: 96344108de1f79799132f47ad59643658590d582
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.1.0
+          title: "'Update nodejs to 16.14.0 and npm to 8.5.1'"
+          date: 2022-02-21T16:05:34.829Z
+        - commits:
+            - subject: Avoid cryptic names and rename bcr to registry-proxy
+              hash: c3d6787df9412883b8706f6edf7db80ed885b71f
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-13.0.7
+          title: "'Avoid cryptic names and rename bcr to registry-proxy'"
+          date: 2022-02-16T16:48:08.416Z
+        - commits:
+            - subject: Add new balena container registry (bcr) host
+              hash: 67769b8c23c562120aeee32ce38e3f80519370cb
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-13.0.6
+          title: "'Add new balena container registry (bcr) host'"
+          date: 2022-02-15T19:56:44.683Z
+        - commits:
+            - subject: Refactor ROOT_CA handling/resolution
+              hash: 2c26140eab961b5f6eac6e69fabfed3f35175dbf
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-13.0.5
+          title: Refactor ROOT_CA handling
+          date: 2022-02-01T20:10:39.392Z
+        - commits:
+            - subject: Update to nodejs 16.13.2 and npm 8.3.0
+              hash: 34eb13df1c1132857f1adf8c4f77a41b3f674677
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.0.4
+          date: 2022-01-11T20:01:46.378Z
+        - commits:
+            - subject: Update to nodejs 16.13.1 and npm 8.2.0
+              hash: f755bed613e3c18383ba032df6c179be06e5b1d9
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.0.3
+          date: 2021-12-08T08:29:52.680Z
+        - commits:
+            - subject: Stage stack global environment
+              hash: 1e11429dd099dbdb92dec93d11edd715fb640526
+              body: |
+                * cache environment on volume
+                * read hosts, tokens and sentry config from environment
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-13.0.2
+          date: 2021-11-19T02:02:07.272Z
+        - commits:
+            - subject: Install python3 for node-gyp 8.x which is used by npm 8
+              hash: 9b42d099d82c8c8249aef3a38ecacbcdb501c15f
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.0.1
+          date: 2021-11-01T16:33:58.305Z
+        - commits:
+            - subject: Update nodejs to 16.13.0 and npm 8.1.1
+              hash: ed92e55bd095696e03115761f3c396b72c801a33
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-13.0.0
+          date: 2021-10-30T01:26:26.658Z
+        - commits:
+            - subject: Update nodejs to 14.18.1 and npm to 6.14.15
+              hash: 613f0a4462227bc8dc2bb16aa91b3306c1c87b16
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-12.2.0
+          date: 2021-10-18T10:48:20.444Z
+        - commits:
+            - subject: Simplify config by baking the device UUID into the DNS_TLD if available
+              hash: 140aaf311c000963c51f3304a04221d386209c5a
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Akis Kesoglou
+              nested: []
+            - subject: Fix configuration for non-BoB deployments
+              hash: be5d9722d47b65ca511cfb66ab13ed1f3ddff372
+              body: >
+                The default value on the BALENA_DEVICE_UUID variable forced all
+                code paths that used to run optionally depending on whether
+                deployment was on a balenaOS device to run.
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Akis Kesoglou
+              nested: []
+          version: open-balena-base-12.1.1
+          date: 2021-10-14T11:28:26.606Z
+        - commits:
+            - subject: Auto-configure balenaMachine(bob)
+              hash: efb8da155b7bedec44558dfcd55cb6b535099c01
+              body: >
+                + allows balenaMachine(s)/BoB(s) to automatically configure
+                itself (without bob-cli)
+
+                + auto-configuration requires balena-ca and cert-manager to do the heavy lifting prior
+
+                + corresponding [balena-on-balena PR](https://github.com/balena-io/balena-on-balena/pull/261)
+
+
+                * refactor confd.service to include both root-ca and host-envvars handling
+
+                * add systemd path watcher to restart confd if keys/certs change during runtime
+
+                * store stack configuration available to all services in a persistent/shared volume (/balena)
+
+                * change resolver order to dns => mdns (ipv4) => mdns (ipv6) => return
+
+                * configure API key and JOSE/JWT key id
+
+                * configure open-balena-vpn (PKI) environment variables
+
+                * configure Sentry DSNs
+
+                * configure API keys/tokens
+
+                * configure proxy and devices SSH keys
+
+                * bundle Git SSH keys
+
+                * refactor environment handling in non-systemd variant
+
+                * deprecate BALENA_ prefixes from confd
+              footer:
+                Change-type: minor
+                change-type: minor
+                Co-authored-by: dfunckt <dfunckt@users.noreply.github.com>
+                co-authored-by: dfunckt <dfunckt@users.noreply.github.com>
+              author: ab77
+              nested: []
+          version: open-balena-base-12.1.0
+          date: 2021-09-24T16:30:37.661Z
+        - commits:
+            - subject: Attempt to load root CA certificate bundle from file
+              hash: 493bb446e99fc7a5b6ecaa4e796942aa65ad03d0
+              body: >
+                * allows dynamic certificate generation and loading within the
+                stack
+
+                * if a (volume|directory) /certs exists, set up a notification to watch
+                  for /certs/ca-bundle.pem and update CA certificates/restart confd
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-12.0.3
+          date: 2021-09-01T21:12:04.483Z
+        - commits:
+            - subject: Use multi-user.target as the default target
+              hash: 9006b9eb301b9a315b7fbde5fe4100681f3f4eac
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-12.0.2
+          date: 2021-08-24T17:26:10.620Z
+        - commits:
+            - subject: Use basic.target as the default target
+              hash: 8e886caf096ab5559f0e841b25e781549d686ce2
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-12.0.1
+          date: 2021-08-19T18:17:33.672Z
+        - commits:
+            - subject: Update to debian bullseye
+              hash: ab2063d323d09fcc7f9ea86bb8228eab9b543fd0
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-12.0.0
+          date: 2021-08-17T15:19:06.578Z
+        - commits:
+            - subject: Add hosts
+              hash: 19693644e1a255f602229c0cd9ba7d88ded29843
+              body: |
+                * loki
+                * alertmanager
+                * remove duplicate host
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-11.3.12
+          date: 2021-08-13T23:22:49.151Z
+        - commits:
+            - subject: Remove deprecated etcd config
+              hash: 00d595b6e7e525c692c522c4e3dca13e5e09015d
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-11.3.11
+          date: 2021-08-13T18:17:35.128Z
+        - commits:
+            - subject: Add missing init script
+              hash: e794f58cb352c0b5b8a42e946edfd0c6c07a3f66
+              body: |
+                * balena-root-ca
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-11.3.10
+          date: 2021-08-13T16:35:37.479Z
+        - commits:
+            - subject: Update no-systemd variant
+              hash: 7649527690631c316bb9db59e2e17d050b581fee
+              body: |
+                * fix entrypoint script no-systemd variant
+                * add retry to oneshot services
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-11.3.9
+          date: 2021-08-13T16:04:05.364Z
+        - commits:
+            - subject: Update nodejs to 14.17.5
+              hash: f53fdc6772da9353cd131053f350f266940997f5
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.3.8
+          date: 2021-08-12T15:43:43.425Z
+        - commits:
+            - subject: Use DNS_TLD internally
+              hash: 90ce2fde5004cf4f3e69af4eaac19947b024b9c3
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-11.3.7
+          date: 2021-07-30T19:18:49.722Z
+        - commits:
+            - subject: Accept DNS_TLD in place of BALENA_TLD
+              hash: a64345d362589ee037d982cb9481e476e72fb2f2
+              body: |
+                * backwards compatible with existing BALENA_TLD env var
+                * Handle DNS_TLD prefix (override BALENA_TLD if present)
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-11.3.6
+          date: 2021-07-30T18:19:56.513Z
+        - commits:
+            - subject: Update nodejs to 14.17.4 and npm to 6.14.14
+              hash: a4ebaa82f22a5aa4dc134c659e6aa117364d116d
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.3.5
+          date: 2021-07-30T17:16:32.586Z
+        - commits:
+            - subject: Correct env var name and sort
+              hash: 88c075b8f7ce7ad74fbe24bdd28c3713c3730ca4
+              body: >
+                * TOKEN_AUTH_REALM => REGISTRY2_TOKEN_AUTH_REALM
+
+                * REGISTRY2_TOKEN_AUTH_REALM is the new name for BALENA_TOKEN_AUTH_REALM
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-11.3.4
+          date: 2021-07-30T00:05:49.402Z
+        - commits:
+            - subject: Add parallel HOSTs and env vars
+              hash: 7ef7a8e470f195afec8a104e837f901c9f0d1044
+              body: >
+                * allows removal of BALENA_ prefixes across all products and
+                services (aside from reserved within balenaOS/Supervisor)
+
+                * made balena-root-ca service a dependency of confd.service
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-11.3.3
+          date: 2021-07-29T16:00:40.773Z
+        - commits:
+            - subject: Update nodejs to 14.17.2
+              hash: cc11cc5654ee0bf85af40882a567c9b7fb644f48
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.3.2
+          date: 2021-07-02T17:34:25.572Z
+        - commits:
+            - subject: Delete .github directory
+              hash: d4d32ee5b021b1dd8864e2a2285530f1f4a85829
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: dfunckt
+              nested: []
+          version: open-balena-base-11.3.1
+          date: 2021-06-30T15:35:52.543Z
+        - commits:
+            - subject: Update nodejs to 14.17.1
+              hash: e0471dbbe042d4416ad3bba67ea50dcc4565de9f
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Trong Nghia Nguyen <nghiant2710@gmail.com>
+                signed-off-by: Trong Nghia Nguyen <nghiant2710@gmail.com>
+              author: Trong Nghia Nguyen
+              nested: []
+          version: open-balena-base-11.3.0
+          date: 2021-06-30T03:47:56.917Z
+        - commits:
+            - subject: Update nodejs to 14.17.0 and npm to 6.14.13
+              hash: d4a35f84c95db475b972aab4ed7781ce47515f39
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.2.0
+          date: 2021-05-14T15:14:39.729Z
+        - commits:
+            - subject: Update nodejs to 14.16.1 and npm to 6.14.12
+              hash: 602c54358898ca38005824c748a0682df814d5a8
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.1.2
+          date: 2021-04-08T16:53:39.920Z
+        - commits:
+            - subject: Drop CircleCI
+              hash: 35e8f707fac5767b1d85c30d3ad9244caef1efd1
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-11.1.1
+          date: 2021-03-17T18:24:28.365Z
+        - commits:
+            - subject: Update nodejs to 14.16.0
+              hash: ed8a58f5db73244f75d2e10b6b8df9d883247558
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.1.0
+          date: 2021-02-24T14:22:42.656Z
+        - commits:
+            - subject: Update nodejs to 14.15.5 and npm to 6.14.11
+              hash: 2e812ae8993ad13b1ac0d7a760e4c45ab8b8bd9d
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.0.5
+          date: 2021-02-15T15:06:34.842Z
+        - commits:
+            - subject: Update nodejs to 14.15.4 and npm to 6.14.10
+              hash: 0a52eb67b211fdc31d73e279e6e871b2e803f485
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.0.4
+          date: 2021-01-08T15:21:19.521Z
+        - commits:
+            - subject: Update nodejs to 14.15.3 and npm to 6.14.9
+              hash: 6d9ed96133ca1b4783eafc8b8698f10cd88aaad2
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.0.3
+          date: 2020-12-18T12:11:00.995Z
+        - commits:
+            - subject: Update nodejs to 14.15.1
+              hash: cf533d8fa978bddd6650f129a010b285be485070
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.0.2
+          date: 2020-11-18T12:45:09.418Z
+        - commits:
+            - subject: Publish tagged versions of the no-systemd image
+              hash: 30cd15a4e5fa065635b76f18b842a0dd43320778
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.0.1
+          date: 2020-10-29T14:19:49.787Z
+        - commits:
+            - subject: Update to nodejs 14
+              hash: d2c0a6a0549b85ed9daa1d8f4085cd5dd96e6f86
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.0.0
+          date: 2020-10-27T16:09:19.043Z
+        - commits:
+            - subject: Fix no-systemd nodejs version
+              hash: 3b3db51c6012342fb70f868b8fa747078c2f2294
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-10.1.1
+          date: 2020-10-09T16:21:15.080Z
+        - commits:
+            - subject: Update nodejs to 12.19.0
+              hash: 8431b0e087367ac38454017f86bd1d6f8e8eb814
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-10.1.0
+          date: 2020-10-07T14:47:49.406Z
+        - commits:
+            - subject: Delete custom versionist.conf.js and add repo.yml
+              hash: c09ff99185178766bf236b20b52c5a09cfeb8a69
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Giovanni Garufi <giovanni@balena.io>
+                signed-off-by: Giovanni Garufi <giovanni@balena.io>
+              author: Giovanni Garufi
+              nested: []
+          version: open-balena-base-10.0.2
+          date: 2020-09-17T12:54:19.050Z
+        - commits:
+            - subject: Update nodejs to 12.18.4 and npm to 6.14.8
+              hash: 98ba722e6cc1ca083aaeacb270a6d6b1f2288a02
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-10.0.1
+          date: 2020-09-17T10:34:50.316Z
+        - commits:
+            - subject: remove support for etcd-based confd config
+              hash: 0d01099afeb30cb3693b554174ef2443f4d745a2
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+                Signed-off-by: Will Boyce <will@balena.io>
+                signed-off-by: Will Boyce <will@balena.io>
+              author: Will Boyce
+          version: open-balena-base-10.0.0
+          date: 2020-08-26T09:47:40.813Z
+        - commits:
+            - subject: Update nodejs to 12.18.3 and npm to 6.14.7
+              hash: 4155244b8964625dac10c55f8e3cf7a6010e1ebc
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-9.4.3
+          date: 2020-07-24T13:25:50.450Z
+        - commits:
+            - subject: Update nodejs to 12.18.2
+              hash: 7ca9da66bd3de13616642235a342f5b45feae96e
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-9.4.2
+          date: 2020-06-30T15:32:36.381Z
+        - commits:
+            - subject: Update nodejs to 12.18.1
+              hash: 94c1803d479d80d3f9c1450bf0c3ea0d4639478b
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-9.4.1
+          date: 2020-06-19T13:51:47.608Z
+        - commits:
+            - subject: Update nodejs to 12.18.0
+              hash: f7bf6f487ea64af6ffce821974ccddc5646bb6d8
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: open-balena-base-9.4.0
+          date: 2020-06-08T11:55:53.921Z
+        - commits:
+            - subject: Update nodejs to 12.17.0 and npm to 6.14.5
+              hash: 66675b45ed52a14775a1d0d01bcf6658ee9f0aca
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: open-balena-base-9.3.0
+          date: 2020-05-29T17:40:11.727Z
+        - commits:
+            - subject: Update nodejs to 12.16.3
+              hash: 069780c6c88a8247c684a574e57bf885c3b45be9
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-9.2.4
+          date: 2020-04-30T15:10:28.844Z
+        - commits:
+            - subject: Forward log from journald to console by default
+              hash: 60d85f6207929eb0426979fb56e5238439a3a5b8
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Trong Nghia Nguyen <nghiant2710@gmail.com>
+                signed-off-by: Trong Nghia Nguyen <nghiant2710@gmail.com>
+              author: Trong Nghia Nguyen
+          version: open-balena-base-9.2.3
+          date: 2020-04-15T10:39:48.849Z
+        - commits:
+            - subject: Update nodejs to 12.16.2, npm to 6.14.4
+              hash: 116bbb6bf4f9a548a68b959c39d54c8abc2d5bd7
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-9.2.2
+          date: 2020-04-09T12:42:03.658Z
+        - commits:
+            - subject: Update nodejs to 12.16.1
+              hash: 7662b09a46f2f24cfd0e9bf863132e318c997a30
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-9.2.1
+          date: 2020-02-20T16:51:53.021Z
+        - commits:
+            - subject: Update nodejs to 12.16.0
+              hash: 2d290c934fae54993e435f82b22943570b1a106e
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: open-balena-base-9.2.0
+          date: 2020-02-11T23:55:03.682Z
+        - commits:
+            - subject: Update nodejs to 12.15.0 and npm to 6.13.7
+              hash: 4d1e2434b642a8f892246b0e9c3fd08bca774488
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: open-balena-base-9.1.0
+          date: 2020-02-06T11:51:44.777Z
+        - commits:
+            - subject: Update nodejs to 12.14.1 and npm to 6.13.6
+              hash: b2405095eadada2e8d8f23f258247482c99ea564
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-9.0.5
+          date: 2020-01-10T17:34:31.385Z
+        - commits:
+            - subject: Mask apt-daily-upgrade.timer
+              hash: a714a4bebb2263baef4082c75ac42cf3e5fdf005
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-9.0.4
+          date: 2020-01-07T13:38:43.707Z
+        - commits:
+            - subject: Update nodejs to 12.14.0 and npm to 6.13.4
+              hash: 8fad0b4262e0991b52dbe217c2df80fe533b628a
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-9.0.3
+          date: 2019-12-24T13:25:53.531Z
+        - commits:
+            - subject: Don't use UID used in node archive when unpacking as root
+              hash: fa41cbe4adbb1355705f30d934fa4f8885d86d88
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Federico Fissore <federico@balena.io>
+                signed-off-by: Federico Fissore <federico@balena.io>
+              author: Federico Fissore
+          version: open-balena-base-9.0.2
+          date: 2019-12-20T12:45:38.781Z
+        - commits:
+            - subject: Update node to 12 in no systemd variant
+              hash: 3de89559505f2a10d94e4f0cc955c02651bdb8a3
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Roman Mazur <roman@balena.io>
+                signed-off-by: Roman Mazur <roman@balena.io>
+              author: Roman Mazur
+          version: open-balena-base-9.0.1
+          date: 2019-11-15T16:14:23.953Z
+        - commits:
+            - subject: Update to nodejs 12
+              hash: cde7021d266cfba7e6b7055421c7afb0c0dd2781
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+          version: open-balena-base-9.0.0
+          date: 2019-10-21T09:37:45.197Z
+        - commits:
+            - subject: Respect BALENA_TLD env variable in nosystemd variant
+              hash: 66ad0ec93fadc749c3104443a3313ff73bf04946
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Roman Mazur <roman@balena.io>
+                signed-off-by: Roman Mazur <roman@balena.io>
+              author: Roman Mazur
+            - subject: Optimize for caching
+              hash: 652a3e18545079de46bfe21c3891523467d6163f
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Roman Mazur <roman@balena.io>
+                signed-off-by: Roman Mazur <roman@balena.io>
+              author: Roman Mazur
+            - subject: Use balena node base image
+              hash: b7c1e12773a414a5f843cfaaba943eabf3425e71
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Roman Mazur <roman@balena.io>
+                signed-off-by: Roman Mazur <roman@balena.io>
+              author: Roman Mazur
+            - subject: Add a base image without systemd
+              hash: d7e44872d9594b9ef0557f78b8f38c6e449bbe54
+              body: >
+                Also configures circleCI to publish no-systemd variant in
+                parallel.
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Roman Mazur <roman@balena.io>
+                signed-off-by: Roman Mazur <roman@balena.io>
+              author: Roman Mazur
+          version: open-balena-base-8.1.0
+          date: 2019-09-24T16:07:27.946Z
+        - commits:
+            - subject: "🔒: Update Node to 10.16.3 and NPM to 6.10.3"
+              hash: 8714ca3fee1ff44187e0a0c4b6c648d0c2fe550c
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Connects-to: "#91"
+                connects-to: "#91"
+                Signed-off-by: Andreas Fitzek <andreas@balena.io>
+                signed-off-by: Andreas Fitzek <andreas@balena.io>
+              author: Andreas Fitzek
+          version: open-balena-base-8.0.3
+          date: 2019-08-16T12:10:08.587Z
+        - commits:
+            - subject: Update nodejs to 10.16.1 and npm to 6.10.2
+              hash: 11a141feb88985b698d5f4358505767e9065a200
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-8.0.2
+          date: 2019-08-06T13:52:12.883Z
+        - commits:
+            - subject: "mdns: Ensure multipart subdomains are allowed"
+              hash: bc5903d77867c3c969f1e7193cbef69dab12eeef
+              body: |
+                Debian Buster now uses Avahi 0.7 instead of
+                0.6.32. This means that there is now a stricter
+                policy defining MDNS domains. This commit allows
+                us to use multipart subdomains.
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Heds Simons <heds@balena.io>
+                signed-off-by: Heds Simons <heds@balena.io>
+              author: Heds Simons
+          version: open-balena-base-8.0.1
+          date: 2019-07-17T15:08:57.053Z
+        - commits:
+            - subject: Upgrade to debian buster
+              hash: d090290e87b279482d7e3884a0a9e93a845152fe
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+          version: open-balena-base-8.0.0
+          date: 2019-07-08T10:31:53.488Z
+        - commits:
+            - subject: "systemd: move StartLimitIntervalSec to proper conf section"
+              hash: d8e86fb27e02975a98ff271ec5c7f30c6f1dcd03
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Matthew McGinn <matthew@balena.io>
+                signed-off-by: Matthew McGinn <matthew@balena.io>
+              author: Matthew McGinn
+          version: open-balena-base-7.2.2
+          date: 2019-06-19T14:32:09.638Z
+        - commits:
+            - subject: Fix adding htoprc
+              hash: 24f7afc3559227e3c58cfcf1483aab91f034be5f
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-7.2.1
+          date: 2019-06-03T13:55:28.382Z
+        - commits:
+            - subject: Add default htop settings to hide threads and use a tree view
+              hash: c5d98f753b326b2b684ad997d470b0510eac86d2
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: open-balena-base-7.2.0
+          date: 2019-05-29T12:59:56.714Z
+        - commits:
+            - subject: Update nodejs to 10.16.0 and npm to 6.9.0
+              hash: 74815baf4ab2f617d2cd3301609ef21ea8aa4079
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: open-balena-base-7.1.0
+          date: 2019-05-29T11:12:37.555Z
+        - commits:
+            - subject: Disable the apt daily timer
+              hash: bbcc74a1b72886272bbec3071d79e0240c14a174
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-7.0.2
+          date: 2019-05-06T10:25:53.563Z
+        - commits:
+            - subject: Disable start limit for confd.service
+              hash: 8ef586e573f77b06adaead91f47093757cc0584b
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: open-balena-base-7.0.1
+          date: 2019-05-06T10:05:10.962Z
+        - commits:
+            - subject: "hostname-vars: Ensure previous hostname envvars aren't overwritten"
+              hash: 8eb1904dc5e5a99f5a92ab22e179f69636ce9e3b
+              body: ""
+              footer:
+                Connects-to: "#78"
+                connects-to: "#78"
+                Change-type: major
+                change-type: major
+                Signed-off-by: Heds Simons <heds@balena.io>
+                signed-off-by: Heds Simons <heds@balena.io>
+              author: Heds Simons
+          version: open-balena-base-7.0.0
+          date: 2019-03-14T16:05:18.429Z
+        - commits:
+            - subject: "versionbot: Add CHANGELOG.yml (for nested changelogs)"
+              hash: f7150cae490a106e8cf3d77bd0b19d2687b93a07
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Will Boyce <will@balena.io>
+                signed-off-by: Will Boyce <will@balena.io>
+              author: Will Boyce
+          version: open-balena-base-6.0.1
+          date: 2019-03-14T13:56:00.634Z
+        - commits:
+            - author: Heds Simons
+              body: |-
+                Adds the `BALENA_HOST_MONITOR` host and moves
+                `RESIN_DEVICE_UUID` to `BALENA_DEVICE_UUID`.
+                Should the UUID not be present, do not suffix the
+                hostnames with it.
+              footers:
+                change-type: major
+                connects-to: "#74"
+                signed-off-by: Heds Simons <heds@balena.io>
+              hash: 2ed66320598b446c385a53264f837e5545ff4317
+              subject: "envvars: Add Monitor host and use balena UUID"
+          date: 2019-03-11T16:58:28Z
+          version: open-balena-base-6.0.0
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: patch
+              hash: 1ed86955d086c676efe0e8a6ca90a35b300322fc
+              subject: Update node to v10.15.3
+          date: 2019-03-11T14:47:02Z
+          version: open-balena-base-5.3.3
+        - commits:
+            - author: Heds Simons
+              body: ""
+              footers:
+                change-type: patch
+                connects-to: "#72"
+                signed-off-by: Heds Simons <heds@balena.io>
+              hash: eb08a461be029693071daa7b50b14b2cc3f9516a
+              subject: "codeowners: Add backend team as owners"
+          date: 2019-03-08T11:40:00Z
+          version: open-balena-base-5.3.2
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: patch
+              hash: e446fe63fbc13004ec3adf426f2dd9651ef96d94
+              subject: Update nodejs to 10.15.2 and npm to 6.8.0
+          date: 2019-03-01T13:57:28Z
+          version: open-balena-base-5.3.1
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: patch
+              hash: cb1b9a791bdf38ed4c978793949ddc45db0b4eef
+              subject: Update nodejs to 10.15.1
+            - author: Will Boyce
+              body: ""
+              footers:
+                change-type: minor
+                signed-off-by: Will Boyce <will@balena.io>
+              hash: b5b092ae2eedeca1e5449e5cb8e2ac0b679a538d
+              subject: "journald: set RuntimeMaxUse=100M"
+          date: 2019-02-06T10:33:48Z
+          version: open-balena-base-5.3.0
+        - commits:
+            - author: Michael Angelos Simos
+              body: >-
+                We were using `env > /etc/docker.env` for storing a container's
+
+                environment to an envfile, to be used as `EnvironmentFile` for
+
+                `confd.service`. This way, backslash characters were "consumed" as
+
+                described [here](https://www.freedesktop.org/software/systemd/man/systemd.exec.html#EnvironmentFile=)
+              footers:
+                change-type: patch
+                signed-off-by: Michael Angelos Simos <michalis@balena.io>
+              hash: fd82073cdd505f3f3bfe0a28232529ca5e283a0b
+              subject: "confd: Fix backslashes being removed from envvars"
+          date: 2019-02-05T16:48:59Z
+          version: open-balena-base-5.2.1
+        - commits:
+            - author: Will Boyce
+              body: ""
+              footers:
+                change-type: minor
+                signed-off-by: Will Boyce <will@balena.io>
+              hash: 3094d980c60009d630f4ae7e84223abf5dbab5b3
+              subject: "confd: Update to v0.16.0"
+          date: 2019-02-04T11:27:18Z
+          version: open-balena-base-5.2.0
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: minor
+              hash: 3840b4b1094b833507435da546644ce305c1f10a
+              subject: Update nodejs to 10.15.0 and npm to 6.7.0
+          date: 2019-01-29T12:32:42Z
+          version: open-balena-base-5.1.0
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: patch
+              hash: f30d1d90d4544fac5868fad76b5ac7c55d753061
+              subject: Update to node 10.14.1
+          date: 2018-12-03T12:13:15Z
+          version: open-balena-base-5.0.1
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: major
+                signed-off-by: Pagan Gazzard <page@resin.io>
+              hash: 1901c25ddd2d3af98c64548c58d91c91e3913f94
+              subject: Update nodejs to 10.x
+          date: 2018-10-30T13:20:39Z
+          version: open-balena-base-5.0.0
+        - commits:
+            - author: Heds Simons
+              body: |-
+                Should subdomain variables not be set for a component, this
+                base change attempts to set relevant subdomain envvars to
+                the current resin device UUID, assuming a base `BALENA_TLD`
+                envvar is present.
+              footers:
+                change-type: minor
+                connects-to: "#61"
+                signed-off-by: Heds Simons <heds@balena.io>
+              hash: fa56c916cdb7efb9f7d5a7e3f2d1803b16c153a7
+              subject: "subdomains: Autoset subdomain envvars based on device UUID"
+          date: 2018-10-24T11:54:50Z
+          version: open-balena-base-4.5.0
+        - commits:
+            - author: Will Boyce
+              body: Image is now available at `balena/open-balena-base`.
+              footers:
+                change-type: patch
+                signed-off-by: Will Boyce <will@balena.io>
+              hash: 3f09996efc89b131b70a0bf691424ea76b49f977
+              subject: "rename: s/resin/balena"
+          date: 2018-10-23T15:01:00Z
+          version: open-balena-base-4.4.2
+        - commits:
+            - author: Heds Simons
+              body: |-
+                Historically, aliasing of containers occured via the use
+                of the `--link` (or `links` property of `docker-compose`).
+                This would be required on each container to ensure that
+                the relevant alias would be added to the `/etc/hosts` file.
+                However, this functionality is now deprecated in favour
+                of the use of the `networks.<name>.aliases` property, set
+                on a particular service to ensure all other services can
+                reach that service using the bridge on which they exist.
+                Unfortunately, this is carried out by adding the records
+                to the Docker daemon's internal DNS, referenced before
+                propagating to the host. Whilst this is good in theory,
+                in the case where MDNS is used (and in particular the
+                recommended Avahi `libnss-mdns` NS switch config) this
+                means that MDNS is consulted *before* the Docker DNS
+                service, in effect meaning that aliases to the internal
+                IP address for a service are never used, and in effect
+                negating them.
+                To counter this, this commit ensures that DNS is
+                *always* prioritised over MDNS. This has the effect of
+                querying DNS for `.local` addresses, which can lead
+                to an initial lag in lookups (although these should then
+                be cached locally per service), and potentially more DNS
+                traffic that ideal. However, for the purposes of a
+                Devenv/OnPrem, this is acceptable.
+                It has no effect on Cloud deployed instances, as they
+                will not use `.local` suffixes.
+              footers:
+                change-type: patch
+                connects-to: "#59"
+                signed-off-by: Heds Simons <heds@resin.io>
+              hash: 953bbd6b2c375831e45fecfe26ca28f6b7338230
+              subject: "dns: Prioritise DNS over MDNS lookups for aliases"
+          date: 2018-09-28T08:37:57Z
+          version: open-balena-base-4.4.1
+        - commits:
+            - author: Heds Simons
+              body: |-
+                Changes to allow backend components to output to the console
+                should they wish to.
+                Also adds a ResinCI config to allow builds to be pushed.
+              footers:
+                change-type: minor
+                connects-to: "#57"
+                signed-off-by: Heds Simons <heds@resin.io>
+              hash: 94d9496b4ae447de85db2dcfeeea257ee552c370
+              subject: "logging: Allow child components\tto log to the console"
+          date: 2018-09-24T13:05:40Z
+          version: open-balena-base-4.4.0
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: minor
+                signed-off-by: Pagan Gazzard <page@resin.io>
+              hash: 72d6b7d45beed6853ae6d02ac0df066ad79d5335
+              subject: Update to nodejs 8.12.0 and npm 6.4.1
+          date: 2018-09-11T11:04:26Z
+          version: open-balena-base-4.3.0
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: patch
+                signed-off-by: Pagan Gazzard <page@resin.io>
+              hash: 88729b4a687dd66ebffe4ded2b430aac0caa8e0a
+              subject: Update to nodejs 8.11.4
+          date: 2018-08-20T17:34:41Z
+          version: open-balena-base-4.2.2
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: patch
+              hash: df71f3465fcdf922e7db0a0fc6e2e57ad848a3b3
+              subject: Update to nodejs 8.11.3
+          date: 2018-07-03T16:11:37Z
+          version: open-balena-base-4.2.1
+        - commits:
+            - author: Heds Simons
+              body: |-
+                Part of continued work to allow multi-target resin deployments.
+                Also moves CircleCI config to correct directory.
+              footers:
+                change-type: minor
+                connects-to: "#51"
+                signed-off-by: Heds Simons <heds@whaleway.net>
+              hash: 772ed9c19242b7b5d0785cc490eebdee46404e06
+              subject: Add `libnss-mdns` to base images for MDNS lookups.
+          date: 2018-07-03T12:14:11Z
+          version: open-balena-base-4.2.0
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: minor
+              hash: 018fbc55bc21723547cfb837603ce801129d3fd6
+              subject: Update to nodejs 8.11.2 and npm 5.10.0
+          date: 2018-05-16T17:14:02Z
+          version: open-balena-base-4.1.0
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: major
+              hash: 232711a2cbe3eebae76481d9247eb7ba50cc02b3
+              subject: Update to debian stretch
+          date: 2018-04-26T20:09:44Z
+          version: open-balena-base-4.0.0
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: patch
+              hash: 828470cc6f56055c921a8745e2ce4d840712b18f
+              subject: Fix disabling systemd rate limiting.
+          date: 2018-04-24T17:04:13Z
+          version: open-balena-base-3.4.1
+        - commits:
+            - author: Heds Simons
+              body: >-
+                Should the `BALENA_ROOT_CA` environment variable be present in
+                the
+
+                `/etc/docker.env` environment file, then the specified root CA is
+
+                added to the trusted certificate store.
+
+                Downstream components can then check the presence of the environment
+
+                variable and point `NODE_EXTRA_CA_CERTS` to `/etc/ssl/certs/balenaRootCA.pem`
+
+                if required, ensuring they Require/Want `balena-root-ca.service` in their
+
+                own service.
+              footers:
+                change-type: minor
+                connects-to: "#46"
+              hash: e6071936531fda927089599f3d26489ce389a770
+              subject: Add `balena-root-ca.service` unit file for self-signed CA handling.
+          date: 2018-04-11T09:09:53Z
+          version: open-balena-base-3.4.0
+        - commits:
+            - author: Michael Angelos Simos
+              body: |-
+                with an envvar switch (CONFD_BACKEND=ENV).
+                Default confd back-end to remain unchanged
+              footers:
+                change-type: minor
+              hash: 851bb8edb8ee75ff09b860f5edfee99f33ecc6e7
+              subject: Support confd env back-end switch,
+            - author: Michael Angelos Simos
+              body: ""
+              hash: e2bd3083fe7fab2666ca467bacdd92a78b320996
+              subject: Merge branch 'master' into 43-confd-env-backend-support
+          date: 2018-03-12T11:05:27Z
+          version: open-balena-base-3.3.0
+        - commits:
+            - author: Michael Angelos Simos
+              body: Version 0.15.0 introduces features and bugfixes.
+              footers:
+                change-type: minor
+              hash: 9029fdb9d7325dcd08eadddbd194976b565da675
+              subject: Upgrade confd to v0.15.0
+          date: 2018-03-09T12:59:45Z
+          version: open-balena-base-3.2.0
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: minor
+              hash: 34f6887e50d00f6a3282a1a126bbb2321fb72bf7
+              subject: Update nodejs to 8.10.0 and npm to 5.6.0
+          date: 2018-03-08T08:05:50Z
+          version: open-balena-base-3.1.0
+        - commits:
+            - author: Cameron Diver
+              body: >-
+                This can often cause stack traces etc to be suppressed, which is
+                not
+
+                helpful.
+              footers:
+                change-type: patch
+                signed-off-by: Cameron Diver <cameron@resin.io>
+              hash: d9a5868eaa94a264bade7fa3cb015ec6f2a23c05
+              subject: Turn off journald rate limiting
+          date: 2017-11-29T20:06:10Z
+          version: open-balena-base-3.0.1
+        - commits:
+            - author: Pagan Gazzard
+              body: ""
+              footers:
+                change-type: major
+              hash: 6608b8db39617e38b87b04a3ec10ff7f39aa3372
+              subject: Update nodejs to 8.9.0 and npm to 5.5.1
+          date: 2017-11-01T20:16:09Z
+          version: open-balena-base-3.0.0
+        - commits:
+            - author: Andreas Fitzek
+              body: ""
+              footers:
+                change-type: patch
+                connects-to: "#38"
+                signed-off-by: Andreas Fitzek <andreas@resin.io>
+              hash: 6068d4e93dc4bd860b39e376d0568a16c41259a7
+              subject: Update node to 6.11.5
+          date: 2017-10-25T17:25:53Z
+          version: open-balena-base-2.9.2
+        - commits:
+            - author: John (Jack) Brown
+              body: ""
+              footers:
+                change-type: patch
+              hash: 20480c5c993ebb4ecda22b354da27e030540ad66
+              subject: Fix tag detection on circle builds
+          date: 2017-09-12T15:33:56Z
+          version: open-balena-base-2.9.1
+        - commits:
+            - author: Lucian Buzzo
+              body: >-
+                Connects to #34
+
+                This version introduces support for default values in the `getv` template function
+              footers:
+                change-type: minor
+              hash: 09d70541e02bfb8640b559e8faa9c2a66caa5451
+              subject: Update confd to version 0.13.0
+          date: 2017-09-11T21:32:59Z
+          version: open-balena-base-2.9.0
+        - commits:
+            - author: John (Jack) Brown
+              body: ""
+              footers:
+                change-type: patch
+              hash: adc037f931336408f6115ea88c3c639b9b406d1c
+              subject: Add CircleCI integration
+          date: 2017-09-08T17:03:25Z
+          version: open-balena-base-2.8.5
+        - commits:
+            - author: John (Jack) Brown
+              body: ""
+              footers:
+                change-type: patch
+              hash: 168f59352e2ed59bbda7caf21ba25d5e13024de2
+              subject: Add versionist config
+          date: 2017-07-27T15:54:28Z
+          version: open-balena-base-2.8.4
+  version: 19.1.5
+  title: ""
+  date: 2024-02-23T12:01:09.084Z
+- commits:
     - subject: Update dependency husky to v9
       hash: 16eac572fbe00277f8003f081f083f2f339d78e3
       body: |
