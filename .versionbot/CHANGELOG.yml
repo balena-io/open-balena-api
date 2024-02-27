@@ -1,4 +1,32 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v17.0.6
+      hash: 2e2844d4ca74dbfa63bfbec0f6d5afd5efd6a69b
+      body: |
+        Update balena/open-balena-base from 17.0.5 to 17.0.6
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Move the no-systemd compatibility tag to a suffix
+              hash: a869fb57fe2866a16aecfc75f33eb679696de3dd
+              body: >
+                We kept it as a prefix for historical reasons, but renovate
+                versioning expects the docker compatibility tag to follow the
+                semver.
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-17.0.6
+          title: ""
+          date: 2024-02-27T15:03:10.991Z
+  version: 19.1.8
+  title: ""
+  date: 2024-02-27T16:01:04.346Z
+- commits:
     - subject: Lock file maintenance
       hash: 27fd2c68c49ac8185209570fde65eaa9162dc7fd
       body: |
