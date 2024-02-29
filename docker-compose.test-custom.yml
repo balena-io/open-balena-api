@@ -2,7 +2,6 @@ version: "2.4"
 services:
   db:
     image: balena/open-balena-db:master
-    restart: "no"
     ports:
       - "5432"
       - "5431:5432"
@@ -10,14 +9,12 @@ services:
       - local-test
   redis:
     image: redis:7-alpine
-    restart: "no"
     ports:
       - "6378:6379"
     networks:
       - local-test
   loki:
     image: grafana/loki:2.9.5
-    restart: "no"
     ports:
       - "9095:9095"
       - "3100:3100"
@@ -25,7 +22,6 @@ services:
       - local-test
   minio-server:
     image: minio/minio
-    restart: always
     environment:
       MINIO_ROOT_USER: USERNAME
       MINIO_ROOT_PASSWORD: PASSWORD
@@ -52,7 +48,6 @@ services:
       context: ./
       target: test
     command: npx mocha
-    restart: "no"
     depends_on:
       - "db"
       - "redis"
@@ -127,7 +122,6 @@ services:
       build:
         context: ./
         target: test
-      restart: "no"
       depends_on:
         - "db"
         - "redis"
