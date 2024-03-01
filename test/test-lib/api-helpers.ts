@@ -95,7 +95,7 @@ export const expectResourceToMatch = async <T = AnyObject>(
 		| number
 		| boolean
 		| object
-		| ((chaiPropertyAssertion: Chai.Assertion) => void)
+		| ((chaiPropertyAssertion: Chai.Assertion, value: unknown) => void)
 	>,
 ): Promise<T> => {
 	const requestPromise = pineUser.get({
@@ -117,7 +117,10 @@ export const expectResourceToMatch = async <T = AnyObject>(
 	expect(result).to.be.an('object');
 	for (const [key, valueOrAssertion] of Object.entries(expectations)) {
 		if (typeof valueOrAssertion === 'function') {
-			valueOrAssertion(expect(result).to.have.property(key));
+			valueOrAssertion(
+				expect(result).to.have.property(key),
+				result![key as keyof typeof result],
+			);
 		} else if (
 			typeof valueOrAssertion === 'object' &&
 			valueOrAssertion != null
