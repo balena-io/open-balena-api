@@ -1,4 +1,18 @@
 - commits:
+    - subject: "heartbeat: Clear the write cache when marking a device as offline"
+      hash: 521d75f20db2d1677e635027dbfb31fb9fc7fd4b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://balena.zulipchat.com/#narrow/stream/346007-balena-io.2FbalenaCloud/topic/Statuspage.20Alert.20-.20lj8x31dm9wh9
+        see: https://balena.zulipchat.com/#narrow/stream/346007-balena-io.2FbalenaCloud/topic/Statuspage.20Alert.20-.20lj8x31dm9wh9
+      author: Thodoris Greasidis
+      nested: []
+  version: 19.1.14
+  title: ""
+  date: 2024-03-01T07:35:50.887Z
+- commits:
     - subject: Add tests for the race conditions on the heartbeat state management
       hash: 9c2dbff592cea97bca01e22917547cd7289a9a55
       body: ""
