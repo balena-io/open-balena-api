@@ -632,11 +632,10 @@ export default () => {
 										// Wait for the stale (TIMEOUT -> OFFLINE) message queue item to get consumed.
 										await setTimeout(TIMEOUT_SEC * 1000 + 1000);
 
-										// The write cache should then agree with the DB on the device being Online (but atm this fails)
-										// TODO: This should be fixed to be either offline or undefined.
-										expect(
-											await getHeartbeatWriteCacheState(device3.id),
-										).to.have.property('currentState', 'online');
+										// it's expected that the write cache gets cleared when the DB switches to offline
+										expect(await getHeartbeatWriteCacheState(device3.id)).to.be
+											.null;
+
 										await expectResourceToMatch(
 											pineUser,
 											'device',
@@ -654,98 +653,27 @@ export default () => {
 									/The api_heartbeat_state should have become online but it was found offline/,
 								);
 
-								itExpectsError(
-									'should switch to Online after a subsequent state GET and not stay stuck as offline forever',
-									async function () {
-										// Confirm that we are in the case that the DB says Offline & the write Cache says Online
-										await expectDeviceHeartbeat(device3.id, {
-											db: DeviceOnlineStates.Offline,
-											cache: DeviceOnlineStates.Online,
-										});
+								it('should switch to Online after a subsequent state GET and not stay stuck as offline forever', async function () {
+									// Confirm that we are in he case that the DB says Offline & the write Cache is cleared up
+									await expectDeviceHeartbeat(device3.id, {
+										db: DeviceOnlineStates.Offline,
+										cache: null,
+									});
 
-										await fakeDevice.getState(
-											device3,
-											device3.uuid,
-											stateVersion,
-										);
-										await setTimeout(maxGetStateEventConsumptionTimeout);
-										// B/c the write cache's state was already online, there was no device PATCH
-										expect(device3ChangeEventSpy.called).to.be.false;
-										await expectDeviceHeartbeat(device3.id, {
-											db: DeviceOnlineStates.Offline,
-											cache: DeviceOnlineStates.Online,
-										});
-
-										await expectResourceToMatch(
-											pineUser,
-											'device',
-											device3.id,
-											{
-												// We use the same description as in the itExpectsError, so that we are sure which part failed.
-												api_heartbeat_state: (prop, value) =>
-													prop.to.equal(
-														DeviceOnlineStates.Online,
-														`The api_heartbeat_state should have recovered to online but it was found ${value}`,
-													),
-											},
-										);
-										expect(
-											await getHeartbeatWriteCacheState(device3.id),
-										).to.have.property('currentState', 'online');
-									},
-									/The api_heartbeat_state should have recovered to online but it was found offline/,
-								);
-
-								// TODO: This should not be happening. Drop this v test once the previous tests gets fixed.
-								itExpectsError(
-									'[FIXME] is expected that it will stay stuck to Offline when doing regular state GETs',
-									async function () {
-										await expectDeviceHeartbeat(device3.id, {
-											db: DeviceOnlineStates.Offline,
-											cache: DeviceOnlineStates.Online,
-										});
-										const keepPollingForMs =
-											devicePollInterval + TIMEOUT_SEC * 1000 + 1000;
-										const keepPollingForUntil = Date.now() + keepPollingForMs;
-										// Confirm that if the device keeps polling regularly every POLL_MSEC
-										// then it will stay as Offline in the DB.
-										while (Date.now() < keepPollingForUntil) {
-											await fakeDevice.getState(
-												device3,
-												device3.uuid,
-												stateVersion,
-											);
-											await setTimeout(maxGetStateEventConsumptionTimeout);
-											// B/c the write cache's state was already online, there was no device PATCH
-											expect(device3ChangeEventSpy.called).to.be.false;
-											await expectDeviceHeartbeat(device3.id, {
-												db: DeviceOnlineStates.Offline,
-												cache: DeviceOnlineStates.Online,
-											});
-
-											console.log(`⌚  Waiting for next state GET poll...`);
-											await setTimeout(POLL_MSEC);
-										}
-
-										expect(
-											await getHeartbeatWriteCacheState(device3.id),
-										).to.have.property('currentState', 'online');
-										await expectResourceToMatch(
-											pineUser,
-											'device',
-											device3.id,
-											{
-												// We use the same description as in the itExpectsError, so that we are sure which part failed.
-												api_heartbeat_state: (prop, value) =>
-													prop.to.equal(
-														DeviceOnlineStates.Online,
-														`The api_heartbeat_state should have recovered to online but it was found ${value}`,
-													),
-											},
-										);
-									},
-									/The api_heartbeat_state should have recovered to online but it was found offline/,
-								);
+									await fakeDevice.getState(
+										device3,
+										device3.uuid,
+										stateVersion,
+									);
+									await waitFor({
+										maxWait: maxGetStateEventConsumptionTimeout,
+										checkFn: () => device3ChangeEventSpy.called,
+									});
+									await expectDeviceHeartbeat(device3.id, {
+										db: DeviceOnlineStates.Online,
+										cache: DeviceOnlineStates.Online,
+									});
+								});
 							});
 
 							// Here we test how the heartbeat behaves when the write cache has expired (eg b/c of downtime) and when the API starts working again,
@@ -851,12 +779,10 @@ export default () => {
 								// instead of being stuck forever.
 								// TODO: We should be able to drop this once the ^ test gets fixed.
 								it('should switch to Online after a subsequent state GET and not stay stuck to Offline forever', async function () {
+									// Confirm that we are in he case that the DB says Offline & the write Cache is cleared up
 									await expectDeviceHeartbeat(device3.id, {
 										db: DeviceOnlineStates.Offline,
-										// There is a stale TIMEOUT write cache still b/c of the arbitrary +5sec EXpiry that it has
-										// and b/c we do not clean it up when switching to OFFLINE.
-										// TODO: We should probably clean this up when going OFFLINE.
-										cache: DeviceOnlineStates.Timeout,
+										cache: null,
 									});
 
 									await fakeDevice.getState(

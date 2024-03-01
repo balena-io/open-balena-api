@@ -318,6 +318,15 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 								deviceId,
 								DeviceOnlineStates.Offline,
 							);
+							// This not only cleans-up the write cache for housekeeping reasons, but also
+							// invalidates it whenever a device goes Offline.
+							// This way, after an incident/downtime, when the RSMQ resumes processing the pending heartbeat changes
+							// and new state GETs arrive, racing to update the DB & write cache's heartbeat state,
+							// the DB & write cache get back in sync (if they have drifted) as soon as each device is marked as Offline,
+							// allowing it to go back Online on the next state GET.
+							await redis.del(
+								`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${deviceId}`,
+							);
 							break;
 						default:
 							throw new Error(
