@@ -70,7 +70,8 @@ export let API_HEARTBEAT_STATE_TIMEOUT_SECONDS = intVar(
 /**
  * null:do not update the DB's device heartbeat to Online, if Redis says it's already Online
  * 0: always run DB device heartbeat updates to Online
- * >0: skip updating the DB's device heartbeat to Online for N ms, if Redis says it's already Online
+ * >0: always persist an Online device heartbeat to the DB after N ms, even if the write cache is already Online.
+ *   ie: only use the Redis write cache Online-ness for up to N ms and skip updating the DB to Online during that period.
  */
 export let API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT = intVar(
 	'API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT',
