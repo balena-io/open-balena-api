@@ -11,6 +11,11 @@ import {
 	trustProxyVar,
 } from '@balena/env-parsing';
 
+// Even though we only use these when TRUST_PROXY we do not conditionally
+// import them, since that makes the execution order harder to predict.
+import proxyAddr from 'proxy-addr';
+import memoizee from 'memoizee';
+
 export let version: string;
 export function setVersion(v: typeof version) {
 	if (version !== undefined) {
@@ -420,9 +425,6 @@ if (typeof trustProxy === 'string') {
 
 	// Support comma-separated IPs
 	const trustProxyIPs = trustProxy.split(/ *, */);
-
-	const proxyAddr = await import('proxy-addr');
-	const { default: memoizee } = await import('memoizee');
 	trustProxyValue = memoizee(proxyAddr.compile(trustProxyIPs), {
 		primitive: true,
 		max: 1000,
