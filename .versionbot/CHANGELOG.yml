@@ -1,4 +1,17 @@
 - commits:
+    - subject: Lock file maintenance
+      hash: 0f765e2c9a9af330fab80e8ce494d22e8420a91a
+      body: |
+        Update
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 19.1.15
+  title: ""
+  date: 2024-03-04T01:24:52.387Z
+- commits:
     - subject: "heartbeat: Clear the write cache when marking a device as offline"
       hash: 521d75f20db2d1677e635027dbfb31fb9fc7fd4b
       body: ""
