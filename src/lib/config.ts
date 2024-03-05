@@ -28,7 +28,7 @@ export function setVersion(v: typeof version) {
 
 const openVpnConfig = `
 client
-remote {{VPN_DETAILS}}
+{{VPN_DETAILS}}
 resolv-retry infinite
 
 remote-cert-tls server
@@ -137,10 +137,27 @@ export const DB_QUERY_TIMEOUT = intVar(
 export const DELTA_HOST = requiredVar('DELTA_HOST');
 export const FILES_HOST = optionalVar('FILES_HOST', '');
 export const DEVICE_CONFIG_OPENVPN_CA = requiredVar('DEVICE_CONFIG_OPENVPN_CA');
-export const DEVICE_CONFIG_OPENVPN_CONFIG = openVpnConfig.replace(
-	'remote {{VPN_DETAILS}}',
-	`remote ${requiredVar('VPN_HOST')} ${requiredVar('VPN_PORT')}`,
-);
+export const VPN_UDP_HOST = optionalVar('VPN_UDP_HOST');
+export const VPN_HOST = requiredVar('VPN_HOST');
+export const VPN_PORT = requiredVar('VPN_PORT');
+
+export const DEVICE_CONFIG_OPENVPN_CONFIG = (() => {
+	if (VPN_UDP_HOST) {
+		const remotes = [
+			`remote ${VPN_UDP_HOST} ${VPN_PORT} udp`,
+			`remote ${VPN_HOST} ${VPN_PORT} tcp`,
+		].join('\n');
+		return openVpnConfig
+			.replace('{{VPN_DETAILS}}', remotes)
+			.replace('\nproto tcp\n', '\n');
+	} else {
+		return openVpnConfig.replace(
+			'{{VPN_DETAILS}}',
+			`remote ${VPN_HOST} ${VPN_PORT}`,
+		);
+	}
+})();
+
 export const DEVICE_CONFIG_SSH_AUTHORIZED_KEYS = optionalVar(
 	'DEVICE_CONFIG_SSH_AUTHORIZED_KEYS',
 	'',
@@ -313,8 +330,6 @@ export const TOKEN_AUTH_CERT_KEY = requiredVar('TOKEN_AUTH_CERT_KEY');
 export const TOKEN_AUTH_CERT_KID = requiredVar('TOKEN_AUTH_CERT_KID');
 export const TOKEN_AUTH_CERT_PUB = requiredVar('TOKEN_AUTH_CERT_PUB');
 export const TOKEN_AUTH_JWT_ALGO = requiredVar('TOKEN_AUTH_JWT_ALGO');
-export const VPN_HOST = requiredVar('VPN_HOST');
-export const VPN_PORT = requiredVar('VPN_PORT');
 export const VPN_SERVICE_API_KEY = requiredVar('VPN_SERVICE_API_KEY');
 export const VPN_GUEST_API_KEY = optionalVar('VPN_GUEST_API_KEY');
 
