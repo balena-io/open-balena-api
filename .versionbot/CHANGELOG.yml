@@ -1,4 +1,30 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v17.0.9
+      hash: dcb7b4dc41a0c476ce7ccecd0789351574113a68
+      body: |
+        Update balena/open-balena-base from 17.0.8 to 17.0.9
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency node to v21.7.0
+              hash: 090c5b72737c4849076108d38b84b77b482822f1
+              body: |
+                Update node from 21.6.2 to 21.7.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-17.0.9
+          title: ""
+          date: 2024-03-06T18:58:19.803Z
+  version: 19.1.16
+  title: ""
+  date: 2024-03-06T20:02:05.182Z
+- commits:
     - subject: Lock file maintenance
       hash: 0f765e2c9a9af330fab80e8ce494d22e8420a91a
       body: |
@@ -1269,7 +1295,8 @@
                 * if global config already contains the value(s) for the map,
                 use them
 
-                * don't explicitly require BALENA_DEVICE_UID (openBalena/dockerd)
+                * don't explicitly require BALENA_DEVICE_UID
+                (openBalena/dockerd)
 
                 * add REGISTRY S3 secrets
               footer:
@@ -1467,18 +1494,24 @@
                 + allows balenaMachine(s)/BoB(s) to automatically configure
                 itself (without bob-cli)
 
-                + auto-configuration requires balena-ca and cert-manager to do the heavy lifting prior
+                + auto-configuration requires balena-ca and cert-manager to do
+                the heavy lifting prior
 
-                + corresponding [balena-on-balena PR](https://github.com/balena-io/balena-on-balena/pull/261)
+                + corresponding [balena-on-balena
+                PR](https://github.com/balena-io/balena-on-balena/pull/261)
 
 
-                * refactor confd.service to include both root-ca and host-envvars handling
+                * refactor confd.service to include both root-ca and
+                host-envvars handling
 
-                * add systemd path watcher to restart confd if keys/certs change during runtime
+                * add systemd path watcher to restart confd if keys/certs change
+                during runtime
 
-                * store stack configuration available to all services in a persistent/shared volume (/balena)
+                * store stack configuration available to all services in a
+                persistent/shared volume (/balena)
 
-                * change resolver order to dns => mdns (ipv4) => mdns (ipv6) => return
+                * change resolver order to dns => mdns (ipv4) => mdns (ipv6) =>
+                return
 
                 * configure API key and JOSE/JWT key id
 
@@ -1511,7 +1544,8 @@
                 * allows dynamic certificate generation and loading within the
                 stack
 
-                * if a (volume|directory) /certs exists, set up a notification to watch
+                * if a (volume|directory) /certs exists, set up a notification
+                to watch
                   for /certs/ca-bundle.pem and update CA certificates/restart confd
               footer:
                 Change-type: patch
@@ -1655,7 +1689,8 @@
               body: >
                 * TOKEN_AUTH_REALM => REGISTRY2_TOKEN_AUTH_REALM
 
-                * REGISTRY2_TOKEN_AUTH_REALM is the new name for BALENA_TOKEN_AUTH_REALM
+                * REGISTRY2_TOKEN_AUTH_REALM is the new name for
+                BALENA_TOKEN_AUTH_REALM
               footer:
                 Change-type: patch
                 change-type: patch
@@ -2302,9 +2337,11 @@
 
                 environment to an envfile, to be used as `EnvironmentFile` for
 
-                `confd.service`. This way, backslash characters were "consumed" as
+                `confd.service`. This way, backslash characters were "consumed"
+                as
 
-                described [here](https://www.freedesktop.org/software/systemd/man/systemd.exec.html#EnvironmentFile=)
+                described
+                [here](https://www.freedesktop.org/software/systemd/man/systemd.exec.html#EnvironmentFile=)
               footers:
                 change-type: patch
                 signed-off-by: Michael Angelos Simos <michalis@balena.io>
@@ -2501,15 +2538,19 @@
                 Should the `BALENA_ROOT_CA` environment variable be present in
                 the
 
-                `/etc/docker.env` environment file, then the specified root CA is
+                `/etc/docker.env` environment file, then the specified root CA
+                is
 
                 added to the trusted certificate store.
 
-                Downstream components can then check the presence of the environment
+                Downstream components can then check the presence of the
+                environment
 
-                variable and point `NODE_EXTRA_CA_CERTS` to `/etc/ssl/certs/balenaRootCA.pem`
+                variable and point `NODE_EXTRA_CA_CERTS` to
+                `/etc/ssl/certs/balenaRootCA.pem`
 
-                if required, ensuring they Require/Want `balena-root-ca.service` in their
+                if required, ensuring they Require/Want `balena-root-ca.service`
+                in their
 
                 own service.
               footers:
@@ -2600,7 +2641,8 @@
               body: >-
                 Connects to #34
 
-                This version introduces support for default values in the `getv` template function
+                This version introduces support for default values in the `getv`
+                template function
               footers:
                 change-type: minor
               hash: 09d70541e02bfb8640b559e8faa9c2a66caa5451
@@ -3711,7 +3753,9 @@
                 https://github.com/brianc/node-postgres/pull/2967
 
 
-                In pinejs the case is handled and as of now we don't want to populate a breaking change by transparently push the types to callers.
+                In pinejs the case is handled and as of now we don't want to
+                populate a breaking change by transparently push the types to
+                callers.
               footer:
                 Change-type: patch
                 change-type: patch
@@ -4137,7 +4181,8 @@
 
         - [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
 
-        - [Commits](https://github.com/babel/babel/commits/v7.23.2/packages/babel-traverse)
+        -
+        [Commits](https://github.com/babel/babel/commits/v7.23.2/packages/babel-traverse)
 
 
         ---
@@ -4451,9 +4496,11 @@
 
         - [Release notes](https://github.com/protobufjs/protobuf.js/releases)
 
-        - [Changelog](https://github.com/protobufjs/protobuf.js/blob/master/CHANGELOG.md)
+        -
+        [Changelog](https://github.com/protobufjs/protobuf.js/blob/master/CHANGELOG.md)
 
-        - [Commits](https://github.com/protobufjs/protobuf.js/compare/protobufjs-v7.2.2...protobufjs-v7.2.5)
+        -
+        [Commits](https://github.com/protobufjs/protobuf.js/compare/protobufjs-v7.2.2...protobufjs-v7.2.5)
 
 
         ---
@@ -4663,9 +4710,11 @@
                 On empty database schemas the `migrations` model is not
                 executed.
 
-                Hence, every model migration that is executed before the `migrations` model
+                Hence, every model migration that is executed before the
+                `migrations` model
 
-                will not be tracked properly. This is an edge case for empty database schemas.
+                will not be tracked properly. This is an edge case for empty
+                database schemas.
               footer:
                 Change-type: patch
                 change-type: patch
@@ -5795,7 +5844,8 @@
                 Update grunt from 1.5.3 to 1.6.0
 
 
-                Grunt 1.6.0 bumps node to 16 and internally rimraf to node14 what was
+                Grunt 1.6.0 bumps node to 16 and internally rimraf to node14
+                what was
 
                 a major change.
               footer:
@@ -6087,9 +6137,11 @@
                                         Ensure that the input passed in for JSON
                                         types is either an object or
 
-                                        an array (typeof returns 'object' for arrays as well). This change is
+                                        an array (typeof returns 'object' for
+                                        arrays as well). This change is
 
-                                        mainly to prevent primitives from being stored as JSON.
+                                        mainly to prevent primitives from being
+                                        stored as JSON.
                                       footer:
                                         Change-type: major
                                         change-type: major
@@ -6229,7 +6281,8 @@
                                         We know what type they return and they
                                         should be explicitly accepted as
 
-                                        those types instead where it is valid to do so
+                                        those types instead where it is valid to
+                                        do so
                                       footer:
                                         Change-type: patch
                                         change-type: patch
@@ -6637,9 +6690,11 @@
                                 Ensure that the input passed in for JSON types
                                 is either an object or
 
-                                an array (typeof returns 'object' for arrays as well). This change is
+                                an array (typeof returns 'object' for arrays as
+                                well). This change is
 
-                                mainly to prevent primitives from being stored as JSON.
+                                mainly to prevent primitives from being stored
+                                as JSON.
                               footer:
                                 Change-type: major
                                 change-type: major
@@ -6791,9 +6846,11 @@
                                 Ensure that the input passed in for JSON types
                                 is either an object or
 
-                                an array (typeof returns 'object' for arrays as well). This change is
+                                an array (typeof returns 'object' for arrays as
+                                well). This change is
 
-                                mainly to prevent primitives from being stored as JSON.
+                                mainly to prevent primitives from being stored
+                                as JSON.
                               footer:
                                 Change-type: major
                                 change-type: major
@@ -6911,7 +6968,8 @@
                         Ensure that the input passed in for JSON types is either
                         an object or
 
-                        an array (typeof returns 'object' for arrays as well). This change is
+                        an array (typeof returns 'object' for arrays as well).
+                        This change is
 
                         mainly to prevent primitives from being stored as JSON.
                       footer:
@@ -7398,7 +7456,8 @@
                                         We know what type they return and they
                                         should be explicitly accepted as
 
-                                        those types instead where it is valid to do so
+                                        those types instead where it is valid to
+                                        do so
                                       footer:
                                         Change-type: patch
                                         change-type: patch
@@ -9561,7 +9620,8 @@
       body: >
         Raspberry PI 4 has a second which can be configured adding the suffix
 
-        `:1` to configurations in config.txt. This commit enables those variables on
+        `:1` to configurations in config.txt. This commit enables those
+        variables on
 
         the API.
       footer:
@@ -9592,7 +9652,8 @@
       body: >
         Dropping os.semver >= 2.0.0 filter for testing device configuration.
 
-        open-balena-api does not support resinOS anymore and for sure only balenaOS 2.x
+        open-balena-api does not support resinOS anymore and for sure only
+        balenaOS 2.x
       footer:
         Change-type: minor
         change-type: minor
@@ -9799,7 +9860,8 @@
                 async migration execution on startup.
 
 
-                Test with SIGUSR2 listener to toggle migration execution during runtime.
+                Test with SIGUSR2 listener to toggle migration execution during
+                runtime.
               footer:
                 Change-type: minor
                 change-type: minor
@@ -9935,11 +9997,14 @@
                         This increases the minimum postgres version for
                         AggregateJSON from 9.2
 
-                        to 9.3 but it is likely that other places already require postgres
+                        to 9.3 but it is likely that other places already
+                        require postgres
 
-                        >=9.3 and as such this should not increase the minimum version at all.
+                        >=9.3 and as such this should not increase the minimum
+                        version at all.
 
-                        If it does somehow manage to then increasing the minimum from a 2012
+                        If it does somehow manage to then increasing the minimum
+                        from a 2012
 
                         postgres to 2013 should still be fine
                       footer:
@@ -10020,7 +10085,8 @@
                         This is intended to be used to target tables differently
                         for reads vs
 
-                        writes, eg where you might read from a view/definition but want to
+                        writes, eg where you might read from a view/definition
+                        but want to
 
                         write to a physical table instead
                       footer:
@@ -10062,7 +10128,8 @@
                         `lfInfo` will be used to pass extra context extracted
                         from LF
 
-                        downstream. Currently the only context is the root table alias for each
+                        downstream. Currently the only context is the root table
+                        alias for each
 
                         rule.
                       footer:
@@ -10082,12 +10149,14 @@
                         This is intended to be used to target tables differently
                         for reads vs
 
-                        writes, eg where you might read from a view/definition but want to
+                        writes, eg where you might read from a view/definition
+                        but want to
 
                         write to a physical table instead
 
 
-                        Update @balena/abstract-sql-compiler from 7.22.0 to 7.25.0
+                        Update @balena/abstract-sql-compiler from 7.22.0 to
+                        7.25.0
                       footer:
                         Change-type: minor
                         change-type: minor
@@ -10100,7 +10169,8 @@
                                 This is intended to be used to target tables
                                 differently for reads vs
 
-                                writes, eg where you might read from a view/definition but want to
+                                writes, eg where you might read from a
+                                view/definition but want to
 
                                 write to a physical table instead
                               footer:
@@ -10227,7 +10297,8 @@
                         This avoids issues where the aliases may not map up,
                         particularly if
 
-                        the definition was generated and may have automatic aliases, eg if
+                        the definition was generated and may have automatic
+                        aliases, eg if
 
                         using the result of an odata-to-abstract-sql generation
                       footer:
@@ -10350,7 +10421,8 @@
               body: >
                 This avoids unnecessary work by adding an async boundary for the
 
-                filtering part, meaning we can avoid any async boundaries in the case
+                filtering part, meaning we can avoid any async boundaries in the
+                case
 
                 of no side effecting hooks (the likely case)
               footer:
@@ -11747,7 +11819,8 @@
                         if operands in expression can be used as numericValues.
 
 
-                        In SQL statements arithmetic expressions like add/sub are supported for date values.
+                        In SQL statements arithmetic expressions like add/sub
+                        are supported for date values.
 
                         DateArithmetic nodes need input dependent typing.
                       footer:
@@ -11795,12 +11868,16 @@
                                         isNumericValue is evaluated in
                                         arithmetic expressions
 
-                                        if operands in expression can be used as numericValues.
+                                        if operands in expression can be used as
+                                        numericValues.
 
 
-                                        In SQL statements arithmetic expressions like add/sub are supported for date values.
+                                        In SQL statements arithmetic expressions
+                                        like add/sub are supported for date
+                                        values.
 
-                                        DateArithmetic nodes need input dependent typing.
+                                        DateArithmetic nodes need input
+                                        dependent typing.
                                       footer:
                                         Change-type: minor
                                         change-type: minor
@@ -11968,7 +12045,8 @@
                                 This reduces the size of the generated SQL when
                                 computed fields are
 
-                                included and as such helps to make it more readable
+                                included and as such helps to make it more
+                                readable
                               footer:
                                 Change-type: patch
                                 change-type: patch
@@ -12177,12 +12255,15 @@
                                 isNumericValue is evaluated in arithmetic
                                 expressions
 
-                                if operands in expression can be used as numericValues.
+                                if operands in expression can be used as
+                                numericValues.
 
 
-                                In SQL statements arithmetic expressions like add/sub are supported for date values.
+                                In SQL statements arithmetic expressions like
+                                add/sub are supported for date values.
 
-                                DateArithmetic nodes need input dependent typing.
+                                DateArithmetic nodes need input dependent
+                                typing.
                               footer:
                                 Change-type: minor
                                 change-type: minor
@@ -12249,7 +12330,8 @@
       body: >
         Version 2 uses `grpc-js` instead of `grpc`
 
-        Moved `loki-grpc-client` from `optionalDependencies` `dependencies` since it should no longer cause install fails
+        Moved `loki-grpc-client` from `optionalDependencies` `dependencies`
+        since it should no longer cause install fails
       footer:
         Change-type: patch
         change-type: patch
@@ -12706,7 +12788,8 @@
                 Give preference to TypeScript over CoffeeScript for the example
                 app.
 
-                Improve code blocks by giving them types and removing unnecessary
+                Improve code blocks by giving them types and removing
+                unnecessary
 
                 characters to enable better copy-paste when viewing on GitHub.
               footer:
@@ -13125,13 +13208,17 @@
         creds but I get back no results").
 
 
-        This change separates the latter case and responds immediately with 401, as it should.
+        This change separates the latter case and responds immediately with 401,
+        as it should.
 
 
-        This is however a workaround and ideally it would be Pine that makes this distinction and throws an exception appropriately but this would be a breaking change to existing code.
+        This is however a workaround and ideally it would be Pine that makes
+        this distinction and throws an exception appropriately but this would be
+        a breaking change to existing code.
 
 
-        Chat thread: https://jel.ly.fish/thread-79f9d489-8af5-42dd-b45f-84cef2d379a9
+        Chat thread:
+        https://jel.ly.fish/thread-79f9d489-8af5-42dd-b45f-84cef2d379a9
       footer:
         Change-type: patch
         change-type: patch
@@ -13278,7 +13365,8 @@
                 It is already run as part of the tests which are required by CI
                 before
 
-                it'll publish, and avoids issues when publishing without dev deps
+                it'll publish, and avoids issues when publishing without dev
+                deps
               footer:
                 Change-type: patch
                 change-type: patch
@@ -13642,9 +13730,11 @@
                 Modules may need to know if a model existed before
                 initialisation of the instance.
 
-                Eg. migrations need to know if a model is freshly generated / executed
+                Eg. migrations need to know if a model is freshly generated /
+                executed
 
-                of if this model already existed and can be target for migrations.
+                of if this model already existed and can be target for
+                migrations.
               footer:
                 Change-type: minor
                 change-type: minor
@@ -13714,7 +13804,8 @@
 
                 permissions, and also now constrains the model to the specific
 
-                permissions passed in rather than bypassing permissions altogether
+                permissions passed in rather than bypassing permissions
+                altogether
 
                 for the root cases
               footer:
@@ -14299,7 +14390,8 @@
               body: >
                 In practice the module level `db.engine` will always match the
 
-                `request.engine` but this future proofs things and makes it clear where
+                `request.engine` but this future proofs things and makes it
+                clear where
 
                 this value actually comes from
               footer:
@@ -14436,12 +14528,15 @@
                                         is 'strict' or 'informative'.
 
 
-                                        Behaviour change only if type is informative otherwise default 'strict'.
+                                        Behaviour change only if type is
+                                        informative otherwise default 'strict'.
 
 
-                                        An informative reference is just an int field that points
+                                        An informative reference is just an int
+                                        field that points
 
-                                        to another tables id field - like foreign key without constraints
+                                        to another tables id field - like
+                                        foreign key without constraints
 
                                         or foregein key cascades.
                                       footer:
@@ -14461,7 +14556,8 @@
                                         Since it's possible for them to behave
                                         in a way that violates the
 
-                                        safety checks we'll disable them until we can add specific checks
+                                        safety checks we'll disable them until
+                                        we can add specific checks
 
                                         for the HAVING clause
                                       footer:
@@ -14522,12 +14618,15 @@
                                 This means the prefix will be stable/reliable
                                 across runs and make it
 
-                                easier to compare the output generating from different runs
+                                easier to compare the output generating from
+                                different runs
 
 
-                                Update @balena/abstract-sql-compiler from 7.14.1 to 7.17.0
+                                Update @balena/abstract-sql-compiler from 7.14.1
+                                to 7.17.0
 
-                                Update @balena/lf-to-abstract-sql from 4.3.0 to 4.4.1
+                                Update @balena/lf-to-abstract-sql from 4.3.0 to
+                                4.4.1
 
                                 Update @balena/sbvr-parser from 1.2.5 to 1.3.0
                               footer:
@@ -14712,7 +14811,8 @@
                                         This became unnecessary when
                                         @balena/sbvr-types added the concept of
 
-                                        cast types since that now specifies how to cast a SERIAL type
+                                        cast types since that now specifies how
+                                        to cast a SERIAL type
                                       footer:
                                         Change-type: patch
                                         change-type: patch
@@ -14878,9 +14978,11 @@
                                         This works on the assumption that it is
                                         a rule query that should always
 
-                                        return true and allows ignoring more modification cases where they
+                                        return true and allows ignoring more
+                                        modification cases where they
 
-                                        cannot change the result from true to false
+                                        cannot change the result from true to
+                                        false
                                       footer:
                                         Change-type: minor
                                         change-type: minor
@@ -15094,12 +15196,15 @@
                                 'strict' or 'informative'.
 
 
-                                Behaviour change only if type is informative otherwise default 'strict'.
+                                Behaviour change only if type is informative
+                                otherwise default 'strict'.
 
 
-                                An informative reference is just an int field that points
+                                An informative reference is just an int field
+                                that points
 
-                                to another tables id field - like foreign key without constraints
+                                to another tables id field - like foreign key
+                                without constraints
 
                                 or foregein key cascades.
                               footer:
@@ -15119,7 +15224,8 @@
                                 Since it's possible for them to behave in a way
                                 that violates the
 
-                                safety checks we'll disable them until we can add specific checks
+                                safety checks we'll disable them until we can
+                                add specific checks
 
                                 for the HAVING clause
                               footer:
@@ -15362,12 +15468,15 @@
                         'informative'.
 
 
-                        Behaviour change only if type is informative otherwise default 'strict'.
+                        Behaviour change only if type is informative otherwise
+                        default 'strict'.
 
 
-                        An informative reference is just an int field that points
+                        An informative reference is just an int field that
+                        points
 
-                        to another tables id field - like foreign key without constraints
+                        to another tables id field - like foreign key without
+                        constraints
 
                         or foregein key cascades.
                       footer:
@@ -16025,7 +16134,8 @@
               body: >
                 In practice the module level `db.engine` will always match the
 
-                `request.engine` but this future proofs things and makes it clear where
+                `request.engine` but this future proofs things and makes it
+                clear where
 
                 this value actually comes from
               footer:
@@ -16162,12 +16272,15 @@
                                         is 'strict' or 'informative'.
 
 
-                                        Behaviour change only if type is informative otherwise default 'strict'.
+                                        Behaviour change only if type is
+                                        informative otherwise default 'strict'.
 
 
-                                        An informative reference is just an int field that points
+                                        An informative reference is just an int
+                                        field that points
 
-                                        to another tables id field - like foreign key without constraints
+                                        to another tables id field - like
+                                        foreign key without constraints
 
                                         or foregein key cascades.
                                       footer:
@@ -16187,7 +16300,8 @@
                                         Since it's possible for them to behave
                                         in a way that violates the
 
-                                        safety checks we'll disable them until we can add specific checks
+                                        safety checks we'll disable them until
+                                        we can add specific checks
 
                                         for the HAVING clause
                                       footer:
@@ -16248,12 +16362,15 @@
                                 This means the prefix will be stable/reliable
                                 across runs and make it
 
-                                easier to compare the output generating from different runs
+                                easier to compare the output generating from
+                                different runs
 
 
-                                Update @balena/abstract-sql-compiler from 7.14.1 to 7.17.0
+                                Update @balena/abstract-sql-compiler from 7.14.1
+                                to 7.17.0
 
-                                Update @balena/lf-to-abstract-sql from 4.3.0 to 4.4.1
+                                Update @balena/lf-to-abstract-sql from 4.3.0 to
+                                4.4.1
 
                                 Update @balena/sbvr-parser from 1.2.5 to 1.3.0
                               footer:
@@ -16438,7 +16555,8 @@
                                         This became unnecessary when
                                         @balena/sbvr-types added the concept of
 
-                                        cast types since that now specifies how to cast a SERIAL type
+                                        cast types since that now specifies how
+                                        to cast a SERIAL type
                                       footer:
                                         Change-type: patch
                                         change-type: patch
@@ -16604,9 +16722,11 @@
                                         This works on the assumption that it is
                                         a rule query that should always
 
-                                        return true and allows ignoring more modification cases where they
+                                        return true and allows ignoring more
+                                        modification cases where they
 
-                                        cannot change the result from true to false
+                                        cannot change the result from true to
+                                        false
                                       footer:
                                         Change-type: minor
                                         change-type: minor
@@ -16820,12 +16940,15 @@
                                 'strict' or 'informative'.
 
 
-                                Behaviour change only if type is informative otherwise default 'strict'.
+                                Behaviour change only if type is informative
+                                otherwise default 'strict'.
 
 
-                                An informative reference is just an int field that points
+                                An informative reference is just an int field
+                                that points
 
-                                to another tables id field - like foreign key without constraints
+                                to another tables id field - like foreign key
+                                without constraints
 
                                 or foregein key cascades.
                               footer:
@@ -16845,7 +16968,8 @@
                                 Since it's possible for them to behave in a way
                                 that violates the
 
-                                safety checks we'll disable them until we can add specific checks
+                                safety checks we'll disable them until we can
+                                add specific checks
 
                                 for the HAVING clause
                               footer:
@@ -17961,7 +18085,8 @@
                         Since it's possible for them to behave in a way that
                         violates the
 
-                        safety checks we'll disable them until we can add specific checks
+                        safety checks we'll disable them until we can add
+                        specific checks
 
                         for the HAVING clause
                       footer:
@@ -20305,18 +20430,24 @@
                 + allows balenaMachine(s)/BoB(s) to automatically configure
                 itself (without bob-cli)
 
-                + auto-configuration requires balena-ca and cert-manager to do the heavy lifting prior
+                + auto-configuration requires balena-ca and cert-manager to do
+                the heavy lifting prior
 
-                + corresponding [balena-on-balena PR](https://github.com/balena-io/balena-on-balena/pull/261)
+                + corresponding [balena-on-balena
+                PR](https://github.com/balena-io/balena-on-balena/pull/261)
 
 
-                * refactor confd.service to include both root-ca and host-envvars handling
+                * refactor confd.service to include both root-ca and
+                host-envvars handling
 
-                * add systemd path watcher to restart confd if keys/certs change during runtime
+                * add systemd path watcher to restart confd if keys/certs change
+                during runtime
 
-                * store stack configuration available to all services in a persistent/shared volume (/balena)
+                * store stack configuration available to all services in a
+                persistent/shared volume (/balena)
 
-                * change resolver order to dns => mdns (ipv4) => mdns (ipv6) => return
+                * change resolver order to dns => mdns (ipv4) => mdns (ipv6) =>
+                return
 
                 * configure API key and JOSE/JWT key id
 
@@ -20349,7 +20480,8 @@
                 * allows dynamic certificate generation and loading within the
                 stack
 
-                * if a (volume|directory) /certs exists, set up a notification to watch
+                * if a (volume|directory) /certs exists, set up a notification
+                to watch
                   for /certs/ca-bundle.pem and update CA certificates/restart confd
               footer:
                 Change-type: patch
@@ -20944,7 +21076,8 @@
                                 This became unnecessary when @balena/sbvr-types
                                 added the concept of
 
-                                cast types since that now specifies how to cast a SERIAL type
+                                cast types since that now specifies how to cast
+                                a SERIAL type
                               footer:
                                 Change-type: patch
                                 change-type: patch
@@ -21109,7 +21242,8 @@
                                 This works on the assumption that it is a rule
                                 query that should always
 
-                                return true and allows ignoring more modification cases where they
+                                return true and allows ignoring more
+                                modification cases where they
 
                                 cannot change the result from true to false
                               footer:
@@ -21772,7 +21906,8 @@
               body: >
                 * TOKEN_AUTH_REALM => REGISTRY2_TOKEN_AUTH_REALM
 
-                * REGISTRY2_TOKEN_AUTH_REALM is the new name for BALENA_TOKEN_AUTH_REALM
+                * REGISTRY2_TOKEN_AUTH_REALM is the new name for
+                BALENA_TOKEN_AUTH_REALM
               footer:
                 Change-type: patch
                 change-type: patch
@@ -22693,7 +22828,8 @@
                         This became unnecessary when @balena/sbvr-types added
                         the concept of
 
-                        cast types since that now specifies how to cast a SERIAL type
+                        cast types since that now specifies how to cast a SERIAL
+                        type
                       footer:
                         Change-type: patch
                         change-type: patch
@@ -23540,9 +23676,11 @@
                 This fixes an issue where trying to eagerly fetch affected ids
                 for
 
-                equests that can create entries would return ids for existing entries
+                equests that can create entries would return ids for existing
+                entries
 
-                that you could have created rather than giving the ids for the entries
+                that you could have created rather than giving the ids for the
+                entries
 
                 that you will create
               footer:
@@ -24538,7 +24676,8 @@
                         This works on the assumption that it is a rule query
                         that should always
 
-                        return true and allows ignoring more modification cases where they
+                        return true and allows ignoring more modification cases
+                        where they
 
                         cannot change the result from true to false
                       footer:
@@ -24806,7 +24945,8 @@
               body: >
                 This avoids issues where a postgres connection can hang and the
 
-                rollback never finishes and the client is never released from the pool
+                rollback never finishes and the client is never released from
+                the pool
               footer:
                 Change-type: minor
                 change-type: minor
@@ -25245,7 +25385,8 @@
                 We now support support passing an SBVR file or a model
                 specification
 
-                as well as an abstract sql model, and we also accept any file type that
+                as well as an abstract sql model, and we also accept any file
+                type that
 
                 is acceptable to nodejs `require` rather than just a JSON file
               footer:
@@ -25866,7 +26007,8 @@
                                 This allows specifying the correct type to cast
                                 to when necessary
 
-                                rather than relying on the fact the currently all type functions happen
+                                rather than relying on the fact the currently
+                                all type functions happen
 
                                 to be integers
                               footer:
@@ -25925,7 +26067,8 @@
                                 This allows specifying the correct type to cast
                                 to when necessary
 
-                                rather than relying on the fact the currently all type functions happen
+                                rather than relying on the fact the currently
+                                all type functions happen
 
                                 to be integers
                               footer:
@@ -25994,7 +26137,8 @@
                                         This allows specifying the correct type
                                         to cast to when necessary
 
-                                        rather than relying on the fact the currently all type functions happen
+                                        rather than relying on the fact the
+                                        currently all type functions happen
 
                                         to be integers
                                       footer:
@@ -26075,7 +26219,8 @@
                         This allows specifying the correct type to cast to when
                         necessary
 
-                        rather than relying on the fact the currently all type functions happen
+                        rather than relying on the fact the currently all type
+                        functions happen
 
                         to be integers
                       footer:
