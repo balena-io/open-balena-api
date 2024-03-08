@@ -1,5 +1,4 @@
 import avro from 'avsc';
-import * as snappy from 'snappy';
 import { stripIndent } from 'common-tags';
 import { EventEmitter } from 'events';
 import _ from 'lodash';
@@ -8,6 +7,7 @@ import { captureException } from '../../../../infra/error-handling/index.js';
 import {
 	LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS,
 	LOGS_SUBSCRIPTION_EXPIRY_SECONDS,
+	REDIS_LOGS_COMPRESSION_ENABLED,
 	REDIS_LOGS_SHARDED_PUBSUB,
 } from '../../../../lib/config.js';
 import { DAYS } from '@balena/env-parsing';
@@ -118,6 +118,18 @@ redis.defineCommand('decrSubscribers', {
 
 // This connection goes into "subscriber mode" and cannot be reused for commands
 const pubSub = newSubscribeInstance({ instance: 'logs' });
+
+const getCompressionLib = _.once(async () => {
+	if (!REDIS_LOGS_COMPRESSION_ENABLED) {
+		return;
+	}
+	const snappy = await import('snappy');
+	return {
+		compress: snappy.compress,
+		uncompress: async (buffer: Buffer) =>
+			(await snappy.uncompress(buffer)) as Buffer,
+	};
+});
 
 export class RedisBackend implements DeviceLogsBackend {
 	private subscriptions: EventEmitter;
@@ -236,13 +248,14 @@ export class RedisBackend implements DeviceLogsBackend {
 	private async fromRedisLog(payload: string): Promise<DeviceLog | undefined> {
 		try {
 			let decompressedBuffer = Buffer.from(payload, BUFFER_ENCODING);
-			try {
-				decompressedBuffer = (await snappy.uncompress(
-					decompressedBuffer,
-				)) as Buffer;
-			} catch {
-				// We ignore ones that fail to decompress as they are likely from before we added compression
-				// TODO: Stop ignoring these errors once we're sure all logs are compressed
+			const compression = await getCompressionLib();
+			if (compression != null) {
+				try {
+					decompressedBuffer = await compression.uncompress(decompressedBuffer);
+				} catch {
+					// We ignore ones that fail to decompress as they are likely from before we added compression
+					// TODO: Stop ignoring these errors once we're sure all logs are compressed
+				}
 			}
 			const log = schema.fromBuffer(decompressedBuffer);
 			if (log.version !== VERSION) {
@@ -262,7 +275,11 @@ export class RedisBackend implements DeviceLogsBackend {
 
 	private async toRedisLog(log: DeviceLog): Promise<string> {
 		try {
-			const compressedLog = await snappy.compress(schema.toBuffer(log));
+			let compressedLog = schema.toBuffer(log);
+			const compression = await getCompressionLib();
+			if (compression != null) {
+				compressedLog = await compression.compress(compressedLog);
+			}
 			return compressedLog.toString(BUFFER_ENCODING);
 		} catch (err) {
 			captureException(err, 'Failed to convert log to redis buffer');
