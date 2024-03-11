@@ -1,4 +1,16 @@
 - commits:
+    - subject: "device-logs/redis: Add the option to disable compression"
+      hash: 5bea0d0ac5e99fc9b6247a9369f53fd385b8b4c2
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 19.2.0
+  title: ""
+  date: 2024-03-11T08:06:13.192Z
+- commits:
     - subject: Lock file maintenance
       hash: cf6d8a564f113fa68d22ed965383935eeab3325f
       body: |
