@@ -1,4 +1,16 @@
 - commits:
+    - subject: "lib/config: Remove top level awaits to make execution more predictable"
+      hash: d11e9a50e4c6f9f31bdddc33333ecb0ad86198b3
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 19.2.1
+  title: ""
+  date: 2024-03-12T14:57:14.333Z
+- commits:
     - subject: "device-logs/redis: Add the option to disable compression"
       hash: 5bea0d0ac5e99fc9b6247a9369f53fd385b8b4c2
       body: ""
