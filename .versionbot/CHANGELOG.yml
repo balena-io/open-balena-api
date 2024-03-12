@@ -1,4 +1,16 @@
 - commits:
+    - subject: push optional OpenVPN UDP host to clients
+      hash: dbfd634f63d4791ef56b84d2f77cc9bb6c93a6ed
+      body: |
+        Co-authored-by: Thodoris Greasidis <thgreasi@gmail.com>
+      footer:
+        change-type: minor
+      author: Anton Belodedenko
+      nested: []
+  version: 19.3.0
+  title: ""
+  date: 2024-03-12T20:30:08.912Z
+- commits:
     - subject: Test the exact open-vpn config returned by /os/v1/config
       hash: d6399e4b84eb0bd43ef28c98ffd9257708340725
       body: ""
