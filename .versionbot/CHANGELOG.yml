@@ -1,4 +1,16 @@
 - commits:
+    - subject: Test the exact open-vpn config returned by /os/v1/config
+      hash: d6399e4b84eb0bd43ef28c98ffd9257708340725
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 19.2.2
+  title: ""
+  date: 2024-03-12T19:57:32.748Z
+- commits:
     - subject: "lib/config: Remove top level awaits to make execution more predictable"
       hash: d11e9a50e4c6f9f31bdddc33333ecb0ad86198b3
       body: ""
