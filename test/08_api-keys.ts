@@ -155,9 +155,8 @@ export default () => {
 						);
 
 						expect(apiKeyResp).to.have.property('expiry_date');
-						expect(apiKeyResp!.expiry_date.getTime()).to.equal(
-							tomorrowDate.getTime(),
-						);
+						const expiryDate = new Date(apiKeyResp!.expiry_date);
+						expect(expiryDate.getTime()).to.equal(tomorrowDate.getTime());
 					});
 
 					it('should not be able to create a provisioning key with a in-valid expiry date', async function () {
