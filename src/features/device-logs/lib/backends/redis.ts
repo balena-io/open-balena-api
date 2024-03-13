@@ -123,6 +123,11 @@ const getCompressionLib = _.once(async () => {
 	if (!REDIS_LOGS_COMPRESSION_ENABLED) {
 		return;
 	}
+	// FIXME: Importing 'snappy' statically at the top level causes some balenaMachine installations to take
+	// a long time to startup or enter a restart loop. This might be due to 'spappy' being composed of
+	// a big Rust compiled package (making it one big & slow to import file), and having native sub-dependencies
+	// '@napi-rs/snappy-xyz' (potential arch/lib incompatibilities). Importing the module lazily or disabling
+	// compression with REDIS_LOGS_COMPRESSION_ENABLED seems to workaround the issue in such cases.
 	const snappy = await import('snappy');
 	return {
 		compress: snappy.compress,
