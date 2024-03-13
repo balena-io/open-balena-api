@@ -1,4 +1,16 @@
 - commits:
+    - subject: "device-logs/redis: Comment the reasoning for the async snappy import"
+      hash: 6024203ce98ba29d07fa8069a32084a9c4a2c8cd
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 19.3.1
+  title: ""
+  date: 2024-03-13T09:04:41.743Z
+- commits:
     - subject: push optional OpenVPN UDP host to clients
       hash: dbfd634f63d4791ef56b84d2f77cc9bb6c93a6ed
       body: |
