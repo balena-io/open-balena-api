@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency rate-limiter-flexible to v5
+      hash: fcc2adaabac42c6fff8d0dd584c7ea93a4777729
+      body: |
+        Update rate-limiter-flexible from 4.0.1 to 5.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 19.3.2
+  title: ""
+  date: 2024-03-19T09:23:20.554Z
+- commits:
     - subject: "device-logs/redis: Comment the reasoning for the async snappy import"
       hash: 6024203ce98ba29d07fa8069a32084a9c4a2c8cd
       body: ""
