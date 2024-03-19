@@ -1,4 +1,24 @@
 - commits:
+    - subject: "fixtures: Remove some unnecessary unloaders in favor of cascade delete"
+      hash: a174f5428dc46ce191690cf756b38f755885bfbe
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: "fixtures: Define the unloaders dictionary in order of execution"
+      hash: 7b653af3921df31a8cc4055cf81b7198da5397ef
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 19.3.3
+  title: ""
+  date: 2024-03-19T15:20:31.989Z
+- commits:
     - subject: Update dependency rate-limiter-flexible to v5
       hash: fcc2adaabac42c6fff8d0dd584c7ea93a4777729
       body: |
