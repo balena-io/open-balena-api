@@ -478,19 +478,11 @@ const deleteResource = (resource: string) => async (obj: { id: number }) => {
 	});
 };
 
-const modelUnloadOrder = [
-	'devices',
-	'release_asset',
-	'applications',
-	'releases',
-	'image_install',
-];
-
-const unloaders: {
-	[K in (typeof modelUnloadOrder)[number]]: (obj: {
-		id: number;
-	}) => PromiseLike<void>;
-} = {
+// Make sure this list only contains top-level resources, ie. those
+// that aren't expected to be cascade deleted by the api itself.
+// The order of the properties dictates the order the unloaders run.
+const unloaders: Dictionary<(obj: { id: number }) => PromiseLike<void>> = {
+	// Devices need to be deleted before their linked hostApp & supervisor releases/apps
 	devices: deleteResource('device'),
 	applications: deleteResource('application'),
 	releases: deleteResource('release'),
@@ -502,10 +494,10 @@ export const clean = async (fixtures: types.AnyObject) => {
 	if (fixtures == null) {
 		throw new Error('You must pass in loaded fixtures to clean');
 	}
-	for (const model of modelUnloadOrder) {
+	for (const [model, unloader] of Object.entries(unloaders)) {
 		const objs = fixtures[model];
 		if (objs != null) {
-			await Promise.all(Object.values(objs).map(unloaders[model]));
+			await Promise.all(Object.values(objs).map(unloader));
 		}
 	}
 };
