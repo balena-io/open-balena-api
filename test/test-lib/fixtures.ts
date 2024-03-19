@@ -485,9 +485,6 @@ const unloaders: Dictionary<(obj: { id: number }) => PromiseLike<void>> = {
 	// Devices need to be deleted before their linked hostApp & supervisor releases/apps
 	devices: deleteResource('device'),
 	applications: deleteResource('application'),
-	releases: deleteResource('release'),
-	image_install: deleteResource('image_install'),
-	release_asset: deleteResource('release_asset'),
 };
 
 export const clean = async (fixtures: types.AnyObject) => {
