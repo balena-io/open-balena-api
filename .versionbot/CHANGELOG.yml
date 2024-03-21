@@ -1,4 +1,27 @@
 - commits:
+    - subject: Update @balena/pinejs to enable ISODatestring as internal pine API
+        interface for date and date time fields.
+      hash: 08bc45cf84a66d1b0dd344c3339f6b8f18f50a40
+      body: >
+        Fix usage of `DateString` to actually as DateString and not as a `Date`
+
+
+        This is a major change as the exported internal API reference from
+        `open-balena-api` when used as module breaks the type interface.
+
+        The model types have always been generated as `string` but actually
+        returned as `Date`.
+      footer:
+        Change-type: major
+        change-type: major
+        Signed-off-by: fisehara <harald@balena.io>
+        signed-off-by: fisehara <harald@balena.io>
+      author: fisehara
+      nested: []
+  version: 20.0.0
+  title: ""
+  date: 2024-03-21T14:21:19.300Z
+- commits:
     - subject: "fixtures: Remove some unnecessary unloaders in favor of cascade delete"
       hash: a174f5428dc46ce191690cf756b38f755885bfbe
       body: ""
