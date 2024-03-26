@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency @balena/lint to v8
+      hash: 8737a12fce0ea2bfb19ee1f976d538ba9ab3b54c
+      body: |
+        Update @balena/lint from 7.3.0 to 8.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 20.0.3
+  title: ""
+  date: 2024-03-26T10:21:44.533Z
+- commits:
     - subject: Lock file maintenance
       hash: e809d900e2144666b4354a69ecfdb0c4d4a99342
       body: |
