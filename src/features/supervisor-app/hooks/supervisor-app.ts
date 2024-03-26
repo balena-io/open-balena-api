@@ -15,6 +15,40 @@ import type {
 
 const { BadRequestError } = pinejsErrors;
 
+hooks.addPureHook('POST', 'resin', 'device', {
+	async POSTPARSE({ request, api }) {
+		if (
+			request.values.supervisor_version != null &&
+			request.values.is_of__device_type != null
+		) {
+			const deviceType = (await api.get({
+				resource: 'device_type',
+				id: request.values.is_of__device_type,
+				options: {
+					$select: 'is_of__cpu_architecture',
+				},
+			})) as PickDeferred<DeviceType, 'is_of__cpu_architecture'> | null;
+			if (deviceType == null) {
+				return;
+			}
+
+			const [supervisorRelease] = await getSupervisorReleaseResource(
+				api,
+				request.values.supervisor_version,
+				deviceType.is_of__cpu_architecture.__id,
+			);
+
+			if (supervisorRelease == null) {
+				return;
+			}
+
+			// since this is a POST, we _know_ the device is being created and has no current/target state, so we can
+			// just append the target after determining which it is (like a preloaded app)
+			request.values.should_be_managed_by__release = supervisorRelease.id;
+		}
+	},
+});
+
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	/**
 	 * When a device checks in with it's initial supervisor version, set the corresponding should_be_managed_by__release resource
@@ -134,7 +168,7 @@ async function checkSupervisorReleaseUpgrades(
 async function getSupervisorReleaseResource(
 	api: sbvrUtils.PinejsClient,
 	supervisorVersion: string,
-	archId: string,
+	archId: string | number,
 ) {
 	return (await api.get({
 		resource: 'release',

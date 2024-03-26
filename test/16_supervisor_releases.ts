@@ -3,6 +3,7 @@ import * as fixtures from './test-lib/fixtures.js';
 import * as fakeDevice from './test-lib/fake-device.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
+import type { Device } from '../src/balena-model.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -178,6 +179,124 @@ export default () => {
 							ctx.fixtures.services.amd64_supervisor_app_service1.id,
 						);
 						expect(service).to.have.property('service_name', 'main');
+					});
+				});
+
+				(
+					[
+						[
+							'POST device resource',
+							async ({ device_type, ...devicePostBody }: AnyObject) => {
+								return await supertest(ctx.admin)
+									.post(`/${version}/device`)
+									.send({
+										...devicePostBody,
+										is_of__device_type: (
+											await pineTest
+												.get({
+													resource: 'device_type',
+													passthrough: { user: ctx.admin },
+													id: { slug: device_type },
+													options: {
+														$select: 'id',
+													},
+												})
+												.expect(200)
+										).body.id,
+									})
+									.expect(201);
+							},
+						],
+						[
+							'POST /device/register',
+							async ({
+								belongs_to__application,
+								...restDevicePostBody
+							}: AnyObject) => {
+								const { body: provisioningKey } = await supertest(ctx.admin)
+									.post(`/api-key/application/${ctx.deviceApp.id}/provisioning`)
+									.expect(200);
+								const uuid =
+									'f716a3e020bd444b885cb394453917520c3cf82e69654f84be0d33e31a0e15';
+								return await supertest()
+									.post(`/device/register?apikey=${provisioningKey}`)
+									.send({
+										user: ctx.admin.id,
+										application: belongs_to__application,
+										uuid,
+										...restDevicePostBody,
+									})
+									.expect(201);
+							},
+						],
+					] as const
+				).forEach(([titlePart, provisionFn]) => {
+					describe(`provisioning with a supervisor version (using ${titlePart})`, function () {
+						let registeredDevice: Device;
+
+						after(async function () {
+							await fixtures.clean({
+								devices: [registeredDevice],
+							});
+						});
+
+						it(`should set the device to a non-null supervisor release`, async () => {
+							({ body: registeredDevice } = await provisionFn({
+								belongs_to__application: ctx.deviceApp.id,
+								device_type: 'intel-nuc',
+								os_version: '2.38.0+rev1',
+								os_variant: 'dev',
+								supervisor_version: '5.0.1',
+							}));
+							const {
+								body: {
+									d: [fetchedDevice],
+								},
+							} = await supertest(ctx.admin)
+								.get(
+									`/${version}/device(${registeredDevice.id})?$select=should_be_managed_by__release`,
+								)
+								.expect(200);
+							expect(fetchedDevice).to.have.nested.property(
+								'should_be_managed_by__release.__id',
+								ctx.supervisorReleases['5.0.1'].id,
+							);
+						});
+
+						it(`should create a service install for the linked supervisor release`, async () => {
+							const { body: serviceInstalls } = await pineUser
+								.get({
+									resource: 'service_install',
+									options: {
+										$expand: {
+											installs__service: {
+												$select: ['id', 'service_name'],
+											},
+										},
+										$filter: {
+											device: registeredDevice.id,
+											installs__service: {
+												$any: {
+													$alias: 'is',
+													$expr: {
+														is: {
+															application: ctx.amd64SupervisorApp.id,
+														},
+													},
+												},
+											},
+										},
+									},
+								})
+								.expect(200);
+							expect(serviceInstalls).to.have.lengthOf(1);
+							const [service] = serviceInstalls[0].installs__service;
+							expect(service).to.have.property(
+								'id',
+								ctx.fixtures.services.amd64_supervisor_app_service1.id,
+							);
+							expect(service).to.have.property('service_name', 'main');
+						});
 					});
 				});
 
