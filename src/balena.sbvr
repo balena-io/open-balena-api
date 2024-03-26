@@ -368,6 +368,9 @@ Term: device
 		Necessity: each device has exactly one api heartbeat state
 		Definition: "online" or "offline" or "timeout" or "unknown"
 
+	Fact type: device [last changed api heartbeat state on] date
+		Necessity: each device [last changed api heartbeat state on] at most one date.
+
 	Fact type: device has env var name
 		Term Form: device environment variable
 		Database Table Name: device environment variable
@@ -443,7 +446,7 @@ Fact type: user (Auth) has public key
 -- user public key
 
 Fact type: user public key has title
-    Necessity: each user public key has exactly one title
+	Necessity: each user public key has exactly one title
 
 
 -- application type
