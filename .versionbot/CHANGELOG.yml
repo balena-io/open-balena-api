@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency express to v4.19.2 [SECURITY]
+      hash: 09fab6c8e692a5206010c159f675c36d7ec2c468
+      body: |
+        Update express from 4.19.1 to 4.19.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 20.0.4
+  title: ""
+  date: 2024-03-26T11:07:22.549Z
+- commits:
     - subject: Update dependency @balena/lint to v8
       hash: 8737a12fce0ea2bfb19ee1f976d538ba9ab3b54c
       body: |
