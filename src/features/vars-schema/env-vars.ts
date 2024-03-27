@@ -163,6 +163,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			'revpi-connect',
 			'revpi-connect-s',
 			'revpi-core-3',
+			'revpi-connect-4',
 		],
 		properties: {
 			RESIN_HOST_CONFIG_disable_splash: {
