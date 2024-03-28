@@ -1,39 +1,27 @@
 {
-	"releasetag0-variant": {
+	"release2_50_0_rev1-variant": {
 		"user": "admin",
-		"release": "release0",
+		"release": "release2_50_0_rev1",
 		"tag_key": "variant",
 		"value": "production"
 	},
-	"releasetag0-version": {
+	"release2_50_0_rev1-version": {
 		"user": "admin",
-		"release": "release0",
+		"release": "release2_50_0_rev1",
 		"tag_key": "version",
 		"value": "2.50.0+rev1"
 	},
-	"releasetag1-variant": {
+	"rpi3releasetag1-variant": {
 		"user": "admin",
-		"release": "release1",
+		"release": "rpi3release",
 		"tag_key": "variant",
 		"value": "production"
 	},
-	"releasetag1-version": {
+	"rpi3releasetag1-version": {
 		"user": "admin",
-		"release": "release1",
+		"release": "rpi3release",
 		"tag_key": "version",
 		"value": "2.50.0+rev1"
-	},
-	"releasetag2-variant": {
-		"user": "admin",
-		"release": "release2",
-		"tag_key": "variant",
-		"value": "production"
-	},
-	"releasetag2-version": {
-		"user": "admin",
-		"release": "release2",
-		"tag_key": "version",
-		"value": "2.50.1+rev1"
 	},
 	"releaseIntelNucFailedTag2-variant": {
 		"user": "admin",
@@ -45,19 +33,37 @@
 		"user": "admin",
 		"release": "releaseIntelNucFailed",
 		"tag_key": "version",
-		"value": "2.50.1+rev1"
+		"value": "2.51.0+rev1"
 	},
-	"releasetag3-variant": {
+	"release2_51_0_rev1-variant": {
 		"user": "admin",
-		"release": "release3",
+		"release": "release2_51_0_rev1",
 		"tag_key": "variant",
 		"value": "production"
 	},
-	"releasetag3-version": {
+	"release2_51_0_rev1-version": {
 		"user": "admin",
-		"release": "release3",
+		"release": "release2_51_0_rev1",
+		"tag_key": "version",
+		"value": "2.51.0+rev1"
+	},
+	"releaseNucEsrTagOnly-variant": {
+		"user": "admin",
+		"release": "releaseNucEsrTagOnly",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"releaseNucEsrTagOnly-version": {
+		"user": "admin",
+		"release": "releaseNucEsrTagOnly",
 		"tag_key": "version",
 		"value": "2021.01.0"
+	},
+	"releaseNucEsrUnified-version": {
+		"user": "admin",
+		"release": "releaseNucEsrUnified",
+		"tag_key": "version",
+		"value": "2023.1.0"
 	},
 	"releasetag4-variant": {
 		"user": "admin",
@@ -71,15 +77,15 @@
 		"tag_key": "version",
 		"value": "2.50.0+rev1"
 	},
-	"releasetag5-variant": {
+	"releaseNucInvalidated2_52_0_rev1TagOnly-variant": {
 		"user": "admin",
-		"release": "release5",
+		"release": "releaseNucInvalidated2_52_0_rev1TagOnly",
 		"tag_key": "variant",
 		"value": "production"
 	},
-	"releasetag5-version": {
+	"releaseNucInvalidated2_52_0_rev1TagOnly-version": {
 		"user": "admin",
-		"release": "release5",
+		"release": "releaseNucInvalidated2_52_0_rev1TagOnly",
 		"tag_key": "version",
 		"value": "2.52.0+rev1"
 	},
@@ -95,10 +101,16 @@
 		"tag_key": "version",
 		"value": "2.53.0+rev1"
 	},
-	"unifiedReleaseTag-version": {
+	"unified2_88_4Release-version": {
 		"user": "admin",
-		"release": "unifiedRelease",
+		"release": "unified2_88_4Release",
 		"tag_key": "version",
 		"value": "2.88.4"
+	},
+	"nucDraft2_90_0TagOnly-version": {
+		"user": "admin",
+		"release": "nucDraft2_90_0TagOnly",
+		"tag_key": "version",
+		"value": "2.90.0"
 	}
 }

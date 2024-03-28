@@ -198,6 +198,7 @@ const loaders: types.Dictionary<LoaderFunc> = {
 					'source',
 					'release_version',
 					'semver',
+					'variant',
 					'is_invalidated',
 					'is_final',
 					'is_passing_tests',
