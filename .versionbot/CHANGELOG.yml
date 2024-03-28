@@ -1,4 +1,19 @@
 - commits:
+    - subject: Use the release semver fields along with release_tags in hostApp
+        operations
+      hash: b0522499e0e522efa525a432ac9ff0195b00d659
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        See: https://balena.fibery.io/Work/Task/Use-the-release-semver-fields-along-with-release_tags-in-hostApp-operations-1840
+        see: https://balena.fibery.io/Work/Task/Use-the-release-semver-fields-along-with-release_tags-in-hostApp-operations-1840
+      author: Thodoris Greasidis
+      nested: []
+  version: 20.1.0
+  title: ""
+  date: 2024-03-28T07:15:55.569Z
+- commits:
     - subject: Update dependency express to v4.19.2 [SECURITY]
       hash: 09fab6c8e692a5206010c159f675c36d7ec2c468
       body: |
