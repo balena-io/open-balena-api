@@ -1,4 +1,18 @@
 - commits:
+    - subject: Expose the RPi family config vars to RevPi Connect 4
+      hash: 3daf0ce057cefcae9450a55fa85bbd89399d092a
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Shreya Patel <shreya@dynamicdevices.co.uk>
+        signed-off-by: Shreya Patel <shreya@dynamicdevices.co.uk>
+      author: Shreya Patel
+      nested: []
+  version: 20.2.0
+  title: ""
+  date: 2024-03-28T15:51:33.592Z
+- commits:
     - subject: Use the release semver fields along with release_tags in hostApp
         operations
       hash: b0522499e0e522efa525a432ac9ff0195b00d659
