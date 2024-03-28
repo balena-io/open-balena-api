@@ -1,37 +1,72 @@
 {
-	"release0": {
+	"release2_50_0_rev1": {
+		"notes": "release_tag only",
 		"application": "intel-nuc",
 		"composition": {},
 		"source": "cloud",
 		"status": "success",
 		"user": "admin"
 	},
-	"release1": {
+	"rpi3release": {
 		"application": "raspberrypi3",
 		"composition": {},
 		"source": "cloud",
 		"status": "success",
 		"user": "admin"
 	},
-	"release2": {
-		"application": "intel-nuc",
-		"composition": {},
-		"source": "cloud",
-		"status": "success",
-		"user": "admin"
-	},
 	"releaseIntelNucFailed": {
+		"notes": "failed with release_tag and semver",
 		"application": "intel-nuc",
 		"composition": {},
 		"source": "cloud",
 		"status": "failed",
+		"semver": "2.51.0",
+		"variant": "prod",
 		"user": "admin"
 	},
-	"release3": {
+	"release2_51_0_rev1": {
+		"createAfterRelease": "releaseIntelNucFailed",
+		"notes": "release_tag and semver",
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "2.51.0+rev1",
+		"variant": "prod",
+		"user": "admin"
+	},
+	"release2_51_0_rev2": {
+		"createAfterRelease": "release2_51_0_rev1",
+		"notes": "semver only",
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "2.51.0+rev2",
+		"variant": "prod",
+		"user": "admin"
+	},
+	"releaseNucEsrTagOnly": {
 		"application": "intel-nuc-esr",
 		"composition": {},
 		"source": "cloud",
 		"status": "success",
+		"user": "admin"
+	},
+	"releaseNucEsrUnified": {
+		"application": "intel-nuc-esr",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "2023.1.0",
+		"user": "admin"
+	},
+	"releaseNucEsrSemverOnly": {
+		"application": "intel-nuc-esr",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "2023.10.0",
 		"user": "admin"
 	},
 	"release4": {
@@ -41,11 +76,34 @@
 		"status": "success",
 		"user": "admin"
 	},
-	"release5": {
+	"releaseNucInvalidated2_52_0_rev1TagOnly": {
 		"application": "intel-nuc",
 		"composition": {},
 		"source": "cloud",
 		"status": "success",
+		"is_invalidated": true,
+		"user": "admin"
+	},
+	"releaseNucFailed2_52_1SemverOnly": {
+		"note": "remove this release once we allow skipping revisions",
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "failed",
+		"semver": "2.52.1",
+		"variant": "prod",
+		"is_invalidated": true,
+		"user": "admin"
+	},
+	"releaseNucInvalidated2_52_1rev1SemverOnly": {
+		"createAfterRelease": "releaseNucFailed2_52_1SemverOnly",
+		"note": "remove this release once we allow skipping revisions",
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "2.52.1+rev1",
+		"variant": "prod",
 		"is_invalidated": true,
 		"user": "admin"
 	},
@@ -57,12 +115,56 @@
 		"is_invalidated": true,
 		"user": "admin"
 	},
-	"unifiedRelease": {
+	"unified2_88_4Release": {
 		"application": "intel-nuc",
 		"composition": {},
 		"source": "cloud",
 		"status": "success",
-		"is_invalidated": true,
+		"semver": "2.88.4",
+		"user": "admin"
+	},
+	"unified2_88_5SemverOnlyRelease": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "2.88.5",
+		"user": "admin"
+	},
+	"unified2_88_5_rev1SemverOnlyRelease": {
+		"createAfterRelease": "unified2_88_5SemverOnlyRelease",
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "2.88.5+rev1",
+		"user": "admin"
+	},
+	"nucDraft2_90_0TagOnly": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"is_final": false,
+		"user": "admin"
+	},
+	"nucDraft2_90_1SemverOnly": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"is_final": false,
+		"semver": "2.90.1",
+		"user": "admin"
+	},
+	"nucDraft2_90_1rev1SemverOnly": {
+		"createAfterRelease": "nucDraft2_90_1SemverOnly",
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"is_final": false,
+		"semver": "2.90.1+rev1",
 		"user": "admin"
 	}
 }
