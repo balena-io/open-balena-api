@@ -1,4 +1,17 @@
 - commits:
+    - subject: Lock file maintenance
+      hash: 019da0b0476ba3aafa67dc774d81465ef15fb72b
+      body: |
+        Update
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 20.2.1
+  title: ""
+  date: 2024-04-01T01:24:46.803Z
+- commits:
     - subject: Expose the RPi family config vars to RevPi Connect 4
       hash: 3daf0ce057cefcae9450a55fa85bbd89399d092a
       body: ""
