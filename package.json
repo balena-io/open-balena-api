@@ -48,7 +48,7 @@
     "@balena/es-version": "^1.0.3",
     "@balena/node-metrics-gatherer": "^6.0.3",
     "@balena/pinejs": "^16.0.0",
-    "@balena/pinejs-webresource-cloudfront": "^0.0.5",
+    "@balena/pinejs-webresource-cloudfront": "^0.1.0",
     "@sentry/node": "^7.99.0",
     "@types/basic-auth": "^1.1.8",
     "@types/bluebird": "^3.5.42",
