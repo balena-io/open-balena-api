@@ -1,4 +1,30 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v17.0.13
+      hash: c5e582b446abb4bcbc0241a0f75b98dd1fa7a294
+      body: |
+        Update balena/open-balena-base from 17.0.12 to 17.0.13
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency node to v21.7.3
+              hash: c8b4b1b7458cf85cedcedcac0586a7a8ccb523b9
+              body: |
+                Update node from 21.7.2 to 21.7.3
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-17.0.13
+          title: ""
+          date: 2024-04-10T19:07:42.640Z
+  version: 20.2.7
+  title: ""
+  date: 2024-04-10T20:04:05.240Z
+- commits:
     - subject: Update dependency @balena/pinejs-webresource-cloudfront to ^0.1.0
       hash: 67f1139cae18218f4f44376bbc30ff9b3f0f3aa0
       body: |
