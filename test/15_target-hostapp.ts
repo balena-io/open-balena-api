@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import * as fixtures from './test-lib/fixtures.js';
 import * as fakeDevice from './test-lib/fake-device.js';
 import { expect } from 'chai';
@@ -27,6 +28,7 @@ export default () => {
 			let nucDraft2_90_0TagOnlyId: number;
 			let nucDraft2_90_1SemverOnlyId: number;
 			let nucDraft2_90_1rev1SemverOnlyId: number;
+			let nuc2_90_2SemverOnlyFinalizedId: number;
 			/* eslint-enable @typescript-eslint/naming-convention */
 			let rpi3hostAppReleaseId: number;
 			let failedIntelNucHostAppReleaseId: number;
@@ -74,6 +76,26 @@ export default () => {
 				nucDraft2_90_1SemverOnlyId = fx.releases.nucDraft2_90_1SemverOnly.id;
 				nucDraft2_90_1rev1SemverOnlyId =
 					fx.releases.nucDraft2_90_1rev1SemverOnly.id;
+
+				// We need the releases to differ only by revision to test that
+				// the finalized one is the one linked to the device.
+				expect(
+					_.pick(fx.releases.nuc2_90_2SemverOnlyDraft, ['semver', 'revision']),
+				).to.deep.equal({
+					semver: '2.90.2',
+					revision: null,
+				});
+				expect(
+					_.pick(fx.releases.nuc2_90_2SemverOnlyFinalized, [
+						'semver',
+						'revision',
+					]),
+				).to.deep.equal({
+					semver: '2.90.2',
+					revision: 0,
+				});
+				nuc2_90_2SemverOnlyFinalizedId =
+					fx.releases.nuc2_90_2SemverOnlyFinalized.id;
 			});
 
 			after(async () => {
@@ -177,6 +199,15 @@ export default () => {
 					},
 					() => nucDraft2_90_1rev1SemverOnlyId,
 				],
+				[
+					'finalized (for which there also drafts)',
+					{
+						os_version: 'balenaOS 2.90.2',
+						os_variant: 'prod',
+					},
+					// It should link to the finalized release.
+					() => nuc2_90_2SemverOnlyFinalizedId,
+				],
 			] as const;
 
 			(
@@ -251,8 +282,8 @@ export default () => {
 						},
 					],
 				] as const
-			).forEach(([titlePart, provisionFn]) => {
-				it(`should provision WITHOUT a linked hostapp when not providing a version (using ${titlePart})`, async () => {
+			).forEach(([provisioningFnTitlePart, provisionFn]) => {
+				it(`should provision WITHOUT a linked hostapp when not providing a version (using ${provisioningFnTitlePart})`, async () => {
 					const res = await provisionFn({
 						belongs_to__application: applicationId,
 						device_type: 'raspberrypi3',
@@ -262,7 +293,7 @@ export default () => {
 					});
 				});
 
-				it(`should provision WITHOUT a linked hostapp when the version is not found (using ${titlePart})`, async () => {
+				it(`should provision WITHOUT a linked hostapp when the version is not found (using ${provisioningFnTitlePart})`, async () => {
 					const res = await provisionFn({
 						belongs_to__application: applicationId,
 						device_type: 'raspberrypi3',
@@ -279,7 +310,7 @@ export default () => {
 						const isEsr =
 							osVersionVariantParams.os_version.startsWith('balenaOS 20');
 
-						describe(`provisioning with a ${osTypeTitlePart} OS (using ${titlePart})`, function () {
+						describe(`provisioning with a ${osTypeTitlePart} OS (using ${provisioningFnTitlePart})`, function () {
 							let registeredDevice: Device;
 
 							after(async function () {

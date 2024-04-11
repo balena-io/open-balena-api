@@ -185,7 +185,7 @@ async function getOSReleaseResource(
 	osVersion: string,
 	osVariant: string,
 	deviceTypeId: number,
-) {
+): Promise<PickDeferred<Release, 'id' | 'is_final'> | undefined> {
 	const parsedOsVersion = semver.parse(osVersion);
 	// balena-semver is able to parse all OS versions that we support,
 	// so if it can't parse the given version string, then we can be sure
@@ -197,7 +197,7 @@ async function getOSReleaseResource(
 		resource: 'release',
 		options: {
 			$top: 2,
-			$select: 'id',
+			$select: ['id', 'is_final'],
 			$filter: {
 				status: 'success',
 				belongs_to__application: {
@@ -289,21 +289,31 @@ async function getOSReleaseResource(
 					},
 				],
 			},
-			$orderby: {
-				// We order the resuts by semver_major DESC so that we always prefer rows
-				// that were matched via the semver fields rather than tags in case of a conflict,
-				// (since versions using only tags would have a 0.0.0 semver).
-				semver_major: 'desc',
-			},
+			$orderby: [
+				{
+					// We order the resuts by semver_major DESC so that we always prefer rows
+					// that were matched via the semver fields rather than tags in case of a conflict,
+					// (since versions using only tags would have a 0.0.0 semver).
+					semver_major: 'desc',
+				},
+				{
+					// When there are both finalized & draft releases
+					// we should prefer picking the finalized one
+					is_final: 'desc',
+				},
+				{
+					created_at: 'desc',
+				},
+			],
 		},
-	})) as [PickDeferred<Release, 'id'>?, PickDeferred<Release, 'id'>?];
-	if (releases.length > 1) {
+	})) as Array<PickDeferred<Release, 'id' | 'is_final'>>;
+	const [release] = releases;
+	if (releases.filter((r) => r.is_final).length > 1) {
 		ThisShouldNeverHappenError(
-			`Found more than one hostApp release matching version ${osVersion} ${osVariant} for device type ${deviceTypeId}.`,
+			`Found more than one finalized hostApp release matching version ${osVersion} ${osVariant} for device type ${deviceTypeId} and returned ${release.id}.`,
 		);
 	}
 
-	const [release] = releases;
 	return release;
 }
 
