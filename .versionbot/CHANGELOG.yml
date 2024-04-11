@@ -1,4 +1,17 @@
 - commits:
+    - subject: "target-hostapp: Prefer linking devices to a finalized release if it
+        exists"
+      hash: a4375d4557a0986edc74ac6083a4bb865cffb62d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 20.2.9
+  title: ""
+  date: 2024-04-11T09:55:56.137Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v17.0.14
       hash: 3d0b43917732e3cebc9538589033dfe022ccbc05
       body: |
