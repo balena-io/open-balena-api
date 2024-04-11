@@ -117,5 +117,19 @@
 		"releases": [ "nucDraft2_90_1rev1SemverOnly" ],
 		"project_type": "Dockerfile.template",
 		"status": "success"
+	},
+	"nuc2_90_2SemverOnlyDraftImage": {
+		"user": "admin",
+		"service": "intel-nuc_service1",
+		"releases": [ "nuc2_90_2SemverOnlyDraft" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"nuc2_90_2SemverOnlyFinalizedImage": {
+		"user": "admin",
+		"service": "intel-nuc_service1",
+		"releases": [ "nuc2_90_2SemverOnlyFinalized" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
 	}
 }

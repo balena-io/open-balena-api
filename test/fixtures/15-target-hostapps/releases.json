@@ -166,5 +166,24 @@
 		"is_final": false,
 		"semver": "2.90.1+rev1",
 		"user": "admin"
+	},
+	"nuc2_90_2SemverOnlyDraft": {
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"is_final": false,
+		"semver": "2.90.2",
+		"user": "admin"
+	},
+	"nuc2_90_2SemverOnlyFinalized": {
+		"createAfterRelease": "nuc2_90_2SemverOnlyDraft",
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"is_final": true,
+		"semver": "2.90.2",
+		"user": "admin"
 	}
 }
