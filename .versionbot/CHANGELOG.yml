@@ -1,4 +1,17 @@
 - commits:
+    - subject: Lock file maintenance
+      hash: 597af4b2f19c15225cc91acf3b2bf56df3f46428
+      body: |
+        Update
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 20.2.10
+  title: ""
+  date: 2024-04-12T12:11:09.730Z
+- commits:
     - subject: "target-hostapp: Prefer linking devices to a finalized release if it
         exists"
       hash: a4375d4557a0986edc74ac6083a4bb865cffb62d
