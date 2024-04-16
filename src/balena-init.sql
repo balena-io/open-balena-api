@@ -162,9 +162,7 @@ ON "image" USING GIN ("is stored at-image location" gin_trgm_ops);
 CREATE INDEX IF NOT EXISTS "release_id_belongs_to_app_status_idx"
 ON "release" ("id", "belongs to-application", "status");
 
--- Optimization for the app-semver-revision uniqueness rule and for computing the next revision
-CREATE INDEX IF NOT EXISTS "release_belongs_to_app_revision_semver_idx"
-ON "release" ("belongs to-application", "revision", "semver major", "semver minor", "semver patch"); -- TODO: Drop this in a follow-up PR.
+-- Optimization for the app-semver-revision uniqueness rule, computing the next revision & the target hostApp release
 CREATE INDEX IF NOT EXISTS "release_belongs_to_app_revision_semver_prerelease_variant_idx"
 ON "release" ("belongs to-application", "revision", "semver major", "semver minor", "semver patch", "semver prerelease", "variant");
 
