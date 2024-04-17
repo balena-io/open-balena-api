@@ -1,0 +1,72 @@
+{
+	"deviceUpdating": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": true,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceVpnOnHeartbeatOnline": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": true,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceVpnOnHeartbeatTimeout": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": true,
+		"api_heartbeat_state": "timeout",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceVpnOnHeartbeatOffline": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": true,
+		"api_heartbeat_state": "offline",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceVpnOffHeartbeatOnline": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceVpnOffHeartbeatTimeout": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "timeout",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceVpnOffHeartbeatOffline": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "offline",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	}
+}

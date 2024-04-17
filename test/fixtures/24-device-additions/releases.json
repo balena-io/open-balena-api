@@ -1,0 +1,19 @@
+{
+	"release1": {
+		"user": "admin",
+		"application": "app1",
+		"commit": "deadc0de",
+		"composition": {
+			"services": {
+				"image1": {
+					"build": "./image1/"
+				},
+				"image2": {
+					"build": "./image2/"
+				}
+			}
+		},
+		"status": "success",
+		"source": "cloud"
+	}
+}
