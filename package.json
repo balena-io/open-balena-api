@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "@balena/abstract-sql-compiler": "^9.0.4",
+    "@balena/abstract-sql-to-typescript": "^3.0.0",
     "@balena/env-parsing": "^1.1.10",
     "@balena/es-version": "^1.0.3",
     "@balena/node-metrics-gatherer": "^6.0.3",

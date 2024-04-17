@@ -194,7 +194,7 @@ const shouldUpdateImageInstall = (() => {
 
 export const upsertImageInstall = async (
 	resinApi: typeof sbvrUtils.api.resin,
-	imgInstall: Pick<ImageInstall, 'id'>,
+	imgInstall: Pick<ImageInstall['Read'], 'id'>,
 	{
 		imageId,
 		releaseId,

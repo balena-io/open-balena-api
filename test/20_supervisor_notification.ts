@@ -15,7 +15,7 @@ export default () => {
 			let fx: fixtures.Fixtures;
 			let admin: UserObjectParam;
 			let pineUser: PineTest;
-			let app1: Application;
+			let app1: Application['Read'];
 			let device: fakeDevice.Device;
 
 			before(async () => {

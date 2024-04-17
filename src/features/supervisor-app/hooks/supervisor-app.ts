@@ -6,12 +6,8 @@ import {
 	permissions,
 	errors as pinejsErrors,
 } from '@balena/pinejs';
-import type {
-	Device,
-	DeviceType,
-	PickDeferred,
-	Release,
-} from '../../../balena-model.js';
+import type { Device, DeviceType, Release } from '../../../balena-model.js';
+import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 
 const { BadRequestError } = pinejsErrors;
 
@@ -181,7 +177,7 @@ async function getSupervisorReleaseResource(
 			},
 			$orderby: { revision: 'desc' },
 		},
-	})) as Array<Pick<Release, 'id'>>;
+	})) as Array<Pick<Release['Read'], 'id'>>;
 }
 
 async function setSupervisorReleaseResource(
@@ -206,8 +202,10 @@ async function setSupervisorReleaseResource(
 			},
 		},
 	})) as Array<
-		Pick<Device, 'id'> & {
-			is_of__device_type: [PickDeferred<DeviceType, 'is_of__cpu_architecture'>];
+		Pick<Device['Read'], 'id'> & {
+			is_of__device_type: [
+				PickDeferred<DeviceType['Read'], 'is_of__cpu_architecture'>,
+			];
 		}
 	>;
 

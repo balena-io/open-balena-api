@@ -205,9 +205,9 @@ export default () => {
 					const { body: dbDeviceTypes } = await pineTest
 						.get<
 							Array<
-								DeviceType & {
+								DeviceType['Read'] & {
 									device_type_alias: Array<
-										Pick<DeviceTypeAlias, 'is_referenced_by__alias'>
+										Pick<DeviceTypeAlias['Read'], 'is_referenced_by__alias'>
 									>;
 								}
 							>

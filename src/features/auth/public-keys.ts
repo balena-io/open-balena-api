@@ -36,7 +36,7 @@ export const getUserPublicKeys: RequestHandler = async (req, res) => {
 				},
 			},
 			passthrough: { req },
-		})) as Array<Pick<UserHasPublicKey, 'public_key'>>;
+		})) as Array<Pick<UserHasPublicKey['Read'], 'public_key'>>;
 
 		const authorizedKeys = data.map((e) => e.public_key).join('\n');
 		res.status(200).send(authorizedKeys);

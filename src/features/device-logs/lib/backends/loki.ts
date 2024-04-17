@@ -26,7 +26,8 @@ import {
 	incrementPublishCallTotal,
 } from './metrics.js';
 import { setTimeout } from 'timers/promises';
-import type { Device, PickDeferred } from '../../../../balena-model.js';
+import type { Device } from '../../../../balena-model.js';
+import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 
 const { BadRequestError } = errors;
 
@@ -98,7 +99,7 @@ async function assertLokiLogContext(
 		options: {
 			$select: ['belongs_to__application'],
 		},
-	})) as PickDeferred<Device, 'belongs_to__application'> | undefined;
+	})) as PickDeferred<Device['Read'], 'belongs_to__application'> | undefined;
 
 	// Mutate so that we don't have to repeatedly amend the same context and instead cache it
 	(ctx as Writable<typeof ctx>).belongs_to__application =

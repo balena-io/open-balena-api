@@ -6,12 +6,8 @@ import {
 } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 import type { SemVer } from 'semver';
-import type {
-	Device,
-	ReleaseTag,
-	PickDeferred,
-	Release,
-} from '../../../balena-model.js';
+import type { Device, ReleaseTag, Release } from '../../../balena-model.js';
+import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import { groupByMap } from '../../../lib/utils.js';
 import { ThisShouldNeverHappenError } from '../../../infra/error-handling/index.js';
 const { BadRequestError } = pinejsErrors;
@@ -127,7 +123,7 @@ async function setOSReleaseResource(
 			},
 			$select: ['id', 'is_of__device_type'],
 		},
-	})) as Array<PickDeferred<Device, 'id' | 'is_of__device_type'>>;
+	})) as Array<PickDeferred<Device['Read'], 'id' | 'is_of__device_type'>>;
 
 	if (devices.length === 0) {
 		return;
@@ -185,7 +181,7 @@ async function getOSReleaseResource(
 	osVersion: string,
 	osVariant: string,
 	deviceTypeId: number,
-): Promise<PickDeferred<Release, 'id' | 'is_final'> | undefined> {
+): Promise<PickDeferred<Release['Read'], 'id' | 'is_final'> | undefined> {
 	const parsedOsVersion = semver.parse(osVersion);
 	// balena-semver is able to parse all OS versions that we support,
 	// so if it can't parse the given version string, then we can be sure
@@ -306,7 +302,7 @@ async function getOSReleaseResource(
 				},
 			],
 		},
-	})) as Array<PickDeferred<Release, 'id' | 'is_final'>>;
+	})) as Array<PickDeferred<Release['Read'], 'id' | 'is_final'>>;
 	const [release] = releases;
 	if (releases.filter((r) => r.is_final).length > 1) {
 		ThisShouldNeverHappenError(
@@ -357,8 +353,8 @@ function normalizeOsVersion(osVersion: string) {
  * and they were not migrated to the release semver fields.
  */
 function getBaseVersionFromReleaseSemverOrTag(
-	release: Pick<Release, 'semver'> & {
-		release_tag: [Pick<ReleaseTag, 'value'>?];
+	release: Pick<Release['Read'], 'semver'> & {
+		release_tag: [Pick<ReleaseTag['Read'], 'value'>?];
 	},
 ) {
 	// For OS releases w/ versions that we could not migrate to the semver fields
@@ -415,8 +411,8 @@ async function checkHostappReleaseUpgrades(
 			},
 		},
 	})) as
-		| (Pick<Release, 'semver'> & {
-				release_tag: [Pick<ReleaseTag, 'value'>?];
+		| (Pick<Release['Read'], 'semver'> & {
+				release_tag: [Pick<ReleaseTag['Read'], 'value'>?];
 		  })
 		| undefined;
 
@@ -462,8 +458,8 @@ async function checkHostappReleaseUpgrades(
 			},
 		},
 	})) as Array<
-		Pick<Release, 'semver'> & {
-			release_tag: [Pick<ReleaseTag, 'value'>?];
+		Pick<Release['Read'], 'semver'> & {
+			release_tag: [Pick<ReleaseTag['Read'], 'value'>?];
 		}
 	>;
 

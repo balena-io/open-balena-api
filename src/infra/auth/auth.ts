@@ -8,7 +8,8 @@ import { retrieveAPIKey } from './api-keys.js';
 import type { ResolvedUserPayload } from './jwt-passport.js';
 
 import { getIP } from '../../lib/utils.js';
-import type { PickDeferred, User as DbUser } from '../../balena-model.js';
+import type { User as DbUser } from '../../balena-model.js';
+import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import type { PreparedFn } from 'pinejs-client-core';
 
 const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
@@ -127,7 +128,7 @@ export const checkUserPassword = async (
 		options: {
 			$select: ['password', 'id'],
 		},
-	})) as Pick<DbUser, 'password' | 'id'>;
+	})) as Pick<DbUser['Read'], 'password' | 'id'>;
 	if (user == null) {
 		throw new BadRequestError('User not found.');
 	}
@@ -146,7 +147,7 @@ export const reqHasPermission = (
 // If adding/removing fields, please also update `User`
 // in "typings/common.d.ts".
 export const userFields = ['id', 'actor', 'jwt_secret'] satisfies Array<
-	keyof DbUser
+	keyof DbUser['Read']
 >;
 
 const getUserQuery = _.once(
@@ -179,7 +180,7 @@ const getUserQuery = _.once(
 			},
 		}) as PreparedFn<
 			{ key: string },
-			Promise<Array<PickDeferred<DbUser, (typeof userFields)[number]>>>
+			Promise<Array<PickDeferred<DbUser['Read'], (typeof userFields)[number]>>>
 		>,
 );
 
@@ -250,21 +251,25 @@ export const defaultFindUser$select = [
 	'actor',
 	'username',
 	'password',
-] satisfies Array<keyof DbUser>;
+] satisfies Array<keyof DbUser['Read']>;
 
 export async function findUser(
 	loginInfo: string,
 	tx: Tx,
 ): Promise<
-	PickDeferred<DbUser, (typeof defaultFindUser$select)[number]> | undefined
+	| PickDeferred<DbUser['Read'], (typeof defaultFindUser$select)[number]>
+	| undefined
 >;
-export async function findUser<T extends DbUser, TProps extends Array<keyof T>>(
+export async function findUser<
+	T extends DbUser['Read'],
+	TProps extends Array<keyof T>,
+>(
 	loginInfo: string,
 	tx: Tx,
 	$select: TProps,
 ): Promise<PickDeferred<T, (typeof $select)[number]> | undefined>;
 export async function findUser<
-	T extends DbUser,
+	T extends DbUser['Read'],
 	TProps extends Array<keyof T & string>,
 >(
 	loginInfo: string,
@@ -333,7 +338,7 @@ export const registerUser = async (
 				clientIP,
 			},
 		},
-	})) as PickDeferred<DbUser, keyof DbUser>;
+	})) as PickDeferred<DbUser['Read'], keyof DbUser['Read']>;
 
 	if (user.id == null) {
 		throw new Error('Error creating user in the platform');

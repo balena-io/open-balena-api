@@ -1,5 +1,6 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
-import type { PickDeferred, User } from '../../balena-model.js';
+import type { User } from '../../balena-model.js';
+import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import { captureException } from '../../infra/error-handling/index.js';
 import { setupDeleteCascade } from './setup-delete-cascade.js';
 
@@ -124,7 +125,7 @@ hooks.addPureHook('DELETE', 'resin', 'user', {
 				options: {
 					$select: 'actor',
 				},
-			}) as Promise<PickDeferred<User, 'actor'>>
+			}) as Promise<PickDeferred<User['Read'], 'actor'>>
 		).then(async (user) => {
 			if (user == null) {
 				throw new errors.BadRequestError('Invalid user');

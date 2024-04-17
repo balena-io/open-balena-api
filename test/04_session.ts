@@ -17,7 +17,7 @@ export default () => {
 		describe('session', () => {
 			let admin: UserObjectParam;
 			let device: Device;
-			let application: Application;
+			let application: Application['Read'];
 			let deviceApiKey: string;
 			let provisioningKey: string;
 			let userApiKey: string;
