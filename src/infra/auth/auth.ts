@@ -9,7 +9,10 @@ import type { ResolvedUserPayload } from './jwt-passport.js';
 
 import { getIP } from '../../lib/utils.js';
 import type { User as DbUser } from '../../balena-model.js';
-import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
+import type {
+	Deferred,
+	PickDeferred,
+} from '@balena/abstract-sql-to-typescript';
 import type { PreparedFn } from 'pinejs-client-core';
 
 const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
@@ -338,7 +341,7 @@ export const registerUser = async (
 				clientIP,
 			},
 		},
-	})) as PickDeferred<DbUser['Read'], keyof DbUser['Read']>;
+	})) as { [P in keyof DbUser['Read']]: Deferred<DbUser['Read'][P]> };
 
 	if (user.id == null) {
 		throw new Error('Error creating user in the platform');
