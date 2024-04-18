@@ -1,7 +1,6 @@
 import type { DeviceTypeJson } from './device-type-json.js';
 import type { sbvrUtils } from '@balena/pinejs';
 import { errors } from '@balena/pinejs';
-const { InternalRequestError } = errors;
 
 import { captureException } from '../../infra/error-handling/index.js';
 
@@ -111,11 +110,11 @@ export const getImageSize = async (
 	buildId: string,
 ): Promise<number> => {
 	const deviceTypeInfo = await findDeviceTypeInfoBySlug(resinApi, slug);
-	const deviceType = deviceTypeInfo.latest;
-	const normalizedSlug = deviceType.slug;
+	const deviceTypeJson = deviceTypeInfo.latest;
+	const normalizedSlug = deviceTypeJson.slug;
 
 	if (buildId === 'latest') {
-		buildId = deviceType.buildId;
+		buildId = deviceTypeJson.buildId;
 	}
 
 	if (!deviceTypeInfo.versions.includes(buildId)) {
@@ -137,42 +136,4 @@ export const getImageSize = async (
 		);
 		throw err;
 	}
-};
-
-export interface ImageVersions {
-	versions: string[];
-	latest: string;
-}
-
-export const getImageVersions = async (
-	resinApi: typeof sbvrUtils.api.resin,
-	slug: string,
-): Promise<ImageVersions> => {
-	const deviceTypeInfo = await findDeviceTypeInfoBySlug(resinApi, slug);
-	const deviceType = deviceTypeInfo.latest;
-	const normalizedSlug = deviceType.slug;
-
-	const buildIds = (
-		await Promise.all(
-			deviceTypeInfo.versions.map(async (buildId) => {
-				try {
-					if ((await getDeviceTypeJson(normalizedSlug, buildId)) != null) {
-						return buildId;
-					}
-				} catch {
-					return;
-				}
-			}),
-		)
-	).filter((buildId) => buildId != null);
-	if (buildIds.length === 0 && deviceTypeInfo.versions.length > 0) {
-		throw new InternalRequestError(
-			`Could not retrieve any image version for device type ${slug}`,
-		);
-	}
-
-	return {
-		versions: buildIds,
-		latest: buildIds[0],
-	};
 };
