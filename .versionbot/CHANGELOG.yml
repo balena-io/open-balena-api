@@ -1,4 +1,17 @@
 - commits:
+    - subject: "fasttest: Stop syncing node_modules/@napi-rs that have a native build
+        step"
+      hash: dd0363531bdfca07dc918d48b8f572c4bf75f6ef
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+      nested: []
+  version: 20.2.13
+  title: ""
+  date: 2024-04-18T10:49:23.987Z
+- commits:
     - subject: Lock file maintenance
       hash: cd7a6380d142e38ba40b1ff421f2c786a3e8c249
       body: |
