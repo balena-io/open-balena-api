@@ -242,7 +242,7 @@ export const release = {
 };
 export const deviceTypes = {
 	getAccessibleDeviceTypes,
-	findBySlug: findDeviceTypeJsonBySlug,
+	findDeviceTypeJsonBySlug,
 	getDeviceTypeBySlug,
 };
 export * as contracts from './exports/contracts.js';
