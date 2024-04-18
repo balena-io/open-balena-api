@@ -10,7 +10,7 @@ import {
 import type { Application, DeviceType } from '../../balena-model.js';
 
 import { generateConfig } from './device-config.js';
-import { findBySlug } from '../device-types/device-types.js';
+import { findDeviceTypeJsonBySlug } from '../device-types/device-types.js';
 import { checkInt } from '../../lib/utils.js';
 
 const { UnauthorizedError, NotFoundError } = errors;
@@ -63,7 +63,7 @@ export const downloadImageConfig: RequestHandler = async (req, res) => {
 		const resinApi = api.resin.clone({ passthrough: { req } });
 
 		const app = await getApp(appId, req);
-		const deviceTypeJson = await findBySlug(
+		const deviceTypeJson = await findDeviceTypeJsonBySlug(
 			resinApi,
 			deviceTypeSlug || app.is_for__device_type[0].slug,
 		);
