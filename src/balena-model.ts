@@ -588,7 +588,7 @@ export interface ReleaseAsset {
 	release: { __id: number } | [Release];
 	asset_key: string;
 	id: number;
-	asset: WebResource;
+	asset: WebResource | null;
 }
 
 export interface MyApplication {
