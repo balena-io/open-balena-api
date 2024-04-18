@@ -43,21 +43,6 @@ export const getDeviceType: RequestHandler = async (req, res) => {
 	}
 };
 
-export const listAvailableImageVersions: RequestHandler = async (req, res) => {
-	try {
-		const resinApi = api.resin.clone({ passthrough: { req } });
-		const slug = deviceTypesLib.validateSlug(req.params.deviceType);
-		const data = await deviceTypesLib.getImageVersions(resinApi, slug);
-		res.json(data);
-	} catch (err) {
-		captureException(err, 'Error getting image versions');
-		if (handleHttpErrors(req, res, err)) {
-			return;
-		}
-		res.status(500).send(translateError(err));
-	}
-};
-
 const DOWNLOAD_TIMEOUT = 30000; // we must respond within this time
 
 export const downloadImageSize: RequestHandler = async (req, res) => {
