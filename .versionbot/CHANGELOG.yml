@@ -1,4 +1,18 @@
 - commits:
+    - subject: Fix selecting the device.is_web_accessible field on the v6 model
+      hash: 9b35b51107faed79aff5743b0327b6dd0aa3bda9
+      body: ""
+      footer:
+        Resolves: "#1610"
+        resolves: "#1610"
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 20.2.14
+  title: ""
+  date: 2024-04-19T12:12:09.838Z
+- commits:
     - subject: "fasttest: Stop syncing node_modules/@napi-rs that have a native build
         step"
       hash: dd0363531bdfca07dc918d48b8f572c4bf75f6ef
