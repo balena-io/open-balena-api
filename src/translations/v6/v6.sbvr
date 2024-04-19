@@ -552,6 +552,11 @@ Fact type: device has ip address
 	Necessity: each device has at most one ip address
 Fact type: device has mac address
 	Necessity: each device has at most one mac address
+-- FIXME: The core API has no support for "Device Public URLs",
+-- but w/o this shim some CLI commands fail since they do select it,
+-- Eg: A mechanism that silently unknown selected fields on versioned models
+-- would allow us to drop this.
+Fact type: device is web accessible
 Fact type: device has memory usage
 	Necessity: each device has at most one memory usage
 Fact type: device has memory total
@@ -607,7 +612,6 @@ Fact type: device should be operated by release
 Fact type: device1 is managed by device2
 	Synonymous Form: device2 manages device1
 	Necessity: each device1 is managed by at most one device2.
-
 
 -- application config variable
 
