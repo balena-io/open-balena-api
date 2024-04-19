@@ -11,8 +11,10 @@ export const addToModel = (
 	addShims: boolean = true,
 ) => {
 	if (addShims) {
-		// FIXME: this is a shim for the `is web accessible` attribute on the device
-		// resource. The core API has no support for "Device Public URLs".
+		// FIXME: The core API has no support for "Device Public URLs",
+		// but w/o this shim some CLI commands fail since they do select it,
+		// Eg: A mechanism that silently unknown selected fields on versioned models
+		// would allow us to drop this.
 		abstractSql.tables['device'].fields.push({
 			fieldName: 'is web accessible',
 			dataType: 'Boolean',
@@ -20,6 +22,8 @@ export const addToModel = (
 			computed: ['Boolean', false] as AbstractSqlQuery,
 		});
 
+		// Even though the core API does not have device freezing, we have to define
+		// a shimmed version so that we can refer to it in the device permissions.
 		abstractSql.tables['device'].fields.push({
 			fieldName: 'is frozen',
 			dataType: 'Boolean',
