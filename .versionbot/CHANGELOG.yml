@@ -1,4 +1,25 @@
 - commits:
+    - subject: Update tar import & usage
+      hash: a8a6fe3c3071210622f65505f7e22c51c2350a1c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Update dependency tar to v7
+      hash: 2793cd87ccfdbe2390348efe100b46a985ae89e5
+      body: |
+        Update tar from 6.2.1 to 7.0.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 20.2.16
+  title: ""
+  date: 2024-04-21T22:41:01.719Z
+- commits:
     - subject: "Tests: Use model typings for device type helper typings"
       hash: 94a3192a3b1aca57ff7c82d15f347365ddd8792c
       body: ""
