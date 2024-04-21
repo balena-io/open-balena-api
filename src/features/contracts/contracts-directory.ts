@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import request from 'request';
-import tar from 'tar';
+import * as tar from 'tar';
 import glob from 'fast-glob';
 import fs from 'fs';
 import stream from 'stream';
@@ -162,7 +162,11 @@ export const fetchContractsLocally = async (repos: RepositoryInfo[]) => {
 					}
 				}) as unknown as NodeJS.ReadableStream;
 
-			await stream.promises.pipeline(get, untar);
+			await stream.promises.pipeline(
+				get,
+				// TODO: Drop the cast once https://github.com/isaacs/node-tar/issues/409 gets fixed
+				untar as ReturnType<typeof tar.extract> & NodeJS.WritableStream,
+			);
 		}),
 	);
 };

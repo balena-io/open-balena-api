@@ -6,7 +6,7 @@ import {
 } from '../../src/lib/config.js';
 import type { RepositoryInfo } from '../../src/features/contracts/index.js';
 import nock from 'nock';
-import tar from 'tar';
+import * as tar from 'tar';
 
 export const mockRepo = (
 	repo: RepositoryInfo,
