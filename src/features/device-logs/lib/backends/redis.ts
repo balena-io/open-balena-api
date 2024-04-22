@@ -18,17 +18,16 @@ import type {
 	Subscription,
 } from '../struct.js';
 import {
-	newSubscribeInstance,
+	newNodeRedisSubscribeInstance,
 	createIsolatedRedis,
 } from '../../../../infra/redis/index.js';
 import type { Result } from 'ioredis';
 
-const SUBSCRIBECMD = REDIS_LOGS_SHARDED_PUBSUB ? 'ssubscribe' : 'subscribe';
+const SUBSCRIBECMD = REDIS_LOGS_SHARDED_PUBSUB ? 'sSubscribe' : 'subscribe';
 const UNSUBSCRIBECMD = REDIS_LOGS_SHARDED_PUBSUB
-	? 'sunsubscribe'
+	? 'sUnsubscribe'
 	: 'unsubscribe';
 const PUBLISHCMD = REDIS_LOGS_SHARDED_PUBSUB ? 'spublish' : 'publish';
-const MESSAGECMD = REDIS_LOGS_SHARDED_PUBSUB ? 'smessage' : 'message';
 
 const redis = createIsolatedRedis({ instance: 'logs' });
 const redisRO = createIsolatedRedis({ instance: 'logs', readOnly: true });
@@ -117,7 +116,7 @@ redis.defineCommand('decrSubscribers', {
 });
 
 // This connection goes into "subscriber mode" and cannot be reused for commands
-const pubSub = newSubscribeInstance({ instance: 'logs' });
+const pubSub = await newNodeRedisSubscribeInstance({ instance: 'logs' });
 
 const getCompressionLib = _.once(async () => {
 	if (!REDIS_LOGS_COMPRESSION_ENABLED) {
@@ -143,8 +142,6 @@ export class RedisBackend implements DeviceLogsBackend {
 	} = {};
 
 	constructor() {
-		pubSub.on(MESSAGECMD, this.handleMessage.bind(this));
-
 		this.subscriptions = new EventEmitter();
 	}
 
@@ -200,7 +197,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		const key = this.getKey(ctx);
 		if (!this.subscriptions.listenerCount(key)) {
 			const subscribersKey = this.getKey(ctx, 'subscribers');
-			void pubSub[SUBSCRIBECMD](key);
+			void pubSub[SUBSCRIBECMD](key, this.handleMessage);
 			// Increment the subscribers counter to recognize we've subscribed
 			void redis.incrSubscribers(subscribersKey);
 			// Start a heartbeat to ensure the subscribers counter stays alive whilst we're subscribed
@@ -233,9 +230,7 @@ export class RedisBackend implements DeviceLogsBackend {
 
 	private get connected() {
 		return (
-			redis.status === 'ready' &&
-			pubSub.status === 'ready' &&
-			redisRO.status === 'ready'
+			redis.status === 'ready' && pubSub.isOpen && redisRO.status === 'ready'
 		);
 	}
 
@@ -243,12 +238,12 @@ export class RedisBackend implements DeviceLogsBackend {
 		return `{device:${ctx.id}}:${suffix}`;
 	}
 
-	private async handleMessage(key: string, payload: string) {
+	private handleMessage = async (payload: string, key: string) => {
 		const log = await this.fromRedisLog(payload);
 		if (log) {
 			this.subscriptions.emit(key, log);
 		}
-	}
+	};
 
 	private async fromRedisLog(payload: string): Promise<DeviceLog | undefined> {
 		try {
