@@ -1,4 +1,16 @@
 - commits:
+    - subject: Switch to node-redis for sharded logs subscription support
+      hash: 95194fedd2f3409433d45e960739525abe046d5d
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 20.3.0
+  title: ""
+  date: 2024-04-23T09:41:59.286Z
+- commits:
     - subject: Update tar import & usage
       hash: a8a6fe3c3071210622f65505f7e22c51c2350a1c
       body: ""
