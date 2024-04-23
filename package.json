@@ -114,6 +114,7 @@
     "proxy-addr": "^2.0.7",
     "randomstring": "^1.3.0",
     "rate-limiter-flexible": "^5.0.0",
+    "redis": "^4.6.13",
     "redlock": "^4.2.0",
     "request": "^2.88.2",
     "rsmq": "^0.12.4",
