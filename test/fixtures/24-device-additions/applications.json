@@ -1,0 +1,9 @@
+{
+	"app1": {
+		"user": "admin",
+		"app_name": "test_state_endpoint",
+		"device_type": "raspberry-pi",
+		"commit": "deadbeef",
+		"should_track_latest_release": 1
+	}
+}

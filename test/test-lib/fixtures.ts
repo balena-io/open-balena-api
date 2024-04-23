@@ -339,6 +339,37 @@ const loaders: types.Dictionary<LoaderFunc> = {
 
 		return { ...iev, ...{ release_image: image.image__is_part_of__release } };
 	},
+	image_installs: async (jsonData, fixtures) => {
+		const device = await fixtures.devices[jsonData.device];
+		if (device == null) {
+			logErrorAndThrow('Could not find device: ', jsonData.device);
+		}
+		const release = await fixtures.releases[jsonData.release];
+		if (release == null) {
+			logErrorAndThrow('Could not find release: ', jsonData.release);
+		}
+		const image = await fixtures.images[jsonData.image];
+		if (image == null) {
+			logErrorAndThrow('Could not find image: ', jsonData.image);
+		}
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow('Could not find user: ', jsonData.user);
+		}
+
+		return await createResource({
+			resource: 'image_install',
+			body: {
+				installs__image: image.id,
+				device: device.id,
+				install_date: jsonData.install_date ?? Date.now(),
+				download_progress: jsonData.download_progress,
+				status: jsonData.status,
+				is_provided_by__release: release.id,
+			},
+			user,
+		});
+	},
 	image_labels: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.user];
 		if (user == null) {
@@ -432,6 +463,7 @@ const loaders: types.Dictionary<LoaderFunc> = {
 			user,
 		});
 	},
+
 	devices: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.belongs_to__user];
 		if (user == null) {
@@ -458,11 +490,13 @@ const loaders: types.Dictionary<LoaderFunc> = {
 					'custom_latitude',
 					'custom_longitude',
 					'is_online',
+					'api_heartbeat_state',
 					'latitude',
 					'longitude',
 					'os_variant',
 					'os_version',
 					'supervisor_version',
+					'overall_progress',
 					'uuid',
 				),
 			},

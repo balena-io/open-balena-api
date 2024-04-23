@@ -1,0 +1,18 @@
+{
+  "ii1": {
+    "device": "deviceUpdating",
+    "release": "release1",
+    "image": "image1",
+    "download_progress": 50,
+    "status": "Downloading",
+    "user": "admin"
+  },
+  "ii2": {
+    "device": "deviceUpdating",
+    "release": "release1",
+    "image": "image2",
+    "download_progress": null,
+    "status": "Running",
+    "user": "admin"
+  }
+}
