@@ -1,4 +1,20 @@
 - commits:
+    - subject: Move device additions tests to relevant repository
+      hash: fc03375210b2414b17165b5233bef63811ed0e98
+      body: >
+        This commit relocates the test cases for the device additions from
+        balena-api to open-balena-api. The move consolidates the tests with
+        their corresponding implementation, enhancing maintainability and
+        coherence in project structure.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+      nested: []
+  version: 20.3.1
+  title: ""
+  date: 2024-04-23T13:39:24.375Z
+- commits:
     - subject: Switch to node-redis for sharded logs subscription support
       hash: 95194fedd2f3409433d45e960739525abe046d5d
       body: ""
