@@ -1,4 +1,26 @@
 - commits:
+    - subject: Drop superseded release versioning index
+      hash: d2409389cd11f1da1580d3cfb038ccc960f4e327
+      body: >
+        On the environments I tested,
+
+        pg_stat_all_indexes shows the longer index
+
+        being used at least 2000x more often, and
+
+        surprisingly enough being slightly smaller as well, which I guess might
+        mean that the old
+
+        index has bloat.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 20.3.2
+  title: ""
+  date: 2024-04-24T23:01:06.104Z
+- commits:
     - subject: Move device additions tests to relevant repository
       hash: fc03375210b2414b17165b5233bef63811ed0e98
       body: >
