@@ -91,6 +91,7 @@ import {
 	getOrInsertRoleId,
 	assignUserPermission,
 	assignUserRole,
+	revokeUserRole,
 } from './infra/auth/permissions.js';
 import { createScopedAccessToken, createJwt } from './infra/auth/jwt.js';
 import { middleware as authMiddleware } from './infra/auth/index.js';
@@ -198,6 +199,7 @@ export const auth = {
 	getOrInsertRoleId,
 	assignUserPermission,
 	assignUserRole,
+	revokeUserRole,
 	getUserIDFromCreds,
 	registryAuth,
 	normalizeHandle,
