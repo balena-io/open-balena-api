@@ -8,8 +8,8 @@ import {
 	IMAGE_STORAGE_SECRET_KEY,
 } from '../../src/lib/config.js';
 
-import $getObjectMocks from '../fixtures/s3/getObject.json' assert { type: 'json' };
-import listObjectsV2Mocks from '../fixtures/s3/listObjectsV2.json' assert { type: 'json' };
+import $getObjectMocks from '../fixtures/s3/getObject.json' with { type: 'json' };
+import listObjectsV2Mocks from '../fixtures/s3/listObjectsV2.json' with { type: 'json' };
 
 // AWS S3 Client getObject results have a Buffer on their Body prop
 // and a Date on their LastModified prop so we have to reconstruct
