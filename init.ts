@@ -4,7 +4,7 @@ import { sbvrUtils, errors } from '@balena/pinejs';
 import express from 'express';
 import _ from 'lodash';
 import config from './config.js';
-import packageJson from './package.json' assert { type: 'json' };
+import packageJson from './package.json' with { type: 'json' };
 import { promises as fs } from 'fs';
 import { TRUST_PROXY, PORT } from './src/lib/config.js';
 
