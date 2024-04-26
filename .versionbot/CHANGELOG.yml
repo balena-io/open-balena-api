@@ -1,4 +1,18 @@
 - commits:
+    - subject: Migrate import assertions to use the "with" keyword
+      hash: 5d4255d16721f2e990e9308bc37a5970699047b6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://github.com/nodejs/node/releases/tag/v22.0.0
+        see: https://github.com/nodejs/node/releases/tag/v22.0.0
+      author: Thodoris Greasidis
+      nested: []
+  version: 20.3.3
+  title: ""
+  date: 2024-04-26T18:09:43.104Z
+- commits:
     - subject: Drop superseded release versioning index
       hash: d2409389cd11f1da1580d3cfb038ccc960f4e327
       body: >
