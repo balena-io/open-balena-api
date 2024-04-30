@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update pinejs-client-supertest to 2.0.3
+      hash: 8dc75ba761379cdbebca4754527f28a011169054
+      body: |
+        Update pinejs-client-supertest from 2.0.2 to 2.0.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 20.3.5
+  title: ""
+  date: 2024-04-30T12:35:39.131Z
+- commits:
     - subject: Update dependency supertest to v7
       hash: 5de49191fe00ebb770667a6a590a8c14072c93fb
       body: |
