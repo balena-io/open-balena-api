@@ -149,7 +149,7 @@
     "pinejs-client-supertest": "^2.0.2",
     "rimraf": "^5.0.5",
     "sinon": "^17.0.1",
-    "supertest": "^6.3.4"
+    "supertest": "^7.0.0"
   },
   "engines": {
     "node": "^21.6.1",
