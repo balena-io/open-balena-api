@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency supertest to v7
+      hash: 5de49191fe00ebb770667a6a590a8c14072c93fb
+      body: |
+        Update supertest from 6.3.4 to 7.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 20.3.4
+  title: ""
+  date: 2024-04-30T10:14:08.497Z
+- commits:
     - subject: Migrate import assertions to use the "with" keyword
       hash: 5d4255d16721f2e990e9308bc37a5970699047b6
       body: ""
