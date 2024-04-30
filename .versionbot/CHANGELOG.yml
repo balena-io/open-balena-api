@@ -1,4 +1,16 @@
 - commits:
+    - subject: Run docker build and test on Actuated
+      hash: cb1d2f4710fe7f2ae51066ef8a1aaefd115a5c22
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Kyle Harding
+      nested: []
+  version: 20.3.6
+  title: ""
+  date: 2024-04-30T20:34:29.400Z
+- commits:
     - subject: Update pinejs-client-supertest to 2.0.3
       hash: 8dc75ba761379cdbebca4754527f28a011169054
       body: |
