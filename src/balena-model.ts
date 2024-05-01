@@ -357,6 +357,7 @@ export interface Device {
 	id: number;
 	actor: { __id: number } | [Actor];
 	api_heartbeat_state: 'online' | 'offline' | 'timeout' | 'unknown';
+	last_changed_api_heartbeat_state_on__date: DateString | null;
 	uuid: string;
 	local_id: string | null;
 	device_name: string | null;
