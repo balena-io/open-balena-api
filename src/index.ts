@@ -149,8 +149,8 @@ import { model as balenaModel } from './balena.js';
 import { getV6Translations } from './translations/v6/v6.js';
 
 export * as tags from './features/tags/validation.js';
-
-export type { Creds, TokenUserPayload } from './infra/auth/jwt-passport.js';
+export type { TokenUserPayload } from './infra/auth/jwt.js';
+export type { Creds, ResolvedUserPayload } from './infra/auth/jwt-passport.js';
 export type { Access } from './features/registry/registry.js';
 export type { ApplicationType } from './features/application-types/application-types.js';
 export type { DeviceTypeJson } from './features/device-types/device-type-json.js';

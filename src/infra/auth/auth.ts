@@ -5,7 +5,7 @@ import type { hooks } from '@balena/pinejs';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
 import { retrieveAPIKey } from './api-keys.js';
-import type { TokenUserPayload } from './jwt-passport.js';
+import type { ResolvedUserPayload } from './jwt-passport.js';
 
 import { getIP } from '../../lib/utils.js';
 import type { PickDeferred, User as DbUser } from '../../balena-model.js';
@@ -182,22 +182,23 @@ const getUserQuery = _.once(
 			Promise<Array<PickDeferred<DbUser, (typeof userFields)[number]>>>
 		>,
 );
+
 export function getUser(
 	req: Request | hooks.HookReq,
 	txParam: Tx | undefined,
 	required?: true,
-): Promise<TokenUserPayload>;
+): Promise<ResolvedUserPayload>;
 export function getUser(
 	req: Request | hooks.HookReq,
 	txParam: Tx | undefined,
 	required: false,
-): Promise<TokenUserPayload | undefined>;
+): Promise<ResolvedUserPayload | undefined>;
 export async function getUser(
 	req: hooks.HookReq & Pick<Request, 'user' | 'creds'>,
 	/** You should always be passing a Tx, unless you are using this in a middleware. */
 	txParam: Tx | undefined,
 	required = true,
-): Promise<TokenUserPayload | undefined> {
+): Promise<ResolvedUserPayload | undefined> {
 	const $getUser = async (tx: Tx) => {
 		// This shouldn't happen but it does for some internal PineJS requests
 		if (req.user && !req.creds) {
