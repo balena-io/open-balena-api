@@ -11,7 +11,11 @@ import { permissions } from '@balena/pinejs';
 import { JSON_WEB_TOKEN_SECRET } from '../../lib/config.js';
 
 import { captureException } from '../error-handling/index.js';
-import type { ScopedAccessToken, ScopedToken } from './jwt.js';
+import type {
+	ScopedAccessToken,
+	ScopedToken,
+	TokenUserPayload,
+} from './jwt.js';
 import type { PickDeferred, User as DbUser } from '../../balena-model.js';
 import { getGuestActorId } from './permissions.js';
 
@@ -29,20 +33,13 @@ export interface ApiKey extends sbvrUtils.ApiKey {
 	key: string;
 }
 
-// The content of the JWT that we give to users, other than the standard JWT props (eg iat,exp,...).
-export interface TokenUserPayload extends Pick<sbvrUtils.User, 'id' | 'actor'> {
-	jwt_secret: string | null;
-	twoFactorRequired?: boolean;
-	authTime?: number;
-}
-
 // What pine expects on Creds after a JWT is parsed so that everything works.
-type ResolvedUserToken = TokenUserPayload & sbvrUtils.User;
+export type ResolvedUserPayload = TokenUserPayload & sbvrUtils.User;
 
 // What decoded content of Passport finds on the Authorization header
 type UnparsedCreds = ServiceToken | TokenUserPayload | ScopedAccessToken;
 // The result after JwtStrategy runs
-export type Creds = ServiceToken | ResolvedUserToken | ScopedToken;
+export type Creds = ServiceToken | ResolvedUserPayload | ScopedToken;
 const TOKEN_BODY_FIELD = '_token';
 
 const jwtFromRequest = ExtractJwt.versionOneCompatibility({
@@ -91,12 +88,12 @@ export const createStrategy = (
 						throw new InvalidJwtSecretError();
 					}
 
-					jwtUser.actor = user.actor.__id;
 					const userPermissions = await permissions.getUserPermissions(
 						jwtUser.id,
 					);
 
-					const processedJwtUser = jwtUser as ResolvedUserToken;
+					const processedJwtUser = jwtUser as ResolvedUserPayload;
+					processedJwtUser.actor = user.actor.__id;
 					processedJwtUser.permissions = userPermissions;
 					return processedJwtUser;
 				} else {
@@ -153,7 +150,7 @@ export const middleware: RequestHandler = (req, res, next) => {
 					twoFactorRequired: true;
 				};
 			} else {
-				req.user = auth as TokenUserPayload & {
+				req.user = auth as ResolvedUserPayload & {
 					twoFactorRequired: false;
 				};
 			}

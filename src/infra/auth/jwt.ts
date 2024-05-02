@@ -7,10 +7,10 @@ import jsonwebtoken from 'jsonwebtoken';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
-import type { SignOptions, TokenUserPayload } from './jwt-passport.js';
+import type { SignOptions } from './jwt-passport.js';
 import type { User as DbUser, PickDeferred } from '../../balena-model.js';
 import { randomBytesAsync } from '../../lib/utils.js';
-import { getUser, userFields } from './auth.js';
+import { getUser } from './auth.js';
 import {
 	JSON_WEB_TOKEN_EXPIRY_MINUTES,
 	JSON_WEB_TOKEN_SECRET,
@@ -35,7 +35,13 @@ export const generateNewJwtSecret = async (): Promise<string> => {
 	return base32.encode(key).toString();
 };
 
-export const tokenFields = [...userFields];
+export const tokenFields = ['id', 'jwt_secret'] satisfies Array<keyof DbUser>;
+// The content of the JWT that we give to users, other than the standard JWT props (eg iat,exp,...).
+export interface TokenUserPayload
+	extends Pick<DbUser, (typeof tokenFields)[number]> {
+	twoFactorRequired?: boolean;
+	authTime?: number;
+}
 
 export interface ExtraParams {
 	existingToken?: Partial<TokenUserPayload>;
@@ -69,17 +75,14 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 	if (!userData) {
 		throw new Error('No data found?!');
 	}
-	const newTokenData = {
-		..._.pick(userData, tokenFields),
-		actor: userData.actor.__id,
-	};
+	const newTokenData = _.pick(userData, tokenFields);
 
 	const tokenData: TokenUserPayload = {
 		...existingToken,
 		...newTokenData,
 	};
 
-	if (!Number.isFinite(tokenData.authTime!)) {
+	if (!Number.isFinite(tokenData.authTime)) {
 		tokenData.authTime = Date.now();
 	}
 
