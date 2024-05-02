@@ -1,4 +1,15 @@
 - commits:
+    - subject: correct startup when run as a standalone container
+      hash: f2c400123e96b9e763b61bd8fdc9483076c7a566
+      body: ""
+      footer:
+        change-type: patch
+      author: Anton Belodedenko
+      nested: []
+  version: 21.1.1
+  title: ""
+  date: 2024-05-02T22:06:53.721Z
+- commits:
     - subject: Add revokeUserRole to auth
       hash: 91ec128eb38a206bbea02ef5818db97111e197ea
       body: ""
