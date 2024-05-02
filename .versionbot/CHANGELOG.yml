@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove the `actor` from the `TokenUserPayload` & generated JWT
+      hash: 5310aa959e22b3c2da39f8f43c130f737b6f6d92
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Thodoris Greasidis
+      nested: []
+  version: 21.0.0
+  title: ""
+  date: 2024-05-02T14:22:27.450Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v17.0.18
       hash: 2dce98f65678ff311a1624705684b48ed2d6e85f
       body: |
