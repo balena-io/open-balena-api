@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add revokeUserRole to auth
+      hash: 91ec128eb38a206bbea02ef5818db97111e197ea
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Otavio Jacobi
+      nested: []
+  version: 21.1.0
+  title: ""
+  date: 2024-05-02T21:45:13.478Z
+- commits:
     - subject: Remove the `actor` from the `TokenUserPayload` & generated JWT
       hash: 5310aa959e22b3c2da39f8f43c130f737b6f6d92
       body: ""
