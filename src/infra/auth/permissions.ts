@@ -62,6 +62,21 @@ export const assignUserPermission = (
 	tx: Tx,
 ) => getOrInsertId('user__has__permission', { user, permission }, tx);
 
+export const revokeUserRole = (user: number, role: number, tx: Tx) =>
+	api.Auth.delete({
+		resource: 'user__has__role',
+		options: {
+			$filter: {
+				user,
+				role,
+			},
+		},
+		passthrough: {
+			tx,
+			req: permissions.root,
+		},
+	});
+
 // api key helpers
 
 const getOrInsertApiKey = async (
