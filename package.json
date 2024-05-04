@@ -123,7 +123,7 @@
     "statuses": "^2.0.1",
     "strict-event-emitter-types": "^2.0.0",
     "supervisor": "^0.12.0",
-    "tar": "^7.0.0",
+    "tar": "^7.1.0",
     "thirty-two": "^1.0.2",
     "ts-node": "^10.9.2",
     "typed-error": "^3.2.2",

@@ -162,11 +162,7 @@ export const fetchContractsLocally = async (repos: RepositoryInfo[]) => {
 					}
 				}) as unknown as NodeJS.ReadableStream;
 
-			await stream.promises.pipeline(
-				get,
-				// TODO: Drop the cast once https://github.com/isaacs/node-tar/issues/409 gets fixed
-				untar as ReturnType<typeof tar.extract> & NodeJS.WritableStream,
-			);
+			await stream.promises.pipeline(get, untar);
 		}),
 	);
 };
