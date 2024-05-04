@@ -1,4 +1,18 @@
 - commits:
+    - subject: Update `tar` to 7.1.0
+      hash: 4f9f350a9ccff0d0b95548a07c9d7dd848aba7c0
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://github.com/isaacs/node-tar/blob/main/CHANGELOG.md#71
+        see: https://github.com/isaacs/node-tar/blob/main/CHANGELOG.md#71
+      author: Thodoris Greasidis
+      nested: []
+  version: 21.1.2
+  title: ""
+  date: 2024-05-04T21:16:54.678Z
+- commits:
     - subject: correct startup when run as a standalone container
       hash: f2c400123e96b9e763b61bd8fdc9483076c7a566
       body: ""
