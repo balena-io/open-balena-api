@@ -1,4 +1,16 @@
 - commits:
+    - subject: Improve typing of api key actor type
+      hash: 7c636dd2f5ff48c1e9f8d9d934bee433e79634a1
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 21.1.3
+  title: ""
+  date: 2024-05-07T22:57:05.029Z
+- commits:
     - subject: Update `tar` to 7.1.0
       hash: 4f9f350a9ccff0d0b95548a07c9d7dd848aba7c0
       body: ""
