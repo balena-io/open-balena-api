@@ -29,8 +29,10 @@ interface InternalApiKeyOptions extends ApiKeyOptions {
 	tx: Tx;
 }
 
+type ApiKeyActor = 'application' | 'device' | 'user';
+
 const $createApiKey = async (
-	actorType: string,
+	actorType: ApiKeyActor,
 	roleName: string,
 	req: Request,
 	actorTypeID: number,
@@ -143,7 +145,7 @@ const getKeyMetadata = (reqBody: {
 };
 
 export const createApiKey = async (
-	actorType: string,
+	actorType: ApiKeyActor,
 	roleName: string,
 	req: Request,
 	actorTypeID: number,
