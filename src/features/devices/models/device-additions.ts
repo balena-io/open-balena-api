@@ -1,57 +1,16 @@
 import type {
 	AbstractSqlModel,
-	AbstractSqlQuery,
 	AndNode,
 	OrNode,
 	BooleanTypeNodes,
 	EqualsNode,
 } from '@balena/abstract-sql-compiler';
 
-export const addToModel = (
-	abstractSql: AbstractSqlModel,
-	addShims: boolean = true,
-) => {
-	if (addShims) {
-		// FIXME: The core API has no support for "Device Public URLs",
-		// but w/o this shim some CLI commands fail since they do select it,
-		// Eg: A mechanism that silently unknown selected fields on versioned models
-		// would allow us to drop this.
-		abstractSql.tables['device'].fields.push({
-			fieldName: 'is web accessible',
-			dataType: 'Boolean',
-			// The cast is needed because AbstractSqlQuery cannot express a constant value.
-			computed: ['Boolean', false] as AbstractSqlQuery,
-		});
-
-		// Even though the core API does not have device freezing, we have to define
-		// a shimmed version so that we can refer to it in the device permissions.
-		abstractSql.tables['device'].fields.push({
-			fieldName: 'is frozen',
-			dataType: 'Boolean',
-			// The cast is needed because AbstractSqlQuery cannot express a constant value.
-			computed: ['Boolean', false] as AbstractSqlQuery,
-		});
-	}
-
-	// FIXME: cloud has the notion of active/inactive devices via a field
-	// on the device resource. Computing the overall status below depends
-	// on whether the device is active but also on a few other statuses
-	// (Ordered, Preparing, etc.) that make no sense for the core API.
-	//
-	// We must somehow expose the overall status/progress attributes on the
-	// model and we could contrive a way for the cloud to inject the extra
-	// cases, but that would quickly become overly complex because the order
-	// of cases matters. We'd never be able to cleanly make the core API
-	// agnostic to the cloud.
-	//
-	// Therefore, I opted for the most straightforward way, which is to switch
-	// the computation based on a flag. When `addShims` is true (the default),
-	// it'll generate a dummy case (the equivalent of 1 == 2, which is always
-	// false), otherwise it'll generate a case that looks into the actual model
-	// field.
-	const isInactive: BooleanTypeNodes = addShims
-		? ['Boolean', false]
-		: ['Not', ['ReferencedField', 'device', 'is active']];
+export const addToModel = (abstractSql: AbstractSqlModel) => {
+	const isInactive: BooleanTypeNodes = [
+		'Not',
+		['ReferencedField', 'device', 'is active'],
+	];
 
 	const isOverallOffline: AndNode = [
 		'And',
@@ -140,28 +99,6 @@ export const addToModel = (
 		computed: [
 			// TODO: should use `is managed by-service instance` with timeout for informing online/offline
 			'Case',
-			[
-				'When',
-				[
-					'Or',
-					[
-						'In',
-						['ReferencedField', 'device', 'status'],
-						['EmbeddedText', 'Ordered'],
-						['EmbeddedText', 'Preparing'],
-					],
-					[
-						'And',
-						['Not', ['ReferencedField', 'device', 'is online']],
-						[
-							'Equals',
-							['ReferencedField', 'device', 'status'],
-							['EmbeddedText', 'Shipped'],
-						],
-					],
-				],
-				['ToLower', ['ReferencedField', 'device', 'status']],
-			],
 			['When', isInactive, ['EmbeddedText', 'inactive']],
 			['When', isPostProvisioning, ['EmbeddedText', 'post-provisioning']],
 			['When', isPreProvisioning, ['EmbeddedText', 'configuring']],
@@ -232,26 +169,9 @@ export const addToModel = (
 			'Case',
 			[
 				'When',
-				[
-					'Or',
-					[
-						'In',
-						['ReferencedField', 'device', 'status'],
-						['EmbeddedText', 'Ordered'],
-						['EmbeddedText', 'Preparing'],
-					],
-					[
-						'And',
-						['Not', ['ReferencedField', 'device', 'is online']],
-						[
-							'Equals',
-							['ReferencedField', 'device', 'status'],
-							['EmbeddedText', 'Shipped'],
-						],
-					],
-					isInactive,
-				],
-				// If the device is inactive or in an Ordered/Preparing/Shipped then we return null progress as we have no more info
+
+				isInactive,
+				// If the device is inactive then we return null progress as we have no more info
 				['Null'],
 			],
 			[
