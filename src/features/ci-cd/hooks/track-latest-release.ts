@@ -12,7 +12,7 @@ const trackableReleaseFilter = {
 const releaseStateFields = Object.keys(trackableReleaseFilter);
 
 const updateLatestRelease = async (
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	releaseIds: number[],
 ) => {
 	if (!releaseIds.length) {

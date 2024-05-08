@@ -9,7 +9,7 @@ import type {
 } from '../../../balena-model.js';
 
 const createReleaseServiceInstalls = async (
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	deviceFilterOrIds: number[] | FilterObj,
 	releaseFilter: Filter,
 ): Promise<void> => {
@@ -126,7 +126,7 @@ const createReleaseServiceInstalls = async (
 };
 
 const createAppServiceInstalls = async (
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	appId: number,
 	deviceIds: number[],
 ): Promise<void> =>
@@ -140,7 +140,7 @@ const createAppServiceInstalls = async (
 	});
 
 const deleteServiceInstallsForCurrentApp = (
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	newAppId: number,
 	deviceIds: number[],
 ) =>

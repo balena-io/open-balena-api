@@ -63,7 +63,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 });
 
 async function checkSupervisorReleaseUpgrades(
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	deviceIds: number[],
 	newSupervisorReleaseId: number,
 ) {
@@ -132,7 +132,7 @@ async function checkSupervisorReleaseUpgrades(
 }
 
 async function getSupervisorReleaseResource(
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	supervisorVersion: string,
 	archId: string,
 ) {
@@ -185,7 +185,7 @@ async function getSupervisorReleaseResource(
 }
 
 async function setSupervisorReleaseResource(
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	deviceIds: number[],
 	supervisorVersion: string,
 ) {

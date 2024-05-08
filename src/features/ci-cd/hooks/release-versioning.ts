@@ -59,7 +59,7 @@ const preventChangingFinalToDraft = async (
 };
 
 const getNextRevision = async (
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	applicationId: number,
 	semverObject: semverLib.SemVer,
 	variant: string,

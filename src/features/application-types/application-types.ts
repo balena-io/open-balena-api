@@ -46,7 +46,7 @@ export class WebUrlNotSupportedError extends errors.ForbiddenError {
 }
 
 export const checkDevicesCanHaveDeviceURL = async (
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	deviceIDs: number[],
 ): Promise<void> => {
 	if (deviceIDs.length === 0) {
@@ -87,7 +87,7 @@ export const checkDevicesCanHaveDeviceURL = async (
 	}
 };
 
-const getAppType = async (api: sbvrUtils.PinejsClient, appId: number) => {
+const getAppType = async (api: typeof sbvrUtils.api.resin, appId: number) => {
 	const [appType] = await api.get({
 		resource: 'application_type',
 		passthrough: {
@@ -113,7 +113,7 @@ const getAppType = async (api: sbvrUtils.PinejsClient, appId: number) => {
 };
 
 export const checkDeviceCanBeInApplication = async (
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	appId: number,
 	device: AnyObject,
 ) => {
@@ -125,7 +125,7 @@ export const checkDeviceCanBeInApplication = async (
 };
 
 export const checkDevicesCanBeInApplication = async (
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	appId: number,
 	deviceIds: number[],
 ): Promise<void> => {
