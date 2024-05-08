@@ -105,7 +105,7 @@ hooks.addPureHook('POST', 'resin', 'device', {
 });
 
 async function setOSReleaseResource(
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	deviceIds: number[],
 	osVersion: string,
 	osVariant: string,
@@ -177,7 +177,7 @@ async function setOSReleaseResource(
 }
 
 async function getOSReleaseResource(
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	osVersion: string,
 	osVariant: string,
 	deviceTypeId: number,
@@ -368,7 +368,7 @@ function getBaseVersionFromReleaseSemverOrTag(
 }
 
 async function checkHostappReleaseUpgrades(
-	api: sbvrUtils.PinejsClient,
+	api: typeof sbvrUtils.api.resin,
 	deviceIds: number[],
 	newHostappReleaseId: number,
 ) {

@@ -193,7 +193,7 @@ const shouldUpdateImageInstall = (() => {
 })();
 
 export const upsertImageInstall = async (
-	resinApi: sbvrUtils.PinejsClient,
+	resinApi: typeof sbvrUtils.api.resin,
 	imgInstall: Pick<ImageInstall['Read'], 'id'>,
 	{
 		imageId,
@@ -249,7 +249,7 @@ export const upsertImageInstall = async (
 };
 
 export const deleteOldImageInstalls = async (
-	resinApi: sbvrUtils.PinejsClient,
+	resinApi: typeof sbvrUtils.api.resin,
 	deviceId: number,
 	imageIds: number[],
 ): Promise<void> => {
