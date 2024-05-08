@@ -2,6 +2,7 @@ import type {
 	AbstractSqlModel,
 	AbstractSqlQuery,
 	AndNode,
+	OrNode,
 	BooleanTypeNodes,
 	EqualsNode,
 } from '@balena/abstract-sql-compiler';
@@ -76,6 +77,57 @@ export const addToModel = (
 		],
 	];
 
+	const isReducedFunctionality: OrNode = [
+		'Or',
+		[
+			'And',
+			['Equals', ['ReferencedField', 'device', 'is online'], ['Boolean', true]],
+			[
+				'In',
+				['ReferencedField', 'device', 'api heartbeat state'],
+				['EmbeddedText', 'timeout'],
+				['EmbeddedText', 'offline'],
+				['EmbeddedText', 'unknown'],
+			],
+		],
+		[
+			'And',
+			['Not', ['ReferencedField', 'device', 'is online']],
+			[
+				'Equals',
+				['ReferencedField', 'device', 'api heartbeat state'],
+				['EmbeddedText', 'online'],
+			],
+			[
+				'Not',
+				[
+					'Exists',
+					[
+						'SelectQuery',
+						['Select', []],
+						['From', ['Table', 'device config variable']],
+						[
+							'Where',
+							[
+								'And',
+								[
+									'Equals',
+									['ReferencedField', 'device config variable', 'name'],
+									['EmbeddedText', 'RESIN_SUPERVISOR_VPN_CONTROL'],
+								],
+								[
+									'GreaterThan',
+									['ReferencedField', 'device config variable', 'value'],
+									['Number', 0],
+								],
+							],
+						],
+					],
+				],
+			],
+		],
+	];
+
 	const isPostProvisioning: EqualsNode = [
 		'Equals',
 		['ReferencedField', 'device', 'provisioning state'],
@@ -113,7 +165,12 @@ export const addToModel = (
 			['When', isInactive, ['EmbeddedText', 'inactive']],
 			['When', isPostProvisioning, ['EmbeddedText', 'post-provisioning']],
 			['When', isPreProvisioning, ['EmbeddedText', 'configuring']],
-			['When', isOverallOffline, ['EmbeddedText', 'offline']],
+			['When', isOverallOffline, ['EmbeddedText', 'disconnected']],
+			[
+				'When',
+				isReducedFunctionality,
+				['EmbeddedText', 'reduced-functionality'],
+			],
 			[
 				'When',
 				[
@@ -164,7 +221,7 @@ export const addToModel = (
 				],
 				['EmbeddedText', 'updating'],
 			],
-			['Else', ['EmbeddedText', 'idle']],
+			['Else', ['EmbeddedText', 'operational']],
 		],
 	});
 
