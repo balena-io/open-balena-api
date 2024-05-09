@@ -1,0 +1,8 @@
+{
+	"variable1": {
+		"user": "admin",
+		"application": "app2",
+		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
+		"value": "false"
+	}
+}
