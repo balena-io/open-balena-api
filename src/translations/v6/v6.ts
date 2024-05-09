@@ -92,6 +92,69 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) =>
 			'is managed by-device': ['Cast', ['Null'], 'Integer'],
 			'logs channel': ['Cast', ['Null'], 'Short Text'],
 			'vpn address': ['Cast', ['Null'], 'Short Text'],
+			'overall status': [
+				'Case',
+				[
+					'When',
+					[
+						'Equals',
+						['ReferencedField', 'device', 'overall status'],
+						['EmbeddedText', 'disconnected'],
+					],
+					['EmbeddedText', 'offline'],
+				],
+				[
+					'When',
+					[
+						'And',
+						[
+							'Equals',
+							['ReferencedField', 'device', 'overall status'],
+							['EmbeddedText', 'reduced-functionality'],
+						],
+						[
+							'Exists',
+							[
+								'SelectQuery',
+								['Select', []],
+								['From', ['Table', 'image install']],
+								[
+									'Where',
+									[
+										'And',
+										[
+											'Equals',
+											['ReferencedField', 'image install', 'device'],
+											['ReferencedField', 'device', 'id'],
+										],
+										[
+											'Exists',
+											['ReferencedField', 'image install', 'download progress'],
+										],
+										[
+											'Equals',
+											['ReferencedField', 'image install', 'status'],
+											['EmbeddedText', 'Downloading'],
+										],
+									],
+								],
+							],
+						],
+					],
+					['EmbeddedText', 'updating'],
+				],
+				[
+					'When',
+					[
+						'In',
+						['ReferencedField', 'device', 'overall status'],
+						['EmbeddedText', 'reduced-functionality'],
+						['EmbeddedText', 'operational'],
+					],
+					['EmbeddedText', 'idle'],
+				],
+				['Else', ['ReferencedField', 'device', 'overall status']],
+			],
 		},
 		release: {
 			abstractSql: [

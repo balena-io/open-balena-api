@@ -503,6 +503,29 @@ const loaders: types.Dictionary<LoaderFunc> = {
 			user,
 		});
 	},
+
+	device_config_variables: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const device = await fixtures.devices[jsonData.device];
+		if (device == null) {
+			logErrorAndThrow(`Could not find device: ${jsonData.device}`);
+		}
+
+		const body = _.pick(jsonData, 'name', 'value');
+
+		return await createResource({
+			resource: 'device_config_variable',
+			body: {
+				...body,
+				device: device.id,
+			},
+			user,
+		});
+	},
 };
 
 const deleteResource = (resource: string) => async (obj: { id: number }) => {

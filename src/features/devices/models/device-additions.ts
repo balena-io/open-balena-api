@@ -4,6 +4,7 @@ import type {
 	AndNode,
 	BooleanTypeNodes,
 	EqualsNode,
+	OrNode,
 } from '@balena/abstract-sql-compiler';
 
 export const addToModel = (
@@ -80,6 +81,94 @@ export const addToModel = (
 		['ReferencedField', 'device', 'provisioning state'],
 		['EmbeddedText', 'Post-Provisioning'],
 	];
+	// This check does not double check heartbeat state as it is already checked from isOverallOffline which runs before
+	const hasPartialConnectivity: OrNode = [
+		'Or',
+		[
+			'And',
+			['Equals', ['ReferencedField', 'device', 'is online'], ['Boolean', true]],
+			[
+				'NotEquals',
+				['ReferencedField', 'device', 'api heartbeat state'],
+				['EmbeddedText', 'online'],
+			],
+		],
+		[
+			'And',
+			[
+				'Equals',
+				['ReferencedField', 'device', 'is online'],
+				['Boolean', false],
+			],
+			[
+				'In',
+				['ReferencedField', 'device', 'api heartbeat state'],
+				['EmbeddedText', 'online'],
+				['EmbeddedText', 'timeout'],
+			],
+			[
+				'NotEquals',
+				[
+					'Coalesce',
+					[
+						'SelectQuery',
+						[
+							'Select',
+							[['ReferencedField', 'device config variable', 'value']],
+						],
+						['From', ['Table', 'device config variable']],
+						[
+							'Where',
+							[
+								'And',
+								[
+									'Equals',
+									['ReferencedField', 'device config variable', 'device'],
+									['ReferencedField', 'device', 'id'],
+								],
+								[
+									'Equals',
+									['ReferencedField', 'device config variable', 'name'],
+									['EmbeddedText', 'RESIN_SUPERVISOR_VPN_CONTROL'],
+								],
+							],
+						],
+					],
+					[
+						'SelectQuery',
+						[
+							'Select',
+							[['ReferencedField', 'application config variable', 'value']],
+						],
+						['From', ['Table', 'application config variable']],
+						[
+							'Where',
+							[
+								'And',
+								[
+									'Equals',
+									[
+										'ReferencedField',
+										'application config variable',
+										'application',
+									],
+									['ReferencedField', 'device', 'belongs to-application'],
+								],
+								[
+									'Equals',
+									['ReferencedField', 'application config variable', 'name'],
+									['EmbeddedText', 'RESIN_SUPERVISOR_VPN_CONTROL'],
+								],
+							],
+						],
+					],
+					// Adding a COALESCE default value to avoid the need for NotEquals to compare 'false' with NULL
+					['EmbeddedText', 'not set'],
+				],
+				['EmbeddedText', 'false'],
+			],
+		],
+	];
 
 	abstractSql.tables['device'].fields.push({
 		fieldName: 'overall status',
@@ -90,11 +179,17 @@ export const addToModel = (
 			['When', isInactive, ['EmbeddedText', 'inactive']],
 			['When', isPostProvisioning, ['EmbeddedText', 'post-provisioning']],
 			['When', isPreProvisioning, ['EmbeddedText', 'configuring']],
-			['When', isOverallOffline, ['EmbeddedText', 'offline']],
+			['When', isOverallOffline, ['EmbeddedText', 'disconnected']],
 			[
 				'When',
 				[
 					'And',
+					[
+						'In',
+						['ReferencedField', 'device', 'api heartbeat state'],
+						['EmbeddedText', 'online'],
+						['EmbeddedText', 'timeout'],
+					],
 					['Exists', ['ReferencedField', 'device', 'download progress']],
 					[
 						'Equals',
@@ -112,28 +207,37 @@ export const addToModel = (
 			[
 				'When',
 				[
-					'Exists',
+					'And',
 					[
-						'SelectQuery',
-						['Select', []],
-						['From', ['Table', 'image install']],
+						'In',
+						['ReferencedField', 'device', 'api heartbeat state'],
+						['EmbeddedText', 'online'],
+						['EmbeddedText', 'timeout'],
+					],
+					[
+						'Exists',
 						[
-							'Where',
+							'SelectQuery',
+							['Select', []],
+							['From', ['Table', 'image install']],
 							[
-								'And',
+								'Where',
 								[
-									'Equals',
-									['ReferencedField', 'image install', 'device'],
-									['ReferencedField', 'device', 'id'],
-								],
-								[
-									'Exists',
-									['ReferencedField', 'image install', 'download progress'],
-								],
-								[
-									'Equals',
-									['ReferencedField', 'image install', 'status'],
-									['EmbeddedText', 'Downloading'],
+									'And',
+									[
+										'Equals',
+										['ReferencedField', 'image install', 'device'],
+										['ReferencedField', 'device', 'id'],
+									],
+									[
+										'Exists',
+										['ReferencedField', 'image install', 'download progress'],
+									],
+									[
+										'Equals',
+										['ReferencedField', 'image install', 'status'],
+										['EmbeddedText', 'Downloading'],
+									],
 								],
 							],
 						],
@@ -141,9 +245,16 @@ export const addToModel = (
 				],
 				['EmbeddedText', 'updating'],
 			],
-			['Else', ['EmbeddedText', 'idle']],
+			[
+				'When',
+				hasPartialConnectivity,
+				['EmbeddedText', 'reduced-functionality'],
+			],
+			['Else', ['EmbeddedText', 'operational']],
 		],
 	});
+
+	console.log(abstractSql.tables['device']);
 
 	abstractSql.tables['device'].fields.push({
 		fieldName: 'overall progress',

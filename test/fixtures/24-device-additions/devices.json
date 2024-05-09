@@ -68,5 +68,35 @@
 		"os_variant": "prod",
 		"os_version": "Resin OS 2.11.0+rev1",
 		"supervisor_version": "6.4.2"
+	},
+	"deviceWithDeviceConfigVPNDisabled": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceWithApplicationConfigVPNDisabled": {
+		"belongs_to__application": "app2",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceWithDeviceConfigVPNEnabled": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
 	}
 }
