@@ -34,8 +34,7 @@ export const addToModel = (
 
 	// FIXME: cloud has the notion of active/inactive devices via a field
 	// on the device resource. Computing the overall status below depends
-	// on whether the device is active but also on a few other statuses
-	// (Ordered, Preparing, etc.) that make no sense for the core API.
+	// on whether the device is active.
 	//
 	// We must somehow expose the overall status/progress attributes on the
 	// model and we could contrive a way for the cloud to inject the extra
@@ -88,28 +87,6 @@ export const addToModel = (
 		computed: [
 			// TODO: should use `is managed by-service instance` with timeout for informing online/offline
 			'Case',
-			[
-				'When',
-				[
-					'Or',
-					[
-						'In',
-						['ReferencedField', 'device', 'status'],
-						['EmbeddedText', 'Ordered'],
-						['EmbeddedText', 'Preparing'],
-					],
-					[
-						'And',
-						['Not', ['ReferencedField', 'device', 'is online']],
-						[
-							'Equals',
-							['ReferencedField', 'device', 'status'],
-							['EmbeddedText', 'Shipped'],
-						],
-					],
-				],
-				['ToLower', ['ReferencedField', 'device', 'status']],
-			],
 			['When', isInactive, ['EmbeddedText', 'inactive']],
 			['When', isPostProvisioning, ['EmbeddedText', 'post-provisioning']],
 			['When', isPreProvisioning, ['EmbeddedText', 'configuring']],
@@ -175,26 +152,8 @@ export const addToModel = (
 			'Case',
 			[
 				'When',
-				[
-					'Or',
-					[
-						'In',
-						['ReferencedField', 'device', 'status'],
-						['EmbeddedText', 'Ordered'],
-						['EmbeddedText', 'Preparing'],
-					],
-					[
-						'And',
-						['Not', ['ReferencedField', 'device', 'is online']],
-						[
-							'Equals',
-							['ReferencedField', 'device', 'status'],
-							['EmbeddedText', 'Shipped'],
-						],
-					],
-					isInactive,
-				],
-				// If the device is inactive or in an Ordered/Preparing/Shipped then we return null progress as we have no more info
+				isInactive,
+				// If the device is inactive then we return null progress as we have no more info
 				['Null'],
 			],
 			[
