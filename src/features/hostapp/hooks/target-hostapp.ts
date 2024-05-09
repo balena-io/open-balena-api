@@ -354,7 +354,7 @@ function normalizeOsVersion(osVersion: string) {
  */
 function getBaseVersionFromReleaseSemverOrTag(
 	release: Pick<Release['Read'], 'semver'> & {
-		release_tag: [Pick<ReleaseTag['Read'], 'value'>?];
+		release_tag: Array<Pick<ReleaseTag['Read'], 'value'>>;
 	},
 ) {
 	// For OS releases w/ versions that we could not migrate to the semver fields
@@ -412,7 +412,7 @@ async function checkHostappReleaseUpgrades(
 		},
 	})) as
 		| (Pick<Release['Read'], 'semver'> & {
-				release_tag: [Pick<ReleaseTag['Read'], 'value'>?];
+				release_tag: Array<Pick<ReleaseTag['Read'], 'value'>>;
 		  })
 		| undefined;
 
@@ -457,9 +457,9 @@ async function checkHostappReleaseUpgrades(
 				},
 			},
 		},
-	})) as Array<
+	} as const)) as Array<
 		Pick<Release['Read'], 'semver'> & {
-			release_tag: [Pick<ReleaseTag['Read'], 'value'>?];
+			release_tag: Array<Pick<ReleaseTag['Read'], 'value'>>;
 		}
 	>;
 

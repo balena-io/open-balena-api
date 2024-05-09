@@ -33,15 +33,13 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 
 	try {
 		const allowedDevices = (await api.resin.post({
-			resource: 'device',
-			id: device.id,
+			url: `device(${device.id})/canAccess`,
 			passthrough: {
 				req,
 			},
 			body: {
 				action: 'ssh-host',
 			},
-			url: `device(${device.id})/canAccess`,
 		})) as { d?: AnyObject[] };
 
 		if (!Array.isArray(allowedDevices.d) || allowedDevices.d.length !== 1) {

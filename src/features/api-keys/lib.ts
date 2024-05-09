@@ -285,7 +285,7 @@ export const createGenericApiKey = async (
 
 export const isApiKeyWithRole = (() => {
 	const authQuery = _.once(() =>
-		api.Auth.prepare<{ key: string; roleName: string }>({
+		api.Auth.prepare<{ key: string; roleName: string }, 'role'>({
 			resource: 'role',
 			passthrough: { req: permissions.root },
 			id: {

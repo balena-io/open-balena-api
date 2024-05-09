@@ -11,6 +11,8 @@ import type { Headers } from 'request';
 import { API_HOST } from '../../src/lib/config.js';
 import { requestAsync } from '../../src/infra/request-promise/index.js';
 import { supertest } from './supertest.js';
+import type { Organization } from '../../src/balena-model.js';
+import type Model from '../../src/balena-model.js';
 
 const { api } = sbvrUtils;
 const version = 'resin';
@@ -144,7 +146,7 @@ const loaders: types.Dictionary<LoaderFunc> = {
 			user,
 		});
 	},
-	organizations: async (jsonData) => {
+	organizations: async (jsonData: Organization['Write']) => {
 		return await api.resin.post({
 			resource: 'organization',
 			passthrough: { req: permissions.root },
@@ -530,13 +532,14 @@ const loaders: types.Dictionary<LoaderFunc> = {
 	},
 };
 
-const deleteResource = (resource: string) => async (obj: { id: number }) => {
-	await api.resin.delete({
-		resource,
-		id: obj.id,
-		passthrough: { req: permissions.root },
-	});
-};
+const deleteResource =
+	(resource: keyof Model) => async (obj: { id: number }) => {
+		await api.resin.delete({
+			resource,
+			id: obj.id,
+			passthrough: { req: permissions.root },
+		});
+	};
 
 // Make sure this list only contains top-level resources, ie. those
 // that aren't expected to be cascade deleted by the api itself.

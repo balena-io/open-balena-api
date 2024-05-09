@@ -30,7 +30,7 @@ const getAdvisoryLockForApp = async (tx: Tx, appId: number) => {
 };
 
 const preventChangingFinalToDraft = async (
-	args: sbvrUtils.HookArgs & { tx: Tx },
+	args: sbvrUtils.HookArgs<'resin'> & { tx: Tx },
 ) => {
 	const { api, request } = args;
 	const { is_final } = request.custom as PatchCustomObject;
@@ -207,7 +207,7 @@ interface PatchCustomObject extends CustomObjectBase {
 }
 
 const setReleasesToSetRevision = async (
-	args: sbvrUtils.HookArgs & { tx: Tx },
+	args: sbvrUtils.HookArgs<'resin'> & { tx: Tx },
 ) => {
 	const { request, api } = args;
 	const custom = request.custom as PatchCustomObject;

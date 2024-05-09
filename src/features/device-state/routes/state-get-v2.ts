@@ -187,10 +187,10 @@ const releaseExpand = {
 			},
 		},
 	},
-};
+} as const;
 
 const stateQuery = _.once(() =>
-	api.resin.prepare<{ uuid: string }>({
+	api.resin.prepare<{ uuid: string }, 'device'>({
 		resource: 'device',
 		id: { uuid: { '@': 'uuid' } },
 		options: {

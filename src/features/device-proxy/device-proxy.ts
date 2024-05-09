@@ -247,7 +247,7 @@ async function requestDevices({
 					},
 				},
 			},
-		});
+		} as const);
 	});
 
 	// We add a delay between each notification so that we do not in essence

@@ -328,8 +328,8 @@ const resolveImageLocation = multiCacheMemoizee(
 						}),
 					},
 					$orderby: [
-						'release_image/is_part_of__release/revision desc',
-						'id asc',
+						{ 'release_image/is_part_of__release/revision': 'desc' },
+						{ id: 'asc' },
 					],
 				},
 			});

@@ -11,7 +11,7 @@ const { api } = sbvrUtils;
 
 const $select = ['id', 'is_frozen'] satisfies Array<keyof Device['Read']>;
 const checkDeviceExistsIsFrozenQuery = _.once(() =>
-	api.resin.prepare<{ uuid: string }>({
+	api.resin.prepare<{ uuid: string }, 'device'>({
 		resource: 'device',
 		passthrough: { req: permissions.root },
 		id: {

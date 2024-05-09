@@ -9,7 +9,7 @@ const { ConflictError } = errors;
 const { api } = sbvrUtils;
 
 const checkApiKeyExistsQuery = _.once(() =>
-	api.resin.prepare<{ key: string }>({
+	api.resin.prepare<{ key: string }, 'api_key'>({
 		resource: 'api_key',
 		passthrough: { req: permissions.root },
 		id: {

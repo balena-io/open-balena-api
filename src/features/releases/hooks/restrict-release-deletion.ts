@@ -21,7 +21,7 @@ hooks.addPureHook('DELETE', 'resin', 'release', {
 					should_be_running__release: { $in: affectedIds },
 				},
 			},
-		})) as Array<
+		} as const)) as Array<
 			PickExpanded<
 				Application['Read'],
 				'is_of__class' | 'should_be_running__release'

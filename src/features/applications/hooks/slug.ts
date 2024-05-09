@@ -59,7 +59,7 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 						id: { $in: ids },
 					},
 				},
-			});
+			} as const);
 
 			await Promise.all(
 				apps.map((app) =>

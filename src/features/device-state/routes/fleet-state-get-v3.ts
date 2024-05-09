@@ -48,7 +48,7 @@ const fleetExpand: Expand = {
 };
 
 const stateQuery = _.once(() =>
-	api.resin.prepare<{ uuid: string }>({
+	api.resin.prepare<{ uuid: string }, 'application'>({
 		resource: 'application',
 		id: { uuid: { '@': 'uuid' } },
 		options: {
@@ -58,7 +58,7 @@ const stateQuery = _.once(() =>
 );
 
 const releaseQuery = _.once(() =>
-	api.resin.prepare<{ commit: string; fleetId: number }>({
+	api.resin.prepare<{ commit: string; fleetId: number }, 'release'>({
 		resource: 'release',
 		options: {
 			$filter: {

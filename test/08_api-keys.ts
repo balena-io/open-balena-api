@@ -154,7 +154,7 @@ export default () => {
 						);
 
 						expect(apiKeyResp).to.have.property('expiry_date');
-						const expiryDate = new Date(apiKeyResp!.expiry_date);
+						const expiryDate = new Date(apiKeyResp!.expiry_date!);
 						expect(expiryDate.getTime()).to.equal(tomorrowDate.getTime());
 					});
 

@@ -46,7 +46,7 @@ const updateLatestRelease = async (
 				},
 			},
 		},
-	});
+	} as const);
 	if (!appsToUpdate.length) {
 		return;
 	}

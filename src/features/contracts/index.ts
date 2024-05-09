@@ -17,6 +17,12 @@ import { MINUTES } from '@balena/env-parsing';
 import { captureException } from '../../infra/error-handling/index.js';
 import { scheduleJob } from '../../infra/scheduler/index.js';
 
+type ValidContractResources =
+	| 'device_type'
+	| 'cpu_architecture'
+	| 'device_family'
+	| 'device_manufacturer';
+
 export interface RepositoryInfo {
 	owner: string;
 	name: string;
@@ -69,19 +75,19 @@ type FieldsMap = {
 		contractField: string;
 		default?: any;
 		refersTo?: {
-			resource: string;
-			uniqueKey: string;
+			resource: ValidContractResources;
+			uniqueKey: keyof Model[ValidContractResources]['Read'];
 		};
 		isReferencedBy?: {
-			resource: string;
-			naturalKeyPart: string;
+			resource: 'device_type_alias';
+			naturalKeyPart: keyof Model['device_type_alias']['Write'];
 		};
 	};
 };
 
-type SyncSetting = {
-	resource: keyof Model;
-	uniqueKey: string;
+export type SyncSetting = {
+	resource: ValidContractResources;
+	uniqueKey: keyof Model[ValidContractResources]['Read'];
 	includeRawContract?: boolean;
 	map: FieldsMap;
 };
@@ -219,7 +225,7 @@ const upsertEntries = async (
 						const naturalKey = {
 							[resource]: existingEntry.id,
 							[isReferencedBy.naturalKeyPart]: targetUniqueValue,
-						};
+						} satisfies Partial<Model[keyof Model]['Write']>;
 
 						if (!existingUniqueValues?.includes(targetUniqueValue)) {
 							await rootApi.post({

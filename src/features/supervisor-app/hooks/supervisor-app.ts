@@ -6,8 +6,7 @@ import {
 	permissions,
 	errors as pinejsErrors,
 } from '@balena/pinejs';
-import type { Device, DeviceType, Release } from '../../../balena-model.js';
-import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
+import type { Release } from '../../../balena-model.js';
 
 const { BadRequestError } = pinejsErrors;
 
@@ -188,7 +187,7 @@ async function setSupervisorReleaseResource(
 	if (deviceIds.length === 0) {
 		return;
 	}
-	const devices = (await api.get({
+	const devices = await api.get({
 		resource: 'device',
 		options: {
 			// if the device already has a supervisor_version, just bail.
@@ -201,13 +200,7 @@ async function setSupervisorReleaseResource(
 				is_of__device_type: { $select: ['is_of__cpu_architecture'] },
 			},
 		},
-	})) as Array<
-		Pick<Device['Read'], 'id'> & {
-			is_of__device_type: [
-				PickDeferred<DeviceType['Read'], 'is_of__cpu_architecture'>,
-			];
-		}
-	>;
+	} as const);
 
 	if (devices.length === 0) {
 		return;

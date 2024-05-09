@@ -17,6 +17,7 @@ import { checkInt } from '../../lib/utils.js';
 import { checkDeviceExistsIsFrozen } from '../device-state/middleware.js';
 import { gracefullyDenyConflictingRegistrations } from './gracefully-deny-conflicting-registrations.js';
 import onFinished from 'on-finished';
+import type { Device } from '../../balena-model.js';
 
 const { BadRequestError, ConflictError } = errors;
 const { api } = sbvrUtils;
@@ -79,6 +80,7 @@ export const register: RequestHandler = async (req, res) => {
 			const device = await resinApiTx.post({
 				resource: 'device',
 				body: {
+					// @ts-expect-error This is for backwards compatibility :(
 					belongs_to__user: userId,
 					belongs_to__application: applicationId,
 					is_of__device_type: deviceType.id,
@@ -87,7 +89,7 @@ export const register: RequestHandler = async (req, res) => {
 					os_variant: osVariant,
 					mac_address: macAddress,
 					uuid,
-				},
+				} satisfies Partial<Device['Write']> as Partial<Device['Write']>,
 			});
 			if (device == null) {
 				throw new Error('Failed to create device');

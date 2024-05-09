@@ -15,6 +15,7 @@ import * as Sentry from '@sentry/node';
 import * as zlib from 'node:zlib';
 
 import * as pine from '@balena/pinejs';
+import { sbvrUtils } from '@balena/pinejs';
 
 import type { User } from './balena-model.js';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
@@ -24,7 +25,7 @@ import type {
 } from './infra/auth/auth.js';
 import * as jwt from './infra/auth/jwt-passport.js';
 
-const { api } = pine.sbvrUtils;
+const { api } = sbvrUtils;
 
 // TODO: Move this into a feature
 passport.use(

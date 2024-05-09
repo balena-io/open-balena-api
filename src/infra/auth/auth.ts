@@ -155,7 +155,7 @@ export const userFields = ['id', 'actor', 'jwt_secret'] satisfies Array<
 
 const getUserQuery = _.once(
 	() =>
-		api.resin.prepare<{ key: string }>({
+		api.resin.prepare<{ key: string }, 'user'>({
 			resource: 'user',
 			passthrough: { req: permissions.root },
 			options: {
@@ -183,7 +183,8 @@ const getUserQuery = _.once(
 			},
 		}) as PreparedFn<
 			{ key: string },
-			Promise<Array<PickDeferred<User['Read'], (typeof userFields)[number]>>>
+			Promise<Array<PickDeferred<User['Read'], (typeof userFields)[number]>>>,
+			User
 		>,
 );
 
@@ -263,17 +264,13 @@ export async function findUser(
 	| PickDeferred<User['Read'], (typeof defaultFindUser$select)[number]>
 	| undefined
 >;
-export async function findUser<
-	T extends User['Read'],
-	TProps extends Array<keyof T>,
->(
+export async function findUser<TProps extends Array<keyof User['Read']>>(
 	loginInfo: string,
 	tx: Tx,
 	$select: TProps,
-): Promise<PickDeferred<T, (typeof $select)[number]> | undefined>;
+): Promise<PickDeferred<User['Read'], (typeof $select)[number]> | undefined>;
 export async function findUser<
-	T extends User['Read'],
-	TProps extends Array<keyof T & string>,
+	TProps extends Array<keyof User['Read'] & string>,
 >(
 	loginInfo: string,
 	tx: Tx,
@@ -290,8 +287,7 @@ export async function findUser<
 		loginField = 'username';
 	}
 
-	type UserResult = PickDeferred<T, (typeof $select)[number]>;
-	const [user] = (await api.resin.get({
+	const [user] = await api.resin.get({
 		resource: 'user',
 		passthrough: {
 			req: permissions.root,
@@ -310,7 +306,7 @@ export async function findUser<
 			},
 			$select,
 		},
-	})) as [UserResult?];
+	});
 	return user;
 }
 
