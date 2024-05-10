@@ -1050,6 +1050,85 @@ export default () => {
 					};
 				};
 
+				it('should limit metric values when they exceed safe limit', async () => {
+					const testDevice = await fakeDevice.provisionDevice(
+						admin,
+						applicationId,
+						'balenaOS 2.42.0+rev1',
+						'9.11.1',
+					);
+					const patchKey = stateVersion === 'v2' ? 'local' : testDevice.uuid;
+
+					const overLimit = config.METRICS_MAX_INTEGER_VALUE + 1;
+					const devicePatchBody = {
+						[patchKey]: {
+							name: 'reported_device_name',
+							status: 'Idle',
+							is_online: true,
+							os_version: 'balenaOS 2.50.1+rev1',
+							os_variant: 'prod',
+							supervisor_version: '11.4.10',
+							provisioning_progress: null,
+							provisioning_state: null,
+							ip_address: '192.168.1.1',
+							mac_address: '00:11:22:33:44:55',
+							download_progress: null,
+							api_port: 48484,
+							cpu_usage: overLimit,
+							cpu_temp: overLimit,
+							memory_usage: overLimit,
+							memory_total: overLimit,
+							storage_block_device: '/dev/mmcblk0',
+							storage_usage: overLimit,
+							storage_total: overLimit,
+							is_undervolted: true,
+							cpu_id: 'some CPU string',
+						},
+					};
+
+					await fakeDevice.patchState(
+						testDevice,
+						testDevice.uuid,
+						devicePatchBody,
+						stateVersion,
+					);
+
+					// manually force cpu_id toLowerCase before expecting the value
+					devicePatchBody[patchKey].cpu_id =
+						devicePatchBody[patchKey].cpu_id.toLowerCase();
+
+					// memory_usage should be limited to memory_total while others
+					// should be limited to the max value
+					devicePatchBody[patchKey].cpu_usage =
+						config.METRICS_MAX_INTEGER_VALUE;
+					devicePatchBody[patchKey].cpu_temp = config.METRICS_MAX_INTEGER_VALUE;
+					devicePatchBody[patchKey].memory_usage =
+						config.METRICS_MAX_INTEGER_VALUE;
+					devicePatchBody[patchKey].memory_total =
+						config.METRICS_MAX_INTEGER_VALUE;
+					devicePatchBody[patchKey].storage_usage =
+						config.METRICS_MAX_INTEGER_VALUE;
+					devicePatchBody[patchKey].storage_total =
+						config.METRICS_MAX_INTEGER_VALUE;
+
+					const expectedData =
+						stateVersion === 'v2'
+							? _.mapKeys(devicePatchBody[patchKey], (_v, key) =>
+									key === 'name' ? 'device_name' : key,
+								)
+							: _.pickBy(
+									devicePatchBody[patchKey],
+									(_v, key) => key !== 'name',
+								);
+
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						testDevice.id,
+						expectedData,
+					);
+				});
+
 				it('should save the updated device state', async () => {
 					const devicePatchBody = {
 						[stateKey]: {

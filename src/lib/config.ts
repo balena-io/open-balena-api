@@ -347,6 +347,11 @@ export const METRICS_MAX_REPORT_INTERVAL_SECONDS = intVar(
 	'METRICS_MAX_REPORT_INTERVAL_SECONDS',
 	60,
 );
+// Maximum integer value for metrics, default to max value for postgres
+export const METRICS_MAX_INTEGER_VALUE = intVar(
+	'METRICS_MAX_INTEGER_VALUE',
+	2 ** 31 - 1,
+);
 export const DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS = intVar(
 	'DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS',
 	30,

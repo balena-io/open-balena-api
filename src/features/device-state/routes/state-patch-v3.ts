@@ -19,6 +19,7 @@ import type { Filter } from 'pinejs-client-core';
 import { metricsPatchFields, v3ValidPatchFields } from '../index.js';
 import {
 	deleteOldImageInstalls,
+	limitMetricNumbers,
 	upsertImageInstall,
 	shouldUpdateMetrics,
 	truncateShortTextFields,
@@ -280,6 +281,7 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 				StatePatchV3Body[string],
 				(typeof metricsPatchFields)[number]
 			> = _.pick(state, metricsPatchFields);
+			limitMetricNumbers(metricsBody);
 			if (
 				Object.keys(metricsBody).length > 0 &&
 				(await shouldUpdateMetrics(uuid))

@@ -5,6 +5,7 @@ import type { StatePatchV3Body } from './routes/state-patch-v3.js';
 import {
 	DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
 	IMAGE_INSTALL_CACHE_TIMEOUT_SECONDS,
+	METRICS_MAX_INTEGER_VALUE,
 	METRICS_MAX_REPORT_INTERVAL_SECONDS,
 } from '../../lib/config.js';
 import { createMultiLevelStore } from '../../infra/cache/index.js';
@@ -81,15 +82,31 @@ export const truncateShortTextFields = (
 	return object;
 };
 
-export const metricsPatchFields = [
+const metricsPatchNumbers = [
 	'memory_usage',
 	'memory_total',
-	'storage_block_device',
 	'storage_usage',
 	'storage_total',
 	'cpu_temp',
 	'cpu_usage',
 ] as const;
+
+export const metricsPatchFields = [
+	...metricsPatchNumbers,
+	'storage_block_device',
+] as const;
+
+// Limit the values of the metrics to safe values
+export function limitMetricNumbers(
+	body: Partial<Record<(typeof metricsPatchNumbers)[number], number>>,
+): void {
+	for (const key of metricsPatchNumbers) {
+		const value = body[key];
+		if (typeof value === 'number' && value > METRICS_MAX_INTEGER_VALUE) {
+			body[key] = METRICS_MAX_INTEGER_VALUE;
+		}
+	}
+}
 
 export const shouldUpdateMetrics = (() => {
 	const lastMetricsReportTime = createMultiLevelStore<number>(
