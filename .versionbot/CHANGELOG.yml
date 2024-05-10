@@ -1,4 +1,16 @@
 - commits:
+    - subject: Limit metric numbers to safe maximum values
+      hash: 932a5dad9dfe316523c54008ff3855de2a5632b8
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Josh Bowling
+      nested: []
+  version: 21.1.5
+  title: ""
+  date: 2024-05-10T07:41:54.737Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v17.0.19
       hash: 671ced112fb566b0f2476fc1dab796308215b740
       body: |
