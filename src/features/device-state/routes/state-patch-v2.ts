@@ -15,6 +15,7 @@ import {
 	upsertImageInstall,
 	deleteOldImageInstalls,
 	truncateShortTextFields,
+	limitMetricNumbers,
 } from '../state-patch-utils.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 
@@ -144,6 +145,7 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 			} = _.pick(local, v2ValidPatchFields);
 			let metricsBody: Pick<LocalBody, (typeof metricsPatchFields)[number]> =
 				_.pick(local, metricsPatchFields);
+			limitMetricNumbers(metricsBody);
 			if (
 				Object.keys(metricsBody).length > 0 &&
 				(await shouldUpdateMetrics(uuid))
