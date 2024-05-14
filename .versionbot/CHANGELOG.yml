@@ -1,4 +1,16 @@
 - commits:
+    - subject: Pin the open-balena-db used in tests to v5.2.2 (PG16)
+      hash: 2c775ec9c3f7f8e566d56bf24b1cd5d17f68df81
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 21.1.6
+  title: ""
+  date: 2024-05-14T23:02:22.218Z
+- commits:
     - subject: Limit metric numbers to safe maximum values
       hash: 932a5dad9dfe316523c54008ff3855de2a5632b8
       body: ""
