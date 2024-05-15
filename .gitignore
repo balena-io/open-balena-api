@@ -25,7 +25,6 @@ nbproject
 *.sublime-project
 *.sublime-workspace
 .fasttest
-.vscode
 
 # Komodo
 *.komodoproject
