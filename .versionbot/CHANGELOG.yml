@@ -1,4 +1,17 @@
 - commits:
+    - subject: "device.addVirtualFieldsToModel: Auto-shim missing fields & deprecate
+        the addShims param"
+      hash: e59d613f0a5c2b43661f3a1190cafdb94fc83156
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 21.1.7
+  title: ""
+  date: 2024-05-15T15:43:52.055Z
+- commits:
     - subject: Pin the open-balena-db used in tests to v5.2.2 (PG16)
       hash: 2c775ec9c3f7f8e566d56bf24b1cd5d17f68df81
       body: ""
