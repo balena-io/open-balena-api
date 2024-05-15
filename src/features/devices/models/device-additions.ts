@@ -8,9 +8,13 @@ import type {
 
 export const addToModel = (
 	abstractSql: AbstractSqlModel,
-	addShims: boolean = true,
+	/* @deprecated */
+	addShims?: boolean,
 ) => {
-	if (addShims) {
+	const deviceFieldSet = new Set(
+		abstractSql.tables['device'].fields.map((f) => f.fieldName),
+	);
+	if (addShims !== false && !deviceFieldSet.has('is web accessible')) {
 		// FIXME: The core API has no support for "Device Public URLs",
 		// but w/o this shim some CLI commands fail since they do select it,
 		// Eg: A mechanism that silently unknown selected fields on versioned models
@@ -21,7 +25,9 @@ export const addToModel = (
 			// The cast is needed because AbstractSqlQuery cannot express a constant value.
 			computed: ['Boolean', false] as AbstractSqlQuery,
 		});
+	}
 
+	if (addShims !== false && !deviceFieldSet.has('is frozen')) {
 		// Even though the core API does not have device freezing, we have to define
 		// a shimmed version so that we can refer to it in the device permissions.
 		abstractSql.tables['device'].fields.push({
@@ -32,9 +38,9 @@ export const addToModel = (
 		});
 	}
 
-	// FIXME: cloud has the notion of active/inactive devices via a field
+	// The Cloud API has the notion of active/inactive devices via a field
 	// on the device resource. Computing the overall status below depends
-	// on whether the device is active but also on a few other statuses
+	// on whether the device 'is active' but also on a few other statuses
 	// (Ordered, Preparing, etc.) that make no sense for the core API.
 	//
 	// We must somehow expose the overall status/progress attributes on the
@@ -43,14 +49,14 @@ export const addToModel = (
 	// of cases matters. We'd never be able to cleanly make the core API
 	// agnostic to the cloud.
 	//
-	// Therefore, I opted for the most straightforward way, which is to switch
-	// the computation based on a flag. When `addShims` is true (the default),
-	// it'll generate a dummy case (the equivalent of 1 == 2, which is always
-	// false), otherwise it'll generate a case that looks into the actual model
-	// field.
-	const isInactive: BooleanTypeNodes = addShims
-		? ['Boolean', false]
-		: ['Not', ['ReferencedField', 'device', 'is active']];
+	// Therefore, we opted for using the 'is active' field when it's part of
+	// the model, otherwise we use a dummy `false` value everywhere that field
+	// is referenced. This approach can also be used in core API
+	// translations in a consistent way.
+	const isInactive: BooleanTypeNodes =
+		addShims !== false && !deviceFieldSet.has('is active')
+			? ['Boolean', false]
+			: ['Not', ['ReferencedField', 'device', 'is active']];
 
 	const isOverallOffline: AndNode = [
 		'And',
