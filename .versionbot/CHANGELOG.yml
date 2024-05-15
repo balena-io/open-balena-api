@@ -1,4 +1,16 @@
 - commits:
+    - subject: "fasttest: Allow targeting a single model version"
+      hash: 6688cdebe633185522f20556c0f21ac05cd76426
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 21.1.8
+  title: ""
+  date: 2024-05-15T16:06:24.954Z
+- commits:
     - subject: "device.addVirtualFieldsToModel: Auto-shim missing fields & deprecate
         the addShims param"
       hash: e59d613f0a5c2b43661f3a1190cafdb94fc83156
