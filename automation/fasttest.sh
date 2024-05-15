@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+test_versions=''
 test_files=''
 extra_env=''
 extra_args=''
@@ -24,6 +25,10 @@ while [[ $# -gt 0 ]]; do
 			extra_env="${extra_env} --env GENERATE_CONFIG=$1"
 			shift
 		;;
+		-v | --version)
+			test_versions="$test_versions $1"
+			shift
+		;;
 		*)
 			test_files="$test_files $key"
 		;;
@@ -43,5 +48,10 @@ if [[ -z "$test_files" ]]; then
 else
 	echo "Running tests:$test_files"
 fi
+if [[ -z "$test_versions" ]]; then
+	echo "Running all versions"
+else
+	echo "Running versions:$test_versions"
+fi
 
-docker compose -f docker-compose.test-custom.yml run --rm --service-ports ${extra_env} --env TEST_FILES="$test_files" sut-fast npx mocha --bail ${extra_args}
+docker compose -f docker-compose.test-custom.yml run --rm --service-ports ${extra_env} --env TEST_VERSIONS="$test_versions" --env TEST_FILES="$test_files" sut-fast npx mocha --bail ${extra_args}
