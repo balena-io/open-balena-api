@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add .vscode/launch.json to make using fasttest --profile easier
+      hash: cba8c2c2cd7ea81c24c6c4e14424eca1492ab688
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 21.1.9
+  title: ""
+  date: 2024-05-15T16:46:00.676Z
+- commits:
     - subject: "fasttest: Allow targeting a single model version"
       hash: 6688cdebe633185522f20556c0f21ac05cd76426
       body: ""
