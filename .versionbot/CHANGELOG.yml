@@ -1,4 +1,30 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v17.0.20
+      hash: cf853d2bfdfe1d660a1b467e4ac70cc61671322c
+      body: |
+        Update balena/open-balena-base from 17.0.19 to 17.0.20
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency npm to v10.8.0
+              hash: 33e1332d098407d973f87617e2b2d106c54ad207
+              body: |
+                Update npm from 10.7.0 to 10.8.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-17.0.20
+          title: ""
+          date: 2024-05-15T22:53:32.529Z
+  version: 21.1.10
+  title: ""
+  date: 2024-05-16T00:02:55.591Z
+- commits:
     - subject: Add .vscode/launch.json to make using fasttest --profile easier
       hash: cba8c2c2cd7ea81c24c6c4e14424eca1492ab688
       body: ""
