@@ -29,11 +29,20 @@ hooks.addPureHook('POST', 'resin', 'device', {
 				'Device UUID must be a 32 or 62 character long lower case hex string.',
 			);
 		}
+
+		// TODO[device management next step]: Drop this after re-migrating all data on step 2:
+		if (request.values.should_be_running__release !== undefined) {
+			// Add an async boundary so that value updates,
+			// and doesn't remove the properties that we add.
+			await null;
+			request.values.is_pinned_on__release =
+				request.values.should_be_running__release;
+		}
 	},
 });
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
-	POSTPARSE: ({ request }) => {
+	POSTPARSE: async ({ request }) => {
 		// Check for extra whitespace characters
 		if (
 			request.values.device_name != null &&
@@ -72,6 +81,15 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 
 		if (request.values.is_online != null) {
 			request.values.last_connectivity_event = new Date();
+		}
+
+		// TODO[device management next step]: Drop this after re-migrating all data on step 2:
+		if (request.values.should_be_running__release !== undefined) {
+			// Add an async boundary so that value updates,
+			// and doesn't remove the properties that we add.
+			await null;
+			request.values.is_pinned_on__release =
+				request.values.should_be_running__release;
 		}
 	},
 });

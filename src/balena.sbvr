@@ -579,6 +579,9 @@ Fact type: device is managed by service instance
 Fact type: device should be running release
 	Synonymous Form: release should be running on device
 	Necessity: each device should be running at most one release
+Fact type: device is pinned on release
+	Synonymous Form: release is pinned to device
+	Necessity: each device is pinned on at most one release
 Fact type: device should be operated by release
 	Synonymous Form: release should operate device
 	Necessity: each device should be operated by at most one release
