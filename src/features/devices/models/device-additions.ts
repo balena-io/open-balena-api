@@ -6,15 +6,11 @@ import type {
 	EqualsNode,
 } from '@balena/abstract-sql-compiler';
 
-export const addToModel = (
-	abstractSql: AbstractSqlModel,
-	/* @deprecated */
-	addShims?: boolean,
-) => {
+export const addToModel = (abstractSql: AbstractSqlModel) => {
 	const deviceFieldSet = new Set(
 		abstractSql.tables['device'].fields.map((f) => f.fieldName),
 	);
-	if (addShims !== false && !deviceFieldSet.has('is web accessible')) {
+	if (!deviceFieldSet.has('is web accessible')) {
 		// FIXME: The core API has no support for "Device Public URLs",
 		// but w/o this shim some CLI commands fail since they do select it,
 		// Eg: A mechanism that silently unknown selected fields on versioned models
@@ -27,7 +23,7 @@ export const addToModel = (
 		});
 	}
 
-	if (addShims !== false && !deviceFieldSet.has('is frozen')) {
+	if (!deviceFieldSet.has('is frozen')) {
 		// Even though the core API does not have device freezing, we have to define
 		// a shimmed version so that we can refer to it in the device permissions.
 		abstractSql.tables['device'].fields.push({
@@ -40,8 +36,7 @@ export const addToModel = (
 
 	// The Cloud API has the notion of active/inactive devices via a field
 	// on the device resource. Computing the overall status below depends
-	// on whether the device 'is active' but also on a few other statuses
-	// (Ordered, Preparing, etc.) that make no sense for the core API.
+	// on whether the device 'is active'.
 	//
 	// We must somehow expose the overall status/progress attributes on the
 	// model and we could contrive a way for the cloud to inject the extra
@@ -53,10 +48,9 @@ export const addToModel = (
 	// the model, otherwise we use a dummy `false` value everywhere that field
 	// is referenced. This approach can also be used in core API
 	// translations in a consistent way.
-	const isInactive: BooleanTypeNodes =
-		addShims !== false && !deviceFieldSet.has('is active')
-			? ['Boolean', false]
-			: ['Not', ['ReferencedField', 'device', 'is active']];
+	const isInactive: BooleanTypeNodes = !deviceFieldSet.has('is active')
+		? ['Boolean', false]
+		: ['Not', ['ReferencedField', 'device', 'is active']];
 
 	const isOverallOffline: AndNode = [
 		'And',
@@ -94,28 +88,6 @@ export const addToModel = (
 		computed: [
 			// TODO: should use `is managed by-service instance` with timeout for informing online/offline
 			'Case',
-			[
-				'When',
-				[
-					'Or',
-					[
-						'In',
-						['ReferencedField', 'device', 'status'],
-						['EmbeddedText', 'Ordered'],
-						['EmbeddedText', 'Preparing'],
-					],
-					[
-						'And',
-						['Not', ['ReferencedField', 'device', 'is online']],
-						[
-							'Equals',
-							['ReferencedField', 'device', 'status'],
-							['EmbeddedText', 'Shipped'],
-						],
-					],
-				],
-				['ToLower', ['ReferencedField', 'device', 'status']],
-			],
 			['When', isInactive, ['EmbeddedText', 'inactive']],
 			['When', isPostProvisioning, ['EmbeddedText', 'post-provisioning']],
 			['When', isPreProvisioning, ['EmbeddedText', 'configuring']],
@@ -181,26 +153,8 @@ export const addToModel = (
 			'Case',
 			[
 				'When',
-				[
-					'Or',
-					[
-						'In',
-						['ReferencedField', 'device', 'status'],
-						['EmbeddedText', 'Ordered'],
-						['EmbeddedText', 'Preparing'],
-					],
-					[
-						'And',
-						['Not', ['ReferencedField', 'device', 'is online']],
-						[
-							'Equals',
-							['ReferencedField', 'device', 'status'],
-							['EmbeddedText', 'Shipped'],
-						],
-					],
-					isInactive,
-				],
-				// If the device is inactive or in an Ordered/Preparing/Shipped then we return null progress as we have no more info
+				isInactive,
+				// If the device is inactive then we return null progress as we have no more info
 				['Null'],
 			],
 			[
