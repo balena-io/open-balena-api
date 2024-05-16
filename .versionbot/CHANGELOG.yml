@@ -1,4 +1,24 @@
 - commits:
+    - subject: Drop deprecated addShims argument
+      hash: 868fef865d3183b303a193823cfae1918f5248a3
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Andrea Rosci
+      nested: []
+    - subject: Remove unused Ordered, Preparing and Shipping overall statuses
+      hash: 7ce0f533a1b38fec0e6ca57afe578e4598b1f98c
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Andrea Rosci
+      nested: []
+  version: 22.0.0
+  title: ""
+  date: 2024-05-16T09:23:23.933Z
+- commits:
     - subject: Update `balena-model` to referenced types
       hash: 7401b1a6719c5b32460d1bd890d8b77145589194
       body: ""
