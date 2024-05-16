@@ -4,11 +4,11 @@
 
 export type DateString = string;
 export type Expanded<T> = Extract<T, any[]>;
-export type PickExpanded<T, K extends keyof T> = {
+export type PickExpanded<T, K extends keyof T = keyof T> = {
 	[P in K]-?: Expanded<T[P]>;
 };
 export type Deferred<T> = Exclude<T, any[]>;
-export type PickDeferred<T, K extends keyof T> = {
+export type PickDeferred<T, K extends keyof T = keyof T> = {
 	[P in K]: Deferred<T[P]>;
 };
 export interface WebResource {
@@ -56,8 +56,8 @@ export interface Role {
 export interface RoleHasPermission {
 	created_at: DateString;
 	modified_at: DateString;
-	role: { __id: number } | [Role];
-	permission: { __id: number } | [Permission];
+	role: { __id: Role['id'] } | [Role];
+	permission: { __id: Permission['id'] } | [Permission];
 	id: number;
 }
 
@@ -65,7 +65,7 @@ export interface User {
 	created_at: DateString;
 	modified_at: DateString;
 	id: number;
-	actor: { __id: number } | [Actor];
+	actor: { __id: Actor['id'] } | [Actor];
 	username: string;
 	password: string | null;
 	jwt_secret: string | null;
@@ -85,8 +85,8 @@ export interface User {
 export interface UserHasRole {
 	created_at: DateString;
 	modified_at: DateString;
-	user: { __id: number } | [User];
-	role: { __id: number } | [Role];
+	user: { __id: User['id'] } | [User];
+	role: { __id: Role['id'] } | [Role];
 	id: number;
 	expiry_date: DateString | null;
 }
@@ -94,8 +94,8 @@ export interface UserHasRole {
 export interface UserHasPermission {
 	created_at: DateString;
 	modified_at: DateString;
-	user: { __id: number } | [User];
-	permission: { __id: number } | [Permission];
+	user: { __id: User['id'] } | [User];
+	permission: { __id: Permission['id'] } | [Permission];
 	id: number;
 	expiry_date: DateString | null;
 }
@@ -106,7 +106,7 @@ export interface ApiKey {
 	id: number;
 	key: string;
 	expiry_date: DateString | null;
-	is_of__actor: { __id: number } | [Actor];
+	is_of__actor: { __id: Actor['id'] } | [Actor];
 	name: string | null;
 	description: string | null;
 	api_key__has__role?: ApiKeyHasRole[];
@@ -116,16 +116,16 @@ export interface ApiKey {
 export interface ApiKeyHasRole {
 	created_at: DateString;
 	modified_at: DateString;
-	api_key: { __id: number } | [ApiKey];
-	role: { __id: number } | [Role];
+	api_key: { __id: ApiKey['id'] } | [ApiKey];
+	role: { __id: Role['id'] } | [Role];
 	id: number;
 }
 
 export interface ApiKeyHasPermission {
 	created_at: DateString;
 	modified_at: DateString;
-	api_key: { __id: number } | [ApiKey];
-	permission: { __id: number } | [Permission];
+	api_key: { __id: ApiKey['id'] } | [ApiKey];
+	permission: { __id: Permission['id'] } | [Permission];
 	id: number;
 }
 
@@ -171,7 +171,7 @@ export interface DeviceFamily {
 	slug: string;
 	name: string;
 	is_manufactured_by__device_manufacturer:
-		| { __id: number }
+		| { __id: DeviceManufacturer['id'] }
 		| [DeviceManufacturer?]
 		| null;
 	device_type?: DeviceType[];
@@ -192,10 +192,13 @@ export interface DeviceType {
 	id: number;
 	slug: string;
 	name: string;
-	is_of__cpu_architecture: { __id: number } | [CpuArchitecture];
+	is_of__cpu_architecture: { __id: CpuArchitecture['id'] } | [CpuArchitecture];
 	logo: string | null;
 	contract: object | null;
-	belongs_to__device_family: { __id: number } | [DeviceFamily?] | null;
+	belongs_to__device_family:
+		| { __id: DeviceFamily['id'] }
+		| [DeviceFamily?]
+		| null;
 	is_default_for__application?: Application[];
 	describes__device?: Device[];
 	device_type__is_referenced_by__alias?: DeviceTypeAlias[];
@@ -210,7 +213,7 @@ export interface Image {
 	start_timestamp: DateString;
 	end_timestamp: DateString | null;
 	dockerfile: string | null;
-	is_a_build_of__service: { __id: number } | [Service];
+	is_a_build_of__service: { __id: Service['id'] } | [Service];
 	image_size: number | null;
 	is_stored_at__image_location: string;
 	project_type: string | null;
@@ -264,15 +267,15 @@ export interface Application {
 	created_at: DateString;
 	modified_at: DateString;
 	id: number;
-	actor: { __id: number } | [Actor];
+	actor: { __id: Actor['id'] } | [Actor];
 	should_track_latest_release: boolean;
 	is_of__class: 'fleet' | 'block' | 'app';
-	organization: { __id: number } | [Organization];
+	organization: { __id: Organization['id'] } | [Organization];
 	app_name: string;
 	slug: string;
-	is_for__device_type: { __id: number } | [DeviceType];
-	should_be_running__release: { __id: number } | [Release?] | null;
-	application_type: { __id: number } | [ApplicationType];
+	is_for__device_type: { __id: DeviceType['id'] } | [DeviceType];
+	should_be_running__release: { __id: Release['id'] } | [Release?] | null;
+	application_type: { __id: ApplicationType['id'] } | [ApplicationType];
 	is_host: boolean;
 	is_archived: boolean;
 	uuid: string;
@@ -293,7 +296,7 @@ export interface Application {
 export interface ApplicationEnvironmentVariable {
 	created_at: DateString;
 	modified_at: DateString;
-	application: { __id: number } | [Application];
+	application: { __id: Application['id'] } | [Application];
 	name: string;
 	id: number;
 	value: string;
@@ -302,7 +305,7 @@ export interface ApplicationEnvironmentVariable {
 export interface ApplicationConfigVariable {
 	created_at: DateString;
 	modified_at: DateString;
-	application: { __id: number } | [Application];
+	application: { __id: Application['id'] } | [Application];
 	name: string;
 	id: number;
 	value: string;
@@ -311,7 +314,7 @@ export interface ApplicationConfigVariable {
 export interface Service {
 	created_at: DateString;
 	modified_at: DateString;
-	application: { __id: number } | [Application];
+	application: { __id: Application['id'] } | [Application];
 	service_name: string;
 	id: number;
 	application__has__service_name__has__label_name?: ServiceLabel[];
@@ -327,7 +330,7 @@ export interface Service {
 export interface ServiceLabel {
 	created_at: DateString;
 	modified_at: DateString;
-	service: { __id: number } | [Service];
+	service: { __id: Service['id'] } | [Service];
 	label_name: string;
 	id: number;
 	value: string;
@@ -336,7 +339,7 @@ export interface ServiceLabel {
 export interface ServiceEnvironmentVariable {
 	created_at: DateString;
 	modified_at: DateString;
-	service: { __id: number } | [Service];
+	service: { __id: Service['id'] } | [Service];
 	name: string;
 	id: number;
 	value: string;
@@ -345,7 +348,7 @@ export interface ServiceEnvironmentVariable {
 export interface ApplicationTag {
 	created_at: DateString;
 	modified_at: DateString;
-	application: { __id: number } | [Application];
+	application: { __id: Application['id'] } | [Application];
 	tag_key: string;
 	id: number;
 	value: string;
@@ -355,14 +358,14 @@ export interface Device {
 	created_at: DateString;
 	modified_at: DateString;
 	id: number;
-	actor: { __id: number } | [Actor];
+	actor: { __id: Actor['id'] } | [Actor];
 	api_heartbeat_state: 'online' | 'offline' | 'timeout' | 'unknown';
 	uuid: string;
 	local_id: string | null;
 	device_name: string | null;
 	note: string | null;
-	is_of__device_type: { __id: number } | [DeviceType];
-	belongs_to__application: { __id: number } | [Application?] | null;
+	is_of__device_type: { __id: DeviceType['id'] } | [DeviceType];
+	belongs_to__application: { __id: Application['id'] } | [Application?] | null;
 	is_online: boolean;
 	last_connectivity_event: DateString | null;
 	is_connected_to_vpn: boolean;
@@ -380,7 +383,7 @@ export interface Device {
 	cpu_temp: number | null;
 	is_undervolted: boolean;
 	cpu_id: string | null;
-	is_running__release: { __id: number } | [Release?] | null;
+	is_running__release: { __id: Release['id'] } | [Release?] | null;
 	download_progress: number | null;
 	status: string | null;
 	os_version: string | null;
@@ -390,10 +393,13 @@ export interface Device {
 	provisioning_state: string | null;
 	api_port: number | null;
 	api_secret: string | null;
-	is_managed_by__service_instance: { __id: number } | [ServiceInstance?] | null;
-	should_be_running__release: { __id: number } | [Release?] | null;
-	should_be_operated_by__release: { __id: number } | [Release?] | null;
-	should_be_managed_by__release: { __id: number } | [Release?] | null;
+	is_managed_by__service_instance:
+		| { __id: ServiceInstance['id'] }
+		| [ServiceInstance?]
+		| null;
+	should_be_running__release: { __id: Release['id'] } | [Release?] | null;
+	should_be_operated_by__release: { __id: Release['id'] } | [Release?] | null;
+	should_be_managed_by__release: { __id: Release['id'] } | [Release?] | null;
 	is_web_accessible: boolean | null;
 	is_frozen: boolean | null;
 	overall_status: string | null;
@@ -415,7 +421,7 @@ export interface Device {
 export interface DeviceEnvironmentVariable {
 	created_at: DateString;
 	modified_at: DateString;
-	device: { __id: number } | [Device];
+	device: { __id: Device['id'] } | [Device];
 	name: string;
 	id: number;
 	value: string;
@@ -424,7 +430,7 @@ export interface DeviceEnvironmentVariable {
 export interface DeviceConfigVariable {
 	created_at: DateString;
 	modified_at: DateString;
-	device: { __id: number } | [Device];
+	device: { __id: Device['id'] } | [Device];
 	name: string;
 	id: number;
 	value: string;
@@ -433,20 +439,20 @@ export interface DeviceConfigVariable {
 export interface ImageInstall {
 	created_at: DateString;
 	modified_at: DateString;
-	device: { __id: number } | [Device];
-	installs__image: { __id: number } | [Image];
+	device: { __id: Device['id'] } | [Device];
+	installs__image: { __id: Image['id'] } | [Image];
 	id: number;
 	install_date: DateString;
 	download_progress: number | null;
 	status: string;
-	is_provided_by__release: { __id: number } | [Release];
+	is_provided_by__release: { __id: Release['id'] } | [Release];
 }
 
 export interface ServiceInstall {
 	created_at: DateString;
 	modified_at: DateString;
-	device: { __id: number } | [Device];
-	installs__service: { __id: number } | [Service];
+	device: { __id: Device['id'] } | [Device];
+	installs__service: { __id: Service['id'] } | [Service];
 	id: number;
 	device__installs__application__has__service_name__has__name?: DeviceServiceEnvironmentVariable[];
 	device_service_environment_variable?: DeviceServiceEnvironmentVariable[];
@@ -455,7 +461,7 @@ export interface ServiceInstall {
 export interface DeviceServiceEnvironmentVariable {
 	created_at: DateString;
 	modified_at: DateString;
-	service_install: { __id: number } | [ServiceInstall];
+	service_install: { __id: ServiceInstall['id'] } | [ServiceInstall];
 	name: string;
 	id: number;
 	value: string;
@@ -464,7 +470,7 @@ export interface DeviceServiceEnvironmentVariable {
 export interface DeviceTag {
 	created_at: DateString;
 	modified_at: DateString;
-	device: { __id: number } | [Device];
+	device: { __id: Device['id'] } | [Device];
 	tag_key: string;
 	id: number;
 	value: string;
@@ -474,7 +480,7 @@ export interface Release {
 	created_at: DateString;
 	modified_at: DateString;
 	id: number;
-	belongs_to__application: { __id: number } | [Application];
+	belongs_to__application: { __id: Application['id'] } | [Application];
 	commit: string;
 	composition: object;
 	status: string;
@@ -521,7 +527,7 @@ export interface Release {
 export interface ReleaseTag {
 	created_at: DateString;
 	modified_at: DateString;
-	release: { __id: number } | [Release];
+	release: { __id: Release['id'] } | [Release];
 	tag_key: string;
 	id: number;
 	value: string;
@@ -530,8 +536,8 @@ export interface ReleaseTag {
 export interface ImageIsPartOfRelease {
 	created_at: DateString;
 	modified_at: DateString;
-	image: { __id: number } | [Image];
-	is_part_of__release: { __id: number } | [Release];
+	image: { __id: Image['id'] } | [Image];
+	is_part_of__release: { __id: Release['id'] } | [Release];
 	id: number;
 	image__is_part_of__release__has__label_name?: ImageLabel[];
 	image_label?: ImageLabel[];
@@ -542,7 +548,7 @@ export interface ImageIsPartOfRelease {
 export interface ImageLabel {
 	created_at: DateString;
 	modified_at: DateString;
-	release_image: { __id: number } | [ImageIsPartOfRelease];
+	release_image: { __id: ImageIsPartOfRelease['id'] } | [ImageIsPartOfRelease];
 	label_name: string;
 	id: number;
 	value: string;
@@ -551,7 +557,7 @@ export interface ImageLabel {
 export interface ImageEnvironmentVariable {
 	created_at: DateString;
 	modified_at: DateString;
-	release_image: { __id: number } | [ImageIsPartOfRelease];
+	release_image: { __id: ImageIsPartOfRelease['id'] } | [ImageIsPartOfRelease];
 	name: string;
 	id: number;
 	value: string;
@@ -560,15 +566,15 @@ export interface ImageEnvironmentVariable {
 export interface OrganizationMembership {
 	created_at: DateString;
 	modified_at: DateString;
-	user: { __id: number } | [User];
-	is_member_of__organization: { __id: number } | [Organization];
+	user: { __id: User['id'] } | [User];
+	is_member_of__organization: { __id: Organization['id'] } | [Organization];
 	id: number;
 }
 
 export interface UserHasPublicKey {
 	created_at: DateString;
 	modified_at: DateString;
-	user: { __id: number } | [User];
+	user: { __id: User['id'] } | [User];
 	public_key: string;
 	id: number;
 	title: string;
@@ -577,7 +583,7 @@ export interface UserHasPublicKey {
 export interface DeviceTypeAlias {
 	created_at: DateString;
 	modified_at: DateString;
-	device_type: { __id: number } | [DeviceType];
+	device_type: { __id: DeviceType['id'] } | [DeviceType];
 	is_referenced_by__alias: string;
 	id: number;
 }
@@ -585,7 +591,7 @@ export interface DeviceTypeAlias {
 export interface ReleaseAsset {
 	created_at: DateString;
 	modified_at: DateString;
-	release: { __id: number } | [Release];
+	release: { __id: Release['id'] } | [Release];
 	asset_key: string;
 	id: number;
 	asset: WebResource;
@@ -595,15 +601,15 @@ export interface MyApplication {
 	created_at: DateString;
 	modified_at: DateString;
 	id: number;
-	actor: { __id: number } | [Actor];
+	actor: { __id: Actor['id'] } | [Actor];
 	should_track_latest_release: boolean;
 	is_of__class: 'fleet' | 'block' | 'app';
-	organization: { __id: number } | [Organization];
+	organization: { __id: Organization['id'] } | [Organization];
 	app_name: string;
 	slug: string;
-	is_for__device_type: { __id: number } | [DeviceType];
-	should_be_running__release: { __id: number } | [Release?] | null;
-	application_type: { __id: number } | [ApplicationType];
+	is_for__device_type: { __id: DeviceType['id'] } | [DeviceType];
+	should_be_running__release: { __id: Release['id'] } | [Release?] | null;
+	application_type: { __id: ApplicationType['id'] } | [ApplicationType];
 	is_host: boolean;
 	is_archived: boolean;
 	uuid: string;
@@ -622,6 +628,8 @@ export interface MyApplication {
 
 export interface UserHasDirectAccessToApplication {
 	id: number;
-	user: { __id: number } | [User];
-	has_direct_access_to__application: { __id: number } | [Application];
+	user: { __id: User['id'] } | [User];
+	has_direct_access_to__application:
+		| { __id: Application['id'] }
+		| [Application];
 }
