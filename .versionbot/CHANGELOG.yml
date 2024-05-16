@@ -1,4 +1,25 @@
 - commits:
+    - subject: Update `balena-model` to referenced types
+      hash: 7401b1a6719c5b32460d1bd890d8b77145589194
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Lock file maintenance
+      hash: 4e9f05b34b7b042475ee96c8d27bd18fb5559d93
+      body: |
+        Update
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 21.1.11
+  title: ""
+  date: 2024-05-16T08:07:36.068Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v17.0.20
       hash: cf853d2bfdfe1d660a1b467e4ac70cc61671322c
       body: |
