@@ -2,6 +2,7 @@
 Description=open-balena-api
 Requires=confd.service
 After=confd.service
+StartLimitIntervalSec=0
 
 [Service]
 StandardOutput=journal+console
@@ -11,7 +12,6 @@ EnvironmentFile=/usr/src/app/config/env
 ExecStart=/usr/src/app/entry.sh
 Restart=always
 SyslogIdentifier=api
-StartLimitIntervalSec=0
 
 [Install]
 WantedBy=basic.target
