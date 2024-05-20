@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update the overall_status computed field in the resin model
+      hash: 3f8ab5caa5364d2c085b3932b8df66ca10f1d788
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Andrea Rosci
+      nested: []
+  version: 22.1.0
+  title: ""
+  date: 2024-05-20T15:38:31.101Z
+- commits:
     - subject: Update dependency sinon to v18
       hash: 5e10d60099f3fff7529c046990326036f9018cea
       body: |
