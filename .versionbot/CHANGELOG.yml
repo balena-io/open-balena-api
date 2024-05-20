@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency sinon to v18
+      hash: 5e10d60099f3fff7529c046990326036f9018cea
+      body: |
+        Update sinon from 17.0.1 to 18.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 22.0.1
+  title: ""
+  date: 2024-05-20T09:20:58.434Z
+- commits:
     - subject: Drop deprecated addShims argument
       hash: 868fef865d3183b303a193823cfae1918f5248a3
       body: ""
