@@ -7,6 +7,7 @@ import {
 	renameResourceField,
 } from '../../abstract-sql-utils.js';
 import * as userHasDirectAccessToApplication from '../../features/applications/models/user__has_direct_access_to__application.js';
+import * as DeviceAdditions from '../../features/devices/models/device-additions.js';
 
 export const toVersion = 'resin';
 
@@ -28,8 +29,11 @@ for (const resource of ['device', 'application']) {
 	renameResourceField(v6AbstractSqlModel, resource, 'env var name', 'name');
 }
 
-export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) =>
-	({
+export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) => {
+	const deviceFieldSet = new Set(
+		abstractSqlModel.tables['device'].fields.map((f) => f.fieldName),
+	);
+	return {
 		'my application': {
 			$toResource: `application$${toVersion}`,
 			abstractSql: [
@@ -92,6 +96,79 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) =>
 			'is managed by-device': ['Cast', ['Null'], 'Integer'],
 			'logs channel': ['Cast', ['Null'], 'Short Text'],
 			'vpn address': ['Cast', ['Null'], 'Short Text'],
+			// We are redefining the overall_status rather than translating it, so that:
+			// • the v6 overall_status performances does not degrades from the additional FROMs
+			// • the behavior does not change if we later add new statuses in the v7 one
+			'overall status': [
+				'Case',
+				[
+					'When',
+					DeviceAdditions.isInactiveFn(!deviceFieldSet.has('is active')),
+					['EmbeddedText', 'inactive'],
+				],
+				[
+					'When',
+					DeviceAdditions.isPostProvisioning,
+					['EmbeddedText', 'post-provisioning'],
+				],
+				[
+					'When',
+					DeviceAdditions.isPreProvisioning,
+					['EmbeddedText', 'configuring'],
+				],
+				['When', DeviceAdditions.isOverallOffline, ['EmbeddedText', 'offline']],
+				[
+					'When',
+					[
+						'And',
+						['Exists', ['ReferencedField', 'device', 'download progress']],
+						[
+							'Equals',
+							['ReferencedField', 'device', 'status'],
+							['EmbeddedText', 'Downloading'],
+						],
+					],
+					['EmbeddedText', 'updating'],
+				],
+				[
+					'When',
+					['Exists', ['ReferencedField', 'device', 'provisioning progress']],
+					['EmbeddedText', 'configuring'],
+				],
+				[
+					'When',
+					[
+						'Exists',
+						[
+							'SelectQuery',
+							['Select', []],
+							['From', ['Table', 'image install']],
+							[
+								'Where',
+								[
+									'And',
+									[
+										'Equals',
+										['ReferencedField', 'image install', 'device'],
+										['ReferencedField', 'device', 'id'],
+									],
+									[
+										'Exists',
+										['ReferencedField', 'image install', 'download progress'],
+									],
+									[
+										'Equals',
+										['ReferencedField', 'image install', 'status'],
+										['EmbeddedText', 'Downloading'],
+									],
+								],
+							],
+						],
+					],
+					['EmbeddedText', 'updating'],
+				],
+				['Else', ['EmbeddedText', 'idle']],
+			],
 		},
 		release: {
 			abstractSql: [
@@ -142,4 +219,5 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) =>
 				['Where', ['Boolean', false]],
 			],
 		},
-	}) satisfies ConfigLoader.Model['translations'];
+	} satisfies ConfigLoader.Model['translations'];
+};

@@ -24,15 +24,59 @@ export default () => {
 			expect(device).to.have.property('overall_status', overallStatus);
 		};
 
+		const testOverallProgress = async (
+			user: UserObjectParam,
+			deviceId: number,
+			overallProgress: number,
+		) => {
+			const {
+				body: {
+					d: [device],
+				},
+			} = await supertest(user)
+				.get(`/${version}/device(${deviceId})?$select=overall_progress`)
+				.expect(200);
+
+			expect(device).to.have.property('overall_progress', overallProgress);
+		};
+
 		describe('Device additions', function () {
 			let pineUser: PineTest;
 			const ctx: AnyObject = {};
+
+			const itShouldHaveOverallStatus = (
+				overallStatus: string,
+				restTitle: string,
+				deviceName: string,
+			) => {
+				it(`should have overall_status = "${overallStatus}" ${restTitle}`, async () => {
+					await testOverallStatus(ctx.user, ctx[deviceName].id, overallStatus);
+				});
+			};
+
+			const itShouldHaveOverallProgress = (
+				overallProgress: number,
+				title: string,
+				deviceName: string,
+			) => {
+				it(title, async () => {
+					await testOverallProgress(
+						ctx.user,
+						ctx[deviceName].id,
+						overallProgress,
+					);
+				});
+			};
+
 			before(async () => {
 				const fx = await fixtures.load('24-device-additions');
 				ctx.loadedFixtures = fx;
 				ctx.user = fx.users.admin;
 
 				ctx.deviceUpdating = fx.devices.deviceUpdating;
+				ctx.deviceUpdatingVPNOnly = fx.devices.deviceUpdatingVPNOnly;
+				ctx.deviceUpdatingHeartbeatOnly =
+					fx.devices.deviceUpdatingHeartbeatOnly;
 				ctx.deviceVpnOnHeartbeatOnline = fx.devices.deviceVpnOnHeartbeatOnline;
 				ctx.deviceVpnOnHeartbeatTimeout =
 					fx.devices.deviceVpnOnHeartbeatTimeout;
@@ -45,6 +89,18 @@ export default () => {
 					fx.devices.deviceVpnOffHeartbeatTimeout;
 				ctx.deviceVpnOffHeartbeatOffline =
 					fx.devices.deviceVpnOffHeartbeatOffline;
+				ctx.deviceVpnOffHeartbeatTimeoutVPNDisabled =
+					fx.devices.deviceVpnOffHeartbeatTimeoutVPNDisabled;
+				ctx.deviceWithDeviceConfigVPNDisabled =
+					fx.devices.deviceWithDeviceConfigVPNDisabled;
+				ctx.deviceWithApplicationConfigVPNDisabled =
+					fx.devices.deviceWithApplicationConfigVPNDisabled;
+				ctx.deviceWithDeviceConfigVPNEnabled =
+					fx.devices.deviceWithDeviceConfigVPNEnabled;
+				ctx.deviceInPreProvisioningState =
+					fx.devices.deviceInPreProvisioningState;
+				ctx.deviceInPostProvisioningState =
+					fx.devices.deviceInPostProvisioningState;
 
 				pineUser = pineTest.clone({ passthrough: { user: ctx.user } });
 
@@ -89,79 +145,117 @@ export default () => {
 
 			describe('overall_status & overall_progress', () => {
 				describe('Given a device connected to the vpn', () => {
-					it('should have an Idle overall_status when the heartbeat is Online', async () => {
-						await testOverallStatus(
-							ctx.user,
-							ctx.deviceVpnOnHeartbeatOnline.id,
-							'idle',
-						);
-					});
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'operational' : 'idle',
+						'when the heartbeat is Online',
+						'deviceVpnOnHeartbeatOnline',
+					);
 
-					it('should have an Idle overall_status when the heartbeat is Timeout', async () => {
-						await testOverallStatus(
-							ctx.user,
-							ctx.deviceVpnOnHeartbeatTimeout.id,
-							'idle',
-						);
-					});
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'reduced-functionality' : 'idle',
+						'when the heartbeat is Timeout',
+						'deviceVpnOnHeartbeatTimeout',
+					);
 
-					it('should have an Idle overall_status when the heartbeat is Offline', async () => {
-						await testOverallStatus(
-							ctx.user,
-							ctx.deviceVpnOnHeartbeatOffline.id,
-							'idle',
-						);
-					});
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'reduced-functionality' : 'idle',
+						'when the heartbeat is Offline',
+						'deviceVpnOnHeartbeatOffline',
+					);
+
+					itShouldHaveOverallStatus(
+						'post-provisioning',
+						'when provisioning state is Post-Provisioning',
+						'deviceInPostProvisioningState',
+					);
+
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'reduced-functionality' : 'updating',
+						'when VPN is disconnected',
+						'deviceUpdatingVPNOnly',
+					);
 				});
 
 				describe('Given a device disconnected from the vpn', () => {
-					it('should have an Idle overall_status when the heartbeat is Online', async () => {
-						await testOverallStatus(
-							ctx.user,
-							ctx.deviceVpnOffHeartbeatOnline.id,
-							'idle',
-						);
-					});
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'reduced-functionality' : 'idle',
+						'when the heartbeat is Online',
+						'deviceVpnOffHeartbeatOnline',
+					);
 
-					it('should have an Idle overall_status when the heartbeat is Timeout', async () => {
-						await testOverallStatus(
-							ctx.user,
-							ctx.deviceVpnOffHeartbeatTimeout.id,
-							'idle',
-						);
-					});
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'reduced-functionality' : 'idle',
+						'when the heartbeat is Timeout',
+						'deviceVpnOffHeartbeatTimeout',
+					);
 
-					it('should have an Offline overall_status when the heartbeat is Offline', async () => {
-						await testOverallStatus(
-							ctx.user,
-							ctx.deviceVpnOffHeartbeatOffline.id,
-							'offline',
-						);
-					});
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'reduced-functionality' : 'idle',
+						'when the heartbeat is Timeout and and RESIN_SUPERVISOR_VPN_CONTROL is false',
+						'deviceVpnOffHeartbeatTimeoutVPNDisabled',
+					);
+
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'operational' : 'idle',
+						'should have an ${OVERALL_STATUS} overall_status when the heartbeat is Online and RESIN_SUPERVISOR_VPN_CONTROL is false',
+						'deviceWithDeviceConfigVPNDisabled',
+					);
+
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'reduced-functionality' : 'idle',
+						'should have an ${OVERALL_STATUS} overall_status when the heartbeat is Online and RESIN_SUPERVISOR_VPN_CONTROL is true',
+						'deviceWithDeviceConfigVPNEnabled',
+					);
+
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'operational' : 'idle',
+						'should have an ${OVERALL_STATUS} overall_status when the heartbeat is Online and RESIN_SUPERVISOR_VPN_CONTROL is false in application config variables',
+						'deviceWithApplicationConfigVPNDisabled',
+					);
+
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'disconnected' : 'offline',
+						'when the heartbeat is Offline',
+						'deviceVpnOffHeartbeatOffline',
+					);
+
+					itShouldHaveOverallStatus(
+						'configuring',
+						'when heartbeat is unknown and last connectivity event does not exist',
+						'deviceInPreProvisioningState',
+					);
+
+					itShouldHaveOverallStatus(
+						'updating',
+						'when heartbeat is online',
+						'deviceUpdatingHeartbeatOnly',
+					);
 				});
 
 				describe('Given a device downloading a multicontainer release', () => {
-					it('should properly calculate the overall_status', async () => {
-						await testOverallStatus(
-							ctx.user,
-							ctx.deviceUpdating.id,
-							'updating',
-						);
-					});
+					itShouldHaveOverallStatus(
+						'updating',
+						'when downloading',
+						'deviceUpdating',
+					);
 
-					it('should properly calculate the overall_progress', async () => {
-						const {
-							body: {
-								d: [device],
-							},
-						} = await supertest(ctx.user)
-							.get(
-								`/${version}/device(${ctx.deviceUpdating.id})?$select=overall_progress`,
-							)
-							.expect(200);
+					itShouldHaveOverallProgress(
+						75,
+						'should properly calculate the overall_progress',
+						'deviceUpdating',
+					);
 
-						expect(device).to.have.property('overall_progress', 75);
-					});
+					itShouldHaveOverallProgress(
+						50,
+						'should give last calculated overall_progress when connected to VPN and heartbeat offline',
+						'deviceUpdatingVPNOnly',
+					);
+
+					itShouldHaveOverallProgress(
+						25,
+						'should properly calculate the overall_progress when VPN is disconnected and heartbeat is online',
+						'deviceUpdatingHeartbeatOnly',
+					);
 				});
 			});
 		});

@@ -9,6 +9,26 @@
 		"os_version": "Resin OS 2.11.0+rev1",
 		"supervisor_version": "6.4.2"
 	},
+	"deviceUpdatingVPNOnly": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": true,
+		"api_heartbeat_state": "offline",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceUpdatingHeartbeatOnly": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
 	"deviceVpnOnHeartbeatOnline": {
 		"belongs_to__application": "app1",
 		"device_type": "raspberry-pi",
@@ -59,6 +79,16 @@
 		"os_version": "Resin OS 2.11.0+rev1",
 		"supervisor_version": "6.4.2"
 	},
+	"deviceVpnOffHeartbeatTimeoutVPNDisabled": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "timeout",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
 	"deviceVpnOffHeartbeatOffline": {
 		"belongs_to__application": "app1",
 		"device_type": "raspberry-pi",
@@ -68,5 +98,57 @@
 		"os_variant": "prod",
 		"os_version": "Resin OS 2.11.0+rev1",
 		"supervisor_version": "6.4.2"
+	},
+	"deviceWithDeviceConfigVPNDisabled": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceWithApplicationConfigVPNDisabled": {
+		"belongs_to__application": "app2",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceWithDeviceConfigVPNEnabled": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceInPreProvisioningState": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "unknown",
+		"last_connectivity_event": null,
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceInPostProvisioningState": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": true,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2",
+		"provisioning_state": "Post-Provisioning"
 	}
 }

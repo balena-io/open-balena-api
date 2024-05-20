@@ -1,0 +1,20 @@
+{
+	"variable1": {
+		"user": "admin",
+		"device": "deviceWithDeviceConfigVPNDisabled",
+		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
+		"value": "false"
+	},
+	"variable2": {
+		"user": "admin",
+		"device": "deviceWithDeviceConfigVPNEnabled",
+		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
+		"value": "true"
+	},
+	"variable3": {
+		"user": "admin",
+		"device": "deviceVpnOffHeartbeatTimeoutVPNDisabled",
+		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
+		"value": "false"
+	}
+}

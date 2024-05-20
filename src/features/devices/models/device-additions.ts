@@ -4,7 +4,138 @@ import type {
 	AndNode,
 	BooleanTypeNodes,
 	EqualsNode,
+	NotEqualsNode,
+	OrNode,
 } from '@balena/abstract-sql-compiler';
+
+// The Cloud API has the notion of active/inactive devices via a field
+// on the device resource. Computing the overall status below depends
+// on whether the device 'is active'.
+//
+// We must somehow expose the overall status/progress attributes on the
+// model and we could contrive a way for the cloud to inject the extra
+// cases, but that would quickly become overly complex because the order
+// of cases matters. We'd never be able to cleanly make the core API
+// agnostic to the cloud.
+//
+// Therefore, we opted for using the 'is active' field when it's part of
+// the model, otherwise we use a dummy `false` value everywhere that field
+// is referenced. This approach can also be used in core API
+// translations in a consistent way.
+export const isInactiveFn = (isActiveNotExist: boolean): BooleanTypeNodes =>
+	isActiveNotExist
+		? ['Boolean', false]
+		: ['Not', ['ReferencedField', 'device', 'is active']];
+
+export const isOverallOffline: AndNode = [
+	'And',
+	['Not', ['ReferencedField', 'device', 'is online']],
+	[
+		'In',
+		['ReferencedField', 'device', 'api heartbeat state'],
+		['EmbeddedText', 'offline'],
+		['EmbeddedText', 'unknown'],
+	],
+];
+
+// VPN not connected and supervisor didn't yet reach the API,
+// so it's still provisioning.
+export const isPreProvisioning: AndNode = [
+	'And',
+	['Not', ['ReferencedField', 'device', 'is online']],
+	['NotExists', ['ReferencedField', 'device', 'last connectivity event']],
+	[
+		'Equals',
+		['ReferencedField', 'device', 'api heartbeat state'],
+		['EmbeddedText', 'unknown'],
+	],
+];
+
+export const isPostProvisioning: EqualsNode = [
+	'Equals',
+	['ReferencedField', 'device', 'provisioning state'],
+	['EmbeddedText', 'Post-Provisioning'],
+];
+
+const isVpnEnabled: NotEqualsNode = [
+	'NotEquals',
+	[
+		'Coalesce',
+		[
+			'SelectQuery',
+			['Select', [['ReferencedField', 'device config variable', 'value']]],
+			['From', ['Table', 'device config variable']],
+			[
+				'Where',
+				[
+					'And',
+					[
+						'Equals',
+						['ReferencedField', 'device config variable', 'device'],
+						['ReferencedField', 'device', 'id'],
+					],
+					[
+						'Equals',
+						['ReferencedField', 'device config variable', 'name'],
+						['EmbeddedText', 'RESIN_SUPERVISOR_VPN_CONTROL'],
+					],
+				],
+			],
+		],
+		[
+			'SelectQuery',
+			['Select', [['ReferencedField', 'application config variable', 'value']]],
+			['From', ['Table', 'application config variable']],
+			[
+				'Where',
+				[
+					'And',
+					[
+						'Equals',
+						['ReferencedField', 'application config variable', 'application'],
+						['ReferencedField', 'device', 'belongs to-application'],
+					],
+					[
+						'Equals',
+						['ReferencedField', 'application config variable', 'name'],
+						['EmbeddedText', 'RESIN_SUPERVISOR_VPN_CONTROL'],
+					],
+				],
+			],
+		],
+		// Adding a COALESCE default value to avoid the need for NotEquals to compare 'false' with NULL
+		['EmbeddedText', 'not set'],
+	],
+	['EmbeddedText', 'false'],
+];
+// This check does not double check heartbeat state as it is already checked from isOverallOffline which runs before
+export const hasPartialConnectivity: OrNode = [
+	'Or',
+	[
+		'Equals',
+		['ReferencedField', 'device', 'api heartbeat state'],
+		['EmbeddedText', 'timeout'],
+	],
+	[
+		'And',
+		['ReferencedField', 'device', 'is online'],
+		[
+			'NotEquals',
+			['ReferencedField', 'device', 'api heartbeat state'],
+			['EmbeddedText', 'online'],
+		],
+	],
+	[
+		'And',
+		['Not', ['ReferencedField', 'device', 'is online']],
+		[
+			'Equals',
+			['ReferencedField', 'device', 'api heartbeat state'],
+			['EmbeddedText', 'online'],
+		],
+		isVpnEnabled,
+	],
+];
 
 export const addToModel = (abstractSql: AbstractSqlModel) => {
 	const deviceFieldSet = new Set(
@@ -34,53 +165,7 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 		});
 	}
 
-	// The Cloud API has the notion of active/inactive devices via a field
-	// on the device resource. Computing the overall status below depends
-	// on whether the device 'is active'.
-	//
-	// We must somehow expose the overall status/progress attributes on the
-	// model and we could contrive a way for the cloud to inject the extra
-	// cases, but that would quickly become overly complex because the order
-	// of cases matters. We'd never be able to cleanly make the core API
-	// agnostic to the cloud.
-	//
-	// Therefore, we opted for using the 'is active' field when it's part of
-	// the model, otherwise we use a dummy `false` value everywhere that field
-	// is referenced. This approach can also be used in core API
-	// translations in a consistent way.
-	const isInactive: BooleanTypeNodes = !deviceFieldSet.has('is active')
-		? ['Boolean', false]
-		: ['Not', ['ReferencedField', 'device', 'is active']];
-
-	const isOverallOffline: AndNode = [
-		'And',
-		['Not', ['ReferencedField', 'device', 'is online']],
-		[
-			'In',
-			['ReferencedField', 'device', 'api heartbeat state'],
-			['EmbeddedText', 'offline'],
-			['EmbeddedText', 'unknown'],
-		],
-	];
-
-	// VPN not connected and supervisor didn't yet reach the API,
-	// so it's still provisioning.
-	const isPreProvisioning: AndNode = [
-		'And',
-		['Not', ['ReferencedField', 'device', 'is online']],
-		['NotExists', ['ReferencedField', 'device', 'last connectivity event']],
-		[
-			'Equals',
-			['ReferencedField', 'device', 'api heartbeat state'],
-			['EmbeddedText', 'unknown'],
-		],
-	];
-
-	const isPostProvisioning: EqualsNode = [
-		'Equals',
-		['ReferencedField', 'device', 'provisioning state'],
-		['EmbeddedText', 'Post-Provisioning'],
-	];
+	const isInactive = isInactiveFn(!deviceFieldSet.has('is active'));
 
 	abstractSql.tables['device'].fields.push({
 		fieldName: 'overall status',
@@ -91,11 +176,17 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 			['When', isInactive, ['EmbeddedText', 'inactive']],
 			['When', isPostProvisioning, ['EmbeddedText', 'post-provisioning']],
 			['When', isPreProvisioning, ['EmbeddedText', 'configuring']],
-			['When', isOverallOffline, ['EmbeddedText', 'offline']],
+			['When', isOverallOffline, ['EmbeddedText', 'disconnected']],
 			[
 				'When',
 				[
 					'And',
+					[
+						'In',
+						['ReferencedField', 'device', 'api heartbeat state'],
+						['EmbeddedText', 'online'],
+						['EmbeddedText', 'timeout'],
+					],
 					['Exists', ['ReferencedField', 'device', 'download progress']],
 					[
 						'Equals',
@@ -113,28 +204,37 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 			[
 				'When',
 				[
-					'Exists',
+					'And',
 					[
-						'SelectQuery',
-						['Select', []],
-						['From', ['Table', 'image install']],
+						'In',
+						['ReferencedField', 'device', 'api heartbeat state'],
+						['EmbeddedText', 'online'],
+						['EmbeddedText', 'timeout'],
+					],
+					[
+						'Exists',
 						[
-							'Where',
+							'SelectQuery',
+							['Select', []],
+							['From', ['Table', 'image install']],
 							[
-								'And',
+								'Where',
 								[
-									'Equals',
-									['ReferencedField', 'image install', 'device'],
-									['ReferencedField', 'device', 'id'],
-								],
-								[
-									'Exists',
-									['ReferencedField', 'image install', 'download progress'],
-								],
-								[
-									'Equals',
-									['ReferencedField', 'image install', 'status'],
-									['EmbeddedText', 'Downloading'],
+									'And',
+									[
+										'Equals',
+										['ReferencedField', 'image install', 'device'],
+										['ReferencedField', 'device', 'id'],
+									],
+									[
+										'Exists',
+										['ReferencedField', 'image install', 'download progress'],
+									],
+									[
+										'Equals',
+										['ReferencedField', 'image install', 'status'],
+										['EmbeddedText', 'Downloading'],
+									],
 								],
 							],
 						],
@@ -142,7 +242,12 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 				],
 				['EmbeddedText', 'updating'],
 			],
-			['Else', ['EmbeddedText', 'idle']],
+			[
+				'When',
+				hasPartialConnectivity,
+				['EmbeddedText', 'reduced-functionality'],
+			],
+			['Else', ['EmbeddedText', 'operational']],
 		],
 	});
 
