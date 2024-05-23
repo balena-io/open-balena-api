@@ -57,6 +57,21 @@ function createS3Client() {
 
 const s3Client = createS3Client();
 
+function logUnauthenticatedWarning(
+	clientS3: UnauthenticatedS3Facade | AWSWrapper.AWS.S3,
+	pathS3: string,
+	err: any,
+): void {
+	if (
+		clientS3 instanceof UnauthenticatedS3Facade &&
+		[401, 403].includes(err.statusCode)
+	) {
+		console.warn(
+			`${err.code} (${err.statusCode}): ${pathS3} belongs to a private device type or has incorrect permissions`,
+		);
+	}
+}
+
 async function getFileInfo(s3Path: string) {
 	const req = s3Client.headObject({
 		Bucket: S3_BUCKET,
@@ -66,11 +81,16 @@ async function getFileInfo(s3Path: string) {
 }
 
 export async function getFile(s3Path: string) {
-	const req = s3Client.getObject({
-		Bucket: S3_BUCKET,
-		Key: s3Path,
-	});
-	return await req.promise();
+	try {
+		const req = s3Client.getObject({
+			Bucket: S3_BUCKET,
+			Key: s3Path,
+		});
+		return await req.promise();
+	} catch (err) {
+		// catch errors for private device types when running unauthenticated
+		logUnauthenticatedWarning(s3Client, s3Path, err);
+	}
 }
 
 export async function getFolderSize(
@@ -128,6 +148,8 @@ export async function fileExists(s3Path: string): Promise<boolean> {
 		await getFileInfo(s3Path);
 		return true;
 	} catch (err) {
+		// catch errors for private device types when running unauthenticated
+		logUnauthenticatedWarning(s3Client, s3Path, err);
 		if (err.statusCode === 404) {
 			return false;
 		}
