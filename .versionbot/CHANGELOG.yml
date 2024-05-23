@@ -1,4 +1,25 @@
 - commits:
+    - subject: better handling of exceptions from AWS/S3
+      hash: ced381586a17dd594be3e5dba821ac5d6ffa0797
+      body: >
+        .. otherwise when processing device types and hitting private DTs,
+
+        openBalena generates lots of noise/exceptions in the logs
+
+
+        * also correct systemd unit
+
+
+        Co-authored-by: Josh Bowling
+        <45343541+joshbwlng@users.noreply.github.com>
+      footer:
+        change-type: patch
+      author: Anton Belodedenko
+      nested: []
+  version: 22.2.1
+  title: ""
+  date: 2024-05-23T21:15:11.452Z
+- commits:
     - subject: Allow configuring HIDE_UNVERSIONED_ENDPOINT via env vars
       hash: f1206d5c9f1e930a77866eca6cf8be3b53d25a49
       body: ""
