@@ -1,4 +1,15 @@
 - commits:
+    - subject: Allow configuring HIDE_UNVERSIONED_ENDPOINT via env vars
+      hash: f1206d5c9f1e930a77866eca6cf8be3b53d25a49
+      body: ""
+      footer:
+        change-type: minor
+      author: Anton Belodedenko
+      nested: []
+  version: 22.2.0
+  title: ""
+  date: 2024-05-23T18:22:42.173Z
+- commits:
     - subject: Update the overall_status computed field in the resin model
       hash: 3f8ab5caa5364d2c085b3932b8df66ca10f1d788
       body: ""
