@@ -1,4 +1,17 @@
 - commits:
+    - subject: Lock file maintenance
+      hash: 0da4ab4a0c9764c82d2ae174d5c1b7abd3dfeeb0
+      body: |
+        Update
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 22.2.2
+  title: ""
+  date: 2024-05-27T01:24:08.626Z
+- commits:
     - subject: better handling of exceptions from AWS/S3
       hash: ced381586a17dd594be3e5dba821ac5d6ffa0797
       body: >
