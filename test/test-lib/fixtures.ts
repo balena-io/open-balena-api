@@ -611,7 +611,7 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 			const { default: fromJson } = await import(
 				path.join('../fixtures', fixtureName, `${model}.json`),
 				{
-					assert: { type: 'json' },
+					with: { type: 'json' },
 				}
 			);
 			return await loadFixtureModel(loaders[model], fixtures, fromJson);
