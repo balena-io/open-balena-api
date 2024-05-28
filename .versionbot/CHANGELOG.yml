@@ -1,4 +1,16 @@
 - commits:
+    - subject: Switch from using import assertions to import attributes
+      hash: 4a456bf74be5c383085a9e1be0f1d1dd32bdf77e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 22.2.3
+  title: ""
+  date: 2024-05-28T17:26:00.298Z
+- commits:
     - subject: Lock file maintenance
       hash: 0da4ab4a0c9764c82d2ae174d5c1b7abd3dfeeb0
       body: |
