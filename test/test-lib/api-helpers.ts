@@ -136,6 +136,15 @@ export const expectResourceToMatch = async <T = AnyObject>(
 	return result;
 };
 
+export const getUserFromToken = (token: string) => {
+	const user: UserObjectParam = {
+		...expectJwt(token),
+		token,
+	};
+
+	return user;
+};
+
 const validJwtProps = ['id', 'jwt_secret', 'authTime', 'iat', 'exp'].sort();
 
 export function expectJwt(tokenOrJwt: string | AnyObject) {

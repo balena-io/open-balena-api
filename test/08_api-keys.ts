@@ -7,6 +7,7 @@ import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import { assertExists } from './test-lib/common.js';
+import { loginUserSudoTimeoutAgo } from './test-lib/users.js';
 
 const { api } = sbvrUtils;
 
@@ -115,6 +116,21 @@ export default () => {
 							'description',
 							`Sample key for application-${applicationId} description.`,
 						);
+					});
+
+					it('should be able to create a provisioning key when using a non-sudo token', async function () {
+						const userWithNonSudoToken = await loginUserSudoTimeoutAgo(
+							this.user.id,
+						);
+						const applicationId = this.application.id;
+						const { body: provisioningKey } = await fn(
+							userWithNonSudoToken,
+							applicationId,
+							`provision-key-from-non-sudo-jwt-${applicationId}`,
+							`Sample key for application-${applicationId} description.`,
+						).expect(200);
+
+						expect(provisioningKey).to.be.a('string');
 					});
 
 					it('should be able to create a provisioning key with a valid expiry date', async function () {
@@ -300,7 +316,7 @@ export default () => {
 				},
 			].forEach(({ title, fn }, i) => {
 				describe(title, function () {
-					it('should create an apikey when none is passed', async function () {
+					it('should create an apikey when no property is set in the body', async function () {
 						const { body: apiKey } = await fn(
 							this.user,
 							this.device.id,
@@ -316,6 +332,23 @@ export default () => {
 						const { body: deviceApiKey } = await fn(this.user, this.device.id, {
 							apiKey,
 						}).expect(200);
+
+						expect(deviceApiKey).to.be.a('string');
+						expect(deviceApiKey).to.equal(apiKey);
+					});
+
+					it('should be able to create an apikey when using a non-sudo token', async function () {
+						const userWithNonSudoToken = await loginUserSudoTimeoutAgo(
+							this.user.id,
+						);
+						const apiKey = `bananas-from-non-sudo-jwt-${version}-${i}`;
+						const { body: deviceApiKey } = await fn(
+							userWithNonSudoToken,
+							this.device.id,
+							{
+								apiKey,
+							},
+						).expect(200);
 
 						expect(deviceApiKey).to.be.a('string');
 						expect(deviceApiKey).to.equal(apiKey);
@@ -406,12 +439,14 @@ export default () => {
 			[
 				{
 					title: 'using the /api-key/user/full endpoint',
+					missingNameErrorMessage: '"API keys require a name"',
 					fn(user: UserObjectParam | undefined, body?: AnyObject) {
 						return supertest(user).post(`/api-key/user/full`).send(body);
 					},
 				},
 				{
 					title: 'using the /api-key/v1/ endpoint',
+					missingNameErrorMessage: `"API keys with the 'named-user-api-key' role require a name"`,
 					fn(user: UserObjectParam | undefined, body?: AnyObject) {
 						return supertest(user)
 							.post(`/api-key/v1/`)
@@ -423,18 +458,30 @@ export default () => {
 							});
 					},
 				},
-			].forEach(({ title, fn }) => {
+			].forEach(({ title, fn, missingNameErrorMessage }) => {
 				describe(title, function () {
 					it('should not allow unauthorized requests', async () => {
 						await fn(undefined, undefined).expect(401);
 					});
 
 					it('should not allow requests without name', async function () {
-						await fn(this.user, {}).expect(400);
+						await fn(this.user, {}).expect(400, missingNameErrorMessage);
 					});
 
 					it('should not allow requests with an empty name', async function () {
-						await fn(this.user, { name: '' }).expect(400);
+						await fn(this.user, { name: '' }).expect(
+							400,
+							missingNameErrorMessage,
+						);
+					});
+
+					it('should not allow requests with a non-sudo token', async function () {
+						const userWithNonSudoToken = await loginUserSudoTimeoutAgo(
+							this.user.id,
+						);
+						await fn(userWithNonSudoToken, {
+							name: 'some-name',
+						}).expect(401, '"Fresh authentication token required"');
 					});
 
 					it('should allow api keys without description', async function () {
