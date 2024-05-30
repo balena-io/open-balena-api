@@ -12,6 +12,8 @@ import type {
 } from '../../balena-model.js';
 import { multiCacheMemoizee } from '../../infra/cache/index.js';
 import { API_KEY_ROLE_CACHE_TIMEOUT } from '../../lib/config.js';
+import { checkSudoValidity } from '../../infra/auth/jwt.js';
+import { getUser } from '../../infra/auth/auth.js';
 
 const { api } = sbvrUtils;
 const { BadRequestError } = errors;
@@ -67,6 +69,13 @@ const $createApiKey = async (
 	const resId: number | undefined = res?.d?.[0]?.id;
 	if (resId !== actorTypeID) {
 		throw new errors.ForbiddenError();
+	}
+
+	if (
+		actorType === 'user' &&
+		!(await checkSudoValidity(await getUser(req, tx)))
+	) {
+		throw new errors.UnauthorizedError('Fresh authentication token required');
 	}
 
 	const authApiTx = api.Auth.clone({
