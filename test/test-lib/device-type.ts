@@ -11,10 +11,7 @@ export const loadDefaultFixtures = () =>
 			{} as Dictionary<Promise<Pick<DeviceType, 'id' | 'slug' | 'name'>>>,
 			{
 				get: (obj, slug) => {
-					if (
-						typeof slug === 'string' &&
-						!Object.prototype.hasOwnProperty.call(obj, slug)
-					) {
+					if (typeof slug === 'string' && !Object.hasOwn(obj, slug)) {
 						if (slug === 'then') {
 							// Something is checking if we're a thenable
 							return;

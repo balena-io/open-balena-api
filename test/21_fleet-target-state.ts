@@ -14,7 +14,7 @@ config.TEST_MOCK_ONLY.API_HEARTBEAT_STATE_TIMEOUT_SECONDS = TIMEOUT_SEC;
 
 // test fleet default state helper
 const appMatcherFunc = (svc: AnyObject, fxProp: AnyObject) =>
-	Object.prototype.hasOwnProperty.call(svc, 'environment') && !!fxProp;
+	Object.hasOwn(svc, 'environment') && !!fxProp;
 const svcMatcherFunc = (svc: AnyObject, fxProp: AnyObject) =>
 	svc.id === fxProp.service.__id;
 const imgMatcherFunc = (svc: AnyObject, fxProp: AnyObject) =>
