@@ -19,7 +19,7 @@ const addReadOnlyHook = (
 const translateDeviceTypeTo =
 	(toField: string) =>
 	async ({ request, api }: sbvrUtils.HookArgs) => {
-		if (Object.prototype.hasOwnProperty.call(request.values, 'device_type')) {
+		if (Object.hasOwn(request.values, 'device_type')) {
 			const resinApi = sbvrUtils.api.resin.clone({
 				passthrough: api.passthrough,
 			});
@@ -87,7 +87,7 @@ addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'release', {
 
 addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'release', {
 	async POSTPARSE({ request }) {
-		if (!Object.prototype.hasOwnProperty.call(request.values, 'contract')) {
+		if (!Object.hasOwn(request.values, 'contract')) {
 			return;
 		}
 		try {

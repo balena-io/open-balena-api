@@ -599,10 +599,7 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 		.filter(
 			(file) =>
 				file.endsWith('.json') &&
-				Object.prototype.hasOwnProperty.call(
-					loaders,
-					file.slice(0, -'.json'.length),
-				),
+				Object.hasOwn(loaders, file.slice(0, -'.json'.length)),
 		)
 		.map((file) => file.slice(0, -'.json'.length).trim());
 
