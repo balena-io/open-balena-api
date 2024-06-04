@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add auth.credentials_login permission to default-user
+      hash: cc8071c77f52d97c4ec0e34085f00b9599ba41af
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Otavio Jacobi
+      nested: []
+  version: 23.1.0
+  title: ""
+  date: 2024-06-04T20:24:34.911Z
+- commits:
     - subject: Switch from `Object.prototype.hasOwnProperty.call` to `Object.hasOwn`
       hash: 69efa33de1c9cb9ba0c5c219f3b4628840f98745
       body: ""
