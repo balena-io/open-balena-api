@@ -157,6 +157,7 @@ ROLES['device-api-key'] = [
 
 export const DEFAULT_USER_EXTRA_PERMISSIONS = [
 	'auth.create_token',
+	'auth.credentials_login',
 	`resin.user.create-user-api-key?${matchesActor}`,
 	`resin.user.create-named-user-api-key?${matchesActor}`,
 	// api_key.create is not allowed, must be done via the custom endpoints
