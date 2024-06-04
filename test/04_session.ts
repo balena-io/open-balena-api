@@ -8,6 +8,12 @@ import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import type { Device } from './test-lib/fake-device.js';
 import type { Application } from '../src/balena-model.js';
+import {
+	assignUserRole,
+	revokeUserRole,
+} from '../src/infra/auth/permissions.js';
+import { permissions as pinePermissions, sbvrUtils } from '@balena/pinejs';
+const { api } = sbvrUtils;
 
 const atob = (x: string) => Buffer.from(x, 'base64').toString('binary');
 const parseJwt = (t: string) => JSON.parse(atob(t.split('.')[1]));
@@ -299,6 +305,51 @@ export default () => {
 				});
 
 				await supertest(accessToken).get('/actor/v1/whoami').expect(401);
+			});
+
+			it('/login_ returns a 401 error if user does not have auth.credentials_login permission', async function () {
+				const user = (await supertest(admin).get('/user/v1/whoami').expect(200))
+					.body;
+
+				let role = await api.Auth.get({
+					resource: 'role',
+					passthrough: {
+						req: pinePermissions.rootRead,
+					},
+					id: {
+						name: 'default-user',
+					},
+					options: {
+						$select: 'id',
+					},
+				});
+
+				expect(role).to.have.property('id').that.is.a('number');
+				role = role as { id: number };
+
+				await sbvrUtils.db.transaction(async (tx) => {
+					await revokeUserRole(user.id, role.id, tx);
+				});
+
+				await supertest()
+					.post('/login_')
+					.send({
+						username: SUPERUSER_EMAIL,
+						password: SUPERUSER_PASSWORD,
+					})
+					.expect(401);
+
+				await sbvrUtils.db.transaction(async (tx) => {
+					await assignUserRole(user.id, role.id, tx);
+				});
+
+				await supertest()
+					.post('/login_')
+					.send({
+						username: SUPERUSER_EMAIL,
+						password: SUPERUSER_PASSWORD,
+					})
+					.expect(200);
 			});
 		});
 	});
