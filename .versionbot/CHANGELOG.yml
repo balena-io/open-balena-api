@@ -1,4 +1,16 @@
 - commits:
+    - subject: Enforce user has auth.credentials_login to be able to login
+      hash: 4e453b11306ef58fc59bf957360d37d2103fafaf
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Otavio Jacobi
+      nested: []
+  version: 23.2.0
+  title: ""
+  date: 2024-06-05T15:18:57.541Z
+- commits:
     - subject: Add auth.credentials_login permission to default-user
       hash: cc8071c77f52d97c4ec0e34085f00b9599ba41af
       body: ""
