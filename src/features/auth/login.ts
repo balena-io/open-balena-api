@@ -3,6 +3,7 @@ import { errors, sbvrUtils } from '@balena/pinejs';
 import { comparePassword, findUser } from '../../infra/auth/auth.js';
 import { loginUserXHR } from '../../infra/auth/jwt.js';
 import { captureException } from '../../infra/error-handling/index.js';
+import { permissions } from '@balena/pinejs';
 
 import type { SetupOptions } from '../../index.js';
 
@@ -28,6 +29,12 @@ export const login =
 				if (!matches) {
 					throw new BadRequestError('Current password incorrect.');
 				}
+
+				const userPermissions = await permissions.getUserPermissions(user.id);
+				if (!userPermissions.includes('auth.credentials_login')) {
+					throw new BadRequestError('User not allowed to login.');
+				}
+
 				if (onLogin) {
 					await onLogin(user, tx);
 				}
