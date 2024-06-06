@@ -31,27 +31,12 @@ export const getDeviceType: RequestHandler = async (req, res) => {
 	try {
 		const resinApi = api.resin.clone({ passthrough: { req } });
 		const slug = deviceTypesLib.validateSlug(req.params.deviceType);
-		const data = await deviceTypesLib.findBySlug(resinApi, slug);
+		const data = await deviceTypesLib.findDeviceTypeJsonBySlug(resinApi, slug);
 		res.json(data);
 	} catch (err) {
 		captureException(err, 'Error getting device type', {
 			req,
 		});
-		if (handleHttpErrors(req, res, err)) {
-			return;
-		}
-		res.status(500).send(translateError(err));
-	}
-};
-
-export const listAvailableImageVersions: RequestHandler = async (req, res) => {
-	try {
-		const resinApi = api.resin.clone({ passthrough: { req } });
-		const slug = deviceTypesLib.validateSlug(req.params.deviceType);
-		const data = await deviceTypesLib.getImageVersions(resinApi, slug);
-		res.json(data);
-	} catch (err) {
-		captureException(err, 'Error getting image versions', { req });
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}

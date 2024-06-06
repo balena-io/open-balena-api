@@ -1,9 +1,6 @@
-import _ from 'lodash';
-
 import type { DeviceTypeJson } from './device-type-json.js';
 import type { sbvrUtils } from '@balena/pinejs';
 import { errors } from '@balena/pinejs';
-const { InternalRequestError } = errors;
 
 import { captureException } from '../../infra/error-handling/index.js';
 
@@ -61,6 +58,13 @@ export const getDeviceTypeBySlug = async (
 	return dt;
 };
 
+export const validateSlug = (slug?: string) => {
+	if (slug == null || !/^[\w-]+$/.test(slug)) {
+		throw new BadRequestError('Invalid device type');
+	}
+	return slug;
+};
+
 const findDeviceTypeInfoBySlug = async (
 	resinApi: sbvrUtils.PinejsClient,
 	slug: string,
@@ -74,28 +78,19 @@ const findDeviceTypeInfoBySlug = async (
 	return deviceTypeInfo;
 };
 
-export const validateSlug = (slug?: string) => {
-	if (slug == null || !/^[\w-]+$/.test(slug)) {
-		throw new BadRequestError('Invalid device type');
-	}
-	return slug;
-};
-
-/** @deprecated */
-const getAllDeviceTypes = async () => {
-	const dtInfo = await getDeviceTypes();
-	return _.uniqBy(
-		Object.values(dtInfo).map((dtEntry) => dtEntry.latest),
-		(dt) => dt.slug,
-	);
-};
+/** @deprecated Use the getDeviceTypeBySlug unless you need the device-type.json contents. */
+export const findDeviceTypeJsonBySlug = async (
+	resinApi: sbvrUtils.PinejsClient,
+	slug: string,
+): Promise<DeviceTypeJson> =>
+	(await findDeviceTypeInfoBySlug(resinApi, slug)).latest;
 
 /** @deprecated */
 export const getAccessibleDeviceTypes = async (
 	resinApi: sbvrUtils.PinejsClient,
 ): Promise<DeviceTypeJson[]> => {
-	const [deviceTypes, accessibleDeviceTypes] = await Promise.all([
-		getAllDeviceTypes(),
+	const [deviceTypeInfosBySlug, accessibleDeviceTypes] = await Promise.all([
+		getDeviceTypes(),
 		resinApi.get({
 			resource: 'device_type',
 			options: {
@@ -104,18 +99,10 @@ export const getAccessibleDeviceTypes = async (
 		}) as Promise<Array<{ slug: string }>>,
 	]);
 
-	const accessSet = new Set(accessibleDeviceTypes.map((dt) => dt.slug));
-	return deviceTypes.filter((deviceType) => {
-		return accessSet.has(deviceType.slug);
-	});
+	return accessibleDeviceTypes
+		.map((dt) => deviceTypeInfosBySlug[dt.slug]?.latest)
+		.filter((dtJson) => dtJson != null);
 };
-
-/** @deprecated Use the getDeviceTypeBySlug unless you need the device-type.json contents. */
-export const findBySlug = async (
-	resinApi: sbvrUtils.PinejsClient,
-	slug: string,
-): Promise<DeviceTypeJson> =>
-	(await findDeviceTypeInfoBySlug(resinApi, slug)).latest;
 
 export const getImageSize = async (
 	resinApi: sbvrUtils.PinejsClient,
@@ -123,11 +110,11 @@ export const getImageSize = async (
 	buildId: string,
 ): Promise<number> => {
 	const deviceTypeInfo = await findDeviceTypeInfoBySlug(resinApi, slug);
-	const deviceType = deviceTypeInfo.latest;
-	const normalizedSlug = deviceType.slug;
+	const deviceTypeJson = deviceTypeInfo.latest;
+	const normalizedSlug = deviceTypeJson.slug;
 
 	if (buildId === 'latest') {
-		buildId = deviceType.buildId;
+		buildId = deviceTypeJson.buildId;
 	}
 
 	if (!deviceTypeInfo.versions.includes(buildId)) {
@@ -149,46 +136,4 @@ export const getImageSize = async (
 		);
 		throw err;
 	}
-};
-
-export interface ImageVersions {
-	versions: string[];
-	latest: string;
-}
-
-export const getImageVersions = async (
-	resinApi: sbvrUtils.PinejsClient,
-	slug: string,
-): Promise<ImageVersions> => {
-	const deviceTypeInfo = await findDeviceTypeInfoBySlug(resinApi, slug);
-	const deviceType = deviceTypeInfo.latest;
-	const normalizedSlug = deviceType.slug;
-
-	const versionInfo = await Promise.all(
-		deviceTypeInfo.versions.map(async (buildId) => {
-			try {
-				return {
-					buildId,
-					hasDeviceTypeJson: await getDeviceTypeJson(normalizedSlug, buildId),
-				};
-			} catch {
-				return;
-			}
-		}),
-	);
-	const filteredInfo = versionInfo.filter(
-		(buildInfo): buildInfo is NonNullable<typeof buildInfo> =>
-			buildInfo != null && !!buildInfo.hasDeviceTypeJson,
-	);
-	if (_.isEmpty(filteredInfo) && !_.isEmpty(deviceTypeInfo.versions)) {
-		throw new InternalRequestError(
-			`Could not retrieve any image version for device type ${slug}`,
-		);
-	}
-
-	const buildIds = filteredInfo.map(({ buildId }) => buildId);
-	return {
-		versions: buildIds,
-		latest: buildIds[0],
-	};
 };
