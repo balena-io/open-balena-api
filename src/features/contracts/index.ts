@@ -99,7 +99,7 @@ export function setSyncSettings(syncSettings: SyncSettings) {
 const mapModel = async (
 	contractEntry: Contract,
 	{ includeRawContract, map }: SyncSetting,
-	rootApi: sbvrUtils.PinejsClient,
+	rootApi: typeof sbvrUtils.api.resin,
 ) => {
 	const mappedModel: { [k: string]: any } = {};
 	if (includeRawContract) {
@@ -146,7 +146,7 @@ const getReversePropMapEntries = (map: SyncSetting['map']) =>
 	);
 
 const upsertEntries = async (
-	rootApi: sbvrUtils.PinejsClient,
+	rootApi: typeof sbvrUtils.api.resin,
 	{ resource, uniqueKey, map }: SyncSetting,
 	reversePropMapEntries: ReturnType<typeof getReversePropMapEntries>,
 	existingData: Map<string | number | boolean, AnyObject>,

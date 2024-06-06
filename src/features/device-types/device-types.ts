@@ -31,7 +31,7 @@ export class UnknownVersionError extends NotFoundError {
  * @param slug The slug or alias to check.
  */
 export const getDeviceTypeBySlug = async (
-	resinApi: sbvrUtils.PinejsClient,
+	resinApi: typeof sbvrUtils.api.resin,
 	slug: string,
 ): Promise<{ id: number; slug: string }> => {
 	const [dt] = (await resinApi.get({
@@ -62,7 +62,7 @@ export const getDeviceTypeBySlug = async (
 };
 
 const findDeviceTypeInfoBySlug = async (
-	resinApi: sbvrUtils.PinejsClient,
+	resinApi: typeof sbvrUtils.api.resin,
 	slug: string,
 ): Promise<DeviceTypeInfo> => {
 	const deviceTypeResource = await getDeviceTypeBySlug(resinApi, slug);
@@ -92,7 +92,7 @@ const getAllDeviceTypes = async () => {
 
 /** @deprecated */
 export const getAccessibleDeviceTypes = async (
-	resinApi: sbvrUtils.PinejsClient,
+	resinApi: typeof sbvrUtils.api.resin,
 ): Promise<DeviceTypeJson[]> => {
 	const [deviceTypes, accessibleDeviceTypes] = await Promise.all([
 		getAllDeviceTypes(),
@@ -112,13 +112,13 @@ export const getAccessibleDeviceTypes = async (
 
 /** @deprecated Use the getDeviceTypeBySlug unless you need the device-type.json contents. */
 export const findBySlug = async (
-	resinApi: sbvrUtils.PinejsClient,
+	resinApi: typeof sbvrUtils.api.resin,
 	slug: string,
 ): Promise<DeviceTypeJson> =>
 	(await findDeviceTypeInfoBySlug(resinApi, slug)).latest;
 
 export const getImageSize = async (
-	resinApi: sbvrUtils.PinejsClient,
+	resinApi: typeof sbvrUtils.api.resin,
 	slug: string,
 	buildId: string,
 ): Promise<number> => {
@@ -157,7 +157,7 @@ export interface ImageVersions {
 }
 
 export const getImageVersions = async (
-	resinApi: sbvrUtils.PinejsClient,
+	resinApi: typeof sbvrUtils.api.resin,
 	slug: string,
 ): Promise<ImageVersions> => {
 	const deviceTypeInfo = await findDeviceTypeInfoBySlug(resinApi, slug);

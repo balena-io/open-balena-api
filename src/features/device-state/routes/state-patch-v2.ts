@@ -135,7 +135,7 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 		const { local } = values as StatePatchV2Body;
 
 		const updateFns: Array<
-			(resinApiTx: sbvrUtils.PinejsClient) => Promise<void>
+			(resinApiTx: typeof sbvrUtils.api.resin) => Promise<void>
 		> = [];
 
 		if (local != null) {
