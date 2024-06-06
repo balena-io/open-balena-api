@@ -317,7 +317,7 @@ export async function findUser<
 export const registerUser = async (
 	userData: AnyObject & {
 		username: string;
-		email: string;
+		email: string | null;
 		password?: string;
 	},
 	tx: Tx,
