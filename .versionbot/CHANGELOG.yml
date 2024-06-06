@@ -1,4 +1,26 @@
 - commits:
+    - subject: Allow registering user with `null` email
+      hash: 10b1ce2a4342d45d5cd90e62abaa06c5e4e9d29e
+      body: >
+        user (Auth) email is a nullable property. However, instead of using the
+        actual null current
+
+        API behaviour forces it to be an empty string. This is problematic as
+        ideally the email field
+
+        would have a unique constraint to it (and NULL value is considered
+        distinct by default,
+
+        different than empty string)
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Otavio Jacobi
+      nested: []
+  version: 24.1.0
+  title: ""
+  date: 2024-06-06T16:37:00.468Z
+- commits:
     - subject: Lock file maintenance
       hash: 49b00255f250c5ee07649ef82f11811d050374b9
       body: |
