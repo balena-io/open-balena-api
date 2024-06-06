@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix typing of `getStateEventAdditionalFields`
+      hash: 70ef735b362ff5e72ecfaf34bbcf2e6c2c69714d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 24.1.1
+  title: ""
+  date: 2024-06-06T17:09:51.892Z
+- commits:
     - subject: Allow registering user with `null` email
       hash: 10b1ce2a4342d45d5cd90e62abaa06c5e4e9d29e
       body: >
