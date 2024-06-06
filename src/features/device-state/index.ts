@@ -72,7 +72,7 @@ export interface Events {
 		info: Pick<Request, 'apiKey'> & {
 			config?: Dictionary<string>;
 			ipAddress: string | undefined;
-			storedDeviceFields: Partial<Device>;
+			storedDeviceFields: Partial<Device['Read']>;
 		},
 	) => void;
 }
