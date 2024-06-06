@@ -31,7 +31,7 @@ const { api } = sbvrUtils;
 export type JobFunction = (
 	fireDate: Date,
 	lock: Redlock.Lock,
-	scheduledJobRun: ScheduledJobRun,
+	scheduledJobRun: ScheduledJobRun['Read'],
 ) => PromiseLike<void>;
 
 interface JobInfo {
@@ -112,7 +112,7 @@ export const scheduleJob = (
 				const rootApi = api.resin.clone({
 					passthrough: { req: permissions.root },
 				});
-				let scheduledJobRun: ScheduledJobRun | undefined;
+				let scheduledJobRun: ScheduledJobRun['Read'] | undefined;
 
 				try {
 					const shouldRun = await checkJobShouldExecute(
@@ -130,7 +130,7 @@ export const scheduleJob = (
 								start_timestamp: Date.now(),
 								status: 'running',
 							},
-						})) as ScheduledJobRun;
+						})) as ScheduledJobRun['Read'];
 
 						await jobFunction(fireDate, lock, scheduledJobRun);
 

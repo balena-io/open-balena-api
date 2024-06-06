@@ -16,8 +16,8 @@ export default () => {
 			let admin: UserObjectParam;
 			let pineUser: typeof pineTest;
 			let applicationId: number;
-			let nucHostApp: Application;
-			let nucEsrHostApp: Application;
+			let nucHostApp: Application['Read'];
+			let nucEsrHostApp: Application['Read'];
 			let device1: fakeDevice.Device;
 			let device2: fakeDevice.Device;
 			let noMatchDevice: fakeDevice.Device;
@@ -311,7 +311,7 @@ export default () => {
 							osVersionVariantParams.os_version.startsWith('balenaOS 20');
 
 						describe(`provisioning with a ${osTypeTitlePart} OS (using ${provisioningFnTitlePart})`, function () {
-							let registeredDevice: Device;
+							let registeredDevice: Device['Read'];
 
 							after(async function () {
 								await fixtures.clean({

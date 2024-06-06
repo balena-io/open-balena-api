@@ -12,9 +12,9 @@ import type {
 	Device,
 	Image,
 	ImageInstall,
-	PickDeferred,
 	Release,
 } from '../../../balena-model.js';
+import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import type { Filter } from 'pinejs-client-core';
 import { metricsPatchFields, v3ValidPatchFields } from '../index.js';
 import {
@@ -108,18 +108,19 @@ const fetchData = async (
 				},
 			},
 		})) as Array<
-			Pick<Device, 'id' | 'uuid'> & {
-				belongs_to__application: Array<Pick<Application, 'uuid'>>;
+			Pick<Device['Read'], 'id' | 'uuid'> & {
+				belongs_to__application: Array<Pick<Application['Read'], 'uuid'>>;
 			}
 		>;
 		if (devices.length !== deviceIds.length) {
 			throw new UnauthorizedError();
 		}
 
-		const images: Array<Pick<Image, 'id' | 'is_stored_at__image_location'>> =
-			[];
+		const images: Array<
+			Pick<Image['Read'], 'id' | 'is_stored_at__image_location'>
+		> = [];
 		const releasesByAppUuid: {
-			[appUuid: string]: Array<Pick<Release, 'id' | 'commit'>>;
+			[appUuid: string]: Array<Pick<Release['Read'], 'id' | 'commit'>>;
 		} = {};
 		for (const [appUuid, { releaseUuids, imageLocations }] of Object.entries(
 			appReleaseUuids,
@@ -183,9 +184,11 @@ const fetchData = async (
 					},
 				},
 			})) as Array<
-				Pick<Release, 'id' | 'commit'> & {
+				Pick<Release['Read'], 'id' | 'commit'> & {
 					release_image?: Array<{
-						image: Array<Pick<Image, 'id' | 'is_stored_at__image_location'>>;
+						image: Array<
+							Pick<Image['Read'], 'id' | 'is_stored_at__image_location'>
+						>;
 					}>;
 				}
 			>);
@@ -408,7 +411,7 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 									},
 								},
 							})) as Array<
-								PickDeferred<ImageInstall, 'id' | 'installs__image'>
+								PickDeferred<ImageInstall['Read'], 'id' | 'installs__image'>
 							>;
 							const existingImgInstallsByImage = _.keyBy(
 								existingImgInstalls,

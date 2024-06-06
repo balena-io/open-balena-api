@@ -214,7 +214,7 @@ export default () => {
 			const {
 				body: [topRevisionRelease],
 			} = await pineTestInstance
-				.get<Array<Pick<Release, 'revision'>>>({
+				.get<Array<Pick<Release['Read'], 'revision'>>>({
 					resource: 'release',
 					options: {
 						$select: 'revision',
@@ -249,7 +249,7 @@ export default () => {
 				semver_prerelease,
 				semver_build,
 				variant,
-			} = release as Release;
+			} = release as Release['Read'];
 			expect(release).to.have.deep.property('is_final', revision != null);
 
 			const createdAtTimestamp = +new Date(created_at);
@@ -316,7 +316,7 @@ export default () => {
 			releaseId: number,
 		) => {
 			const { body: release } = await pineUser
-				.get<Release>({
+				.get<Release['Read']>({
 					resource: 'release',
 					id: releaseId,
 					options: {
@@ -361,14 +361,14 @@ export default () => {
 				initialVariant?: string;
 				semver?: string;
 				variant?: string;
-			}): Promise<Release>;
+			}): Promise<Release['Read']>;
 			async function testReleaseSemverPatch(opts: {
 				initialSemver?: string;
 				initialVariant?: string;
 				semver?: string;
 				variant?: string;
 				shouldError?: boolean;
-			}): Promise<Release | undefined>;
+			}): Promise<Release['Read'] | undefined>;
 			async function testReleaseSemverPatch({
 				initialSemver = '0.0.1',
 				initialVariant,
@@ -535,7 +535,7 @@ export default () => {
 					.that.is.a('string');
 
 				const { body: freshlyGetRelease } = await pineUser
-					.get<Release>({
+					.get<Release['Read']>({
 						resource: 'release',
 						id: newRelease.id,
 						options: {
@@ -590,7 +590,7 @@ export default () => {
 			});
 
 			it('should start assigning new revisions per semver per app starting from 0', async () => {
-				const newReleases: Release[] = [];
+				const newReleases: Array<Release['Read']> = [];
 				// Add them in order so that they get predictable revisions.
 				for (let i = 0; i < RELEASE_FINALIZATION_TEST_CONCURENCY; i++) {
 					newReleases.push(
@@ -605,7 +605,7 @@ export default () => {
 									},
 								})
 								.expect(201)
-						).body as Release,
+						).body as Release['Read'],
 					);
 				}
 
@@ -641,7 +641,7 @@ export default () => {
 									},
 								})
 								.expect(201)
-						).body as Release;
+						).body as Release['Read'];
 					}),
 				);
 
@@ -660,7 +660,7 @@ export default () => {
 
 			const makeMarkAsFinalTest = (
 				titlePart: string,
-				updateFn: (newDraftReleases: Release[]) => Promise<void>,
+				updateFn: (newDraftReleases: Array<Release['Read']>) => Promise<void>,
 			) => {
 				it(`should assign unique revisions when multiple draft releases are marked as final ${titlePart}`, async () => {
 					topRevision = await getTopRevision(
@@ -682,7 +682,7 @@ export default () => {
 										},
 									})
 									.expect(201)
-							).body as Release;
+							).body as Release['Read'];
 						}),
 					);
 					newDraftReleases.forEach((r) =>
@@ -692,7 +692,7 @@ export default () => {
 					await updateFn(newDraftReleases);
 
 					const { body: newFinalReleases } = await pineUser
-						.get<Array<Pick<Release, 'revision'>>>({
+						.get<Array<Pick<Release['Read'], 'revision'>>>({
 							resource: 'release',
 							options: {
 								$select: 'revision',
@@ -747,12 +747,14 @@ export default () => {
 			const makeUpdateSemverTest = (
 				titlePart: string,
 				[SEMVER_A, SEMVER_B]: [string, string],
-				updateFn: (versionAReleasesToChangeSemver: Release[]) => Promise<void>,
+				updateFn: (
+					versionAReleasesToChangeSemver: Array<Release['Read']>,
+				) => Promise<void>,
 			) => {
 				it(`should assign the correct revisions when changing the semver of a release ${titlePart}`, async () => {
 					const [v1Releases, v2Releases] = await Promise.all(
 						[SEMVER_A, SEMVER_B].map(async (semver) => {
-							const newReleases: Release[] = [];
+							const newReleases: Array<Release['Read']> = [];
 							// Add them in order so that they get predictable revisions.
 							for (let i = 0; i < RELEASE_FINALIZATION_TEST_CONCURENCY; i++) {
 								newReleases.push(
@@ -767,7 +769,7 @@ export default () => {
 												},
 											})
 											.expect(201)
-									).body as Release,
+									).body as Release['Read'],
 								);
 							}
 
@@ -799,7 +801,7 @@ export default () => {
 					await updateFn(versionAReleasesToChangeSemver);
 
 					const { body: changedSemverReleases } = await pineUser
-						.get<Array<Pick<Release, 'revision'>>>({
+						.get<Array<Pick<Release['Read'], 'revision'>>>({
 							resource: 'release',
 							options: {
 								$select: 'revision',
@@ -817,7 +819,7 @@ export default () => {
 					);
 
 					const { body: unchangedV1SemverRelease } = await pineUser
-						.get<Array<Pick<Release, 'revision'>>>({
+						.get<Array<Pick<Release['Read'], 'revision'>>>({
 							resource: 'release',
 							id: leftBehindV1SemverRelease.id,
 							options: {

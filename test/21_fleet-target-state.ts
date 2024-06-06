@@ -47,7 +47,7 @@ export default () => {
 	(['v3'] as const).forEach((stateVersion) =>
 		describe(`Fleet State ${stateVersion}`, function () {
 			let fx: fixtures.Fixtures;
-			let application: Application;
+			let application: Application['Read'];
 			let admin: UserObjectParam;
 			let releases: AnyObject;
 			let fleetStateEndpoint: string;

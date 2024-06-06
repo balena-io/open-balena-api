@@ -45,7 +45,7 @@ type MockService = MockServiceParams & { id: number };
 export const addReleaseToApp = async (
 	auth: UserObjectParam,
 	release: MockReleaseParams,
-): Promise<Release> =>
+): Promise<Release['Read']> =>
 	(await supertest(auth).post(`/${version}/release`).send(release).expect(201))
 		.body;
 

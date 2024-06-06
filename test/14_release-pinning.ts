@@ -32,7 +32,7 @@ export default () => {
 			let device3: fakeDevice.Device;
 			let device4: fakeDevice.Device;
 			let device5: fakeDevice.Device;
-			let applicationToDelete: Application;
+			let applicationToDelete: Application['Read'];
 
 			before(async () => {
 				fx = await fixtures.load('14-release-pinning');
@@ -188,8 +188,8 @@ export default () => {
 			describe('given two releases of two applications building in parallel', function () {
 				// used to create unique commits for each set of releases
 				let testRunsCount = 0;
-				let app1Release: Release;
-				let app2Release: Release;
+				let app1Release: Release['Read'];
+				let app2Release: Release['Read'];
 
 				beforeEach(async function () {
 					testRunsCount++;
@@ -319,7 +319,7 @@ export default () => {
 				before(async function () {
 					const org = await fx.organizations.admin;
 					const { body: deviceType } = await pineUser
-						.get<DeviceType>({
+						.get<DeviceType['Read']>({
 							resource: 'device_type',
 							id: { slug: 'intel-nuc' },
 							options: { $select: 'id' },
@@ -335,7 +335,7 @@ export default () => {
 							},
 						})
 						.expect(201);
-					applicationToDelete = application as Application;
+					applicationToDelete = application as Application['Read'];
 
 					device5 = await fakeDevice.provisionDevice(
 						admin,

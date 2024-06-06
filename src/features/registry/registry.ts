@@ -216,7 +216,7 @@ const resolveImageId = multiCacheMemoizee(
 					},
 				},
 			},
-		})) as Array<Pick<Image, 'id'>>;
+		})) as Array<Pick<Image['Read'], 'id'>>;
 		return image?.id;
 	},
 	{
@@ -679,7 +679,7 @@ const $getSubject = multiCacheMemoizee(
 				},
 				$top: 1,
 			},
-		})) as [Pick<User, 'username'>?];
+		})) as [Pick<User['Read'], 'username'>?];
 		if (user) {
 			return user.username;
 		}
@@ -708,7 +708,7 @@ const getSubject = async (
 			options: {
 				$select: 'username',
 			},
-		})) as Pick<User, 'username'> | null;
+		})) as Pick<User['Read'], 'username'> | null;
 		return user?.username;
 	}
 };

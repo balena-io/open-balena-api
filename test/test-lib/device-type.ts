@@ -8,7 +8,9 @@ export const loadDefaultFixtures = () =>
 	setDefaultFixtures(
 		'deviceTypes',
 		new Proxy(
-			{} as Dictionary<Promise<Pick<DeviceType, 'id' | 'slug' | 'name'>>>,
+			{} as Dictionary<
+				Promise<Pick<DeviceType['Read'], 'id' | 'slug' | 'name'>>
+			>,
 			{
 				get: (obj, slug) => {
 					if (typeof slug === 'string' && !Object.hasOwn(obj, slug)) {
@@ -27,7 +29,7 @@ export const loadDefaultFixtures = () =>
 							options: {
 								$select: ['id', 'slug', 'name'],
 							},
-						}) as Promise<Pick<DeviceType, 'id' | 'slug' | 'name'>>;
+						}) as Promise<Pick<DeviceType['Read'], 'id' | 'slug' | 'name'>>;
 						obj[slug] = deviceType;
 					}
 

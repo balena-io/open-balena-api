@@ -3,13 +3,8 @@ import randomstring from 'randomstring';
 import _ from 'lodash';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
-import type {
-	Deferred,
-	Application,
-	Device,
-	Role,
-	User,
-} from '../../balena-model.js';
+import type { Application, Device, Role, User } from '../../balena-model.js';
+import type { Deferred } from '@balena/abstract-sql-to-typescript';
 import { multiCacheMemoizee } from '../../infra/cache/index.js';
 import { API_KEY_ROLE_CACHE_TIMEOUT } from '../../lib/config.js';
 
@@ -47,7 +42,11 @@ const $createApiKey = async (
 		},
 	})) as
 		| {
-				actor: Deferred<Application['actor'] | Device['actor'] | User['actor']>;
+				actor: Deferred<
+					| Application['Read']['actor']
+					| Device['Read']['actor']
+					| User['Read']['actor']
+				>;
 		  }
 		| undefined;
 
@@ -96,7 +95,7 @@ const $createApiKey = async (
 			options: {
 				$select: 'id',
 			},
-		}) as Promise<Pick<Role, 'id'>>,
+		}) as Promise<Pick<Role['Read'], 'id'>>,
 	]);
 
 	await authApiTx.post({

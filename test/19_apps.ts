@@ -19,9 +19,9 @@ export default () => {
 				let fx: fixtures.Fixtures;
 				let admin: UserObjectParam;
 				let pineAdmin: PineTest;
-				let userApp: Application;
-				let supervisorApp: Application;
-				let supervisorRelease2: Release;
+				let userApp: Application['Read'];
+				let supervisorApp: Application['Read'];
+				let supervisorRelease2: Release['Read'];
 				let deviceWithSupervisor: fakeDevice.Device;
 				let deviceWithoutSupervisor: fakeDevice.Device;
 
@@ -121,9 +121,9 @@ export default () => {
 				let fx: fixtures.Fixtures;
 				let admin: UserObjectParam;
 				let pineAdmin: PineTest;
-				let userApp: Application;
-				let intelNucHostApp: Application;
-				let intelNucHostAppRelease1: Release;
+				let userApp: Application['Read'];
+				let intelNucHostApp: Application['Read'];
+				let intelNucHostAppRelease1: Release['Read'];
 				let deviceWithHostApp: fakeDevice.Device;
 				let deviceWithoutHostApp: fakeDevice.Device;
 
