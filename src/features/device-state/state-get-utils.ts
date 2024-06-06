@@ -11,7 +11,7 @@ import {
 } from '../../infra/cache/index.js';
 import type { Device } from '../../balena-model.js';
 
-export const getStateEventAdditionalFields: Array<keyof Device> = [];
+export const getStateEventAdditionalFields: Array<keyof Device['Read']> = [];
 
 const defaultConfigVariableFns: Array<(config: Dictionary<string>) => void> = [
 	function setMinPollInterval(config) {
