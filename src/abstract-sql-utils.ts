@@ -70,9 +70,8 @@ const $aliasRelationships = (
 				resourceRegex,
 				`$1${toResourceName}$3`,
 			);
-			if (resourceRegex.test(mapping[0])) {
-				mapping[0] = mapping[0].replace(resourceRegex, `$1${toResourceName}$3`);
-			}
+			// Note: We do not remap `mapping[0]` as that refers to the foreign key fields, we only add aliases that point that
+			// field to the aliased referenced table
 
 			relationships.$ = mapping;
 		}
