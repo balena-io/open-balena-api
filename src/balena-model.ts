@@ -398,6 +398,7 @@ export interface Device {
 		| [ServiceInstance?]
 		| null;
 	should_be_running__release: { __id: Release['id'] } | [Release?] | null;
+	is_pinned_on__release: { __id: Release['id'] } | [Release?] | null;
 	should_be_operated_by__release: { __id: Release['id'] } | [Release?] | null;
 	should_be_managed_by__release: { __id: Release['id'] } | [Release?] | null;
 	is_web_accessible: boolean | null;
@@ -519,6 +520,7 @@ export interface Release {
 	should_be_running_on__application?: Application[];
 	should_be_running_on__device?: Device[];
 	is_running_on__device?: Device[];
+	is_pinned_to__device?: Device[];
 	should_operate__device?: Device[];
 	should_manage__device?: Device[];
 	provides__device__installs__image?: ImageInstall[];
