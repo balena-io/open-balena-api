@@ -1,4 +1,16 @@
 - commits:
+    - subject: Improve typings to specify the expected api version of a pinejs client
+      hash: d12018d1b6dd3880256a1020180dcd1d0032ce0b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 24.0.1
+  title: ""
+  date: 2024-06-06T15:43:40.341Z
+- commits:
     - subject: Update @balena/pinejs to 17.x
       hash: 713caf68af1147a9b3187ae700ccfd7ac7f7537b
       body: |
