@@ -9,7 +9,8 @@ import type { FilterObj } from 'pinejs-client-core';
 import semverLib from 'semver';
 import { ADVISORY_LOCK_NAMESPACES } from '../../../lib/config.js';
 import { groupByMap } from '../../../lib/utils.js';
-import type { PickDeferred, Release } from '../../../balena-model.js';
+import type { Release } from '../../../balena-model.js';
+import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import {
 	captureException,
 	ThisShouldNeverHappenError,
@@ -82,7 +83,7 @@ const getNextRevision = async (
 				revision: 'desc',
 			},
 		},
-	})) as Array<NonNullableField<Pick<Release, 'revision'>, 'revision'>>;
+	})) as Array<NonNullableField<Pick<Release['Read'], 'revision'>, 'revision'>>;
 
 	return releaseWithLatestRevision != null
 		? releaseWithLatestRevision.revision + 1
@@ -197,8 +198,11 @@ hooks.addPureHook('POST', 'resin', 'release', {
 
 interface PatchCustomObject extends CustomObjectBase {
 	releasesToSetRevision?: Array<
-		Pick<Release, 'id' | 'semver' | 'variant' | 'is_finalized_at__date'> &
-			PickDeferred<Release, 'belongs_to__application'>
+		Pick<
+			Release['Read'],
+			'id' | 'semver' | 'variant' | 'is_finalized_at__date'
+		> &
+			PickDeferred<Release['Read'], 'belongs_to__application'>
 	>;
 }
 

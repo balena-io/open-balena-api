@@ -30,8 +30,8 @@ const getApp = async (appId: number, req: Request) => {
 			},
 		},
 	})) as
-		| (Pick<Application, 'id'> & {
-				is_for__device_type: [Pick<DeviceType, 'slug'>];
+		| (Pick<Application['Read'], 'id'> & {
+				is_for__device_type: [Pick<DeviceType['Read'], 'slug'>];
 		  })
 		| null;
 

@@ -16,21 +16,21 @@ const { api } = sbvrUtils;
 type ExpandedActor =
 	| {
 			id: number;
-			is_of__user: [Pick<User, 'id' | 'username' | 'email'>];
+			is_of__user: [Pick<User['Read'], 'id' | 'username' | 'email'>];
 			is_of__application: [];
 			is_of__device: [];
 	  }
 	| {
 			id: number;
 			is_of__user: [];
-			is_of__application: [Pick<Application, 'id' | 'slug'>];
+			is_of__application: [Pick<Application['Read'], 'id' | 'slug'>];
 			is_of__device: [];
 	  }
 	| {
 			id: number;
 			is_of__user: [];
 			is_of__application: [];
-			is_of__device: [Pick<Device, 'id' | 'uuid'>];
+			is_of__device: [Pick<Device['Read'], 'id' | 'uuid'>];
 	  };
 
 type ActorResponse =
@@ -60,7 +60,8 @@ export const whoami: RequestHandler = async (req, res) => {
 			async (
 				tx,
 			): Promise<
-				Pick<User, 'id'> & Partial<Pick<User, 'username' | 'email'>>
+				Pick<User['Read'], 'id'> &
+					Partial<Pick<User['Read'], 'username' | 'email'>>
 			> => {
 				const user = await getUser(req, tx, true);
 				const [userWithUsername] = (await api.resin.get({
@@ -70,7 +71,7 @@ export const whoami: RequestHandler = async (req, res) => {
 						$select: ['id', 'username'],
 						$filter: { actor: user.actor },
 					},
-				})) as [Pick<User, 'id' | 'username'>?];
+				})) as [Pick<User['Read'], 'id' | 'username'>?];
 
 				if (userWithUsername == null) {
 					// If we can't retrieve the user, then this request might be from
@@ -86,7 +87,7 @@ export const whoami: RequestHandler = async (req, res) => {
 					options: {
 						$select: 'email',
 					},
-				})) as Pick<User, 'email'>;
+				})) as Pick<User['Read'], 'email'>;
 
 				return {
 					...userWithUsername,
@@ -124,7 +125,7 @@ export const actorWhoami: RequestHandler = async (req, res) => {
 							actor: req.user?.actor,
 						},
 					},
-				})) as Array<Pick<User, 'id'>>;
+				})) as Array<Pick<User['Read'], 'id'>>;
 
 				if (userWithId == null) {
 					throw new errors.UnauthorizedError();

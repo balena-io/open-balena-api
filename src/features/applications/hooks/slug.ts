@@ -16,7 +16,7 @@ hooks.addPureHook('POST', 'resin', 'application', {
 				options: {
 					$select: 'handle',
 				},
-			})) as Pick<Organization, 'handle'> | undefined;
+			})) as Pick<Organization['Read'], 'handle'> | undefined;
 			if (organization) {
 				request.values.slug = getApplicationSlug(
 					organization.handle,
@@ -97,7 +97,7 @@ hooks.addPureHook('PATCH', 'resin', 'organization', {
 							},
 							$select: ['id', 'app_name'],
 						},
-					})) as Array<Pick<Application, 'id' | 'app_name'>>;
+					})) as Array<Pick<Application['Read'], 'id' | 'app_name'>>;
 
 					const rootApiTx = api.clone({
 						passthrough: {

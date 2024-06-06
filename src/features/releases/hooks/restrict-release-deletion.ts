@@ -1,9 +1,6 @@
 import { sbvrUtils, hooks, errors } from '@balena/pinejs';
-import type {
-	Application,
-	Device,
-	PickExpanded,
-} from '../../../balena-model.js';
+import type { Application, Device } from '../../../balena-model.js';
+import type { PickExpanded } from '@balena/abstract-sql-to-typescript';
 const { BadRequestError } = errors;
 
 hooks.addPureHook('DELETE', 'resin', 'release', {
@@ -25,7 +22,10 @@ hooks.addPureHook('DELETE', 'resin', 'release', {
 				},
 			},
 		})) as Array<
-			PickExpanded<Application, 'is_of__class' | 'should_be_running__release'>
+			PickExpanded<
+				Application['Read'],
+				'is_of__class' | 'should_be_running__release'
+			>
 		>;
 
 		if (applicationPinnedToRelease != null) {
@@ -43,7 +43,7 @@ hooks.addPureHook('DELETE', 'resin', 'release', {
 					should_be_running__release: { $in: affectedIds },
 				},
 			},
-		})) as Array<PickExpanded<Device, 'id'>>;
+		})) as Array<PickExpanded<Device['Read'], 'id'>>;
 
 		if (devicesPinnedToRelease != null) {
 			throw new BadRequestError(

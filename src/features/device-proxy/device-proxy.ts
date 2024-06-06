@@ -203,7 +203,7 @@ async function requestDevices({
 						],
 					},
 				},
-			})) as Array<Pick<Device, 'id'>>
+			})) as Array<Pick<Device['Read'], 'id'>>
 		).map(({ id }) => id);
 		if (deviceIds.length === 0) {
 			if (!wait) {

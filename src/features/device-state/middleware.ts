@@ -9,7 +9,7 @@ import type { Request } from 'express-serve-static-core';
 
 const { api } = sbvrUtils;
 
-const $select = ['id', 'is_frozen'] satisfies Array<keyof Device>;
+const $select = ['id', 'is_frozen'] satisfies Array<keyof Device['Read']>;
 const checkDeviceExistsIsFrozenQuery = _.once(() =>
 	api.resin.prepare<{ uuid: string }>({
 		resource: 'device',
@@ -25,9 +25,9 @@ const checkDeviceExistsIsFrozenQuery = _.once(() =>
 export const checkDeviceExistsIsFrozen = multiCacheMemoizee(
 	async (
 		uuid: string,
-	): Promise<Pick<Device, (typeof $select)[number]> | undefined> => {
+	): Promise<Pick<Device['Read'], (typeof $select)[number]> | undefined> => {
 		return (await checkDeviceExistsIsFrozenQuery()({ uuid })) as
-			| Pick<Device, (typeof $select)[number]>
+			| Pick<Device['Read'], (typeof $select)[number]>
 			| undefined;
 	},
 	{
@@ -40,7 +40,7 @@ export const checkDeviceExistsIsFrozen = multiCacheMemoizee(
 );
 
 export interface ResolveDeviceInfoCustomObject {
-	resolvedDeviceIds: Array<Device['id']>;
+	resolvedDeviceIds: Array<Device['Read']['id']>;
 }
 
 const requestParamsUuidResolver = (req: Request) => [req.params.uuid];

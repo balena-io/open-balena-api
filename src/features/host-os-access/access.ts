@@ -24,7 +24,7 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 		passthrough: {
 			req,
 		},
-	})) as Pick<Device, 'id' | 'os_version'> | undefined;
+	})) as Pick<Device['Read'], 'id' | 'os_version'> | undefined;
 
 	if (device == null) {
 		res.status(401).end();

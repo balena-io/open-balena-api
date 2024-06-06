@@ -6,7 +6,6 @@ import type { UserObjectParam } from './test-lib/supertest.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import type { DateString } from '../src/balena-model.js';
 
 const { api } = sbvrUtils;
 
@@ -34,7 +33,7 @@ export default () => {
 						applicationId: number,
 						provisioningKeyName?: string,
 						provisioningKeyDescription?: string,
-						provisioningKeyExpiryDate?: DateString,
+						provisioningKeyExpiryDate?: string,
 					) {
 						return supertest(user)
 							.post(`/api-key/application/${applicationId}/provisioning`)
@@ -52,7 +51,7 @@ export default () => {
 						applicationId: number,
 						provisioningKeyName?: string,
 						provisioningKeyDescription?: string,
-						provisioningKeyExpiryDate?: DateString,
+						provisioningKeyExpiryDate?: string,
 					) {
 						return supertest(user)
 							.post(`/api-key/v1/`)

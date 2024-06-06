@@ -222,7 +222,7 @@ async function getReadContext(req: Request): Promise<LogContext> {
 		options: {
 			$select: ['id'],
 		},
-	})) as Pick<Device, 'id'> | undefined;
+	})) as Pick<Device['Read'], 'id'> | undefined;
 
 	if (!device) {
 		throw new NotFoundError('No device with uuid ' + uuid);

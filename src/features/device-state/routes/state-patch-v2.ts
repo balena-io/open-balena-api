@@ -7,7 +7,8 @@ import {
 } from '../../../infra/error-handling/index.js';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils.js';
-import type { ImageInstall, PickDeferred } from '../../../balena-model.js';
+import type { ImageInstall } from '../../../balena-model.js';
+import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import {
 	shouldUpdateMetrics,
 	metricsPatchFields,
@@ -251,7 +252,9 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 									installs__image: { $in: imageIds },
 								},
 							},
-						})) as Array<PickDeferred<ImageInstall, 'id' | 'installs__image'>>;
+						})) as Array<
+							PickDeferred<ImageInstall['Read'], 'id' | 'installs__image'>
+						>;
 						const existingImgInstallsByImage = _.keyBy(
 							existingImgInstalls,
 							({ installs__image }) => installs__image.__id,

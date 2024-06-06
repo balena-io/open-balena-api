@@ -194,7 +194,7 @@ const shouldUpdateImageInstall = (() => {
 
 export const upsertImageInstall = async (
 	resinApi: sbvrUtils.PinejsClient,
-	imgInstall: Pick<ImageInstall, 'id'>,
+	imgInstall: Pick<ImageInstall['Read'], 'id'>,
 	{
 		imageId,
 		releaseId,
