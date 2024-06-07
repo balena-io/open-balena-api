@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove unused `aliasRelationships` function
+      hash: 32533b6b4345d7eb2714c2eb26e827c6e3bef5ae
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 24.1.2
+  title: ""
+  date: 2024-06-07T10:29:08.849Z
+- commits:
     - subject: Fix typing of `getStateEventAdditionalFields`
       hash: 70ef735b362ff5e72ecfaf34bbcf2e6c2c69714d
       body: ""
