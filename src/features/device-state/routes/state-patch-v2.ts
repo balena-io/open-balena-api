@@ -7,7 +7,7 @@ import {
 } from '../../../infra/error-handling/index.js';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils.js';
-import type { ImageInstall } from '../../../balena-model.js';
+import type { Device, ImageInstall } from '../../../balena-model.js';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import {
 	shouldUpdateMetrics,
@@ -141,9 +141,10 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 		if (local != null) {
 			const { apps } = local;
 
-			let deviceBody: Pick<LocalBody, (typeof v2ValidPatchFields)[number]> & {
-				is_running__release?: number | null;
-			} = _.pick(local, v2ValidPatchFields);
+			let deviceBody: Pick<LocalBody, (typeof v2ValidPatchFields)[number]> &
+				Partial<
+					Pick<Device['Write'], 'is_running__release' | 'is_pinned_on__release'>
+				> = _.pick(local, v2ValidPatchFields);
 			let metricsBody: Pick<LocalBody, (typeof metricsPatchFields)[number]> =
 				_.pick(local, metricsPatchFields);
 			limitMetricNumbers(metricsBody);
@@ -157,6 +158,9 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 				metricsBody = {};
 			}
 
+			if (local.should_be_running__release !== undefined) {
+				deviceBody.is_pinned_on__release = local.should_be_running__release;
+			}
 			if (local.name != null) {
 				deviceBody.device_name = local.name;
 			}

@@ -21,7 +21,7 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 							is_running__release: {
 								$ne: request.values.should_be_running__release,
 							},
-							should_be_running__release: null,
+							is_pinned_on__release: null,
 						},
 						wait: false,
 					});

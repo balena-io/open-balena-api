@@ -189,7 +189,7 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 				api,
 				{
 					belongs_to__application: { $in: affectedIds },
-					should_be_running__release: null,
+					is_pinned_on__release: null,
 				},
 				{
 					id: request.values.should_be_running__release,
@@ -236,14 +236,14 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	POSTRUN: async ({ api, request }) => {
 		const affectedIds = request.affectedIds!;
 		if (
-			request.values.should_be_running__release !== undefined &&
+			request.values.is_pinned_on__release !== undefined &&
 			affectedIds.length !== 0
 		) {
 			// If the device was preloaded, and then pinned, service_installs do not exist
 			// for this device+release combination. We need to create these
-			if (request.values.should_be_running__release != null) {
+			if (request.values.is_pinned_on__release != null) {
 				await createReleaseServiceInstalls(api, affectedIds, {
-					id: request.values.should_be_running__release,
+					id: request.values.is_pinned_on__release,
 				});
 			} else {
 				const devices = (await api.get({

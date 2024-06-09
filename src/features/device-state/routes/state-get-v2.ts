@@ -202,7 +202,7 @@ const stateQuery = _.once(() =>
 				device_environment_variable: {
 					$select: ['name', 'value'],
 				},
-				should_be_running__release: releaseExpand,
+				is_pinned_on__release: releaseExpand,
 				service_install: {
 					$select: ['id'],
 					$expand: {

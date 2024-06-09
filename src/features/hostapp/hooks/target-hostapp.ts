@@ -17,11 +17,11 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	 * Disallow hostapp downgrades, using the related release resource
 	 */
 	async PRERUN(args) {
-		if (args.request.values.should_be_operated_by__release != null) {
+		if (args.request.values.is_pinned_on__release != null) {
 			// First try to coerce the value to an integer for
 			// moving forward
 			args.request.custom.hostappRelease = parseInt(
-				args.request.values.should_be_operated_by__release,
+				args.request.values.is_pinned_on__release,
 				10,
 			);
 			// But let's check we actually got a value
@@ -54,9 +54,9 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	async POSTPARSE({ request }) {
 		if (
 			request.values.is_of__device_type != null &&
-			request.values.should_be_operated_by__release === undefined
+			request.values.is_pinned_on__release === undefined
 		) {
-			request.values.should_be_operated_by__release = null;
+			request.values.is_pinned_on__release = null;
 		}
 	},
 });
