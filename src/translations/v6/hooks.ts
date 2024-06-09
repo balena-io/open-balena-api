@@ -16,6 +16,18 @@ const addReadOnlyHook = (
 	});
 };
 
+const translatePropertyTo =
+	(currentModelField: string, newerModelField: string) =>
+	async ({ request }: Pick<sbvrUtils.HookArgs, 'request'>) => {
+		if (Object.hasOwn(request.values, currentModelField)) {
+			// Add an async boundary so that other sync hooks can use
+			// the untranslated values.
+			await null;
+			request.values[newerModelField] = request.values[currentModelField];
+			delete request.values[currentModelField];
+		}
+	};
+
 const translateDeviceTypeTo =
 	(toField: string) =>
 	async ({ request, api }: sbvrUtils.HookArgs) => {
@@ -48,12 +60,19 @@ addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'application', {
 		}
 	},
 });
+
+const translateDeviceIsPinnedOnRelease = translatePropertyTo(
+	'should_be_running__release',
+	'is_pinned_on__release',
+);
+
 addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'device', {
-	POSTPARSE({ request }) {
+	async POSTPARSE({ request }) {
 		// Dependent device properties were removed so we block trying to set them
 		if (request.values.is_managed_by__device != null) {
 			throw new errors.BadRequestError();
 		}
+		await translateDeviceIsPinnedOnRelease({ request });
 	},
 });
 

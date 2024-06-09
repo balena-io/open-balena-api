@@ -33,7 +33,7 @@ hooks.addPureHook('DELETE', 'resin', 'release', {
 				$top: 1,
 				$select: 'id',
 				$filter: {
-					should_be_running__release: { $in: affectedIds },
+					is_pinned_on__release: { $in: affectedIds },
 				},
 			},
 		});
