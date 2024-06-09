@@ -17,6 +17,10 @@ import type { Application, DeviceType, Release } from '../src/balena-model.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
+		const pinnedOnReleaseField = versions.gt(version, 'v6')
+			? 'is_pinned_on__release'
+			: 'should_be_running__release';
+
 		describe(`Tracking latest release`, () => {
 			let fx: fixtures.Fixtures;
 			let admin: UserObjectParam;
@@ -85,7 +89,7 @@ export default () => {
 				await supertest(admin)
 					.patch(`/${version}/device(${device.id})`)
 					.send({
-						should_be_running__release: pinnedRelease.id,
+						[pinnedOnReleaseField]: pinnedRelease.id,
 					})
 					.expect(200);
 
@@ -106,7 +110,7 @@ export default () => {
 				await supertest(admin)
 					.patch(`/${version}/device(${device.id})`)
 					.send({
-						should_be_running__release: null,
+						[pinnedOnReleaseField]: null,
 					})
 					.expect(200);
 			});
@@ -464,7 +468,7 @@ export default () => {
 					await supertest(device4)
 						.patch(`/${version}/device(${device4.id})`)
 						.send({
-							should_be_running__release: app3ReleaseId,
+							[pinnedOnReleaseField]: app3ReleaseId,
 						})
 						.expect(200);
 
@@ -491,7 +495,7 @@ export default () => {
 							await supertest(device4)
 								.patch(`/${version}/device(${device4.id})`)
 								.send({
-									should_be_running__release: app3ReleaseId,
+									[pinnedOnReleaseField]: app3ReleaseId,
 								})
 								.expect(200);
 						},
@@ -579,7 +583,7 @@ export default () => {
 				it('should not be able to delete a release if a device is pinned to it', async function () {
 					await supertest(admin)
 						.patch(`/${version}/device(${device4.id})`)
-						.send({ should_be_running__release: app4ReleaseId });
+						.send({ [pinnedOnReleaseField]: app4ReleaseId });
 					await supertest(admin)
 						.delete(`/${version}/release(${app4ReleaseId})`)
 						.expect(
