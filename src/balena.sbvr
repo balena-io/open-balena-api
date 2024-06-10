@@ -436,6 +436,7 @@ Fact type: organization has handle
 Fact type: user (Auth) has email
 	Necessity: each user (Auth) has at most one email.
 	Necessity: each user (Auth) that has an email, has an email that has a Length (Type) that is greater than 4.
+	Necessity: each email is of exactly one user (Auth).
 
 Fact type: user (Auth) has public key
 	Term Form: user public key

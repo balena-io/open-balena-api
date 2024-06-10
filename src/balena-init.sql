@@ -201,3 +201,5 @@ ADD CONSTRAINT "user$M+9koFfMHn7kQFDNBaQZbS7gAvNMB1QkrTtsaVZoETw=" CHECK (NOT (
 		AND "email" IS NOT NULL
 	)
 ));
+
+ALTER TABLE "user" ADD UNIQUE ("email");
