@@ -1,4 +1,16 @@
 - commits:
+    - subject: Enforce user email minimum size 5
+      hash: dc5829bc34c17bd76befe5b2edcaf3b41c3b562d
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Otavio Jacobi
+      nested: []
+  version: 24.2.0
+  title: ""
+  date: 2024-06-10T13:49:24.976Z
+- commits:
     - subject: Lock file maintenance
       hash: 6ce0f9eb4b5eb961cfcea4006d6ca6717ff106be
       body: |
