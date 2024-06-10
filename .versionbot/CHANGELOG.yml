@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update s3 error handling and logs
+      hash: fc5f0709dd79854d72c42fecf89271f35c05e0bb
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Josh Bowling
+      nested: []
+  version: 24.2.1
+  title: ""
+  date: 2024-06-10T22:06:37.702Z
+- commits:
     - subject: Enforce user email minimum size 5
       hash: dc5829bc34c17bd76befe5b2edcaf3b41c3b562d
       body: ""
