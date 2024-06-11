@@ -190,3 +190,14 @@ ON "application" ("slug" varchar_pattern_ops, "is public", "is host");
 
 CREATE INDEX IF NOT EXISTS "scheduled_job_run_start_timestamp_idx"
 ON "scheduled job run" (DATE_TRUNC('milliseconds', "start timestamp"));
+
+ALTER TABLE "user" 
+-- It is necessary that each user (Auth) that has an email, has an email that has a Length (Type) that is greater than 4.
+ADD CONSTRAINT "user$M+9koFfMHn7kQFDNBaQZbS7gAvNMB1QkrTtsaVZoETw=" CHECK (NOT (
+	"email" IS NOT NULL
+	AND NOT (
+		4 < LENGTH("email")
+		AND LENGTH("email") IS NOT NULL
+		AND "email" IS NOT NULL
+	)
+));
