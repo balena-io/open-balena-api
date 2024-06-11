@@ -14,6 +14,9 @@ import {
 } from '../src/infra/auth/permissions.js';
 import { permissions as pinePermissions, sbvrUtils } from '@balena/pinejs';
 const { api } = sbvrUtils;
+import type { JwtPayload } from 'jsonwebtoken';
+import { decode } from 'jsonwebtoken';
+import { setTimeout } from 'timers/promises';
 
 const atob = (x: string) => Buffer.from(x, 'base64').toString('binary');
 const parseJwt = (t: string) => JSON.parse(atob(t.split('.')[1]));
@@ -124,10 +127,43 @@ export default () => {
 				});
 
 				it('should be refreshable with /user/v1/refresh-token', async function () {
+					// wait 2 seconds to make sure the token is already starting to expire
+					await setTimeout(2000);
+
 					const res = await supertest({ token })
 						.get('/user/v1/refresh-token')
 						.expect(200);
+
+					const oldDecodedToken = decode(token) as JwtPayload;
+					const newDecodedToken = decode(res.text) as JwtPayload;
 					token = res.text;
+
+					expect(oldDecodedToken)
+						.to.be.an('object')
+						.to.have.property('exp')
+						.that.is.a('number');
+					expect(newDecodedToken)
+						.to.be.an('object')
+						.to.have.property('exp')
+						.that.is.a('number');
+					expect(oldDecodedToken)
+						.to.be.an('object')
+						.to.have.property('iat')
+						.that.is.a('number');
+					expect(newDecodedToken)
+						.to.be.an('object')
+						.to.have.property('iat')
+						.that.is.a('number');
+
+					const oldExp = oldDecodedToken.exp as number;
+					const newExp = newDecodedToken.exp as number;
+					expect(newExp).to.be.eq(oldExp);
+
+					const oldIat = oldDecodedToken.iat as number;
+					const newIat = newDecodedToken.iat as number;
+					expect(newIat).to.be.gt(oldIat);
+					expect(newIat - oldIat).to.be.gt(2);
+
 					const tokenParts = token.split('.');
 					expect(tokenParts).to.be.an('array');
 					expect(tokenParts).to.have.property('length', 3);

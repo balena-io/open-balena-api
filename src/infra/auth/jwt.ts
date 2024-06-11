@@ -15,6 +15,7 @@ import { getUser } from './auth.js';
 import {
 	JSON_WEB_TOKEN_EXPIRY_MINUTES,
 	JSON_WEB_TOKEN_SECRET,
+	JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH,
 } from '../../lib/config.js';
 
 const { InternalRequestError } = errors;
@@ -180,12 +181,25 @@ export function createScopedAccessToken(
 }
 
 const EXPIRY_SECONDS = JSON_WEB_TOKEN_EXPIRY_MINUTES * 60;
+// if the new jwt should be created from an existing one,
+// the expiration date of the existing token is taken over
+// If a new token is issued the input value or default is used.
 export const createJwt = (
 	payload: AnyObject,
 	jwtOptions: jsonwebtoken.SignOptions = {},
 ): string => {
-	_.defaults(jwtOptions, { expiresIn: EXPIRY_SECONDS });
+	if (JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH === true) {
+		if (payload.exp == null) {
+			jwtOptions.expiresIn ??= EXPIRY_SECONDS;
+		} else {
+			// jsonwebtoken will throw an error if the expiresIn and exp are both set.
+			// So we need to delete the expiresIn to tke over the old expiration date.
+			delete jwtOptions.expiresIn;
+		}
+	} else {
+		jwtOptions.expiresIn ??= EXPIRY_SECONDS;
+		delete payload.exp;
+	}
 	delete payload.iat;
-	delete payload.exp;
 	return jsonwebtoken.sign(payload, JSON_WEB_TOKEN_SECRET, jwtOptions);
 };
