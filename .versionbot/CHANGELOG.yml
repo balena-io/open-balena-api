@@ -1,4 +1,24 @@
 - commits:
+    - subject: Add len constraint to balena-init
+      hash: e40065f2139a3e5bd5d43c1624b7b43d60f99bca
+      body: >
+        This is necessary because when creating migration on pine generated
+        resources (user)
+
+        when starting on a clean database migrations won't run and pine will
+        create a user table
+
+        using its default model, this ensures a clean DB will also contain the
+        len constraint
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+  version: 24.2.2
+  title: ""
+  date: 2024-06-11T13:08:06.380Z
+- commits:
     - subject: Update s3 error handling and logs
       hash: fc5f0709dd79854d72c42fecf89271f35c05e0bb
       body: ""
