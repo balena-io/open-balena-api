@@ -1,4 +1,30 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v18.0.2
+      hash: d11ac52a457886a3c8904c1aa5c58ad82e553054
+      body: |
+        Update balena/open-balena-base from 18.0.1 to 18.0.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency node to v22.3.0
+              hash: a94789c2aa6acef922ab880edfcbc849a4bffc68
+              body: |
+                Update node from 22.2.0 to 22.3.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-18.0.2
+          title: ""
+          date: 2024-06-11T19:53:08.300Z
+  version: 24.3.1
+  title: ""
+  date: 2024-06-11T21:47:15.025Z
+- commits:
     - subject: Add unique email constraint on user model
       hash: 401891881457f66952ef6604b61a6cf89d6ce5b1
       body: ""
