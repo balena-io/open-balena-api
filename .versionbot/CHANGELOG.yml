@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add unique email constraint on user model
+      hash: 401891881457f66952ef6604b61a6cf89d6ce5b1
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Otavio Jacobi
+      nested: []
+  version: 24.3.0
+  title: ""
+  date: 2024-06-11T15:09:02.226Z
+- commits:
     - subject: Add len constraint to balena-init
       hash: e40065f2139a3e5bd5d43c1624b7b43d60f99bca
       body: >
