@@ -1,4 +1,18 @@
 - commits:
+    - subject: Expire refreshed tokens within the same time as initial token.
+      hash: 696fda46094fdb5ac9b69ee3c6e7eed32db07397
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+        Signed-off-by: fisehara <harald@balena.io>
+        signed-off-by: fisehara <harald@balena.io>
+      author: fisehara
+      nested: []
+  version: 25.0.0
+  title: ""
+  date: 2024-06-13T06:57:28.395Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v18.0.2
       hash: d11ac52a457886a3c8904c1aa5c58ad82e553054
       body: |
