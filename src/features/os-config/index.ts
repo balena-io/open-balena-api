@@ -4,6 +4,7 @@ import {
 	DEVICE_CONFIG_OPENVPN_CA,
 	DEVICE_CONFIG_OPENVPN_CONFIG,
 	DEVICE_CONFIG_SSH_AUTHORIZED_KEYS,
+	DELTA_HOST,
 	LOGS_HOST,
 } from '../../lib/config.js';
 import { b64decode } from '../../lib/utils.js';
@@ -27,6 +28,11 @@ const services = {
 // - A field not found in the whitelist of the os-config schema will be ignored.
 const config = {
 	overrides: {
+		...(
+			DELTA_HOST != null && 
+			DELTA_HOST !== 'delta.balena-cloud.com' && 
+			{ deltaEndpoint: `https://${DELTA_HOST}` }
+		),
 		...(LOGS_HOST != null && { logsEndpoint: `https://${LOGS_HOST}` }),
 	},
 };
