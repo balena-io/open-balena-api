@@ -179,6 +179,10 @@ export const JSON_WEB_TOKEN_EXPIRY_MINUTES = intVar(
 	'JSON_WEB_TOKEN_EXPIRY_MINUTES',
 );
 export const JSON_WEB_TOKEN_SECRET = requiredVar('JSON_WEB_TOKEN_SECRET');
+export const JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH = boolVar(
+	'JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH',
+	false,
+);
 export const LOGS_HOST = optionalVar('LOGS_HOST');
 export const MIXPANEL_TOKEN = requiredVar('MIXPANEL_TOKEN');
 export const NODE_ENV = optionalVar('NODE_ENV');
