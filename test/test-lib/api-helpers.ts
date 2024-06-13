@@ -5,6 +5,7 @@ import { expect } from 'chai';
 import type { UserObjectParam } from '../test-lib/supertest.js';
 import { supertest } from '../test-lib/supertest.js';
 import type { TokenUserPayload } from '../../src/index.js';
+import type { RequiredField } from '@balena/pinejs/out/sbvr-api/common-types.js';
 
 const version = 'resin';
 
@@ -140,7 +141,10 @@ export function expectJwt(tokenOrJwt: string | AnyObject) {
 		typeof tokenOrJwt === 'string'
 			? jsonwebtoken.decode(tokenOrJwt)
 			: tokenOrJwt
-	) as TokenUserPayload & { iat: number; exp: number };
+	) as RequiredField<TokenUserPayload, 'authTime'> & {
+		iat: number;
+		exp: number;
+	};
 	expect(decoded).to.have.property('id').that.is.a('number');
 	expect(decoded).to.have.property('jwt_secret').that.is.a.string;
 	expect(decoded.jwt_secret).to.be.a('string').that.has.length(32);
