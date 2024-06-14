@@ -1,4 +1,16 @@
 - commits:
+    - subject: Improve typings
+      hash: 85f995d1f54662fa1f028e49b21c8f70e4a75e45
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 25.0.1
+  title: ""
+  date: 2024-06-14T15:41:59.188Z
+- commits:
     - subject: Expire refreshed tokens within the same time as initial token.
       hash: 696fda46094fdb5ac9b69ee3c6e7eed32db07397
       body: ""
