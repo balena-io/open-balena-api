@@ -61,7 +61,7 @@ const deleteApiKeyHooks: hooks.Hooks = {
 		}
 
 		await Promise.all(
-			['api_key__has__role', 'api_key__has__permission'].map(
+			(['api_key__has__role', 'api_key__has__permission'] as const).map(
 				async (resource) => {
 					try {
 						await api.Auth.delete({
@@ -101,21 +101,23 @@ hooks.addPureHook('DELETE', 'resin', 'user', {
 		});
 
 		const authApiDeletes = Promise.all(
-			['user__has__role', 'user__has__permission'].map(async (resource) => {
-				try {
-					await authApiTx.delete({
-						resource,
-						options: {
-							$filter: {
-								user: userId,
+			(['user__has__role', 'user__has__permission'] as const).map(
+				async (resource) => {
+					try {
+						await authApiTx.delete({
+							resource,
+							options: {
+								$filter: {
+									user: userId,
+								},
 							},
-						},
-					});
-				} catch (err) {
-					captureException(err, `Error deleting user ${resource}`, { req });
-					throw err;
-				}
-			}),
+						});
+					} catch (err) {
+						captureException(err, `Error deleting user ${resource}`, { req });
+						throw err;
+					}
+				},
+			),
 		);
 
 		const apiKeyDelete = (
