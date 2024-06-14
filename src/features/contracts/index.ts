@@ -1,3 +1,4 @@
+import type Model from '../../balena-model.js';
 import _ from 'lodash';
 import Bluebird from 'bluebird';
 import { fetchContractsLocally, getContracts } from './contracts-directory.js';
@@ -79,7 +80,7 @@ type FieldsMap = {
 };
 
 type SyncSetting = {
-	resource: string;
+	resource: keyof Model;
 	uniqueKey: string;
 	includeRawContract?: boolean;
 	map: FieldsMap;
