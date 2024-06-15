@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency uuid to v10
+      hash: b9f1e574ccb5912712f4c769c941afd4e3d5f092
+      body: |
+        Update uuid from 9.0.1 to 10.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 25.0.2
+  title: ""
+  date: 2024-06-15T14:32:45.892Z
+- commits:
     - subject: Improve typings
       hash: 85f995d1f54662fa1f028e49b21c8f70e4a75e45
       body: ""
