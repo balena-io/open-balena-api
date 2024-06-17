@@ -1,4 +1,17 @@
 - commits:
+    - subject: "is_pinned_on__release: Add migration to sync 'is pinned on-release'
+        with 'should be running-release' in device table"
+      hash: b502b626c43301bb1ffe2e1dea6614951cd7968f
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Andrea Rosci
+      nested: []
+  version: 25.1.0
+  title: ""
+  date: 2024-06-17T15:59:11.590Z
+- commits:
     - subject: Update dependency uuid to v10
       hash: b9f1e574ccb5912712f4c769c941afd4e3d5f092
       body: |
