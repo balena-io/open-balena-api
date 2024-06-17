@@ -1,6 +1,6 @@
 import { hooks, permissions } from '@balena/pinejs';
 import { getApplicationSlug } from '../index.js';
-import type { Application, Organization } from '../../../balena-model.js';
+import type { Organization } from '../../../balena-model.js';
 
 hooks.addPureHook('POST', 'resin', 'application', {
 	POSTPARSE: ({ request }) => {
@@ -89,7 +89,7 @@ hooks.addPureHook('PATCH', 'resin', 'organization', {
 		if (request.values.handle != null) {
 			await Promise.all(
 				orgIds.map(async (organizationID) => {
-					const apps = (await api.get({
+					const apps = await api.get({
 						resource: 'application',
 						options: {
 							$filter: {
@@ -97,7 +97,7 @@ hooks.addPureHook('PATCH', 'resin', 'organization', {
 							},
 							$select: ['id', 'app_name'],
 						},
-					})) as Array<Pick<Application['Read'], 'id' | 'app_name'>>;
+					});
 
 					const rootApiTx = api.clone({
 						passthrough: {

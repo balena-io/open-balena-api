@@ -4,7 +4,6 @@ import _ from 'lodash';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import type { Filter } from 'pinejs-client-core';
 
-import type { Device } from '../../balena-model.js';
 import {
 	captureException,
 	handleHttpErrors,
@@ -189,7 +188,7 @@ async function requestDevices({
 			passthrough: { req, tx },
 		});
 		const deviceIds = (
-			(await resinApi.get({
+			await resinApi.get({
 				resource: 'device',
 				options: {
 					$select: 'id',
@@ -203,7 +202,7 @@ async function requestDevices({
 						],
 					},
 				},
-			})) as Array<Pick<Device['Read'], 'id'>>
+			})
 		).map(({ id }) => id);
 		if (deviceIds.length === 0) {
 			if (!wait) {

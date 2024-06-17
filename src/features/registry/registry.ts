@@ -27,7 +27,6 @@ import {
 	RESOLVE_IMAGE_READ_ACCESS_CACHE_TIMEOUT,
 	TOKEN_AUTH_BUILDER_TOKEN,
 } from '../../lib/config.js';
-import type { Image, User } from '../../balena-model.js';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -205,7 +204,7 @@ const resolveWriteAccess = async (
 
 const resolveImageId = multiCacheMemoizee(
 	async (effectiveName: string, tx: Tx): Promise<number | undefined> => {
-		const [image] = (await api.resin.get({
+		const [image] = await api.resin.get({
 			resource: 'image',
 			passthrough: { req: permissions.root, tx },
 			options: {
@@ -216,7 +215,7 @@ const resolveImageId = multiCacheMemoizee(
 					},
 				},
 			},
-		})) as Array<Pick<Image['Read'], 'id'>>;
+		});
 		return image?.id;
 	},
 	{
@@ -653,7 +652,7 @@ const $getSubject = multiCacheMemoizee(
 			}
 		}
 		// If resolving as a device api key fails then instead try to resolve to the user api key username
-		const [user] = (await api.resin.get({
+		const [user] = await api.resin.get({
 			resource: 'user',
 			passthrough: { req: permissions.root },
 			options: {
@@ -679,7 +678,7 @@ const $getSubject = multiCacheMemoizee(
 				},
 				$top: 1,
 			},
-		})) as [Pick<User['Read'], 'username'>?];
+		});
 		if (user) {
 			return user.username;
 		}
@@ -701,14 +700,14 @@ const getSubject = async (
 		return await $getSubject(req.apiKey.key, req.params.subject, tx);
 	} else if (req.user && 'id' in req.user) {
 		// If there's no api key then try to fetch the user from JWT credentials and get the username
-		const user = (await api.resin.get({
+		const user = await api.resin.get({
 			resource: 'user',
 			passthrough: { req, tx },
 			id: req.user.id,
 			options: {
 				$select: 'username',
 			},
-		})) as Pick<User['Read'], 'username'> | null;
+		});
 		return user?.username;
 	}
 };

@@ -121,7 +121,7 @@ export const checkUserPassword = async (
 	userId: number,
 	tx: Tx,
 ): Promise<void> => {
-	const user = (await api.resin.get({
+	const user = await api.resin.get({
 		resource: 'user',
 		id: userId,
 		passthrough: {
@@ -131,7 +131,7 @@ export const checkUserPassword = async (
 		options: {
 			$select: ['password', 'id'],
 		},
-	})) as Pick<User['Read'], 'password' | 'id'>;
+	});
 	if (user == null) {
 		throw new BadRequestError('User not found.');
 	}
@@ -318,14 +318,16 @@ export const registerUser = async (
 	},
 	tx: Tx,
 	req?: Request,
-) => {
+	// This should be able to be `PickDeferred<User['Read']>` but it needs to be inlined
+	// to avoid issues around typescript's maximum serialization length.
+): Promise<{ [P in keyof User['Read']]: Deferred<User['Read'][P]> }> => {
 	let clientIP;
 	if (req) {
 		clientIP = getIP(req);
 	}
 
 	// Create the user in the platform
-	const user = (await api.resin.post({
+	const user = await api.resin.post({
 		resource: 'user',
 		body: {
 			...userData,
@@ -337,9 +339,7 @@ export const registerUser = async (
 				clientIP,
 			},
 		},
-		// This should be able to be `PickDeferred<User['Read']>` but it needs to be inlined
-		// to avoid issues around typescript's maximum serialization length.
-	})) as { [P in keyof User['Read']]: Deferred<User['Read'][P]> };
+	});
 
 	if (user.id == null) {
 		throw new Error('Error creating user in the platform');

@@ -115,7 +115,7 @@ export const actorWhoami: RequestHandler = async (req, res) => {
 			// If this is a user key/token we must validate this is a key that
 			// has permissions for reading username/email
 			if (req.user?.actor) {
-				const [userWithId] = (await api.resin.get({
+				const [userWithId] = await api.resin.get({
 					resource: 'user',
 					passthrough: { req, tx },
 					options: {
@@ -125,7 +125,7 @@ export const actorWhoami: RequestHandler = async (req, res) => {
 							actor: req.user?.actor,
 						},
 					},
-				})) as Array<Pick<User['Read'], 'id'>>;
+				});
 
 				if (userWithId == null) {
 					throw new errors.UnauthorizedError();

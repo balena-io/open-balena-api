@@ -1,6 +1,4 @@
 import { sbvrUtils, hooks, errors } from '@balena/pinejs';
-import type { Application, Device } from '../../../balena-model.js';
-import type { PickExpanded } from '@balena/abstract-sql-to-typescript';
 const { BadRequestError } = errors;
 
 hooks.addPureHook('DELETE', 'resin', 'release', {
@@ -11,7 +9,7 @@ hooks.addPureHook('DELETE', 'resin', 'release', {
 			return;
 		}
 
-		const [applicationPinnedToRelease] = (await api.get({
+		const [applicationPinnedToRelease] = await api.get({
 			resource: 'application',
 			options: {
 				$top: 1,
@@ -21,12 +19,7 @@ hooks.addPureHook('DELETE', 'resin', 'release', {
 					should_be_running__release: { $in: affectedIds },
 				},
 			},
-		} as const)) as Array<
-			PickExpanded<
-				Application['Read'],
-				'is_of__class' | 'should_be_running__release'
-			>
-		>;
+		} as const);
 
 		if (applicationPinnedToRelease != null) {
 			throw new BadRequestError(
@@ -34,7 +27,7 @@ hooks.addPureHook('DELETE', 'resin', 'release', {
 			);
 		}
 
-		const [devicesPinnedToRelease] = (await api.get({
+		const [devicesPinnedToRelease] = await api.get({
 			resource: 'device',
 			options: {
 				$top: 1,
@@ -43,7 +36,7 @@ hooks.addPureHook('DELETE', 'resin', 'release', {
 					should_be_running__release: { $in: affectedIds },
 				},
 			},
-		})) as Array<PickExpanded<Device['Read'], 'id'>>;
+		});
 
 		if (devicesPinnedToRelease != null) {
 			throw new BadRequestError(

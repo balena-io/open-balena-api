@@ -52,13 +52,13 @@ const addEnvHooks = (
 				await Promise.all(
 					filters.map(async ($filter) =>
 						(
-							(await args.api.get({
+							await args.api.get({
 								resource: 'device',
 								options: {
 									$select: 'id',
 									$filter,
 								},
-							})) as Array<{ id: number }>
+							})
 						).map(({ id }) => id),
 					),
 				)

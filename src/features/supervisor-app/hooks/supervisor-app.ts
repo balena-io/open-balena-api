@@ -6,7 +6,6 @@ import {
 	permissions,
 	errors as pinejsErrors,
 } from '@balena/pinejs';
-import type { Release } from '../../../balena-model.js';
 
 const { BadRequestError } = pinejsErrors;
 
@@ -131,7 +130,7 @@ async function getSupervisorReleaseResource(
 	supervisorVersion: string,
 	archId: string,
 ) {
-	return (await api.get({
+	return await api.get({
 		resource: 'release',
 		options: {
 			$top: 1,
@@ -176,7 +175,7 @@ async function getSupervisorReleaseResource(
 			},
 			$orderby: { revision: 'desc' },
 		},
-	})) as Array<Pick<Release['Read'], 'id'>>;
+	});
 }
 
 async function setSupervisorReleaseResource(
@@ -195,7 +194,7 @@ async function setSupervisorReleaseResource(
 				id: { $in: deviceIds },
 				supervisor_version: null,
 			},
-			$select: ['id', 'is_of__device_type'],
+			$select: ['id'],
 			$expand: {
 				is_of__device_type: { $select: ['is_of__cpu_architecture'] },
 			},

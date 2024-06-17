@@ -9,7 +9,6 @@ import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
 import type { SignOptions } from './jwt-passport.js';
 import type { User } from '../../balena-model.js';
-import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import { randomBytesAsync } from '../../lib/utils.js';
 import { getUser } from './auth.js';
 import {
@@ -76,14 +75,14 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 	existingToken,
 	tx: Tx,
 ): Promise<TokenUserPayload> => {
-	const userData = (await api.resin.get({
+	const userData = await api.resin.get({
 		resource: 'user',
 		id: userId,
 		passthrough: { req: permissions.root, tx },
 		options: {
 			$select: tokenFields,
 		},
-	})) as PickDeferred<User['Read'], (typeof tokenFields)[number]>;
+	});
 	if (!userData) {
 		throw new Error('No data found?!');
 	}
