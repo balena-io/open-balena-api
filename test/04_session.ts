@@ -1,5 +1,9 @@
 import { expect } from 'chai';
-import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from '../src/lib/config.js';
+import {
+	JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH,
+	SUPERUSER_EMAIL,
+	SUPERUSER_PASSWORD,
+} from '../src/lib/config.js';
 import { createScopedAccessToken } from '../src/infra/auth/jwt.js';
 
 import * as fixtures from './test-lib/fixtures.js';
@@ -14,12 +18,8 @@ import {
 } from '../src/infra/auth/permissions.js';
 import { permissions as pinePermissions, sbvrUtils } from '@balena/pinejs';
 const { api } = sbvrUtils;
-import type { JwtPayload } from 'jsonwebtoken';
-import { decode } from 'jsonwebtoken';
 import { setTimeout } from 'timers/promises';
-
-const atob = (x: string) => Buffer.from(x, 'base64').toString('binary');
-const parseJwt = (t: string) => JSON.parse(atob(t.split('.')[1]));
+import { expectJwt } from './test-lib/api-helpers.js';
 
 export default () => {
 	versions.test((version) => {
@@ -58,6 +58,29 @@ export default () => {
 			after(async function () {
 				await supertest(admin).delete(`/${version}/api_key`).expect(200);
 				await fixtures.clean(this.loadedFixtures);
+			});
+
+			it('/login_ returns 401 when the password is wrong', async function () {
+				await supertest()
+					.post('/login_')
+					.send({
+						username: SUPERUSER_EMAIL,
+						password: `${SUPERUSER_PASSWORD}_wrong`,
+					})
+					.expect(401);
+			});
+
+			it('/login_ returns a token with only the allowed properties', async function () {
+				const token = (
+					await supertest()
+						.post('/login_')
+						.send({
+							username: SUPERUSER_EMAIL,
+							password: SUPERUSER_PASSWORD,
+						})
+						.expect(200)
+				).text;
+				expectJwt(token);
 			});
 
 			it('/user/v1/whoami returns a user', async function () {
@@ -126,7 +149,7 @@ export default () => {
 					token = admin.token!;
 				});
 
-				it('should be refreshable with /user/v1/refresh-token', async function () {
+				it('should be refreshable with /user/v1/refresh-token and not include extra properties', async function () {
 					// wait 2 seconds to make sure the token is already starting to expire
 					await setTimeout(2000);
 
@@ -134,43 +157,20 @@ export default () => {
 						.get('/user/v1/refresh-token')
 						.expect(200);
 
-					const oldDecodedToken = decode(token) as JwtPayload;
-					const newDecodedToken = decode(res.text) as JwtPayload;
+					const oldDecodedToken = expectJwt(token);
+					const newDecodedToken = expectJwt(res.text);
 					token = res.text;
 
-					expect(oldDecodedToken)
-						.to.be.an('object')
-						.to.have.property('exp')
-						.that.is.a('number');
-					expect(newDecodedToken)
-						.to.be.an('object')
-						.to.have.property('exp')
-						.that.is.a('number');
-					expect(oldDecodedToken)
-						.to.be.an('object')
-						.to.have.property('iat')
-						.that.is.a('number');
-					expect(newDecodedToken)
-						.to.be.an('object')
-						.to.have.property('iat')
-						.that.is.a('number');
+					if (JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH) {
+						expect(oldDecodedToken.exp, 'exp should not change').to.be.eq(
+							newDecodedToken.exp,
+						);
 
-					const oldExp = oldDecodedToken.exp as number;
-					const newExp = newDecodedToken.exp as number;
-					expect(newExp).to.be.eq(oldExp);
-
-					const oldIat = oldDecodedToken.iat as number;
-					const newIat = newDecodedToken.iat as number;
-					expect(newIat).to.be.gt(oldIat);
-					expect(newIat - oldIat).to.be.gt(2);
-
-					const tokenParts = token.split('.');
-					expect(tokenParts).to.be.an('array');
-					expect(tokenParts).to.have.property('length', 3);
-					const payload = parseJwt(token);
-					expect(payload).to.have.property('id');
-					expect(payload).to.not.have.property('username');
-					expect(payload).to.not.have.property('email');
+						expect(newDecodedToken.iat, 'should get a newer iat').to.be.gt(
+							oldDecodedToken.iat,
+						);
+						expect(newDecodedToken.iat - oldDecodedToken.iat).to.be.gt(2);
+					}
 				});
 
 				it('should refresh & update the authTime with a POST to /user/v1/refresh-token using a correct password', async function () {
@@ -182,11 +182,7 @@ export default () => {
 					const tokenParts = token.split('.');
 					expect(tokenParts).to.be.an('array');
 					expect(tokenParts).to.have.property('length', 3);
-					const payload = parseJwt(token);
-					expect(payload).to.have.property('id');
-					expect(payload).to.not.have.property('username');
-					expect(payload).to.not.have.property('email');
-					expect(payload).to.have.property('authTime');
+					const payload = expectJwt(token);
 					const initialAuthTime: number = payload.authTime;
 
 					const res1 = await supertest(token)
@@ -198,10 +194,7 @@ export default () => {
 					const tokenParts1 = token.split('.');
 					expect(tokenParts1).to.be.an('array');
 					expect(tokenParts1).to.have.property('length', 3);
-					const payload1 = parseJwt(token);
-					expect(payload1).to.have.property('id');
-					expect(payload1).to.not.have.property('username');
-					expect(payload1).to.not.have.property('email');
+					const payload1 = expectJwt(token);
 					expect(payload1)
 						.to.have.property('authTime')
 						.to.be.above(initialAuthTime);
@@ -215,11 +208,7 @@ export default () => {
 					const tokenParts = token.split('.');
 					expect(tokenParts).to.be.an('array');
 					expect(tokenParts).to.have.property('length', 3);
-					const payload = parseJwt(token);
-					expect(payload).to.have.property('id');
-					expect(payload).to.not.have.property('username');
-					expect(payload).to.not.have.property('email');
-					expect(payload).to.have.property('authTime');
+					const payload = expectJwt(token);
 					const initialAuthTime: number = payload.authTime;
 
 					const res1 = await supertest(token)
@@ -229,10 +218,7 @@ export default () => {
 					const tokenParts1 = token.split('.');
 					expect(tokenParts1).to.be.an('array');
 					expect(tokenParts1).to.have.property('length', 3);
-					const payload1 = parseJwt(token);
-					expect(payload1).to.have.property('id');
-					expect(payload1).to.not.have.property('username');
-					expect(payload1).to.not.have.property('email');
+					const payload1 = expectJwt(token);
 					expect(payload1)
 						.to.have.property('authTime')
 						.that.equals(initialAuthTime);

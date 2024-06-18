@@ -47,6 +47,14 @@ export interface TokenUserPayload
 	authTime?: number;
 }
 
+const jwtValidFields = [
+	...tokenFields,
+	'authTime',
+	'twoFactorRequired',
+	'iat',
+	'exp',
+] satisfies Array<keyof TokenUserPayload | 'iat' | 'exp'>;
+
 export interface ExtraParams {
 	existingToken?: Partial<TokenUserPayload>;
 	jwtOptions?: SignOptions;
@@ -82,7 +90,10 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 	const newTokenData = _.pick(userData, tokenFields);
 
 	const tokenData: TokenUserPayload = {
-		...existingToken,
+		// The existingToken that we pass in is the augmented object that
+		// the jwt-passport returns, so we need to make sure we are not
+		// destructuring extra properties.
+		..._.pick(existingToken, jwtValidFields),
 		...newTokenData,
 	};
 
