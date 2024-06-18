@@ -47,7 +47,7 @@
     "@balena/env-parsing": "^1.1.12",
     "@balena/es-version": "^1.0.3",
     "@balena/node-metrics-gatherer": "^6.0.3",
-    "@balena/pinejs": "^17.0.0",
+    "@balena/pinejs": "17.1.0-build-model-based-typings-c276ef4fb8482a246c25940d617d76b76847eff8-1",
     "@balena/pinejs-webresource-cloudfront": "^0.1.0",
     "@sentry/node": "^7.116.0",
     "@types/basic-auth": "^1.1.8",
