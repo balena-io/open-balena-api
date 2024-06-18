@@ -49,7 +49,7 @@
     "@balena/node-metrics-gatherer": "^6.0.3",
     "@balena/pinejs": "^17.0.0",
     "@balena/pinejs-webresource-cloudfront": "^0.1.0",
-    "@sentry/node": "^7.116.0",
+    "@sentry/node": "^8.0.0",
     "@types/basic-auth": "^1.1.8",
     "@types/bluebird": "^3.5.42",
     "@types/cache-manager": "^4.0.6",
