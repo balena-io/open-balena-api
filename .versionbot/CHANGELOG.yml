@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix refresh-token including additional jwt properties
+      hash: 42a40836d1781e85864a57599021632abfe379b7
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 25.1.1
+  title: ""
+  date: 2024-06-18T07:58:31.401Z
+- commits:
     - subject: "is_pinned_on__release: Add migration to sync 'is pinned on-release'
         with 'should be running-release' in device table"
       hash: b502b626c43301bb1ffe2e1dea6614951cd7968f
