@@ -168,7 +168,7 @@ hooks.addPureHook('POST', 'resin', 'release', {
 	},
 	POSTRUN: async ({ api, request, result: releaseId, tx }) => {
 		const custom = request.custom as CustomObjectBase;
-		if (releaseId == null || !custom.is_final) {
+		if (typeof releaseId !== 'number' || !custom.is_final) {
 			return;
 		}
 		const semverObject = custom.semverObject ?? DEFAULT_SEMVER;

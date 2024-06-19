@@ -202,7 +202,7 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 hooks.addPureHook('POST', 'resin', 'device', {
 	POSTRUN: async ({ request, api, tx, result: deviceId }) => {
 		// Don't try to add service installs if the device wasn't created
-		if (deviceId == null) {
+		if (typeof deviceId !== 'number') {
 			return;
 		}
 
@@ -282,7 +282,7 @@ const addSystemAppServiceInstallHooks = (
 	hooks.addPureHook('POST', 'resin', 'device', {
 		POSTRUN: async ({ request, api, tx, result: deviceId }) => {
 			// Don't try to add service installs if the device wasn't created
-			if (deviceId == null) {
+			if (typeof deviceId !== 'number') {
 				return;
 			}
 

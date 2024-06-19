@@ -8,6 +8,9 @@ const { api } = sbvrUtils;
 
 hooks.addPureHook('POST', 'resin', 'user', {
 	POSTRUN: async ({ request, result, tx }) => {
+		if (typeof result !== 'number') {
+			throw new InternalRequestError('Unable to find created user id');
+		}
 		const role = await api.Auth.get({
 			resource: 'role',
 			passthrough: {
