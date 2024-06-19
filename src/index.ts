@@ -392,7 +392,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	routes.setup(app, options);
 	await options.onInitRoutes?.(app);
 
-	app.use(Sentry.Handlers.errorHandler());
+	Sentry.setupExpressErrorHandler(app);
 
 	// start consuming the API heartbeat state queue...
 	getDeviceOnlineStateManager().start();
