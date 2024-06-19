@@ -91,7 +91,7 @@ hooks.addPureHook('POST', 'resin', 'release', {
 	POSTRUN: async ({ api, result: releaseId }) => {
 		// If we successfully created a release then check if the latest release needs to be updated.
 		// We avoid checking specific fields & short-circuiting since the db can provide defaults that we later use to filter on.
-		if (releaseId == null) {
+		if (typeof releaseId !== 'number') {
 			return;
 		}
 		// Try to update the latest release only if it is
