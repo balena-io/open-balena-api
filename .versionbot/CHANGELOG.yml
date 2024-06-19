@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update sentry to 8.x
+      hash: 9d0916089149cc9d22b5fcc31f528eb0d86499eb
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 25.1.3
+  title: ""
+  date: 2024-06-19T17:42:58.887Z
+- commits:
     - subject: Update dependencies
       hash: 886b755019f4724eae92d09a4877e204f37cc4d5
       body: |
