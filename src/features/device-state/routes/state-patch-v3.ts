@@ -22,6 +22,15 @@ import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 const { BadRequestError, UnauthorizedError, InternalRequestError } = errors;
 const { api } = sbvrUtils;
 
+enum updateStatusPrecedence {
+	'rejected',
+	'aborted',
+	'downloading',
+	'downloaded',
+	'applying changes',
+	'done',
+}
+
 /**
  * These typings should be used as a guide to what should be sent, but cannot be trusted as what actually *is* sent.
  */
@@ -58,6 +67,7 @@ export type StatePatchV3Body = {
 				release_uuid?: string;
 				releases?: {
 					[releaseUUID: string]: {
+						update_status?: NonNullable<Device['Write']['update_status']>;
 						services?: {
 							[name: string]: {
 								image: string;
@@ -264,7 +274,8 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 			const { apps } = state;
 
 			let deviceBody: Pick<
-				StatePatchV3Body[string],
+				StatePatchV3Body[string] &
+					Partial<Pick<Device['Write'], 'update_status'>>,
 				(typeof v3ValidPatchFields)[number]
 			> &
 				Partial<Pick<Device['Write'], 'is_running__release'>> = _.pick(
@@ -317,6 +328,22 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 						);
 						if (release) {
 							deviceBody.is_running__release = release.id;
+						}
+					}
+					const { releases } = apps[userAppUuid] ?? {};
+					if (releases != null) {
+						for (const { update_status: updateStatus } of Object.values(
+							releases,
+						)) {
+							if (updateStatus != null) {
+								if (
+									deviceBody.update_status == null ||
+									updateStatusPrecedence[updateStatus] <
+										updateStatusPrecedence[deviceBody.update_status]
+								) {
+									deviceBody.update_status = updateStatus;
+								}
+							}
 						}
 					}
 				}

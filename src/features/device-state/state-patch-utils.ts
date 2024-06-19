@@ -12,9 +12,7 @@ import { createMultiLevelStore } from '../../infra/cache/index.js';
 import type { sbvrUtils } from '@balena/pinejs';
 import { permissions } from '@balena/pinejs';
 
-export const v3ValidPatchFields: Array<
-	Exclude<keyof StatePatchV3Body[string], 'apps'>
-> = [
+export const v3ValidPatchFields = [
 	'status',
 	'is_online',
 	'os_version',
@@ -28,11 +26,19 @@ export const v3ValidPatchFields: Array<
 	'api_secret',
 	'cpu_id',
 	'is_undervolted',
-];
+	'update_status',
+] satisfies Array<
+	Exclude<keyof StatePatchV3Body[string], 'apps'> | 'update_status'
+>;
 
 export const v2ValidPatchFields: Array<
 	Exclude<keyof NonNullable<StatePatchV2Body['local']>, 'apps'>
-> = [...v3ValidPatchFields, 'device_name', 'note', 'download_progress'];
+> = [
+	...v3ValidPatchFields.filter((f) => f !== 'update_status'),
+	'device_name',
+	'note',
+	'download_progress',
+];
 
 const SHORT_TEXT_LENGTH = 255;
 const ADDRESS_DELIMITER = ' ';

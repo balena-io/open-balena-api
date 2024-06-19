@@ -5,6 +5,7 @@ import './features/ci-cd/hooks/index.js';
 import './features/cascade-delete/hooks.js';
 import './features/devices/hooks/index.js';
 import './features/device-provisioning/hooks/index.js';
+import './features/device-state/hooks.js';
 import './features/device-types/hooks/index.js';
 import './features/device-urls/hooks.js';
 import './features/hostapp/hooks/index.js';
