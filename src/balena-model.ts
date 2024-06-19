@@ -745,6 +745,15 @@ export interface Device {
 			| [Release['Read']]
 			| []
 			| null;
+		update_status:
+			| 'rejected'
+			| 'downloading'
+			| 'downloaded'
+			| 'applying changes'
+			| 'aborted'
+			| 'done'
+			| null;
+		last_update_status_event: Types['Date Time']['Read'] | null;
 		is_web_accessible: Types['Boolean']['Read'] | null;
 		is_frozen: Types['Boolean']['Read'] | null;
 		overall_status: Types['Short Text']['Read'] | null;
@@ -809,6 +818,15 @@ export interface Device {
 		is_pinned_on__release: Release['Write']['id'] | null;
 		should_be_operated_by__release: Release['Write']['id'] | null;
 		should_be_managed_by__release: Release['Write']['id'] | null;
+		update_status:
+			| 'rejected'
+			| 'downloading'
+			| 'downloaded'
+			| 'applying changes'
+			| 'aborted'
+			| 'done'
+			| null;
+		last_update_status_event: Types['Date Time']['Write'] | null;
 		is_web_accessible: Types['Boolean']['Write'] | null;
 		is_frozen: Types['Boolean']['Write'] | null;
 		overall_status: Types['Short Text']['Write'] | null;

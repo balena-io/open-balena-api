@@ -958,7 +958,7 @@ export default () => {
 			}),
 		);
 
-		(['v2', 'v3'] as const).forEach((stateVersion) =>
+		(['v2', 'v3'] as const).forEach((stateVersion) => {
 			describe(`Device State ${stateVersion} patch`, function () {
 				let fx: fixtures.Fixtures;
 				let admin: UserObjectParam;
@@ -1432,7 +1432,60 @@ export default () => {
 						});
 					}
 				});
-			}),
-		);
+
+				if (stateVersion === 'v3') {
+					it('should save the update status of the device state', async () => {
+						await fakeDevice.patchState(
+							device,
+							device.uuid,
+							{
+								[stateKey]: {
+									apps: {
+										[applicationUuid]: {
+											releases: {
+												[release1.commit]: {
+													update_status: 'downloading',
+												},
+											},
+										},
+									},
+								},
+							},
+							stateVersion,
+						);
+
+						await expectResourceToMatch(pineUser, 'device', device.id, {
+							update_status: 'downloading',
+						});
+
+						await fakeDevice.patchState(
+							device,
+							device.uuid,
+							{
+								[stateKey]: {
+									apps: {
+										[applicationUuid]: {
+											releases: {
+												[release1.commit]: {
+													update_status: 'downloading',
+												},
+												[release2.commit]: {
+													update_status: 'rejected',
+												},
+											},
+										},
+									},
+								},
+							},
+							stateVersion,
+						);
+
+						await expectResourceToMatch(pineUser, 'device', device.id, {
+							update_status: 'rejected',
+						});
+					});
+				}
+			});
+		});
 	});
 };
