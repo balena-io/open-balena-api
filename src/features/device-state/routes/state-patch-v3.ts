@@ -22,6 +22,15 @@ import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 const { BadRequestError, UnauthorizedError, InternalRequestError } = errors;
 const { api } = sbvrUtils;
 
+enum updateStatusPredence {
+	'rejected',
+	'aborted',
+	'downloading',
+	'downloaded',
+	'applying changes',
+	'done',
+}
+
 /**
  * These typings should be used as a guide to what should be sent, but cannot be trusted as what actually *is* sent.
  */
@@ -58,6 +67,13 @@ export type StatePatchV3Body = {
 				release_uuid?: string;
 				releases?: {
 					[releaseUUID: string]: {
+						update_status?:
+							| 'rejected'
+							| 'downloading'
+							| 'downloaded'
+							| 'applying changes'
+							| 'aborted'
+							| 'done';
 						services?: {
 							[name: string]: {
 								image: string;
@@ -264,13 +280,16 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 			const { apps } = state;
 
 			let deviceBody: Pick<
-				StatePatchV3Body[string],
+				StatePatchV3Body[string] &
+					Partial<Pick<Device['Write'], 'update_status'>>,
 				(typeof v3ValidPatchFields)[number]
 			> &
-				Partial<Pick<Device['Write'], 'is_running__release'>> = _.pick(
-				state,
-				v3ValidPatchFields,
-			);
+				Partial<
+					Pick<
+						Device['Write'],
+						'is_running__release' | 'last_update_status_event'
+					>
+				> = _.pick(state, v3ValidPatchFields);
 			let metricsBody: Pick<
 				StatePatchV3Body[string],
 				(typeof metricsPatchFields)[number]
@@ -317,6 +336,29 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 						);
 						if (release) {
 							deviceBody.is_running__release = release.id;
+						}
+					}
+					const { releases } = apps[userAppUuid];
+					if (releases != null) {
+						let overallUpdateStatus:
+							| Device['Write']['update_status']
+							| undefined;
+						for (const { update_status: updateStatus } of Object.values(
+							releases,
+						)) {
+							if (updateStatus != null) {
+								if (
+									overallUpdateStatus == null ||
+									updateStatusPredence[updateStatus] <
+										updateStatusPredence[overallUpdateStatus]
+								) {
+									overallUpdateStatus = updateStatus;
+								}
+							}
+						}
+						if (overallUpdateStatus != null) {
+							deviceBody.update_status = overallUpdateStatus;
+							deviceBody.last_update_status_event = new Date();
 						}
 					}
 				}
