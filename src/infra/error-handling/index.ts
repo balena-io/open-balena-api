@@ -31,7 +31,7 @@ export function captureException(
 	message?: string,
 	options?: {
 		tags?: { [key: string]: string };
-		req?: Sentry.Handlers.ExpressRequest | hooks.HookReq;
+		req?: Sentry.PolymorphicRequest | hooks.HookReq;
 		extra?: AnyObject;
 	},
 ): void {
@@ -50,7 +50,7 @@ export function captureException(
 			}
 			if (req != null) {
 				scope.addEventProcessor((evt) =>
-					Sentry.Handlers.parseRequest(evt, req),
+					Sentry.addRequestDataToEvent(evt, req),
 				);
 			}
 			if (extra != null) {
