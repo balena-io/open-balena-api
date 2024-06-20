@@ -164,29 +164,25 @@ export const getImageVersions = async (
 	const deviceType = deviceTypeInfo.latest;
 	const normalizedSlug = deviceType.slug;
 
-	const versionInfo = await Promise.all(
-		deviceTypeInfo.versions.map(async (buildId) => {
-			try {
-				return {
-					buildId,
-					hasDeviceTypeJson: await getDeviceTypeJson(normalizedSlug, buildId),
-				};
-			} catch {
-				return;
-			}
-		}),
-	);
-	const filteredInfo = versionInfo.filter(
-		(buildInfo): buildInfo is NonNullable<typeof buildInfo> =>
-			buildInfo != null && !!buildInfo.hasDeviceTypeJson,
-	);
-	if (_.isEmpty(filteredInfo) && !_.isEmpty(deviceTypeInfo.versions)) {
+	const buildIds = (
+		await Promise.all(
+			deviceTypeInfo.versions.map(async (buildId) => {
+				try {
+					if ((await getDeviceTypeJson(normalizedSlug, buildId)) != null) {
+						return buildId;
+					}
+				} catch {
+					return;
+				}
+			}),
+		)
+	).filter((buildId) => buildId != null);
+	if (_.isEmpty(buildIds) && !_.isEmpty(deviceTypeInfo.versions)) {
 		throw new InternalRequestError(
 			`Could not retrieve any image version for device type ${slug}`,
 		);
 	}
 
-	const buildIds = filteredInfo.map(({ buildId }) => buildId);
 	return {
 		versions: buildIds,
 		latest: buildIds[0],
