@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import { stripIndent } from 'common-tags';
 import { setTimeout } from 'timers/promises';
 import { TypedError } from 'typed-error';
@@ -96,3 +97,7 @@ export const itExpectsError = (
 		}
 	});
 };
+
+export function assertExists(v: unknown): asserts v is NonNullable<typeof v> {
+	expect(v).to.not.be.null;
+}

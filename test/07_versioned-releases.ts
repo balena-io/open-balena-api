@@ -9,6 +9,7 @@ import type { UserObjectParam } from './test-lib/supertest.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import { setTimeout } from 'timers/promises';
+import { assertExists } from './test-lib/common.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -208,9 +209,8 @@ export default () => {
 			appId: number,
 			semver: string,
 		) => {
-			let semverObject = semverLib.parse(semver);
-			expect(semverObject).to.not.be.null;
-			semverObject = semverObject as Exclude<typeof semverObject, null>;
+			const semverObject = semverLib.parse(semver);
+			assertExists(semverObject);
 			const {
 				body: [topRevisionRelease],
 			} = await pineTestInstance
@@ -238,8 +238,9 @@ export default () => {
 
 		/* Tests that the computed terms have the correct values based on what values the DB fields hold. */
 		const expectCorrectReleaseComputedTerms = (
-			release: Release | AnyObject,
+			release: Release | AnyObject | undefined,
 		) => {
+			assertExists(release);
 			const {
 				revision,
 				created_at,
