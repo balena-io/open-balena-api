@@ -230,7 +230,7 @@ export default () => {
 												},
 											})
 											.expect(200)
-									).body.id,
+									).body?.id,
 								})
 								.expect(201);
 						},

@@ -65,7 +65,7 @@ export default () => {
 				}
 
 				const { body: apps } = await pineUser
-					.get({
+					.get<Array<Pick<Application['Read'], 'id' | 'created_at'>>>({
 						resource: 'application',
 						options: {
 							$select: ['id', 'created_at'],
@@ -154,9 +154,7 @@ export default () => {
 					expect(body)
 						.to.be.an('array')
 						.to.have.lengthOf(applicationCount - 1);
-					expect(body.map((app: Application['Read']) => app.id)).to.not.include(
-						testTimes[0].id,
-					);
+					expect(body.map((app) => app.id)).to.not.include(testTimes[0].id);
 				});
 
 				it('Should order applications by tag count', async () => {
@@ -172,9 +170,12 @@ export default () => {
 						},
 					});
 					expect(body).to.be.an('array').to.have.lengthOf(4);
-					expect(
-						body.map((app: Application['Read']) => app.app_name),
-					).deep.equal(['appapp3', 'appapp2', 'appapp1', 'appapp0']);
+					expect(body.map((app) => app.app_name)).deep.equal([
+						'appapp3',
+						'appapp2',
+						'appapp1',
+						'appapp0',
+					]);
 				});
 
 				it('Should order applications by tag count using the deprecated raw string notation', async () => {
@@ -185,9 +186,12 @@ export default () => {
 						},
 					});
 					expect(body).to.be.an('array').to.have.lengthOf(4);
-					expect(
-						body.map((app: Application['Read']) => app.app_name),
-					).deep.equal(['appapp3', 'appapp2', 'appapp1', 'appapp0']);
+					expect(body.map((app) => app.app_name)).deep.equal([
+						'appapp3',
+						'appapp2',
+						'appapp1',
+						'appapp0',
+					]);
 				});
 
 				it('Should order applications by filtered tag count', async () => {
@@ -214,9 +218,12 @@ export default () => {
 						},
 					});
 					expect(body).to.be.an('array').to.have.lengthOf(4);
-					expect(
-						body.map((app: Application['Read']) => app.app_name),
-					).deep.equal(['appapp2', 'appapp3', 'appapp0', 'appapp1']);
+					expect(body.map((app) => app.app_name)).deep.equal([
+						'appapp2',
+						'appapp3',
+						'appapp0',
+						'appapp1',
+					]);
 				});
 
 				it('Should order applications by filtered tag count using the deprecated raw string notation', async () => {
@@ -229,9 +236,12 @@ export default () => {
 						},
 					});
 					expect(body).to.be.an('array').to.have.lengthOf(4);
-					expect(
-						body.map((app: Application['Read']) => app.app_name),
-					).deep.equal(['appapp2', 'appapp3', 'appapp0', 'appapp1']);
+					expect(body.map((app) => app.app_name)).deep.equal([
+						'appapp2',
+						'appapp3',
+						'appapp0',
+						'appapp1',
+					]);
 				});
 			});
 		});

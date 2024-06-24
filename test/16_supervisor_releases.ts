@@ -3,6 +3,7 @@ import * as fixtures from './test-lib/fixtures.js';
 import * as fakeDevice from './test-lib/fake-device.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
+import { assertExists } from './test-lib/common.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -126,6 +127,7 @@ export default () => {
 								},
 							})
 							.expect(200);
+						assertExists(deviceInfo);
 						const { body: nativeSupervisorRelease } = await pineUser
 							.get({
 								resource: 'release',
