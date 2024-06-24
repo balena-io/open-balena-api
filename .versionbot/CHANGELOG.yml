@@ -1,4 +1,16 @@
 - commits:
+    - subject: "device-types: Simplify the device-type.json check in getImageVersions"
+      hash: 54b2af02cffce2904f46d79079f825e8be781181
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 25.1.5
+  title: ""
+  date: 2024-06-24T05:21:41.862Z
+- commits:
     - subject: Update TypeScript to 5.5.2
       hash: dfd5e3990b35e12ce59236971ed9e05b29a1abe3
       body: ""
