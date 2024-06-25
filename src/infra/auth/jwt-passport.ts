@@ -16,7 +16,7 @@ import type {
 	ScopedToken,
 	TokenUserPayload,
 } from './jwt.js';
-import type { User as DbUser } from '../../balena-model.js';
+import type { User } from '../../balena-model.js';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import { getGuestActorId } from './permissions.js';
 
@@ -51,7 +51,7 @@ const jwtFromRequest = ExtractJwt.versionOneCompatibility({
 export const createStrategy = (
 	fetchUser: (
 		id: number,
-	) => Promise<PickDeferred<DbUser['Read'], 'jwt_secret' | 'actor'>>,
+	) => Promise<PickDeferred<User['Read'], 'jwt_secret' | 'actor'>>,
 ) =>
 	new JwtStrategy(
 		{

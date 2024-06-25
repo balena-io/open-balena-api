@@ -8,7 +8,7 @@ import jsonwebtoken from 'jsonwebtoken';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
 import type { SignOptions } from './jwt-passport.js';
-import type { User as DbUser } from '../../balena-model.js';
+import type { User } from '../../balena-model.js';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import { randomBytesAsync } from '../../lib/utils.js';
 import { getUser } from './auth.js';
@@ -38,11 +38,11 @@ export const generateNewJwtSecret = async (): Promise<string> => {
 };
 
 export const tokenFields = ['id', 'jwt_secret'] satisfies Array<
-	keyof DbUser['Read']
+	keyof User['Read']
 >;
 // The content of the JWT that we give to users, other than the standard JWT props (eg iat,exp,...).
 export interface TokenUserPayload
-	extends Pick<DbUser['Read'], (typeof tokenFields)[number]> {
+	extends Pick<User['Read'], (typeof tokenFields)[number]> {
 	twoFactorRequired?: boolean;
 	authTime?: number;
 }
@@ -83,7 +83,7 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 		options: {
 			$select: tokenFields,
 		},
-	})) as PickDeferred<DbUser['Read'], (typeof tokenFields)[number]>;
+	})) as PickDeferred<User['Read'], (typeof tokenFields)[number]>;
 	if (!userData) {
 		throw new Error('No data found?!');
 	}
