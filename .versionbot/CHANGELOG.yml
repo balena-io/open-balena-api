@@ -1,4 +1,16 @@
 - commits:
+    - subject: Switch from no longer necessary `DbUser` alias back to `User`
+      hash: 4104f063321dc6d918217afe7ba13163c77331e2
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 25.1.8
+  title: ""
+  date: 2024-06-25T15:12:59.599Z
+- commits:
     - subject: Lock file maintenance
       hash: b577789ebad9833205fe113f3fa3e3ca3995ca77
       body: |
