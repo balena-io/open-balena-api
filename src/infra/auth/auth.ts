@@ -8,7 +8,7 @@ import { retrieveAPIKey } from './api-keys.js';
 import type { ResolvedUserPayload } from './jwt-passport.js';
 
 import { getIP } from '../../lib/utils.js';
-import type { User as DbUser } from '../../balena-model.js';
+import type { User } from '../../balena-model.js';
 import type {
 	PickDeferred,
 	Deferred,
@@ -131,7 +131,7 @@ export const checkUserPassword = async (
 		options: {
 			$select: ['password', 'id'],
 		},
-	})) as Pick<DbUser['Read'], 'password' | 'id'>;
+	})) as Pick<User['Read'], 'password' | 'id'>;
 	if (user == null) {
 		throw new BadRequestError('User not found.');
 	}
@@ -150,7 +150,7 @@ export const reqHasPermission = (
 // If adding/removing fields, please also update `User`
 // in "typings/common.d.ts".
 export const userFields = ['id', 'actor', 'jwt_secret'] satisfies Array<
-	keyof DbUser['Read']
+	keyof User['Read']
 >;
 
 const getUserQuery = _.once(
@@ -183,7 +183,7 @@ const getUserQuery = _.once(
 			},
 		}) as PreparedFn<
 			{ key: string },
-			Promise<Array<PickDeferred<DbUser['Read'], (typeof userFields)[number]>>>
+			Promise<Array<PickDeferred<User['Read'], (typeof userFields)[number]>>>
 		>,
 );
 
@@ -254,17 +254,17 @@ export const defaultFindUser$select = [
 	'actor',
 	'username',
 	'password',
-] satisfies Array<keyof DbUser['Read']>;
+] satisfies Array<keyof User['Read']>;
 
 export async function findUser(
 	loginInfo: string,
 	tx: Tx,
 ): Promise<
-	| PickDeferred<DbUser['Read'], (typeof defaultFindUser$select)[number]>
+	| PickDeferred<User['Read'], (typeof defaultFindUser$select)[number]>
 	| undefined
 >;
 export async function findUser<
-	T extends DbUser['Read'],
+	T extends User['Read'],
 	TProps extends Array<keyof T>,
 >(
 	loginInfo: string,
@@ -272,7 +272,7 @@ export async function findUser<
 	$select: TProps,
 ): Promise<PickDeferred<T, (typeof $select)[number]> | undefined>;
 export async function findUser<
-	T extends DbUser['Read'],
+	T extends User['Read'],
 	TProps extends Array<keyof T & string>,
 >(
 	loginInfo: string,
@@ -341,9 +341,9 @@ export const registerUser = async (
 				clientIP,
 			},
 		},
-		// This should be able to be `PickDeferred<DbUser['Read']>` but it needs to be inlined
+		// This should be able to be `PickDeferred<User['Read']>` but it needs to be inlined
 		// to avoid issues around typescript's maximum serialization length.
-	})) as { [P in keyof DbUser['Read']]: Deferred<DbUser['Read'][P]> };
+	})) as { [P in keyof User['Read']]: Deferred<User['Read'][P]> };
 
 	if (user.id == null) {
 		throw new Error('Error creating user in the platform');

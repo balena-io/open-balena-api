@@ -16,7 +16,7 @@ import * as zlib from 'node:zlib';
 
 import * as pine from '@balena/pinejs';
 
-import type { User as DbUser } from './balena-model.js';
+import type { User } from './balena-model.js';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import type {
 	defaultFindUser$select,
@@ -37,7 +37,7 @@ passport.use(
 				options: {
 					$select: ['actor', 'jwt_secret'],
 				},
-			})) as PickDeferred<DbUser['Read'], 'actor' | 'jwt_secret'>,
+			})) as PickDeferred<User['Read'], 'actor' | 'jwt_secret'>,
 	),
 );
 
@@ -281,7 +281,7 @@ export interface SetupOptions {
 	onInitRoutes?: SetupFunction;
 
 	onLogin?: (
-		user: Pick<DbUser['Read'], (typeof defaultFindUser$select)[number]>,
+		user: Pick<User['Read'], (typeof defaultFindUser$select)[number]>,
 		tx: Tx,
 	) => PromiseLike<void> | void;
 	onLogWriteStreamInitialized?: (req: Request) => void;
