@@ -18,7 +18,6 @@ import * as pine from '@balena/pinejs';
 import { sbvrUtils } from '@balena/pinejs';
 
 import type { User } from './balena-model.js';
-import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import type {
 	defaultFindUser$select,
 	GetNewUserRoleFunction,
@@ -31,14 +30,14 @@ const { api } = sbvrUtils;
 passport.use(
 	jwt.createStrategy(
 		async (id: number) =>
-			(await api.resin.get({
+			await api.resin.get({
 				resource: 'user',
 				id,
 				passthrough: { req: pine.permissions.root },
 				options: {
 					$select: ['actor', 'jwt_secret'],
 				},
-			})) as PickDeferred<User['Read'], 'actor' | 'jwt_secret'>,
+			}),
 	),
 );
 
