@@ -1213,69 +1213,6 @@ export interface ReleaseAsset {
 	};
 }
 
-export interface MyApplication {
-	Read: {
-		created_at: Types['Date Time']['Read'];
-		modified_at: Types['Date Time']['Read'];
-		id: Types['Serial']['Read'];
-		actor: { __id: Actor['Read']['id'] } | [Actor['Read']];
-		should_track_latest_release: Types['Boolean']['Read'];
-		is_of__class: 'fleet' | 'block' | 'app';
-		organization: { __id: Organization['Read']['id'] } | [Organization['Read']];
-		app_name: Types['Text']['Read'];
-		slug: Types['Short Text']['Read'];
-		is_for__device_type:
-			| { __id: DeviceType['Read']['id'] }
-			| [DeviceType['Read']];
-		should_be_running__release:
-			| { __id: Release['Read']['id'] }
-			| [Release['Read']]
-			| []
-			| null;
-		application_type:
-			| { __id: ApplicationType['Read']['id'] }
-			| [ApplicationType['Read']];
-		is_host: Types['Boolean']['Read'];
-		is_archived: Types['Boolean']['Read'];
-		uuid: Types['Text']['Read'];
-		is_public: Types['Boolean']['Read'];
-		application__has__env_var_name?: Array<
-			ApplicationEnvironmentVariable['Read']
-		>;
-		application_environment_variable?: Array<
-			ApplicationEnvironmentVariable['Read']
-		>;
-		application__has__config_var_name?: Array<
-			ApplicationConfigVariable['Read']
-		>;
-		application_config_variable?: Array<ApplicationConfigVariable['Read']>;
-		application__has__service_name?: Array<Service['Read']>;
-		service?: Array<Service['Read']>;
-		application__has__tag_key?: Array<ApplicationTag['Read']>;
-		application_tag?: Array<ApplicationTag['Read']>;
-		owns__device?: Array<Device['Read']>;
-		owns__release?: Array<Release['Read']>;
-	};
-	Write: {
-		created_at: Types['Date Time']['Write'];
-		modified_at: Types['Date Time']['Write'];
-		id: Types['Serial']['Write'];
-		actor: Actor['Write']['id'];
-		should_track_latest_release: Types['Boolean']['Write'];
-		is_of__class: 'fleet' | 'block' | 'app';
-		organization: Organization['Write']['id'];
-		app_name: Types['Text']['Write'];
-		slug: Types['Short Text']['Write'];
-		is_for__device_type: DeviceType['Write']['id'];
-		should_be_running__release: Release['Write']['id'] | null;
-		application_type: ApplicationType['Write']['id'];
-		is_host: Types['Boolean']['Write'];
-		is_archived: Types['Boolean']['Write'];
-		uuid: Types['Text']['Write'];
-		is_public: Types['Boolean']['Write'];
-	};
-}
-
 export interface UserHasDirectAccessToApplication {
 	Read: {
 		id: Types['Big Integer']['Read'];
@@ -1339,7 +1276,6 @@ export default interface $Model {
 	user__has__public_key: UserHasPublicKey;
 	device_type__is_referenced_by__alias: DeviceTypeAlias;
 	release__has__asset_key: ReleaseAsset;
-	my_application: MyApplication;
 	user__has_direct_access_to__application: UserHasDirectAccessToApplication;
 	// Synonyms
 	user_role: UserHasRole;

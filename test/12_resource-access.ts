@@ -27,6 +27,7 @@ export default () => {
 				{
 					title: 'my_application',
 					odataPart: `my_application?$select=id&$orderby=app_name asc`,
+					errorCode: version !== 'v6' ? 401 : undefined,
 				},
 				{
 					title: 'user__has_direct_access_to__application',
@@ -38,27 +39,40 @@ export default () => {
 						'application when filtering by is_directly_accessible_by__user',
 					odataPart: `application?$select=id&$filter=is_directly_accessible_by__user/any(dau:1 eq 1)&$orderby=app_name asc`,
 				},
-			].forEach(({ title, odataPart, appIdField = 'id' }) => {
+			].forEach(({ title, odataPart, appIdField = 'id', errorCode }) => {
 				describe(`${title} access`, function () {
-					it(`should be able to see all applications in /${version}/${title}`, async function () {
-						const {
-							body: { d },
-						} = await supertest(this.user)
-							.get(`/${version}/${odataPart}`)
-							.expect(200);
-
-						const expectedAppIds = [this.application1.id, this.application2.id];
-
-						expect(d).to.be.an('array').that.has.length(expectedAppIds.length);
-
-						const apps = d.map((item: AnyObject) => {
-							expect(item)
-								.to.have.nested.property(appIdField)
-								.that.is.a('number');
-							return _.get(item, appIdField);
+					if (errorCode != null) {
+						it(`should not be able to get applications via /${version}/${title}`, async function () {
+							await supertest(this.user)
+								.get(`/${version}/${odataPart}`)
+								.expect(errorCode);
 						});
-						expect(apps).to.deep.equal(expectedAppIds);
-					});
+					} else {
+						it(`should be able to see all applications in /${version}/${title}`, async function () {
+							const {
+								body: { d },
+							} = await supertest(this.user)
+								.get(`/${version}/${odataPart}`)
+								.expect(200);
+
+							const expectedAppIds = [
+								this.application1.id,
+								this.application2.id,
+							];
+
+							expect(d)
+								.to.be.an('array')
+								.that.has.length(expectedAppIds.length);
+
+							const apps = d.map((item: AnyObject) => {
+								expect(item)
+									.to.have.nested.property(appIdField)
+									.that.is.a('number');
+								return _.get(item, appIdField);
+							});
+							expect(apps).to.deep.equal(expectedAppIds);
+						});
+					}
 				});
 			});
 
