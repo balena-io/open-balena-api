@@ -9,7 +9,7 @@ export const loadDefaultFixtures = () =>
 		'deviceTypes',
 		new Proxy(
 			{} as Dictionary<
-				Promise<Pick<DeviceType['Read'], 'id' | 'slug' | 'name'>>
+				Promise<Pick<DeviceType['Read'], 'id' | 'slug' | 'name'> | undefined>
 			>,
 			{
 				get: (obj, slug) => {
@@ -29,7 +29,7 @@ export const loadDefaultFixtures = () =>
 							options: {
 								$select: ['id', 'slug', 'name'],
 							},
-						}) as Promise<Pick<DeviceType['Read'], 'id' | 'slug' | 'name'>>;
+						});
 						obj[slug] = deviceType;
 					}
 

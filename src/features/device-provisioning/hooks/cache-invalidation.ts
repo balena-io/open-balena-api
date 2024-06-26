@@ -16,7 +16,7 @@ const setupCacheInvalidation = <K extends string>(
 			if (affectedIds.length === 0) {
 				return;
 			}
-			const affectedItems = (await api.get({
+			const affectedItems = await api.get({
 				resource,
 				passthrough: { req: permissions.root, tx },
 				options: {
@@ -25,7 +25,7 @@ const setupCacheInvalidation = <K extends string>(
 						id: { $in: affectedIds },
 					},
 				},
-			})) as Array<{ [key in K]: string }>;
+			});
 
 			// Invalidate the caches only when the tx is committed
 			tx.on('end', () => {

@@ -26,8 +26,6 @@ import {
 	incrementPublishCallTotal,
 } from './metrics.js';
 import { setTimeout } from 'timers/promises';
-import type { Device } from '../../../../balena-model.js';
-import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 
 const { BadRequestError } = errors;
 
@@ -92,14 +90,14 @@ async function assertLokiLogContext(
 		return ctx as types.RequiredField<typeof ctx, 'belongs_to__application'>;
 	}
 
-	const device = (await sbvrUtils.api.resin.get({
+	const device = await sbvrUtils.api.resin.get({
 		resource: 'device',
 		id: ctx.id,
 		passthrough: { req: permissions.root },
 		options: {
 			$select: ['belongs_to__application'],
 		},
-	})) as PickDeferred<Device['Read'], 'belongs_to__application'> | undefined;
+	});
 
 	// Mutate so that we don't have to repeatedly amend the same context and instead cache it
 	(ctx as Writable<typeof ctx>).belongs_to__application =
