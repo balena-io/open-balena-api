@@ -9,7 +9,7 @@ import {
 import * as userHasDirectAccessToApplication from '../../features/applications/models/user__has_direct_access_to__application.js';
 import * as DeviceAdditions from '../../features/devices/models/device-additions.js';
 
-export const toVersion = 'resin';
+export const toVersion = 'v7';
 
 export const v6AbstractSqlModel = generateAbstractSqlModel(
 	new URL('v6.sbvr', import.meta.url),
@@ -87,10 +87,12 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) => {
 			'depends on-application': ['Cast', ['Null'], 'Integer'],
 		},
 		'application-has-name': {
-			$toResource: `application-has-config var name$${toVersion}`,
+			// TODO: Figure out why toVersion doesn't work.
+			$toResource: `application-has-config var name$resin`,
 		},
 		'device-has-name': {
-			$toResource: `device-has-config var name$${toVersion}`,
+			// TODO: Figure out why toVersion doesn't work.
+			$toResource: `device-has-config var name$resin`,
 		},
 		device: {
 			'is managed by-device': ['Cast', ['Null'], 'Integer'],
