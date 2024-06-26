@@ -1,4 +1,16 @@
 - commits:
+    - subject: Make use of model based typings
+      hash: 40e1553f3ba95637bc6224424f5694b93fe30613
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 25.1.9
+  title: ""
+  date: 2024-06-26T11:49:45.170Z
+- commits:
     - subject: Switch from no longer necessary `DbUser` alias back to `User`
       hash: 4104f063321dc6d918217afe7ba13163c77331e2
       body: ""
