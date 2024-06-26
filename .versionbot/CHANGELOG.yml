@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix createStrategy fetchUser typing
+      hash: 11b575fec2a4df04f007422ecd6b28e0b4e618d5
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+  version: 25.1.10
+  title: ""
+  date: 2024-06-26T12:17:51.385Z
+- commits:
     - subject: Make use of model based typings
       hash: 40e1553f3ba95637bc6224424f5694b93fe30613
       body: ""
