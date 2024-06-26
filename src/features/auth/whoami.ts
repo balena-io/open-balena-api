@@ -9,7 +9,7 @@ import {
 	ThisShouldNeverHappenError,
 } from '../../infra/error-handling/index.js';
 
-import type { User, Application, Device } from '../../balena-model.js';
+import type { User, Application, Device, Actor } from '../../balena-model.js';
 
 const { api } = sbvrUtils;
 
@@ -115,7 +115,7 @@ export const actorWhoami: RequestHandler = async (req, res) => {
 			// If this is a user key/token we must validate this is a key that
 			// has permissions for reading username/email
 			if (req.user?.actor) {
-				const [userWithId] = (await api.resin.get({
+				const [userWithId] = await api.resin.get({
 					resource: 'user',
 					passthrough: { req, tx },
 					options: {
@@ -125,7 +125,7 @@ export const actorWhoami: RequestHandler = async (req, res) => {
 							actor: req.user?.actor,
 						},
 					},
-				})) as Array<Pick<User['Read'], 'id'>>;
+				});
 
 				if (userWithId == null) {
 					throw new errors.UnauthorizedError();
@@ -140,11 +140,12 @@ export const actorWhoami: RequestHandler = async (req, res) => {
 				);
 			}
 
-			return (await api.resin.get({
+			return await api.resin.get({
 				resource: 'actor',
 				passthrough: { req: permissions.root, tx },
 				id: actorId,
 				options: {
+					$select: ['id'],
 					$expand: {
 						is_of__user: {
 							$select: ['id', 'username', 'email'],
@@ -157,8 +158,9 @@ export const actorWhoami: RequestHandler = async (req, res) => {
 						},
 					},
 				},
-			})) as ExpandedActor;
+			} as const);
 		});
+		validateRawActorInfo(actorInfo);
 		res.json(formatActorInfo(actorInfo));
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
@@ -170,8 +172,6 @@ export const actorWhoami: RequestHandler = async (req, res) => {
 };
 
 const formatActorInfo = (rawActorInfo: ExpandedActor): ActorResponse => {
-	validateRawActorInfo(rawActorInfo);
-
 	if (rawActorInfo.is_of__user.length === 1) {
 		return {
 			id: rawActorInfo.id,
@@ -205,7 +205,20 @@ const formatActorInfo = (rawActorInfo: ExpandedActor): ActorResponse => {
 	);
 };
 
-const validateRawActorInfo = (rawActorInfo: ExpandedActor) => {
+function validateRawActorInfo(
+	rawActorInfo:
+		| {
+				id: Actor['Read']['id'];
+				is_of__user: Array<Pick<User['Read'], 'id' | 'username' | 'email'>>;
+				is_of__application: Array<Pick<Application['Read'], 'id' | 'slug'>>;
+				is_of__device: Array<Pick<Device['Read'], 'id' | 'uuid'>>;
+		  }
+		| undefined,
+): asserts rawActorInfo is ExpandedActor {
+	if (rawActorInfo == null) {
+		throw new errors.UnauthorizedError(`Actor not found`);
+	}
+
 	const amountAssociatedResources =
 		rawActorInfo.is_of__user.length +
 		rawActorInfo.is_of__application.length +
@@ -222,4 +235,4 @@ const validateRawActorInfo = (rawActorInfo: ExpandedActor) => {
 			`Actor ${rawActorInfo.id} is not associated to any resource`,
 		);
 	}
-};
+}

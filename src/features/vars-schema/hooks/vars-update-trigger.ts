@@ -20,7 +20,7 @@ const MAX_SAFE_SQL_BINDS = 2 ** 16 - 1 - 100;
 const addEnvHooks = (
 	resource: string,
 	buildFilter: (
-		args: hooks.HookArgs & {
+		args: hooks.HookArgs<'resin'> & {
 			tx: Tx;
 		},
 	) => Promise<
@@ -30,7 +30,7 @@ const addEnvHooks = (
 	>,
 ): void => {
 	const getAffectedDeviceIds = async (
-		args: hooks.HookArgs & {
+		args: hooks.HookArgs<'resin'> & {
 			tx: Tx;
 		},
 	) => {
@@ -52,13 +52,13 @@ const addEnvHooks = (
 				await Promise.all(
 					filters.map(async ($filter) =>
 						(
-							(await args.api.get({
+							await args.api.get({
 								resource: 'device',
 								options: {
 									$select: 'id',
 									$filter,
 								},
-							})) as Array<{ id: number }>
+							})
 						).map(({ id }) => id),
 					),
 				)
@@ -72,7 +72,7 @@ const addEnvHooks = (
 		}
 	};
 
-	const envVarHook: hooks.Hooks = {
+	const envVarHook: hooks.Hooks<'resin'> = {
 		POSTRUN: async (args) => {
 			const { req, request, tx } = args;
 			const devices =
@@ -111,182 +111,27 @@ const addEnvHooks = (
 };
 
 const addAppEnvHooks = (resource: string) =>
-	addEnvHooks(
-		resource,
-		async (
-			args: hooks.HookArgs & {
-				tx: Tx;
-			},
-		) => {
-			if (args.req.body.application != null) {
-				// If we have an application passed in the body (ie POST) then we can use that to find the devices to update.
-				return {
-					belongs_to__application: args.req.body.application,
-				};
-			}
-			const envVarIds = await sbvrUtils.getAffectedIds(args);
-			if (envVarIds.length === 0) {
-				return;
-			}
-
-			return [
-				envVarIds,
-				(envVarIdsChunk) => ({
-					belongs_to__application: {
-						$any: {
-							$alias: 'a',
-							$expr: {
-								a: {
-									[resource]: {
-										$any: {
-											$alias: 'e',
-											$expr: { e: { id: { $in: envVarIdsChunk } } },
-										},
-									},
-								},
-							},
-						},
-					},
-				}),
-			];
-		},
-	);
-
-addAppEnvHooks('application_config_variable');
-addAppEnvHooks('application_environment_variable');
-
-const addDeviceEnvHooks = (resource: string) =>
-	addEnvHooks(
-		resource,
-		async (
-			args: hooks.HookArgs & {
-				tx: Tx;
-			},
-		) => {
-			if (args.req.body.device != null) {
-				// If we have a device passed in the body (ie POST) then we can use that as ID filter.
-				return { id: args.req.body.device };
-			}
-
-			const envVarIds = await sbvrUtils.getAffectedIds(args);
-			if (envVarIds.length === 0) {
-				return;
-			}
-			return [
-				envVarIds,
-				(envVarIdsChunk) => ({
-					[resource]: {
-						$any: {
-							$alias: 'e',
-							$expr: {
-								e: { id: { $in: envVarIdsChunk } },
-							},
-						},
-					},
-				}),
-			];
-		},
-	);
-
-addDeviceEnvHooks('device_config_variable');
-addDeviceEnvHooks('device_environment_variable');
-
-addEnvHooks(
-	'service_environment_variable',
-	async (
-		args: hooks.HookArgs & {
-			tx: Tx;
-		},
-	) => {
-		if (args.req.body.service != null) {
+	addEnvHooks(resource, async (args) => {
+		if (args.req.body.application != null) {
+			// If we have an application passed in the body (ie POST) then we can use that to find the devices to update.
 			return {
-				service_install: {
-					$any: {
-						$alias: 'si',
-						$expr: {
-							si: {
-								service: {
-									$any: {
-										$alias: 's',
-										$expr: { s: { id: args.req.body.service } },
-									},
-								},
-							},
-						},
-					},
-				},
+				belongs_to__application: args.req.body.application,
 			};
 		}
-
 		const envVarIds = await sbvrUtils.getAffectedIds(args);
 		if (envVarIds.length === 0) {
 			return;
 		}
+
 		return [
 			envVarIds,
 			(envVarIdsChunk) => ({
-				service_install: {
+				belongs_to__application: {
 					$any: {
-						$alias: 'si',
+						$alias: 'a',
 						$expr: {
-							si: {
-								service: {
-									$any: {
-										$alias: 's',
-										$expr: {
-											s: {
-												service_environment_variable: {
-													$any: {
-														$alias: 'e',
-														$expr: {
-															e: { id: { $in: envVarIdsChunk } },
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			}),
-		];
-	},
-);
-
-addEnvHooks(
-	'device_service_environment_variable',
-	async (
-		args: hooks.HookArgs & {
-			tx: Tx;
-		},
-	) => {
-		if (args.req.body.service_install != null) {
-			return {
-				service_install: {
-					$any: {
-						$alias: 's',
-						$expr: { s: { id: args.req.body.service_install } },
-					},
-				},
-			};
-		}
-
-		const envVarIds = await sbvrUtils.getAffectedIds(args);
-		if (envVarIds.length === 0) {
-			return;
-		}
-		return [
-			envVarIds,
-			(envVarIdsChunk) => ({
-				service_install: {
-					$any: {
-						$alias: 's',
-						$expr: {
-							s: {
-								device_service_environment_variable: {
+							a: {
+								[resource]: {
 									$any: {
 										$alias: 'e',
 										$expr: { e: { id: { $in: envVarIdsChunk } } },
@@ -298,41 +143,16 @@ addEnvHooks(
 				},
 			}),
 		];
-	},
-);
+	});
 
-addEnvHooks(
-	'image_environment_variable',
-	async (
-		args: hooks.HookArgs & {
-			tx: Tx;
-		},
-	) => {
-		if (args.req.body.release_image != null) {
-			return {
-				image_install: {
-					$any: {
-						$alias: 'ii',
-						$expr: {
-							installs__image: {
-								$any: {
-									$alias: 'i',
-									$expr: {
-										i: {
-											release_image: {
-												$any: {
-													$alias: 'ri',
-													$expr: { ri: { id: args.req.body.release_image } },
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			};
+addAppEnvHooks('application_config_variable');
+addAppEnvHooks('application_environment_variable');
+
+const addDeviceEnvHooks = (resource: string) =>
+	addEnvHooks(resource, async (args) => {
+		if (args.req.body.device != null) {
+			// If we have a device passed in the body (ie POST) then we can use that as ID filter.
+			return { id: args.req.body.device };
 		}
 
 		const envVarIds = await sbvrUtils.getAffectedIds(args);
@@ -342,25 +162,170 @@ addEnvHooks(
 		return [
 			envVarIds,
 			(envVarIdsChunk) => ({
-				image_install: {
+				[resource]: {
 					$any: {
-						$alias: 'ii',
+						$alias: 'e',
 						$expr: {
-							installs__image: {
+							e: { id: { $in: envVarIdsChunk } },
+						},
+					},
+				},
+			}),
+		];
+	});
+
+addDeviceEnvHooks('device_config_variable');
+addDeviceEnvHooks('device_environment_variable');
+
+addEnvHooks('service_environment_variable', async (args) => {
+	if (args.req.body.service != null) {
+		return {
+			service_install: {
+				$any: {
+					$alias: 'si',
+					$expr: {
+						si: {
+							service: {
 								$any: {
-									$alias: 'i',
+									$alias: 's',
+									$expr: { s: { id: args.req.body.service } },
+								},
+							},
+						},
+					},
+				},
+			},
+		};
+	}
+
+	const envVarIds = await sbvrUtils.getAffectedIds(args);
+	if (envVarIds.length === 0) {
+		return;
+	}
+	return [
+		envVarIds,
+		(envVarIdsChunk) => ({
+			service_install: {
+				$any: {
+					$alias: 'si',
+					$expr: {
+						si: {
+							service: {
+								$any: {
+									$alias: 's',
 									$expr: {
-										i: {
-											release_image: {
+										s: {
+											service_environment_variable: {
 												$any: {
-													$alias: 'ri',
+													$alias: 'e',
 													$expr: {
-														ri: {
-															image_environment_variable: {
-																$any: {
-																	$alias: 'e',
-																	$expr: { e: { id: { $in: envVarIdsChunk } } },
-																},
+														e: { id: { $in: envVarIdsChunk } },
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		}),
+	];
+});
+
+addEnvHooks('device_service_environment_variable', async (args) => {
+	if (args.req.body.service_install != null) {
+		return {
+			service_install: {
+				$any: {
+					$alias: 's',
+					$expr: { s: { id: args.req.body.service_install } },
+				},
+			},
+		};
+	}
+
+	const envVarIds = await sbvrUtils.getAffectedIds(args);
+	if (envVarIds.length === 0) {
+		return;
+	}
+	return [
+		envVarIds,
+		(envVarIdsChunk) => ({
+			service_install: {
+				$any: {
+					$alias: 's',
+					$expr: {
+						s: {
+							device_service_environment_variable: {
+								$any: {
+									$alias: 'e',
+									$expr: { e: { id: { $in: envVarIdsChunk } } },
+								},
+							},
+						},
+					},
+				},
+			},
+		}),
+	];
+});
+
+addEnvHooks('image_environment_variable', async (args) => {
+	if (args.req.body.release_image != null) {
+		return {
+			image_install: {
+				$any: {
+					$alias: 'ii',
+					$expr: {
+						installs__image: {
+							$any: {
+								$alias: 'i',
+								$expr: {
+									i: {
+										release_image: {
+											$any: {
+												$alias: 'ri',
+												$expr: { ri: { id: args.req.body.release_image } },
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		};
+	}
+
+	const envVarIds = await sbvrUtils.getAffectedIds(args);
+	if (envVarIds.length === 0) {
+		return;
+	}
+	return [
+		envVarIds,
+		(envVarIdsChunk) => ({
+			image_install: {
+				$any: {
+					$alias: 'ii',
+					$expr: {
+						installs__image: {
+							$any: {
+								$alias: 'i',
+								$expr: {
+									i: {
+										release_image: {
+											$any: {
+												$alias: 'ri',
+												$expr: {
+													ri: {
+														image_environment_variable: {
+															$any: {
+																$alias: 'e',
+																$expr: { e: { id: { $in: envVarIdsChunk } } },
 															},
 														},
 													},
@@ -373,7 +338,7 @@ addEnvHooks(
 						},
 					},
 				},
-			}),
-		];
-	},
-);
+			},
+		}),
+	];
+});

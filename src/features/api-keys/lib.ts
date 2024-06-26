@@ -3,8 +3,7 @@ import randomstring from 'randomstring';
 import _ from 'lodash';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
-import type { Application, Device, Role, User } from '../../balena-model.js';
-import type { Deferred } from '@balena/abstract-sql-to-typescript';
+import type { Role } from '../../balena-model.js';
 import { multiCacheMemoizee } from '../../infra/cache/index.js';
 import { API_KEY_ROLE_CACHE_TIMEOUT } from '../../lib/config.js';
 
@@ -33,22 +32,14 @@ const $createApiKey = async (
 	actorTypeID: number,
 	{ apiKey, tx, name, description, expiryDate }: InternalApiKeyOptions,
 ): Promise<string> => {
-	const actorable = (await api.resin.get({
+	const actorable = await api.resin.get({
 		resource: actorType,
 		id: actorTypeID,
 		passthrough: { req, tx },
 		options: {
 			$select: 'actor',
 		},
-	})) as
-		| {
-				actor: Deferred<
-					| Application['Read']['actor']
-					| Device['Read']['actor']
-					| User['Read']['actor']
-				>;
-		  }
-		| undefined;
+	});
 
 	const actorID = actorable?.actor.__id;
 	if (actorID == null) {
@@ -285,7 +276,7 @@ export const createGenericApiKey = async (
 
 export const isApiKeyWithRole = (() => {
 	const authQuery = _.once(() =>
-		api.Auth.prepare<{ key: string; roleName: string }>({
+		api.Auth.prepare<{ key: string; roleName: string }, 'role'>({
 			resource: 'role',
 			passthrough: { req: permissions.root },
 			id: {

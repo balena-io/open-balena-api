@@ -121,7 +121,7 @@ export const checkUserPassword = async (
 	userId: number,
 	tx: Tx,
 ): Promise<void> => {
-	const user = (await api.resin.get({
+	const user = await api.resin.get({
 		resource: 'user',
 		id: userId,
 		passthrough: {
@@ -131,7 +131,7 @@ export const checkUserPassword = async (
 		options: {
 			$select: ['password', 'id'],
 		},
-	})) as Pick<User['Read'], 'password' | 'id'>;
+	});
 	if (user == null) {
 		throw new BadRequestError('User not found.');
 	}
@@ -155,7 +155,7 @@ export const userFields = ['id', 'actor', 'jwt_secret'] satisfies Array<
 
 const getUserQuery = _.once(
 	() =>
-		api.resin.prepare<{ key: string }>({
+		api.resin.prepare<{ key: string }, 'user'>({
 			resource: 'user',
 			passthrough: { req: permissions.root },
 			options: {
@@ -183,7 +183,8 @@ const getUserQuery = _.once(
 			},
 		}) as PreparedFn<
 			{ key: string },
-			Promise<Array<PickDeferred<User['Read'], (typeof userFields)[number]>>>
+			Promise<Array<PickDeferred<User['Read'], (typeof userFields)[number]>>>,
+			User
 		>,
 );
 
@@ -263,17 +264,13 @@ export async function findUser(
 	| PickDeferred<User['Read'], (typeof defaultFindUser$select)[number]>
 	| undefined
 >;
-export async function findUser<
-	T extends User['Read'],
-	TProps extends Array<keyof T>,
->(
+export async function findUser<TProps extends Array<keyof User['Read']>>(
 	loginInfo: string,
 	tx: Tx,
 	$select: TProps,
-): Promise<PickDeferred<T, (typeof $select)[number]> | undefined>;
+): Promise<PickDeferred<User['Read'], (typeof $select)[number]> | undefined>;
 export async function findUser<
-	T extends User['Read'],
-	TProps extends Array<keyof T & string>,
+	TProps extends Array<keyof User['Read'] & string>,
 >(
 	loginInfo: string,
 	tx: Tx,
@@ -290,8 +287,7 @@ export async function findUser<
 		loginField = 'username';
 	}
 
-	type UserResult = PickDeferred<T, (typeof $select)[number]>;
-	const [user] = (await api.resin.get({
+	const [user] = await api.resin.get({
 		resource: 'user',
 		passthrough: {
 			req: permissions.root,
@@ -310,7 +306,7 @@ export async function findUser<
 			},
 			$select,
 		},
-	})) as [UserResult?];
+	});
 	return user;
 }
 
@@ -322,14 +318,16 @@ export const registerUser = async (
 	},
 	tx: Tx,
 	req?: Request,
-) => {
+	// This should be able to be `PickDeferred<User['Read']>` but it needs to be inlined
+	// to avoid issues around typescript's maximum serialization length.
+): Promise<{ [P in keyof User['Read']]: Deferred<User['Read'][P]> }> => {
 	let clientIP;
 	if (req) {
 		clientIP = getIP(req);
 	}
 
 	// Create the user in the platform
-	const user = (await api.resin.post({
+	const user = await api.resin.post({
 		resource: 'user',
 		body: {
 			...userData,
@@ -341,9 +339,7 @@ export const registerUser = async (
 				clientIP,
 			},
 		},
-		// This should be able to be `PickDeferred<User['Read']>` but it needs to be inlined
-		// to avoid issues around typescript's maximum serialization length.
-	})) as { [P in keyof User['Read']]: Deferred<User['Read'][P]> };
+	});
 
 	if (user.id == null) {
 		throw new Error('Error creating user in the platform');

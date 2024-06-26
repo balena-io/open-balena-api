@@ -19,7 +19,6 @@ import {
 } from '../state-get-utils.js';
 import { sbvrUtils } from '@balena/pinejs';
 import { events } from '../index.js';
-import type { Expand } from 'pinejs-client-core';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 import { getIP } from '../../../lib/utils.js';
 
@@ -212,14 +211,14 @@ export const releaseExpand = {
 			},
 		},
 	},
-};
+} as const;
 
-const appExpand: Expand = {
+const appExpand = {
 	application_environment_variable: {
 		$select: ['name', 'value'],
 	},
-};
-const deviceExpand: Expand = {
+} as const;
+const deviceExpand = {
 	device_config_variable: {
 		$select: ['name', 'value'],
 	},
@@ -276,10 +275,10 @@ const deviceExpand: Expand = {
 			},
 		},
 	},
-};
+} as const;
 
 const stateQuery = _.once(() =>
-	api.resin.prepare<{ uuid: string }>({
+	api.resin.prepare<{ uuid: string }, 'device'>({
 		resource: 'device',
 		id: { uuid: { '@': 'uuid' } },
 		options: {

@@ -5,7 +5,6 @@ import * as semver from 'balena-semver';
 
 import { reqHasPermission } from '../../infra/auth/auth.js';
 import { captureException } from '../../infra/error-handling/index.js';
-import type { Device } from '../../balena-model.js';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -13,7 +12,7 @@ const { api } = sbvrUtils;
 const HOSTOS_ACCESS_MIN_OS_VER = '2.0.0';
 
 export async function hostOSAccess(req: Request, res: Response): Promise<void> {
-	const device = (await api.resin.get({
+	const device = await api.resin.get({
 		resource: 'device',
 		id: {
 			uuid: req.params['device_uuid'],
@@ -24,7 +23,7 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 		passthrough: {
 			req,
 		},
-	})) as Pick<Device['Read'], 'id' | 'os_version'> | undefined;
+	});
 
 	if (device == null) {
 		res.status(401).end();
@@ -33,15 +32,13 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 
 	try {
 		const allowedDevices = (await api.resin.post({
-			resource: 'device',
-			id: device.id,
+			url: `device(${device.id})/canAccess`,
 			passthrough: {
 				req,
 			},
 			body: {
 				action: 'ssh-host',
 			},
-			url: `device(${device.id})/canAccess`,
 		})) as { d?: AnyObject[] };
 
 		if (!Array.isArray(allowedDevices.d) || allowedDevices.d.length !== 1) {

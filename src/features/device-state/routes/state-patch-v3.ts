@@ -7,14 +7,7 @@ import {
 } from '../../../infra/error-handling/index.js';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils.js';
-import type {
-	Application,
-	Device,
-	Image,
-	ImageInstall,
-	Release,
-} from '../../../balena-model.js';
-import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
+import type { Image, Release } from '../../../balena-model.js';
 import type { Filter } from 'pinejs-client-core';
 import { metricsPatchFields, v3ValidPatchFields } from '../index.js';
 import {
@@ -94,7 +87,7 @@ const fetchData = async (
 		const resinApiTx = api.resin.clone({
 			passthrough: { req, custom, tx },
 		});
-		const devices = (await resinApiTx.get({
+		const devices = await resinApiTx.get({
 			resource: 'device',
 			options: {
 				$select: ['id', 'uuid'],
@@ -107,11 +100,7 @@ const fetchData = async (
 					},
 				},
 			},
-		})) as Array<
-			Pick<Device['Read'], 'id' | 'uuid'> & {
-				belongs_to__application: Array<Pick<Application['Read'], 'uuid'>>;
-			}
-		>;
+		} as const);
 		if (devices.length !== deviceIds.length) {
 			throw new UnauthorizedError();
 		}
@@ -401,7 +390,7 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 
 					updateFns.push(async (resinApiTx) => {
 						if (imageIds.length > 0) {
-							const existingImgInstalls = (await resinApiTx.get({
+							const existingImgInstalls = await resinApiTx.get({
 								resource: 'image_install',
 								options: {
 									$select: ['id', 'installs__image'],
@@ -410,9 +399,7 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 										installs__image: { $in: imageIds },
 									},
 								},
-							})) as Array<
-								PickDeferred<ImageInstall['Read'], 'id' | 'installs__image'>
-							>;
+							});
 							const existingImgInstallsByImage = _.keyBy(
 								existingImgInstalls,
 								({ installs__image }) => installs__image.__id,

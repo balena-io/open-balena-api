@@ -6,7 +6,7 @@ import {
 } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 import type { SemVer } from 'semver';
-import type { Device, ReleaseTag, Release } from '../../../balena-model.js';
+import type { ReleaseTag, Release } from '../../../balena-model.js';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import { groupByMap } from '../../../lib/utils.js';
 import { ThisShouldNeverHappenError } from '../../../infra/error-handling/index.js';
@@ -113,7 +113,7 @@ async function setOSReleaseResource(
 	if (deviceIds.length === 0) {
 		return;
 	}
-	const devices = (await api.get({
+	const devices = await api.get({
 		resource: 'device',
 		options: {
 			// if the device already has an os_version, just bail.
@@ -123,7 +123,7 @@ async function setOSReleaseResource(
 			},
 			$select: ['id', 'is_of__device_type'],
 		},
-	})) as Array<PickDeferred<Device['Read'], 'id' | 'is_of__device_type'>>;
+	});
 
 	if (devices.length === 0) {
 		return;
@@ -189,7 +189,7 @@ async function getOSReleaseResource(
 	if (parsedOsVersion == null) {
 		return;
 	}
-	const releases = (await api.get({
+	const releases = await api.get({
 		resource: 'release',
 		options: {
 			$top: 2,
@@ -302,7 +302,7 @@ async function getOSReleaseResource(
 				},
 			],
 		},
-	})) as Array<PickDeferred<Release['Read'], 'id' | 'is_final'>>;
+	});
 	const [release] = releases;
 	if (releases.filter((r) => r.is_final).length > 1) {
 		ThisShouldNeverHappenError(
@@ -354,7 +354,7 @@ function normalizeOsVersion(osVersion: string) {
  */
 function getBaseVersionFromReleaseSemverOrTag(
 	release: Pick<Release['Read'], 'semver'> & {
-		release_tag: [Pick<ReleaseTag['Read'], 'value'>?];
+		release_tag: Array<Pick<ReleaseTag['Read'], 'value'>>;
 	},
 ) {
 	// For OS releases w/ versions that we could not migrate to the semver fields
@@ -392,7 +392,7 @@ async function checkHostappReleaseUpgrades(
 	// In order to prevent blocking devices from provisioning, we allow devices to come online, report any version and
 	// we tag it accordingly. However we do not allow devices to _upgrade_ to invalidated releases, so we filter those
 	// out here.
-	const newHostappRelease = (await api.get({
+	const newHostappRelease = await api.get({
 		resource: 'release',
 		id: newHostappReleaseId,
 		options: {
@@ -410,11 +410,7 @@ async function checkHostappReleaseUpgrades(
 				status: 'success',
 			},
 		},
-	})) as
-		| (Pick<Release['Read'], 'semver'> & {
-				release_tag: [Pick<ReleaseTag['Read'], 'value'>?];
-		  })
-		| undefined;
+	} as const);
 
 	if (newHostappRelease == null) {
 		throw new BadRequestError(
@@ -431,7 +427,7 @@ async function checkHostappReleaseUpgrades(
 		);
 	}
 
-	const oldOsReleases = (await api.get({
+	const oldOsReleases = await api.get({
 		resource: 'release',
 		options: {
 			$select: 'semver',
@@ -457,11 +453,7 @@ async function checkHostappReleaseUpgrades(
 				},
 			},
 		},
-	})) as Array<
-		Pick<Release['Read'], 'semver'> & {
-			release_tag: [Pick<ReleaseTag['Read'], 'value'>?];
-		}
-	>;
+	} as const);
 
 	for (const oldOsRelease of oldOsReleases) {
 		const oldVersion = getBaseVersionFromReleaseSemverOrTag(oldOsRelease);

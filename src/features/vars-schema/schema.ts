@@ -26,7 +26,7 @@ export const schema: RequestHandler = async (req, res) => {
 
 		const resinApi = api.resin.clone({ passthrough: { req } });
 		// Ensure that the user has access to the provided device type.
-		const [dt] = (await resinApi.get({
+		const [dt] = await resinApi.get({
 			resource: 'device_type',
 			options: {
 				$top: 1,
@@ -44,7 +44,7 @@ export const schema: RequestHandler = async (req, res) => {
 					},
 				},
 			},
-		})) as Array<{ slug: string }>;
+		});
 
 		// We do not throw when the DT is not found for backwards compatibility reasons.
 		return dt?.slug;

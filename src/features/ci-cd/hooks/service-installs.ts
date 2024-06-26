@@ -1,8 +1,6 @@
 import _ from 'lodash';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import type { Filter, FilterObj } from 'pinejs-client-core';
-import type { Device, Service, ServiceInstall } from '../../../balena-model.js';
-import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 
 const createReleaseServiceInstalls = async (
 	api: typeof sbvrUtils.api.resin,
@@ -13,7 +11,7 @@ const createReleaseServiceInstalls = async (
 		return;
 	}
 
-	const services = (await api.get({
+	const services = await api.get({
 		resource: 'service',
 		options: {
 			$select: 'id',
@@ -44,7 +42,7 @@ const createReleaseServiceInstalls = async (
 				},
 			},
 		},
-	})) as Array<Pick<Service['Read'], 'id'>>;
+	});
 	if (services.length === 0) {
 		return;
 	}
@@ -65,7 +63,7 @@ const createReleaseServiceInstalls = async (
 		},
 	}));
 
-	const devicesToAddServiceInstalls = (await api.get({
+	const devicesToAddServiceInstalls = await api.get({
 		resource: 'device',
 		options: {
 			$select: 'id',
@@ -92,13 +90,7 @@ const createReleaseServiceInstalls = async (
 						}),
 			},
 		},
-	})) as Array<
-		Pick<Device['Read'], 'id'> & {
-			service_install: Array<
-				PickDeferred<ServiceInstall['Read'], 'installs__service'>
-			>;
-		}
-	>;
+	} as const);
 
 	await Promise.all(
 		devicesToAddServiceInstalls.map(async (device) => {

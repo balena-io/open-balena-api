@@ -13,7 +13,6 @@ import { StreamState } from './struct.js';
 import { addRetentionLimit, getBackend } from './config.js';
 import { getNanoTimestamp } from '../../../lib/utils.js';
 import type { SetupOptions } from '../../../index.js';
-import type { Device } from '../../../balena-model.js';
 import {
 	LOGS_DEFAULT_HISTORY_COUNT,
 	LOGS_DEFAULT_SUBSCRIPTION_COUNT,
@@ -215,14 +214,14 @@ function getHistory(
 
 async function getReadContext(req: Request): Promise<LogContext> {
 	const { uuid } = req.params;
-	const device = (await api.resin.get({
+	const device = await api.resin.get({
 		resource: 'device',
 		id: { uuid },
 		passthrough: { req },
 		options: {
 			$select: ['id'],
 		},
-	})) as Pick<Device['Read'], 'id'> | undefined;
+	});
 
 	if (!device) {
 		throw new NotFoundError('No device with uuid ' + uuid);

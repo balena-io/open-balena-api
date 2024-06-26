@@ -6,7 +6,6 @@ import {
 	captureException,
 	handleHttpErrors,
 } from '../../infra/error-handling/index.js';
-import type { UserHasPublicKey } from '../../balena-model.js';
 import { augmentReqApiKeyPermissions } from '../api-keys/lib.js';
 
 export const getUserPublicKeys: RequestHandler = async (req, res) => {
@@ -20,7 +19,7 @@ export const getUserPublicKeys: RequestHandler = async (req, res) => {
 		// for device keys to have the ability by default. Access to the public key will still be restricted
 		// by `user__has__public_key` so this only affects the ability to resolve the username they apply to
 		req = augmentReqApiKeyPermissions(req, ['resin.user.read']);
-		const data = (await sbvrUtils.api.resin.get({
+		const data = await sbvrUtils.api.resin.get({
 			resource: 'user__has__public_key',
 			options: {
 				$select: 'public_key',
@@ -36,7 +35,7 @@ export const getUserPublicKeys: RequestHandler = async (req, res) => {
 				},
 			},
 			passthrough: { req },
-		})) as Array<Pick<UserHasPublicKey['Read'], 'public_key'>>;
+		});
 
 		const authorizedKeys = data.map((e) => e.public_key).join('\n');
 		res.status(200).send(authorizedKeys);

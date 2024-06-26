@@ -22,7 +22,7 @@ import { setTimeout } from 'timers/promises';
 const { api } = sbvrUtils;
 
 const getPollIntervalForDevice = _.once(() =>
-	api.resin.prepare<{ deviceId: number }>({
+	api.resin.prepare<{ deviceId: number }, 'device_config_variable'>({
 		resource: 'device_config_variable',
 		passthrough: { req: permissions.root },
 		options: {
@@ -47,9 +47,12 @@ const getPollIntervalForDevice = _.once(() =>
 );
 
 const getPollIntervalForParentApplication = _.once(() =>
-	api.resin.prepare<{
-		deviceId: number;
-	}>({
+	api.resin.prepare<
+		{
+			deviceId: number;
+		},
+		'application_config_variable'
+	>({
 		resource: 'application_config_variable',
 		passthrough: { req: permissions.root },
 		options: {

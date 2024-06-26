@@ -7,7 +7,6 @@ import {
 	handleHttpErrors,
 	translateError,
 } from '../../infra/error-handling/index.js';
-import type { Application, DeviceType } from '../../balena-model.js';
 
 import { generateConfig } from './device-config.js';
 import { findBySlug } from '../device-types/device-types.js';
@@ -17,7 +16,7 @@ const { UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
 
 const getApp = async (appId: number, req: Request) => {
-	const app = (await api.resin.get({
+	const app = await api.resin.get({
 		resource: 'application',
 		id: appId,
 		passthrough: { req },
@@ -29,11 +28,7 @@ const getApp = async (appId: number, req: Request) => {
 				},
 			},
 		},
-	})) as
-		| (Pick<Application['Read'], 'id'> & {
-				is_for__device_type: [Pick<DeviceType['Read'], 'slug'>];
-		  })
-		| null;
+	} as const);
 
 	// Check that the current user has access to this application.
 	if (app == null) {
