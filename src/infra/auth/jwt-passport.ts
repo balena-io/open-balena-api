@@ -51,7 +51,7 @@ const jwtFromRequest = ExtractJwt.versionOneCompatibility({
 export const createStrategy = (
 	fetchUser: (
 		id: number,
-	) => Promise<PickDeferred<User['Read'], 'jwt_secret' | 'actor'>>,
+	) => Promise<PickDeferred<User['Read'], 'jwt_secret' | 'actor'> | undefined>,
 ) =>
 	new JwtStrategy(
 		{
