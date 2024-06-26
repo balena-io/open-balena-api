@@ -10,8 +10,8 @@ import * as versions from './test-lib/versions.js';
 
 export default () => {
 	versions.test((version) => {
-		if (!versions.gt(version, 'v6')) {
-			// Release assets were added after v6
+		if (!versions.gt(version, 'v7')) {
+			// Release assets were added after v7
 			return;
 		}
 		describe('release asset', function () {
