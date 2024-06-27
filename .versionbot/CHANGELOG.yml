@@ -1,4 +1,18 @@
 - commits:
+    - subject: Use `assertExists` in place of `expect(..).to.not.be.undefined`
+      hash: 918c8903f72be30817ba71c36e807ad3e69c58f0
+      body: |
+        This allows us to remove assertions/optional chaining as it makes
+        typescript aware that we've proven it's not nullish
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 25.1.11
+  title: ""
+  date: 2024-06-27T13:34:59.216Z
+- commits:
     - subject: Fix createStrategy fetchUser typing
       hash: 11b575fec2a4df04f007422ecd6b28e0b4e618d5
       body: ""
