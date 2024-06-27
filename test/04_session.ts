@@ -20,6 +20,7 @@ import { permissions as pinePermissions, sbvrUtils } from '@balena/pinejs';
 const { api } = sbvrUtils;
 import { setTimeout } from 'timers/promises';
 import { expectJwt } from './test-lib/api-helpers.js';
+import { assertExists } from './test-lib/common.js';
 
 export default () => {
 	versions.test((version) => {
@@ -333,7 +334,7 @@ export default () => {
 				const user = (await supertest(admin).get('/user/v1/whoami').expect(200))
 					.body;
 
-				let role = await api.Auth.get({
+				const role = await api.Auth.get({
 					resource: 'role',
 					passthrough: {
 						req: pinePermissions.rootRead,
@@ -346,8 +347,8 @@ export default () => {
 					},
 				});
 
+				assertExists(role);
 				expect(role).to.have.property('id').that.is.a('number');
-				role = role as { id: number };
 
 				await sbvrUtils.db.transaction(async (tx) => {
 					await revokeUserRole(user.id, role.id, tx);
