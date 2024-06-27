@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove unnecessary Non-null Assertion operators
+      hash: 619daf42fd8c42a9e8e0a59955d7338326c5c524
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 25.1.13
+  title: ""
+  date: 2024-06-27T15:45:32.749Z
+- commits:
     - subject: Throw when creating api key for not found role
       hash: b7c2c1c23997f2724598d3a2a8d4a7d2d577eefa
       body: ""
