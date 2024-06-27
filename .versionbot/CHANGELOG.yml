@@ -1,4 +1,19 @@
 - commits:
+    - subject: Fail tests if the minio-client fails to initialize the server
+      hash: 293cec5d61410c49424b1e2f575722e0005a0024
+      body: |
+        This catches errors early rather than potentially waiting for runtime
+        failures that could happen much later and be unclear as to the root
+        cause
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 25.1.14
+  title: ""
+  date: 2024-06-27T23:13:23.417Z
+- commits:
     - subject: Remove unnecessary Non-null Assertion operators
       hash: 619daf42fd8c42a9e8e0a59955d7338326c5c524
       body: ""
