@@ -9,7 +9,7 @@ import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import * as config from '../src/lib/config.js';
 import * as stateMock from '../src/features/device-heartbeat/index.js';
-import { itExpectsError, waitFor } from './test-lib/common.js';
+import { assertExists, itExpectsError, waitFor } from './test-lib/common.js';
 import * as fixtures from './test-lib/fixtures.js';
 import { expectResourceToMatch } from './test-lib/api-helpers.js';
 import { redis, redisRO } from '../src/infra/redis/index.js';
@@ -285,7 +285,7 @@ export default () => {
 											.get(`/${version}/device(${getDevice().id})`)
 											.expect(200);
 
-										expect(body.d[0]).to.not.be.undefined;
+										assertExists(body.d[0]);
 										expect(body.d[0]).to.have.property(
 											'api_heartbeat_state',
 											DeviceOnlineStates.Unknown,
@@ -316,7 +316,7 @@ export default () => {
 											.get(`/${version}/device(${getDevice().id})`)
 											.expect(200);
 
-										expect(body.d[0]).to.not.be.undefined;
+										assertExists(body.d[0]);
 										expect(body.d[0]).to.have.property(
 											'api_heartbeat_state',
 											heartbeatAfterGet,
@@ -346,7 +346,7 @@ export default () => {
 											.get(`/${version}/device(${getDevice().id})`)
 											.expect(200);
 
-										expect(body.d[0]).to.not.be.undefined;
+										assertExists(body.d[0]);
 										expect(body.d[0]).to.have.property(
 											'api_heartbeat_state',
 											DeviceOnlineStates.Timeout,
@@ -371,7 +371,7 @@ export default () => {
 											.get(`/${version}/device(${getDevice().id})`)
 											.expect(200);
 
-										expect(body.d[0]).to.not.be.undefined;
+										assertExists(body.d[0]);
 										expect(body.d[0]).to.have.property(
 											'api_heartbeat_state',
 											DeviceOnlineStates.Online,
@@ -399,7 +399,7 @@ export default () => {
 											.get(`/${version}/device(${getDevice().id})`)
 											.expect(200);
 
-										expect(body.d[0]).to.not.be.undefined;
+										assertExists(body.d[0]);
 										expect(body.d[0]).to.have.property(
 											'api_heartbeat_state',
 											DeviceOnlineStates.Offline,
@@ -447,7 +447,7 @@ export default () => {
 									.get(`/${version}/device(${device.id})`)
 									.expect(200);
 
-								expect(body.d[0]).to.not.be.undefined;
+								assertExists(body.d[0]);
 								expect(body.d[0]).to.have.property(
 									'api_heartbeat_state',
 									DeviceOnlineStates.Offline,
@@ -485,7 +485,7 @@ export default () => {
 									.get(`/${version}/device(${device.id})`)
 									.expect(200);
 
-								expect(body.d[0]).to.not.be.undefined;
+								assertExists(body.d[0]);
 								expect(body.d[0]).to.have.property(
 									'api_heartbeat_state',
 									DeviceOnlineStates.Online,

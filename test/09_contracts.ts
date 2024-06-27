@@ -15,6 +15,7 @@ import type { RepositoryInfo } from '../src/features/contracts/index.js';
 import { synchronizeContracts } from '../src/features/contracts/index.js';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import type { DeviceType, DeviceTypeAlias } from '../src/balena-model.js';
+import { assertExists } from './test-lib/common.js';
 
 const contractRepository: RepositoryInfo = {
 	owner: 'balena-io',
@@ -81,8 +82,9 @@ export default () => {
 					const contracts = await getContracts('hw.device-type');
 
 					expect(contracts).to.have.length(16);
-					expect(contracts.find((contract) => contract.slug === 'raspberrypi3'))
-						.to.not.be.undefined;
+					assertExists(
+						contracts.find((contract) => contract.slug === 'raspberrypi3'),
+					);
 				});
 
 				it('should merge multiple contracts repos', async () => {
@@ -99,9 +101,9 @@ export default () => {
 					const contracts = await getContracts('hw.device-type');
 
 					expect(contracts).to.have.length(17);
-					expect(
+					assertExists(
 						contracts.find((contract) => contract.slug === 'other-contract-dt'),
-					).to.not.be.undefined;
+					);
 				});
 
 				it('should normalize the assets included with the contracts', async () => {
@@ -166,7 +168,7 @@ export default () => {
 					);
 
 					expect(contracts).to.have.length(17);
-					expect(newDt).to.not.be.undefined;
+					assertExists(newDt);
 					expect(finDt).to.have.property('name', 'Fin');
 				});
 			});
@@ -235,7 +237,7 @@ export default () => {
 					);
 
 					expect(dbDeviceTypes).to.have.length(17);
-					expect(newDt).to.not.be.undefined;
+					assertExists(newDt);
 					expect(finDt).to.have.property('name', 'Fin');
 					expect(finDt).to.have.deep.property(
 						'contract',
