@@ -1,4 +1,24 @@
 - commits:
+    - subject: Throw when creating api key for not found role
+      hash: b7c2c1c23997f2724598d3a2a8d4a7d2d577eefa
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+    - subject: Remove not necessary type castings
+      hash: 54a0632804d9793748564f54a643381eed761c22
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+  version: 25.1.12
+  title: ""
+  date: 2024-06-27T14:29:31.661Z
+- commits:
     - subject: Use `assertExists` in place of `expect(..).to.not.be.undefined`
       hash: 918c8903f72be30817ba71c36e807ad3e69c58f0
       body: |
