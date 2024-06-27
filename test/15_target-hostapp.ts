@@ -8,6 +8,7 @@ import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import type { Application, Device } from '../src/balena-model.js';
 import { expectResourceToMatch } from './test-lib/api-helpers.js';
+import { assertExists } from './test-lib/common.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -503,13 +504,11 @@ export default () => {
 						`/${version}/device(${noMatchDevice.id})?$select=should_be_operated_by__release`,
 					)
 					.expect(200);
-				expect(body.d[0]).to.not.be.undefined;
-				expect(body.d[0]).to.have.property(
-					'should_be_operated_by__release',
-					null,
-				);
-				expect(body.d[0]['os_version']).to.be.not.null;
-				expect(body.d[0]['os_variant']).to.be.not.null;
+				assertExists(body.d[0]);
+				expect(body.d[0]).to.have.property('should_be_operated_by__release')
+					.that.is.null;
+				expect(body.d[0]).to.not.have.property('os_version');
+				expect(body.d[0]).to.not.have.property('os_variant');
 			});
 
 			(

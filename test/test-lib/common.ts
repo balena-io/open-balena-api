@@ -99,5 +99,5 @@ export const itExpectsError = (
 };
 
 export function assertExists(v: unknown): asserts v is NonNullable<typeof v> {
-	expect(v).to.not.be.null;
+	expect(v).to.exist;
 }

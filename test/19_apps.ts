@@ -7,6 +7,7 @@ import type { Application, Release } from '../src/balena-model.js';
 import { expectResourceToMatch } from './test-lib/api-helpers.js';
 import type { PineTest } from 'pinejs-client-supertest';
 import * as versions from './test-lib/versions.js';
+import { assertExists } from './test-lib/common.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -85,6 +86,7 @@ export default () => {
 						.that.is.an('object');
 					const supervisorApp1 =
 						state[deviceWithSupervisor.uuid].apps?.[supervisorApp.uuid];
+					assertExists(supervisorApp1);
 					expect(supervisorApp1).to.have.property(
 						'name',
 						supervisorApp.app_name,
@@ -99,8 +101,6 @@ export default () => {
 						.to.have.property('services')
 						.that.has.property('resin-supervisor')
 						.that.is.an('object');
-
-					expect(supervisorApp1, 'supervisor is undefined').to.not.be.undefined;
 				});
 
 				it('should not have a supervisor app if not managed by release', async () => {
@@ -187,6 +187,7 @@ export default () => {
 						.that.is.an('object');
 					const stateGetHostApp =
 						state[deviceWithHostApp.uuid].apps?.[intelNucHostApp.uuid];
+					assertExists(stateGetHostApp);
 					expect(stateGetHostApp).to.have.property(
 						'name',
 						intelNucHostApp.app_name,
@@ -203,8 +204,6 @@ export default () => {
 						.that.is.an('object')
 						.and.has.property('labels')
 						.that.has.property('io.balena.image.store', 'root');
-
-					expect(stateGetHostApp, 'hostApp is undefined').to.not.be.undefined;
 				});
 
 				it('should not have a host app if not operated by a release', async () => {
