@@ -174,7 +174,7 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 			) {
 				if (local != null) {
 					if (local.is_on__commit === null) {
-						deviceBody!.is_running__release = null;
+						deviceBody.is_running__release = null;
 					} else if (local.is_on__commit !== undefined) {
 						// Run this in a separate read-only transaction in advance, this allows it to be redirected
 						// to a read replica as necessary and avoids holding the write transaction open unnecessarily
@@ -188,7 +188,7 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 						);
 						if (releaseId != null) {
 							// Only set the running release if it's valid, otherwise just silently ignore it
-							deviceBody!.is_running__release = releaseId;
+							deviceBody.is_running__release = releaseId;
 						}
 					}
 				}
