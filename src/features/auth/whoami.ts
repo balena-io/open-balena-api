@@ -64,14 +64,14 @@ export const whoami: RequestHandler = async (req, res) => {
 					Partial<Pick<User['Read'], 'username' | 'email'>>
 			> => {
 				const user = await getUser(req, tx, true);
-				const [userWithUsername] = (await api.resin.get({
+				const [userWithUsername] = await api.resin.get({
 					resource: 'user',
 					passthrough: { req, tx },
 					options: {
 						$select: ['id', 'username'],
 						$filter: { actor: user.actor },
 					},
-				})) as [Pick<User['Read'], 'id' | 'username'>?];
+				});
 
 				if (userWithUsername == null) {
 					// If we can't retrieve the user, then this request might be from
@@ -80,14 +80,14 @@ export const whoami: RequestHandler = async (req, res) => {
 					return user;
 				}
 
-				const userWithEmail = (await api.resin.get({
+				const userWithEmail = await api.resin.get({
 					resource: 'user',
 					passthrough: { req: permissions.root, tx },
 					id: userWithUsername.id,
 					options: {
 						$select: 'email',
 					},
-				})) as Pick<User['Read'], 'email'>;
+				});
 
 				return {
 					...userWithUsername,

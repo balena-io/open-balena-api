@@ -55,7 +55,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 							},
 						},
 					},
-				}) as Promise<Array<{ id: number }>>,
+				}),
 				checkDevicesCanBeInApplication(
 					api,
 					request.values.belongs_to__application,

@@ -3,7 +3,6 @@ import randomstring from 'randomstring';
 import _ from 'lodash';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
-import type { Role } from '../../balena-model.js';
 import { multiCacheMemoizee } from '../../infra/cache/index.js';
 import { API_KEY_ROLE_CACHE_TIMEOUT } from '../../lib/config.js';
 
@@ -66,7 +65,7 @@ const $createApiKey = async (
 		},
 	});
 
-	const [{ id: apiKeyId }, { id: roleId }] = await Promise.all([
+	const [{ id: apiKeyId }, role] = await Promise.all([
 		authApiTx.post({
 			resource: 'api_key',
 			body: {
@@ -77,7 +76,7 @@ const $createApiKey = async (
 				expiry_date: expiryDate,
 			},
 			options: { returnResource: false },
-		}) as Promise<{ id: number }>,
+		}),
 		authApiTx.get({
 			resource: 'role',
 			id: {
@@ -86,14 +85,18 @@ const $createApiKey = async (
 			options: {
 				$select: 'id',
 			},
-		}) as Promise<Pick<Role['Read'], 'id'>>,
+		}),
 	]);
+
+	if (role == null) {
+		throw new errors.NotFoundError(`Role '${roleName}' not found`);
+	}
 
 	await authApiTx.post({
 		resource: 'api_key__has__role',
 		body: {
 			api_key: apiKeyId,
-			role: roleId,
+			role: role.id,
 		},
 		options: { returnResource: false },
 	});

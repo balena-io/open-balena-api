@@ -12,13 +12,13 @@ const $getOrInsertId = async (
 	tx?: Tx,
 ): Promise<{ id: number }> => {
 	const apiTx = api.clone({ passthrough: { req: permissions.root, tx } });
-	const results = (await apiTx.get({
+	const results = await apiTx.get({
 		resource,
 		options: {
 			$select: 'id',
 			$filter: body,
 		},
-	})) as Array<{ id: number }>;
+	} as const);
 	if (results.length === 0) {
 		const idObj = (await apiTx.post({
 			resource,
@@ -42,14 +42,13 @@ const $updateOrInsert = async (
 	tx?: Tx,
 ): Promise<{ id: number }> => {
 	const apiTx = api.clone({ passthrough: { req: permissions.root, tx } });
-	const results = (await apiTx.get({
+	const results = await apiTx.get({
 		resource,
 		options: {
 			$filter: filter,
 			$select: ['id'],
 		},
-	})) as Array<{ id: number }>;
-
+	} as const);
 	if (results.length === 0) {
 		const body = _.cloneDeep(filter);
 		_.merge(body, updateFields);

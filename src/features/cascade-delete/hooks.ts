@@ -1,6 +1,4 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
-import type { User } from '../../balena-model.js';
-import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import { captureException } from '../../infra/error-handling/index.js';
 import { setupDeleteCascade } from './setup-delete-cascade.js';
 
@@ -120,33 +118,33 @@ hooks.addPureHook('DELETE', 'resin', 'user', {
 			),
 		);
 
-		const apiKeyDelete = (
-			resinApi.get({
+		const apiKeyDelete = resinApi
+			.get({
 				resource: 'user',
 				id: userId,
 				options: {
 					$select: 'actor',
 				},
-			}) as Promise<PickDeferred<User['Read'], 'actor'>>
-		).then(async (user) => {
-			if (user == null) {
-				throw new errors.BadRequestError('Invalid user');
-			}
-			request.custom.actorId = user.actor.__id;
-			try {
-				await authApiTx.delete({
-					resource: 'api_key',
-					options: {
-						$filter: {
-							is_of__actor: user.actor.__id,
+			})
+			.then(async (user) => {
+				if (user == null) {
+					throw new errors.BadRequestError('Invalid user');
+				}
+				request.custom.actorId = user.actor.__id;
+				try {
+					await authApiTx.delete({
+						resource: 'api_key',
+						options: {
+							$filter: {
+								is_of__actor: user.actor.__id,
+							},
 						},
-					},
-				});
-			} catch (err) {
-				captureException(err, 'Error deleting user api_key', { req });
-				throw err;
-			}
-		});
+					});
+				} catch (err) {
+					captureException(err, 'Error deleting user api_key', { req });
+					throw err;
+				}
+			});
 
 		await Promise.all([authApiDeletes, apiKeyDelete]);
 	},

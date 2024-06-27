@@ -1,6 +1,5 @@
 import { hooks, permissions } from '@balena/pinejs';
 import { getApplicationSlug } from '../index.js';
-import type { Organization } from '../../../balena-model.js';
 
 hooks.addPureHook('POST', 'resin', 'application', {
 	POSTPARSE: ({ request }) => {
@@ -10,14 +9,14 @@ hooks.addPureHook('POST', 'resin', 'application', {
 	},
 	PRERUN: async ({ request, api }) => {
 		if (request.values.organization != null) {
-			const organization = (await api.get({
+			const organization = await api.get({
 				resource: 'organization',
 				id: request.values.organization,
 				options: {
 					$select: 'handle',
 				},
-			})) as Pick<Organization['Read'], 'handle'> | undefined;
-			if (organization) {
+			});
+			if (organization != null) {
 				request.values.slug = getApplicationSlug(
 					organization.handle,
 					request.values.app_name,

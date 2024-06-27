@@ -34,7 +34,7 @@ export const getDeviceTypeBySlug = async (
 	resinApi: typeof sbvrUtils.api.resin,
 	slug: string,
 ): Promise<{ id: number; slug: string }> => {
-	const [dt] = (await resinApi.get({
+	const [dt] = await resinApi.get({
 		resource: 'device_type',
 		options: {
 			$top: 1,
@@ -52,7 +52,7 @@ export const getDeviceTypeBySlug = async (
 				},
 			},
 		},
-	})) as [{ id: number; slug: string }] | [];
+	});
 
 	if (dt == null) {
 		throw new UnknownDeviceTypeError(slug);

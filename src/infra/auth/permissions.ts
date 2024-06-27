@@ -116,10 +116,10 @@ const getOrInsertApiKey = async (
 			key,
 		};
 
-		const idObj = (await authApiTx.post({
+		const idObj = await authApiTx.post({
 			resource: 'api_key',
 			body,
-		})) as { id: number };
+		});
 		const apiKey = { ...idObj, ...body };
 		await authApiTx.post({
 			resource: 'api_key__has__role',
@@ -204,7 +204,7 @@ export async function createAllPermissions(
 				$filter: { name: { $in: permissionNames } },
 			},
 		})
-		.then(async (perms: AnyObject[]) => {
+		.then(async (perms) => {
 			const permissionsMap = _(perms).keyBy('name').mapValues('id').value();
 			const result: Dictionary<number | Promise<number>> = {};
 			for (const permissionName of permissionNames) {
