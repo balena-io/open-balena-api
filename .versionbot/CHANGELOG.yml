@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use typings from the generated model typings rather than manual typings
+      hash: 64eb87c30e1095275cfe5bb825a5c03cb4cd2efd
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 25.1.16
+  title: ""
+  date: 2024-06-28T21:52:39.225Z
+- commits:
     - subject: Use id rather than filter for `revokeUserRole`
       hash: e9900ea2f2dc93c6aab5773d353e772760db456a
       body: ""
