@@ -7,7 +7,7 @@ import {
 } from '../../../infra/error-handling/index.js';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils.js';
-import type { Image, Release } from '../../../balena-model.js';
+import type { Device, Image, Release } from '../../../balena-model.js';
 import type { Filter } from 'pinejs-client-core';
 import { metricsPatchFields, v3ValidPatchFields } from '../index.js';
 import {
@@ -266,9 +266,11 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 			let deviceBody: Pick<
 				StatePatchV3Body[string],
 				(typeof v3ValidPatchFields)[number]
-			> & {
-				is_running__release?: number | null;
-			} = _.pick(state, v3ValidPatchFields);
+			> &
+				Partial<Pick<Device['Write'], 'is_running__release'>> = _.pick(
+				state,
+				v3ValidPatchFields,
+			);
 			let metricsBody: Pick<
 				StatePatchV3Body[string],
 				(typeof metricsPatchFields)[number]
