@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use id rather than filter for `revokeUserRole`
+      hash: e9900ea2f2dc93c6aab5773d353e772760db456a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 25.1.15
+  title: ""
+  date: 2024-06-28T14:31:20.094Z
+- commits:
     - subject: Fail tests if the minio-client fails to initialize the server
       hash: 293cec5d61410c49424b1e2f575722e0005a0024
       body: |
