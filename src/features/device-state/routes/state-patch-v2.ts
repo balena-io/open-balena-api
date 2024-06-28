@@ -17,6 +17,7 @@ import {
 	limitMetricNumbers,
 } from '../state-patch-utils.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
+import type { Device } from '../../../balena-model.js';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -139,9 +140,11 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 		if (local != null) {
 			const { apps } = local;
 
-			let deviceBody: Pick<LocalBody, (typeof v2ValidPatchFields)[number]> & {
-				is_running__release?: number | null;
-			} = _.pick(local, v2ValidPatchFields);
+			let deviceBody: Pick<LocalBody, (typeof v2ValidPatchFields)[number]> &
+				Partial<Pick<Device['Write'], 'is_running__release'>> = _.pick(
+				local,
+				v2ValidPatchFields,
+			);
 			let metricsBody: Pick<LocalBody, (typeof metricsPatchFields)[number]> =
 				_.pick(local, metricsPatchFields);
 			limitMetricNumbers(metricsBody);
