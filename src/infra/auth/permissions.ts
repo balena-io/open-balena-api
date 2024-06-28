@@ -62,14 +62,12 @@ export const assignUserPermission = (
 	tx: Tx,
 ) => getOrInsertId('user__has__permission', { user, permission }, tx);
 
-export const revokeUserRole = (user: number, role: number, tx: Tx) =>
-	api.Auth.delete({
+export const revokeUserRole = async (user: number, role: number, tx: Tx) =>
+	await api.Auth.delete({
 		resource: 'user__has__role',
-		options: {
-			$filter: {
-				user,
-				role,
-			},
+		id: {
+			user,
+			role,
 		},
 		passthrough: {
 			tx,
