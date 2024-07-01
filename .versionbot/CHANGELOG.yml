@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove unnecessary async/await calls of synchronous code
+      hash: 0aa95a942becdb186d70766cbf9c41d6fbc24f91
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 25.1.18
+  title: ""
+  date: 2024-07-01T16:25:35.816Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v18.0.3
       hash: ed8ca531613d2c57e28dca8b27f7d58b4903d58b
       body: |
