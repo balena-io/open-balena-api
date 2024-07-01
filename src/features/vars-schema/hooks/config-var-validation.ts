@@ -6,7 +6,7 @@ import {
 } from '../env-vars.js';
 
 const configVarHook: hooks.Hooks = {
-	POSTPARSE: async ({ request }) => {
+	POSTPARSE: ({ request }) => {
 		const { name, value } = request.values;
 
 		if (name != null) {

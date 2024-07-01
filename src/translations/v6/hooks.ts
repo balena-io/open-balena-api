@@ -41,7 +41,7 @@ addReadOnlyHook(['POST'], 'device', {
 });
 
 addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'application', {
-	async POSTPARSE({ request }) {
+	POSTPARSE({ request }) {
 		// Dependent device properties were removed so we block trying to set them
 		if (request.values.depends_on__application != null) {
 			throw new errors.BadRequestError();
@@ -49,7 +49,7 @@ addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'application', {
 	},
 });
 addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'device', {
-	async POSTPARSE({ request }) {
+	POSTPARSE({ request }) {
 		// Dependent device properties were removed so we block trying to set them
 		if (request.values.is_managed_by__device != null) {
 			throw new errors.BadRequestError();
@@ -62,7 +62,7 @@ const releaseTypeToIsFinalMap = {
 	final: true,
 };
 addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'release', {
-	async POSTPARSE({ request }) {
+	POSTPARSE({ request }) {
 		const { release_type, is_final } = request.values;
 		if (typeof release_type === 'string') {
 			if (!(release_type in releaseTypeToIsFinalMap)) {
@@ -86,7 +86,7 @@ addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'release', {
 });
 
 addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'release', {
-	async POSTPARSE({ request }) {
+	POSTPARSE({ request }) {
 		if (!Object.hasOwn(request.values, 'contract')) {
 			return;
 		}
@@ -104,7 +104,7 @@ addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'release', {
 });
 
 addReadOnlyHook(['all'], 'all', {
-	async PRERESPOND({ response }) {
+	PRERESPOND({ response }) {
 		if (response.body == null) {
 			// Use the default body message for the status code when the body is empty
 			// to support clients that checked the body rather than status code for old versions

@@ -157,7 +157,7 @@ const checkNotDifferentRevision = (
 };
 
 hooks.addPureHook('POST', 'resin', 'release', {
-	POSTPARSE: async (args) => {
+	POSTPARSE: (args) => {
 		parseReleaseVersioningFields(args);
 
 		const { request } = args;

@@ -6,7 +6,7 @@ import { checkSudoValidity } from '../../../infra/auth/jwt.js';
 const { BadRequestError, UnauthorizedError } = errors;
 
 hooks.addPureHook('DELETE', 'resin', 'user', {
-	POSTPARSE: async ({ request }) => {
+	POSTPARSE: ({ request }) => {
 		const userIdBind = request.odataQuery?.key;
 		if (userIdBind == null) {
 			throw new BadRequestError('You must provide user ID');
@@ -27,7 +27,7 @@ hooks.addPureHook('DELETE', 'resin', 'user', {
 			throw new BadRequestError('You can only delete your own account');
 		}
 
-		if (!(await checkSudoValidity(user))) {
+		if (!checkSudoValidity(user)) {
 			throw new UnauthorizedError('Fresh authentication token required');
 		}
 	},

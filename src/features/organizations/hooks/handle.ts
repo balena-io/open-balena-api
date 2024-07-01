@@ -3,7 +3,7 @@ import { validateHandle } from '../../auth/index.js';
 
 for (const method of ['POST', 'PATCH'] as const) {
 	hooks.addPureHook(method, 'resin', 'organization', {
-		POSTPARSE: async ({ request }) => {
+		POSTPARSE: ({ request }) => {
 			if (request.values.handle) {
 				validateHandle(request.values.handle);
 			}

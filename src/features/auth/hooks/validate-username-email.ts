@@ -8,7 +8,7 @@ const USERNAME_BLACKLIST = ['root'];
 
 for (const method of ['POST', 'PATCH'] as const) {
 	hooks.addPureHook(method, 'resin', 'user', {
-		POSTPARSE: async ({ request }) => {
+		POSTPARSE: ({ request }) => {
 			if (request.values.username != null) {
 				request.values.username = normalizeHandle(request.values.username);
 				if (USERNAME_BLACKLIST.includes(request.values.username)) {

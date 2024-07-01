@@ -3,7 +3,7 @@ import { captureException } from '../../../infra/error-handling/index.js';
 import { postDevices } from '../../device-proxy/device-proxy.js';
 
 hooks.addPureHook('PATCH', 'resin', 'application', {
-	POSTRUN: async ({ request, tx }) => {
+	POSTRUN: ({ request, tx }) => {
 		const affectedIds = request.affectedIds!;
 		if (
 			request.values.should_be_running__release != null &&
