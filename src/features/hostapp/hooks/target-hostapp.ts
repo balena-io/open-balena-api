@@ -51,7 +51,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	 * unset the value
 	 */
 
-	async POSTPARSE({ request }) {
+	POSTPARSE({ request }) {
 		if (
 			request.values.is_of__device_type != null &&
 			request.values.should_be_operated_by__release === undefined

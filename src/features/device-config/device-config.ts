@@ -133,7 +133,7 @@ export const generateConfig = async (
 		},
 	);
 
-	_(deviceType.options!)
+	_(deviceType.options)
 		.flatMap((opt) => {
 			if ('isGroup' in opt && opt.isGroup) {
 				if (['network', 'advanced'].includes(opt.name)) {

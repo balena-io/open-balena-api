@@ -117,7 +117,7 @@ export const filterDeviceConfig = (configVars: Dictionary<string>): void => {
 
 let $readTransaction: dbModule.Database['readTransaction'] = (
 	...args: Parameters<dbModule.Database['readTransaction']>
-) => sbvrUtils.db.readTransaction!(...args);
+) => sbvrUtils.db.readTransaction(...args);
 export const setReadTransaction = (
 	newReadTransaction: dbModule.Database['readTransaction'],
 ) => {

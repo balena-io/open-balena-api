@@ -375,7 +375,7 @@ export async function setup(app: Application, options: SetupOptions) {
 
 	await options.onInit?.(app);
 
-	await setupMiddleware(app);
+	setupMiddleware(app);
 	await options.onInitMiddleware?.(app);
 
 	await pine.init(app, options.config, options.databaseOptions);

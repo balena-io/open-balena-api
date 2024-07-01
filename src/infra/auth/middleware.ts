@@ -135,7 +135,7 @@ export const permissionRequired =
 export const sudo: RequestHandler = async (req, res, next) => {
 	try {
 		const user = await getUser(req, undefined, false);
-		if (user != null && (await checkSudoValidity(user))) {
+		if (user != null && checkSudoValidity(user)) {
 			next();
 			return;
 		} else {

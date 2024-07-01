@@ -19,7 +19,7 @@ const toUuid = (strippedUuid: string): string => {
 };
 
 hooks.addPureHook('POST', 'resin', 'application', {
-	POSTPARSE: async ({ request }) => {
+	POSTPARSE: ({ request }) => {
 		request.values.application_type ??= DefaultApplicationType.id;
 
 		if (!/^[a-zA-Z0-9_-]+$/.test(request.values.app_name)) {

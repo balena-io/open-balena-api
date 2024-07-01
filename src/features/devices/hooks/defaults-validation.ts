@@ -22,7 +22,7 @@ hooks.addPureHook('POST', 'resin', 'device', {
 		request.values.device_name =
 			request.values.device_name || haikuName.generate();
 		request.values.uuid =
-			request.values.uuid || (await randomUUID().replaceAll('-', ''));
+			request.values.uuid || randomUUID().replaceAll('-', '');
 
 		if (!/^[a-f0-9]{32}([a-f0-9]{30})?$/.test(request.values.uuid)) {
 			throw new errors.BadRequestError(
