@@ -578,9 +578,6 @@ Fact type: device has api secret
 Fact type: device is managed by service instance
 	Synonymous Form: service instance manages device
 	Necessity: each device is managed by at most one service instance
-Fact type: device should be running release
-	Synonymous Form: release should be running on device
-	Necessity: each device should be running at most one release
 Fact type: device is pinned on release
 	Synonymous Form: release is pinned to device
 	Necessity: each device is pinned on at most one release
@@ -865,7 +862,6 @@ Rule: It is necessary that each image that has a status that is equal to "succes
 Rule: It is necessary that each application that owns a release1 that has a status that is equal to "success" and has a commit1, owns at most one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.
 Rule: It is necessary that each application that owns a release1 that has a revision, owns at most one release2 that has a semver major that is of the release1 and has a semver minor that is of the release1 and has a semver patch that is of the release1 and has a semver prerelease that is of the release1 and has a variant that is of the release1 and has a revision that is of the release1.
 Rule: It is necessary that each release that is pinned to a device, has a status that is equal to "success" and belongs to an application1 that the device belongs to.
-Rule: It is necessary that each release that should be running on an application, has a status that is equal to "success" and belongs to the application.
 Rule: It is necessary that each application that owns a release that contains at least 2 images, has an application type that supports multicontainer.
 Rule: It is necessary that each release that should operate a device, has a status that is equal to "success".
 Rule: It is necessary that each release that should operate a device that is of a device type, belongs to an application that is host and is for the device type.
