@@ -11,7 +11,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		// * target release changed
 		// * device name changed - so a user can restart their service and it will pick up the change
 		if (
-			(request.values.should_be_running__release !== undefined ||
+			(request.values.is_pinned_on__release !== undefined ||
 				request.values.belongs_to__application != null ||
 				request.values.device_name != null) &&
 			affectedIds.length !== 0
