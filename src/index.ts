@@ -149,6 +149,7 @@ import * as deviceAdditions from './features/devices/models/device-additions.js'
 import { addToModel as addReleaseAdditionsToModel } from './features/ci-cd/models/release-additions.js';
 import { model as balenaModel } from './balena.js';
 import { getV6Translations } from './translations/v6/v6.js';
+import { getV7Translations } from './translations/v7/v7.js';
 
 export * as tags from './features/tags/validation.js';
 export type { TokenUserPayload } from './infra/auth/jwt.js';
@@ -257,6 +258,10 @@ export const envVarsConfig = {
 };
 
 export const translations = {
+	v7: {
+		getTranslations: getV7Translations,
+		loadHooks: () => import('./translations/v7/hooks.js'),
+	},
 	v6: {
 		getTranslations: getV6Translations,
 		loadHooks: () => import('./translations/v6/hooks.js'),
