@@ -32,13 +32,7 @@ export const v3ValidPatchFields: Array<
 
 export const v2ValidPatchFields: Array<
 	Exclude<keyof NonNullable<StatePatchV2Body['local']>, 'apps'>
-> = [
-	...v3ValidPatchFields,
-	'should_be_running__release',
-	'device_name',
-	'note',
-	'download_progress',
-];
+> = [...v3ValidPatchFields, 'device_name', 'note', 'download_progress'];
 
 const SHORT_TEXT_LENGTH = 255;
 const ADDRESS_DELIMITER = ' ';
