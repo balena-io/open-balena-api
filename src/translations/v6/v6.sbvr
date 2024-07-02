@@ -163,6 +163,9 @@ Term: last connectivity event
 Term: last heartbeat
 	Concept Type: Date Time (Type)
 
+Term: last update status event
+	Concept Type: Date Time (Type)
+
 Term: last vpn event
 	Concept Type: Date Time (Type)
 
@@ -305,6 +308,9 @@ Term: tag key
 	Concept Type: Short Text (Type)
 
 Term: title
+	Concept Type: Short Text (Type)
+
+Term: update status
 	Concept Type: Short Text (Type)
 
 Term: update timestamp
@@ -612,6 +618,11 @@ Fact type: device should be operated by release
 Fact type: device1 is managed by device2
 	Synonymous Form: device2 manages device1
 	Necessity: each device1 is managed by at most one device2.
+Fact type: device has update status
+	Necessity: each device has at most one update status.
+	Definition: "rejected" or "downloading" or "downloaded" or "applying changes" or "aborted" or "done"
+Fact type: device has last update status event
+	Necessity: each device has at most one last update status event.
 
 -- application config variable
 
