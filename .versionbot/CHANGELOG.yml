@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove the my_application resource from the resin model
+      hash: ac8f13c0f264146b94da01f9c131e21fb0bc0751
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 25.1.21
+  title: ""
+  date: 2024-07-03T13:57:33.657Z
+- commits:
     - subject: Update grafana/loki Docker tag to v3.1.0
       hash: bbf308c9bf01b8040a8aabee0371bbefc98050b0
       body: |
