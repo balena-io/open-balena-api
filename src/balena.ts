@@ -1,6 +1,5 @@
 import { fileURLToPath } from 'node:url';
 import {
-	aliasTable,
 	generateAbstractSqlModel,
 	renameVarResourcesName,
 	optimizeSchema,
@@ -22,11 +21,6 @@ export const model = {
 	initSqlPath: fileURLToPath(new URL('balena-init.sql', import.meta.url)),
 	abstractSql,
 } satisfies ConfigLoader.Model;
-
-aliasTable(abstractSql, 'application', 'my application', {
-	binds: [],
-	abstractSql: ['Resource', 'application'],
-});
 
 renameVarResourcesName(abstractSql);
 
