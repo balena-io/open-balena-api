@@ -101,7 +101,7 @@ const appAndReleaseOfDeviceQuery = _.once(() =>
 				},
 			},
 		},
-	}),
+	} as const),
 );
 
 const resolveReleaseId = async (

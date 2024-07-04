@@ -6,7 +6,6 @@ import {
 	captureException,
 	handleHttpErrors,
 } from '../../../infra/error-handling/index.js';
-import type { Expand } from 'pinejs-client-core';
 
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { getConfig, readTransaction } from '../state-get-utils.js';
@@ -23,7 +22,7 @@ type FleetStateV3 = {
 	};
 };
 
-const fleetExpand: Expand = {
+const fleetExpand = {
 	application_config_variable: {
 		$select: ['name', 'value'],
 	},
@@ -45,7 +44,7 @@ const fleetExpand: Expand = {
 			},
 		},
 	},
-};
+} as const;
 
 const stateQuery = _.once(() =>
 	api.resin.prepare<{ uuid: string }, 'application'>({
