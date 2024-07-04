@@ -1,4 +1,21 @@
 - commits:
+    - subject: Add @balena/abstract-sql-to-typescript as a direct dependency
+      hash: b584f9d39217ca997bf9deae6a888017df14bd7b
+      body: >
+        Currently we only consume the typings from this library, however, these
+        are used in the
+
+        model files which might be consumed downstream so this must be a regular
+        dependency
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+  version: 25.1.23
+  title: ""
+  date: 2024-07-04T12:27:10.324Z
+- commits:
     - subject: Use updated @balena/abstract-sql-to-typescript v3.3.0 to generate
         balena types
       hash: 8030f9a8c54864fb890bf7b3c1e535f52313bb6f
