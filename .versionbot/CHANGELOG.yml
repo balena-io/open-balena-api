@@ -1,4 +1,16 @@
 - commits:
+    - subject: "logs/redis: Delete references of cancelled heartbeat subscriptions"
+      hash: ff24112cb62344e721105dfc68a055ef127bd56e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 25.1.24
+  title: ""
+  date: 2024-07-04T14:39:34.141Z
+- commits:
     - subject: Add @balena/abstract-sql-to-typescript as a direct dependency
       hash: b584f9d39217ca997bf9deae6a888017df14bd7b
       body: >
