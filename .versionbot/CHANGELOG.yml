@@ -1,4 +1,26 @@
 - commits:
+    - subject: Use updated @balena/abstract-sql-to-typescript v3.3.0 to generate
+        balena types
+      hash: 8030f9a8c54864fb890bf7b3c1e535f52313bb6f
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+    - subject: Lock file maintenance
+      hash: 42fd66e733dfb90b532027a87e46991d29027dcd
+      body: |
+        Update
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 25.1.22
+  title: ""
+  date: 2024-07-04T12:10:20.285Z
+- commits:
     - subject: Remove the my_application resource from the resin model
       hash: ac8f13c0f264146b94da01f9c131e21fb0bc0751
       body: ""
