@@ -115,20 +115,26 @@ async function handleStreamingRead(
 		}
 	});
 
+	let heartbeatTimeout: ReturnType<typeof setTimeout> | null = null;
+
 	function heartbeat() {
 		if (state !== StreamState.Closed) {
 			// In order to keep the connection alive, output new lines every now and then
 			write('\n');
-			setTimeout(heartbeat, LOGS_HEARTBEAT_INTERVAL);
+			heartbeatTimeout = setTimeout(heartbeat, LOGS_HEARTBEAT_INTERVAL);
 		}
 	}
 
-	setTimeout(heartbeat, LOGS_HEARTBEAT_INTERVAL);
+	heartbeatTimeout = setTimeout(heartbeat, LOGS_HEARTBEAT_INTERVAL);
 
 	function close() {
 		if (state !== StreamState.Closed) {
 			state = StreamState.Closed;
 			getBackend().unsubscribe(ctx, onLog);
+		}
+		if (heartbeatTimeout != null) {
+			clearTimeout(heartbeatTimeout);
+			heartbeatTimeout = null;
 		}
 	}
 
