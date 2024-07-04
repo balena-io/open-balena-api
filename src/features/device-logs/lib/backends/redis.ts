@@ -215,6 +215,7 @@ export class RedisBackend implements DeviceLogsBackend {
 			const subscribersKey = this.getKey(ctx, 'subscribers');
 			// Clear the heartbeat
 			clearInterval(this.subscriptionHeartbeats[key]);
+			delete this.subscriptionHeartbeats[key];
 			// And decrement the subscribers counter
 			void redis.decrSubscribers(subscribersKey).then((n) => {
 				if (n < 0) {
