@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import type { ExpandableStringKeyOf } from 'pinejs-client-core';
 import type { dbModule, permissions } from '@balena/pinejs';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import {
@@ -11,7 +12,9 @@ import {
 } from '../../infra/cache/index.js';
 import type { Device } from '../../balena-model.js';
 
-export const getStateEventAdditionalFields: Array<keyof Device['Read']> = [];
+export const getStateEventAdditionalFields: Array<
+	Exclude<keyof Device['Read'], ExpandableStringKeyOf<Device['Read']>>
+> = [];
 
 const defaultConfigVariableFns: Array<(config: Dictionary<string>) => void> = [
 	function setMinPollInterval(config) {

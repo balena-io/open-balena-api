@@ -1,5 +1,5 @@
-import type { RequestHandler } from 'express';
-import type { Request } from 'express';
+import type { RequestHandler, Request } from 'express';
+import type { Params } from 'pinejs-client-core';
 
 import _ from 'lodash';
 import {
@@ -21,6 +21,7 @@ import { sbvrUtils } from '@balena/pinejs';
 import { events } from '../index.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 import { getIP } from '../../../lib/utils.js';
+import type { Device } from '../../../balena-model.js';
 
 const { api } = sbvrUtils;
 
@@ -189,8 +190,8 @@ const releaseExpand = {
 	},
 } as const;
 
-const stateQuery = _.once(() =>
-	api.resin.prepare<{ uuid: string }, 'device'>({
+const stateQuery = _.once(() => {
+	const pineQuery = {
 		resource: 'device',
 		id: { uuid: { '@': 'uuid' } },
 		options: {
@@ -236,8 +237,11 @@ const stateQuery = _.once(() =>
 				},
 			},
 		},
-	} as const),
-);
+	} as const satisfies Params<Device>;
+	return api.resin.prepare<{ uuid: string }, 'device', typeof pineQuery>(
+		pineQuery,
+	);
+});
 
 const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 	const [deviceId] = (req.custom as ResolveDeviceInfoCustomObject)
@@ -257,7 +261,7 @@ const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 	const userAppFromApi: AnyObject = device.belongs_to__application[0];
 
 	const local: StateV2['local'] = {
-		name: device.device_name,
+		name: device.device_name!,
 		config,
 		apps: {
 			[userAppFromApi.id]: userApp,

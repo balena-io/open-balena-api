@@ -1,4 +1,5 @@
 import type { RequestHandler } from 'express';
+import type { Params } from 'pinejs-client-core';
 
 import _ from 'lodash';
 import {
@@ -17,7 +18,7 @@ import {
 	limitMetricNumbers,
 } from '../state-patch-utils.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
-import type { Device } from '../../../balena-model.js';
+import type { Application, Device } from '../../../balena-model.js';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -69,13 +70,13 @@ export type StatePatchV2Body = {
 	};
 };
 
-const appAndReleaseOfDeviceQuery = _.once(() =>
+const appAndReleaseOfDeviceQuery = _.once(() => {
 	// This is a performance optimization impactful when using device API key permissions,
 	// in which case emitting the OR checks for the public device access
 	// in a nested subquery didn't perform as well.
 	// TODO: Should be converted back to a simple GET to the release resource once
 	// the performance of that query improves.
-	api.resin.prepare<{ deviceId: number; commit: string }>({
+	const pineQuery = {
 		resource: 'application',
 		options: {
 			$top: 1,
@@ -101,8 +102,13 @@ const appAndReleaseOfDeviceQuery = _.once(() =>
 				},
 			},
 		},
-	} as const),
-);
+	} as const satisfies Params<Application>;
+	return api.resin.prepare<
+		{ deviceId: number; commit: string },
+		'application',
+		typeof pineQuery
+	>(pineQuery);
+});
 
 const resolveReleaseId = async (
 	...args: Parameters<ReturnType<typeof appAndReleaseOfDeviceQuery>>

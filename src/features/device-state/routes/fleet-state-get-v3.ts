@@ -1,5 +1,6 @@
 import type { RequestHandler } from 'express';
 import type { Request } from 'express';
+import type { Params } from 'pinejs-client-core';
 
 import _ from 'lodash';
 import {
@@ -11,6 +12,7 @@ import { sbvrUtils, errors } from '@balena/pinejs';
 import { getConfig, readTransaction } from '../state-get-utils.js';
 import type { StateV3 } from './state-get-v3.js';
 import { buildAppFromRelease, releaseExpand } from './state-get-v3.js';
+import type { Application, Release } from '../../../balena-model.js';
 const { api } = sbvrUtils;
 const { UnauthorizedError } = errors;
 
@@ -46,18 +48,21 @@ const fleetExpand = {
 	},
 } as const;
 
-const stateQuery = _.once(() =>
-	api.resin.prepare<{ uuid: string }, 'application'>({
+const stateQuery = _.once(() => {
+	const pineQuery = {
 		resource: 'application',
 		id: { uuid: { '@': 'uuid' } },
 		options: {
 			$expand: fleetExpand,
 		},
-	}),
-);
+	} as const satisfies Params<Application>;
+	return api.resin.prepare<{ uuid: string }, 'application', typeof pineQuery>(
+		pineQuery,
+	);
+});
 
-const releaseQuery = _.once(() =>
-	api.resin.prepare<{ commit: string; fleetId: number }, 'release'>({
+const releaseQuery = _.once(() => {
+	const pineQuery = {
 		resource: 'release',
 		options: {
 			$filter: {
@@ -67,8 +72,13 @@ const releaseQuery = _.once(() =>
 			},
 			...releaseExpand,
 		},
-	}),
-);
+	} as const satisfies Params<Release>;
+	return api.resin.prepare<
+		{ commit: string; fleetId: number },
+		'release',
+		typeof pineQuery
+	>(pineQuery);
+});
 
 const getFleet = async (req: Request, uuid: string) => {
 	const fleet = await readTransaction((tx) =>
@@ -78,7 +88,6 @@ const getFleet = async (req: Request, uuid: string) => {
 	if (fleet == null) {
 		throw new UnauthorizedError();
 	}
-
 	return fleet;
 };
 

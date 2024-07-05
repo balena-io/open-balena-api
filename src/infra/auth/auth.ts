@@ -13,7 +13,7 @@ import type {
 	PickDeferred,
 	Deferred,
 } from '@balena/abstract-sql-to-typescript';
-import type { PreparedFn } from 'pinejs-client-core';
+import type { Params } from 'pinejs-client-core';
 
 const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
@@ -153,25 +153,23 @@ export const userFields = ['id', 'actor', 'jwt_secret'] satisfies Array<
 	keyof User['Read']
 >;
 
-const getUserQuery = _.once(
-	() =>
-		api.resin.prepare<{ key: string }, 'user'>({
-			resource: 'user',
-			passthrough: { req: permissions.root },
-			options: {
-				$select: userFields,
-				$filter: {
-					actor: {
-						$any: {
-							$alias: 'a',
-							$expr: {
-								a: {
-									api_key: {
-										$any: {
-											$alias: 'k',
-											$expr: {
-												k: { key: { '@': 'key' } },
-											},
+const getUserQuery = _.once(() => {
+	const pineQuery = {
+		resource: 'user',
+		passthrough: { req: permissions.root },
+		options: {
+			$select: userFields,
+			$filter: {
+				actor: {
+					$any: {
+						$alias: 'a',
+						$expr: {
+							a: {
+								api_key: {
+									$any: {
+										$alias: 'k',
+										$expr: {
+											k: { key: { '@': 'key' } },
 										},
 									},
 								},
@@ -179,14 +177,14 @@ const getUserQuery = _.once(
 						},
 					},
 				},
-				$top: 1,
 			},
-		}) as PreparedFn<
-			{ key: string },
-			Promise<Array<PickDeferred<User['Read'], (typeof userFields)[number]>>>,
-			User
-		>,
-);
+			$top: 1,
+		},
+	} as const satisfies Params<User>;
+	return api.resin.prepare<{ key: string }, 'user', typeof pineQuery>(
+		pineQuery,
+	);
+});
 
 export function getUser(
 	req: Request | hooks.HookReq,

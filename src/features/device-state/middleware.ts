@@ -1,4 +1,5 @@
 import type { RequestHandler } from 'express';
+import type { Params } from 'pinejs-client-core';
 import _ from 'lodash';
 import { multiCacheMemoizee } from '../../infra/cache/index.js';
 import type { Device } from '../../balena-model.js';
@@ -9,26 +10,24 @@ import type { Request } from 'express-serve-static-core';
 
 const { api } = sbvrUtils;
 
-const $select = ['id', 'is_frozen'] satisfies Array<keyof Device['Read']>;
-const checkDeviceExistsIsFrozenQuery = _.once(() =>
-	api.resin.prepare<{ uuid: string }, 'device'>({
+const checkDeviceExistsIsFrozenQuery = _.once(() => {
+	const pineQuery = {
 		resource: 'device',
 		passthrough: { req: permissions.root },
 		id: {
 			uuid: { '@': 'uuid' },
 		},
 		options: {
-			$select,
+			$select: ['id', 'is_frozen'],
 		},
-	}),
-);
+	} as const satisfies Params<Device>;
+	return api.resin.prepare<{ uuid: string }, 'device', typeof pineQuery>(
+		pineQuery,
+	);
+});
 export const checkDeviceExistsIsFrozen = multiCacheMemoizee(
-	async (
-		uuid: string,
-	): Promise<Pick<Device['Read'], (typeof $select)[number]> | undefined> => {
-		return (await checkDeviceExistsIsFrozenQuery()({ uuid })) as
-			| Pick<Device['Read'], (typeof $select)[number]>
-			| undefined;
+	async (uuid: string) => {
+		return await checkDeviceExistsIsFrozenQuery()({ uuid });
 	},
 	{
 		cacheKey: 'checkDeviceExistsIsFrozen',
