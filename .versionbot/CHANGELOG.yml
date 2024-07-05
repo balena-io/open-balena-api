@@ -1,4 +1,16 @@
 - commits:
+    - subject: Use improved pinejs-client prepare typings
+      hash: 31402df387dea0803db5cc710cd75bcb9c9233fb
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 25.1.26
+  title: ""
+  date: 2024-07-05T18:22:43.317Z
+- commits:
     - subject: Use `as const` to improve typings of $expand queries
       hash: f2d9b7cb3ccc8744a63dadc006dfc5d8c3c7e5b3
       body: |
