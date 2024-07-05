@@ -1,6 +1,7 @@
 import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 import RedisSMQ from 'rsmq';
+import type { Params } from 'pinejs-client-core';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
@@ -18,11 +19,15 @@ import {
 } from '../../lib/config.js';
 import { redis, redisRO } from '../../infra/redis/index.js';
 import { setTimeout } from 'timers/promises';
+import type {
+	ApplicationConfigVariable,
+	DeviceConfigVariable,
+} from '../../balena-model.js';
 
 const { api } = sbvrUtils;
 
-const getPollIntervalForDevice = _.once(() =>
-	api.resin.prepare<{ deviceId: number }, 'device_config_variable'>({
+const getPollIntervalForDevice = _.once(() => {
+	const pineQuery = {
 		resource: 'device_config_variable',
 		passthrough: { req: permissions.root },
 		options: {
@@ -43,16 +48,16 @@ const getPollIntervalForDevice = _.once(() =>
 				name: 'desc',
 			},
 		},
-	}),
-);
+	} as const satisfies Params<DeviceConfigVariable>;
+	return api.resin.prepare<
+		{ deviceId: number },
+		'device_config_variable',
+		typeof pineQuery
+	>(pineQuery);
+});
 
-const getPollIntervalForParentApplication = _.once(() =>
-	api.resin.prepare<
-		{
-			deviceId: number;
-		},
-		'application_config_variable'
-	>({
+const getPollIntervalForParentApplication = _.once(() => {
+	const pineQuery = {
 		resource: 'application_config_variable',
 		passthrough: { req: permissions.root },
 		options: {
@@ -91,8 +96,15 @@ const getPollIntervalForParentApplication = _.once(() =>
 				name: 'desc',
 			},
 		},
-	}),
-);
+	} as const satisfies Params<ApplicationConfigVariable>;
+	return api.resin.prepare<
+		{
+			deviceId: number;
+		},
+		'application_config_variable',
+		typeof pineQuery
+	>(pineQuery);
+});
 
 export const getPollInterval = async (
 	deviceId: number,
@@ -106,17 +118,15 @@ export const getPollInterval = async (
 			config['BALENA_SUPERVISOR_POLL_INTERVAL'];
 	} else {
 		pollIntervalString ??= (
-			(await getPollIntervalForDevice()({
+			await getPollIntervalForDevice()({
 				deviceId,
-			})) as Array<{
-				value: string;
-			}>
+			})
 		)[0]?.value;
 
 		pollIntervalString ??= (
-			(await getPollIntervalForParentApplication()({
+			await getPollIntervalForParentApplication()({
 				deviceId,
-			})) as Array<{ value: string }>
+			})
 		)[0]?.value;
 	}
 

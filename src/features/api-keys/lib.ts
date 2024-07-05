@@ -1,10 +1,12 @@
 import type { Request } from 'express';
 import randomstring from 'randomstring';
 import _ from 'lodash';
+import type { Params } from 'pinejs-client-core';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import { multiCacheMemoizee } from '../../infra/cache/index.js';
 import { API_KEY_ROLE_CACHE_TIMEOUT } from '../../lib/config.js';
+import type { Role } from '../../balena-model.js';
 
 const { api } = sbvrUtils;
 const { BadRequestError } = errors;
@@ -278,8 +280,8 @@ export const createGenericApiKey = async (
 };
 
 export const isApiKeyWithRole = (() => {
-	const authQuery = _.once(() =>
-		api.Auth.prepare<{ key: string; roleName: string }, 'role'>({
+	const authQuery = _.once(() => {
+		const pineQuery = {
 			resource: 'role',
 			passthrough: { req: permissions.root },
 			id: {
@@ -309,8 +311,13 @@ export const isApiKeyWithRole = (() => {
 					},
 				},
 			},
-		}),
-	);
+		} as const satisfies Params<Role>;
+		return api.Auth.prepare<
+			{ key: string; roleName: string },
+			'role',
+			typeof pineQuery
+		>(pineQuery);
+	});
 	return multiCacheMemoizee(
 		async (key: string, roleName: string, tx?: Tx): Promise<boolean> => {
 			const role = await authQuery()({ key, roleName }, undefined, {
