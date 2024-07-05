@@ -171,7 +171,7 @@ export default () => {
 										},
 									},
 								},
-							})
+							} as const)
 							.expect(200);
 						expect(serviceInstalls).to.have.lengthOf(1);
 						const [service] = serviceInstalls[0].installs__service;
@@ -450,7 +450,7 @@ export default () => {
 										},
 									},
 								},
-							})
+							} as const)
 							.expect(200);
 						expect(serviceInstalls).to.have.lengthOf(1);
 						const [service] = serviceInstalls[0].installs__service;
@@ -505,7 +505,7 @@ export default () => {
 										},
 										$orderby: { created_at: 'asc' },
 									},
-								})
+								} as const)
 								.expect(200);
 							expect(serviceInstalls).to.have.lengthOf(2);
 							const [oldService, newService] = serviceInstalls.map(

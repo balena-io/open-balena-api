@@ -236,7 +236,7 @@ const stateQuery = _.once(() =>
 				},
 			},
 		},
-	}),
+	} as const),
 );
 
 const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {

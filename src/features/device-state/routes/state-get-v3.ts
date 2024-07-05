@@ -285,7 +285,7 @@ const stateQuery = _.once(() =>
 			$select: ['device_name', ...getStateEventAdditionalFields],
 			$expand: deviceExpand,
 		},
-	}),
+	} as const),
 );
 
 const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {

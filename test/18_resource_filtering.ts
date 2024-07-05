@@ -216,7 +216,7 @@ export default () => {
 								},
 							],
 						},
-					});
+					} as const);
 					expect(body).to.be.an('array').to.have.lengthOf(4);
 					expect(body.map((app) => app.app_name)).deep.equal([
 						'appapp2',
@@ -234,7 +234,7 @@ export default () => {
 							$expand: { application_tag: {} },
 							$orderby: `application_tag/$count($filter=value eq '0') desc,app_name asc`,
 						},
-					});
+					} as const);
 					expect(body).to.be.an('array').to.have.lengthOf(4);
 					expect(body.map((app) => app.app_name)).deep.equal([
 						'appapp2',

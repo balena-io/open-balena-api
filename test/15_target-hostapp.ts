@@ -367,7 +367,7 @@ export default () => {
 												},
 											},
 										},
-									})
+									} as const)
 									.expect(200);
 								expect(serviceInstalls).to.have.lengthOf(1);
 								const [service] = serviceInstalls[0].installs__service;

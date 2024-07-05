@@ -223,7 +223,7 @@ export default () => {
 									},
 								},
 							},
-						})
+						} as const)
 						.expect(200);
 
 					const newDt = dbDeviceTypes.find(

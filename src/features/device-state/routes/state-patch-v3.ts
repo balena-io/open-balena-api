@@ -172,7 +172,7 @@ const fetchData = async (
 						},
 					},
 				},
-			})) as Array<
+			} as const)) as Array<
 				Pick<Release['Read'], 'id' | 'commit'> & {
 					release_image?: Array<{
 						image: Array<
