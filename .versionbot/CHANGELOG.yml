@@ -1,4 +1,18 @@
 - commits:
+    - subject: Use `as const` to improve typings of $expand queries
+      hash: f2d9b7cb3ccc8744a63dadc006dfc5d8c3c7e5b3
+      body: |
+        Typescript doesn't like inferring nested $expand typings so using as
+        const just gives it a helping hand
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 25.1.25
+  title: ""
+  date: 2024-07-05T07:40:08.566Z
+- commits:
     - subject: "logs/redis: Delete references of cancelled heartbeat subscriptions"
       hash: ff24112cb62344e721105dfc68a055ef127bd56e
       body: ""
