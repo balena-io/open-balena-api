@@ -1,4 +1,24 @@
 - commits:
+    - subject: "logs: Refactor the heartbeat to use setInterval instead of setTimeout"
+      hash: 6f9c85c4e0004a68b731e5a17d9187baa7e521b9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: "logs: Eagerly clear the heartbeat timeout when the request finishes"
+      hash: 40360a462e0529e1cab0c85db47cb4e3dd71fd86
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 25.1.29
+  title: ""
+  date: 2024-07-09T14:40:52.132Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v18.0.5
       hash: bcb34a715e4a33298bb7f7b72860f2d03335c551
       body: |
