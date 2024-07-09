@@ -22,6 +22,7 @@ const translatePropertyTo =
 		if (Object.hasOwn(request.values, currentModelField)) {
 			// Add an async boundary so that other sync hooks can use
 			// the untranslated values.
+			// eslint-disable-next-line @typescript-eslint/await-thenable
 			await null;
 			request.values[newerModelField] = request.values[currentModelField];
 			delete request.values[currentModelField];

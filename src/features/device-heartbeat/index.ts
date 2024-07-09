@@ -188,7 +188,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 
 	private readonly featureIsEnabled: boolean;
 
-	private isConsuming: boolean = false;
+	private isConsuming = false;
 	private rsmq: RedisSMQ;
 
 	public constructor() {
@@ -215,11 +215,11 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 					throw err;
 				}
 			})
-			.then(() =>
+			.then(() => {
 				this.setupQueueStatsEmitter(
 					DeviceOnlineStateManager.QUEUE_STATS_INTERVAL_MSEC,
-				),
-			);
+				);
+			});
 	}
 
 	private setupQueueStatsEmitter(interval: number) {
@@ -301,7 +301,8 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 			.then(async (msg) => {
 				if (!('id' in msg)) {
 					// no messages to consume, wait a second...
-					return await setTimeout(1000);
+					await setTimeout(1000);
+					return;
 				}
 
 				const { id, message } = msg;
@@ -358,12 +359,12 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 					);
 				}
 			})
-			.catch((err: Error) =>
+			.catch((err: Error) => {
 				captureException(
 					err,
 					'An error occurred while consuming API heartbeat state queue',
-				),
-			)
+				);
+			})
 			.then(() => this.consume());
 
 		return null;

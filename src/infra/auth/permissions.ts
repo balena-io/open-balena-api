@@ -62,7 +62,7 @@ export const assignUserPermission = (
 	tx: Tx,
 ) => getOrInsertId('user__has__permission', { user, permission }, tx);
 
-export const revokeUserRole = async (user: number, role: number, tx: Tx) =>
+export const revokeUserRole = async (user: number, role: number, tx: Tx) => {
 	await api.Auth.delete({
 		resource: 'user__has__role',
 		id: {
@@ -74,6 +74,7 @@ export const revokeUserRole = async (user: number, role: number, tx: Tx) =>
 			req: permissions.root,
 		},
 	});
+};
 
 // api key helpers
 

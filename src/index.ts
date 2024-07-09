@@ -322,7 +322,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	// redirect to https if needed, except for requests to
 	// the /ping endpoint which must always return 200
 	app.use(
-		fixProtocolMiddleware(['/ping'].concat(options.skipHttpsPaths || [])),
+		fixProtocolMiddleware(['/ping'].concat(options.skipHttpsPaths ?? [])),
 	);
 
 	app.use((req, res, next) => {
@@ -332,12 +332,13 @@ export async function setup(app: Application, options: SetupOptions) {
 			// itself as "Supervisor/X.X.X (Linux; Resin OS X.X.X; prod)" and the
 			// cron-updater uses curl, all of which ignore CORS and other browser related
 			// headers, so we can drop them to save bandwidth.
-			return next();
+			next();
+			return;
 		}
 		res.set('X-Frame-Options', 'DENY');
 		res.set('X-Content-Type-Options', 'nosniff');
 
-		const origin = req.get('Origin') || '*';
+		const origin = req.get('Origin') ?? '*';
 		res.header('Access-Control-Allow-Origin', origin);
 		res.header('Access-Control-Allow-Credentials', 'true');
 		// Indicates the response headers that should be made available to js code running in browsers,
@@ -346,7 +347,8 @@ export async function setup(app: Application, options: SetupOptions) {
 
 		if (req.method !== 'OPTIONS') {
 			// If we're not a preflight request then carry on to the real implementation
-			return next();
+			next();
+			return;
 		}
 		// Otherwise add the preflight CORS headers and return 200
 		res.header(
@@ -408,16 +410,18 @@ export async function setup(app: Application, options: SetupOptions) {
 function fixProtocolMiddleware(skipUrls: string[] = []): Handler {
 	return (req, res, next) => {
 		if (req.protocol === 'https' || skipUrls.includes(req.url)) {
-			return next();
+			next();
+			return;
 		}
 		if (req.headers['x-forwarded-for'] == null) {
 			const trust = req.app.get('trust proxy fn') as ReturnType<
 				typeof import('proxy-addr').compile
 			>;
-			if (trust(req.socket.remoteAddress!, 0)) {
+			if (req.socket.remoteAddress && trust(req.socket.remoteAddress, 0)) {
 				// If we trust the origin of the request and they have not set any `x-forwarded-for` header then
 				// allow them to use http connections without needing to set a dummy `x-forwarded-proto` header
-				return next();
+				next();
+				return;
 			}
 		}
 		res.redirect(301, `https://${API_HOST}${req.url}`);

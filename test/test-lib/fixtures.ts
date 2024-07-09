@@ -614,7 +614,7 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 					with: { type: 'json' },
 				}
 			);
-			return await loadFixtureModel(loaders[model], fixtures, fromJson);
+			return loadFixtureModel(loaders[model], fixtures, fromJson);
 		})();
 	}
 

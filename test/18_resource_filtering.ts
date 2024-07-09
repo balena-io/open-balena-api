@@ -6,6 +6,7 @@ import _ from 'lodash';
 import type { Application } from '../src/balena-model.js';
 import { setTimeout } from 'timers/promises';
 import type { PineTest } from 'pinejs-client-supertest';
+import { assertExists } from './test-lib/common.js';
 
 export default () => {
 	versions.test((_version, pineTest) => {
@@ -117,11 +118,13 @@ export default () => {
 				});
 
 				it('Should filter applications with created_at less or equal than last', async () => {
+					const lastTestTime = testTimes.at(-1);
+					assertExists(lastTestTime);
 					const { body } = await pineUser.get({
 						resource: 'application',
 						options: {
 							$filter: {
-								created_at: { $le: testTimes.at(-1)!.created_at },
+								created_at: { $le: lastTestTime.created_at },
 							},
 						},
 					});

@@ -34,6 +34,7 @@ hooks.addPureHook('POST', 'resin', 'device', {
 		if (request.values.is_pinned_on__release !== undefined) {
 			// Add an async boundary so that value updates,
 			// and doesn't remove the properties that we add.
+			// eslint-disable-next-line @typescript-eslint/await-thenable
 			await null;
 			request.values.should_be_running__release =
 				request.values.is_pinned_on__release;
@@ -87,6 +88,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		if (request.values.is_pinned_on__release !== undefined) {
 			// Add an async boundary so that value updates,
 			// and doesn't remove the properties that we add.
+			// eslint-disable-next-line @typescript-eslint/await-thenable
 			await null;
 			request.values.should_be_running__release =
 				request.values.is_pinned_on__release;

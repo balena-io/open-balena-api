@@ -6,6 +6,7 @@ import type { UserObjectParam } from '../test-lib/supertest.js';
 import { supertest } from '../test-lib/supertest.js';
 import type { TokenUserPayload } from '../../src/index.js';
 import type { RequiredField } from '@balena/pinejs/out/sbvr-api/common-types.js';
+import { assertExists } from './common.js';
 
 const version = 'resin';
 
@@ -113,14 +114,15 @@ export const expectResourceToMatch = async <T = AnyObject>(
 		(
 			'expect' in requestPromise
 				? (await requestPromise.expect(200)).body
-				: await requestPromise
+				: await (requestPromise as Promise<T>)
 		) as T | undefined;
+	assertExists(result);
 	expect(result).to.be.an('object');
 	for (const [key, valueOrAssertion] of Object.entries(expectations)) {
 		if (typeof valueOrAssertion === 'function') {
 			valueOrAssertion(
 				expect(result).to.have.property(key),
-				result![key as keyof typeof result],
+				result[key as keyof typeof result],
 			);
 		} else if (
 			typeof valueOrAssertion === 'object' &&
@@ -131,7 +133,7 @@ export const expectResourceToMatch = async <T = AnyObject>(
 			expect(result).to.have.property(key, valueOrAssertion);
 		}
 	}
-	return result!;
+	return result;
 };
 
 const validJwtProps = ['id', 'jwt_secret', 'authTime', 'iat', 'exp'].sort();

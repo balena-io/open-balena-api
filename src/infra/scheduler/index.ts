@@ -99,8 +99,7 @@ export const scheduleJob = (
 	jobFunction: JobFunction,
 	lockOptions?: LockSettings,
 ): schedule.Job => {
-	const ttl =
-		lockOptions && lockOptions.ttl ? lockOptions.ttl : JOB_DEFAULT_TTL;
+	const ttl = lockOptions?.ttl ? lockOptions.ttl : JOB_DEFAULT_TTL;
 	const jobLockKey = JOB_LOCK_PREFIX + jobId;
 	const jobInfoKey = JOB_INFO_PREFIX + jobId;
 	const job: schedule.Job = schedule.scheduleJob(

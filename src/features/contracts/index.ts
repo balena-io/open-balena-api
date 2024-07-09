@@ -351,7 +351,9 @@ export const startContractSynchronization = _.once(() => {
 	scheduleJob(
 		'contractSync',
 		'*/5 * * * *',
-		async () => await synchronizeContracts(contractRepos),
+		async () => {
+			await synchronizeContracts(contractRepos);
+		},
 		{
 			// The maximum expected amount of time that the job needs to complete
 			// and it should hold the lock to prevent other jobs from starting.

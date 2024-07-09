@@ -5,6 +5,8 @@ import _ from 'lodash';
 import { execSync } from 'node:child_process';
 import path from 'path';
 import configJson from '../config.js';
+import type { types } from '@balena/pinejs';
+import { assertExists } from './test-lib/common.js';
 
 // Validate SQL files using squawk
 function validateSql(file: string): void {
@@ -20,16 +22,20 @@ function validateSql(file: string): void {
 export default () => {
 	describe('migrations', () => {
 		_(configJson.models)
-			.filter('migrationsPath')
+			.filter(
+				(m): m is types.RequiredField<typeof m, 'migrationsPath'> =>
+					m.migrationsPath != null,
+			)
 			.each(({ modelName, migrationsPath }) => {
-				describe(modelName!, () => {
-					if (!path.isAbsolute(migrationsPath!)) {
+				assertExists(modelName);
+				describe(modelName, () => {
+					if (!path.isAbsolute(migrationsPath)) {
 						migrationsPath = fileURLToPath(
 							new URL('../src/' + migrationsPath, import.meta.url),
 						);
 					}
-					const fileNames = fs.readdirSync(migrationsPath!);
-					it('should have unique prefixes', async () => {
+					const fileNames = fs.readdirSync(migrationsPath);
+					it('should have unique prefixes', () => {
 						const duplicates = _(fileNames)
 							.groupBy((v) => v.split('-', 1)[0])
 							.filter((v) => v.length > 1)
@@ -45,15 +51,15 @@ export default () => {
 					for (const fileName of fileNames.filter((f) => {
 						return f.endsWith('.sql');
 					})) {
-						it(`should have valid sql in ${fileName}`, async () => {
-							validateSql(path.join(migrationsPath!, fileName));
+						it(`should have valid sql in ${fileName}`, () => {
+							validateSql(path.join(migrationsPath, fileName));
 						});
 					}
 
 					// Sanity check async migrations
 					const asyncMigrationPaths = fileNames
 						.filter((fileName) => fileName.endsWith('.async.ts'))
-						.map((fileName) => path.join(migrationsPath!, fileName));
+						.map((fileName) => path.join(migrationsPath, fileName));
 					for (const asyncMigrationPath of asyncMigrationPaths) {
 						it(`should have valid sql in ${asyncMigrationPath}`, async () => {
 							const migration = (await import(asyncMigrationPath)).default;
@@ -90,7 +96,7 @@ export default () => {
 	});
 
 	describe('balena-init.sql', () => {
-		it('should have valid sql', async () => {
+		it('should have valid sql', () => {
 			validateSql('src/balena-init.sql');
 		});
 	});

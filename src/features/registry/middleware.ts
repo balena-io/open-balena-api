@@ -18,10 +18,13 @@ export const basicApiKeyAuthenticate: RequestHandler = async (
 	res,
 	next,
 ) => {
-	const creds = BasicAuth.parse(req.headers['authorization']!);
-	if (creds) {
-		req.params.subject = creds.name;
-		req.params.apikey = creds.pass;
+	const authHeader = req.headers['authorization'];
+	if (authHeader != null) {
+		const creds = BasicAuth.parse(authHeader);
+		if (creds) {
+			req.params.subject = creds.name;
+			req.params.apikey = creds.pass;
+		}
 	}
 	if (req.params.apikey === TOKEN_AUTH_BUILDER_TOKEN) {
 		next();
@@ -47,9 +50,9 @@ export const basicApiKeyAuthenticate: RequestHandler = async (
 			req.user == null
 		) {
 			if (
-				req.headers['authorization'] ||
-				req.params['apikey'] ||
-				req.body['apikey'] ||
+				req.headers['authorization'] ??
+				req.params['apikey'] ??
+				req.body['apikey'] ??
 				req.query['apikey']
 			) {
 				throw new InvalidAuthProvidedError();

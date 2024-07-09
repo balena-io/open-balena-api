@@ -79,7 +79,7 @@ export default () => {
 		});
 
 		describe(`given a token that doesn't match any device api key`, function () {
-			before(async function () {
+			before(function () {
 				this.uuid = generateDeviceUuid();
 				this.deviceKey = randomstring.generate();
 			});

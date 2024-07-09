@@ -70,38 +70,35 @@ export function setCurrentSubscriptions(value: number) {
 	metrics.gauge(names.api_device_logs_current_subscriptions, value);
 }
 
-export function incrementSubscriptionTotal(value: number = 1) {
+export function incrementSubscriptionTotal(value = 1) {
 	metrics.counter(names.api_device_logs_subscription_total, value);
 }
 
-export function incrementPublishLogMessagesTotal(value: number = 1) {
+export function incrementPublishLogMessagesTotal(value = 1) {
 	metrics.counter(names.api_device_logs_publish_log_messages_total, value);
 }
 
-export function incrementPublishLogMessagesDropped(value: number = 1) {
+export function incrementPublishLogMessagesDropped(value = 1) {
 	metrics.counter(names.api_device_logs_publish_log_messages_dropped, value);
 }
 
-export function incrementPublishCallTotal(value: number = 1) {
+export function incrementPublishCallTotal(value = 1) {
 	metrics.counter(names.api_device_logs_publish_call_total, value);
 }
 
-export function incrementPublishCallSuccessTotal(value: number = 1) {
+export function incrementPublishCallSuccessTotal(value = 1) {
 	metrics.counter(names.api_device_logs_publish_call_success_total, value);
 }
 
-export function incrementPublishCallFailedTotal(value: number = 1) {
+export function incrementPublishCallFailedTotal(value = 1) {
 	metrics.counter(names.api_device_logs_publish_call_failed_total, value);
 }
 
-export function incrementLokiPushTotal(value: number = 1) {
+export function incrementLokiPushTotal(value = 1) {
 	metrics.counter(names.api_device_logs_loki_push_total, value);
 }
 
-export function incrementLokiPushErrorTotal(
-	errorCode: string,
-	value: number = 1,
-) {
+export function incrementLokiPushErrorTotal(errorCode: string, value = 1) {
 	metrics.counter(names.api_device_logs_loki_push_error_total, value, {
 		errorCode,
 	});

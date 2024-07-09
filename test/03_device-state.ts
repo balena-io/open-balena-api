@@ -849,7 +849,8 @@ export default () => {
 							});
 
 							it(`should update the DB heartbeat after the validity period passes`, async () => {
-								await setTimeout(500 + Date.now() - lastPersistedTimestamp!);
+								assertExists(lastPersistedTimestamp);
+								await setTimeout(500 + Date.now() - lastPersistedTimestamp);
 								await fakeDevice.getState(device2, device2.uuid, stateVersion);
 								await waitFor({ checkFn: () => device2ChangeEventSpy.called });
 								await expectResourceToMatch(pineUser, 'device', device2.id, {
@@ -921,7 +922,7 @@ export default () => {
 						});
 
 						describe('When decreasing the API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT', function () {
-							before(async function () {
+							before(function () {
 								config.TEST_MOCK_ONLY.API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT =
 									2 * SECONDS;
 							});
@@ -943,7 +944,8 @@ export default () => {
 							});
 
 							it(`should update the DB heartbeat after exceeding the new validity period`, async () => {
-								await setTimeout(500 + Date.now() - lastPersistedTimestamp!);
+								assertExists(lastPersistedTimestamp);
+								await setTimeout(500 + Date.now() - lastPersistedTimestamp);
 								await fakeDevice.getState(device2, device2.uuid, stateVersion);
 								await waitFor({ checkFn: () => device2ChangeEventSpy.called });
 								await expectResourceToMatch(pineUser, 'device', device2.id, {
@@ -1237,7 +1239,7 @@ export default () => {
 					const generateValidAddress = (
 						addr: string,
 						truncLen: number,
-						delimiter: string = '',
+						delimiter = '',
 					): string => {
 						let validAddress = '';
 						while (

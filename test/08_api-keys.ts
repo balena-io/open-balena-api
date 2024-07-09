@@ -6,6 +6,7 @@ import type { UserObjectParam } from './test-lib/supertest.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import { sbvrUtils, permissions } from '@balena/pinejs';
+import { assertExists } from './test-lib/common.js';
 
 const { api } = sbvrUtils;
 
@@ -144,6 +145,7 @@ export default () => {
 							},
 						});
 
+						assertExists(apiKeyResp);
 						expect(apiKeyResp).to.have.property(
 							'name',
 							`provision-key-${applicationId}-with-expiry`,
@@ -153,8 +155,8 @@ export default () => {
 							`Sample key for application-${applicationId} description.`,
 						);
 
-						expect(apiKeyResp).to.have.property('expiry_date');
-						const expiryDate = new Date(apiKeyResp!.expiry_date!);
+						assertExists(apiKeyResp.expiry_date);
+						const expiryDate = new Date(apiKeyResp.expiry_date);
 						expect(expiryDate.getTime()).to.equal(tomorrowDate.getTime());
 					});
 
@@ -565,7 +567,7 @@ export default () => {
 			});
 		});
 
-		describe('standard api key endpoints', async function () {
+		describe('standard api key endpoints', function () {
 			before(async function () {
 				const fx = await fixtures.load();
 

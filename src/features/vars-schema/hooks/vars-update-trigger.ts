@@ -110,7 +110,7 @@ const addEnvHooks = (
 	});
 };
 
-const addAppEnvHooks = (resource: string) =>
+const addAppEnvHooks = (resource: string) => {
 	addEnvHooks(resource, async (args) => {
 		if (args.req.body.application != null) {
 			// If we have an application passed in the body (ie POST) then we can use that to find the devices to update.
@@ -144,11 +144,12 @@ const addAppEnvHooks = (resource: string) =>
 			}),
 		];
 	});
+};
 
 addAppEnvHooks('application_config_variable');
 addAppEnvHooks('application_environment_variable');
 
-const addDeviceEnvHooks = (resource: string) =>
+const addDeviceEnvHooks = (resource: string) => {
 	addEnvHooks(resource, async (args) => {
 		if (args.req.body.device != null) {
 			// If we have a device passed in the body (ie POST) then we can use that as ID filter.
@@ -173,6 +174,7 @@ const addDeviceEnvHooks = (resource: string) =>
 			}),
 		];
 	});
+};
 
 addDeviceEnvHooks('device_config_variable');
 addDeviceEnvHooks('device_environment_variable');
