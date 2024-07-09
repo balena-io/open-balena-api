@@ -1,4 +1,16 @@
 - commits:
+    - subject: "is_pinned_on__release: Add translations and only read the new column"
+      hash: 84da36eeb2c6f4111333bdeb40f0a53ca7601499
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Andrea Rosci
+      nested: []
+  version: 25.2.0
+  title: ""
+  date: 2024-07-09T15:21:59.710Z
+- commits:
     - subject: "logs: Refactor the heartbeat to use setInterval instead of setTimeout"
       hash: 6f9c85c4e0004a68b731e5a17d9187baa7e521b9
       body: ""
