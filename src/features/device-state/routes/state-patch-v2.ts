@@ -8,6 +8,7 @@ import {
 } from '../../../infra/error-handling/index.js';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils.js';
+import type { Application, Device } from '../../../balena-model.js';
 import {
 	shouldUpdateMetrics,
 	metricsPatchFields,
@@ -18,7 +19,6 @@ import {
 	limitMetricNumbers,
 } from '../state-patch-utils.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
-import type { Application, Device } from '../../../balena-model.js';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -147,10 +147,9 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 			const { apps } = local;
 
 			let deviceBody: Pick<LocalBody, (typeof v2ValidPatchFields)[number]> &
-				Partial<Pick<Device['Write'], 'is_running__release'>> = _.pick(
-				local,
-				v2ValidPatchFields,
-			);
+				Partial<
+					Pick<Device['Write'], 'is_running__release' | 'is_pinned_on__release'>
+				> = _.pick(local, v2ValidPatchFields);
 			let metricsBody: Pick<LocalBody, (typeof metricsPatchFields)[number]> =
 				_.pick(local, metricsPatchFields);
 			limitMetricNumbers(metricsBody);
@@ -164,6 +163,9 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 				metricsBody = {};
 			}
 
+			if (local.should_be_running__release !== undefined) {
+				deviceBody.is_pinned_on__release = local.should_be_running__release;
+			}
 			if (local.name != null) {
 				deviceBody.device_name = local.name;
 			}

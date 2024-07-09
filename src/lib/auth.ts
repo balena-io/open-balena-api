@@ -95,7 +95,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 		`device/any(d:${matchesNonFrozenDeviceActor('d')})`,
 	),
 	'resin.application_config_variable.read?application/canAccess()',
-	'resin.release.read?should_be_running_on__device/canAccess() or belongs_to__application/canAccess()',
+	'resin.release.read?is_pinned_to__device/canAccess() or belongs_to__application/canAccess()',
 	'resin.release_tag.read?release/canAccess()',
 	'resin.device_environment_variable.read?device/canAccess()',
 	...writePerms(

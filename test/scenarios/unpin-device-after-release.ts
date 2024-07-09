@@ -12,10 +12,18 @@ import {
 	addServiceToApp,
 	addImageToRelease,
 } from '../test-lib/api-helpers.js';
+import * as versions from '../test-lib/versions.js';
 
 const version = 'resin';
 
 export default () => {
+	// we don't really need `versions.gt` here since `const version = 'resin';`,
+	// but used it anyway for consistency and in case we later prefer to run
+	// the scenarion with multiple versions.
+	const pinnedOnReleaseField = versions.gt(version, 'v6')
+		? 'is_pinned_on__release'
+		: 'should_be_running__release';
+
 	describe('Device with missing service installs', () => {
 		let fx: fixtures.Fixtures;
 		let admin: UserObjectParam;
@@ -81,7 +89,7 @@ export default () => {
 			await supertest(admin)
 				.patch(`/${version}/device(${device.id})`)
 				.send({
-					should_be_running__release: releases['deadbeef'],
+					[pinnedOnReleaseField]: releases['deadbeef'],
 				})
 				.expect(200);
 
@@ -163,7 +171,7 @@ export default () => {
 			await supertest(admin)
 				.patch(`/${version}/device(${device.id})`)
 				.send({
-					should_be_running__release: null,
+					[pinnedOnReleaseField]: null,
 				})
 				.expect(200);
 		});

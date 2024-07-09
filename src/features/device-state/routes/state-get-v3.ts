@@ -226,7 +226,7 @@ const deviceExpand = {
 	device_environment_variable: {
 		$select: ['name', 'value'],
 	},
-	should_be_running__release: releaseExpand,
+	is_pinned_on__release: releaseExpand,
 	service_install: {
 		$select: ['id'],
 		$expand: {
@@ -323,7 +323,7 @@ const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
 				'io.balena.image.store': 'root',
 			},
 		),
-		...getAppState(device, 'should_be_running__release', config),
+		...getAppState(device, 'is_pinned_on__release', config),
 	};
 
 	const state: StateV3 = {
@@ -368,7 +368,7 @@ const getDevice = getStateDelayingEmpty(
 const getAppState = (
 	device: AnyObject,
 	targetReleaseField:
-		| 'should_be_running__release'
+		| 'is_pinned_on__release'
 		| 'should_be_managed_by__release'
 		| 'should_be_operated_by__release',
 	config: Dictionary<string>,
@@ -376,7 +376,7 @@ const getAppState = (
 ): StateV3[string]['apps'] | null => {
 	let application: AnyObject;
 	let release: AnyObject | undefined;
-	if (targetReleaseField === 'should_be_running__release') {
+	if (targetReleaseField === 'is_pinned_on__release') {
 		application = device.belongs_to__application[0];
 		release = getReleaseForDevice(device);
 	} else {
