@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update @balena/lint and fix warnings
+      hash: b8249a7c9e9ce11a98505f1cde0a08b3783cc3d4
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 25.2.2
+  title: ""
+  date: 2024-07-10T16:33:05.696Z
+- commits:
     - subject: Use the toVersion Resource instead of Table in v6 device.overall_status
         translation
       hash: 80e144fbad821588b6602369351a38a73f3122e8
