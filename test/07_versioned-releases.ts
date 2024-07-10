@@ -232,8 +232,9 @@ export default () => {
 					},
 				})
 				.expect(200);
+			assertExists(topRevisionRelease.revision);
 			expect(topRevisionRelease.revision).to.be.a('number');
-			return topRevisionRelease.revision!;
+			return topRevisionRelease.revision;
 		};
 
 		/* Tests that the computed terms have the correct values based on what values the DB fields hold. */
@@ -781,14 +782,17 @@ export default () => {
 								(rev) => rev,
 							);
 							expect(revisions).to.deep.equal(_.range(0, newReleases.length));
-							return newReleases;
+							for (const release of newReleases) {
+								assertExists(release.revision);
+								expect(release)
+									.to.have.property('revision')
+									.that.is.a('number');
+							}
+							return newReleases as Array<
+								NonNullableField<Release['Read'], 'revision'>
+							>;
 						}),
 					);
-					v1Releases
-						.concat(v2Releases)
-						.forEach((r) =>
-							expect(r).to.have.property('revision').that.is.a('number'),
-						);
 					const [versionAReleasesToChangeSemver, [leftBehindV1SemverRelease]] =
 						_.partition(
 							v1Releases,
@@ -797,7 +801,7 @@ export default () => {
 					const releaseIdsToChangeSemver = versionAReleasesToChangeSemver.map(
 						(r) => r.id,
 					);
-					const maxV2Revision = Math.max(...v2Releases.map((r) => r.revision!));
+					const maxV2Revision = Math.max(...v2Releases.map((r) => r.revision));
 
 					await updateFn(versionAReleasesToChangeSemver);
 

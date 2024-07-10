@@ -244,11 +244,12 @@ export default () => {
 						JSON.parse(JSON.stringify(finDtContract)),
 					);
 
+					assertExists(rpiDt);
 					expect(rpiDt)
 						.to.have.property('device_type_alias')
 						.that.is.an('array');
 					expect(
-						rpiDt!.device_type_alias
+						rpiDt.device_type_alias
 							.map((a) => a.is_referenced_by__alias)
 							.sort(),
 					).to.deep.equal(['raspberry-pi', 'raspberrypi']);

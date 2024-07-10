@@ -145,7 +145,7 @@ export const checkUserPassword = async (
 export const reqHasPermission = (
 	req: Pick<Request, 'apiKey' | 'user'>,
 	permission: string,
-): boolean => userHasPermission(req.apiKey || req.user, permission);
+): boolean => userHasPermission(req.apiKey ?? req.user, permission);
 
 // If adding/removing fields, please also update `User`
 // in "typings/common.d.ts".
@@ -267,9 +267,7 @@ export async function findUser<TProps extends Array<keyof User['Read']>>(
 	tx: Tx,
 	$select: TProps,
 ): Promise<PickDeferred<User['Read'], (typeof $select)[number]> | undefined>;
-export async function findUser<
-	TProps extends Array<keyof User['Read'] & string>,
->(
+export async function findUser<TProps extends Array<keyof User['Read']>>(
 	loginInfo: string,
 	tx: Tx,
 	$select: TProps = defaultFindUser$select as TProps,

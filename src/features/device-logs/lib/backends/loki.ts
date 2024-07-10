@@ -101,7 +101,7 @@ async function assertLokiLogContext(
 
 	// Mutate so that we don't have to repeatedly amend the same context and instead cache it
 	(ctx as Writable<typeof ctx>).belongs_to__application =
-		device?.belongs_to__application!.__id;
+		device?.belongs_to__application?.__id;
 
 	return ctx as types.RequiredField<typeof ctx, 'belongs_to__application'>;
 }
@@ -139,9 +139,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		);
 	}
 
-	public get available(): boolean {
-		return true;
-	}
+	public readonly available = true;
 
 	/**
 	 *
@@ -232,9 +230,17 @@ export class LokiBackend implements DeviceLogsBackend {
 				{
 					deadline: startAt + PUSH_TIMEOUT,
 				},
-				(err, response) => (err ? reject(err) : resolve(response)),
+				(err, response) => {
+					if (err) {
+						reject(err);
+					} else {
+						resolve(response);
+					}
+				},
 			);
-		}).finally(() => updateLokiPushDurationHistogram(Date.now() - startAt));
+		}).finally(() => {
+			updateLokiPushDurationHistogram(Date.now() - startAt);
+		});
 	}
 
 	public async subscribe($ctx: LogContext, subscription: Subscription) {
@@ -327,7 +333,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		try {
 			return stream.getEntriesList().map((entry: loki.EntryAdapter) => {
 				const log = JSON.parse(entry.getLine());
-				const timestamp = entry.getTimestamp() as loki.Timestamp;
+				const timestamp = entry.getTimestamp()!;
 				log.nanoTimestamp =
 					BigInt(timestamp.getSeconds()) * 1000000000n +
 					BigInt(timestamp.getNanos());

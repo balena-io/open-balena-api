@@ -22,7 +22,7 @@ const getCallerId = (req: Request) => {
 		(req.creds != null && 'service' in req.creds && req.creds.service) ||
 		req.apiKey?.permissions?.includes('service')
 	) {
-		return `s/${getServiceFromRequest(req) || 'unknown'}`;
+		return `s/${getServiceFromRequest(req) ?? 'unknown'}`;
 	}
 	if (req.creds != null) {
 		if ('actor' in req.creds && req.creds.actor) {
@@ -32,7 +32,7 @@ const getCallerId = (req: Request) => {
 			return `u/${req.creds.id}`;
 		}
 	}
-	if (req.apiKey && req.apiKey.actor) {
+	if (req.apiKey?.actor) {
 		return `a/${req.apiKey.actor}`;
 	}
 	return '-';
@@ -59,9 +59,9 @@ export const setupRequestLogging = (
 			(tokens, req, res) => {
 				const date = new Date().toISOString();
 				const url = $getUrl(req);
-				const statusCode = tokens.status(req, res) || '-';
-				const responseTime = tokens['response-time'](req, res) || '-';
-				const balenaClient = req.headers['x-balena-client'] || '-';
+				const statusCode = tokens.status(req, res) ?? '-';
+				const responseTime = tokens['response-time'](req, res) ?? '-';
+				const balenaClient = req.headers['x-balena-client'] ?? '-';
 				const callerId = getCallerId(req);
 
 				return `${date} ${getIP(req)} ${callerId} ${

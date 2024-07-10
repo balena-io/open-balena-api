@@ -555,7 +555,7 @@ const authorizeRequest = async (
 };
 
 const generateToken = (
-	subject: string = '',
+	subject = '',
 	audience: string,
 	access: Access[],
 ): string => {
@@ -597,7 +597,7 @@ export const token: RequestHandler = async (req, res) => {
 				]),
 		);
 		res.json({
-			token: generateToken(sub, REGISTRY2_HOST, access!),
+			token: generateToken(sub, REGISTRY2_HOST, access),
 		});
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {

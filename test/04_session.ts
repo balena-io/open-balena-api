@@ -145,9 +145,10 @@ export default () => {
 			describe('granted user token', function () {
 				let token: string;
 
-				before(async function () {
-					expect(admin).to.have.property('token').that.is.a('string');
-					token = admin.token!;
+				before(function () {
+					assertExists(admin.token);
+					expect(admin.token).to.be.a('string');
+					token = admin.token;
 				});
 
 				it('should be refreshable with /user/v1/refresh-token and not include extra properties', async function () {

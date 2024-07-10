@@ -4,7 +4,7 @@ import type { DeviceType } from '../../src/balena-model.js';
 
 const { api } = sbvrUtils;
 
-export const loadDefaultFixtures = () =>
+export const loadDefaultFixtures = () => {
 	setDefaultFixtures(
 		'deviceTypes',
 		new Proxy(
@@ -38,3 +38,4 @@ export const loadDefaultFixtures = () =>
 			},
 		),
 	);
+};

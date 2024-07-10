@@ -126,10 +126,10 @@ export async function provisionDevice(
 			return await getState(device, device.uuid, 'v3');
 		},
 		patchStateV2: async (devicePatchBody: StatePatchV2Body) => {
-			return await patchState(device, device.uuid, devicePatchBody, 'v2');
+			await patchState(device, device.uuid, devicePatchBody, 'v2');
 		},
 		patchStateV3: async (devicePatchBody: StatePatchV3Body) => {
-			return await patchState(device, device.uuid, devicePatchBody, 'v3');
+			await patchState(device, device.uuid, devicePatchBody, 'v3');
 		},
 	};
 

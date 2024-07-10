@@ -27,7 +27,7 @@ const getAPIKey = async (
 	}
 
 	// While this could be omitted, Pine will go to the DB in vain if not handled
-	const token = (req.get('Authorization') || '').split(' ', 2)[1];
+	const token = (req.get('Authorization') ?? '').split(' ', 2)[1];
 	if (token && !isJWT(token)) {
 		try {
 			// Add support for API keys on Authorization header if a JWT wasn't provided

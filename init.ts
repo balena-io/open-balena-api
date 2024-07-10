@@ -213,14 +213,14 @@ app.set('trust proxy', TRUST_PROXY);
 
 const init = async () => {
 	try {
-		const generateConfig = (process.env.GENERATE_CONFIG || '').trim();
+		const generateConfig = (process.env.GENERATE_CONFIG ?? '').trim();
 		if (generateConfig.length > 0) {
 			await fs.writeFile(generateConfig, JSON.stringify(config, null, '\t'));
 			process.exit();
 		}
 
 		const doRunTests =
-			(process.env.RUN_TESTS || '').trim() === '1'
+			(process.env.RUN_TESTS ?? '').trim() === '1'
 				? await import('./test/test-lib/init-tests.js')
 				: undefined;
 

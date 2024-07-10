@@ -87,7 +87,7 @@ export default () => {
 						'release1',
 						'release2',
 					] as const
-				).forEach(async (testReleaseKey) => {
+				).forEach((testReleaseKey) => {
 					it(`with releaseUuid parameter for ${testReleaseKey}`, async () => {
 						const releaseUuidQueryParam = releases[testReleaseKey]?.commit
 							? `?releaseUuid=${releases[testReleaseKey]?.commit}`

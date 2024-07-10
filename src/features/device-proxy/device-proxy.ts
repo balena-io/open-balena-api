@@ -58,7 +58,8 @@ const validateSupervisorResponse = (
 				try {
 					jsonBody = JSON.parse(body);
 				} catch (e) {
-					return badSupervisorResponse(req, res, filter, 'Invalid JSON data');
+					badSupervisorResponse(req, res, filter, 'Invalid JSON data');
+					return;
 				}
 			}
 			res.status(statusCode).json(jsonBody);
@@ -125,7 +126,8 @@ export const proxy = async (req: Request, res: Response) => {
 
 		const responses = await requestDevices({ url, req, filter, data, method });
 		if (responses.length === 1) {
-			return validateSupervisorResponse(responses[0], req, res, filter);
+			validateSupervisorResponse(responses[0], req, res, filter);
+			return;
 		}
 		res.status(207).json(multiResponse(responses));
 	} catch (err) {
@@ -162,12 +164,12 @@ async function requestDevices(
 	opts: RequestDevicesOpts & {
 		wait: false;
 	},
-): Promise<void>;
+): Promise<undefined>;
 // This override is identical to the main form in order for `postDevices` to be able
 // to call it with the generic form
 async function requestDevices(
 	opts: RequestDevicesOpts,
-): Promise<void | RequestResponse[]>;
+): Promise<undefined | RequestResponse[]>;
 async function requestDevices({
 	url,
 	filter,
@@ -175,7 +177,7 @@ async function requestDevices({
 	req,
 	wait = true,
 	method = 'POST',
-}: RequestDevicesOpts): Promise<void | RequestResponse[]> {
+}: RequestDevicesOpts): Promise<undefined | RequestResponse[]> {
 	if (url == null) {
 		throw new BadRequestError('You must specify a url to request!');
 	}
@@ -263,7 +265,7 @@ async function requestDevices({
 				vpnIp = `[${vpnIp}]`;
 			}
 			const deviceUrl = `http://${device.uuid}.balena:${
-				device.api_port || 80
+				device.api_port ?? 80
 			}${url}?apikey=${device.api_secret}`;
 			try {
 				return await requestAsync({
@@ -300,9 +302,9 @@ export async function postDevices(
 	opts: FixedMethodRequestDevicesOpts & {
 		wait: false;
 	},
-): Promise<void>;
+): Promise<undefined>;
 export async function postDevices(
 	opts: FixedMethodRequestDevicesOpts,
-): Promise<void | RequestResponse[]> {
+): Promise<undefined | RequestResponse[]> {
 	return await requestDevices({ ...opts, method: 'POST' });
 }

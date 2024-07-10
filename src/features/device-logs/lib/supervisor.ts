@@ -48,6 +48,8 @@ export class Supervisor {
 
 	private isOldLog(log: any): log is OldSupervisorLog {
 		const old: OldSupervisorLog = log;
-		return !!(old.is_stderr || old.is_system || old.image_id);
+		return (
+			old.is_stderr != null || old.is_system != null || old.image_id != null
+		);
 	}
 }

@@ -70,9 +70,8 @@ export const createStrategy = (
 					return { service, apikey, permissions: apiKeyPermissions };
 				} else if (
 					'access' in jwtUser &&
-					jwtUser.access != null &&
-					jwtUser.access.actor &&
-					jwtUser.access.permissions
+					jwtUser.access?.actor &&
+					jwtUser.access?.permissions
 				) {
 					return jwtUser.access;
 				} else if ('id' in jwtUser) {
@@ -108,7 +107,8 @@ export const middleware: RequestHandler = (req, res, next) => {
 	if (!jwtString || typeof jwtString !== 'string' || !jwtString.includes('.')) {
 		// If we don't have any possibility of a valid jwt string then we avoid
 		// attempting authentication with it altogether
-		return next();
+		next();
+		return;
 	}
 
 	const authenticate = passport.authenticate(
@@ -130,10 +130,12 @@ export const middleware: RequestHandler = (req, res, next) => {
 			}
 			if (err) {
 				captureException(err, 'Error JWT auth', { req });
-				return next(err);
+				next(err);
+				return;
 			}
 			if (!auth) {
-				return next();
+				next();
+				return;
 			}
 
 			req.creds = auth;

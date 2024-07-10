@@ -45,7 +45,7 @@ const loadAdminUserAndOrganization = async () => {
 	).text;
 
 	const user: UserObjectParam = {
-		...(await expectJwt(token)),
+		...expectJwt(token),
 		token,
 	};
 

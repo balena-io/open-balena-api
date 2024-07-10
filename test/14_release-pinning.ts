@@ -14,6 +14,7 @@ import {
 	addImageToRelease,
 } from './test-lib/api-helpers.js';
 import type { Application, DeviceType, Release } from '../src/balena-model.js';
+import { assertExists } from './test-lib/common.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -198,9 +199,10 @@ export default () => {
 				beforeEach(async function () {
 					testRunsCount++;
 
+					assertExists(admin.id);
 					app1Release = await addReleaseToApp(admin, {
 						belongs_to__application: applicationId,
-						is_created_by__user: admin.id!,
+						is_created_by__user: admin.id,
 						build_log: '',
 						commit: `deadbeef${testRunsCount}`,
 						composition: {},
@@ -211,7 +213,7 @@ export default () => {
 
 					app2Release = await addReleaseToApp(admin, {
 						belongs_to__application: application2Id,
-						is_created_by__user: admin.id!,
+						is_created_by__user: admin.id,
 						build_log: '',
 						commit: `deadbeef${testRunsCount}`,
 						composition: {},
@@ -353,9 +355,11 @@ export default () => {
 						})
 						.expect(200);
 
+					assertExists(admin.id);
+
 					const app3Release = await addReleaseToApp(admin, {
 						belongs_to__application: application3Id,
-						is_created_by__user: admin.id!,
+						is_created_by__user: admin.id,
 						build_log: '',
 						commit: `deadbeef`,
 						composition: {},
@@ -367,7 +371,7 @@ export default () => {
 					app3ReleaseId = app3Release.id;
 					const app4Release = await addReleaseToApp(admin, {
 						belongs_to__application: application3Id,
-						is_created_by__user: admin.id!,
+						is_created_by__user: admin.id,
 						build_log: '',
 						commit: `deadbeef2`,
 						composition: {},
@@ -378,7 +382,7 @@ export default () => {
 					app4ReleaseId = app4Release.id;
 					const app5Release = await addReleaseToApp(admin, {
 						belongs_to__application: application3Id,
-						is_created_by__user: admin.id!,
+						is_created_by__user: admin.id,
 						build_log: '',
 						commit: `deadbeef3`,
 						composition: {},
@@ -389,7 +393,7 @@ export default () => {
 					app5ReleaseId = app5Release.id;
 					const appToDeleteRelease1 = await addReleaseToApp(admin, {
 						belongs_to__application: applicationToDelete.id,
-						is_created_by__user: admin.id!,
+						is_created_by__user: admin.id,
 						build_log: '',
 						commit: `deadbeef4`,
 						composition: {},

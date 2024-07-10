@@ -248,7 +248,7 @@ function multiCache<T extends (...args: any[]) => Promise<Defined | undefined>>(
 			const valueToCache = await fn(...args);
 			// Some caches (eg redis) cannot handle caching undefined/null so we convert it to the `undefinedAs` proxy value
 			// which will be used when storing in the cache and then convert it back to undefined when retrieving from the cache
-			return valueToCache === undefined ? undefinedAs : valueToCache;
+			return valueToCache ?? undefinedAs;
 		});
 		return valueFromCache === undefinedAs ? undefined : valueFromCache;
 	};

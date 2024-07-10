@@ -194,7 +194,9 @@ export default () => {
 							])
 							.expect(201);
 					});
-					res.on('end', () => callback(null, Buffer.concat(chunks)));
+					res.on('end', () => {
+						callback(null, Buffer.concat(chunks));
+					});
 				})
 				.expect(200);
 
