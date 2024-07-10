@@ -1,4 +1,17 @@
 - commits:
+    - subject: Use the toVersion Resource instead of Table in v6 device.overall_status
+        translation
+      hash: 80e144fbad821588b6602369351a38a73f3122e8
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 25.2.1
+  title: ""
+  date: 2024-07-10T13:38:56.608Z
+- commits:
     - subject: "is_pinned_on__release: Add translations and only read the new column"
       hash: 84da36eeb2c6f4111333bdeb40f0a53ca7601499
       body: ""
