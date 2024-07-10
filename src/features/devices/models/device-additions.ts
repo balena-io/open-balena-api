@@ -109,7 +109,7 @@ const isVpnEnabled: NotEqualsNode = [
 	['EmbeddedText', 'false'],
 ];
 // This check does not double check heartbeat state as it is already checked from isOverallOffline which runs before
-export const hasPartialConnectivity: OrNode = [
+const hasPartialConnectivity: OrNode = [
 	'Or',
 	[
 		'Equals',

@@ -143,7 +143,14 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) => {
 						[
 							'SelectQuery',
 							['Select', []],
-							['From', ['Table', 'image install']],
+							[
+								'From',
+								[
+									'Alias',
+									['Resource', `device-installs-image$${toVersion}`],
+									'image install',
+								],
+							],
 							[
 								'Where',
 								[
