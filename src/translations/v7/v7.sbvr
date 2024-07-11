@@ -590,10 +590,6 @@ Fact type: device has api secret
 Fact type: device is managed by service instance
 	Synonymous Form: service instance manages device
 	Necessity: each device is managed by at most one service instance
--- TODO: drop me
-Fact type: device should be running release
-	Synonymous Form: release should be running on device
-	Necessity: each device should be running at most one release
 Fact type: device is pinned on release
 	Synonymous Form: release is pinned to device
 	Necessity: each device is pinned on at most one release
