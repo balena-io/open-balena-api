@@ -147,7 +147,11 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) => {
 								'From',
 								[
 									'Alias',
-									['Resource', `device-installs-image$${toVersion}`],
+									// The `Resource`+$bypass avoids adding extra permissions checks,
+									// similarly to how `Table` is working in the balena model.
+									// Without it, requests that have permissions to access the device resource,
+									// but do not have permissions to access image_installs would start failing.
+									['Resource', `device-installs-image$${toVersion}$bypass`],
 									'image install',
 								],
 							],
