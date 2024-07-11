@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update types to support using `throttledForEach` with synchronous fns
+      hash: ff55f1b3e3915494e711c5e7dac8e7e79f57f21e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 25.2.5
+  title: ""
+  date: 2024-07-11T14:21:39.799Z
+- commits:
     - subject: Use $bypass for image_installs in the v6 device.overall_status computed
         term
       hash: 5bfd8be07c019762cfea561f11af0e0760ab5349
