@@ -1,4 +1,26 @@
 - commits:
+    - subject: Use $bypass for image_installs in the v6 device.overall_status computed
+        term
+      hash: 5bfd8be07c019762cfea561f11af0e0760ab5349
+      body: |
+        Follow-up of #1708.
+        Before #1708 we were using 'Table' directly,
+        so switching to 'Resource' added more
+        permissions checks to the query, which also
+        unintentionally broke device requests from
+        actors don't have permissions to access the
+        image_installs.
+      footer:
+        Change-type: patch
+        change-type: patch
+        See: https://github.com/balena-io/open-balena-api/pull/1708
+        see: https://github.com/balena-io/open-balena-api/pull/1708
+      author: Thodoris Greasidis
+      nested: []
+  version: 25.2.4
+  title: ""
+  date: 2024-07-11T07:16:29.857Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v18.0.6
       hash: fda4a571e97cda19ddbfd415efcfd72de59d916a
       body: |
