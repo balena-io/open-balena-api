@@ -73,9 +73,9 @@ export const b64decode = (str: string): string =>
 export const throttledForEach = async <T, U>(
 	array: T[],
 	delayMS: number,
-	fn: (item: T) => PromiseLike<U>,
+	fn: (item: T) => PromiseLike<U> | U,
 ): Promise<U[]> => {
-	const promises: Array<PromiseLike<U>> = [];
+	const promises: Array<PromiseLike<U> | U> = [];
 	for (const item of array) {
 		// We do not wait for each individual fn, we just throttle the calling of them
 		promises.push(fn(item));
