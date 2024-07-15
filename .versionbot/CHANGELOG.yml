@@ -1,4 +1,17 @@
 - commits:
+    - subject: Lock file maintenance
+      hash: f052b725515e07a6084bff7b1ff3b7f42046bac8
+      body: |
+        Update
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 25.2.6
+  title: ""
+  date: 2024-07-15T01:26:38.781Z
+- commits:
     - subject: Update types to support using `throttledForEach` with synchronous fns
       hash: ff55f1b3e3915494e711c5e7dac8e7e79f57f21e
       body: ""
