@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency rimraf to v6
+      hash: 62a52efb945453f5e307dfc1184362f8291332f9
+      body: |
+        Update rimraf from 5.0.9 to 6.0.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 25.2.7
+  title: ""
+  date: 2024-07-15T07:54:00.386Z
+- commits:
     - subject: Lock file maintenance
       hash: f052b725515e07a6084bff7b1ff3b7f42046bac8
       body: |
