@@ -149,7 +149,7 @@
     "mockery": "^2.1.0",
     "nock": "^13.5.4",
     "pinejs-client-supertest": "^2.1.1",
-    "rimraf": "^5.0.7",
+    "rimraf": "^6.0.0",
     "sinon": "^18.0.0",
     "supertest": "^7.0.0"
   },
