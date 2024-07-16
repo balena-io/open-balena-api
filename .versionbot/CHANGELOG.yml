@@ -1,4 +1,17 @@
 - commits:
+    - subject: "is_pinned_on__release: stop setting device.should_be_running__release
+        and remove it from the sbvr"
+      hash: 8a71fa2ff9f001da7fb84419fc42909677954ee0
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+      nested: []
+  version: 25.2.8
+  title: ""
+  date: 2024-07-16T08:39:36.076Z
+- commits:
     - subject: Update dependency rimraf to v6
       hash: 62a52efb945453f5e307dfc1184362f8291332f9
       body: |
