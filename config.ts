@@ -3,17 +3,30 @@ import { model as balenaModel } from './src/balena.js';
 import {
 	v6AbstractSqlModel,
 	getV6Translations,
+	toVersion as v6ToVersion,
 } from './src/translations/v6/v6.js';
+import {
+	v7AbstractSqlModel,
+	getV7Translations,
+	toVersion as v7ToVersion,
+} from './src/translations/v7/v7.js';
 import { getFileUploadHandler } from './src/fileupload-handler.js';
 
 export default {
 	models: [
 		balenaModel,
 		{
+			apiRoot: 'v7',
+			modelName: 'v7',
+			abstractSql: v7AbstractSqlModel,
+			translateTo: v7ToVersion,
+			translations: getV7Translations(),
+		},
+		{
 			apiRoot: 'v6',
 			modelName: 'v6',
 			abstractSql: v6AbstractSqlModel,
-			translateTo: 'resin',
+			translateTo: v6ToVersion,
 			translations: getV6Translations(),
 		},
 	],
