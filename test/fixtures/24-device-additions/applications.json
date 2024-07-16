@@ -12,5 +12,15 @@
 		"device_type": "raspberry-pi",
 		"commit": "deadbeef",
 		"should_track_latest_release": 1
+	},
+	"app3": {
+		"user": "admin",
+		"app_name": "test_app",
+		"device_type": "raspberry-pi"
+	},
+	"appWoRelease": {
+		"user": "admin",
+		"app_name": "test_no_releases",
+		"device_type": "raspberry-pi"
 	}
 }

@@ -12,6 +12,7 @@ import {
 	addImageToService,
 	addServiceToApp,
 	addImageToRelease,
+	expectResourceToMatch,
 } from './test-lib/api-helpers.js';
 import type { Application, DeviceType, Release } from '../src/balena-model.js';
 import { assertExists } from './test-lib/common.js';
@@ -68,6 +69,12 @@ export default () => {
 
 			it('Should track latest release that is passing tests and final', async () => {
 				const expectedLatest = fx.releases.release0;
+				await expectResourceToMatch(pineUser, 'device', device.id, {
+					[pinnedOnReleaseField]: null,
+					...(versions.gt(version, 'v6') && {
+						should_be_running__release: { __id: expectedLatest.id },
+					}),
+				});
 
 				const stateV2 = await device.getStateV2();
 				expect(
@@ -94,6 +101,13 @@ export default () => {
 					})
 					.expect(200);
 
+				await expectResourceToMatch(pineUser, 'device', device.id, {
+					[pinnedOnReleaseField]: { __id: pinnedRelease.id },
+					...(versions.gt(version, 'v6') && {
+						should_be_running__release: { __id: pinnedRelease.id },
+					}),
+				});
+
 				const stateV2 = await device.getStateV2();
 				expect(
 					stateV2.local.apps[applicationId].releaseId,
@@ -108,12 +122,20 @@ export default () => {
 					.to.have.property(pinnedRelease.commit)
 					.that.has.property('id')
 					.that.equals(pinnedRelease.id);
+
+				const expectedLatest = fx.releases.release0;
 				await supertest(admin)
 					.patch(`/${version}/device(${device.id})`)
 					.send({
 						[pinnedOnReleaseField]: null,
 					})
 					.expect(200);
+				await expectResourceToMatch(pineUser, 'device', device.id, {
+					[pinnedOnReleaseField]: null,
+					...(versions.gt(version, 'v6') && {
+						should_be_running__release: { __id: expectedLatest.id },
+					}),
+				});
 			});
 
 			it('Should update latest release to a newly-marked final release', async () => {
