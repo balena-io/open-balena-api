@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import jsonwebtoken from 'jsonwebtoken';
 import type { PineTest } from 'pinejs-client-supertest';
 import type { Release } from '../../src/balena-model.js';
@@ -91,7 +92,7 @@ export const expectResourceToMatch = async <T = AnyObject>(
 	pineUser: PineTest,
 	resource: string,
 	id: number | AnyObject,
-	expectations: Dictionary<
+	selectExpectations: Dictionary<
 		| null
 		| string
 		| number
@@ -99,12 +100,48 @@ export const expectResourceToMatch = async <T = AnyObject>(
 		| object
 		| ((chaiPropertyAssertion: Chai.Assertion, value: unknown) => void)
 	>,
+	expandExpectations?: Dictionary<
+		Array<Dictionary<null | string | number | boolean>>
+	>,
 ): Promise<T> => {
+	if (_.isEqual(expandExpectations, {})) {
+		throw new Error(
+			'expectResourceToMatch was called with empty expandExpectations',
+		);
+	}
+	let expands: AnyObject | null = null;
+	if (expandExpectations != null) {
+		expands = {};
+		for (const [key, expand] of Object.entries(expandExpectations)) {
+			let selectedFields = _.uniq(expand.flatMap((prop) => Object.keys(prop)));
+			if (selectedFields.length === 0) {
+				selectedFields = ['id'];
+			}
+			expands[key] = {
+				$select: selectedFields,
+				// So that the results always come back in a deterministic order.
+				$orderby: _.uniq([selectedFields[0], 'id']).map((prop) => ({
+					[prop]: 'asc',
+				})),
+			};
+		}
+	}
+
+	if (_.isEqual(selectExpectations, {})) {
+		if (expandExpectations == null) {
+			throw new Error(
+				'expectResourceToMatch was called with empty selectExpectations & null expandExpectations',
+			);
+		}
+		selectExpectations = { id };
+	}
+
 	const requestPromise = pineUser.get({
 		resource,
 		id,
 		options: {
-			$select: Object.keys(expectations),
+			$select: Object.keys(selectExpectations),
+			...(expands != null && { $expand: expands }),
 		},
 	});
 
@@ -118,7 +155,7 @@ export const expectResourceToMatch = async <T = AnyObject>(
 		) as T | undefined;
 	assertExists(result);
 	expect(result).to.be.an('object');
-	for (const [key, valueOrAssertion] of Object.entries(expectations)) {
+	for (const [key, valueOrAssertion] of Object.entries(selectExpectations)) {
 		if (typeof valueOrAssertion === 'function') {
 			valueOrAssertion(
 				expect(result).to.have.property(key),
@@ -131,6 +168,12 @@ export const expectResourceToMatch = async <T = AnyObject>(
 			expect(result).to.have.property(key).to.deep.equal(valueOrAssertion);
 		} else {
 			expect(result).to.have.property(key, valueOrAssertion);
+		}
+	}
+
+	if (expandExpectations != null) {
+		for (const [key, prop] of Object.entries(expandExpectations)) {
+			expect(result).to.have.property(key).to.deep.equal(prop);
 		}
 	}
 	return result;

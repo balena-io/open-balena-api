@@ -486,12 +486,23 @@ const loaders: types.Dictionary<LoaderFunc> = {
 
 		const deviceType = await fixtures.deviceTypes[jsonData.device_type];
 
+		let release: AnyObject | null = null;
+		if (jsonData.is_pinned_on__release != null) {
+			release = await fixtures.releases[jsonData.is_pinned_on__release];
+			if (release == null) {
+				logErrorAndThrow(
+					`Could not find release: ${jsonData.is_pinned_on__release}`,
+				);
+			}
+		}
+
 		return await createResource({
 			resource: 'device',
 			body: {
 				belongs_to__application: application.id,
 				belongs_to__user: user.id,
 				is_of__device_type: deviceType.id,
+				is_pinned_on__release: release?.id ?? null,
 				..._.pick(
 					jsonData,
 					'custom_latitude',

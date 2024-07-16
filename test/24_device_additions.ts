@@ -3,6 +3,7 @@ import type { PineTest } from 'pinejs-client-supertest';
 import * as fixtures from './test-lib/fixtures.js';
 import { type UserObjectParam, supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
+import { expectResourceToMatch } from './test-lib/api-helpers.js';
 
 export default () => {
 	versions.test(function (version, pineTest) {
@@ -101,6 +102,15 @@ export default () => {
 					fx.devices.deviceInPreProvisioningState;
 				ctx.deviceInPostProvisioningState =
 					fx.devices.deviceInPostProvisioningState;
+
+				ctx.appWoRelease = fx.applications.appWoRelease;
+				ctx.deviceInAppWoReleases = fx.devices.deviceInAppWoReleases;
+
+				ctx.app3 = fx.applications.app3;
+				ctx.release1app3 = fx.releases.release1app3;
+				ctx.release2app3 = fx.releases.release2app3;
+				ctx.deviceTrackingLatest = fx.devices.deviceTrackingLatest;
+				ctx.devicePinned = fx.devices.devicePinned;
 
 				pineUser = pineTest.clone({ passthrough: { user: ctx.user } });
 
@@ -256,6 +266,118 @@ export default () => {
 						'should properly calculate the overall_progress when VPN is disconnected and heartbeat is online',
 						'deviceUpdatingHeartbeatOnly',
 					);
+				});
+			});
+
+			if (versions.lte(version, 'v6')) {
+				return;
+			}
+			describe('device.should_be_running__release (effective target release)', () => {
+				describe('Given a device on an application without releases', () => {
+					it('should return a null should_be_running__release when selecting it', async function () {
+						await expectResourceToMatch(
+							pineUser,
+							'device',
+							ctx.deviceInAppWoReleases.id,
+							{
+								should_be_running__release: null,
+							},
+						);
+					});
+
+					it('should return an empty array should_be_running__release when expanding it', async function () {
+						await expectResourceToMatch(
+							pineUser,
+							'device',
+							ctx.deviceInAppWoReleases.id,
+							{},
+							{
+								should_be_running__release: [],
+							},
+						);
+					});
+				});
+				describe('Given an application with releases', () => {
+					before(async function () {
+						// make sure release2app3 is the latest release that the application is tracking
+						await expectResourceToMatch(pineUser, 'application', ctx.app3.id, {
+							should_be_running__release: { __id: ctx.release2app3.id },
+						});
+					});
+					describe('given a device that tracks latest', () => {
+						it('should return a the target release of the application on should_be_running__release when selecting it', async function () {
+							await expectResourceToMatch(
+								pineUser,
+								'device',
+								ctx.deviceTrackingLatest.id,
+								{
+									is_pinned_on__release: null,
+									should_be_running__release: { __id: ctx.release2app3.id },
+								},
+							);
+						});
+						it('should return a the target release of the application on should_be_running__release when expanding it', async function () {
+							await expectResourceToMatch(
+								pineUser,
+								'device',
+								ctx.deviceTrackingLatest.id,
+								{},
+								{
+									is_pinned_on__release: [],
+									should_be_running__release: [{ id: ctx.release2app3.id }],
+								},
+							);
+						});
+						it('should be able to expand from the release to devices that should be running the release', async function () {
+							await expectResourceToMatch(
+								pineUser,
+								'release',
+								ctx.release2app3.id,
+								{},
+								{
+									should_be_running_on__device: [
+										{ id: ctx.deviceTrackingLatest.id },
+									],
+								},
+							);
+						});
+					});
+					describe('given a device that is pinned on a release differnet than the one the application tracks', () => {
+						it('should return a the target release of the application on should_be_running__release when selecting it', async function () {
+							await expectResourceToMatch(
+								pineUser,
+								'device',
+								ctx.devicePinned.id,
+								{
+									is_pinned_on__release: { __id: ctx.release1app3.id },
+									should_be_running__release: { __id: ctx.release1app3.id },
+								},
+							);
+						});
+						it('should return a the target release of the application on should_be_running__release when expanding it', async function () {
+							await expectResourceToMatch(
+								pineUser,
+								'device',
+								ctx.devicePinned.id,
+								{},
+								{
+									is_pinned_on__release: [{ id: ctx.release1app3.id }],
+									should_be_running__release: [{ id: ctx.release1app3.id }],
+								},
+							);
+						});
+						it('should be able to expand from the release to devices that should be running the release', async function () {
+							await expectResourceToMatch(
+								pineUser,
+								'release',
+								ctx.release1app3.id,
+								{},
+								{
+									should_be_running_on__device: [{ id: ctx.devicePinned.id }],
+								},
+							);
+						});
+					});
 				});
 			});
 		});

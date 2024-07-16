@@ -428,4 +428,40 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 			],
 		],
 	});
+
+	const deviceShouldBeRunningReleaseField = abstractSql.tables[
+		'device'
+	].fields.find((f) => f.fieldName === 'should be running-release');
+	if (deviceShouldBeRunningReleaseField == null) {
+		throw new Error(
+			"Could not find 'should be running-release' field in device model",
+		);
+	}
+	deviceShouldBeRunningReleaseField.computed = [
+		'Case',
+		[
+			'When',
+			['Exists', ['ReferencedField', 'device', 'is pinned on-release']],
+			['ReferencedField', 'device', 'is pinned on-release'],
+		],
+		[
+			'Else',
+			[
+				'SelectQuery',
+				[
+					'Select',
+					[['ReferencedField', 'application', 'should be running-release']],
+				],
+				['From', ['Table', 'application']],
+				[
+					'Where',
+					[
+						'Equals',
+						['ReferencedField', 'application', 'id'],
+						['ReferencedField', 'device', 'belongs to-application'],
+					],
+				],
+			],
+		],
+	];
 };

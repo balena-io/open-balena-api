@@ -15,5 +15,34 @@
 		},
 		"status": "success",
 		"source": "cloud"
+	},
+	"release1app3": {
+		"user": "admin",
+		"application": "app3",
+		"commit": "deadc0de1",
+		"composition": {
+			"services": {
+				"image1app3": {
+					"build": "./image1app3/"
+				}
+			}
+		},
+		"status": "success",
+		"source": "cloud"
+	},
+	"release2app3": {
+		"createAfterRelease": "release1app3",
+		"user": "admin",
+		"application": "app3",
+		"commit": "deadc0de2",
+		"composition": {
+			"services": {
+				"image2app3": {
+					"build": "./image2app3/"
+				}
+			}
+		},
+		"status": "success",
+		"source": "cloud"
 	}
 }
