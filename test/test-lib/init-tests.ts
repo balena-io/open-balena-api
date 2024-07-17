@@ -1,11 +1,10 @@
 import * as fixtures from './fixtures.js';
-import type { UserObjectParam } from './supertest.js';
 import { supertest, augmentStatusAssertionError } from './supertest.js';
 import {
 	getContractRepos,
 	synchronizeContracts,
 } from '../../src/features/contracts/index.js';
-import { expectJwt } from './api-helpers.js';
+import { getUserFromToken } from './api-helpers.js';
 
 const version = 'resin';
 
@@ -44,10 +43,7 @@ const loadAdminUserAndOrganization = async () => {
 			.expect(200)
 	).text;
 
-	const user: UserObjectParam = {
-		...expectJwt(token),
-		token,
-	};
+	const user = getUserFromToken(token);
 
 	const org = (
 		await supertest(user)

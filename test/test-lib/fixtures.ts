@@ -17,6 +17,11 @@ import type Model from '../../src/balena-model.js';
 const { api } = sbvrUtils;
 const version = 'resin';
 
+// Use undefined masquerading as a Tx to pass to functions that "require"
+// a Tx based on how they should be used within the main api code, but
+// can actually work without one and makes tests life easier
+export const fakeTx = undefined as any as Tx;
+
 type PendingFixtures = types.Dictionary<
 	PromiseLike<types.Dictionary<PromiseLike<any>>>
 >;
