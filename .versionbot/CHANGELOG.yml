@@ -1,4 +1,16 @@
 - commits:
+    - subject: Require a freshly authenticated JWT when creating a user api_key
+      hash: 2e394890eabf1cfc3b34e576077ea1a933695772
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Thodoris Greasidis
+      nested: []
+  version: 26.0.0
+  title: ""
+  date: 2024-07-17T17:11:07.231Z
+- commits:
     - subject: "is_pinned_on__release: stop setting device.should_be_running__release
         and remove it from the sbvr"
       hash: 8a71fa2ff9f001da7fb84419fc42909677954ee0
