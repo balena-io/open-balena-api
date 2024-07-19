@@ -150,5 +150,36 @@
 		"os_version": "Resin OS 2.11.0+rev1",
 		"supervisor_version": "6.4.2",
 		"provisioning_state": "Post-Provisioning"
+	},
+	"deviceInAppWoReleases": {
+		"belongs_to__application": "appWoRelease",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": true,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceTrackingLatest": {
+		"belongs_to__application": "app3",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": true,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"devicePinned": {
+		"belongs_to__application": "app3",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_pinned_on__release": "release1app3",
+		"is_online": true,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
 	}
 }

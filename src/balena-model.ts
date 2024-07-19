@@ -735,6 +735,11 @@ export interface Device {
 			| [Release['Read']]
 			| []
 			| null;
+		should_be_running__release:
+			| { __id: Release['Read']['id'] }
+			| [Release['Read']]
+			| []
+			| null;
 		should_be_operated_by__release:
 			| { __id: Release['Read']['id'] }
 			| [Release['Read']]
@@ -807,6 +812,7 @@ export interface Device {
 		api_secret: Types['Short Text']['Write'] | null;
 		is_managed_by__service_instance: ServiceInstance['Write']['id'] | null;
 		is_pinned_on__release: Release['Write']['id'] | null;
+		should_be_running__release: Release['Write']['id'] | null;
 		should_be_operated_by__release: Release['Write']['id'] | null;
 		should_be_managed_by__release: Release['Write']['id'] | null;
 		is_web_accessible: Types['Boolean']['Write'] | null;
@@ -1013,6 +1019,7 @@ export interface Release {
 		release_image?: Array<ImageIsPartOfRelease['Read']>;
 		contains__image?: Array<ImageIsPartOfRelease['Read']>;
 		should_be_running_on__application?: Array<Application['Read']>;
+		should_be_running_on__device?: Array<Device['Read']>;
 		is_running_on__device?: Array<Device['Read']>;
 		is_pinned_to__device?: Array<Device['Read']>;
 		should_operate__device?: Array<Device['Read']>;

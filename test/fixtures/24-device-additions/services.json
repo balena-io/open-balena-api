@@ -8,5 +8,10 @@
 		"service_name": "service2",
 		"application": "app1",
 		"user": "admin"
+	},
+	"service1app3": {
+		"service_name": "service1app3",
+		"application": "app3",
+		"user": "admin"
 	}
 }
