@@ -1,4 +1,17 @@
 - commits:
+    - subject: 'is_pinned_on__release: drop device "should_be_running__release" column
+        if exist'
+      hash: d3802677ddca84cc467f6a41cae0ca86b677045a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Andrea Rosci
+      nested: []
+  version: 26.0.1
+  title: ""
+  date: 2024-07-19T09:59:07.519Z
+- commits:
     - subject: Require a freshly authenticated JWT when creating a user api_key
       hash: 2e394890eabf1cfc3b34e576077ea1a933695772
       body: ""
