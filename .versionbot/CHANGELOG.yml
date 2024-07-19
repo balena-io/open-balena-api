@@ -1,4 +1,20 @@
 - commits:
+    - subject: Add the device.should_be_running__release computed term to the balena
+        model
+      hash: 8cf99f4b61f7f18dce1eb871f62bca29fe7b6953
+      body: |
+        device.should_be_running__release :=
+        device.is_pinned_on__release ??
+        application.should_be_running__release
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 26.1.0
+  title: ""
+  date: 2024-07-19T16:21:08.724Z
+- commits:
     - subject: Update dependencies and fix lints
       hash: 8a1dc873be4a7207e378503b46cc3ce9a8016900
       body: ""
