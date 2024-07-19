@@ -8,7 +8,7 @@ export const isDeviceNameValid = (name: string) => {
 };
 
 hooks.addPureHook('POST', 'resin', 'device', {
-	POSTPARSE: async ({ request }) => {
+	POSTPARSE: ({ request }) => {
 		// Check for extra whitespace characters
 		if (
 			request.values.device_name != null &&
@@ -33,7 +33,7 @@ hooks.addPureHook('POST', 'resin', 'device', {
 });
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
-	POSTPARSE: async ({ request }) => {
+	POSTPARSE: ({ request }) => {
 		// Check for extra whitespace characters
 		if (
 			request.values.device_name != null &&
