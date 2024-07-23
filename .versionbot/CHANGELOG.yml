@@ -1,4 +1,15 @@
 - commits:
+    - subject: Switch to self-hosted
+      hash: 6710f24542a478146d80ce239b40a16b022dd31c
+      body: ""
+      footer:
+        change-type: patch
+      author: Anton Belodedenko
+      nested: []
+  version: 26.1.4
+  title: ""
+  date: 2024-07-23T23:17:21.951Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v18.0.8
       hash: 970aee745d19bba3bdb4d1caf3752f351d3b3afa
       body: |
