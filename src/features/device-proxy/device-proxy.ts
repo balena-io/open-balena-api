@@ -203,6 +203,7 @@ async function requestDevices({
 							filter,
 						],
 					},
+					$orderby: { id: 'asc' },
 				},
 			})
 		).map(({ id }) => id);
@@ -216,18 +217,18 @@ async function requestDevices({
 		// Check for device update permission, except for
 		// internal operation of the platform.
 		if (method !== 'GET' && req !== permissions.root) {
-			await Promise.all(
-				deviceIds.map(async (deviceId) => {
-					const res = (await resinApi.post({
-						url: `device(${deviceId})/canAccess`,
-						body: { action: 'update' },
-					})) as { d?: Array<{ id: number }> };
-
-					if (res?.d?.[0]?.id !== deviceId) {
-						throw new errors.ForbiddenError();
-					}
-				}),
-			);
+			console.log('*** device-proxy');
+			// npm run fasttest 20 to test this
+			const res = (await resinApi.post({
+				url: `device(action='update')/canAccess?$filter=id in (${deviceIds.join(
+					',',
+				)})`,
+				body: {},
+			})) as { d?: Array<{ id: number }> };
+			console.log('*** device-proxy', { res: res?.d?.[0], deviceIds });
+			if (_.isEqual(res?.d?.[0], deviceIds)) {
+				throw new errors.ForbiddenError();
+			}
 		}
 		// And now fetch device data with full privs
 		return await api.resin.get({
