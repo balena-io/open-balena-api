@@ -682,6 +682,7 @@ export interface Device {
 		id: Types['Serial']['Read'];
 		actor: { __id: Actor['Read']['id'] } | [Actor['Read']];
 		api_heartbeat_state: 'online' | 'offline' | 'timeout' | 'unknown';
+		changed_api_heartbeat_state_on__date: Types['Date Time']['Read'] | null;
 		uuid: Types['Text']['Read'];
 		local_id: Types['Short Text']['Read'] | null;
 		device_name: Types['Short Text']['Read'] | null;
@@ -786,6 +787,7 @@ export interface Device {
 		id: Types['Serial']['Write'];
 		actor: Actor['Write']['id'];
 		api_heartbeat_state: 'online' | 'offline' | 'timeout' | 'unknown';
+		changed_api_heartbeat_state_on__date: Types['Date Time']['Write'] | null;
 		uuid: Types['Text']['Write'];
 		local_id: Types['Short Text']['Write'] | null;
 		device_name: Types['Short Text']['Write'] | null;
