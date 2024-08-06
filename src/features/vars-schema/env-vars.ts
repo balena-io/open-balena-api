@@ -293,7 +293,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			],
 			'14.0.8': ['imx8m-var-dart', 'imx8mm-var-dart'],
 			'14.0.16': ['imx8mm-var-som'],
-			'14.2.16': ['jetson-agx-orin-devkit'],
+			'14.2.16': ['jetson-agx-orin-devkit', 'jetson-agx-orin-devkit-64gb'],
 			'14.10.2': ['jetson-orin-nx-xavier-nx-devkit'],
 			'14.11.11': ['jetson-orin-nano-devkit-nvme'],
 		},
