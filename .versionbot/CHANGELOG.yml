@@ -1,4 +1,21 @@
 - commits:
+    - subject: "vars-schema: Add custom kernel device-tree support for AGX Orin 64GB"
+      hash: aa32df8a1cbdc890be5d731bdcc3d5500cc7a4dd
+      body: |
+        Although this is a new device-type, its' slug matches the existing SV
+        rule for the jetson-agx-orin-devkit and needs to other changes
+        apart from the one added in this PR.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Alexandru Costache <alexandru@balena.io>
+        signed-off-by: Alexandru Costache <alexandru@balena.io>
+      author: Alexandru Costache
+      nested: []
+  version: 26.2.0
+  title: ""
+  date: 2024-08-07T11:59:26.379Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v18.0.10
       hash: 061c6df5ef649b082d5f9dfaf54b6c575834b21a
       body: |
