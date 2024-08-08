@@ -188,6 +188,24 @@ export const getUserFromToken = (token: string) => {
 	return user;
 };
 
+export const thatIsDateStringAfter = (
+	dateParam: Date | string | number | null,
+) => {
+	if (dateParam == null) {
+		throw new Error(
+			`The date ${dateParam} provided to thatIsAfterDateString has to have a value`,
+		);
+	}
+	const date = !_.isDate(dateParam) ? new Date(dateParam) : dateParam;
+	return (prop: Chai.Assertion, value: unknown) =>
+		prop.that.is
+			.a('string')
+			.that.satisfies(
+				(d: string) => new Date(d) > date,
+				`Expected ${value} to be after ${date.toISOString()}`,
+			);
+};
+
 const validJwtProps = ['id', 'jwt_secret', 'authTime', 'iat', 'exp'].sort();
 
 export function expectJwt(tokenOrJwt: string | AnyObject) {
