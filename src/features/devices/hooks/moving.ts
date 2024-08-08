@@ -1,5 +1,4 @@
-import { sbvrUtils, hooks } from '@balena/pinejs';
-import { TypedError } from 'typed-error';
+import { sbvrUtils, hooks, errors } from '@balena/pinejs';
 import { checkDevicesCanBeInApplication } from '../../application-types/application-types.js';
 
 const INVALID_NEWLINE_REGEX = /\r|\n/;
@@ -7,8 +6,7 @@ export const isDeviceNameValid = (name: string) => {
 	return !INVALID_NEWLINE_REGEX.test(name);
 };
 
-// TODO: This should extend a HttpError
-export class InaccessibleAppError extends TypedError {
+export class InaccessibleAppError extends errors.NotFoundError {
 	constructor(
 		message = "Application doesn't exist or you have no access to it.",
 	) {
