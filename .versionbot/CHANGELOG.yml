@@ -1,4 +1,16 @@
 - commits:
+    - subject: "device/moving: Throw a NotFoundError rather than a custom TypedError"
+      hash: 61d7227283280c25035e3750eef6174e9005acca
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 26.2.1
+  title: ""
+  date: 2024-08-08T12:16:03.736Z
+- commits:
     - subject: "vars-schema: Add custom kernel device-tree support for AGX Orin 64GB"
       hash: aa32df8a1cbdc890be5d731bdcc3d5500cc7a4dd
       body: |
