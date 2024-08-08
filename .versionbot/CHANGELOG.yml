@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update grafana/loki Docker tag to v3.1.1
+      hash: f1666e91f3fe046b2b261f8ed4413c3f6e71eaa7
+      body: |
+        Update grafana/loki from 3.1.0 to 3.1.1
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 26.2.2
+  title: ""
+  date: 2024-08-08T16:02:53.419Z
+- commits:
     - subject: "device/moving: Throw a NotFoundError rather than a custom TypedError"
       hash: 61d7227283280c25035e3750eef6174e9005acca
       body: ""
