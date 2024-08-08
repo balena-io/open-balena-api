@@ -1,4 +1,4 @@
-import { hooks, permissions } from '@balena/pinejs';
+import { errors, hooks, permissions } from '@balena/pinejs';
 import { getApplicationSlug } from '../index.js';
 
 hooks.addPureHook('POST', 'resin', 'application', {
@@ -17,10 +17,14 @@ hooks.addPureHook('POST', 'resin', 'application', {
 				},
 			});
 			if (organization != null) {
-				request.values.slug = getApplicationSlug(
-					organization.handle,
-					request.values.app_name,
-				);
+				try {
+					request.values.slug = getApplicationSlug(
+						organization.handle,
+						request.values.app_name,
+					);
+				} catch (e) {
+					throw new errors.NotFoundError(e.message);
+				}
 			}
 		}
 	},
@@ -60,16 +64,26 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 				},
 			} as const);
 
+			// Attempt to get the slug for each app
+			const appSlugs = new Map<number, string>();
+			try {
+				apps.forEach((app) => {
+					appSlugs.set(
+						app.id,
+						getApplicationSlug(app.organization[0].handle, app.app_name),
+					);
+				});
+			} catch (e) {
+				throw new errors.NotFoundError(e.message);
+			}
+
 			await Promise.all(
 				apps.map((app) =>
 					rootApi.patch({
 						resource: 'application',
 						id: app.id,
 						body: {
-							slug: getApplicationSlug(
-								app.organization[0].handle,
-								app.app_name,
-							),
+							slug: appSlugs.get(app.id),
 						},
 					}),
 				),
