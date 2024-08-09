@@ -16,7 +16,8 @@
     "./models/balena.sbvr": "./dist/balena.sbvr",
     "./models/balena-model.d.ts": "./dist/balena-model.d.ts",
     "./models/balena-init.sql": "./dist/balena-init.sql",
-    "./models/v6.sbvr": "./dist/translations/v6/v6.sbvr"
+    "./models/v6.sbvr": "./dist/translations/v6/v6.sbvr",
+    "./models/v7.sbvr": "./dist/translations/v7/v7.sbvr"
   },
   "files": [
     "dist/"
