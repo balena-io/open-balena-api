@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add device update status/last update status event that devices can report
+      hash: 7002ae0d24920786af036670ea561c68fad4c4b5
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 26.3.0
+  title: ""
+  date: 2024-08-19T08:48:04.328Z
+- commits:
     - subject: Update grafana/loki Docker tag to v3.1.1
       hash: f1666e91f3fe046b2b261f8ed4413c3f6e71eaa7
       body: |
