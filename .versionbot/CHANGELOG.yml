@@ -1,4 +1,17 @@
 - commits:
+    - subject: Lock file maintenance
+      hash: 322213a2c6dd1ec71d2ca1b93ec35e7fffddd9c4
+      body: |
+        Update
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 26.3.2
+  title: ""
+  date: 2024-08-21T01:22:20.938Z
+- commits:
     - subject: Update @balena/pinejs to v18
       hash: f549051d4772be62e81abf38dace7265b51153e4
       body: ""
