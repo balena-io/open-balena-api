@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update @balena/pinejs to v18
+      hash: f549051d4772be62e81abf38dace7265b51153e4
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Josh Bowling
+      nested: []
+  version: 26.3.1
+  title: ""
+  date: 2024-08-21T00:38:23.409Z
+- commits:
     - subject: Add device update status/last update status event that devices can report
       hash: 7002ae0d24920786af036670ea561c68fad4c4b5
       body: ""
