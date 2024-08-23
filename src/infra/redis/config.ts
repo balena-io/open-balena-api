@@ -10,6 +10,9 @@ import type { HostPort } from '@balena/env-parsing';
 */
 const redisRetryStrategy = _.constant(200);
 
+const keepAlive = 0;
+const connectTimeout = 10000;
+
 export const getRedisOptions = ({
 	readOnly = false,
 	instance = 'general',
@@ -30,7 +33,8 @@ export const getRedisOptions = ({
 		retryStrategy: redisRetryStrategy,
 		enableOfflineQueue: false,
 		enableAutoPipelining,
-		keepAlive: 0,
+		keepAlive,
+		connectTimeout,
 	};
 
 	if (r.isCluster) {
@@ -66,7 +70,11 @@ export const getNodeRedisOptions = ({
 	const r = REDIS[instance];
 
 	const redisOptions: NodeRedis.RedisClientOptions = {
-		socket: { reconnectStrategy: redisRetryStrategy },
+		socket: {
+			connectTimeout,
+			keepAlive,
+			reconnectStrategy: redisRetryStrategy,
+		},
 		disableOfflineQueue: true,
 	};
 
