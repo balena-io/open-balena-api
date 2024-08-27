@@ -1,3 +1,5 @@
+import './numeric-big-integer-hack.js';
+
 import type { ConfigLoader } from '@balena/pinejs';
 import {
 	aliasFields,
@@ -28,6 +30,13 @@ overrideFieldType(v6AbstractSqlModel, 'application', 'actor', 'Integer');
 for (const resource of ['device', 'application']) {
 	renameResourceField(v6AbstractSqlModel, resource, 'env var name', 'name');
 }
+
+overrideFieldType(
+	v6AbstractSqlModel,
+	'image',
+	'image size',
+	'Numeric Big Integer',
+);
 
 export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) => {
 	const deviceFieldSet = new Set(

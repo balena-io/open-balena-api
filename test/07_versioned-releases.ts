@@ -9,7 +9,7 @@ import type { UserObjectParam } from './test-lib/supertest.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import { setTimeout } from 'timers/promises';
-import { assertExists } from './test-lib/common.js';
+import { assertExists, itExpectsError } from './test-lib/common.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -37,6 +37,80 @@ export default () => {
 			after(async () => {
 				await fixtures.clean(fx);
 			});
+
+			const imageSizeType = versions.lte(version, 'v6') ? 'number' : 'string';
+			it(`should return an image.image_size of type ${imageSizeType}`, async function () {
+				const { body: image } = await pineUser
+					.get({
+						resource: 'image',
+						id: fx.images.release1_image1.id,
+						options: {
+							$select: 'image_size',
+						},
+					})
+					.expect(200);
+				const imageSize = versions.lte(version, 'v6')
+					? 75123123123
+					: '75123123123';
+				expect(image).to.have.property('image_size', imageSize);
+			});
+
+			it(`should be able to PATCH a ${imageSizeType} value < MAX_SAFE_INTEGER as an image.image_size`, async function () {
+				const newSize = Number.MAX_SAFE_INTEGER - 1;
+				const newSizeBodyValue = versions.lte(version, 'v6')
+					? newSize
+					: `${newSize}`;
+				await pineUser
+					.patch({
+						resource: 'image',
+						id: fx.images.release1_image1.id,
+						body: {
+							image_size: newSizeBodyValue.toString(),
+						},
+					})
+					.expect(200);
+				const { body: image } = await pineUser
+					.get({
+						resource: 'image',
+						id: fx.images.release1_image1.id,
+						options: {
+							$select: 'image_size',
+						},
+					})
+					.expect(200);
+				expect(image).to.have.property('image_size', newSizeBodyValue);
+			});
+
+			itExpectsError(
+				`should be able to PATCH a value > MAX_SAFE_INTEGER as an image.image_size but always retrieve it as a string`,
+				async function () {
+					const newBigIntSize = (
+						BigInt(Number.MAX_SAFE_INTEGER) + BigInt(10)
+					).toString();
+					await pineUser
+						.patch({
+							resource: 'image',
+							id: fx.images.release1_image1.id,
+							body: {
+								image_size: newBigIntSize,
+							},
+						})
+						.expect(200);
+					const { body: image } = await pineUser
+						.get({
+							resource: 'image',
+							id: fx.images.release1_image1.id,
+							options: {
+								$select: 'image_size',
+							},
+						})
+						.expect(200);
+					expect(image).to.have.property('image_size', newBigIntSize);
+				},
+				versions.lte(version, 'v6')
+					? `expected { image_size: 9007199254741000 } to have property 'image_size' of '9007199254741001', but got 9007199254741000`
+					: `expected { image_size: '9007199254741000' } to have property 'image_size' of '9007199254741001', but got '9007199254741000'`,
+			);
 
 			it('should be able to create a new failed release for a given commit', async () => {
 				await supertest(user)
