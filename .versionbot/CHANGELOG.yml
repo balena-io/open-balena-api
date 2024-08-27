@@ -1,4 +1,70 @@
 - commits:
+    - subject: Release the v7 model
+      hash: 50da5cf46b2f090cf6df69946d2558c0766e2e57
+      body: >
+        Drops:
+
+        * `device.logs_channel`
+
+        * `device.vpn_channel`
+
+        * `device.is_managed_by__device`
+          * `device.manages__device`
+        * `application.depends_on__application`
+          * `application.is_dependent_on_by__application`
+        * `release.release_type`(`final`/`draft`) in favor of `release.is_final`
+        (boolean)
+
+        * the `gateway_download` resource
+          * `image.is_downloaded_by__device`
+          * `device.downloads__image`
+        * the `my_application` resource
+
+        * POSTs to the `device` and `application` resource with a text
+        `device_type` field
+
+        * populating the response body with a status code message (eg 'OK')
+
+
+        Changes:
+
+        * the `user.actor`, `device.actor`, `application.actor` to return a
+        deferred (`{ __id: number; }`) instead of a plain number when not
+        `$expand`ed
+
+        * the `release.contract` from a string to a JSON field
+
+        * the `device.overall_status`'s
+          * `offline` to `disconnected`
+          * `idle` to
+            * `operational` when the device is heartbeating, and is either connected to cloudlink or has the vpn configured to be off
+            * `reduced-functionality` when the device has only a heartbeat or is only connected to cloudlink
+
+        Replaces:
+
+        * `device.should_be_running__release` with
+        `device.is_pinned_on__release`
+
+        * `release.should_be_running_on__device` with
+        `release.is_pinned_to__device`
+
+
+        Adds:
+
+        * `device.should_be_managed_by__release`
+      footer:
+        Resolves: "#1097"
+        resolves: "#1097"
+        Change-type: minor
+        change-type: minor
+        See: https://balena.fibery.io/Work/Project/Server-side-pagination-for-devices-Cycle-3-539
+        see: https://balena.fibery.io/Work/Project/Server-side-pagination-for-devices-Cycle-3-539
+      author: Thodoris Greasidis
+      nested: []
+  version: 26.4.0
+  title: ""
+  date: 2024-08-27T13:39:02.207Z
+- commits:
     - subject: Standardize node-redis and ioredis keepalive/connectTimeout settings
       hash: fd903a689dfa1c8b82e1ce5d813921e4ad4ebc5c
       body: |
