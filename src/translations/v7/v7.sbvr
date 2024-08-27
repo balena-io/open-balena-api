@@ -1,0 +1,881 @@
+Vocabulary: Auth
+
+Term: jwt secret
+	Concept Type: Short Text (Type)
+
+Term: name
+	Concept Type: Short Text (Type)
+
+Term: username
+	Concept Type: Short Text (Type)
+
+Term: password
+	Concept Type: Hashed (Type)
+
+Term: expiry date
+	Concept Type: Date Time (Type)
+
+Term: key
+	Concept Type: Short Text (Type)
+
+Term: description
+	Concept Type: Text (Type)
+
+Term: actor
+
+Term: permission
+	Reference Scheme: name
+Fact type: permission has name
+	Necessity: Each permission has exactly one name.
+	Necessity: Each name is of exactly one permission.
+
+Term: role
+	Reference Scheme: name
+Fact type: role has name
+	Necessity: Each role has exactly one name.
+	Necessity: Each name is of exactly one role.
+Fact type: role has permission
+
+Term: user
+	Reference Scheme: username
+	Concept Type: actor
+Fact type: user has username
+	Necessity: Each user has exactly one username.
+	Necessity: Each username is of exactly one user.
+Fact type: user has password
+	Necessity: Each user has at most one password.
+Fact type: user has jwt secret
+	Necessity: Each user has at most one jwt secret.
+Fact type: user has role
+	Term Form: user role
+	Fact type: user role has expiry date
+		Necessity: Each user role has at most one expiry date.
+Fact type: user has permission
+	Term Form: user permission
+	Fact type: user permission has expiry date
+		Necessity: Each user permission has at most one expiry date.
+
+Term: api key
+	Reference Scheme: key
+Fact type: api key has key
+	Necessity: each api key has exactly one key
+	Necessity: each key is of exactly one api key
+Fact type: api key has expiry date
+	Necessity: each api key has at most one expiry date.
+Fact type: api key has role
+	Note: An 'api key' will inherit all the 'permissions' that the 'role' has.
+Fact type: api key has permission
+Fact type: api key is of actor
+	Necessity: each api key is of exactly one actor
+Fact type: api key has name
+	Necessity: Each api key has at most one name.
+Fact type: api key has description
+	Necessity: Each api key has at most one description.
+
+
+Vocabulary: balena
+
+-- Primitive terms (in AZ order)
+Term: alias
+	Concept Type: Short Text (Type)
+
+Term: api heartbeat state
+	Concept Type: Short Text (Type)
+
+Term: api port
+	Concept Type: Integer (Type)
+
+Term: api secret
+	Concept Type: Short Text (Type)
+
+Term: app name
+	Concept Type: Text (Type)
+
+Term: build log
+	Concept Type: Text (Type)
+
+Term: class
+	Concept Type: Short Text (Type)
+
+Term: commit
+	Concept Type: Short Text (Type)
+
+Term: composition
+	Concept Type: JSON (Type)
+
+Term: config var name
+	Concept Type: Short Text (Type)
+
+Term: content hash
+	Concept Type: Short Text (Type)
+
+Term: contract
+	Concept Type: JSON (Type)
+
+Term: date
+	Concept Type: Date Time (Type)
+
+Term: device name
+	Concept Type: Short Text (Type)
+
+Term: dockerfile
+	Concept Type: Text (Type)
+
+Term: download progress
+	Concept Type: Integer (Type)
+
+Term: email
+	Concept Type: Text (Type)
+
+Term: end timestamp
+	Concept Type: Date Time (Type)
+
+Term: env var name
+	Concept Type: Short Text (Type)
+
+Term: error message
+	Concept Type: Text (Type)
+
+Term: handle
+	Concept Type: Short Text (Type)
+
+Term: image location
+	Concept Type: Short Text (Type)
+
+Term: image size
+	Concept Type: Big Integer (Type)
+
+Term: install date
+	Concept Type: Date Time (Type)
+
+Term: invalidation reason
+	Concept Type: Text (Type)
+
+Term: ip address
+	Concept Type: Short Text (Type)
+
+Term: known issue list
+	Concept Type: Text (Type)
+
+Term: label name
+	Concept Type: Short Text (Type)
+
+Term: last connectivity event
+	Concept Type: Date Time (Type)
+
+Term: last heartbeat
+	Concept Type: Date Time (Type)
+
+Term: last update status event
+	Concept Type: Date Time (Type)
+
+Term: last vpn event
+	Concept Type: Date Time (Type)
+
+Term: local id
+	Concept Type: Short Text (Type)
+
+Term: logo
+	Concept Type: Text (Type)
+
+Term: mac address
+	Concept Type: Short Text (Type)
+
+Term: memory usage
+	Concept Type: Integer (Type)
+
+Term: memory total
+	Concept Type: Integer (Type)
+
+Term: storage block device
+	Concept Type: Short Text (Type)
+
+Term: storage usage
+	Concept Type: Integer (Type)
+
+Term: storage total
+	Concept Type: Integer (Type)
+
+Term: cpu usage
+	Concept Type: Integer (Type)
+
+Term: cpu temp
+	Concept Type: Integer (Type)
+
+Term: cpu id
+	Concept Type: Short Text (Type)
+
+Term: maximum device count
+	Concept Type: Integer (Type)
+
+Term: message
+	Concept Type: Text (Type)
+
+Term: note
+	Concept Type: Text (Type)
+
+Term: os version
+	Concept Type: Short Text (Type)
+
+Term: os version range
+	Concept Type: Short Text (Type)
+
+Term: os variant
+	Concept Type: Short Text (Type)
+
+Term: overall status
+	Concept Type: Short Text (Type)
+
+Term: overall progress
+	Concept Type: Integer (Type)
+
+Term: phase
+	Concept Type: Short Text (Type)
+
+Term: project type
+	Concept Type: Short Text (Type)
+
+Term: provisioning progress
+	Concept Type: Integer (Type)
+
+Term: provisioning state
+	Concept Type: Short Text (Type)
+
+Term: public address
+	Concept Type: Short Text (Type)
+
+Term: public key
+	Concept Type: Text (Type)
+
+Term: push timestamp
+	Concept Type: Date Time (Type)
+
+Term: raw version
+	Concept Type: Short Text (Type)
+
+Term: release version
+	Concept Type: Short Text (Type)
+
+Term: revision
+	Concept Type: Integer (Type)
+
+Term: scope
+	Concept Type: Short Text (Type)
+
+Term: semver build
+	Concept Type: Short Text (Type)
+
+Term: semver major
+	Concept Type: Integer (Type)
+
+Term: semver minor
+	Concept Type: Integer (Type)
+
+Term: semver patch
+	Concept Type: Integer (Type)
+
+Term: semver prerelease
+	Concept Type: Short Text (Type)
+
+Term: semver
+	Concept Type: Short Text (Type)
+
+Term: service name
+	Concept Type: Short Text (Type)
+
+Term: service type
+	Concept Type: Short Text (Type)
+
+Term: slug
+	Concept Type: Short Text (Type)
+
+Term: source
+	Concept Type: Short Text (Type)
+
+Term: start timestamp
+	Concept Type: Date Time (Type)
+
+Term: status
+	Concept Type: Short Text (Type)
+
+Term: supervisor version
+	Concept Type: Short Text (Type)
+
+Term: tag key
+	Concept Type: Short Text (Type)
+
+Term: title
+	Concept Type: Short Text (Type)
+
+Term: update status
+	Concept Type: Short Text (Type)
+
+Term: update timestamp
+	Concept Type: Date Time (Type)
+
+Term: uuid
+	Concept Type: Text (Type)
+
+Term: value
+	Concept Type: Text (Type)
+
+Term: variant
+	Concept Type: Short Text (Type)
+
+Term: version
+	Concept Type: Integer (Type)
+
+
+-- Complex terms
+
+Term: application type
+Term: config
+Term: cpu architecture
+Term: device family
+Term: device manufacturer
+Term: device type
+Term: image
+Term: organization
+Term: service instance
+
+Term: application
+	Concept Type: actor (Auth)
+
+	Fact type: application [should track latest release]
+
+	Fact type: application is of class
+		Necessity: each application is of exactly one class.
+		Definition: "fleet" or "block" or "app"
+
+	Fact type: application has env var name
+		Term Form: application environment variable
+		Database Table Name: application environment variable
+
+	Fact type: application has config var name
+		Term Form: application config variable
+		Database Table Name: application config variable
+
+	Fact type: application has service name
+		Term Form: service
+		Database Table Name: service
+
+		Fact type: service has label name
+			Term Form: service label
+			Database Table Name: service label
+
+		Fact type: service has name (Auth)
+			Term Form: service environment variable
+			Database Table Name: service environment variable
+
+	Fact type: application has tag key
+		Term Form: application tag
+		Database Table Name: application tag
+		Necessity: each application tag has a tag key that has a Length (Type) that is greater than 0.
+
+Term: device
+	Concept Type: actor (Auth)
+
+	Fact type: device has api heartbeat state
+		Necessity: each device has exactly one api heartbeat state
+		Definition: "online" or "offline" or "timeout" or "unknown"
+
+	Fact type: device has env var name
+		Term Form: device environment variable
+		Database Table Name: device environment variable
+
+	Fact type: device has config var name
+		Term Form: device config variable
+		Database Table Name: device config variable
+
+	Fact type: device installs image
+		Term Form: image install
+		Database Table Name: image install
+
+	Fact type: device installs service
+		Term Form: service install
+		Database Table Name: service install
+
+		Fact type: service install has name (Auth)
+			Term Form: device service environment variable
+			Database Table Name: device service environment variable
+
+	Fact type: device has tag key
+		Term Form: device tag
+		Database Table Name: device tag
+		Necessity: each device tag has a tag key that has a Length (Type) that is greater than 0.
+
+Term: release
+
+Fact type: release has tag key
+	Term Form: release tag
+	Database Table Name: release tag
+	Necessity: each release tag has a tag key that has a Length (Type) that is greater than 0.
+
+Fact type: image is part of release
+	Synonymous Form: release contains image
+	Term Form: release image
+
+	Fact type: release image has label name
+		Term Form: image label
+		Database Table Name: image label
+
+	Fact type: release image has name (Auth)
+		Term Form: image environment variable
+		Database Table Name: image environment variable
+
+Fact type: user (Auth) is member of organization
+	Synonymous Form: organization includes user (Auth)
+	Database Table Name: organization membership
+	Term Form: organization membership
+
+
+-- organization
+
+Fact type: organization has name (Auth)
+	Necessity: each organization has exactly one name (Auth).
+	Necessity: each name (Auth) of an organization, has a Length (Type) that is greater than 0.
+Fact type: organization has handle
+	Necessity: each organization has exactly one handle.
+	Necessity: each handle is of exactly one organization.
+	Necessity: each handle of an organization, has a Length (Type) that is greater than 0.
+
+
+-- user
+
+Fact type: user (Auth) has email
+	Necessity: each user (Auth) has at most one email.
+	Necessity: each user (Auth) that has an email, has an email that has a Length (Type) that is greater than 4.
+	Necessity: each email is of exactly one user (Auth).
+
+Fact type: user (Auth) has public key
+	Term Form: user public key
+
+
+-- user public key
+
+Fact type: user public key has title
+    Necessity: each user public key has exactly one title
+
+
+-- application type
+
+Fact type: application type has name (Auth)
+	Necessity: each application type has exactly one name (Auth)
+Fact type: application type supports web url
+Fact type: application type supports multicontainer
+Fact type: application type supports gateway mode
+Fact type: application type needs os version range
+	Necessity: each application type needs at most one os version range
+Fact type: application type requires payment
+Fact type: application type is legacy
+Fact type: application type has slug
+	Necessity: each application type has exactly one slug
+	Necessity: each slug is of exactly one application type
+Fact type: application type has description (Auth)
+	Necessity: each application type has at most one description (Auth).
+Fact type: application type has maximum device count
+	Necessity: each application type has at most one maximum device count
+
+
+-- application
+
+Fact type: application has organization
+	Synonymous Form: organization has application
+	Necessity: each application has exactly one organization.
+Fact type: application has app name
+	Necessity: each application has exactly one app name
+	Necessity: each application has an app name that has a Length (Type) that is greater than or equal to 4 and is less than or equal to 100.
+Fact type: application has slug
+	Necessity: each application has exactly one slug
+	Necessity: each slug is of exactly one application
+Fact type: application is for device type
+	Synonymous Form: device type is default for application
+	Necessity: each application is for exactly one device type
+Fact type: application should be running release
+	Synonymous Form: release should be running on application
+	Necessity: each application should be running at most one release.
+Fact type: application has application type
+	Necessity: each application has exactly one application type.
+Fact type: application is host
+Fact type: application is archived
+Fact type: application has uuid
+	Necessity: each application has exactly one uuid.
+	Necessity: each uuid is of exactly one application.
+	Necessity: each application has a uuid that has a Length (Type) that is equal to 32.
+Fact type: application is public
+
+-- service instance
+
+Fact type: service instance has service type
+	Necessity: each service instance has exactly one service type.
+Fact type: service instance has ip address
+	Necessity: each service instance has exactly one ip address.
+Fact type: service instance has last heartbeat
+	Necessity: each service instance has exactly one last heartbeat.
+
+
+-- device
+
+Fact type: device has uuid
+	Necessity: each device has exactly one uuid.
+	Necessity: each uuid is of exactly one device.
+Fact type: device has local id
+	Necessity: each device has at most one local id.
+Fact type: device has device name
+	Necessity: each device has at most one device name.
+Fact type: device has note
+	Necessity: each device has at most one note.
+Fact type: device is of device type
+	Synonymous Form: device type describes device
+	Necessity: each device is of exactly one device type.
+Fact type: device belongs to application
+	Synonymous Form: application owns device
+	Necessity: each device belongs to at most one application.
+Fact type: device is online
+Fact type: device has last connectivity event
+	Necessity: each device has at most one last connectivity event.
+Fact type: device is connected to vpn
+Fact type: device has last vpn event
+	Necessity: each device has at most one last vpn event.
+Fact type: device is locked until date
+	Necessity: each device is locked until at most one date.
+Fact type: device has public address
+	Necessity: each device has at most one public address
+Fact type: device has ip address
+	Necessity: each device has at most one ip address
+Fact type: device has mac address
+	Necessity: each device has at most one mac address
+-- FIXME: The core API has no support for "Device Public URLs",
+-- but w/o this shim some CLI commands fail since they do select it,
+-- Eg: A mechanism that silently unknown selected fields on versioned models
+-- would allow us to drop this.
+Fact type: device is web accessible
+Fact type: device has memory usage
+	Necessity: each device has at most one memory usage
+Fact type: device has memory total
+	Necessity: each device has at most one memory total
+Fact type: device has storage block device
+	Necessity: each device has at most one storage block device
+Fact type: device has storage usage
+	Necessity: each device has at most one storage usage
+Fact type: device has storage total
+	Necessity: each device has at most one storage total
+Fact type: device has cpu usage
+	Necessity: each device has at most one cpu usage
+Fact type: device has cpu temp
+	Necessity: each device has at most one cpu temp
+Fact type: device is undervolted
+Fact type: device has cpu id
+	Necessity: each device has at most one cpu id
+Fact type: device is running release
+	Synonymous Form: release is running on device
+	Necessity: each device is running at most one release.
+	Reference Type: informative
+Fact type: device has download progress
+	Necessity: each device has at most one download progress.
+Fact type: device has status
+	Necessity: each device has at most one status.
+Fact type: device has os version
+	Necessity: each device has at most one os version
+Fact type: device has os variant
+	Necessity: each device has at most one os variant
+Fact type: device has overall status
+	Necessity: each device has exactly one overall status
+Fact type: device has overall progress
+	Necessity: each device has at most one overall progress
+Fact type: device has supervisor version
+	Necessity: each device has at most one supervisor version
+Fact type: device has provisioning progress
+	Necessity: each device has at most one provisioning progress
+Fact type: device has provisioning state
+	Necessity: each device has at most one provisioning state
+Fact type: device has api port
+	Necessity: each device has at most one api port
+Fact type: device has api secret
+	Necessity: each device has at most one api secret
+Fact type: device is managed by service instance
+	Synonymous Form: service instance manages device
+	Necessity: each device is managed by at most one service instance
+Fact type: device is pinned on release
+	Synonymous Form: release is pinned to device
+	Necessity: each device is pinned on at most one release
+Fact type: device should be running release
+	Synonymous Form: release should be running on device
+	Necessity: each device should be running at most one release
+	Note: Computed as device is pinned on release ?? application should be running release.
+Fact type: device should be operated by release
+	Synonymous Form: release should operate device
+	Necessity: each device should be operated by at most one release
+Fact type: device should be managed by release
+	Synonymous Form: release should manage device
+	Necessity: each device should be managed by at most one release
+Fact type: device has update status
+	Necessity: each device has at most one update status.
+	Definition: "rejected" or "downloading" or "downloaded" or "applying changes" or "aborted" or "done"
+Fact type: device has last update status event
+	Necessity: each device has at most one last update status event.
+
+-- application config variable
+
+Fact type: application config variable has value
+	Necessity: each application config variable has exactly one value.
+
+
+-- device config variable
+
+Fact type: device config variable has value
+	Necessity: each device config variable has exactly one value.
+
+-- device type
+
+Fact type: device type has slug
+	Necessity: each device type has exactly one slug
+	Necessity: each slug is of exactly one device type
+
+Fact type: device type has name (Auth)
+	Necessity: each device type has exactly one name (Auth)
+
+Fact type: device type is of cpu architecture
+	Synonymous form: device type supports cpu architecture
+	Synonymous form: cpu architecture is supported by device type
+	Necessity: each device type supports exactly one cpu architecture
+
+Fact type: device type has logo
+	Necessity: each device type has at most one logo
+
+Fact type: device type has contract
+	Necessity: each device type has at most one contract
+
+Fact type: device type belongs to device family
+	Synonymous form: device family has device type
+	Necessity: each device type belongs to at most one device family
+
+Fact type: device type is referenced by alias
+	Synonymous form: alias references device type
+	Term Form: device type alias
+	Database Table Name: device type alias
+	Necessity: each alias references exactly one device type
+
+-- cpu architecture
+
+Fact type: cpu architecture has slug
+	Necessity: each cpu architecture has exactly one slug
+	Necessity: each slug is of exactly one cpu architecture
+
+-- device manufacturer
+
+Fact type: device manufacturer has slug
+	Necessity: each device manufacturer has exactly one slug
+	Necessity: each slug is of exactly one device manufacturer
+Fact type: device manufacturer has name (Auth)
+	Necessity: each device manufacturer has exactly one name (Auth)
+
+-- device family
+
+Fact type: device family has slug
+	Necessity: each device family has exactly one slug
+	Necessity: each slug is of exactly one device family
+Fact type: device family has name (Auth)
+	Necessity: each device family has exactly one name (Auth)
+Fact type: device family is manufactured by device manufacturer
+	Necessity: each device family is manufactured by at most one device manufacturer
+
+-- release
+
+Fact type: release belongs to application
+	Synonymous Form: application owns release
+	Necessity: each release belongs to exactly one application.
+Fact type: release has commit
+	Necessity: each release has exactly one commit.
+Fact type: release has composition
+	Necessity: each release has exactly one composition.
+Fact type: release has status
+	Necessity: each release has exactly one status.
+Fact type: release has source
+	Necessity: each release has exactly one source.
+Fact type: release has build log
+	Necessity: each release has at most one build log.
+Fact type: release is invalidated
+Fact type: release has start timestamp
+	Necessity: each release has exactly one start timestamp.
+Fact type: release has end timestamp
+	Necessity: each release has at most one end timestamp.
+Fact type: release has update timestamp
+	Necessity: each release has exactly one update timestamp.
+Fact type: release has release version
+	Necessity: each release has at most one release version
+	Note: Deprecated.
+Fact type: release has contract
+	Necessity: each release has at most one contract
+Fact type: release is passing tests
+Fact type: release is finalized at date
+	Necessity: each release is finalized at at most one date.
+Fact type: release has phase
+	Necessity: each release has at most one phase.
+	Definition: "next" or "current" or "sunset" or "end-of-life"
+Fact type: release is final
+Fact type: release has semver
+	Necessity: each release has exactly one semver.
+Fact type: release has semver major
+	Necessity: each release has exactly one semver major.
+Fact type: release has semver minor
+	Necessity: each release has exactly one semver minor.
+Fact type: release has semver patch
+	Necessity: each release has exactly one semver patch.
+Fact type: release has semver prerelease
+	Necessity: each release has exactly one semver prerelease.
+Fact type: release has semver build
+	Necessity: each release has exactly one semver build.
+Fact type: release has variant
+	Necessity: each release has exactly one variant.
+Fact type: release has revision
+	Necessity: each release has at most one revision.
+	Necessity: each release that has a revision, has a revision that is greater than or equal to 0.
+Fact type: release has raw version
+	Necessity: each release has exactly one raw version.
+Fact type: release has version
+	Necessity: each release has exactly one version.
+	Note: The release.version's field type is overriden to JSON by changing the generated abstract sql.
+Fact type: release has known issue list
+	Necessity: each release has at most one known issue list.
+Fact type: release has note
+	Necessity: each release has at most one note.
+Fact type: release has invalidation reason
+	Necessity: each release has at most one invalidation reason.
+	Necessity: each release that has an invalidation reason, is invalidated.
+
+
+-- service environment variable
+
+Fact type: service environment variable has value
+	Necessity: each service environment variable has exactly one value.
+
+
+-- image
+
+Fact type: image has start timestamp
+	Necessity: each image has exactly one start timestamp.
+Fact type: image has end timestamp
+	Necessity: each image has at most one end timestamp.
+Fact type: image has dockerfile
+	Necessity: each image has at most one dockerfile.
+Fact type: image is a build of service
+	Synonymous Form: service is built by image
+	Necessity: each image is a build of exactly one service.
+Fact type: image has image size
+	Necessity: each image has at most one image size.
+Fact type: image is stored at image location
+	Synonymous Form: image location hosts image
+	Necessity: each image is stored at exactly one image location.
+	Necessity: each image location hosts exactly one image.
+Fact type: image has project type
+	Necessity: each image has at most one project type.
+Fact type: image has error message
+	Necessity: each image has at most one error message
+Fact type: image has build log
+	Necessity: each image has at most one build log.
+Fact type: image has push timestamp
+	Necessity: each image has at most one push timestamp.
+Fact type: image has status
+	Necessity: each image has exactly one status.
+Fact type: image has content hash
+	Necessity: each image has at most one content hash.
+Fact type: image has contract
+	Necessity: each image has at most one contract
+
+
+-- image label
+
+Fact type: image label has value
+	Necessity: each image label has exactly one value.
+
+
+-- service label
+
+Fact type: service label has value
+	Necessity: each service label has exactly one value.
+
+
+-- device environment variable
+
+Fact type: device environment variable has value
+	Necessity: each device environment variable has exactly one value.
+
+
+-- application environment variable
+
+Fact type: application environment variable has value
+	Necessity: each application environment variable has exactly one value.
+
+
+-- image environment variable
+
+Fact type: image environment variable has value
+	Necessity: each image environment variable has exactly one value.
+
+
+-- device service environment variable
+
+Fact type: device service environment variable has value
+	Necessity: each device service environment variable has exactly one value.
+
+
+-- application tag
+
+Fact type: application tag has value
+	Necessity: each application tag has exactly one value.
+
+
+-- device tag
+
+Fact type: device tag has value
+	Necessity: each device tag has exactly one value.
+
+
+-- release tag
+
+Fact type: release tag has value
+	Necessity: each release tag has exactly one value.
+
+
+-- image install
+
+Fact type: image install has install date
+	Necessity: each image install has exactly one install date.
+Fact type: image install has download progress
+	Necessity: each image install has at most one download progress.
+Fact type: image install has status
+	Necessity: each image install has exactly one status.
+Fact type: image install is provided by release
+	Synonymous Form: release provides image install
+	Necessity: each image install is provided by exactly one release.
+
+
+-- config
+
+Fact type: config has key (Auth)
+	Necessity: each config has exactly one key (Auth).
+Fact type: config has value
+	Necessity: each config has exactly one value.
+Fact type: config has scope
+	Necessity: each config has at most one scope.
+Fact type: config has description (Auth)
+	Necessity: each config has at most one description (Auth).
+
+
+-- Rules
+
+Rule: It is necessary that each application that owns a release1 that has a status that is equal to "success" and is not invalidated and has a release version, owns at most one release2 that has a status that is equal to "success" and is not invalidated and has a release version that is of the release1.
+Rule: It is necessary that each image that has a status that is equal to "success", has a push timestamp.
+Rule: It is necessary that each application that owns a release1 that has a status that is equal to "success" and has a commit1, owns at most one release2 that has a status that is equal to "success" and has a commit2 that is equal to the commit1.
+Rule: It is necessary that each application that owns a release1 that has a revision, owns at most one release2 that has a semver major that is of the release1 and has a semver minor that is of the release1 and has a semver patch that is of the release1 and has a semver prerelease that is of the release1 and has a variant that is of the release1 and has a revision that is of the release1.
+Rule: It is necessary that each release that is pinned to a device, has a status that is equal to "success" and belongs to an application1 that the device belongs to.
+Rule: It is necessary that each release that should be running on an application, has a status that is equal to "success" and belongs to the application.
+Rule: It is necessary that each application that owns a release that contains at least 2 images, has an application type that supports multicontainer.
+Rule: It is necessary that each release that should operate a device, has a status that is equal to "success".
+Rule: It is necessary that each release that should operate a device that is of a device type, belongs to an application that is host and is for the device type.
+-- native supervisor release rules, separated for legibility
+Rule: It is necessary that each release that should manage a device, has a status that is equal to "success" and has a semver major that is greater than 0 or has a semver minor that is greater than 0 or has a semver patch that is greater than 0.
+-- The first part of this rule is meant to prevent accidentally setting a host extension as a supervisor (i.e., another public + non-host app)
+Rule: It is necessary that each release that should manage a device that is of a device type1, belongs to an application that is public and is not host and has a slug that is equal to "balena_os/aarch64-supervisor" or "balena_os/amd64-supervisor" or "balena_os/armv7hf-supervisor" or "balena_os/i386-supervisor" or "balena_os/i386-nlp-supervisor" or "balena_os/rpi-supervisor" and is for a device type2 that is of a cpu architecture that is supported by the device type1.
+
