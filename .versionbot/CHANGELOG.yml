@@ -1,4 +1,19 @@
 - commits:
+    - subject: Standardize node-redis and ioredis keepalive/connectTimeout settings
+      hash: fd903a689dfa1c8b82e1ce5d813921e4ad4ebc5c
+      body: |
+        These are initally set to match the ioredis settings we were using for
+        an extended period however can easily be tweaked in future as makes
+        sense
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 26.3.6
+  title: ""
+  date: 2024-08-27T08:54:45.830Z
+- commits:
     - subject: Lock file maintenance
       hash: 4bd536fd4a9aaa8f27916a655243ad992c57f96a
       body: |
