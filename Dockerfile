@@ -1,4 +1,4 @@
-FROM balena/open-balena-base:v18.0.11 as runtime
+FROM balena/open-balena-base:v18.0.11 AS runtime
 
 EXPOSE 80
 
@@ -14,7 +14,7 @@ COPY config/services/ /etc/systemd/system/
 RUN systemctl enable open-balena-api.service
 
 # Set up a test image that can be reused
-FROM runtime as test
+FROM runtime AS test
 
 RUN apt update && apt install \
 	&& apt install python3-pglast \
