@@ -35,7 +35,7 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) => {
 	);
 	return {
 		'my application': {
-			$toResource: `application$${toVersion}`,
+			$toResource: `application`,
 			abstractSql: [
 				'SelectQuery',
 				[
@@ -87,18 +87,10 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) => {
 			'depends on-application': ['Cast', ['Null'], 'Integer'],
 		},
 		'application-has-name': {
-			// W/o skipping v7 w/ a direct `$resin` translation, POSTs fail with a 500 with:
-			// TypeError: Cannot read properties of undefined (reading 'idField')
-			// TODO: Try removing or switching `$resin` to `$${toVersion}` after v gets fixed
-			// See: https://github.com/balena-io/pinejs/issues/794
-			$toResource: `application-has-config var name$resin`,
+			$toResource: `application-has-config var name`,
 		},
 		'device-has-name': {
-			// W/o skipping v7 w/ a direct `$resin` translation, POSTs fail with a 500 with:
-			// TypeError: Cannot read properties of undefined (reading 'idField')
-			// TODO: Try removing or switching `$resin` to `$${toVersion}` after v gets fixed
-			// See: https://github.com/balena-io/pinejs/issues/794
-			$toResource: `device-has-config var name$resin`,
+			$toResource: `device-has-config var name`,
 		},
 		device: {
 			'is managed by-device': ['Cast', ['Null'], 'Integer'],
@@ -222,7 +214,7 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) => {
 			// TODO-HACK: This redirects to the device resource as a hack because we can't redirect to no resource,
 			// but the redirect is only used for modification events and we have no allowlist entries for gateway_download
 			// writes so it should be blocked anyway
-			$toResource: `device$${toVersion}`,
+			$toResource: `device`,
 			abstractSql: [
 				'SelectQuery',
 				[
