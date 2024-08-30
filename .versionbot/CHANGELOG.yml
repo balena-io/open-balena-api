@@ -1,4 +1,28 @@
 - commits:
+    - subject: Update @balena/pinejs-webresource-cloudfront to 0.2.0
+      hash: d30194efba0d7be3de5f92aeb56191d140042fb2
+      body: |
+        Update @balena/pinejs-webresource-cloudfront from 0.1.0 to 0.2.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Switch @balena/pinejs to a peer dependency and support 17.x/18.x
+              hash: 91bc87db7d0e5e349353a3b33dc057c6a03a92fb
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: pinejs-webresource-cloudfront-0.2.0
+          title: ""
+          date: 2024-08-30T16:35:10.844Z
+  version: 26.4.3
+  title: ""
+  date: 2024-08-30T16:56:26.856Z
+- commits:
     - subject: Fix Dockerfile linting
       hash: 86f808f1e7046c65d80ec741fe56af1d67fb9b1a
       body: ""
