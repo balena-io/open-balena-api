@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix Dockerfile linting
+      hash: 86f808f1e7046c65d80ec741fe56af1d67fb9b1a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 26.4.2
+  title: ""
+  date: 2024-08-30T16:22:57.522Z
+- commits:
     - subject: Remove the no longer necessary version suffix in v6 $toResource
         translations
       hash: d9e62d809aa9221cbdd2fe159bd986eb2aa18a5c
