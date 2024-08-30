@@ -1,4 +1,30 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v18.0.12
+      hash: 89c97ceb764a1fe751b73ca2a286407a0f7e411c
+      body: |
+        Update balena/open-balena-base from 18.0.11 to 18.0.12
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency npm to v10.8.3
+              hash: 222add4df15256fa181b87ef1ef7b56fee3d8c29
+              body: |
+                Update npm from 10.8.2 to 10.8.3
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-18.0.12
+          title: ""
+          date: 2024-08-28T20:53:48.284Z
+  version: 26.4.4
+  title: ""
+  date: 2024-08-30T18:03:39.474Z
+- commits:
     - subject: Update @balena/pinejs-webresource-cloudfront to 0.2.0
       hash: d30194efba0d7be3de5f92aeb56191d140042fb2
       body: |
