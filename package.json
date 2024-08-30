@@ -49,7 +49,7 @@
     "@balena/env-parsing": "^1.1.12",
     "@balena/es-version": "^1.0.3",
     "@balena/node-metrics-gatherer": "^6.0.3",
-    "@balena/pinejs": "^18.1.1",
+    "@balena/pinejs": "^18.2.1",
     "@balena/pinejs-webresource-cloudfront": "^0.1.0",
     "@sentry/node": "^8.18.0",
     "@types/basic-auth": "^1.1.8",
