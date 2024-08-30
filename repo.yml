@@ -10,5 +10,7 @@ upstream:
     url: 'https://github.com/balena-io-modules/typed-error'
   - repo: '@balena/node-metrics-gatherer'
     url: 'https://github.com/balena-io-modules/node-metrics-gatherer'
+  - repo: '@balena/pinejs-webresource-cloudfront'
+    url: 'https://github.com/balena-io-modules/pinejs-webresource-cloudfront'
   - repo: 'loki-grpc-client'
     url: 'https://github.com/balena-io-modules/node-loki-grpc-client'
