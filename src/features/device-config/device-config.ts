@@ -26,6 +26,7 @@ import {
 	VPN_PORT,
 	LOGS_HOST,
 } from '../../lib/config.js';
+import { getBodyOrQueryParam } from '../../lib/utils.js';
 
 // `osVersion == null` means assume "latest"
 export const generateConfig = async (
@@ -61,20 +62,22 @@ export const generateConfig = async (
 
 				// Checking both req.body and req.query given both GET and POST support
 				// Ref: https://github.com/balena-io/balena-api/blob/master/src/routes/applications.ts#L95
-				apiKeyOptions.name =
-					req.body.provisioningKeyName ??
-					req.query.provisioningKeyName ??
-					'Automatically generated provisioning key';
+				apiKeyOptions.name = getBodyOrQueryParam(
+					req,
+					'provisioningKeyName',
+					'Automatically generated provisioning key',
+				);
 
-				apiKeyOptions.description =
-					req.body.provisioningKeyDescription ??
-					req.query.provisioningKeyDescription ??
-					'Automatically generated for an image download or config file generation';
+				apiKeyOptions.description = getBodyOrQueryParam(
+					req,
+					'provisioningKeyDescription',
+					'Automatically generated for an image download or config file generation',
+				);
 
-				apiKeyOptions.expiryDate =
-					req.body.provisioningKeyExpiryDate ??
-					req.query.provisioningKeyExpiryDate ??
-					undefined;
+				apiKeyOptions.expiryDate = getBodyOrQueryParam(
+					req,
+					'provisioningKeyExpiryDate',
+				);
 
 				return await createProvisioningApiKey(req, app.id, apiKeyOptions);
 			})(),
@@ -123,13 +126,15 @@ export const generateConfig = async (
 		},
 		{
 			appUpdatePollInterval:
-				parseInt(req.param('appUpdatePollInterval'), 10) * 60 * 1000,
-			network: req.body.network ?? req.query.network,
-			wifiSsid: req.param('wifiSsid'),
-			wifiKey: req.param('wifiKey'),
-			ip: req.param('ip'),
-			gateway: req.param('gateway'),
-			netmask: req.param('netmask'),
+				parseInt(getBodyOrQueryParam(req, 'appUpdatePollInterval'), 10) *
+				60 *
+				1000,
+			network: getBodyOrQueryParam(req, 'network'),
+			wifiSsid: getBodyOrQueryParam(req, 'wifiSsid'),
+			wifiKey: getBodyOrQueryParam(req, 'wifiKey'),
+			ip: getBodyOrQueryParam(req, 'ip'),
+			gateway: getBodyOrQueryParam(req, 'gateway'),
+			netmask: getBodyOrQueryParam(req, 'netmask'),
 		},
 	);
 
@@ -154,7 +159,7 @@ export const generateConfig = async (
 	}
 
 	const developmentMode = (
-		req.param('developmentMode') ?? osVersion?.endsWith('.dev')
+		getBodyOrQueryParam(req, 'developmentMode') ?? osVersion?.endsWith('.dev')
 	)?.toString();
 	if (['true', 'on', '1'].includes(developmentMode || '')) {
 		config.developmentMode = true;

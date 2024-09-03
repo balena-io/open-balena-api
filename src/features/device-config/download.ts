@@ -10,7 +10,7 @@ import {
 
 import { generateConfig } from './device-config.js';
 import { findBySlug } from '../device-types/device-types.js';
-import { checkInt } from '../../lib/utils.js';
+import { checkInt, getBodyOrQueryParam } from '../../lib/utils.js';
 
 const { UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
@@ -40,14 +40,14 @@ const getApp = async (appId: number, req: Request) => {
 };
 
 export const downloadImageConfig: RequestHandler = async (req, res) => {
-	const appId = checkInt(req.body.appId ?? req.query.appId);
+	const appId = checkInt(getBodyOrQueryParam(req, 'appId'));
 	if (!appId) {
 		res.status(400).send('An appId is required.');
 		return;
 	}
 
-	const deviceTypeSlug = req.body.deviceType ?? req.query.deviceType;
-	const osVersion = req.body.version ?? req.query.version;
+	const deviceTypeSlug = getBodyOrQueryParam(req, 'deviceType');
+	const osVersion = getBodyOrQueryParam(req, 'version');
 
 	if (!osVersion) {
 		res.status(400).send('A version is required.');
