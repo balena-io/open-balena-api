@@ -1,7 +1,6 @@
 import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
 import RedisSMQ from 'rsmq';
-import type { Params } from 'pinejs-client-core';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
@@ -19,62 +18,58 @@ import {
 } from '../../lib/config.js';
 import { redis, redisRO } from '../../infra/redis/index.js';
 import { setTimeout } from 'timers/promises';
-import type {
-	ApplicationConfigVariable,
-	DeviceConfigVariable,
-} from '../../balena-model.js';
 
 const { api } = sbvrUtils;
 
-const getPollIntervalForDevice = _.once(() => {
-	const pineQuery = {
-		resource: 'device_config_variable',
-		passthrough: { req: permissions.root },
-		options: {
-			$select: ['value'],
-			$top: 1,
-			$filter: {
-				device: { '@': 'deviceId' },
-				name: {
-					$in: [
-						'BALENA_SUPERVISOR_POLL_INTERVAL',
-						'RESIN_SUPERVISOR_POLL_INTERVAL',
-					],
+const getPollIntervalForDevice = _.once(() =>
+	api.resin.prepare(
+		{
+			resource: 'device_config_variable',
+			passthrough: { req: permissions.root },
+			options: {
+				$select: ['value'],
+				$top: 1,
+				$filter: {
+					device: { '@': 'deviceId' },
+					name: {
+						$in: [
+							'BALENA_SUPERVISOR_POLL_INTERVAL',
+							'RESIN_SUPERVISOR_POLL_INTERVAL',
+						],
+					},
+				},
+				$orderby: {
+					// we want the last value that would have been passed
+					// to the supervisor, as that is the one it would have used.
+					name: 'desc',
 				},
 			},
-			$orderby: {
-				// we want the last value that would have been passed
-				// to the supervisor, as that is the one it would have used.
-				name: 'desc',
-			},
-		},
-	} as const satisfies Params<DeviceConfigVariable>;
-	return api.resin.prepare<
-		{ deviceId: number },
-		'device_config_variable',
-		typeof pineQuery
-	>(pineQuery);
-});
+		} as const,
+		{ deviceId: ['number'] },
+	),
+);
 
-const getPollIntervalForParentApplication = _.once(() => {
-	const pineQuery = {
-		resource: 'application_config_variable',
-		passthrough: { req: permissions.root },
-		options: {
-			$select: ['value'],
-			$top: 1,
-			$filter: {
-				application: {
-					$any: {
-						$alias: 'a',
-						$expr: {
-							a: {
-								owns__device: {
-									$any: {
-										$alias: 'd',
-										$expr: {
-											d: {
-												id: { '@': 'deviceId' },
+const getPollIntervalForParentApplication = _.once(() =>
+	api.resin.prepare(
+		{
+			resource: 'application_config_variable',
+			passthrough: { req: permissions.root },
+			options: {
+				$select: ['value'],
+				$top: 1,
+				$filter: {
+					application: {
+						$any: {
+							$alias: 'a',
+							$expr: {
+								a: {
+									owns__device: {
+										$any: {
+											$alias: 'd',
+											$expr: {
+												d: {
+													id: { '@': 'deviceId' },
+												},
 											},
 										},
 									},
@@ -82,29 +77,25 @@ const getPollIntervalForParentApplication = _.once(() => {
 							},
 						},
 					},
+					name: {
+						$in: [
+							'BALENA_SUPERVISOR_POLL_INTERVAL',
+							'RESIN_SUPERVISOR_POLL_INTERVAL',
+						],
+					},
 				},
-				name: {
-					$in: [
-						'BALENA_SUPERVISOR_POLL_INTERVAL',
-						'RESIN_SUPERVISOR_POLL_INTERVAL',
-					],
+				$orderby: {
+					// we want the last value that would have been passed
+					// to the supervisor, as that is the one it would have used.
+					name: 'desc',
 				},
 			},
-			$orderby: {
-				// we want the last value that would have been passed
-				// to the supervisor, as that is the one it would have used.
-				name: 'desc',
-			},
-		},
-	} as const satisfies Params<ApplicationConfigVariable>;
-	return api.resin.prepare<
+		} as const,
 		{
-			deviceId: number;
+			deviceId: ['number'],
 		},
-		'application_config_variable',
-		typeof pineQuery
-	>(pineQuery);
-});
+	),
+);
 
 export const getPollInterval = async (
 	deviceId: number,

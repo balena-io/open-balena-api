@@ -1,5 +1,4 @@
 import type { RequestHandler } from 'express';
-import type { Params } from 'pinejs-client-core';
 
 import _ from 'lodash';
 import {
@@ -8,7 +7,7 @@ import {
 } from '../../../infra/error-handling/index.js';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { getIP } from '../../../lib/utils.js';
-import type { Application, Device } from '../../../balena-model.js';
+import type { Device } from '../../../balena-model.js';
 import {
 	shouldUpdateMetrics,
 	metricsPatchFields,
@@ -70,45 +69,43 @@ export type StatePatchV2Body = {
 	};
 };
 
-const appAndReleaseOfDeviceQuery = _.once(() => {
+const appAndReleaseOfDeviceQuery = _.once(() =>
 	// This is a performance optimization impactful when using device API key permissions,
 	// in which case emitting the OR checks for the public device access
 	// in a nested subquery didn't perform as well.
 	// TODO: Should be converted back to a simple GET to the release resource once
 	// the performance of that query improves.
-	const pineQuery = {
-		resource: 'application',
-		options: {
-			$top: 1,
-			$select: 'id',
-			$expand: {
-				owns__release: {
-					$top: 1,
-					$select: 'id',
-					$filter: {
-						commit: { '@': 'commit' },
-						status: 'success',
+	api.resin.prepare(
+		{
+			resource: 'application',
+			options: {
+				$top: 1,
+				$select: 'id',
+				$expand: {
+					owns__release: {
+						$top: 1,
+						$select: 'id',
+						$filter: {
+							commit: { '@': 'commit' },
+							status: 'success',
+						},
 					},
 				},
-			},
-			$filter: {
-				owns__device: {
-					$any: {
-						$alias: 'd',
-						$expr: {
-							d: { id: { '@': 'deviceId' } },
+				$filter: {
+					owns__device: {
+						$any: {
+							$alias: 'd',
+							$expr: {
+								d: { id: { '@': 'deviceId' } },
+							},
 						},
 					},
 				},
 			},
-		},
-	} as const satisfies Params<Application>;
-	return api.resin.prepare<
-		{ deviceId: number; commit: string },
-		'application',
-		typeof pineQuery
-	>(pineQuery);
-});
+		} as const,
+		{ deviceId: ['number'], commit: ['string'] },
+	),
+);
 
 const resolveReleaseId = async (
 	...args: Parameters<ReturnType<typeof appAndReleaseOfDeviceQuery>>

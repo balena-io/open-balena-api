@@ -1,5 +1,4 @@
 import type { RequestHandler, Request } from 'express';
-import type { Params } from 'pinejs-client-core';
 
 import _ from 'lodash';
 import {
@@ -21,7 +20,6 @@ import { sbvrUtils } from '@balena/pinejs';
 import { events } from '../index.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 import { getIP } from '../../../lib/utils.js';
-import type { Device } from '../../../balena-model.js';
 
 const { api } = sbvrUtils;
 
@@ -190,58 +188,58 @@ const releaseExpand = {
 	},
 } as const;
 
-const stateQuery = _.once(() => {
-	const pineQuery = {
-		resource: 'device',
-		id: { uuid: { '@': 'uuid' } },
-		options: {
-			$select: ['device_name', ...getStateEventAdditionalFields],
-			$expand: {
-				device_config_variable: {
-					$select: ['name', 'value'],
-				},
-				device_environment_variable: {
-					$select: ['name', 'value'],
-				},
-				is_pinned_on__release: releaseExpand,
-				service_install: {
-					$select: ['id'],
-					$expand: {
-						service: {
-							$select: ['id', 'service_name'],
-							$expand: {
-								service_environment_variable: {
-									$select: ['name', 'value'],
-								},
-								service_label: {
-									$select: ['label_name', 'value'],
+const stateQuery = _.once(() =>
+	api.resin.prepare(
+		{
+			resource: 'device',
+			id: { uuid: { '@': 'uuid' } },
+			options: {
+				$select: ['device_name', ...getStateEventAdditionalFields],
+				$expand: {
+					device_config_variable: {
+						$select: ['name', 'value'],
+					},
+					device_environment_variable: {
+						$select: ['name', 'value'],
+					},
+					is_pinned_on__release: releaseExpand,
+					service_install: {
+						$select: ['id'],
+						$expand: {
+							service: {
+								$select: ['id', 'service_name'],
+								$expand: {
+									service_environment_variable: {
+										$select: ['name', 'value'],
+									},
+									service_label: {
+										$select: ['label_name', 'value'],
+									},
 								},
 							},
-						},
-						device_service_environment_variable: {
-							$select: ['name', 'value'],
+							device_service_environment_variable: {
+								$select: ['name', 'value'],
+							},
 						},
 					},
-				},
-				belongs_to__application: {
-					$select: ['id', 'app_name'],
-					$expand: {
-						application_config_variable: {
-							$select: ['name', 'value'],
+					belongs_to__application: {
+						$select: ['id', 'app_name'],
+						$expand: {
+							application_config_variable: {
+								$select: ['name', 'value'],
+							},
+							application_environment_variable: {
+								$select: ['name', 'value'],
+							},
+							should_be_running__release: releaseExpand,
 						},
-						application_environment_variable: {
-							$select: ['name', 'value'],
-						},
-						should_be_running__release: releaseExpand,
 					},
 				},
 			},
-		},
-	} as const satisfies Params<Device>;
-	return api.resin.prepare<{ uuid: string }, 'device', typeof pineQuery>(
-		pineQuery,
-	);
-});
+		} as const,
+		{ uuid: ['string'] },
+	),
+);
 
 const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 	const [deviceId] = (req.custom as ResolveDeviceInfoCustomObject)
