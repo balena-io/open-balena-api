@@ -1,4 +1,24 @@
 - commits:
+    - subject: Remove deprecated usage of `req.param`
+      hash: eff4986ede4cf856102de8ce6b728838dc4d4a1a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Remove deprecated usage of `substr`
+      hash: 1ce524a50511f9cf5e85133ea3894635075335d9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 26.4.7
+  title: ""
+  date: 2024-09-03T13:05:45.517Z
+- commits:
     - subject: Update pinejs-client-core and use newer `prepare` api
       hash: 97539ac059285e3599f4e6574e2d146e88c05c7b
       body: ""
