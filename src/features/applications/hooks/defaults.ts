@@ -10,11 +10,11 @@ const toUuid = (strippedUuid: string): string => {
 	}
 
 	return [
-		strippedUuid.substr(0, 8),
-		strippedUuid.substr(8, 4),
-		strippedUuid.substr(12, 4),
-		strippedUuid.substr(16, 4),
-		strippedUuid.substr(20, 12),
+		strippedUuid.substring(0, 8),
+		strippedUuid.substring(8, 12),
+		strippedUuid.substring(12, 16),
+		strippedUuid.substring(16, 20),
+		strippedUuid.substring(20, 32),
 	].join('-');
 };
 

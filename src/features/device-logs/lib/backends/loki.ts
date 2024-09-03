@@ -209,7 +209,7 @@ export class LokiBackend implements DeviceLogsBackend {
 					logs,
 					(key, value) => (key === 'nanoTimestamp' ? undefined : value),
 					'\t',
-				).substr(0, 1000);
+				).substring(0, 1000);
 			}
 			captureException(err, message);
 			throw new BadRequestError(

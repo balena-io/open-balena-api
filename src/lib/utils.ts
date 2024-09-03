@@ -120,3 +120,9 @@ export const groupByMap = <K, V>(entries: V[], iteratee: (item: V) => K) => {
 	}
 	return result;
 };
+
+export const getBodyOrQueryParam = (
+	req: Request,
+	paramName: string,
+	defaultValue?: string,
+) => req.body[paramName] ?? req.query[paramName] ?? defaultValue;
