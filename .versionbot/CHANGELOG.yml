@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update pinejs-client-core and use newer `prepare` api
+      hash: 97539ac059285e3599f4e6574e2d146e88c05c7b
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 26.4.6
+  title: ""
+  date: 2024-09-03T10:24:33.551Z
+- commits:
     - subject: Lock file maintenance
       hash: 533bf1e0929eacbc302f6b29c160f247413cf59c
       body: |
