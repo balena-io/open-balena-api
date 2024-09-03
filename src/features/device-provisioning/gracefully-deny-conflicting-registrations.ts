@@ -1,30 +1,28 @@
 import _ from 'lodash';
-import type { Params } from 'pinejs-client-core';
 import { SECONDS } from '@balena/env-parsing';
 import { sbvrUtils, errors, permissions } from '@balena/pinejs';
 import { API_KEY_EXISTS_CACHE_TIMEOUT } from '../../lib/config.js';
 import { createMultiLevelStore } from '../../infra/cache/index.js';
 import { checkDeviceExistsIsFrozen } from '../device-state/middleware.js';
-import type { ApiKey } from '../../balena-model.js';
 
 const { ConflictError } = errors;
 const { api } = sbvrUtils;
 
-const checkApiKeyExistsQuery = _.once(() => {
-	const pineQuery = {
-		resource: 'api_key',
-		passthrough: { req: permissions.root },
-		id: {
-			key: { '@': 'key' },
-		},
-		options: {
-			$select: 'id',
-		},
-	} as const satisfies Params<ApiKey>;
-	return api.resin.prepare<{ key: string }, 'api_key', typeof pineQuery>(
-		pineQuery,
-	);
-});
+const checkApiKeyExistsQuery = _.once(() =>
+	api.resin.prepare(
+		{
+			resource: 'api_key',
+			passthrough: { req: permissions.root },
+			id: {
+				key: { '@': 'key' },
+			},
+			options: {
+				$select: 'id',
+			},
+		} as const,
+		{ key: ['string'] },
+	),
+);
 
 export const checkApiKeyExistsStore = createMultiLevelStore<boolean>(
 	'checkApiKeyExists',
