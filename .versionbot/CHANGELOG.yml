@@ -1,4 +1,30 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v18.0.13
+      hash: cc6c77d718de1c59a861a3873d471ca72ee10d12
+      body: |
+        Update balena/open-balena-base from 18.0.12 to 18.0.13
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested:
+        - commits:
+            - subject: Update dependency node to v22.8.0
+              hash: 1db3ee233ffb3354b258ac4449b81b5affb77778
+              body: |
+                Update node from 22.7.0 to 22.8.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: open-balena-base-18.0.13
+          title: ""
+          date: 2024-09-03T14:53:08.115Z
+  version: 26.4.8
+  title: ""
+  date: 2024-09-03T15:23:53.104Z
+- commits:
     - subject: Remove deprecated usage of `req.param`
       hash: eff4986ede4cf856102de8ce6b728838dc4d4a1a
       body: ""
