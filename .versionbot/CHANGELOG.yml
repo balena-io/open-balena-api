@@ -1,4 +1,26 @@
 - commits:
+    - subject: Remove `getReleaseForDevice` helper in favor of using
+        `should_be_running__release`
+      hash: b82452363aba8cbd3639228daf3b544733838dd1
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+    - subject: Use `should_be_running__release` to handle the device/app release
+        cascade for state-get
+      hash: 7e105d07269c5aeac5231da6c4fdec7a8e9fd6a0
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 27.0.0
+  title: ""
+  date: 2024-09-04T14:12:57.127Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v18.0.13
       hash: cc6c77d718de1c59a861a3873d471ca72ee10d12
       body: |
