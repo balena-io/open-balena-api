@@ -65,6 +65,9 @@ export const getConfig = (
 	return config;
 };
 
+/**
+ * @deprecated
+ */
 export const getReleaseForDevice = (
 	device: AnyObject,
 ): AnyObject | undefined => {

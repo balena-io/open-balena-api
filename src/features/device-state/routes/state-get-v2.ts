@@ -8,7 +8,6 @@ import {
 import {
 	formatImageLocation,
 	readTransaction,
-	getReleaseForDevice,
 	serviceInstallFromImage,
 	varListInsert,
 	ConfigurationVarsToLabels,
@@ -162,32 +161,6 @@ function buildAppFromRelease(
 	};
 }
 
-const releaseExpand = {
-	$select: ['id', 'commit', 'composition'],
-	$expand: {
-		contains__image: {
-			$select: 'id',
-			$expand: {
-				image: {
-					$select: [
-						'id',
-						'is_stored_at__image_location',
-						'content_hash',
-						'is_a_build_of__service',
-						'contract',
-					],
-				},
-				image_label: {
-					$select: ['label_name', 'value'],
-				},
-				image_environment_variable: {
-					$select: ['name', 'value'],
-				},
-			},
-		},
-	},
-} as const;
-
 const stateQuery = _.once(() =>
 	api.resin.prepare(
 		{
@@ -202,7 +175,32 @@ const stateQuery = _.once(() =>
 					device_environment_variable: {
 						$select: ['name', 'value'],
 					},
-					is_pinned_on__release: releaseExpand,
+					// `should_be_running__release` will automatically defer to the app release as necessary
+					should_be_running__release: {
+						$select: ['id', 'commit', 'composition'],
+						$expand: {
+							contains__image: {
+								$select: 'id',
+								$expand: {
+									image: {
+										$select: [
+											'id',
+											'is_stored_at__image_location',
+											'content_hash',
+											'is_a_build_of__service',
+											'contract',
+										],
+									},
+									image_label: {
+										$select: ['label_name', 'value'],
+									},
+									image_environment_variable: {
+										$select: ['name', 'value'],
+									},
+								},
+							},
+						},
+					},
 					service_install: {
 						$select: ['id'],
 						$expand: {
@@ -231,7 +229,6 @@ const stateQuery = _.once(() =>
 							application_environment_variable: {
 								$select: ['name', 'value'],
 							},
-							should_be_running__release: releaseExpand,
 						},
 					},
 				},
@@ -306,7 +303,7 @@ const getUserAppForState = (
 	const userAppFromApi: AnyObject = device.belongs_to__application[0];
 
 	// get the release of the main app that this device should run...
-	const release = getReleaseForDevice(device);
+	const release = device.should_be_running__release[0];
 
 	// grab the main app for this device...
 	return release == null
