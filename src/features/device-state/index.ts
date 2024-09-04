@@ -21,7 +21,6 @@ export {
 	formatImageLocation,
 	addDefaultConfigVariableFn,
 	setDefaultConfigVariables,
-	getReleaseForDevice,
 	serviceInstallFromImage,
 } from './state-get-utils.js';
 export {
