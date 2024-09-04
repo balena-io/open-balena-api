@@ -9,7 +9,6 @@ import {
 	ConfigurationVarsToLabels,
 	formatImageLocation,
 	getConfig,
-	getReleaseForDevice,
 	getStateDelayingEmpty,
 	getStateEventAdditionalFields,
 	readTransaction,
@@ -224,7 +223,8 @@ const deviceExpand = {
 	device_environment_variable: {
 		$select: ['name', 'value'],
 	},
-	is_pinned_on__release: releaseExpand,
+	// `should_be_running__release` will automatically defer to the app release as necessary
+	should_be_running__release: releaseExpand,
 	service_install: {
 		$select: ['id'],
 		$expand: {
@@ -251,7 +251,6 @@ const deviceExpand = {
 			application_config_variable: {
 				$select: ['name', 'value'],
 			},
-			should_be_running__release: releaseExpand,
 		},
 	},
 	should_be_managed_by__release: {
@@ -321,7 +320,7 @@ const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
 				'io.balena.image.store': 'root',
 			},
 		),
-		...getAppState(device, 'is_pinned_on__release', config),
+		...getAppState(device, 'should_be_running__release', config),
 	};
 
 	const state: StateV3 = {
@@ -366,7 +365,7 @@ const getDevice = getStateDelayingEmpty(
 const getAppState = (
 	device: AnyObject,
 	targetReleaseField:
-		| 'is_pinned_on__release'
+		| 'should_be_running__release'
 		| 'should_be_managed_by__release'
 		| 'should_be_operated_by__release',
 	config: Dictionary<string>,
@@ -374,9 +373,9 @@ const getAppState = (
 ): StateV3[string]['apps'] | null => {
 	let application: AnyObject;
 	let release: AnyObject | undefined;
-	if (targetReleaseField === 'is_pinned_on__release') {
+	if (targetReleaseField === 'should_be_running__release') {
 		application = device.belongs_to__application[0];
-		release = getReleaseForDevice(device);
+		release = device.should_be_running__release[0];
 	} else {
 		release = device[targetReleaseField][0];
 		if (!release) {

@@ -65,15 +65,6 @@ export const getConfig = (
 	return config;
 };
 
-export const getReleaseForDevice = (
-	device: AnyObject,
-): AnyObject | undefined => {
-	if (device.is_pinned_on__release[0] != null) {
-		return device.is_pinned_on__release[0];
-	}
-	return device.belongs_to__application[0]?.should_be_running__release[0];
-};
-
 export const serviceInstallFromImage = (
 	deviceOrFleet: AnyObject,
 	image?: AnyObject,
