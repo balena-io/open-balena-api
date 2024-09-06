@@ -101,7 +101,7 @@ export const getAccessibleDeviceTypeJsons = async (
 };
 
 /** @deprecated Use the getDeviceTypeBySlug unless you need the device-type.json contents. */
-export const findBySlug = async (
+export const getDeviceTypeJsonBySlug = async (
 	resinApi: typeof sbvrUtils.api.resin,
 	slug: string,
 ): Promise<DeviceTypeJson> =>

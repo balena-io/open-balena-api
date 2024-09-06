@@ -120,7 +120,7 @@ import {
 } from './infra/rate-limiting/index.js';
 import {
 	getAccessibleDeviceTypeJsons,
-	findBySlug,
+	getDeviceTypeJsonBySlug,
 	getDeviceTypeBySlug,
 } from './features/device-types/device-types.js';
 import { proxy as supervisorProxy } from './features/device-proxy/device-proxy.js';
@@ -249,7 +249,8 @@ export const release = {
 export const deviceTypes = {
 	getAccessibleDeviceTypes: getAccessibleDeviceTypeJsons,
 	getAccessibleDeviceTypeJsons,
-	findBySlug,
+	findBySlug: getDeviceTypeJsonBySlug,
+	getDeviceTypeJsonBySlug,
 	getDeviceTypeBySlug,
 };
 export * as contracts from './exports/contracts.js';
