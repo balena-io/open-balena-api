@@ -82,20 +82,11 @@ export const validateSlug = (slug?: string) => {
 };
 
 /** @deprecated */
-const getAllDeviceTypes = async () => {
-	const dtInfo = await getDeviceTypes();
-	return _.uniqBy(
-		Object.values(dtInfo).map((dtEntry) => dtEntry.latest),
-		(dt) => dt.slug,
-	);
-};
-
-/** @deprecated */
 export const getAccessibleDeviceTypes = async (
 	resinApi: typeof sbvrUtils.api.resin,
 ): Promise<DeviceTypeJson[]> => {
-	const [deviceTypes, accessibleDeviceTypes] = await Promise.all([
-		getAllDeviceTypes(),
+	const [deviceTypeInfosBySlug, accessibleDeviceTypes] = await Promise.all([
+		getDeviceTypes(),
 		resinApi.get({
 			resource: 'device_type',
 			options: {
@@ -104,10 +95,9 @@ export const getAccessibleDeviceTypes = async (
 		}) as Promise<Array<{ slug: string }>>,
 	]);
 
-	const accessSet = new Set(accessibleDeviceTypes.map((dt) => dt.slug));
-	return deviceTypes.filter((deviceType) => {
-		return accessSet.has(deviceType.slug);
-	});
+	return accessibleDeviceTypes
+		.map((dt) => deviceTypeInfosBySlug[dt.slug]?.latest)
+		.filter((dtJson) => dtJson != null);
 };
 
 /** @deprecated Use the getDeviceTypeBySlug unless you need the device-type.json contents. */
