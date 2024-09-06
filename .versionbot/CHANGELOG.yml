@@ -1,4 +1,20 @@
 - commits:
+    - subject: Add the device.changed_api_heartbeat_state_on__date term to the v7 model
+      hash: a28dfa80d59485962f8d7f04dfbd36f443b63e2f
+      body: ""
+      footer:
+        Resolves: "#644"
+        resolves: "#644"
+        Change-type: minor
+        change-type: minor
+        See: https://balena.fibery.io/Work/Project/Start-recording-the-last-timestamp-the-device-heartbeat-changed-254
+        see: https://balena.fibery.io/Work/Project/Start-recording-the-last-timestamp-the-device-heartbeat-changed-254
+      author: Thodoris Greasidis
+      nested: []
+  version: 27.1.0
+  title: ""
+  date: 2024-09-06T08:15:29.594Z
+- commits:
     - subject: Remove `getReleaseForDevice` helper in favor of using
         `should_be_running__release`
       hash: b82452363aba8cbd3639228daf3b544733838dd1
