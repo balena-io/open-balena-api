@@ -247,6 +247,8 @@ export const release = {
 	addVirtualFieldsToModel: addReleaseAdditionsToModel,
 };
 export const deviceTypes = {
+	// TODO: Drop me in the next major
+	/** @deprecated Use getAccessibleDeviceTypeJsons */
 	getAccessibleDeviceTypes: getAccessibleDeviceTypeJsons,
 	getAccessibleDeviceTypeJsons,
 	// TODO: Drop me in the next major
