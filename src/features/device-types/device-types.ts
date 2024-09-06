@@ -81,8 +81,8 @@ export const validateSlug = (slug?: string) => {
 	return slug;
 };
 
-/** @deprecated */
-export const getAccessibleDeviceTypes = async (
+/** @deprecated Prefer querying the device_type resource directly unless you need the device-type.json contents. */
+export const getAccessibleDeviceTypeJsons = async (
 	resinApi: typeof sbvrUtils.api.resin,
 ): Promise<DeviceTypeJson[]> => {
 	const [deviceTypeInfosBySlug, accessibleDeviceTypes] = await Promise.all([

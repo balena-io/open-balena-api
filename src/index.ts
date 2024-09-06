@@ -119,7 +119,7 @@ import {
 	getUserIDFromCreds,
 } from './infra/rate-limiting/index.js';
 import {
-	getAccessibleDeviceTypes,
+	getAccessibleDeviceTypeJsons,
 	findBySlug,
 	getDeviceTypeBySlug,
 } from './features/device-types/device-types.js';
@@ -247,7 +247,8 @@ export const release = {
 	addVirtualFieldsToModel: addReleaseAdditionsToModel,
 };
 export const deviceTypes = {
-	getAccessibleDeviceTypes,
+	getAccessibleDeviceTypes: getAccessibleDeviceTypeJsons,
+	getAccessibleDeviceTypeJsons,
 	findBySlug,
 	getDeviceTypeBySlug,
 };
