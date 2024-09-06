@@ -92,7 +92,7 @@ export const getAccessibleDeviceTypes = async (
 			options: {
 				$select: 'slug',
 			},
-		}) as Promise<Array<{ slug: string }>>,
+		}),
 	]);
 
 	return accessibleDeviceTypes
