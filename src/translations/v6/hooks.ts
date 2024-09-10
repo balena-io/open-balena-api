@@ -115,7 +115,7 @@ addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'release', {
 				typeof request.values.contract === 'object'
 					? request.values.contract
 					: JSON.parse(request.values.contract);
-		} catch (err) {
+		} catch {
 			throw new errors.BadRequestError(
 				'Failed to parse provided release.contract value',
 			);
