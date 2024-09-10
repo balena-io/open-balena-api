@@ -57,7 +57,7 @@ const validateSupervisorResponse = (
 			} else {
 				try {
 					jsonBody = JSON.parse(body);
-				} catch (e) {
+				} catch {
 					badSupervisorResponse(req, res, filter, 'Invalid JSON data');
 					return;
 				}

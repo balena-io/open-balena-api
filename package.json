@@ -135,7 +135,7 @@
     "validator": "^13.12.0"
   },
   "devDependencies": {
-    "@balena/lint": "^8.2.7",
+    "@balena/lint": "^9.0.1",
     "@types/chai": "^4.3.19",
     "@types/mocha": "^10.0.7",
     "@types/mockery": "^1.4.33",

@@ -333,7 +333,7 @@ const resolveImageLocation = multiCacheMemoizee(
 				},
 			});
 			return image?.is_stored_at__image_location;
-		} catch (err) {
+		} catch {
 			// Ignore errors
 		}
 	},
