@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update @balena/lint to 9.x
+      hash: 9a518674870ab4600c3d22f52b3e9b67fd5ce376
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 27.2.1
+  title: ""
+  date: 2024-09-10T15:09:03.966Z
+- commits:
     - subject: Deprecate getAccessibleDeviceTypes in favor of
         getAccessibleDeviceTypeJsons
       hash: 71e668934e33cfaeb54d5ac8e000063a53d41e20
