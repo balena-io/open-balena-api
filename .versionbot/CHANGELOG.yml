@@ -1,4 +1,42 @@
 - commits:
+    - subject: Deprecate getAccessibleDeviceTypes in favor of
+        getAccessibleDeviceTypeJsons
+      hash: 71e668934e33cfaeb54d5ac8e000063a53d41e20
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Deprecate findBySlug in favor of getDeviceTypeJsonBySlug
+      hash: 2357ad921df258aac3f5fa10e8aa524523ca4087
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: "device-types: Alias findBySlug as getDeviceTypeJsonBySlug"
+      hash: e373600714633f56cdede64fb641530040eca4d5
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+    - subject: "device-types: Alias getAccessibleDeviceTypes as
+        getAccessibleDeviceTypeJsons"
+      hash: b3b0d9ff42d770f47fa4ac325901672e59b760f4
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 27.2.0
+  title: ""
+  date: 2024-09-10T09:05:58.963Z
+- commits:
     - subject: Update TypeScript to 5.6.2
       hash: fcd692c2bc6dc21ad80578ffe6497f99ce77cfcc
       body: ""
