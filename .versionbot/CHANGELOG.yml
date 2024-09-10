@@ -1,4 +1,25 @@
 - commits:
+    - subject: "device-types: Remove casts that are now unnecessary with pinejs model
+        based typings"
+      hash: 5e17ddeaff3e8b972f728b115ef57e0aed82e66e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: "device-types: Simplify the getAccessibleDeviceTypes helper"
+      hash: 28e79b0b8d01828e43b9577622116c1e6cfe80e0
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 27.1.3
+  title: ""
+  date: 2024-09-10T08:28:01.415Z
+- commits:
     - subject: Lock file maintenance
       hash: f7a938f18da278b4d470112b2b2eb114c87b9cbf
       body: |
