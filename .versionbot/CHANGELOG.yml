@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update TypeScript to 5.6.2
+      hash: fcd692c2bc6dc21ad80578ffe6497f99ce77cfcc
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 27.1.4
+  title: ""
+  date: 2024-09-10T08:51:36.815Z
+- commits:
     - subject: "device-types: Remove casts that are now unnecessary with pinejs model
         based typings"
       hash: 5e17ddeaff3e8b972f728b115ef57e0aed82e66e
