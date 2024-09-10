@@ -43,7 +43,7 @@ async function onInitHooks() {
 		_.flatMap(auth.KEYS, 'permissions'),
 	);
 	const { setSyncSettings } = await import('./src/features/contracts/index.js');
-	const { getAccessibleDeviceTypes } = await import(
+	const { getAccessibleDeviceTypeJsons } = await import(
 		'./src/features/device-types/device-types.js'
 	);
 
@@ -131,7 +131,7 @@ async function onInitHooks() {
 	});
 
 	// Pre-fetch the device types and populate the cache w/o blocking the API startup
-	void getAccessibleDeviceTypes(sbvrUtils.api.resin);
+	void getAccessibleDeviceTypeJsons(sbvrUtils.api.resin);
 
 	await sbvrUtils.db.transaction((tx) =>
 		createAll(tx, permissionNames, auth.ROLES, auth.KEYS, {}),

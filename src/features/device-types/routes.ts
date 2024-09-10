@@ -16,7 +16,8 @@ const { api } = sbvrUtils;
 export const getDeviceTypes: RequestHandler = async (req, res) => {
 	const resinApi = api.resin.clone({ passthrough: { req } });
 	try {
-		const deviceTypes = await deviceTypesLib.getAccessibleDeviceTypes(resinApi);
+		const deviceTypes =
+			await deviceTypesLib.getAccessibleDeviceTypeJsons(resinApi);
 		res.json(deviceTypes);
 	} catch (err) {
 		captureException(err, 'Error getting device types', { req });
@@ -31,7 +32,7 @@ export const getDeviceType: RequestHandler = async (req, res) => {
 	try {
 		const resinApi = api.resin.clone({ passthrough: { req } });
 		const slug = deviceTypesLib.validateSlug(req.params.deviceType);
-		const data = await deviceTypesLib.findBySlug(resinApi, slug);
+		const data = await deviceTypesLib.getDeviceTypeJsonBySlug(resinApi, slug);
 		res.json(data);
 	} catch (err) {
 		captureException(err, 'Error getting device type', {

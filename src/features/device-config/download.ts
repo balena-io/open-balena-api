@@ -9,7 +9,7 @@ import {
 } from '../../infra/error-handling/index.js';
 
 import { generateConfig } from './device-config.js';
-import { findBySlug } from '../device-types/device-types.js';
+import { getDeviceTypeJsonBySlug } from '../device-types/device-types.js';
 import { checkInt, getBodyOrQueryParam } from '../../lib/utils.js';
 
 const { UnauthorizedError, NotFoundError } = errors;
@@ -58,7 +58,7 @@ export const downloadImageConfig: RequestHandler = async (req, res) => {
 		const resinApi = api.resin.clone({ passthrough: { req } });
 
 		const app = await getApp(appId, req);
-		const deviceTypeJson = await findBySlug(
+		const deviceTypeJson = await getDeviceTypeJsonBySlug(
 			resinApi,
 			deviceTypeSlug || app.is_for__device_type[0].slug,
 		);
