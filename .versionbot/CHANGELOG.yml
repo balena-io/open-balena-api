@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency sinon to v19
+      hash: 0820a28a157531ad46f3cea42127be0b559d7d5c
+      body: |
+        Update sinon from 18.0.0 to 19.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 27.2.2
+  title: ""
+  date: 2024-09-16T11:39:34.008Z
+- commits:
     - subject: Update @balena/lint to 9.x
       hash: 9a518674870ab4600c3d22f52b3e9b67fd5ce376
       body: ""
