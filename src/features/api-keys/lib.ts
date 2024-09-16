@@ -47,7 +47,8 @@ const $createApiKey = async (
 		throw new Error(`No ${actorType} found to associate with the api key`);
 	}
 
-	const res = await api.resin.post({
+	const res = await api.resin.request({
+		method: 'POST',
 		url: `${actorType}(${actorTypeID})/canAccess`,
 		passthrough: { req, tx },
 		body: {

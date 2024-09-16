@@ -186,7 +186,8 @@ const resolveWriteAccess = async (
 		return false;
 	}
 	try {
-		const res = await api.resin.post({
+		const res = await api.resin.request({
+			method: 'POST',
 			url: `image(${imageId})/canAccess`,
 			passthrough: { req, tx },
 			body: { action: 'push' },
