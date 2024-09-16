@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update dependency express to v4.20.0 [SECURITY]
+      hash: 13a07f2c541455c2306d131313d13902bd69311d
+      body: |
+        Update express from 4.19.2 to 4.20.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 27.2.3
+  title: ""
+  date: 2024-09-16T12:03:58.371Z
+- commits:
     - subject: Update dependency sinon to v19
       hash: 0820a28a157531ad46f3cea42127be0b559d7d5c
       body: |
