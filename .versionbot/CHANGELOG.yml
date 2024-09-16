@@ -1,4 +1,17 @@
 - commits:
+    - subject: Lock file maintenance
+      hash: 47c9adf655ba2bf14d71def6c54e293f2e250b39
+      body: |
+        Update
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 28.0.1
+  title: ""
+  date: 2024-09-16T15:05:34.295Z
+- commits:
     - subject: Update to pinejs 19
       hash: 3fc2198e69b93c5438d4dd8a1bc9ba8e8f096074
       body: |
