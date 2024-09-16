@@ -1,4 +1,24 @@
 - commits:
+    - subject: Avoid deprecated pinejs-client `url` usage with `prepare`
+      hash: f5c0faedbefbddf39f451d303a1f478afeac092e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Avoid deprecated pinejs-client `url` usage with `post`
+      hash: a95baee7d396fb5fef98614cec0c92f5f2eb73ce
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 27.2.4
+  title: ""
+  date: 2024-09-16T13:36:12.585Z
+- commits:
     - subject: Update dependency express to v4.20.0 [SECURITY]
       hash: 13a07f2c541455c2306d131313d13902bd69311d
       body: |
