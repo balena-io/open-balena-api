@@ -31,7 +31,8 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 	}
 
 	try {
-		const allowedDevices = (await api.resin.post({
+		const allowedDevices = (await api.resin.request({
+			method: 'POST',
 			url: `device(${device.id})/canAccess`,
 			passthrough: {
 				req,

@@ -6,7 +6,6 @@ import type {
 	SupervisorLog,
 } from './struct.js';
 
-import _ from 'lodash';
 import onFinished from 'on-finished';
 import type { permissions } from '@balena/pinejs';
 import { sbvrUtils, errors } from '@balena/pinejs';
@@ -48,13 +47,6 @@ const { api } = sbvrUtils;
 const supervisor = new Supervisor();
 
 const getWriteContext = (() => {
-	const authQuery = _.once(() =>
-		api.resin.prepare<{ uuid: string }>({
-			method: 'POST',
-			url: `device(uuid=@uuid)/canAccess`,
-			body: { action: 'write-log' },
-		}),
-	);
 	const $getWriteContext = multiCacheMemoizee(
 		async (
 			uuid: string,
@@ -62,7 +54,13 @@ const getWriteContext = (() => {
 		): Promise<false | LogContext> => {
 			return await sbvrUtils.db.readTransaction(async (tx) => {
 				try {
-					const result = await authQuery()({ uuid }, undefined, { req, tx });
+					const result = await api.resin.request({
+						method: 'POST',
+						// We use a parameter alias to signify to pinejs that it's a beneficial query to cache
+						url: `device(uuid=@uuid)/canAccess?@uuid='${uuid}'`,
+						passthrough: { req, tx },
+						body: { action: 'write-log' },
+					});
 					const deviceId: number | undefined = result?.d?.[0]?.id;
 					if (deviceId == null) {
 						return false;

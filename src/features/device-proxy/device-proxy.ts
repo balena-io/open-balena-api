@@ -218,7 +218,8 @@ async function requestDevices({
 		if (method !== 'GET' && req !== permissions.root) {
 			await Promise.all(
 				deviceIds.map(async (deviceId) => {
-					const res = (await resinApi.post({
+					const res = (await resinApi.request({
+						method: 'POST',
 						url: `device(${deviceId})/canAccess`,
 						body: { action: 'update' },
 					})) as { d?: Array<{ id: number }> };

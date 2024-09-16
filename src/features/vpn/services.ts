@@ -1,6 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express';
 
-import _ from 'lodash';
 import type { permissions } from '@balena/pinejs';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import {
@@ -18,18 +17,17 @@ import { checkDeviceExistsIsFrozen } from '../device-state/middleware.js';
 const { api } = sbvrUtils;
 
 const checkAuth = (() => {
-	const authQuery = _.once(() =>
-		api.resin.prepare<{ uuid: string }>({
-			method: 'POST',
-			url: `device(uuid=@uuid)/canAccess`,
-			body: { action: 'cloudlink' },
-		}),
-	);
 	return multiCacheMemoizee(
 		async (uuid: string, req: permissions.PermissionReq): Promise<number> => {
 			try {
-				await authQuery()({ uuid }, undefined, {
-					req,
+				await api.resin.request({
+					method: 'POST',
+					// We use a parameter alias to signify to pinejs that it's a beneficial query to cache
+					url: `device(uuid=@uuid)/canAccess?@uuid='${uuid}'`,
+					passthrough: {
+						req,
+					},
+					body: { action: 'cloudlink' },
 				});
 				return 200;
 			} catch (err) {
