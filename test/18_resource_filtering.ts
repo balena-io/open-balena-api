@@ -185,7 +185,7 @@ export default () => {
 					const { body } = await pineUser.get({
 						resource: 'application',
 						options: {
-							$orderby: 'application_tag/$count desc',
+							$orderby: { application_tag: { $count: {} }, $dir: 'desc' },
 						},
 					});
 					expect(body).to.be.an('array').to.have.lengthOf(4);
@@ -235,7 +235,13 @@ export default () => {
 						options: {
 							$select: 'app_name',
 							$expand: { application_tag: {} },
-							$orderby: `application_tag/$count($filter=value eq '0') desc,app_name asc`,
+							$orderby: [
+								{
+									application_tag: { $count: { $filter: { value: '0' } } },
+									$dir: 'desc',
+								},
+								{ app_name: 'asc' },
+							],
 						},
 					} as const);
 					expect(body).to.be.an('array').to.have.lengthOf(4);
