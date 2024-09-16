@@ -8,7 +8,6 @@ import {
 import {
 	formatImageLocation,
 	readTransaction,
-	serviceInstallFromImage,
 	varListInsert,
 	ConfigurationVarsToLabels,
 	getStateDelayingEmpty,
@@ -88,17 +87,19 @@ function buildAppFromRelease(
 		// extract the per-image information
 		const image = ipr.image[0];
 
-		const si = serviceInstallFromImage(device, image);
+		const si = device.service_install.find(
+			({ service }) => service.__id === image.is_a_build_of__service[0].id,
+		);
+		const svc = image.is_a_build_of__service[0];
 		if (si == null) {
 			throw new Error(
 				`Could not find service install for device: '${
 					application.id
 				}', image: '${image?.id}', service: '${JSON.stringify(
-					image?.is_a_build_of__service,
+					svc,
 				)}', service installs: '${JSON.stringify(device.service_install)}'`,
 			);
 		}
-		const svc = si.service[0];
 
 		const environment: Dictionary<string> = {};
 		varListInsert(ipr.image_environment_variable, environment);
@@ -189,9 +190,21 @@ const stateQuery = _.once(() =>
 											'id',
 											'is_stored_at__image_location',
 											'content_hash',
-											'is_a_build_of__service',
 											'contract',
 										],
+										$expand: {
+											is_a_build_of__service: {
+												$select: ['id', 'service_name'],
+												$expand: {
+													service_environment_variable: {
+														$select: ['name', 'value'],
+													},
+													service_label: {
+														$select: ['label_name', 'value'],
+													},
+												},
+											},
+										},
 									},
 									image_label: {
 										$select: ['label_name', 'value'],
@@ -204,19 +217,8 @@ const stateQuery = _.once(() =>
 						},
 					},
 					service_install: {
-						$select: ['id'],
+						$select: ['id', 'service'],
 						$expand: {
-							service: {
-								$select: ['id', 'service_name'],
-								$expand: {
-									service_environment_variable: {
-										$select: ['name', 'value'],
-									},
-									service_label: {
-										$select: ['label_name', 'value'],
-									},
-								},
-							},
 							device_service_environment_variable: {
 								$select: ['name', 'value'],
 							},
