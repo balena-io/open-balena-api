@@ -1,4 +1,416 @@
 - commits:
+    - subject: Update to pinejs 19
+      hash: 3fc2198e69b93c5438d4dd8a1bc9ba8e8f096074
+      body: |
+        Update @balena/abstract-sql-to-typescript from 4.0.3 to 4.0.6
+        Update @balena/env-parsing from 1.1.12 to 1.2.0
+        Update @balena/pinejs from 18.2.3 to 19.0.0
+        Update @balena/pinejs-webresource-cloudfront from 0.2.0 to 0.2.1
+        Update pinejs-client-core from 7.1.3 to 8.0.1
+        Update pinejs-client-supertest from 2.1.2 to 3.0.0
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update pinejs-client-core to 8.x
+              hash: 3ff290ddc447a0067684e929bfcf0fb5847638cc
+              body: |
+                Update pinejs-client-core from 7.2.0 to 8.0.1
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Fix multiple lambdas triggering the expand filter error
+                      hash: 5635318a432ba97f5eb701abf0b64e3ba85bd686
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: pinejs-client-js-8.0.1
+                  title: ""
+                  date: 2024-09-13T16:21:23.657Z
+                - commits:
+                    - subject: Remove error check if passing too many arguments to `request`
+                      hash: 2e4bd33bae9c39ed6e448932deb891cfc29e5509
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Update error messages for invalid params
+                      hash: 48f01543aaa0e036f877c50e55abb0adc36358b7
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Drop `url` from general `Params` and only have it in supported places
+                      hash: ac23265dc29bff655e87c6b40aeda4a03d2040c7
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Remove deprecated `prepare` signatures in favor of always passing
+                        expected aliases
+                      hash: 84d2a7f54eb482688205b375dab8ca3536d0a4a0
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: 'Remove `$filter: a: b: ...`, please use `$filter: a: $any: { $alias:
+                        "x", $expr: x: b: ... }` instead.'
+                      hash: 835a891a387660d49d1273c60d0bc972f8718174
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Remove unused `PinejsClient` generic from the class signature
+                      hash: e970e7a7f19c962421c51843c237283dd33bc5f8
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: "Removed `$filter: { a: { $count: { $op: number } } }`, please use
+                        `$filter: { $eq: [ { a: { $count: {} } }, number ] }`
+                        instead."
+                      hash: 0235dfde05eaef4b2226f1faa9831ceb2921484f
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Update minimum supported version to es2018
+                      hash: af17f47ef1dc9e73f8e7018a989a11498acb7230
+                      body: |
+                        This standardizes us back on a single built version
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Removed deprecated `transformGetResult` and renamed
+                        `_transformGetResult` to replace it
+                      hash: 9c7315d878737b6146f9105af34dc38cf4541602
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: "Error on using OData options other than $filter in a `$expand: { a: {
+                        $count: {...} } }`."
+                      hash: 985bf319aa849f1f51ebea7e3120b9daa2d14e79
+                      body: >
+                        Previously they were warned about once but otherwise
+                        ignored, this now
+
+                        makes it much easier to spot mistakes from expecting a
+                        certain behavior
+
+                        based on specified options but not getting that behavior
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: "Removed `$orderby: 'a/$count'`, please use `$orderby: { a: { $count:
+                        {...} } }` instead."
+                      hash: 2dcf9a64bcd010775b6d6e2983465f581fc8f84c
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: "Removed `$expand: { 'a/$count': {...} }`, please use `$expand: { a: {
+                        $count: {...} } }` instead."
+                      hash: 5cacbec1b143307efbb4519416d3b52ef42b54f9
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: "Removed `resource: 'a/$count'`, please use `options: { $count: { ... }
+                        }` instead."
+                      hash: 084ce8bb47ea86c3d5b6b1c8217408598ccba113
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Removed passing `url` to `compile`, please use a query object instead
+                        or use the url directly.
+                      hash: 2904549fb52fac64ac8120871fb0810674c15e16
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Removed passing `url` to `delete`, please use a query object instead or
+                        use `request` directly.
+                      hash: 167fe6c000013b939aad3c71708b37f257a54652
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Removed passing `url` to `put`, please use a query object instead or
+                        use `request` directly.
+                      hash: 259e716cee0a8daea80d6457d26bcf9a64fade07
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Removed passing `url` to `patch`, please use a query object instead or
+                        use `request` directly.
+                      hash: 569f8e493b37375ae0e5db9f4fbe60dabeebd188
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Removed passing `url` to `post`, please use a query object instead or
+                        use `request` directly.
+                      hash: dc1afeb74d82024154640f21d8de3b77993ff495
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Removed passing `url` to `get`, please use a query object instead or
+                        use `request` directly.
+                      hash: ac85622e3fe712b3c8294c64449d89fb3c504296
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Removed passing `url` to `upsert` as it is unsupported and may have
+                        adverse effects, please use a query object instead.
+                      hash: a48e23d31e173f7ec9146c1cbaff3a5518c9a5b8
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Removed passing `url` to `getOrCreate` as it is unsupported and may
+                        have adverse effects, please use a query object instead.
+                      hash: d20d4b89d5523a97578d7168fed6aaf0567053e5
+                      body: ""
+                      footer:
+                        Change-type: major
+                        change-type: major
+                      author: Pagan Gazzard
+                      nested: []
+                  version: pinejs-client-js-8.0.0
+                  title: ""
+                  date: 2024-09-13T12:40:56.292Z
+          version: pinejs-19.0.0
+          title: ""
+          date: 2024-09-16T13:03:50.668Z
+        - commits:
+            - subject: Avoid deprecated usage of pinejs-client
+              hash: 5ef877d6d3c1128d968b02560457e6920840e546
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-18.2.10
+          title: ""
+          date: 2024-09-16T12:41:19.195Z
+        - commits:
+            - subject: Use updated pinejs-client `prepare` syntax
+              hash: be8420b8f48f372caee3fe4f7857ff181e142de9
+              body: >
+                This also fixes the returned actor id for `checkPassword` since
+                the
+
+                improved typings caught that it did not match the expected
+                return type
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-18.2.9
+          title: ""
+          date: 2024-09-13T14:15:09.966Z
+        - commits:
+            - subject: Update dependencies
+              hash: 90241b75b4cddc82f6d147d1b84edac2939a905c
+              body: |
+                Update pinejs-client-core from 7.1.4 to 7.2.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Export `OptionsToResponse` type helper
+                      hash: ae97930264fb22bc8d441bec282c29a90cabbb23
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested: []
+                  version: pinejs-client-js-7.2.0
+                  title: ""
+                  date: 2024-09-13T12:26:09.581Z
+                - commits:
+                    - subject: Switch tsconfig module resolution to Node16
+                      hash: 2c6b45dd7d8d64ae74b9f9efff50de12614780e4
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: pinejs-client-js-7.1.5
+                  title: ""
+                  date: 2024-09-13T12:13:12.995Z
+          version: pinejs-18.2.8
+          title: ""
+          date: 2024-09-13T14:03:33.234Z
+        - commits:
+            - subject: Update dependencies
+              hash: 5f68e9c1a73b073a071c244b693596adadf39b48
+              body: |
+                Update @balena/abstract-sql-to-typescript from 4.0.3 to 4.0.6
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Fix built file paths now that package.json is imported rather than
+                        required
+                      hash: 8c223d915d66559b8650536745adb742362392ff
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-to-typescript-4.0.6
+                  title: ""
+                  date: 2024-09-12T16:40:31.414Z
+                - commits:
+                    - subject: Update @balena/lint to 9.x
+                      hash: d2c8c970f9d7c70b1e134952c621eaa768fe0f4b
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-to-typescript-4.0.5
+                  title: ""
+                  date: 2024-09-12T16:23:15.397Z
+                - commits:
+                    - subject: Correctly use `Record<string, never>` when there are no writable fields
+                      hash: 573c4da6d9e4521f700e7f38a033640ef8afe533
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-to-typescript-4.0.4
+                  title: ""
+                  date: 2024-09-12T16:04:52.737Z
+          version: pinejs-18.2.7
+          title: ""
+          date: 2024-09-13T07:04:45.899Z
+        - commits:
+            - subject: Fix linting issues with latest dependencies
+              hash: b9b80e9eafc9a7becf6d33b0eba760ec0cf06665
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Thodoris Greasidis
+              nested: []
+            - subject: Update TypeScript to 5.6.2
+              hash: a96107141315d64f6d3fa4fe227243c80351af1a
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Thodoris Greasidis
+              nested: []
+          version: pinejs-18.2.6
+          title: ""
+          date: 2024-09-12T13:28:05.172Z
+        - commits:
+            - subject: Update dependency commander to v12
+              hash: eb10dbdcd80ce05ad65f9b7c47542d3ee8f3fe38
+              body: |
+                Update commander from 11.1.0 to 12.1.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: pinejs-18.2.5
+          title: ""
+          date: 2024-09-10T09:37:14.400Z
+        - commits:
+            - subject: "Tests: update nodejs to 20.x matching the minimum supported version"
+              hash: 0ae61c069bd857428a7be988b780f6e838faec35
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-18.2.4
+          title: ""
+          date: 2024-09-09T15:07:44.637Z
+        - commits:
+            - subject: Add pinejs 19 as a supported peer version
+              hash: fb15fc5718a8e340c9634f42dec1343c158b3e5c
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-webresource-cloudfront-0.2.1
+          title: ""
+          date: 2024-09-16T13:05:26.531Z
+  version: 28.0.0
+  title: ""
+  date: 2024-09-16T14:28:35.055Z
+- commits:
     - subject: Avoid deprecated pinejs-client `url` usage with `prepare`
       hash: f5c0faedbefbddf39f451d303a1f478afeac092e
       body: ""
