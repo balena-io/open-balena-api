@@ -10,7 +10,7 @@ import {
 	createMultiLevelStore,
 	reqPermissionNormalizer,
 } from '../../infra/cache/index.js';
-import type { Device } from '../../balena-model.js';
+import type { Device, Service, ServiceInstall } from '../../balena-model.js';
 
 export const getStateEventAdditionalFields: Array<
 	Exclude<keyof Device['Read'], ExpandableStringKeyOf<Device['Read']>>
@@ -39,8 +39,15 @@ export const setDefaultConfigVariables = (config: Dictionary<string>): void => {
 };
 
 export const getConfig = (
-	device: AnyObject | undefined,
-	application: AnyObject = device?.belongs_to__application[0],
+	device:
+		| {
+				device_config_variable: EnvVarList;
+				belongs_to__application: Array<{
+					application_config_variable: EnvVarList;
+				}>;
+		  }
+		| undefined,
+	application = device?.belongs_to__application[0],
 ) => {
 	const config: Dictionary<string> = {};
 
@@ -65,10 +72,42 @@ export const getConfig = (
 	return config;
 };
 
-export const serviceInstallFromImage = (
+type ExpandedService = Pick<Service['Read'], 'id' | 'service_name'> & {
+	service_environment_variable: EnvVarList;
+	service_label: Array<{ label_name: string; value: string }>;
+};
+
+type ExpandedServiceInstall = {
+	id: ServiceInstall['Read']['id'];
+	service: ExpandedService[];
+	device_service_environment_variable: EnvVarList;
+};
+
+export function serviceInstallFromImage(
+	deviceOrFleet: { service_install: ExpandedServiceInstall[] },
+	image?: {
+		is_a_build_of__service: number | { __id: number };
+	},
+): ExpandedServiceInstall | undefined;
+export function serviceInstallFromImage(
+	deviceOrFleet: { service: ExpandedService[] },
+	image?: {
+		is_a_build_of__service: number | { __id: number };
+	},
+): ExpandedService | undefined;
+/** @deprecated Use the strongly-typed overloads with `{ service_install }` or `{ service }` instead */
+export function serviceInstallFromImage(
 	deviceOrFleet: AnyObject,
 	image?: AnyObject,
-): undefined | AnyObject => {
+): undefined | AnyObject;
+export function serviceInstallFromImage(
+	deviceOrFleet:
+		| { service_install: ExpandedServiceInstall[] }
+		| { service: ExpandedService[] },
+	image?: {
+		is_a_build_of__service: number | { __id: number };
+	},
+) {
 	if (image == null) {
 		return;
 	}
@@ -86,11 +125,9 @@ export const serviceInstallFromImage = (
 			(si) => si.service[0].id === id,
 		);
 	} else if ('service' in deviceOrFleet) {
-		return deviceOrFleet.service.find(
-			(fleetService: AnyObject) => fleetService.id === id,
-		);
+		return deviceOrFleet.service.find((fleetService) => fleetService.id === id);
 	}
-};
+}
 
 export const formatImageLocation = (imageLocation: string) =>
 	imageLocation.toLowerCase();

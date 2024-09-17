@@ -24,6 +24,8 @@ const { api } = sbvrUtils;
 
 type CompositionService = AnyObject;
 type LocalStateApp = StateV2['local']['apps'][string];
+type ExpandedDevice = Awaited<ReturnType<typeof getDevice>>;
+
 export type StateV2 = {
 	local: {
 		name: string;
@@ -63,9 +65,9 @@ export type StateV2 = {
 };
 
 function buildAppFromRelease(
-	device: AnyObject,
-	application: AnyObject,
-	release: AnyObject,
+	device: ExpandedDevice,
+	application: ExpandedDevice['belongs_to__application'][number],
+	release: ExpandedDevice['should_be_running__release'][number],
 	config: Dictionary<string>,
 ): LocalStateApp {
 	let composition: AnyObject = {};
@@ -82,7 +84,7 @@ function buildAppFromRelease(
 		}
 	}
 
-	for (const ipr of release.contains__image as AnyObject[]) {
+	for (const ipr of release.contains__image) {
 		// extract the per-image information
 		const image = ipr.image[0];
 
@@ -90,7 +92,7 @@ function buildAppFromRelease(
 		if (si == null) {
 			throw new Error(
 				`Could not find service install for device: '${
-					application.uuid
+					application.id
 				}', image: '${image?.id}', service: '${JSON.stringify(
 					image?.is_a_build_of__service,
 				)}', service installs: '${JSON.stringify(device.service_install)}'`,
@@ -109,7 +111,7 @@ function buildAppFromRelease(
 		for (const { label_name, value } of [
 			...ipr.image_label,
 			...svc.service_label,
-		] as Array<{ label_name: string; value: string }>) {
+		]) {
 			labels[label_name] = value;
 		}
 
@@ -253,7 +255,7 @@ const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 	});
 
 	const userApp = getUserAppForState(device, config);
-	const userAppFromApi: AnyObject = device.belongs_to__application[0];
+	const userAppFromApi = device.belongs_to__application[0];
 
 	const local: StateV2['local'] = {
 		name: device.device_name!,
@@ -297,10 +299,10 @@ const getDevice = getStateDelayingEmpty(
 );
 
 const getUserAppForState = (
-	device: AnyObject,
+	device: ExpandedDevice,
 	config: Dictionary<string>,
 ): LocalStateApp => {
-	const userAppFromApi: AnyObject = device.belongs_to__application[0];
+	const userAppFromApi = device.belongs_to__application[0];
 
 	// get the release of the main app that this device should run...
 	const release = device.should_be_running__release[0];
