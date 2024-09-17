@@ -1,0 +1,9 @@
+{
+	"si1_svc": {
+		"user": "admin",
+		"device": "device1",
+		"service": "app1_service1",
+		"name": "name_si",
+		"value": "value_si"
+	}
+}
