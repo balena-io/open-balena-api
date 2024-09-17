@@ -95,6 +95,14 @@ export function serviceInstallFromImage(
 		is_a_build_of__service: number | { __id: number };
 	},
 ): ExpandedService | undefined;
+export function serviceInstallFromImage(
+	deviceOrFleet:
+		| { service_install: ExpandedServiceInstall[] }
+		| { service: ExpandedService[] },
+	image?: {
+		is_a_build_of__service: number | { __id: number };
+	},
+): ExpandedServiceInstall | ExpandedService | undefined;
 /** @deprecated Use the strongly-typed overloads with `{ service_install }` or `{ service }` instead */
 export function serviceInstallFromImage(
 	deviceOrFleet: AnyObject,
