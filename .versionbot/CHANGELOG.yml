@@ -1,4 +1,16 @@
 - commits:
+    - subject: Improve getTargetStateV2 typings
+      hash: f5b3ef8884a0e6f5813c07b2dd40f507ef85a176
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+  version: 28.0.2
+  title: ""
+  date: 2024-09-17T14:13:13.064Z
+- commits:
     - subject: Lock file maintenance
       hash: 47c9adf655ba2bf14d71def6c54e293f2e250b39
       body: |
