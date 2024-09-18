@@ -82,7 +82,7 @@ const getOrInsertApiKey = async (
 	actorId: number,
 	role: { id: number },
 	tx: Tx,
-): Promise<AnyObject> => {
+) => {
 	const authApiTx = api.Auth.clone({
 		passthrough: {
 			tx,
@@ -144,7 +144,7 @@ export const setApiKey = async (
 	apiKeyPermissions: string[],
 	key: string,
 	tx: Tx,
-): Promise<AnyObject> => {
+) => {
 	const role = await getOrInsertRoleId(roleName, tx);
 	await assignRolePermissions(role.id, apiKeyPermissions, tx);
 	const guestActorId = await getGuestActorId();
@@ -216,7 +216,7 @@ export async function createAllPermissions(
 							body: { name: permissionName },
 							options: { returnResource: false },
 						})
-						.then(({ id }: AnyObject) => id);
+						.then(({ id }) => id);
 				}
 			}
 			return await Bluebird.props<Dictionary<number>>(result);

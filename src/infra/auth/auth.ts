@@ -73,7 +73,7 @@ export const validatePassword = (password?: string) => {
 // will also generate a new token secret, effectively invalidating all current
 // login sessions.
 export const setPassword = async (
-	user: AnyObject,
+	user: Pick<User['Read'], 'id'>,
 	newPassword: string,
 	tx: Tx,
 ) => {

@@ -1,21 +1,29 @@
 import type { sbvrUtils } from '@balena/pinejs';
 import { errors, permissions } from '@balena/pinejs';
 import * as semver from 'balena-semver';
+import type {
+	Device,
+	ApplicationType as $ApplicationType,
+} from '../../balena-model.js';
+import type { types } from '@balena/pinejs';
 
-export interface ApplicationType {
-	id?: number;
-	name: string;
-	slug: string;
-
-	supports_web_url: boolean;
-	supports_multicontainer: boolean;
-	supports_gateway_mode: boolean;
-	requires_payment: boolean;
-	is_legacy: boolean;
-	needs__os_version_range: null | string;
-	maximum_device_count: null | number;
-	description: string;
-}
+export type ApplicationType = types.OptionalField<
+	Pick<
+		$ApplicationType['Write'],
+		| 'id'
+		| 'name'
+		| 'slug'
+		| 'supports_web_url'
+		| 'supports_multicontainer'
+		| 'supports_gateway_mode'
+		| 'requires_payment'
+		| 'is_legacy'
+		| 'needs__os_version_range'
+		| 'maximum_device_count'
+		| 'description'
+	>,
+	'id'
+>;
 
 export const DefaultApplicationType: ApplicationType = {
 	name: 'Default',
@@ -112,13 +120,21 @@ const getAppType = async (api: typeof sbvrUtils.api.resin, appId: number) => {
 	return appType;
 };
 
+function checkOsVersionRange(
+	appType: Pick<$ApplicationType['Read'], 'needs__os_version_range'>,
+): appType is NonNullableField<typeof appType, 'needs__os_version_range'> {
+	return appType?.needs__os_version_range != null;
+}
+
 export const checkDeviceCanBeInApplication = async (
 	api: typeof sbvrUtils.api.resin,
 	appId: number,
-	device: AnyObject,
+	device: Partial<
+		Pick<Device['Read'], 'os_version' | 'supervisor_version' | 'device_name'>
+	>,
 ) => {
 	const appType = await getAppType(api, appId);
-	if (appType?.needs__os_version_range == null) {
+	if (!checkOsVersionRange(appType)) {
 		return;
 	}
 	checkVersion(device, appType);
@@ -130,7 +146,7 @@ export const checkDevicesCanBeInApplication = async (
 	deviceIds: number[],
 ): Promise<void> => {
 	const appType = await getAppType(api, appId);
-	if (appType?.needs__os_version_range == null) {
+	if (!checkOsVersionRange(appType)) {
 		return;
 	}
 
@@ -153,7 +169,15 @@ export const checkDevicesCanBeInApplication = async (
 	}
 };
 
-const checkVersion = (device: AnyObject, appType: AnyObject) => {
+const checkVersion = (
+	device: Partial<
+		Pick<Device['Read'], 'os_version' | 'supervisor_version' | 'device_name'>
+	>,
+	appType: NonNullableField<
+		Pick<$ApplicationType['Read'], 'needs__os_version_range'>,
+		'needs__os_version_range'
+	>,
+) => {
 	if (device.os_version == null && device.supervisor_version != null) {
 		throw new DeviceOSVersionIsTooLow(
 			`Device ${device.device_name} is too old to satisfy required version range: ${appType.needs__os_version_range}`,

@@ -84,9 +84,9 @@ export const getOrInsertId = (
 	tx?: Tx,
 ): Promise<{ id: number }> =>
 	$getOrInsertId(sbvrUtils.api.Auth, resource, body, tx);
-export const getOrInsertModelId = (
-	resource: string,
-	body: AnyObject,
+export const getOrInsertModelId = <T extends keyof BalenaModel>(
+	resource: T,
+	body: Partial<BalenaModel[T]['Write']>,
 	tx?: Tx,
 ): Promise<{ id: number }> =>
 	$getOrInsertId(sbvrUtils.api.resin, resource, body, tx);
@@ -101,7 +101,7 @@ export const updateOrInsert = (
 export const updateOrInsertModel = <T extends keyof BalenaModel>(
 	resource: T,
 	filter: FilterObj<BalenaModel[T]['Read']>,
-	updateFields: AnyObject,
+	updateFields: Partial<BalenaModel[T]['Write']>,
 	tx?: Tx,
 ): Promise<{ id: number }> =>
 	$updateOrInsert(sbvrUtils.api.resin, resource, filter, updateFields, tx);
