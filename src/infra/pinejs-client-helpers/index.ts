@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import type { FilterObj } from 'pinejs-client-core';
+import type BalenaModel from '../../balena-model.js';
 
 // TODO: Potential races here. They are unlikely but not impossible. Will fix
 // in subsequent PR.
@@ -97,9 +98,9 @@ export const updateOrInsert = (
 	tx?: Tx,
 ): Promise<{ id: number }> =>
 	$updateOrInsert(sbvrUtils.api.Auth, resource, filter, updateFields, tx);
-export const updateOrInsertModel = (
-	resource: string,
-	filter: FilterObj,
+export const updateOrInsertModel = <T extends keyof BalenaModel>(
+	resource: T,
+	filter: FilterObj<BalenaModel[T]['Read']>,
 	updateFields: AnyObject,
 	tx?: Tx,
 ): Promise<{ id: number }> =>

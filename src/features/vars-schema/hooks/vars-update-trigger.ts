@@ -1,3 +1,4 @@
+import type BalenaModel from '../../../balena-model.js';
 import { sbvrUtils, hooks } from '@balena/pinejs';
 import _ from 'lodash';
 import type { FilterObj } from 'pinejs-client-core';
@@ -5,6 +6,7 @@ import type { FilterObj } from 'pinejs-client-core';
 import { captureException } from '../../../infra/error-handling/index.js';
 
 import { postDevices } from '../../device-proxy/device-proxy.js';
+import type { Device } from '../../../balena-model.js';
 
 interface CustomObject {
 	affectedDevices?: number[];
@@ -17,15 +19,18 @@ interface CustomObject {
 const MAX_SAFE_SQL_BINDS = 2 ** 16 - 1 - 100;
 
 // Env vars hooks
-const addEnvHooks = (
-	resource: string,
+const addEnvHooks = <T extends keyof BalenaModel>(
+	resource: T,
 	buildFilter: (
 		args: hooks.HookArgs<'resin'> & {
 			tx: Tx;
 		},
 	) => Promise<
-		| FilterObj
-		| [affectedIds: number[], filterBuilder: (ids: number[]) => FilterObj]
+		| FilterObj<Device['Read']>
+		| [
+				affectedIds: number[],
+				filterBuilder: (ids: number[]) => FilterObj<Device['Read']>,
+		  ]
 		| undefined
 	>,
 ): void => {
@@ -110,7 +115,7 @@ const addEnvHooks = (
 	});
 };
 
-const addAppEnvHooks = (resource: string) => {
+const addAppEnvHooks = (resource: keyof BalenaModel) => {
 	addEnvHooks(resource, async (args) => {
 		if (args.req.body.application != null) {
 			// If we have an application passed in the body (ie POST) then we can use that to find the devices to update.
@@ -149,7 +154,7 @@ const addAppEnvHooks = (resource: string) => {
 addAppEnvHooks('application_config_variable');
 addAppEnvHooks('application_environment_variable');
 
-const addDeviceEnvHooks = (resource: string) => {
+const addDeviceEnvHooks = (resource: keyof BalenaModel) => {
 	addEnvHooks(resource, async (args) => {
 		if (args.req.body.device != null) {
 			// If we have a device passed in the body (ie POST) then we can use that as ID filter.

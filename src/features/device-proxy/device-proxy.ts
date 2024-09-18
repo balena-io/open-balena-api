@@ -17,6 +17,7 @@ import {
 import type { RequestResponse } from '../../infra/request-promise/index.js';
 import { requestAsync } from '../../infra/request-promise/index.js';
 import { checkInt, throttledForEach } from '../../lib/utils.js';
+import type { Device } from '../../balena-model.js';
 
 // Degraded network, slow devices, compressed docker binaries and any combination of these factors
 // can cause proxied device requests to surpass the default timeout.
@@ -30,7 +31,7 @@ const { api } = sbvrUtils;
 const badSupervisorResponse = (
 	req: Request,
 	res: Response,
-	filter: Filter,
+	filter: Filter<Device['Read']>,
 	reason: string,
 ) => {
 	// Log incident!
@@ -45,7 +46,7 @@ const validateSupervisorResponse = (
 	response: RequestResponse,
 	req: Request,
 	res: Response,
-	filter: Filter,
+	filter: Filter<Device['Read']>,
 ) => {
 	const [{ statusCode, headers }, body] = response;
 	const contentType = headers?.['content-type'];
@@ -86,7 +87,7 @@ const multiResponse = (responses: RequestResponse[]) =>
 	responses.map(([response]) => _.pick(response, 'statusCode', 'body'));
 
 export const proxy = async (req: Request, res: Response) => {
-	const filter: Filter = {};
+	const filter: Filter<Device['Read']> = {};
 	try {
 		const url = req.params[0];
 		if (url == null) {
@@ -141,7 +142,7 @@ export const proxy = async (req: Request, res: Response) => {
 
 interface FixedMethodRequestDevicesOpts {
 	url: string;
-	filter: Filter;
+	filter: Filter<Device['Read']>;
 	data?: AnyObject;
 	req?: sbvrUtils.Passthrough['req'];
 	wait?: boolean;
