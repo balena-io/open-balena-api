@@ -131,7 +131,9 @@ const fetchData = async (
 
 			const imgLocationFilter = imageLocations.map((imgLocation) => {
 				const [location, contentHash] = imgLocation.split('@');
-				const filter: Filter = { is_stored_at__image_location: location };
+				const filter: Filter<Image['Read']> = {
+					is_stored_at__image_location: location,
+				};
 				if (contentHash) {
 					filter.content_hash = contentHash;
 				}

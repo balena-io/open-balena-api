@@ -211,13 +211,13 @@ const setReleasesToSetRevision = async (
 ) => {
 	const { request, api } = args;
 	const custom = request.custom as PatchCustomObject;
-	const filters: FilterObj[] = [];
+	const filters: Array<FilterObj<Release['Read']>> = [];
 	if (custom.is_final) {
 		filters.push({
 			revision: { $eq: null },
 		});
 	}
-	const uniqueConstraintPartFilters: FilterObj[] = [];
+	const uniqueConstraintPartFilters: Array<FilterObj<Release['Read']>> = [];
 	if (custom.semverObject != null) {
 		uniqueConstraintPartFilters.push({
 			revision: { $ne: null },

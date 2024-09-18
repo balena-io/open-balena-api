@@ -260,7 +260,7 @@ export const deleteOldImageInstalls = async (
 	});
 
 	const body = { status: 'deleted', download_progress: null };
-	const filter: Filter = {
+	const filter: Filter<ImageInstall['Read']> = {
 		device: deviceId,
 	};
 	if (imageIds.length !== 0) {

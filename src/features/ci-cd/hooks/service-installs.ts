@@ -1,11 +1,12 @@
 import _ from 'lodash';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import type { Filter, FilterObj } from 'pinejs-client-core';
+import type { Device, Release } from '../../../balena-model.js';
 
 const createReleaseServiceInstalls = async (
 	api: typeof sbvrUtils.api.resin,
-	deviceFilterOrIds: number[] | FilterObj,
-	releaseFilter: Filter,
+	deviceFilterOrIds: number[] | FilterObj<Device['Read']>,
+	releaseFilter: Filter<Release['Read']>,
 ): Promise<void> => {
 	if (Array.isArray(deviceFilterOrIds) && deviceFilterOrIds.length === 0) {
 		return;
