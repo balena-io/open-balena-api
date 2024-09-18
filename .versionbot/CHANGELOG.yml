@@ -1,4 +1,17 @@
 - commits:
+    - subject: Ensure service installs are created when creating an immediately pinned
+        device
+      hash: fd0616910a197c86b20d51a340497bd8631980fc
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 28.0.4
+  title: ""
+  date: 2024-09-18T14:11:21.921Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v18.0.14
       hash: 6f49bfa02357558855a0eb770b1120ccf6cac810
       body: |
