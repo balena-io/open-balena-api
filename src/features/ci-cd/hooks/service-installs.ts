@@ -200,11 +200,17 @@ hooks.addPureHook('POST', 'resin', 'device', {
 
 		const rootApi = api.clone({ passthrough: { tx, req: permissions.root } });
 
-		await createAppServiceInstalls(
-			rootApi,
-			request.values.belongs_to__application,
-			[deviceId],
-		);
+		const app = request.values.belongs_to__application;
+		if (app != null) {
+			await createAppServiceInstalls(rootApi, app, [deviceId]);
+		}
+
+		const release = request.values.is_pinned_on__release;
+		if (release != null) {
+			await createReleaseServiceInstalls(api, [deviceId], {
+				id: release,
+			});
+		}
 	},
 });
 
