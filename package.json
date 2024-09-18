@@ -1,7 +1,7 @@
 {
   "name": "@balena/open-balena-api",
   "description": "Internet of things, Made Simple",
-  "version": "28.0.4",
+  "version": "28.0.5",
   "license": "AGPL-3.0",
   "repository": {
     "type": "git",
@@ -168,6 +168,6 @@
     "loader": "ts-node/esm/transpile-only"
   },
   "versionist": {
-    "publishedAt": "2024-09-18T14:11:22.719Z"
+    "publishedAt": "2024-09-18T15:03:14.455Z"
   }
 }

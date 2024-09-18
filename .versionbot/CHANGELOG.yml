@@ -1,4 +1,17 @@
 - commits:
+    - subject: Increase type safety by specifying the expected model resource for
+        filter parameters
+      hash: 2c4eb7b78a5be939382bd96c7eeef5a14ec6fbe6
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 28.0.5
+  title: ""
+  date: 2024-09-18T15:03:13.603Z
+- commits:
     - subject: Ensure service installs are created when creating an immediately pinned
         device
       hash: fd0616910a197c86b20d51a340497bd8631980fc
