@@ -40,7 +40,7 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 			body: {
 				action: 'ssh-host',
 			},
-		})) as { d?: AnyObject[] };
+		})) as { d?: Array<{ id: number }> };
 
 		if (!Array.isArray(allowedDevices.d) || allowedDevices.d.length !== 1) {
 			res.status(401).end();
