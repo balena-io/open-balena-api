@@ -1,0 +1,9 @@
+{
+	"device1": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"uuid": "c47e4dec05f76ee37c4b8e805c35c1eee54335803b3a40458928f8afce618c",
+		"is_pinned_on__release": "release1"
+	}
+}

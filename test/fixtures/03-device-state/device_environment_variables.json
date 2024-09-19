@@ -1,0 +1,14 @@
+{
+	"device1_device": {
+		"user": "admin",
+		"device": "device1",
+		"name": "name_device",
+		"value": "value_device"
+	},
+	"device1_si": {
+		"user": "admin",
+		"device": "device1",
+		"name": "name_si",
+		"value": "value_device"
+	}
+}

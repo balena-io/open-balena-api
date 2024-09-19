@@ -13,6 +13,7 @@ import { requestAsync } from '../../src/infra/request-promise/index.js';
 import { supertest } from './supertest.js';
 import type { Organization } from '../../src/balena-model.js';
 import type Model from '../../src/balena-model.js';
+import { assertExists } from './common.js';
 
 const { api } = sbvrUtils;
 const version = 'resin';
@@ -471,6 +472,62 @@ const loaders: types.Dictionary<LoaderFunc> = {
 		});
 	},
 
+	device_environment_variables: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+		const device = await fixtures.devices[jsonData.device];
+		if (device == null) {
+			logErrorAndThrow(`Could not find device: ${jsonData.device}`);
+		}
+
+		return await createResource({
+			resource: 'device_environment_variable',
+			body: {
+				device: device.id,
+				name: jsonData.name,
+				value: jsonData.value,
+			},
+			user,
+		});
+	},
+	device_service_environment_variables: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const device = await fixtures.devices[jsonData.device];
+		if (device == null) {
+			logErrorAndThrow(`Could not find device: ${jsonData.device}`);
+		}
+
+		const service = await fixtures.services[jsonData.service];
+		if (service == null) {
+			logErrorAndThrow(`Could not find service: ${jsonData.service}`);
+		}
+
+		const si = await api.resin.get({
+			resource: 'service_install',
+			passthrough: { req: permissions.rootRead },
+			id: {
+				device: device.id,
+				installs__service: service.id,
+			},
+		});
+		assertExists(si);
+
+		return await createResource({
+			resource: 'device_service_environment_variable',
+			body: {
+				service_install: si.id,
+				name: jsonData.name,
+				value: jsonData.value,
+			},
+			user,
+		});
+	},
 	devices: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.belongs_to__user];
 		if (user == null) {
@@ -488,6 +545,12 @@ const loaders: types.Dictionary<LoaderFunc> = {
 
 		let release: AnyObject | null = null;
 		if (jsonData.is_pinned_on__release != null) {
+			// We need to wait for all images to be created
+			// This guarantees that all releases are also created and properly
+			// linked to its services -> images which finally ensures that
+			// all services intalls are properly created for the device
+			await Promise.all(Object.values(fixtures.images ?? {}));
+
 			release = await fixtures.releases[jsonData.is_pinned_on__release];
 			if (release == null) {
 				logErrorAndThrow(

@@ -1,0 +1,26 @@
+{
+	"app1_app": {
+		"user": "admin",
+		"application": "app1",
+		"name": "name_app",
+		"value": "value_app"
+	},
+	"app1_svc": {
+		"user": "admin",
+		"application": "app1",
+		"name": "name_svc",
+		"value": "value_app"
+	},
+	"app1_device": {
+		"user": "admin",
+		"application": "app1",
+		"name": "name_device",
+		"value": "value_app"
+	},
+	"app1_si": {
+		"user": "admin",
+		"application": "app1",
+		"name": "name_si",
+		"value": "value_app"
+	}
+}

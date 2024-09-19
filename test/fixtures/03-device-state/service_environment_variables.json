@@ -1,0 +1,20 @@
+{
+	"svc1_svc": {
+		"user": "admin",
+		"service": "app1_service1",
+		"name": "name_svc",
+		"value": "value_svc"
+	},
+	"svc1_device": {
+		"user": "admin",
+		"service": "app1_service1",
+		"name": "name_device",
+		"value": "value_svc"
+	},
+	"svc1_si": {
+		"user": "admin",
+		"service": "app1_service1",
+		"name": "name_si",
+		"value": "value_svc"
+	}
+}

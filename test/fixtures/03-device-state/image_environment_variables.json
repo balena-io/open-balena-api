@@ -1,0 +1,32 @@
+{
+	"release1_image1_img": {
+		"user": "admin",
+		"image": "release1_image1",
+		"name": "name_img",
+		"value": "value_img"
+	},
+	"release1_image1_app": {
+		"user": "admin",
+		"image": "release1_image1",
+		"name": "name_app",
+		"value": "value_img"
+	},
+	"release1_image1_svc": {
+		"user": "admin",
+		"image": "release1_image1",
+		"name": "name_svc",
+		"value": "value_img"
+	},
+	"release1_image1_device": {
+		"user": "admin",
+		"image": "release1_image1",
+		"name": "name_device",
+		"value": "value_img"
+	},
+	"release1_image1_si": {
+		"user": "admin",
+		"image": "release1_image1",
+		"name": "name_si",
+		"value": "value_img"
+	}
+}

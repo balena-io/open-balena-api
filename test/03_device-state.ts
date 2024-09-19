@@ -19,6 +19,8 @@ import { redis, redisRO } from '../src/infra/redis/index.js';
 import { setTimeout } from 'timers/promises';
 import { MINUTES, SECONDS } from '@balena/env-parsing';
 import type { PineTest } from 'pinejs-client-supertest';
+import type { StateV2 } from '../src/features/device-state/routes/state-get-v2.js';
+import type { StateV3 } from '../src/features/device-state/routes/state-get-v3.js';
 
 const { api } = sbvrUtils;
 
@@ -70,7 +72,9 @@ export default () => {
 				let pineUser: typeof pineTest;
 				let admin: UserObjectParam;
 				let applicationId: number;
+				let serviceName: string;
 				let device: fakeDevice.Device;
+				let existingDevice: AnyObject;
 
 				/** Tracks updateDeviceModel() calls */
 				const tracker = new StateTracker();
@@ -114,9 +118,11 @@ export default () => {
 						},
 					});
 					applicationId = fx.applications.app1.id;
+					serviceName = fx.services.app1_service1.service_name;
 
 					// create a new device in this test application...
 					device = await fakeDevice.provisionDevice(admin, applicationId);
+					existingDevice = fx.devices.device1;
 
 					stateMock.getInstance()['updateDeviceModel'] = function (
 						deviceId: number,
@@ -1097,6 +1103,44 @@ export default () => {
 										),
 									}),
 								});
+							});
+						});
+					});
+
+					describe('State environment variables', () => {
+						it('should have different level environment variables injected', async () => {
+							const state = await fakeDevice.getState(
+								admin,
+								existingDevice.uuid,
+								stateVersion,
+							);
+
+							let environment: { [varName: string]: string } | undefined;
+
+							if (stateVersion === 'v2') {
+								environment = Object.values((state as StateV2).local.apps)
+									.map((app) =>
+										Object.values(app.services).find(
+											(service) => service.serviceName === serviceName,
+										),
+									)
+									.find((service) => service)?.environment;
+							} else {
+								environment = Object.values(state as StateV3)
+									.flatMap((dvc) => Object.values(dvc.apps))
+									.flatMap((app) => Object.values(app.releases ?? {}))
+									.flatMap((release) => Object.entries(release.services ?? {}))
+									.find(
+										([serviceKey]) => serviceKey === serviceName,
+									)?.[1].environment;
+							}
+
+							expect(environment).to.deep.equal({
+								name_img: 'value_img',
+								name_app: 'value_app',
+								name_svc: 'value_svc',
+								name_device: 'value_device',
+								name_si: 'value_si',
 							});
 						});
 					});
