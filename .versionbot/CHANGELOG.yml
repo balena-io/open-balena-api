@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add test cases for different environment_variables scopes in state get
+      hash: 6c703ae3e3bf654ec0d408ee8355642033bc1ae1
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+  version: 28.0.8
+  title: ""
+  date: 2024-09-19T13:27:49.908Z
+- commits:
     - subject: Reduce usage of service install on device state get v2
       hash: 5899b572a68a3e706ea9c026fead9418938bffee
       body: ""
