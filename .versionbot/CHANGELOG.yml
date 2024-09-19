@@ -1,4 +1,16 @@
 - commits:
+    - subject: Reduce usage of service install on device state get v2
+      hash: 5899b572a68a3e706ea9c026fead9418938bffee
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+  version: 28.0.7
+  title: ""
+  date: 2024-09-19T13:05:02.538Z
+- commits:
     - subject: Use precise model types instead of `AnyObject` where possible
       hash: 52f362b114506e724f8e5dfe61d3d47cc36316a9
       body: ""
