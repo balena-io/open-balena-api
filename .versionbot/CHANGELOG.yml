@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update grafana/loki Docker tag to v3.2.0
+      hash: cbe1a4171708deb029f01368317dedc074b8b213
+      body: |
+        Update grafana/loki from 3.1.1 to 3.2.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 28.0.10
+  title: ""
+  date: 2024-09-20T15:09:50.222Z
+- commits:
     - subject: Optimize state GET v2 via an alternative canAccess path for services
       hash: 11ec78e6071fdf336cb51a3ce096917a6104d8b7
       body: ""
