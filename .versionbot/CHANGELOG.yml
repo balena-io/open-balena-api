@@ -1,4 +1,16 @@
 - commits:
+    - subject: Optimize state GET v2 via an alternative canAccess path for services
+      hash: 11ec78e6071fdf336cb51a3ce096917a6104d8b7
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 28.0.9
+  title: ""
+  date: 2024-09-20T13:54:49.256Z
+- commits:
     - subject: Add test cases for different environment_variables scopes in state get
       hash: 6c703ae3e3bf654ec0d408ee8355642033bc1ae1
       body: ""
