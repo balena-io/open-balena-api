@@ -104,7 +104,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	),
 	'resin.application_environment_variable.read?application/canAccess()',
 
-	'resin.service.read?application/canAccess() or service_install/canAccess()',
+	'resin.service.read?application/canAccess() or service_install/canAccess() or is_built_by__image/canAccess()',
 
 	'resin.service_install.read?device/canAccess()',
 	// Should be created for the device itself, and it should be for a service of the app that the device belongs to or for a service of the supervisor/hostApp release that manages/operates the device.
