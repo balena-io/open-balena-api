@@ -2,14 +2,16 @@
 // Declares permissions assigned to default roles and API keys
 //
 
-import type { sbvrUtils } from '@balena/pinejs';
-
+import { sbvrUtils } from '@balena/pinejs';
+import type Model from '../balena-model.js';
 import {
 	API_VPN_SERVICE_API_KEY,
 	IGNORE_FROZEN_DEVICE_PERMISSIONS,
 	VPN_GUEST_API_KEY,
 	VPN_SERVICE_API_KEY,
 } from './config.js';
+import { Filter } from 'pinejs-client-core';
+const { api } = sbvrUtils;
 
 const defaultWritePerms = ['create', 'update', 'delete'] as const;
 
@@ -19,8 +21,36 @@ const writePerms = (
 	access: ReadonlyArray<(typeof defaultWritePerms)[number]> = defaultWritePerms,
 ): string[] => access.map((verb) => `${resource}.${verb}?${filter}`);
 
+const compileAuth = <TResource extends string & keyof Model>(
+	resource: TResource,
+	access: string,
+	$filter?: Filter<Model[TResource]['Read']>
+) => {
+	const options = $filter ? { $filter } : undefined;
+	return api.resin.compileAuth({
+		modelName: 'resin',
+		resource,
+		access,
+		options
+	});
+};
+
+const actorId = { '@': '__ACTOR_ID' } as const;
+const matchesActorFilter = { actor: actorId } as const;
+
+const matchesUserFilter = {
+	user: {
+		$any: {
+			$alias: 'u',
+			$expr: {
+				u: matchesActorFilter,
+			},
+		},
+	},
+} as const;
+
 const matchesActor = 'actor eq @__ACTOR_ID';
-const matchesUser = `user/any(u:u/${matchesActor})`;
+// const matchesUser = `user/any(u:u/${matchesActor})`;
 const matchesNonFrozenDeviceActor = (alias = '') => {
 	if (alias) {
 		alias += '/';
@@ -30,6 +60,12 @@ const matchesNonFrozenDeviceActor = (alias = '') => {
 		: '';
 	return `${alias}${matchesActor}${andIsNotFrozen}`;
 };
+
+const matchesNonFrozenDeviceActorFilter = IGNORE_FROZEN_DEVICE_PERMISSIONS ? {
+	...matchesActorFilter,
+	is_frozen: false,
+} : matchesActorFilter;
+
 const ownsDevice = `owns__device/any(d:d/${matchesActor})`;
 
 export const ROLES: {
@@ -40,52 +76,169 @@ export const ROLES: {
 	],
 	// also default-user (see below)
 	'named-user-api-key': [
-		'resin.actor.delete?id eq @__ACTOR_ID',
-		'resin.api_key.read?is_of__actor eq @__ACTOR_ID',
-		'resin.application.all',
-		'resin.device_type.read',
-		'resin.device_type_alias.read',
-		'resin.cpu_architecture.read',
-		'resin.application_config_variable.all',
-		'resin.application_environment_variable.all',
-		'resin.application_tag.all',
-		'resin.application_type.all',
-		'resin.device.all',
-		'resin.device.tunnel-22222',
-		'resin.device_config_variable.all',
-		'resin.device_environment_variable.all',
-		'resin.device_tag.all',
-		'resin.device_service_environment_variable.all',
-		'resin.image.all',
-		'resin.image__is_part_of__release.all',
-		'resin.image_environment_variable.all',
-		'resin.image_install.all',
-		'resin.image_label.all',
-		'resin.organization.read',
-		'resin.organization_membership.read',
-		'resin.release.all',
-		'resin.release_tag.all',
-		'resin.service.all',
-		'resin.service_environment_variable.all',
-		'resin.service_install.all',
-		"resin.service_instance.read?service_type eq 'vpn'",
-		'resin.service_label.all',
-		'resin.user.read',
-		`resin.user__has__public_key.all?${matchesUser}`,
-		'resin.release_asset.all',
+		// 'resin.actor.delete?id eq @__ACTOR_ID',
+		compileAuth('actor', 'delete', {
+			id: {
+				'@': '__ACTOR_ID',
+			},
+		}),
+
+		// 'resin.api_key.read?is_of__actor eq @__ACTOR_ID',
+		compileAuth('api_key', 'read', {
+			is_of__actor: {
+				'@': '__ACTOR_ID',
+			},
+		}),
+
+		// 'resin.application.all',
+		compileAuth('application', 'all'),
+
+		// 'resin.device_type.read',
+		compileAuth('device_type', 'read'),
+
+		// 'resin.device_type_alias.read',
+		compileAuth('device_type_alias', 'read'),
+
+		// 'resin.cpu_architecture.read',
+		compileAuth('cpu_architecture', 'read'),
+
+		// 'resin.application_config_variable.all',
+		compileAuth('application_config_variable', 'all'),
+
+		// 'resin.application_environment_variable.all',
+		compileAuth('application_environment_variable', 'all'),
+
+		// 'resin.application_tag.all',
+		compileAuth('application_tag', 'all'),
+
+		// 'resin.application_type.all',
+		compileAuth('application_type', 'all'),
+
+		// 'resin.device.all',
+		compileAuth('device', 'all'),
+
+		// 'resin.device.tunnel-22222',
+		compileAuth('device', 'tunnel-22222'),
+
+		// 'resin.device_config_variable.all',
+		compileAuth('device_config_variable', 'all'),
+
+		// 'resin.device_environment_variable.all',
+		compileAuth('device_environment_variable', 'all'),
+
+		// 'resin.device_tag.all',
+		compileAuth('device_tag', 'all'),
+
+		// 'resin.device_service_environment_variable.all',
+		compileAuth('device_service_environment_variable', 'all'),
+
+		// 'resin.image.all',
+		compileAuth('image', 'all'),
+
+		// 'resin.image__is_part_of__release.all',
+		compileAuth('image__is_part_of__release', 'all'),
+
+		// 'resin.image_environment_variable.all',
+		compileAuth('image_environment_variable', 'all'),
+
+		// 'resin.image_install.all',
+		compileAuth('image_install', 'all'),
+
+		// 'resin.image_label.all',
+		compileAuth('image_label', 'all'),
+
+		// 'resin.organization.read',
+		compileAuth('organization', 'read'),
+
+		// 'resin.organization_membership.read',
+		compileAuth('organization_membership', 'read'),
+
+		// 'resin.release.all',
+		compileAuth('release', 'all'),
+
+		// 'resin.release_tag.all',
+		compileAuth('release_tag', 'all'),
+
+		// 'resin.service.all',
+		compileAuth('service', 'all'),
+
+		// 'resin.service_environment_variable.all',
+		compileAuth('service_environment_variable', 'all'),
+
+		// 'resin.service_install.all',
+		compileAuth('service_install', 'all'),
+
+		// "resin.service_instance.read?service_type eq 'vpn'",
+		compileAuth('service_instance', 'read', { service_type: 'vpn' }),
+
+		// 'resin.service_label.all',
+		compileAuth('service_label', 'all'),
+
+		// 'resin.user.read',
+		compileAuth('user', 'read'),
+
+		// `resin.user__has__public_key.all?${matchesUser}`,
+		compileAuth('user__has__public_key', 'all', matchesUserFilter),
+
+		// 'resin.release_asset.all',
+		compileAuth('release_asset', 'all'),
 	],
 };
 
+export const canAccess = {
+	$fn: {
+		$scope: 'Auth',
+		$method: 'canAccess'
+	}
+} as const;
+
 export const DEVICE_API_KEY_PERMISSIONS = [
-	'resin.device_type.read?describes__device/canAccess()',
-	`resin.device.read?${matchesNonFrozenDeviceActor()}`,
-	`resin.device.update?${matchesNonFrozenDeviceActor()}`,
-	'resin.application.read?owns__device/canAccess() or (is_public eq true and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
-	'resin.application_tag.read?application/canAccess()',
-	'resin.device_config_variable.read?device/canAccess()',
-	`resin.device_config_variable.create?device/any(d:${matchesNonFrozenDeviceActor(
-		'd',
-	)})`,
+	// 'resin.device_type.read?describes__device/canAccess()',
+	compileAuth('device_type', 'read', { describes__device: canAccess }),
+
+	// `resin.device.read?${matchesNonFrozenDeviceActorFilter()}`,
+	// `resin.device.update?${matchesNonFrozenDeviceActorFilter()}`,
+
+	// 'resin.application.read?owns__device/canAccess() or (is_public eq true and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
+	compileAuth('application', 'read', {
+		$or: {
+			owns__device: canAccess,
+			$and: {
+				is_public: true,
+				is_for__device_type: {
+					$any: {
+						$alias: 'dt',
+						$expr: {
+							dt: {
+								describes__device: canAccess,
+							},
+						},
+					},
+				},
+			},
+		}
+	}),
+
+	// 'resin.application_tag.read?application/canAccess()',
+	compileAuth('application_tag', 'read', { application: canAccess }),
+
+	// 'resin.device_config_variable.read?device/canAccess()',
+	compileAuth('device_config_variable', 'read', { device: canAccess }),
+
+	// `resin.device_config_variable.create?device/any(d:${matchesNonFrozenDeviceActor(
+	// 	'd',
+	// )})`,
+	compileAuth('device_config_variable', 'create', {
+		device: {
+			$any: {
+				$alias: 'd',
+				$expr: {
+					d: matchesNonFrozenDeviceActorFilter,
+				}
+			}
+		}
+	}),
+
 	`resin.device_config_variable.update?device/any(d:${matchesNonFrozenDeviceActor(
 		'd',
 	)})`,
