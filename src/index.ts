@@ -265,6 +265,10 @@ export const envVarsConfig = {
 	DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES,
 };
 
+// Needed so that the augmented `@balena/sbvr-types` typings
+// automatically become available to consumer projects.
+import './translations/v6/numeric-big-integer-hack.js';
+
 export const translations = {
 	v7: {
 		getTranslations: getV7Translations,
