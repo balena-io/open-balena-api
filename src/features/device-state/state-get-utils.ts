@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import type { ExpandableStringKeyOf } from 'pinejs-client-core';
 import type { dbModule, permissions } from '@balena/pinejs';
 import { sbvrUtils, errors } from '@balena/pinejs';
@@ -10,7 +9,7 @@ import {
 	createMultiLevelStore,
 	reqPermissionNormalizer,
 } from '../../infra/cache/index.js';
-import type { Device, Service, ServiceInstall } from '../../balena-model.js';
+import type { Device, Service } from '../../balena-model.js';
 
 export const getStateEventAdditionalFields: Array<
 	Exclude<keyof Device['Read'], ExpandableStringKeyOf<Device['Read']>>
@@ -72,68 +71,27 @@ export const getConfig = (
 	return config;
 };
 
-type ExpandedService = Pick<Service['Read'], 'id' | 'service_name'> & {
-	service_environment_variable: EnvVarList;
-	service_label: Array<{ label_name: string; value: string }>;
-};
-
-type ExpandedServiceInstall = {
-	id: ServiceInstall['Read']['id'];
-	service: ExpandedService[];
-	device_service_environment_variable: EnvVarList;
-};
-
 export function serviceInstallFromImage(
-	deviceOrFleet: { service_install: ExpandedServiceInstall[] },
-	image?: {
-		is_a_build_of__service: number | { __id: number };
+	device: {
+		service_install: Array<{
+			service: { __id: Service['Read']['id'] };
+			device_service_environment_variable: EnvVarList;
+		}>;
 	},
-): ExpandedServiceInstall | undefined;
-export function serviceInstallFromImage(
-	deviceOrFleet: { service: ExpandedService[] },
-	image?: {
-		is_a_build_of__service: number | { __id: number };
-	},
-): ExpandedService | undefined;
-export function serviceInstallFromImage(
-	deviceOrFleet:
-		| { service_install: ExpandedServiceInstall[] }
-		| { service: ExpandedService[] },
-	image?: {
-		is_a_build_of__service: number | { __id: number };
-	},
-): ExpandedServiceInstall | ExpandedService | undefined;
-/** @deprecated Use the strongly-typed overloads with `{ service_install }` or `{ service }` instead */
-export function serviceInstallFromImage(
-	deviceOrFleet: AnyObject,
-	image?: AnyObject,
-): undefined | AnyObject;
-export function serviceInstallFromImage(
-	deviceOrFleet:
-		| { service_install: ExpandedServiceInstall[] }
-		| { service: ExpandedService[] },
-	image?: {
-		is_a_build_of__service: number | { __id: number };
-	},
+	image:
+		| {
+				is_a_build_of__service: Array<Pick<Service['Read'], 'id'>>;
+		  }
+		| undefined,
 ) {
 	if (image == null) {
 		return;
 	}
 
-	let id: number;
-	if (typeof image.is_a_build_of__service === 'object') {
-		id = image.is_a_build_of__service.__id;
-	} else {
-		id = image.is_a_build_of__service;
-	}
+	const id = image.is_a_build_of__service[0].id;
 
-	if ('service_install' in deviceOrFleet) {
-		return _.find(
-			deviceOrFleet.service_install,
-			(si) => si.service[0].id === id,
-		);
-	} else if ('service' in deviceOrFleet) {
-		return deviceOrFleet.service.find((fleetService) => fleetService.id === id);
+	if ('service_install' in device) {
+		return device.service_install.find(({ service }) => service.__id === id);
 	}
 }
 

@@ -138,38 +138,34 @@ export function buildAppFromRelease(
 	}
 
 	for (const ipr of release.contains__image) {
-		// extract the per-image information
 		const image = ipr.image[0];
-
-		const si = serviceInstallFromImage(
-			device ?? (application as ExpandedApplicationWithService),
-			image,
-		);
-		if (si == null) {
-			throw new Error(
-				`Could not find service install for device or application: '${
-					application.uuid
-				}', image: '${image?.id}', service: '${JSON.stringify(
-					image?.is_a_build_of__service,
-				)}', service: '${
-					device != null
-						? JSON.stringify(device.service_install)
-						: JSON.stringify(
-								(application as ExpandedApplicationWithService).service,
-							)
-				}'`,
-			);
-		}
-		const svc = 'service' in si ? si.service[0] : si;
+		const svc = image.is_a_build_of__service[0];
 		const environment: Dictionary<string> = {};
+
+		if ('service' in application) {
+			if (!application.service.some((s) => s.id === svc.id)) {
+				throw new Error(
+					`Service '${svc.id}' not found in application '${application.uuid}'`,
+				);
+			}
+		}
+
 		varListInsert(ipr.image_environment_variable, environment);
 		varListInsert(application.application_environment_variable, environment);
 		varListInsert(svc.service_environment_variable, environment);
 
-		if (device?.device_environment_variable) {
+		if (device != null) {
 			varListInsert(device.device_environment_variable, environment);
-		}
-		if ('device_service_environment_variable' in si) {
+			const si = serviceInstallFromImage(device, image);
+			if (si == null) {
+				throw new Error(
+					`Could not find service install for device or application: '${
+						application.uuid
+					}', image: '${image?.id}', service: '${JSON.stringify(
+						svc,
+					)}', service_install: '${JSON.stringify(device.service_install)}'`,
+				);
+			}
 			varListInsert(si.device_service_environment_variable, environment);
 		}
 
@@ -237,9 +233,21 @@ export const releaseExpand = {
 						'id',
 						'is_stored_at__image_location',
 						'content_hash',
-						'is_a_build_of__service',
 						'contract',
 					],
+					$expand: {
+						is_a_build_of__service: {
+							$select: ['id', 'service_name'],
+							$expand: {
+								service_environment_variable: {
+									$select: ['name', 'value'],
+								},
+								service_label: {
+									$select: ['label_name', 'value'],
+								},
+							},
+						},
+					},
 				},
 				image_label: {
 					$select: ['label_name', 'value'],
@@ -274,19 +282,8 @@ const deviceExpand = {
 	// `should_be_running__release` will automatically defer to the app release as necessary
 	should_be_running__release: releaseExpand,
 	service_install: {
-		$select: ['id'],
+		$select: ['id', 'service'],
 		$expand: {
-			service: {
-				$select: ['id', 'service_name'],
-				$expand: {
-					service_environment_variable: {
-						$select: ['name', 'value'],
-					},
-					service_label: {
-						$select: ['label_name', 'value'],
-					},
-				},
-			},
 			device_service_environment_variable: {
 				$select: ['name', 'value'],
 			},
