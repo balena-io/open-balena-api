@@ -1,4 +1,21 @@
 - commits:
+    - subject: Reduce usage of service_install resource on StateGetV3
+      hash: 9c820c0f5a5c2cee6f0d31faabb74704ecff46f8
+      body: >
+        BREAKING: The helper function `serviceInstallFromImage` expects stricter
+        typings
+
+        Reduce the usage of service_install for resolving service environment
+        variables
+      footer:
+        Change-type: major
+        change-type: major
+      author: Otavio Jacobi
+      nested: []
+  version: 29.0.0
+  title: ""
+  date: 2024-10-01T12:38:24.002Z
+- commits:
     - subject: Improve getDeviceTargetStateV3/getFleetTargetStateV3 typings
       hash: 5073c7cd98742632e713b69205a28fcdfda0b11c
       body: ""
