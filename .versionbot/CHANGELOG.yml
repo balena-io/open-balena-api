@@ -1,4 +1,16 @@
 - commits:
+    - subject: Improve getDeviceTargetStateV3/getFleetTargetStateV3 typings
+      hash: 5073c7cd98742632e713b69205a28fcdfda0b11c
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+  version: 28.0.13
+  title: ""
+  date: 2024-10-01T11:12:56.131Z
+- commits:
     - subject: Fix v6 image.image_size no longer being a number
       hash: ecf79f4f337c8fdd8b42b549288e5911f9a8a976
       body: ""
