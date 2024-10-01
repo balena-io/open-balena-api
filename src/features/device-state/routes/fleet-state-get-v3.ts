@@ -9,8 +9,10 @@ import {
 
 import { sbvrUtils, errors } from '@balena/pinejs';
 import { getConfig, readTransaction } from '../state-get-utils.js';
-import type { StateV3 } from './state-get-v3.js';
+import type { ExpandedRelease, StateV3 } from './state-get-v3.js';
 import { buildAppFromRelease, releaseExpand } from './state-get-v3.js';
+import type { OptionsToResponse } from 'pinejs-client-core';
+import type { Application } from '../../../balena-model.js';
 const { api } = sbvrUtils;
 const { UnauthorizedError } = errors;
 
@@ -45,6 +47,16 @@ const fleetExpand = {
 		},
 	},
 } as const;
+
+export type ExpandedApplicationWithService = NonNullable<
+	OptionsToResponse<
+		Application['Read'],
+		{
+			$expand: typeof fleetExpand;
+		},
+		number
+	>
+>;
 
 const stateQuery = _.once(() =>
 	api.resin.prepare(
@@ -104,8 +116,8 @@ const getSuccessfulReleaseForFleetAndCommit = async (
 };
 
 const getFleetAppsForState = (
-	fleet: AnyObject,
-	release: AnyObject | undefined,
+	fleet: ExpandedApplicationWithService,
+	release: ExpandedRelease,
 	config: Dictionary<string>,
 ): FleetStateV3[string]['apps'] => {
 	return {
@@ -128,7 +140,7 @@ const getFleetStateV3 = async (
 ): Promise<FleetStateV3> => {
 	const fleet = await getFleet(req, uuid);
 	const config = getConfig(undefined, fleet);
-	let release: AnyObject | undefined;
+	let release: ExpandedRelease;
 	if (releaseUuid) {
 		release = await getSuccessfulReleaseForFleetAndCommit(
 			req,

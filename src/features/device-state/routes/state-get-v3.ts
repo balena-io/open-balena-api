@@ -19,11 +19,33 @@ import { sbvrUtils } from '@balena/pinejs';
 import { events } from '../index.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 import { getIP } from '../../../lib/utils.js';
+import type { OptionsToResponse } from 'pinejs-client-core';
+import type { Application } from '../../../balena-model.js';
+import type { ExpandedApplicationWithService } from './fleet-state-get-v3.js';
 
 const { api } = sbvrUtils;
 
 type LocalStateApp = StateV3[string]['apps'][string];
 type ServiceComposition = AnyObject;
+type ExpandedDevice = Awaited<ReturnType<typeof getDevice>>;
+type ExpandedApplication = NonNullable<
+	OptionsToResponse<
+		Application['Read'],
+		{
+			$select: typeof appSelect;
+			$expand: typeof appExpand;
+		},
+		number
+	>
+>;
+
+type TargetReleaseField =
+	| 'should_be_running__release'
+	| 'should_be_managed_by__release'
+	| 'should_be_operated_by__release';
+
+export type ExpandedRelease = ExpandedDevice[TargetReleaseField][number];
+
 export type StateV3 = {
 	[uuid: string]: {
 		name: string;
@@ -80,9 +102,23 @@ export type StateV3 = {
 };
 
 export function buildAppFromRelease(
-	device: AnyObject | undefined,
-	application: AnyObject,
-	release: AnyObject,
+	device: undefined,
+	application: ExpandedApplicationWithService,
+	release: ExpandedRelease,
+	config: Dictionary<string>,
+	defaultLabels?: Dictionary<string>,
+): NonNullable<LocalStateApp['releases']>;
+export function buildAppFromRelease(
+	device: ExpandedDevice,
+	application: ExpandedApplication,
+	release: ExpandedRelease,
+	config: Dictionary<string>,
+	defaultLabels?: Dictionary<string>,
+): NonNullable<LocalStateApp['releases']>;
+export function buildAppFromRelease(
+	device: ExpandedDevice | undefined,
+	application: ExpandedApplication | ExpandedApplicationWithService,
+	release: ExpandedRelease,
 	config: Dictionary<string>,
 	defaultLabels?: Dictionary<string>,
 ): NonNullable<LocalStateApp['releases']> {
@@ -101,11 +137,14 @@ export function buildAppFromRelease(
 		}
 	}
 
-	for (const ipr of release.contains__image as AnyObject[]) {
+	for (const ipr of release.contains__image) {
 		// extract the per-image information
 		const image = ipr.image[0];
 
-		const si = serviceInstallFromImage(device ?? application, image);
+		const si = serviceInstallFromImage(
+			device ?? (application as ExpandedApplicationWithService),
+			image,
+		);
 		if (si == null) {
 			throw new Error(
 				`Could not find service install for device or application: '${
@@ -113,13 +152,15 @@ export function buildAppFromRelease(
 				}', image: '${image?.id}', service: '${JSON.stringify(
 					image?.is_a_build_of__service,
 				)}', service: '${
-					device
+					device != null
 						? JSON.stringify(device.service_install)
-						: JSON.stringify(application.service)
+						: JSON.stringify(
+								(application as ExpandedApplicationWithService).service,
+							)
 				}'`,
 			);
 		}
-		const svc = si.service?.[0] ?? si;
+		const svc = 'service' in si ? si.service[0] : si;
 		const environment: Dictionary<string> = {};
 		varListInsert(ipr.image_environment_variable, environment);
 		varListInsert(application.application_environment_variable, environment);
@@ -128,7 +169,7 @@ export function buildAppFromRelease(
 		if (device?.device_environment_variable) {
 			varListInsert(device.device_environment_variable, environment);
 		}
-		if (si?.device_service_environment_variable) {
+		if ('device_service_environment_variable' in si) {
 			varListInsert(si.device_service_environment_variable, environment);
 		}
 
@@ -211,6 +252,13 @@ export const releaseExpand = {
 	},
 } as const;
 
+const appSelect = [
+	'id',
+	'uuid',
+	'app_name',
+	'is_host',
+	'is_of__class',
+] as const;
 const appExpand = {
 	application_environment_variable: {
 		$select: ['name', 'value'],
@@ -245,7 +293,7 @@ const deviceExpand = {
 		},
 	},
 	belongs_to__application: {
-		$select: ['id', 'uuid', 'app_name', 'is_host', 'is_of__class'],
+		$select: appSelect,
 		$expand: {
 			...appExpand,
 			application_config_variable: {
@@ -258,7 +306,7 @@ const deviceExpand = {
 		$expand: {
 			...releaseExpand.$expand,
 			belongs_to__application: {
-				$select: ['id', 'uuid', 'app_name', 'is_host', 'is_of__class'],
+				$select: appSelect,
 				$expand: appExpand,
 			},
 		},
@@ -268,7 +316,7 @@ const deviceExpand = {
 		$expand: {
 			...releaseExpand.$expand,
 			belongs_to__application: {
-				$select: ['id', 'uuid', 'app_name', 'is_host', 'is_of__class'],
+				$select: appSelect,
 				$expand: appExpand,
 			},
 		},
@@ -363,16 +411,13 @@ const getDevice = getStateDelayingEmpty(
 );
 
 const getAppState = (
-	device: AnyObject,
-	targetReleaseField:
-		| 'should_be_running__release'
-		| 'should_be_managed_by__release'
-		| 'should_be_operated_by__release',
+	device: ExpandedDevice,
+	targetReleaseField: TargetReleaseField,
 	config: Dictionary<string>,
 	defaultLabels?: Dictionary<string>,
 ): StateV3[string]['apps'] | null => {
-	let application: AnyObject;
-	let release: AnyObject | undefined;
+	let application: ExpandedApplication;
+	let release: ExpandedRelease;
 	if (targetReleaseField === 'should_be_running__release') {
 		application = device.belongs_to__application[0];
 		release = device.should_be_running__release[0];
@@ -381,7 +426,11 @@ const getAppState = (
 		if (!release) {
 			return null;
 		}
-		application = release.belongs_to__application[0];
+		application = (
+			release as ExpandedDevice[
+				| 'should_be_managed_by__release'
+				| 'should_be_operated_by__release'][number]
+		).belongs_to__application[0];
 	}
 
 	return {
