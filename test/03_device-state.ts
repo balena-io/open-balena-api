@@ -1116,7 +1116,7 @@ export default () => {
 					});
 				});
 
-				describe('State environment variables', () => {
+				describe('state GET results', () => {
 					it('should have different level environment variables injected', async () => {
 						const state = await fakeDevice.getState(
 							admin,
@@ -1214,6 +1214,76 @@ export default () => {
 							});
 						}
 					});
+
+					if (stateVersion !== 'v2') {
+						it('should get the fleet default state', async function () {
+							// Use the same release as the one the devices were pinned to,
+							// so that the results are similar w/ devive GETs
+							await pineUser
+								.patch({
+									resource: 'application',
+									id: application.id,
+									body: {
+										should_be_running__release: release1.id,
+									},
+								})
+								.expect(200);
+
+							const { body } = await supertest(admin)
+								.get(`/device/${stateVersion}/fleet/${application.uuid}/state`)
+								.expect(200);
+							expect(body).to.deep.equal({
+								[application.uuid]: {
+									name: application.app_name,
+									apps: {
+										[application.uuid]: {
+											id: application.id,
+											name: application.app_name,
+											is_host: application.is_host,
+											class: 'fleet',
+											releases: {
+												deadc0de: {
+													id: release1.id,
+													services: {
+														app1_service1: {
+															id: release1Image1.is_a_build_of__service.__id,
+															image_id: release1Image1.id,
+															image:
+																release1Image1.is_stored_at__image_location,
+															environment: {
+																name_app: 'value_app',
+																name_device: 'value_svc',
+																name_img: 'value_img',
+																name_si: 'value_svc',
+																name_svc: 'value_svc',
+															},
+															labels: {},
+														},
+														app1_service2: {
+															id: release1Image2.is_a_build_of__service.__id,
+															image_id: release1Image2.id,
+															image:
+																release1Image2.is_stored_at__image_location,
+															environment: {
+																name_app: 'value_app',
+																name_device: 'value_app',
+																name_si: 'value_app',
+																name_svc: 'value_app',
+															},
+															labels: {},
+														},
+													},
+												},
+											},
+										},
+									},
+									config: {
+										RESIN_SUPERVISOR_POLL_INTERVAL: '2000',
+									},
+								},
+							});
+						});
+					}
 				});
 			}),
 		);
