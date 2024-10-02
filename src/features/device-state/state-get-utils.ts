@@ -9,7 +9,8 @@ import {
 	createMultiLevelStore,
 	reqPermissionNormalizer,
 } from '../../infra/cache/index.js';
-import type { Device, Service } from '../../balena-model.js';
+import type { Device, Image, Service } from '../../balena-model.js';
+import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 
 export const getStateEventAdditionalFields: Array<
 	Exclude<keyof Device['Read'], ExpandableStringKeyOf<Device['Read']>>
@@ -82,16 +83,65 @@ export function serviceInstallFromImage(
 		| {
 				is_a_build_of__service: Array<Pick<Service['Read'], 'id'>>;
 		  }
+		// TODO: Drop me in the next major since v2 & v3 no longer pass this type of objects
+		| PickDeferred<Image['Read'], 'is_a_build_of__service'>
+		| undefined,
+): (typeof device)['service_install'][number] | undefined;
+export function serviceInstallFromImage(
+	fleet: {
+		service: Array<
+			Pick<Service['Read'], 'id' | 'service_name'> & {
+				service_environment_variable: EnvVarList;
+				service_label: Array<{ label_name: string; value: string }>;
+			}
+		>;
+	},
+	image:
+		| {
+				is_a_build_of__service: Array<Pick<Service['Read'], 'id'>>;
+		  }
+		| undefined,
+): (typeof fleet)['service'][number] | undefined;
+export function serviceInstallFromImage(
+	deviceOrFleet:
+		| {
+				service_install: Array<{
+					service: { __id: Service['Read']['id'] };
+					device_service_environment_variable: EnvVarList;
+				}>;
+		  }
+		| {
+				service: Array<
+					Pick<Service['Read'], 'id' | 'service_name'> & {
+						service_environment_variable: EnvVarList;
+						service_label: Array<{ label_name: string; value: string }>;
+					}
+				>;
+		  },
+	image:
+		| {
+				is_a_build_of__service: Array<Pick<Service['Read'], 'id'>>;
+		  }
+		// TODO: Drop me in the next major since v2 & v3 no longer pass this type of objects
+		| PickDeferred<Image['Read'], 'is_a_build_of__service'>
 		| undefined,
 ) {
 	if (image == null) {
 		return;
 	}
 
-	const id = image.is_a_build_of__service[0].id;
+	const id =
+		'__id' in image.is_a_build_of__service
+			? image.is_a_build_of__service.__id
+			: image.is_a_build_of__service[0].id;
 
-	if ('service_install' in device) {
+	if ('service_install' in deviceOrFleet) {
+		const device = deviceOrFleet;
 		return device.service_install.find(({ service }) => service.__id === id);
+	}
+	if ('service' in deviceOrFleet) {
+		const fleet = deviceOrFleet;
+		return fleet.service.find((service) => service.id === id);
 	}
 }
 
