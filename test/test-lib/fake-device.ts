@@ -117,6 +117,7 @@ export async function provisionDevice(
 		...(deviceEntry as {
 			id: number;
 			uuid: string;
+			device_name: string;
 		}),
 		token: randomstring.generate(16),
 		getStateV2: async (): Promise<StateV2> => {

@@ -19,8 +19,8 @@ import { redis, redisRO } from '../src/infra/redis/index.js';
 import { setTimeout } from 'timers/promises';
 import { MINUTES, SECONDS } from '@balena/env-parsing';
 import type { PineTest } from 'pinejs-client-supertest';
-import type { StateV2 } from '../src/features/device-state/routes/state-get-v2.js';
-import type { StateV3 } from '../src/features/device-state/routes/state-get-v3.js';
+import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
+import type { Application } from '../src/balena-model.js';
 
 const { api } = sbvrUtils;
 
@@ -71,10 +71,14 @@ export default () => {
 				let fx: fixtures.Fixtures;
 				let pineUser: typeof pineTest;
 				let admin: UserObjectParam;
-				let applicationId: number;
-				let serviceName: string;
+				let application: PickDeferred<Application['Read']>;
+				let app1service1: AnyObject;
+				let app1service2: AnyObject;
 				let device: fakeDevice.Device;
 				let existingDevice: AnyObject;
+				let release1: AnyObject;
+				let release1Image1: AnyObject;
+				let release1Image2: AnyObject;
 
 				/** Tracks updateDeviceModel() calls */
 				const tracker = new StateTracker();
@@ -117,11 +121,15 @@ export default () => {
 							user: admin,
 						},
 					});
-					applicationId = fx.applications.app1.id;
-					serviceName = fx.services.app1_service1.service_name;
+					application = fx.applications.app1;
+					app1service1 = fx.services.app1_service1;
+					app1service2 = fx.services.app1_service2;
+					release1 = fx.releases.release1;
+					release1Image1 = fx.images.release1_image1;
+					release1Image2 = fx.images.release1_image2;
 
 					// create a new device in this test application...
-					device = await fakeDevice.provisionDevice(admin, applicationId);
+					device = await fakeDevice.provisionDevice(admin, application.id);
 					existingDevice = fx.devices.device1;
 
 					stateMock.getInstance()['updateDeviceModel'] = function (
@@ -156,7 +164,7 @@ export default () => {
 								.send({
 									name: 'RESIN_SUPERVISOR_POLL_INTERVAL',
 									value: '123000',
-									application: applicationId,
+									application: application.id,
 								})
 								.expect(201);
 
@@ -207,7 +215,7 @@ export default () => {
 						it('Should see the default value if the application-specific value is less than it', async () => {
 							await supertest(admin)
 								.patch(
-									`/${version}/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${applicationId}`,
+									`/${version}/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${application.id}`,
 								)
 								.send({
 									value: `${POLL_MSEC - 200}`,
@@ -221,7 +229,7 @@ export default () => {
 
 							await supertest(admin)
 								.delete(
-									`/${version}/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${applicationId}`,
+									`/${version}/application_config_variable?$filter=name eq 'RESIN_SUPERVISOR_POLL_INTERVAL' and application eq ${application.id}`,
 								)
 								.expect(200);
 						});
@@ -234,7 +242,7 @@ export default () => {
 						before(async () => {
 							deviceUserRequestedState = await fakeDevice.provisionDevice(
 								admin,
-								applicationId,
+								application.id,
 							);
 
 							stateMock.getInstance().on('change', (args) => {
@@ -572,7 +580,7 @@ export default () => {
 						}
 
 						before(async () => {
-							device2 = await fakeDevice.provisionDevice(admin, applicationId);
+							device2 = await fakeDevice.provisionDevice(admin, application.id);
 							stateMock.getInstance().on('change', (args) => {
 								if (device2.id === args.deviceId) {
 									device2ChangeEventSpy(args);
@@ -668,7 +676,7 @@ export default () => {
 									// Provision a device and wait for its heartbeat to be Online
 									device3 = await fakeDevice.provisionDevice(
 										admin,
-										applicationId,
+										application.id,
 									);
 									stateMock.getInstance().on('change', (args) => {
 										if (device3.id === args.deviceId) {
@@ -787,7 +795,7 @@ export default () => {
 								before(async function () {
 									device3 = await fakeDevice.provisionDevice(
 										admin,
-										applicationId,
+										application.id,
 									);
 									stateMock.getInstance().on('change', (args) => {
 										if (device3.id === args.deviceId) {
@@ -1106,43 +1114,105 @@ export default () => {
 							});
 						});
 					});
+				});
 
-					describe('State environment variables', () => {
-						it('should have different level environment variables injected', async () => {
-							const state = await fakeDevice.getState(
-								admin,
-								existingDevice.uuid,
-								stateVersion,
-							);
+				describe('State environment variables', () => {
+					it('should have different level environment variables injected', async () => {
+						const state = await fakeDevice.getState(
+							admin,
+							existingDevice.uuid,
+							stateVersion,
+						);
+						const service1environment = {
+							name_img: 'value_img',
+							name_app: 'value_app',
+							name_svc: 'value_svc',
+							name_device: 'value_device',
+							name_si: 'value_si',
+						};
+						const service2environment = {
+							name_app: 'value_app',
+							name_svc: 'value_app',
+							name_device: 'value_device',
+							name_si: 'value_device',
+						};
 
-							let environment: { [varName: string]: string } | undefined;
-
-							if (stateVersion === 'v2') {
-								environment = Object.values((state as StateV2).local.apps)
-									.map((app) =>
-										Object.values(app.services).find(
-											(service) => service.serviceName === serviceName,
-										),
-									)
-									.find((service) => service)?.environment;
-							} else {
-								environment = Object.values(state as StateV3)
-									.flatMap((dvc) => Object.values(dvc.apps))
-									.flatMap((app) => Object.values(app.releases ?? {}))
-									.flatMap((release) => Object.entries(release.services ?? {}))
-									.find(
-										([serviceKey]) => serviceKey === serviceName,
-									)?.[1].environment;
-							}
-
-							expect(environment).to.deep.equal({
-								name_img: 'value_img',
-								name_app: 'value_app',
-								name_svc: 'value_svc',
-								name_device: 'value_device',
-								name_si: 'value_si',
+						if (stateVersion === 'v2') {
+							expect(state).to.deep.equal({
+								local: {
+									name: existingDevice.device_name,
+									apps: {
+										[application.id]: {
+											releaseId: release1.id,
+											commit: 'deadc0de',
+											name: application.app_name,
+											services: {
+												[app1service1.id]: {
+													imageId: release1Image1.id,
+													serviceName: app1service1.service_name,
+													image: release1Image1.is_stored_at__image_location,
+													running: true,
+													environment: service1environment,
+													labels: {},
+												},
+												[app1service2.id]: {
+													imageId: release1Image2.id,
+													serviceName: app1service2.service_name,
+													image: release1Image2.is_stored_at__image_location,
+													running: true,
+													environment: service2environment,
+													labels: {},
+												},
+											},
+											networks: {},
+											volumes: {},
+										},
+									},
+									config: { RESIN_SUPERVISOR_POLL_INTERVAL: '2000' },
+								},
+								dependent: { apps: {}, devices: {} },
 							});
-						});
+						} else {
+							expect(state).to.deep.equal({
+								[existingDevice.uuid]: {
+									name: existingDevice.device_name,
+									apps: {
+										[application.uuid]: {
+											id: application.id,
+											name: application.app_name,
+											is_host: application.is_host,
+											class: 'fleet',
+											releases: {
+												deadc0de: {
+													id: release1.id,
+													services: {
+														app1_service1: {
+															id: release1Image1.is_a_build_of__service.__id,
+															image_id: release1Image1.id,
+															image:
+																release1Image1.is_stored_at__image_location,
+															environment: service1environment,
+															labels: {},
+														},
+														app1_service2: {
+															id: release1Image2.is_a_build_of__service.__id,
+															image_id: release1Image2.id,
+															image:
+																release1Image2.is_stored_at__image_location,
+															environment: service2environment,
+															labels: {},
+														},
+													},
+												},
+											},
+										},
+									},
+									config: {
+										RESIN_SUPERVISOR_POLL_INTERVAL: '2000',
+									},
+								},
+							});
+						}
 					});
 				});
 			}),
