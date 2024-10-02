@@ -1,4 +1,24 @@
 - commits:
+    - subject: Add a test for the fleet state GET v3 endpoint
+      hash: 2ce0b24897f9ee61274b000a46ac8db71fd66a4e
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Extend the device state GET endpoint tests
+      hash: c251a1f5d2cd77ba644276eefcb4478324bb6482
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 29.0.1
+  title: ""
+  date: 2024-10-02T15:32:58.564Z
+- commits:
     - subject: Reduce usage of service_install resource on StateGetV3
       hash: 9c820c0f5a5c2cee6f0d31faabb74704ecff46f8
       body: >
