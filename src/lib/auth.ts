@@ -2,7 +2,7 @@
 // Declares permissions assigned to default roles and API keys
 //
 
-import { sbvrUtils } from '@balena/pinejs';
+import { sbvrUtils, permissions } from '@balena/pinejs';
 import type Model from '../balena-model.js';
 import {
 	API_VPN_SERVICE_API_KEY,
@@ -10,18 +10,13 @@ import {
 	VPN_GUEST_API_KEY,
 	VPN_SERVICE_API_KEY,
 } from './config.js';
-import { Filter } from 'pinejs-client-core';
+import type { Filter, FilterObj } from 'pinejs-client-core';
 const { api } = sbvrUtils;
+const { canAccess } = permissions;
 
 const defaultWritePerms = ['create', 'update', 'delete'] as const;
 
-const writePerms = (
-	resource: string,
-	filter: string,
-	access: ReadonlyArray<(typeof defaultWritePerms)[number]> = defaultWritePerms,
-): string[] => access.map((verb) => `${resource}.${verb}?${filter}`);
-
-const compileAuth = <TResource extends string & keyof Model>(
+const compileAuth = <TResource extends keyof Model & string>(
 	resource: TResource,
 	access: string,
 	$filter?: Filter<Model[TResource]['Read']>
@@ -34,6 +29,12 @@ const compileAuth = <TResource extends string & keyof Model>(
 		options
 	});
 };
+
+const writePerms = <TResource extends keyof Model & string>(
+	resource: TResource,
+	$filter: Filter<Model[TResource]['Read']>,
+	access: ReadonlyArray<(typeof defaultWritePerms)[number]> = defaultWritePerms,
+): string[] => access.map((verb) => compileAuth(resource, verb, $filter));
 
 const actorId = { '@': '__ACTOR_ID' } as const;
 const matchesActorFilter = { actor: actorId } as const;
@@ -64,7 +65,7 @@ const matchesNonFrozenDeviceActor = (alias = '') => {
 const matchesNonFrozenDeviceActorFilter = IGNORE_FROZEN_DEVICE_PERMISSIONS ? {
 	...matchesActorFilter,
 	is_frozen: false,
-} : matchesActorFilter;
+} as const satisfies FilterObj<Model['device']['Read']> : matchesActorFilter;
 
 const ownsDevice = `owns__device/any(d:d/${matchesActor})`;
 
@@ -185,19 +186,15 @@ export const ROLES: {
 	],
 };
 
-export const canAccess = {
-	$fn: {
-		$scope: 'Auth',
-		$method: 'canAccess'
-	}
-} as const;
-
 export const DEVICE_API_KEY_PERMISSIONS = [
 	// 'resin.device_type.read?describes__device/canAccess()',
 	compileAuth('device_type', 'read', { describes__device: canAccess }),
 
 	// `resin.device.read?${matchesNonFrozenDeviceActorFilter()}`,
+	compileAuth('device', 'read', matchesNonFrozenDeviceActorFilter),
+
 	// `resin.device.update?${matchesNonFrozenDeviceActorFilter()}`,
+	compileAuth('device', 'update', matchesNonFrozenDeviceActorFilter),
 
 	// 'resin.application.read?owns__device/canAccess() or (is_public eq true and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
 	compileAuth('application', 'read', {
@@ -239,53 +236,219 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 		}
 	}),
 
-	`resin.device_config_variable.update?device/any(d:${matchesNonFrozenDeviceActor(
-		'd',
-	)})`,
-	`resin.device_tag.read?device/canAccess()`,
-	...writePerms(
-		'resin.device_tag',
-		`device/any(d:${matchesNonFrozenDeviceActor('d')})`,
-	),
-	'resin.application_config_variable.read?application/canAccess()',
-	'resin.release.read?is_pinned_to__device/canAccess() or belongs_to__application/canAccess()',
-	'resin.release_tag.read?release/canAccess()',
-	'resin.device_environment_variable.read?device/canAccess()',
-	...writePerms(
-		'resin.device_environment_variable',
-		`device/any(d:${matchesNonFrozenDeviceActor('d')})`,
-	),
-	'resin.application_environment_variable.read?application/canAccess()',
+	// `resin.device_config_variable.update?device/any(d:${matchesNonFrozenDeviceActor(
+	// 	'd',
+	// )})`,
+	compileAuth('device_config_variable', 'update', {
+		device: {
+			$any: {
+				$alias: 'd',
+				$expr: {
+					d: matchesNonFrozenDeviceActorFilter,
+				}
+			}
+		}
+	}),
 
-	'resin.service.read?application/canAccess() or service_install/canAccess() or is_built_by__image/canAccess()',
+	// `resin.device_tag.read?device/canAccess()`,
+	compileAuth('device_tag', 'read', { device: canAccess }),
 
-	'resin.service_install.read?device/canAccess()',
+	...writePerms(
+		'device_tag',
+		{
+			device: {
+				$any: {
+					$alias: 'd',
+					$expr: {
+						d: matchesNonFrozenDeviceActorFilter,
+					}
+				}
+			}
+		}
+	),
+
+	// 'resin.application_config_variable.read?application/canAccess()',
+	compileAuth('application_config_variable', 'read', { application: canAccess }),
+
+	// 'resin.release.read?is_pinned_to__device/canAccess() or belongs_to__application/canAccess()',
+	compileAuth('release', 'read', {
+		$or: {
+			is_pinned_to__device: canAccess,
+			belongs_to__application: canAccess,
+		}
+	}),
+
+	// 'resin.release_tag.read?release/canAccess()',
+	compileAuth('release_tag', 'read', { release: canAccess }),
+
+	// 'resin.device_environment_variable.read?device/canAccess()',
+	compileAuth('device_environment_variable', 'read', { device: canAccess }),
+
+	...writePerms(
+		'device_environment_variable',
+		// TODO this is used all over the place, create a matchesDeviceNonFrozen filter with satisfies
+		{
+			device: {
+				$any: {
+					$alias: 'd',
+					$expr: {
+						d: matchesNonFrozenDeviceActorFilter,
+					}
+				}
+			}
+		}
+	),
+
+	//'resin.application_environment_variable.read?application/canAccess()',
+	compileAuth('application_environment_variable', 'read', { application: canAccess }),
+
+	// 'resin.service.read?application/canAccess() or service_install/canAccess() or is_built_by__image/canAccess()',
+	compileAuth('service', 'read', {
+		$or: {
+			application: canAccess,
+			service_install: canAccess,
+			is_built_by__image: canAccess,
+		}
+	}),
+
+	// 'resin.service_install.read?device/canAccess()',
+	compileAuth('service_install', 'read', { device: canAccess }),
+
 	// Should be created for the device itself, and it should be for a service of the app that the device belongs to or for a service of the supervisor/hostApp release that manages/operates the device.
-	`resin.service_install.create?device/any(d:${matchesNonFrozenDeviceActor(
-		'd',
-	)}) and installs__service/any(s:s/application/any(a:a/owns__device/any(d:d/${matchesActor}) or (a/is_public eq true and a/owns__release/any(r:r/should_manage__device/any(d:d/${matchesActor}) or r/should_operate__device/any(d:d/${matchesActor})))))`,
+	// `resin.service_install.create?device/any(d:${matchesNonFrozenDeviceActor(
+	// 	'd',
+	// )}) and installs__service/any(s:s/application/any(a:a/owns__device/any(d:d/${matchesActor}) or (a/is_public eq true and a/owns__release/any(r:r/should_manage__device/any(d:d/${matchesActor}) or r/should_operate__device/any(d:d/${matchesActor})))))`,
+	compileAuth('service_install', 'create', {
+		device: {
+			$any: {
+				$alias: 'd',
+				$expr: {
+					d: matchesNonFrozenDeviceActorFilter,
+				}
+			}
+		},
+		installs__service: {
+			$any: {
+				$alias: 's',
+				$expr: {
+					s: {
+						application: {
+							$any: {
+								$alias: 'a',
+								$expr: {
+									a: {
+										$or: {
+											owns__device: {
+												$any: {
+													$alias: 'd',
+													$expr: {
+														d: matchesActorFilter,
+													}
+												}
+											},
+											$and: {
+												is_public: true,
+												owns__release: {
+													$any: {
+														$alias: 'r',
+														$expr: {
+															r: {
+																$or: {
+																	should_manage__device: {
+																		$any: {
+																			$alias: 'd',
+																			$expr: {
+																				d: matchesActorFilter,
+																			}
+																		}
+																	},
+																	should_operate__device: {
+																		$any: {
+																			$alias: 'd',
+																			$expr: {
+																				d: matchesActorFilter,
+																			}
+																		}
+																	},
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}),
+
+
+
 	// A device should be able to manage its own service installs, even from apps its not or no longer part of (past/supervisor/os)
 	...writePerms(
-		'resin.service_install',
-		`device/any(d:${matchesNonFrozenDeviceActor('d')})`,
+		'service_install',
+		// `device/any(d:${matchesNonFrozenDeviceActor('d')})`,
+		{
+			device: {
+				$any: {
+					$alias: 'd',
+					$expr: {
+						d: matchesNonFrozenDeviceActorFilter,
+					}
+				}
+			}
+		},
 		['update', 'delete'],
 	),
 
-	'resin.service_environment_variable.read?service/canAccess()',
+	// 'resin.service_environment_variable.read?service/canAccess()',
+	compileAuth('service_environment_variable', 'read', { service: canAccess }),
 
-	'resin.device_service_environment_variable.read?service_install/canAccess()',
+	// 'resin.device_service_environment_variable.read?service_install/canAccess()',
+	compileAuth('device_service_environment_variable', 'read', { service_install: canAccess }),
+
 	...writePerms(
-		'resin.device_service_environment_variable',
-		`service_install/any(si:si/device/any(d:${matchesNonFrozenDeviceActor(
-			'd',
-		)}))`,
+		'device_service_environment_variable',
+		{
+			service_install: {
+				$any: {
+					$alias: 'si',
+					$expr: {
+						si: {
+							device: {
+								$any: {
+									$alias: 'd',
+									$expr: {
+										d: matchesNonFrozenDeviceActorFilter,
+									},
+								},
+							},
+						}
+					}
+				}
+			}
+		},
 	),
 
-	'resin.image__is_part_of__release.read?is_part_of__release/canAccess()',
+	// 'resin.image__is_part_of__release.read?is_part_of__release/canAccess()',
+	compileAuth('image__is_part_of__release', 'read', { is_part_of__release: canAccess }),
 
-	'resin.image.read?image_install/canAccess() or image__is_part_of__release/canAccess()',
+	// 'resin.image.read?image_install/canAccess() or image__is_part_of__release/canAccess()',
+	compileAuth('image', 'read', {
+		$or: {
+			image_install: canAccess,
+			image__is_part_of__release: canAccess,
+		}
+	}),
 
-	'resin.image_install.read?device/canAccess()',
+	// 'resin.image_install.read?device/canAccess()',
+	compileAuth('image_install', 'read', { device: canAccess }),
+	
 	`resin.image_install.create?device/any(d:${matchesNonFrozenDeviceActor(
 		'd',
 	)}) and installs__image/any(i:i/image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/belongs_to__application/any(a:a/${ownsDevice} or a/is_public eq true))))`,
