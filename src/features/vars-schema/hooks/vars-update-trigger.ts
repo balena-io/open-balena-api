@@ -187,15 +187,33 @@ addDeviceEnvHooks('device_environment_variable');
 addEnvHooks('service_environment_variable', async (args) => {
 	if (args.req.body.service != null) {
 		return {
-			service_install: {
+			should_be_running__release: {
 				$any: {
-					$alias: 'si',
+					$alias: 'r',
 					$expr: {
-						si: {
-							service: {
+						r: {
+							contains__image: {
 								$any: {
-									$alias: 's',
-									$expr: { s: { id: args.req.body.service } },
+									$alias: 'ci',
+									$expr: {
+										ci: {
+											image: {
+												$any: {
+													$alias: 'i',
+													$expr: {
+														i: {
+															is_a_build_of__service: {
+																$any: {
+																	$alias: 's',
+																	$expr: { s: { id: args.req.body.service } },
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
 								},
 							},
 						},
@@ -212,21 +230,39 @@ addEnvHooks('service_environment_variable', async (args) => {
 	return [
 		envVarIds,
 		(envVarIdsChunk) => ({
-			service_install: {
+			should_be_running__release: {
 				$any: {
-					$alias: 'si',
+					$alias: 'r',
 					$expr: {
-						si: {
-							service: {
+						r: {
+							contains__image: {
 								$any: {
-									$alias: 's',
+									$alias: 'ci',
 									$expr: {
-										s: {
-											service_environment_variable: {
+										ci: {
+											image: {
 												$any: {
-													$alias: 'e',
+													$alias: 'i',
 													$expr: {
-														e: { id: { $in: envVarIdsChunk } },
+														i: {
+															is_a_build_of__service: {
+																$any: {
+																	$alias: 's',
+																	$expr: {
+																		s: {
+																			service_environment_variable: {
+																				$any: {
+																					$alias: 'e',
+																					$expr: {
+																						e: { id: { $in: envVarIdsChunk } },
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
 													},
 												},
 											},
