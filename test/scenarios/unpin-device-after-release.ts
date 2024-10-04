@@ -151,7 +151,7 @@ export default () => {
 			);
 		});
 
-		it.skip('should not add any new service installs of the new release to pinned devices', async function () {
+		it('should not add any new service installs of the new release to pinned devices', async function () {
 			const {
 				body: { d: serviceInstalls },
 			} = await supertest(admin)
@@ -176,7 +176,7 @@ export default () => {
 				.expect(200);
 		});
 
-		it.skip('should add any new service installs of the new release once the device gets unpinned', async function () {
+		it('should add any new service installs of the new release once the device gets unpinned', async function () {
 			const {
 				body: { d: serviceInstalls },
 			} = await supertest(admin)

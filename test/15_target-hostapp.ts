@@ -338,12 +338,16 @@ export default () => {
 								);
 							});
 
-							it.skip(`should create a service install for the linked hostapp`, async () => {
+							it(`should create a service install for the linked hostapp`, async () => {
 								const targetHostApp = isEsr ? nucEsrHostApp : nucHostApp;
 								const targetService =
 									fx.services[
 										isEsr ? 'intel-nuc-esr_service1' : 'intel-nuc_service1'
 									];
+
+								// TODO: fix me properly
+								await new Promise((resolve) => setTimeout(resolve, 3000));
+
 								const { body: serviceInstalls } = await pineUser
 									.get({
 										resource: 'service_install',
@@ -580,6 +584,12 @@ export default () => {
 			});
 
 			it('should be able to invalidate a release with devices attached', async () => {
+				// TODO: fix me properly
+				await new Promise((resolve) => setTimeout(resolve, 10000));
+				await supertest(admin).delete(
+					`/${version}/service_install?$filter=id gt 0`,
+				);
+
 				await device2.patchStateV2({
 					local: {
 						os_version: 'balenaOS 2.50.0+rev1',
@@ -619,10 +629,12 @@ export default () => {
 					)
 					.expect(200);
 				expect(body.d[0]['id']).to.be.not.null;
+
 				await supertest(admin)
 					.patch(`/${version}/device(${device2.id})`)
 					.send({ is_of__device_type: body.d[0]['id'] })
 					.expect(200);
+
 				const { body: dev } = await supertest(admin)
 					.get(
 						`/${version}/device(${device2.id})?$select=should_be_operated_by__release`,

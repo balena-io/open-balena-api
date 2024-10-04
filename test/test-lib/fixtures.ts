@@ -13,6 +13,7 @@ import { requestAsync } from '../../src/infra/request-promise/index.js';
 import { supertest } from './supertest.js';
 import type { Organization } from '../../src/balena-model.js';
 import type Model from '../../src/balena-model.js';
+import { assertExists } from './common.js';
 
 const { api } = sbvrUtils;
 const version = 'resin';
@@ -507,19 +508,25 @@ const loaders: types.Dictionary<LoaderFunc> = {
 			logErrorAndThrow(`Could not find service: ${jsonData.service}`);
 		}
 
-		const si = await api.resin.get({
-			resource: 'service_install',
-			passthrough: { req: permissions.rootRead },
-			id: {
-				device: device.id,
-				installs__service: service.id,
-			},
-		});
-		// assertExists(si);
-		if (si == null) {
-			console.error('Could not find service install for device and service');
-			return;
+		let si = null;
+		for (let i = 0; i < 3; i++) {
+			si = await api.resin.get({
+				resource: 'service_install',
+				passthrough: { req: permissions.rootRead },
+				id: {
+					device: device.id,
+					installs__service: service.id,
+				},
+			});
+
+			if (si != null) {
+				break;
+			}
+
+			await new Promise((resolve) => setTimeout(resolve, 2 ** i * 1000));
 		}
+
+		assertExists(si);
 
 		return await createResource({
 			resource: 'device_service_environment_variable',

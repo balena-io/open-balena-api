@@ -147,7 +147,10 @@ export default () => {
 						);
 					});
 
-					it.skip(`should create a service install for the supervisor release after ${titlePart}`, async () => {
+					it(`should create a service install for the supervisor release after ${titlePart}`, async () => {
+						// TODO: fix me properly
+						await new Promise((resolve) => setTimeout(resolve, 3000));
+
 						const { body: serviceInstalls } = await pineUser
 							.get({
 								resource: 'service_install',
@@ -409,7 +412,7 @@ export default () => {
 
 				describe('new supervisor service name', function () {
 					// Documenting that we didn't implement this, since updating the should_be_managed_by__release field is the supported way
-					it.skip(`should not create an extra supervisor service install when patching a new supervisor version`, async () => {
+					it(`should not create an extra supervisor service install when patching a new supervisor version`, async () => {
 						await device3.patchStateV2({
 							local: {
 								api_port: 48484,
@@ -426,6 +429,9 @@ export default () => {
 								update_downloaded: false,
 							},
 						});
+
+						// TODO: fix me properly
+						await new Promise((resolve) => setTimeout(resolve, 3000));
 
 						const { body: serviceInstalls } = await pineUser
 							.get({
@@ -467,7 +473,7 @@ export default () => {
 							['user', () => pineUser, () => device2],
 						] as const
 					).forEach(([titlePart, getPineTestInstance, getDevice]) => {
-						it.skip(`should create an extra supervisor service install after updating the target supervisor release using a ${titlePart} api key`, async () => {
+						it(`should create an extra supervisor service install after updating the target supervisor release using a ${titlePart} api key`, async () => {
 							// Similarly to how the HUP script does it
 							// See: https://github.com/balena-os/balenahup/blob/d38eba01aebf4c4eb8425cb50a4dc9b948decc46/upgrade-2.x.sh#L229
 							await getPineTestInstance()
@@ -480,6 +486,9 @@ export default () => {
 									},
 								})
 								.expect(200);
+
+							// TODO: fix me properly
+							await new Promise((resolve) => setTimeout(resolve, 3000));
 
 							const { body: serviceInstalls } = await pineUser
 								.get<AnyObject[]>({

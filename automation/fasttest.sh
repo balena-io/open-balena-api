@@ -54,4 +54,4 @@ else
 	echo "Running versions:$test_versions"
 fi
 
-docker compose -f docker-compose.test-custom.yml run --rm --service-ports ${extra_env} --env TEST_VERSIONS="$test_versions" --env TEST_FILES="$test_files" sut-fast npx mocha --bail ${extra_args}
+docker compose -f docker-compose.test-custom.yml run --rm --service-ports ${extra_env} --env TEST_VERSIONS="$test_versions" --env TEST_FILES="$test_files" --env PINEJS_QUEUE_CONCURRENCY=1 sut-fast npx mocha --bail ${extra_args}
