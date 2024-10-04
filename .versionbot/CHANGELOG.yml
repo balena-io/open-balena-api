@@ -1,4 +1,16 @@
 - commits:
+    - subject: Reduce usage of service_installs on service_env_var hooks
+      hash: df9399ce46d0314ee229910a152edef385bab7d8
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+  version: 29.0.3
+  title: ""
+  date: 2024-10-04T16:59:58.013Z
+- commits:
     - subject: Update @balena/pinejs to 19.0.4
       hash: 853ceaf8c98315f1cbd2e2a03a5de1fffd506c47
       body: |
