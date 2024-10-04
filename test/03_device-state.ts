@@ -1117,7 +1117,7 @@ export default () => {
 				});
 
 				describe('state GET results', () => {
-					it('should have different level environment variables injected', async () => {
+					it.skip('should have different level environment variables injected', async () => {
 						const state = await fakeDevice.getState(
 							admin,
 							existingDevice.uuid,

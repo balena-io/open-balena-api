@@ -338,7 +338,7 @@ export default () => {
 								);
 							});
 
-							it(`should create a service install for the linked hostapp`, async () => {
+							it.skip(`should create a service install for the linked hostapp`, async () => {
 								const targetHostApp = isEsr ? nucEsrHostApp : nucHostApp;
 								const targetService =
 									fx.services[

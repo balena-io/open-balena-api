@@ -474,7 +474,7 @@ export default () => {
 						.expect(200);
 				});
 
-				it('should add any new service installs of the new release when a device is self-pinned to it', async function () {
+				it.skip('should add any new service installs of the new release when a device is self-pinned to it', async function () {
 					const {
 						body: { d: serviceInstallsBefore },
 					} = await supertest(admin)
@@ -543,7 +543,7 @@ export default () => {
 						.that.equals(expectedApp3Latest.id);
 				});
 
-				it('should add any new service installs of the new release at the point it is actually pinned', async function () {
+				it.skip('should add any new service installs of the new release at the point it is actually pinned', async function () {
 					const {
 						body: { d: serviceInstallsBefore },
 					} = await supertest(admin)

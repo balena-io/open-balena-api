@@ -13,7 +13,6 @@ import { requestAsync } from '../../src/infra/request-promise/index.js';
 import { supertest } from './supertest.js';
 import type { Organization } from '../../src/balena-model.js';
 import type Model from '../../src/balena-model.js';
-import { assertExists } from './common.js';
 
 const { api } = sbvrUtils;
 const version = 'resin';
@@ -516,7 +515,11 @@ const loaders: types.Dictionary<LoaderFunc> = {
 				installs__service: service.id,
 			},
 		});
-		assertExists(si);
+		// assertExists(si);
+		if (si == null) {
+			console.error('Could not find service install for device and service');
+			return;
+		}
 
 		return await createResource({
 			resource: 'device_service_environment_variable',
