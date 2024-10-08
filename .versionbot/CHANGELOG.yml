@@ -1,4 +1,16 @@
 - commits:
+    - subject: Add the ability to enable/disable scheduled jobs
+      hash: fde280fce22b82a167e1de6f4e0a1ee7ea4cd640
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 29.1.0
+  title: ""
+  date: 2024-10-08T16:43:32.733Z
+- commits:
     - subject: Remove service.read/service_install/canAccess() optimization path
       hash: 5f9f924228863f3db505d55acf68677461ef01b0
       body: ""
