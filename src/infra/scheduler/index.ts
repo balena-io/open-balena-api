@@ -23,6 +23,7 @@ import Redlock from 'redlock';
 import type { ScheduledJobRun } from '../../balena-model.js';
 import { captureException } from '../error-handling/index.js';
 import { redis, redisRO } from '../redis/index.js';
+import { DISABLED_SCHEDULED_JOBS } from '../../lib/config.js';
 
 export type { Job } from 'node-schedule';
 
@@ -88,6 +89,7 @@ const updateJobInfoExecute = async (jobInfoKey: string, job: schedule.Job) => {
 	await redis.set(jobInfoKey, serializedJobInfo);
 };
 
+export const jobIds: string[] = [];
 export const scheduleJob = (
 	jobId: string,
 	rule:
@@ -99,6 +101,7 @@ export const scheduleJob = (
 	jobFunction: JobFunction,
 	lockOptions?: LockSettings,
 ): schedule.Job => {
+	jobIds.push(jobId);
 	const ttl = lockOptions?.ttl ? lockOptions.ttl : JOB_DEFAULT_TTL;
 	const jobLockKey = JOB_LOCK_PREFIX + jobId;
 	const jobInfoKey = JOB_INFO_PREFIX + jobId;
@@ -107,6 +110,11 @@ export const scheduleJob = (
 		rule,
 		async (fireDate: Date) => {
 			try {
+				if (DISABLED_SCHEDULED_JOBS.has(jobId)) {
+					// If jobs are not enabled then we immediately return without taking a lock.
+					// This allows dynamically enabling/disabling jobs without needing to restart the API.
+					return;
+				}
 				const lock: Redlock.Lock = await locker.lock(jobLockKey, ttl);
 				const rootApi = api.resin.clone({
 					passthrough: { req: permissions.root },
