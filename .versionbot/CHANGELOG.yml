@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove service.read/service_install/canAccess() optimization path
+      hash: 5f9f924228863f3db505d55acf68677461ef01b0
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+  version: 29.0.4
+  title: ""
+  date: 2024-10-08T16:30:30.086Z
+- commits:
     - subject: Reduce usage of service_installs on service_env_var hooks
       hash: df9399ce46d0314ee229910a152edef385bab7d8
       body: ""
