@@ -9,6 +9,7 @@ import {
 	SECONDS,
 	hostPortsVar,
 	trustProxyVar,
+	arrayVar,
 } from '@balena/env-parsing';
 
 // Even though we only use these when TRUST_PROXY we do not conditionally
@@ -485,6 +486,16 @@ export const WEBRESOURCES_CLOUDFRONT_PUBLICKEY = optionalVar(
 export const WEBRESOURCES_CLOUDFRONT_HOST = optionalVar(
 	'WEBRESOURCES_CLOUDFRONT_HOST',
 );
+
+export const DISABLED_SCHEDULED_JOBS = new Set(
+	arrayVar('DISABLED_SCHEDULED_JOBS') ?? [],
+);
+export const disableScheduledJob = (jobName: string) => {
+	DISABLED_SCHEDULED_JOBS.add(jobName);
+};
+export const enableScheduledJob = (jobName: string) => {
+	DISABLED_SCHEDULED_JOBS.delete(jobName);
+};
 
 /**
  * Splits an env var in the format of `${username}:${password}`
