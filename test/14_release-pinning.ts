@@ -15,7 +15,7 @@ import {
 	expectResourceToMatch,
 } from './test-lib/api-helpers.js';
 import type { Application, DeviceType, Release } from '../src/balena-model.js';
-import { assertExists } from './test-lib/common.js';
+import { assertExists, expectToEventually } from './test-lib/common.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -491,26 +491,30 @@ export default () => {
 						'new-untracked-release-service',
 					);
 
-					await supertest(device4)
-						.patch(`/${version}/device(${device4.id})`)
-						.send({
-							[pinnedOnReleaseField]: app3ReleaseId,
-						})
-						.expect(200);
+					await expectToEventually(async () => {
+						await supertest(device4)
+							.patch(`/${version}/device(${device4.id})`)
+							.send({
+								[pinnedOnReleaseField]: app3ReleaseId,
+							})
+							.expect(200);
 
-					const {
-						body: { d: serviceInstallsAfter },
-					} = await supertest(admin)
-						.get(
-							`/${version}/service_install?$select=id&$expand=installs__service($select=service_name)&$filter=device eq ${device4.id}`,
-						)
-						.expect(200);
+						const {
+							body: { d: serviceInstallsAfter },
+						} = await supertest(admin)
+							.get(
+								`/${version}/service_install?$select=id&$expand=installs__service($select=service_name)&$filter=device eq ${device4.id}`,
+							)
+							.expect(200);
 
-					expect(serviceInstallsAfter).to.be.an('array');
-					const serviceNamesAfter = serviceInstallsAfter.map(
-						(si: AnyObject) => si.installs__service[0].service_name,
-					);
-					expect(serviceNamesAfter).to.include('new-untracked-release-service');
+						expect(serviceInstallsAfter).to.be.an('array');
+						const serviceNamesAfter = serviceInstallsAfter.map(
+							(si: AnyObject) => si.installs__service[0].service_name,
+						);
+						expect(serviceNamesAfter).to.include(
+							'new-untracked-release-service',
+						);
+					});
 				});
 
 				it('should notify the supervisor when a device is self-pinned to a release', async function () {
@@ -567,19 +571,23 @@ export default () => {
 						})
 						.expect(200);
 
-					const {
-						body: { d: serviceInstallsAfter },
-					} = await supertest(admin)
-						.get(
-							`/${version}/service_install?$select=id&$expand=installs__service($select=service_name)&$filter=device eq ${device3.id}`,
-						)
-						.expect(200);
+					await expectToEventually(async () => {
+						const {
+							body: { d: serviceInstallsAfter },
+						} = await supertest(admin)
+							.get(
+								`/${version}/service_install?$select=id&$expand=installs__service($select=service_name)&$filter=device eq ${device3.id}`,
+							)
+							.expect(200);
 
-					expect(serviceInstallsAfter).to.be.an('array');
-					const serviceNamesAfter = serviceInstallsAfter.map(
-						(si: AnyObject) => si.installs__service[0].service_name,
-					);
-					expect(serviceNamesAfter).to.include('new-untracked-release-service');
+						expect(serviceInstallsAfter).to.be.an('array');
+						const serviceNamesAfter = serviceInstallsAfter.map(
+							(si: AnyObject) => si.installs__service[0].service_name,
+						);
+						expect(serviceNamesAfter).to.include(
+							'new-untracked-release-service',
+						);
+					});
 				});
 
 				it('should notify the supervisor when pinning the application to a release pinned', async function () {

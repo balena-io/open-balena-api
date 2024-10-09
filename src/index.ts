@@ -404,8 +404,16 @@ export async function setup(app: Application, options: SetupOptions) {
 		setRegistrationRoleFunc(options.getNewUserRole);
 	}
 
+	pine.env.tasks.queueConcurrency = 1;
+	pine.env.tasks.queueIntervalMS = 100;
+
+	await pine.tasks.setup();
+
 	await import('./hooks.js');
 	await options.onInitHooks?.(app);
+
+	await import('./tasks.js');
+	void pine.tasks.worker?.start();
 
 	const routes = await import('./routes.js');
 	routes.setup(app, options);
