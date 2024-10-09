@@ -1,4 +1,18 @@
 - commits:
+    - subject: Pin minio/minio and minio/mc versions
+      hash: a2105e8ba912a868881308ce529b46f7a918d589
+      body: >
+        This is necessary as the minio latest version is triggering for yet
+        unknown reasons "Bucket not found" errors.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+  version: 29.1.1
+  title: ""
+  date: 2024-10-09T17:46:01.325Z
+- commits:
     - subject: Add the ability to enable/disable scheduled jobs
       hash: fde280fce22b82a167e1de6f4e0a1ee7ea4cd640
       body: ""
