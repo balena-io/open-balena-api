@@ -2,6 +2,8 @@ import _ from 'lodash';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import type { Filter, FilterObj } from 'pinejs-client-core';
 import type { Device, Release } from '../../../balena-model.js';
+import { randomUUID } from 'crypto';
+import type { CreateDeviceParams } from '../tasks/service-installs.js';
 
 const createReleaseServiceInstalls = async (
 	api: typeof sbvrUtils.api.resin,
@@ -10,6 +12,13 @@ const createReleaseServiceInstalls = async (
 ): Promise<void> => {
 	if (Array.isArray(deviceFilterOrIds) && deviceFilterOrIds.length === 0) {
 		return;
+	}
+
+	let deviceIds: Array<number>;
+	if (isFilter(deviceFilterOrIds)) {
+		deviceIds = await getListofDeviceIds();
+	} else {
+		deviceIds = deviceFilterOrIds;
 	}
 
 	const services = await api.get({
@@ -93,27 +102,40 @@ const createReleaseServiceInstalls = async (
 		},
 	} as const);
 
-	await Promise.all(
-		devicesToAddServiceInstalls.map(async (device) => {
-			const existingServiceIds = device.service_install.map(
-				(si) => si.installs__service.__id,
-			);
-			const deviceServiceIds = _.difference(serviceIds, existingServiceIds);
-			await Promise.all(
-				deviceServiceIds.map(async (serviceId) => {
-					// Create a service_install for this pair of service and device
-					await api.post({
-						resource: 'service_install',
-						body: {
-							device: device.id,
-							installs__service: serviceId,
-						},
-						options: { returnResource: false },
-					});
-				}),
-			);
-		}),
-	);
+	// await Promise.all(
+	// 	devicesToAddServiceInstalls.map(async (device) => {
+	// 		const existingServiceIds = device.service_install.map(
+	// 			(si) => si.installs__service.__id,
+	// 		);
+	// 		const deviceServiceIds = _.difference(serviceIds, existingServiceIds);
+	// 		await Promise.all(
+	// 			deviceServiceIds.map(async (serviceId) => {
+	// 				// Create a service_install for this pair of service and device
+	// 				await api.post({
+	// 					resource: 'service_install',
+	// 					body: {
+	// 						device: device.id,
+	// 						installs__service: serviceId,
+	// 					},
+	// 					options: { returnResource: false },
+	// 				});
+	// 			}),
+	// 		);
+	// 	}),
+	// );
+	await sbvrUtils.api.tasks.post({
+		resource: 'task',
+		passthrough: { req: permissions.root },
+		body: {
+			key: randomUUID(),
+			is_executed_by__handler: 'create_service_installs',
+			is_executed_with__parameter_set: {
+				devicesToAddServiceInstalls,
+				serviceIds,
+			} satisfies CreateDeviceParams,
+			// is_scheduled_to_execute_on__time: new Date(Date.now() + 1010),
+		},
+	});
 };
 
 const createAppServiceInstalls = async (

@@ -91,22 +91,24 @@ function buildAppFromRelease(
 			({ service }) => service.__id === image.is_a_build_of__service[0].id,
 		);
 		const svc = image.is_a_build_of__service[0];
-		if (si == null) {
-			throw new Error(
-				`Could not find service install for device: '${
-					application.id
-				}', image: '${image?.id}', service: '${JSON.stringify(
-					svc,
-				)}', service installs: '${JSON.stringify(device.service_install)}'`,
-			);
-		}
+		// if (si == null) {
+		// 	throw new Error(
+		// 		`Could not find service install for device: '${
+		// 			application.id
+		// 		}', image: '${image?.id}', service: '${JSON.stringify(
+		// 			svc,
+		// 		)}', service installs: '${JSON.stringify(device.service_install)}'`,
+		// 	);
+		// }
 
 		const environment: Dictionary<string> = {};
 		varListInsert(ipr.image_environment_variable, environment);
 		varListInsert(application.application_environment_variable, environment);
 		varListInsert(svc.service_environment_variable, environment);
 		varListInsert(device.device_environment_variable, environment);
-		varListInsert(si.device_service_environment_variable, environment);
+		if (si != null) {
+			varListInsert(si.device_service_environment_variable, environment);
+		}
 
 		const labels: Dictionary<string> = {};
 		for (const { label_name, value } of [

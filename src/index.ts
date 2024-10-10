@@ -15,7 +15,7 @@ import * as Sentry from '@sentry/node';
 import * as zlib from 'node:zlib';
 
 import * as pine from '@balena/pinejs';
-import { sbvrUtils } from '@balena/pinejs';
+import { sbvrUtils, tasks } from '@balena/pinejs';
 
 import type { User } from './balena-model.js';
 import type {
@@ -404,8 +404,13 @@ export async function setup(app: Application, options: SetupOptions) {
 		setRegistrationRoleFunc(options.getNewUserRole);
 	}
 
+	await tasks.setup();
+
 	await import('./hooks.js');
 	await options.onInitHooks?.(app);
+
+	await import('./tasks.js');
+	void tasks.worker?.start();
 
 	const routes = await import('./routes.js');
 	routes.setup(app, options);

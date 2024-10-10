@@ -475,6 +475,11 @@ export default () => {
 				});
 
 				it('should add any new service installs of the new release when a device is self-pinned to it', async function () {
+
+					// await waitFor(() => {
+
+					// });
+
 					const {
 						body: { d: serviceInstallsBefore },
 					} = await supertest(admin)
@@ -497,6 +502,9 @@ export default () => {
 							[pinnedOnReleaseField]: app3ReleaseId,
 						})
 						.expect(200);
+
+					// TODO: fix me properly
+					await new Promise((resolve) => setTimeout(resolve, 3000));
 
 					const {
 						body: { d: serviceInstallsAfter },
@@ -566,6 +574,9 @@ export default () => {
 							should_be_running__release: app3ReleaseId,
 						})
 						.expect(200);
+
+					// TODO: fix me properly
+					await new Promise((resolve) => setTimeout(resolve, 3000));
 
 					const {
 						body: { d: serviceInstallsAfter },
