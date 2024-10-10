@@ -508,14 +508,24 @@ const loaders: types.Dictionary<LoaderFunc> = {
 			logErrorAndThrow(`Could not find service: ${jsonData.service}`);
 		}
 
-		const si = await api.resin.get({
-			resource: 'service_install',
-			passthrough: { req: permissions.rootRead },
-			id: {
-				device: device.id,
-				installs__service: service.id,
-			},
-		});
+		let si = null;
+		for (let i = 0; i < 3; i++) {
+			si = await api.resin.get({
+				resource: 'service_install',
+				passthrough: { req: permissions.rootRead },
+				id: {
+					device: device.id,
+					installs__service: service.id,
+				},
+			});
+
+			if (si != null) {
+				break;
+			}
+
+			await new Promise((resolve) => setTimeout(resolve, 2 ** i * 1000));
+		}
+
 		assertExists(si);
 
 		return await createResource({

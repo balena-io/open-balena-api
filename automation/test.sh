@@ -16,4 +16,4 @@ docker compose -f docker-compose.test-custom.yml run \
 
 # ensure redis and db have clean volumes
 docker compose -f docker-compose.test-custom.yml up --force-recreate --renew-anon-volumes -d db redis loki minio-server minio-client
-docker compose -f docker-compose.test-custom.yml run --env NODE_ENV=production sut npx mocha
+docker compose -f docker-compose.test-custom.yml run --env PINEJS_QUEUE_CONCURRENCY=1 --env NODE_ENV=production sut npx mocha

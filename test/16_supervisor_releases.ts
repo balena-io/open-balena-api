@@ -148,6 +148,9 @@ export default () => {
 					});
 
 					it(`should create a service install for the supervisor release after ${titlePart}`, async () => {
+						// TODO: fix me properly
+						await new Promise((resolve) => setTimeout(resolve, 3000));
+
 						const { body: serviceInstalls } = await pineUser
 							.get({
 								resource: 'service_install',
@@ -427,6 +430,9 @@ export default () => {
 							},
 						});
 
+						// TODO: fix me properly
+						await new Promise((resolve) => setTimeout(resolve, 3000));
+
 						const { body: serviceInstalls } = await pineUser
 							.get({
 								resource: 'service_install',
@@ -480,6 +486,9 @@ export default () => {
 									},
 								})
 								.expect(200);
+
+							// TODO: fix me properly
+							await new Promise((resolve) => setTimeout(resolve, 3000));
 
 							const { body: serviceInstalls } = await pineUser
 								.get<AnyObject[]>({
