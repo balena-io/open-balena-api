@@ -99,7 +99,9 @@ export default () => {
 
 			after(async () => {
 				await fixtures.clean(fx);
-				await fixtures.clean(testTimes);
+				await fixtures.clean({
+					applications: Object.fromEntries(testTimes.map((a) => [a.id, a])),
+				});
 			});
 
 			describe('Integer field filters', function () {
