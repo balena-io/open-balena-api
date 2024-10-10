@@ -9,7 +9,7 @@ import type { UserObjectParam } from './test-lib/supertest.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import { setTimeout } from 'timers/promises';
-import { assertExists, itExpectsError } from './test-lib/common.js';
+import { assertExists } from './test-lib/common.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -81,36 +81,61 @@ export default () => {
 				expect(image).to.have.property('image_size', newSizeBodyValue);
 			});
 
-			itExpectsError(
-				`should be able to PATCH a value > MAX_SAFE_INTEGER as an image.image_size but always retrieve it as a string`,
-				async function () {
-					const newBigIntSize = (
-						BigInt(Number.MAX_SAFE_INTEGER) + BigInt(10)
-					).toString();
-					await pineUser
-						.patch({
-							resource: 'image',
-							id: fx.images.release1_image1.id,
-							body: {
-								image_size: newBigIntSize,
-							},
-						})
-						.expect(200);
-					const { body: image } = await pineUser
-						.get({
-							resource: 'image',
-							id: fx.images.release1_image1.id,
-							options: {
-								$select: 'image_size',
-							},
-						})
-						.expect(200);
-					expect(image).to.have.property('image_size', newBigIntSize);
-				},
-				versions.lte(version, 'v6')
-					? `expected { image_size: 9007199254741000 } to have property 'image_size' of '9007199254741001', but got 9007199254741000`
-					: `expected { image_size: '9007199254741000' } to have property 'image_size' of '9007199254741001', but got '9007199254741000'`,
-			);
+			it(`should be able to PATCH a value > MAX_SAFE_INTEGER as an image.image_size ${versions.lte(version, 'v6') ? 'but lose accuracy' : ''}`, async function () {
+				const newBigIntSize = (
+					BigInt(Number.MAX_SAFE_INTEGER) + BigInt(10)
+				).toString();
+				expect(newBigIntSize).to.equal('9007199254741001'); // ~9 Petabytes
+				await pineUser
+					.patch({
+						resource: 'image',
+						id: fx.images.release1_image1.id,
+						body: {
+							image_size: newBigIntSize,
+						},
+					})
+					.expect(200);
+				const { body: image } = await pineUser
+					.get({
+						resource: 'image',
+						id: fx.images.release1_image1.id,
+						options: {
+							$select: 'image_size',
+						},
+					})
+					.expect(200);
+				expect(image).to.have.property(
+					'image_size',
+					versions.lte(version, 'v6') ? 9007199254741000 : `9007199254741001`,
+				);
+			});
+
+			it(`should be able to PATCH a the MAX BigInt value PostgreSQL supports (>> MAX_SAFE_INTEGER) as an image.image_size ${versions.lte(version, 'v6') ? 'but lose accuracy' : ''}`, async function () {
+				const maxPgBigInt = (BigInt(2) ** BigInt(63) - BigInt(1)).toString();
+				expect(maxPgBigInt).to.equal('9223372036854775807'); // ~9.2 Exabytes
+				await pineUser
+					.patch({
+						resource: 'image',
+						id: fx.images.release1_image1.id,
+						body: {
+							image_size: maxPgBigInt,
+						},
+					})
+					.expect(200);
+				const { body: image } = await pineUser
+					.get({
+						resource: 'image',
+						id: fx.images.release1_image1.id,
+						options: {
+							$select: 'image_size',
+						},
+					})
+					.expect(200);
+				expect(image).to.have.property(
+					'image_size',
+					versions.lte(version, 'v6') ? 9223372036854776000 : maxPgBigInt,
+				);
+			});
 
 			it('should be able to create a new failed release for a given commit', async () => {
 				await supertest(user)

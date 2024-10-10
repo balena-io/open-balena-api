@@ -44,12 +44,12 @@
     "prepare": "node -e \"try { (await import('husky')).default() } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e }\" --input-type module"
   },
   "dependencies": {
-    "@balena/abstract-sql-compiler": "^9.2.0",
-    "@balena/abstract-sql-to-typescript": "^4.0.6",
+    "@balena/abstract-sql-compiler": "^10.0.1",
+    "@balena/abstract-sql-to-typescript": "^5.0.0",
     "@balena/env-parsing": "^1.2.0",
     "@balena/es-version": "^1.0.3",
     "@balena/node-metrics-gatherer": "^6.0.3",
-    "@balena/pinejs": "^19.0.4",
+    "@balena/pinejs": "^19.0.7",
     "@balena/pinejs-webresource-cloudfront": "^0.2.1",
     "@sentry/node": "^8.33.1",
     "@types/basic-auth": "^1.1.8",
@@ -113,7 +113,7 @@
     "on-finished": "^2.4.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
-    "pinejs-client-core": "^8.0.1",
+    "pinejs-client-core": "^8.1.1",
     "proxy-addr": "^2.0.7",
     "randomstring": "^1.3.0",
     "rate-limiter-flexible": "^5.0.3",
@@ -130,7 +130,7 @@
     "thirty-two": "^1.0.2",
     "ts-node": "^10.9.2",
     "typed-error": "^3.2.2",
-    "typescript": "^5.6.2",
+    "typescript": "^5.6.3",
     "uuid": "^10.0.0",
     "validator": "^13.12.0"
   },
@@ -149,7 +149,7 @@
     "mocha": "^10.7.3",
     "mockery": "^2.1.0",
     "nock": "^13.5.5",
-    "pinejs-client-supertest": "^3.0.0",
+    "pinejs-client-supertest": "^3.0.1",
     "rimraf": "^6.0.1",
     "sinon": "^19.0.2",
     "supertest": "^7.0.0"
