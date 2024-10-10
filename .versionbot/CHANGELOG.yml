@@ -1,4 +1,32 @@
 - commits:
+    - subject: Fix the application cleanup in the resource filtering tests
+      hash: c7206fbe7252a4e1c7c0a1efe7216de6a7914d57
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Improve the fixture cleanup typings
+      hash: d4e120bf9fc4c744807ad242ce540f52c13a9114
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Add tests for filtering integer fields using decimal values
+      hash: 5bd0a8b764ffcef272a5816cc5857a716dba1c8a
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 29.1.3
+  title: ""
+  date: 2024-10-10T22:46:18.276Z
+- commits:
     - subject: Update the PATCH with BigInt value tests since they got fixed
       hash: 39b512fbead2478514d35e3262e5867b64f0cf93
       body: ""
@@ -663,6 +691,7 @@
                                                               hash: 37684ebb1692f97780dd27056b9cfe299c456b3c
                                                               body: >
                                                                 
+                                                                
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.5.0 to 9.0.4
@@ -677,6 +706,7 @@
                                                             - subject: Return `ISODateString` instead of `date`
                                                               hash: 37e2d446c0ec11f2e3a1ab41b1a205280062bd5d
                                                               body: >
+                                                                
                                                                 
                                                                 The internal and
                                                                 external
@@ -708,6 +738,7 @@
                                                             - subject: Update dependency @types/chai-datetime to ^0.0.39
                                                               hash: 428c5a2c94bd753cc2ffc6d1e012c3a743e1b4d2
                                                               body: >
+                                                                
                                                                 
                                                                 Update
                                                                 @types/chai-datetime
@@ -1168,6 +1199,7 @@
                                                             - subject: Update dependencies
                                                               hash: 0a7bd8ff2e506fa3988b6e1851e0098df5da3f86
                                                               body: >
+                                                                
                                                                 
                                                                 - Update
                                                                 @balena/lint from
@@ -1660,6 +1692,7 @@
                                                               hash: d749289e311ad22e2b09793ad1dd472762bdf402
                                                               body: >
                                                                 
+                                                                
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -1707,6 +1740,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         As balena-lint
                                                                         rejects `new
                                                                         Boolean()`, `new
@@ -1729,6 +1763,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -1766,6 +1801,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         Ensure that the
                                                                         input passed in for
                                                                         JSON types is either
@@ -1829,6 +1865,7 @@
                                                               hash: 78d4a48022ac0465c5d2c48db53b8ddd08e6e1bf
                                                               body: >
                                                                 
+                                                                
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.4.0 to 8.4.1
@@ -1857,6 +1894,7 @@
                                                               hash: 5aa3c51cbbfc66cddedebd41dacba5eabbacf709
                                                               body: >
                                                                 
+                                                                
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.0.0 to 8.4.0
@@ -1875,6 +1913,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -1903,6 +1942,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         It can in fact be a
                                                                         lot of different
                                                                         things and that is
@@ -1932,6 +1972,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -1966,6 +2007,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -2111,6 +2153,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         This also deprecates
                                                                         the legacy use of
                                                                         direct true/false
@@ -2312,6 +2355,7 @@
                                                               hash: be8fc31c3754186dd4c43ca8d4c056b0def7ffbd
                                                               body: >
                                                                 
+                                                                
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -2333,11 +2377,12 @@
                                                               hash: 46a369117c9d1222089498a8794c32d14edef85b
                                                               body: >
                                                                 
-                                                                As engine and
-                                                                npm is now required
-                                                                as part of
-                                                                package.json we can
-                                                                drop this dependency
+                                                                
+                                                                As engine and npm is
+                                                                now required as part
+                                                                of package.json we
+                                                                can drop this
+                                                                dependency
                                                               footer:
                                                                 Change-type: patch
                                                                 change-type: patch
@@ -2368,6 +2413,7 @@
                                                             - subject: Assert that JSON input typeof is object
                                                               hash: 1819ee97811e20da93c6e0f227db6a62ada8c00e
                                                               body: >
+                                                                
                                                                 
                                                                 Ensure that the
                                                                 input passed in for
@@ -2465,6 +2511,7 @@
                                                               hash: be8fc31c3754186dd4c43ca8d4c056b0def7ffbd
                                                               body: >
                                                                 
+                                                                
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -2486,11 +2533,12 @@
                                                               hash: 46a369117c9d1222089498a8794c32d14edef85b
                                                               body: >
                                                                 
-                                                                As engine and
-                                                                npm is now required
-                                                                as part of
-                                                                package.json we can
-                                                                drop this dependency
+                                                                
+                                                                As engine and npm is
+                                                                now required as part
+                                                                of package.json we
+                                                                can drop this
+                                                                dependency
                                                               footer:
                                                                 Change-type: patch
                                                                 change-type: patch
@@ -2521,6 +2569,7 @@
                                                             - subject: Assert that JSON input typeof is object
                                                               hash: 1819ee97811e20da93c6e0f227db6a62ada8c00e
                                                               body: >
+                                                                
                                                                 
                                                                 Ensure that the
                                                                 input passed in for
@@ -4639,6 +4688,7 @@
                                                               hash: be8fc31c3754186dd4c43ca8d4c056b0def7ffbd
                                                               body: >
                                                                 
+                                                                
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -4660,11 +4710,12 @@
                                                               hash: 46a369117c9d1222089498a8794c32d14edef85b
                                                               body: >
                                                                 
-                                                                As engine and
-                                                                npm is now required
-                                                                as part of
-                                                                package.json we can
-                                                                drop this dependency
+                                                                
+                                                                As engine and npm is
+                                                                now required as part
+                                                                of package.json we
+                                                                can drop this
+                                                                dependency
                                                               footer:
                                                                 Change-type: patch
                                                                 change-type: patch
@@ -4695,6 +4746,7 @@
                                                             - subject: Assert that JSON input typeof is object
                                                               hash: 1819ee97811e20da93c6e0f227db6a62ada8c00e
                                                               body: >
+                                                                
                                                                 
                                                                 Ensure that the
                                                                 input passed in for
@@ -4802,9 +4854,9 @@
                                                               hash: 19c2760ecf76b4097d7d3045c2eefbf74fd7c2da
                                                               body: >
                                                                 
-                                                                This also
-                                                                deprecates the
-                                                                legacy version
+                                                                
+                                                                This also deprecates
+                                                                the legacy version
                                                               footer:
                                                                 Change-type: minor
                                                                 change-type: minor
@@ -4830,10 +4882,11 @@
                                                               hash: 1c25d9b8d011791a9e98a5929ad48cdd9f3bab6b
                                                               body: >
                                                                 
-                                                                It can in fact
-                                                                be a lot of
-                                                                different things and
-                                                                that is now also
+                                                                
+                                                                It can in fact be a
+                                                                lot of different
+                                                                things and that is
+                                                                now also
 
                                                                 reflected in the
                                                                 typing
@@ -4858,11 +4911,11 @@
                                                               hash: 6fcb2c4257f9fc50f6b4b1070dec86ace9f71237
                                                               body: >
                                                                 
-                                                                We know what
-                                                                type they return and
-                                                                they should be
-                                                                explicitly accepted
-                                                                as
+                                                                
+                                                                We know what type
+                                                                they return and they
+                                                                should be explicitly
+                                                                accepted as
 
                                                                 those types instead
                                                                 where it is valid to
@@ -4891,6 +4944,7 @@
                                                             - subject: Update dependencies
                                                               hash: 39058b2dacac51da96158d594b2d72e3238d0cbc
                                                               body: >
+                                                                
                                                                 
                                                                 Update
                                                                 @balena/sbvr-types
@@ -5036,10 +5090,11 @@
                                                               hash: d589fb6cd92a3a7570e3b2ebea14acbb84807d8a
                                                               body: >
                                                                 
-                                                                This also
-                                                                deprecates the
-                                                                legacy use of direct
-                                                                true/false entries
+                                                                
+                                                                This also deprecates
+                                                                the legacy use of
+                                                                direct true/false
+                                                                entries
                                                               footer:
                                                                 Change-type: minor
                                                                 change-type: minor
