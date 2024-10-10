@@ -629,7 +629,11 @@ const unloaders: Dictionary<(obj: { id: number }) => PromiseLike<void>> = {
 	applications: deleteResource('application'),
 };
 
-export const clean = async (fixtures: types.AnyObject) => {
+export const clean = async (
+	fixtures: types.Dictionary<
+		types.Dictionary<{ id: number }> | Array<{ id: number }>
+	>,
+) => {
 	if (fixtures == null) {
 		throw new Error('You must pass in loaded fixtures to clean');
 	}
