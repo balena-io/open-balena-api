@@ -6,7 +6,8 @@ import _ from 'lodash';
 import type { Application } from '../src/balena-model.js';
 import { setTimeout } from 'timers/promises';
 import type { PineTest } from 'pinejs-client-supertest';
-import { assertExists } from './test-lib/common.js';
+import { assertExists, itExpectsError } from './test-lib/common.js';
+import { provisionDevice } from './test-lib/fake-device.js';
 
 export default () => {
 	versions.test((_version, pineTest) => {
@@ -16,6 +17,8 @@ export default () => {
 			let testTimes: Array<Pick<Application['Read'], 'id' | 'created_at'>>;
 			let pineUser: PineTest;
 			const applicationCount = 4;
+			let device1: ResolvableReturnType<typeof provisionDevice>;
+			let device2: ResolvableReturnType<typeof provisionDevice>;
 
 			before(async () => {
 				fx = await fixtures.load();
@@ -78,11 +81,90 @@ export default () => {
 					.expect(200);
 
 				testTimes = apps;
+
+				const testApp = apps[0];
+				device1 = await provisionDevice(user, testApp.id);
+				await device1.patchStateV3({
+					[device1.uuid]: {
+						cpu_temp: 50,
+					},
+				});
+				device2 = await provisionDevice(user, testApp.id);
+				await device2.patchStateV3({
+					[device2.uuid]: {
+						cpu_temp: 30,
+					},
+				});
 			});
 
 			after(async () => {
 				await fixtures.clean(fx);
 				await fixtures.clean(testTimes);
+			});
+
+			describe('Integer field filters', function () {
+				it('should be able to filter on metrics using integer values', async function () {
+					const { body: hotDevices } = await pineUser
+						.get({
+							resource: 'device',
+							options: {
+								$select: 'uuid',
+								$filter: {
+									cpu_temp: { $gt: 37 },
+								},
+							},
+						})
+						.expect(200);
+					expect(hotDevices.map((d) => d.uuid)).to.deep.equal([device1.uuid]);
+
+					const { body: coolDevices } = await pineUser
+						.get({
+							resource: 'device',
+							options: {
+								$select: 'uuid',
+								$filter: {
+									cpu_temp: { $lt: 36 },
+								},
+							},
+						})
+						.expect(200);
+					expect(coolDevices.map((d) => d.uuid)).to.deep.equal([device2.uuid]);
+				});
+
+				itExpectsError(
+					'should be able to filter on metrics using decimal values',
+					async function () {
+						const { body: hotDevices } = await pineUser
+							.get({
+								resource: 'device',
+								options: {
+									$select: 'uuid',
+									$filter: {
+										cpu_temp: { $gt: 36.6 },
+									},
+								},
+							})
+							.expect(200);
+						expect(hotDevices.map((d) => d.uuid)).to.deep.equal([device1.uuid]);
+
+						const { body: coolDevices } = await pineUser
+							.get({
+								resource: 'device',
+								options: {
+									$select: 'uuid',
+									$filter: {
+										cpu_temp: { $lt: 36.6 },
+									},
+								},
+							})
+							.expect(200);
+						expect(coolDevices.map((d) => d.uuid)).to.deep.equal([
+							device2.uuid,
+						]);
+					},
+					// DatabaseError: invalid input syntax for type integer: "36.6"`
+					/expected 200 "OK", got 500 "Internal Server Error"/,
+				);
 			});
 
 			describe('Date field filters on created_at', () => {
