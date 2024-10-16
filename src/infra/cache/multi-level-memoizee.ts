@@ -63,7 +63,8 @@ type AtLeastOneProp<T> = Partial<T> & ToSinglePropUnions<T>;
 type ExtraCacheOptsByType<T extends AnyFunction> = AtLeastOneProp<{
 	local: Partial<MultiCacheMemoizeeExtraOpts<T>> | false;
 	global: SharedMultiCacheMemoizeeExtraOpts<T>;
-}>;
+}> &
+	Pick<Parameters<typeof createMultiLevelStore>[1], 'useVersion'>;
 
 type ExtraCacheOpts<T extends AnyFunction> =
 	| ExtraCacheOptsByType<T>
@@ -158,20 +159,19 @@ export function multiCacheMemoizee<
 		throw new Error(`Unsupported options: ${remainingKeys}`);
 	}
 
-	if (
+	const extraCacheOptsByType =
 		extraCacheOpts != null &&
 		!('local' in extraCacheOpts) &&
 		!('global' in extraCacheOpts)
-	) {
-		extraCacheOpts = {
-			global: extraCacheOpts,
-		};
-	}
+			? {
+					global: extraCacheOpts,
+				}
+			: extraCacheOpts;
 
-	if (extraCacheOpts?.local !== false) {
-		checkUnsupportedExtraCacheKeys(extraCacheOpts?.local, 'local');
+	if (extraCacheOptsByType?.local !== false) {
+		checkUnsupportedExtraCacheKeys(extraCacheOptsByType?.local, 'local');
 	}
-	checkUnsupportedExtraCacheKeys(extraCacheOpts?.global, 'shared');
+	checkUnsupportedExtraCacheKeys(extraCacheOptsByType?.global, 'shared');
 
 	if (promise !== true) {
 		throw new Error('Only promise mode memoization is supported');
@@ -204,10 +204,14 @@ export function multiCacheMemoizee<
 	const multiCacheOpts: Parameters<typeof createMultiLevelStore>[1] = {
 		default: { ...convertToMultiStoreOpts(opts), isCacheableValue: () => true },
 		local:
-			extraCacheOpts?.local === false
+			extraCacheOptsByType?.local === false
 				? false
-				: convertToMultiStoreOpts({ ...opts, ...extraCacheOpts?.local }),
-		global: convertToMultiStoreOpts({ ...opts, ...extraCacheOpts?.global }),
+				: convertToMultiStoreOpts({ ...opts, ...extraCacheOptsByType?.local }),
+		global: convertToMultiStoreOpts({
+			...opts,
+			...extraCacheOptsByType?.global,
+		}),
+		useVersion: extraCacheOptsByType?.useVersion,
 	};
 
 	return multiCache(fn, cacheKey, normalizer, multiCacheOpts, undefinedAs);
