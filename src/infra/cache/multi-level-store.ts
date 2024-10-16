@@ -24,7 +24,7 @@ export function createMultiLevelStore<T extends Defined>(
 		 * version updates and so anything that may change the result needs to be manually invalidated,
 		 * eg by changing the cacheKey
 		 */
-		useVersion?: boolean;
+		useVersion: boolean;
 	},
 ): {
 	get: (key: string) => Promise<T | undefined>;
@@ -37,7 +37,7 @@ export function createMultiLevelStore<T extends Defined>(
 	}
 	usedCacheKeys[cacheKey] = true;
 
-	const { default: baseOpts, local, global, useVersion = true } = opts;
+	const { default: baseOpts, local, global, useVersion } = opts;
 	const { isCacheableValue } = baseOpts;
 	const memoryCache =
 		local === false
