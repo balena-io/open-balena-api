@@ -335,6 +335,7 @@ export const isApiKeyWithRole = (() => {
 			maxAge: API_KEY_ROLE_CACHE_TIMEOUT,
 			normalizer: ([key, roleName]) => `${roleName}$${key}`,
 		},
+		{ useVersion: false },
 	);
 })();
 

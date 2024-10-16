@@ -36,8 +36,8 @@ export const checkApiKeyExistsStore = createMultiLevelStore<boolean>(
 			ttl: API_KEY_EXISTS_CACHE_TIMEOUT / SECONDS,
 		},
 		local: false,
+		useVersion: false,
 	},
-	false,
 );
 
 const checkApiKeyExists = async (key: string) => {

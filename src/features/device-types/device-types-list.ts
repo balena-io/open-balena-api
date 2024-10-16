@@ -120,7 +120,10 @@ export const getDeviceTypes = multiCacheMemoizee(
 		maxAge: DEVICE_TYPES_CACHE_LOCAL_TIMEOUT,
 	},
 	{
-		preFetch: 0.1,
-		maxAge: DEVICE_TYPES_CACHE_TIMEOUT,
+		global: {
+			preFetch: 0.1,
+			maxAge: DEVICE_TYPES_CACHE_TIMEOUT,
+		},
+		useVersion: false,
 	},
 );

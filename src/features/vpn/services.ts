@@ -48,6 +48,7 @@ const checkAuth = (() => {
 				return `${uuid}$${reqPermissionNormalizer(req)}`;
 			},
 		},
+		{ useVersion: false },
 	);
 })();
 

@@ -83,6 +83,7 @@ const getWriteContext = (() => {
 				return `${uuid}$${reqPermissionNormalizer(req)}`;
 			},
 		},
+		{ useVersion: false },
 	);
 	return async (req: Request): Promise<LogContext> => {
 		const { uuid } = req.params;
