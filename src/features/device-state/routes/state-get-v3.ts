@@ -157,16 +157,9 @@ export function buildAppFromRelease(
 		if (device != null) {
 			varListInsert(device.device_environment_variable, environment);
 			const si = serviceInstallFromImage(device, image);
-			if (si == null) {
-				throw new Error(
-					`Could not find service install for device or application: '${
-						application.uuid
-					}', image: '${image?.id}', service: '${JSON.stringify(
-						svc,
-					)}', service_install: '${JSON.stringify(device.service_install)}'`,
-				);
+			if (si != null) {
+				varListInsert(si.device_service_environment_variable, environment);
 			}
-			varListInsert(si.device_service_environment_variable, environment);
 		}
 
 		const labels: Dictionary<string> = {
