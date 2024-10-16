@@ -1,4 +1,18 @@
 - commits:
+    - subject: Avoid throwing when `service_install` not found in state-get endpoints
+      hash: 60105509a14b5c1229cc4bfd68cad454298bcadb
+      body: >
+        A given device does not require that the service_install has been
+        previously created in order for state-get to work.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested: []
+  version: 29.1.4
+  title: ""
+  date: 2024-10-16T11:16:57.468Z
+- commits:
     - subject: Fix the application cleanup in the resource filtering tests
       hash: c7206fbe7252a4e1c7c0a1efe7216de6a7914d57
       body: ""
@@ -692,6 +706,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.5.0 to 9.0.4
@@ -708,6 +723,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -740,6 +756,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 Update
                                                                 @types/chai-datetime
                                                                 from 0.0.37 to
@@ -1201,6 +1218,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 - Update
                                                                 @balena/lint from
                                                                 6.2.2 to 7.2.4
@@ -1693,6 +1711,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -1741,6 +1760,7 @@
                                                                         
                                                                         
 
+
                                                                         As balena-lint
                                                                         rejects `new
                                                                         Boolean()`, `new
@@ -1763,6 +1783,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
                                                                         As engine and npm is
                                                                         now required as part
@@ -1801,6 +1822,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
                                                                         Ensure that the
                                                                         input passed in for
@@ -1866,6 +1888,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.4.0 to 8.4.1
@@ -1895,6 +1918,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.0.0 to 8.4.0
@@ -1913,6 +1937,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
                                                                         This also deprecates
                                                                         the legacy version
@@ -1943,6 +1968,7 @@
                                                                         
                                                                         
 
+
                                                                         It can in fact be a
                                                                         lot of different
                                                                         things and that is
@@ -1972,6 +1998,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
                                                                         We know what type
                                                                         they return and they
@@ -2007,6 +2034,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
                                                                         Update
                                                                         @balena/sbvr-types
@@ -2153,6 +2181,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
                                                                         This also deprecates
                                                                         the legacy use of
@@ -2356,6 +2385,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -2378,6 +2408,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 As engine and npm is
                                                                 now required as part
                                                                 of package.json we
@@ -2415,6 +2446,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 Ensure that the
                                                                 input passed in for
                                                                 JSON types is either
@@ -2512,6 +2544,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -2534,6 +2567,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 As engine and npm is
                                                                 now required as part
                                                                 of package.json we
@@ -2571,6 +2605,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 Ensure that the
                                                                 input passed in for
                                                                 JSON types is either
@@ -4689,6 +4724,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -4711,6 +4747,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 As engine and npm is
                                                                 now required as part
                                                                 of package.json we
@@ -4748,6 +4785,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 Ensure that the
                                                                 input passed in for
                                                                 JSON types is either
@@ -4855,6 +4893,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -4883,6 +4922,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 It can in fact be a
                                                                 lot of different
                                                                 things and that is
@@ -4912,6 +4952,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 We know what type
                                                                 they return and they
                                                                 should be explicitly
@@ -4946,6 +4987,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 Update
                                                                 @balena/sbvr-types
                                                                 from 3.4.18 to 3.5.0
@@ -5091,6 +5133,7 @@
                                                               body: >
                                                                 
                                                                 
+
                                                                 This also deprecates
                                                                 the legacy use of
                                                                 direct true/false
