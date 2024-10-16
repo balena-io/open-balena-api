@@ -124,5 +124,6 @@ export const getDeviceTypes = multiCacheMemoizee(
 			preFetch: 0.1,
 			maxAge: DEVICE_TYPES_CACHE_TIMEOUT,
 		},
+		useVersion: false,
 	},
 );

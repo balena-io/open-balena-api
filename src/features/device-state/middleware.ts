@@ -25,7 +25,9 @@ const checkDeviceExistsIsFrozenQuery = _.once(() =>
 	),
 );
 export const checkDeviceExistsIsFrozen = multiCacheMemoizee(
-	async (uuid: string) => {
+	async (
+		uuid: string,
+	): Promise<Pick<Device['Read'], 'id' | 'is_frozen'> | undefined> => {
 		return await checkDeviceExistsIsFrozenQuery()({ uuid });
 	},
 	{
@@ -35,6 +37,7 @@ export const checkDeviceExistsIsFrozen = multiCacheMemoizee(
 		undefinedAs: false,
 		maxAge: DEVICE_EXISTS_CACHE_TIMEOUT,
 	},
+	{ useVersion: false },
 );
 
 export interface ResolveDeviceInfoCustomObject {

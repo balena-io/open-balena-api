@@ -164,6 +164,7 @@ const resolveReadAccess = (() => {
 				return `${imageId}$${reqPermissionNormalizer(req)}`;
 			},
 		},
+		{ useVersion: false },
 	);
 	return async (
 		req: Request,
@@ -228,6 +229,7 @@ const resolveImageId = multiCacheMemoizee(
 		max: 500,
 		normalizer: ([effectiveName]) => effectiveName,
 	},
+	{ useVersion: false },
 );
 
 const resolveImageLocation = multiCacheMemoizee(
@@ -351,6 +353,7 @@ const resolveImageLocation = multiCacheMemoizee(
 			)}`;
 		},
 	},
+	{ useVersion: false },
 );
 
 const resolveAccess = async (
@@ -692,6 +695,7 @@ const $getSubject = multiCacheMemoizee(
 		primitive: true,
 		normalizer: ([apiKey, subject]) => `${apiKey}\u0001${subject}`,
 	},
+	{ useVersion: false },
 );
 const getSubject = async (
 	req: Request,

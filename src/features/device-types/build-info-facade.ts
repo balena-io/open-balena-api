@@ -47,6 +47,7 @@ export const getLogoUrl = multiCacheMemoizee(
 		preFetch: true,
 		maxAge: BUILD_PROPERTY_CACHE_TIMEOUT,
 	},
+	{ useVersion: false },
 );
 
 export const getDeviceTypeJson = multiCacheMemoizee(
@@ -80,6 +81,7 @@ export const getDeviceTypeJson = multiCacheMemoizee(
 		preFetch: true,
 		maxAge: BUILD_PROPERTY_CACHE_TIMEOUT,
 	},
+	{ useVersion: false },
 );
 
 export const getCompressedSize = multiCacheMemoizee(
@@ -95,4 +97,5 @@ export const getCompressedSize = multiCacheMemoizee(
 		preFetch: true,
 		maxAge: BUILD_COMPRESSED_SIZE_CACHE_TIMEOUT,
 	},
+	{ useVersion: false },
 );
