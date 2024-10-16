@@ -151,9 +151,11 @@ export const getStateDelayingEmpty = (() => {
 	const lastFailedDeviceStateTime = createMultiLevelStore<number>(
 		'lastFailedDeviceStateTime',
 		{
-			ttl: EMPTY_DEVICE_STATE_GET_DELAY_SECONDS,
+			default: {
+				ttl: EMPTY_DEVICE_STATE_GET_DELAY_SECONDS,
+			},
+			useVersion: false,
 		},
-		false,
 	);
 	const EMPTY_DEVICE_STATE_GET_DELAY =
 		EMPTY_DEVICE_STATE_GET_DELAY_SECONDS * 1000;

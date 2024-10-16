@@ -112,9 +112,11 @@ export const shouldUpdateMetrics = (() => {
 	const lastMetricsReportTime = createMultiLevelStore<number>(
 		'lastMetricsReportTime',
 		{
-			ttl: METRICS_MAX_REPORT_INTERVAL_SECONDS,
+			default: {
+				ttl: METRICS_MAX_REPORT_INTERVAL_SECONDS,
+			},
+			useVersion: false,
 		},
-		false,
 	);
 	const METRICS_MAX_REPORT_INTERVAL =
 		METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000;
@@ -142,18 +144,15 @@ export type ImageInstallUpdateBody = {
 const shouldUpdateImageInstall = (() => {
 	const lastImageInstallReport = createMultiLevelStore<
 		ImageInstallUpdateBody & { updateTime: number }
-	>(
-		'lastImageInstallUpdate',
-		{
-			default: {
-				ttl: IMAGE_INSTALL_CACHE_TIMEOUT_SECONDS,
-			},
-			// Do not have a local cache to avoid skipping updates based on an
-			// outdated local cache
-			local: false,
+	>('lastImageInstallUpdate', {
+		default: {
+			ttl: IMAGE_INSTALL_CACHE_TIMEOUT_SECONDS,
 		},
-		false,
-	);
+		// Do not have a local cache to avoid skipping updates based on an
+		// outdated local cache
+		local: false,
+		useVersion: false,
+	});
 	const DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL =
 		DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS * 1000;
 	return async (imageInstallId: number, body: ImageInstallUpdateBody) => {

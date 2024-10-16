@@ -10,12 +10,6 @@ export type MultiStoreOpt = Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
 	refreshThreshold?: number;
 };
 
-/**
- * @param useVersion
- * Do not use the api version as part of the cache key, this disables automatic invalidation on
- * version updates and so anything that may change the result needs to be manually invalidated,
- * eg by changing the cacheKey
- */
 export function createMultiLevelStore<T extends Defined>(
 	cacheKey: string,
 	opts:
@@ -27,8 +21,13 @@ export function createMultiLevelStore<T extends Defined>(
 				 * The global store will ignore the `max` anyway, so avoiding passing it in will help reduce confusion
 				 */
 				global?: Exclude<MultiStoreOpt, 'max'>;
+				/**
+				 * Do not use the api version as part of the cache key, this disables automatic invalidation on
+				 * version updates and so anything that may change the result needs to be manually invalidated,
+				 * eg by changing the cacheKey
+				 */
+				useVersion?: boolean;
 		  },
-	useVersion = true,
 ): {
 	get: (key: string) => Promise<T | undefined>;
 	set: (key: string, value: T) => Promise<void>;
@@ -43,7 +42,7 @@ export function createMultiLevelStore<T extends Defined>(
 	if (!('default' in opts)) {
 		opts = { default: opts };
 	}
-	const { default: baseOpts, local, global } = opts;
+	const { default: baseOpts, local, global, useVersion = true } = opts;
 	const { isCacheableValue } = baseOpts;
 	const memoryCache =
 		local === false
