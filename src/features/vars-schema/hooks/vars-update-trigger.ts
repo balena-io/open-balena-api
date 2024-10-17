@@ -316,24 +316,26 @@ addEnvHooks('device_service_environment_variable', async (args) => {
 	];
 });
 
+// Normally we don't expect these to return any match, since our clients
+// * POST image env vars before the release & images gets marked as successful
+// * never PATCH them after that point
+// * DELETEs are expected to normally only happen if the release gets DELETED,
+//   in which case the should_be_running__release will change and trigger an update of its own.
 addEnvHooks('image_environment_variable', async (args) => {
+	// The filter paths here should match the expand path of the state GET.
 	if (args.req.body.release_image != null) {
 		return {
-			image_install: {
+			should_be_running__release: {
 				$any: {
-					$alias: 'ii',
+					$alias: 'r',
 					$expr: {
-						installs__image: {
+						status: 'success',
+						release_image: {
 							$any: {
-								$alias: 'i',
+								$alias: 'ri',
 								$expr: {
-									i: {
-										release_image: {
-											$any: {
-												$alias: 'ri',
-												$expr: { ri: { id: args.req.body.release_image } },
-											},
-										},
+									ri: {
+										id: args.req.body.release_image,
 									},
 								},
 							},
@@ -351,28 +353,20 @@ addEnvHooks('image_environment_variable', async (args) => {
 	return [
 		envVarIds,
 		(envVarIdsChunk) => ({
-			image_install: {
+			should_be_running__release: {
 				$any: {
-					$alias: 'ii',
+					$alias: 'r',
 					$expr: {
-						installs__image: {
+						status: 'success',
+						release_image: {
 							$any: {
-								$alias: 'i',
+								$alias: 'ri',
 								$expr: {
-									i: {
-										release_image: {
+									ri: {
+										image_environment_variable: {
 											$any: {
-												$alias: 'ri',
-												$expr: {
-													ri: {
-														image_environment_variable: {
-															$any: {
-																$alias: 'e',
-																$expr: { e: { id: { $in: envVarIdsChunk } } },
-															},
-														},
-													},
-												},
+												$alias: 'e',
+												$expr: { e: { id: { $in: envVarIdsChunk } } },
 											},
 										},
 									},
