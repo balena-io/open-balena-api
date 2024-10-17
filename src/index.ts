@@ -55,6 +55,7 @@ import {
 	BROTLI_COMPRESSION_QUALITY,
 	GZIP_COMPRESSION_QUALITY,
 	BROTLI_COMPRESSION_WINDOW_BITS,
+	ASYNC_TASKS_ENABLED,
 } from './lib/config.js';
 
 import {
@@ -406,6 +407,12 @@ export async function setup(app: Application, options: SetupOptions) {
 
 	await import('./hooks.js');
 	await options.onInitHooks?.(app);
+
+	if (ASYNC_TASKS_ENABLED) {
+		await pine.tasks.setup();
+		await import('./tasks.js');
+		await pine.tasks.worker?.start();
+	}
 
 	const routes = await import('./routes.js');
 	routes.setup(app, options);
