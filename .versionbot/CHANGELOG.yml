@@ -1,4 +1,41 @@
 - commits:
+    - subject: Update @balena/pinejs to 19.2.0
+      hash: e7fd40c461ab00fb9f89c694f984ff12cdc2eb61
+      body: |
+        Update @balena/pinejs from 19.0.7 to 19.2.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested:
+        - commits:
+            - subject: Add tasks worker `stop` method
+              hash: f9a85d7b6325c1d29750acb35a8eceb3861e9d3d
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Otavio Jacobi
+              nested: []
+          version: pinejs-19.2.0
+          title: ""
+          date: 2024-10-17T14:55:26.651Z
+        - commits:
+            - subject: Add getAuthCompiler for building permissions
+              hash: b1f5bf70c598872417ff46c160c9efcb11f24828
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Otavio Jacobi
+              nested: []
+          version: pinejs-19.1.0
+          title: ""
+          date: 2024-10-17T14:32:27.754Z
+  version: 30.0.1
+  title: ""
+  date: 2024-10-17T15:57:12.285Z
+- commits:
     - subject: Require being explicit about using automatic version based invalidation
       hash: 080f7040601bf6ce55f81e4a6c46637b270593b8
       body: ""
@@ -760,6 +797,7 @@
                                                                 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.5.0 to 9.0.4
@@ -776,6 +814,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
                                                                 The internal and
@@ -810,6 +849,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
                                                                 Update
@@ -1273,6 +1313,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
                                                                 - Update
@@ -1769,6 +1810,7 @@
                                                                 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -1819,6 +1861,7 @@
 
 
 
+
                                                                         As balena-lint
                                                                         rejects `new
                                                                         Boolean()`, `new
@@ -1841,6 +1884,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -1881,6 +1925,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -1950,6 +1995,7 @@
                                                                 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.4.0 to 8.4.1
@@ -1981,6 +2027,7 @@
                                                                 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.0.0 to 8.4.0
@@ -1999,6 +2046,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2033,6 +2081,7 @@
 
 
 
+
                                                                         It can in fact be a
                                                                         lot of different
                                                                         things and that is
@@ -2062,6 +2111,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2099,6 +2149,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2247,6 +2298,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2454,6 +2506,7 @@
                                                                 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -2476,6 +2529,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
                                                                 As engine and npm is
@@ -2515,6 +2569,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
                                                                 Ensure that the
@@ -2616,6 +2671,7 @@
                                                                 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -2638,6 +2694,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
                                                                 As engine and npm is
@@ -2677,6 +2734,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
                                                                 Ensure that the
@@ -4799,6 +4857,7 @@
                                                                 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -4821,6 +4880,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
                                                                 As engine and npm is
@@ -4860,6 +4920,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
                                                                 Ensure that the
@@ -4971,6 +5032,7 @@
                                                                 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -4999,6 +5061,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
                                                                 It can in fact be a
@@ -5030,6 +5093,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
                                                                 We know what type
@@ -5066,6 +5130,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
                                                                 Update
@@ -5213,6 +5278,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
                                                                 This also deprecates
