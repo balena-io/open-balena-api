@@ -54,6 +54,9 @@ import {
 	BROTLI_COMPRESSION_QUALITY,
 	GZIP_COMPRESSION_QUALITY,
 	BROTLI_COMPRESSION_WINDOW_BITS,
+	ASYNC_TASKS_ENABLED,
+	PINEJS_QUEUE_INTERVAL_MS,
+	PINEJS_QUEUE_CONCURRENCY,
 } from './lib/config.js';
 
 import {
@@ -405,6 +408,14 @@ export async function setup(app: Application, options: SetupOptions) {
 
 	await import('./hooks.js');
 	await options.onInitHooks?.(app);
+
+	if (ASYNC_TASKS_ENABLED) {
+		pine.env.tasks.queueConcurrency = PINEJS_QUEUE_CONCURRENCY;
+		pine.env.tasks.queueIntervalMS = PINEJS_QUEUE_INTERVAL_MS;
+		await pine.tasks.setup();
+		await import('./tasks.js');
+		await pine.tasks.worker?.start();
+	}
 
 	const routes = await import('./routes.js');
 	routes.setup(app, options);
