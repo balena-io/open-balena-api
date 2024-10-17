@@ -318,6 +318,39 @@ addEnvHooks('device_service_environment_variable', async (args) => {
 
 addEnvHooks('image_environment_variable', async (args) => {
 	if (args.req.body.release_image != null) {
+		// This is a optimization that allows skipping the following
+		// device->image_install->...->release_image query in most real world
+		// cases, since when user permissions are used it creates a complex query
+		// with high planning time. The idea is that image env vars are created
+		// while the release is still 'running', in which case we don't expect
+		// any device to possibly be running that release.
+		const isPartOfSuccessfulRelease =
+			(
+				await args.api.get({
+					resource: 'release',
+					options: {
+						$top: 1,
+						$select: 'id',
+						$filter: {
+							status: 'success',
+							release_image: {
+								$any: {
+									$alias: 'ri',
+									$expr: {
+										ri: {
+											id: args.req.body.release_image,
+										},
+									},
+								},
+							},
+						},
+					},
+				})
+			).length > 0;
+		if (!isPartOfSuccessfulRelease) {
+			return;
+		}
+
 		return {
 			image_install: {
 				$any: {
@@ -328,6 +361,7 @@ addEnvHooks('image_environment_variable', async (args) => {
 								$alias: 'i',
 								$expr: {
 									i: {
+										status: 'success',
 										release_image: {
 											$any: {
 												$alias: 'ri',
@@ -360,6 +394,7 @@ addEnvHooks('image_environment_variable', async (args) => {
 								$alias: 'i',
 								$expr: {
 									i: {
+										status: 'success',
 										release_image: {
 											$any: {
 												$alias: 'ri',
