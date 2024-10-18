@@ -9,7 +9,6 @@ import cookieSession from 'cookie-session';
 import type { Application, Handler, Request } from 'express';
 import type { Server } from 'http';
 import _ from 'lodash';
-import methodOverride from 'method-override';
 import passport from 'passport';
 import * as Sentry from '@sentry/node';
 import * as zlib from 'node:zlib';
@@ -479,7 +478,6 @@ function setupMiddleware(app: Application) {
 
 	app.use(bodyParser.json({ type: isJson, limit: '512kb' }));
 	app.use(bodyParser.urlencoded({ extended: true }));
-	app.use(methodOverride());
 	app.use(passport.initialize());
 	app.use(AUTH_PATH, cookieSession({ secret: COOKIE_SESSION_SECRET }));
 
