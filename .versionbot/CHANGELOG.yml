@@ -1,4 +1,16 @@
 - commits:
+    - subject: Remove unused methodOverride middleware
+      hash: aad6c816ecc87757d94fdb81125db0d4cf2a5c8d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 30.0.2
+  title: ""
+  date: 2024-10-18T14:33:03.719Z
+- commits:
     - subject: Update @balena/pinejs to 19.2.0
       hash: e7fd40c461ab00fb9f89c694f984ff12cdc2eb61
       body: |
@@ -798,6 +810,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.5.0 to 9.0.4
@@ -814,6 +827,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -849,6 +863,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -1313,6 +1328,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -1811,6 +1827,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -1862,6 +1879,7 @@
 
 
 
+
                                                                         As balena-lint
                                                                         rejects `new
                                                                         Boolean()`, `new
@@ -1884,6 +1902,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -1925,6 +1944,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -1996,6 +2016,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.4.0 to 8.4.1
@@ -2028,6 +2049,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.0.0 to 8.4.0
@@ -2046,6 +2068,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2082,6 +2105,7 @@
 
 
 
+
                                                                         It can in fact be a
                                                                         lot of different
                                                                         things and that is
@@ -2111,6 +2135,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2149,6 +2174,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2298,6 +2324,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2507,6 +2534,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -2529,6 +2557,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2569,6 +2598,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2672,6 +2702,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -2694,6 +2725,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2734,6 +2766,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4858,6 +4891,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -4880,6 +4914,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4920,6 +4955,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5033,6 +5069,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -5061,6 +5098,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5093,6 +5131,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5130,6 +5169,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5278,6 +5318,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
