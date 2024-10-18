@@ -135,7 +135,7 @@
   },
   "devDependencies": {
     "@balena/lint": "^9.0.1",
-    "@types/chai": "^4.3.20",
+    "@types/chai": "^5.0.0",
     "@types/mocha": "^10.0.8",
     "@types/mockery": "^1.4.33",
     "@types/sinon": "^17.0.3",
