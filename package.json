@@ -106,7 +106,6 @@
     "lodash": "^4.17.21",
     "loki-grpc-client": "^2.0.0",
     "memoizee": "^0.4.17",
-    "method-override": "^3.0.0",
     "morgan": "^1.10.0",
     "ndjson": "^2.0.0",
     "node-schedule": "^2.1.1",
