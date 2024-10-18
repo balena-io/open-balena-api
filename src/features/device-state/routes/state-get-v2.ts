@@ -83,7 +83,7 @@ function buildAppFromRelease(
 		}
 	}
 
-	for (const ipr of release.contains__image) {
+	for (const ipr of release.release_image) {
 		// extract the per-image information
 		const image = ipr.image[0];
 
@@ -174,7 +174,7 @@ const stateQuery = _.once(() =>
 					should_be_running__release: {
 						$select: ['id', 'commit', 'composition'],
 						$expand: {
-							contains__image: {
+							release_image: {
 								$select: 'id',
 								$expand: {
 									image: {

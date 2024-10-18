@@ -137,7 +137,7 @@ export function buildAppFromRelease(
 		}
 	}
 
-	for (const ipr of release.contains__image) {
+	for (const ipr of release.release_image) {
 		const image = ipr.image[0];
 		const svc = image.is_a_build_of__service[0];
 		const environment: Dictionary<string> = {};
@@ -218,7 +218,7 @@ export function buildAppFromRelease(
 export const releaseExpand = {
 	$select: ['id', 'commit', 'composition'],
 	$expand: {
-		contains__image: {
+		release_image: {
 			$select: 'id',
 			$expand: {
 				image: {
