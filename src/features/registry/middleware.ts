@@ -23,7 +23,12 @@ export const basicApiKeyAuthenticate: RequestHandler = async (
 		const creds = BasicAuth.parse(authHeader);
 		if (creds) {
 			req.params.subject = creds.name;
+			// This will later be parsed as an api key
 			req.params.apikey = creds.pass;
+			// So we need to delete any other api key parsing that may already have happened
+			// TODO: Run this before any other api key parsing
+			delete req.prefetchApiKey;
+			delete req.apiKey;
 		}
 	}
 	if (req.params.apikey === TOKEN_AUTH_BUILDER_TOKEN) {

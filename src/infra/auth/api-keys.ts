@@ -13,9 +13,9 @@ const getAPIKey = async (
 	tx: Tx | undefined,
 ): Promise<sbvrUtils.ApiKey | undefined> => {
 	try {
-		const apiKey = await permissions.resolveApiKey(req, 'apikey', tx);
+		const apiKey = req.params.apikey ?? req.query.apikey;
 		if (apiKey != null) {
-			return apiKey;
+			return await permissions.checkApiKey(apiKey, tx);
 		}
 	} catch {
 		// ignore
@@ -46,11 +46,11 @@ export const prefetchAPIKey = (
 	tx: Tx | undefined,
 ): void => {
 	if (req.apiKey) {
-		// If the api key is already set then we just reuse that and keep it
-		req.prefetchApiKey ??= req.apiKey;
+		// If the api key is already set then we reuse/keep that
+		req.prefetchApiKey = req.apiKey;
 	} else {
 		// Start the prefetch and let it run in the background - do not await it
-		req.prefetchApiKey = getAPIKey(req, tx);
+		req.prefetchApiKey ??= getAPIKey(req, tx);
 	}
 };
 
