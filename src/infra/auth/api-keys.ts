@@ -13,9 +13,9 @@ const getAPIKey = async (
 	tx: Tx | undefined,
 ): Promise<sbvrUtils.ApiKey | undefined> => {
 	try {
-		const apiKey = await permissions.resolveApiKey(req, 'apikey', tx);
+		const apiKey = req.params.apikey ?? req.query.apikey;
 		if (apiKey != null) {
-			return apiKey;
+			return await permissions.checkApiKey(apiKey, tx);
 		}
 	} catch {
 		// ignore
