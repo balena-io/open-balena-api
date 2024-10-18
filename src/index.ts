@@ -445,6 +445,8 @@ function fixProtocolMiddleware(skipUrls: string[] = []): Handler {
 }
 
 function setupMiddleware(app: Application) {
+	app.use(authMiddleware.prefetchApiKey);
+
 	app.use(
 		compression({
 			level: GZIP_COMPRESSION_QUALITY,
@@ -482,8 +484,6 @@ function setupMiddleware(app: Application) {
 	app.use(AUTH_PATH, cookieSession({ secret: COOKIE_SESSION_SECRET }));
 
 	app.use(jwt.middleware);
-
-	app.use(authMiddleware.prefetchApiKey);
 }
 
 async function startServer(
