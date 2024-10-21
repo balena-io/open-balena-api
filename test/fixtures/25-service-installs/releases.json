@@ -1,0 +1,70 @@
+{
+	"release1": {
+		"application": "app1",
+		"commit": "de2dc0de",
+		"composition": {
+			"services": {
+				"image1": {
+					"build": "./image1/"
+				}
+			}
+		},
+		"is_passing_tests": true,
+		"is_final": true,
+		"release_version": "v3.0.0",
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	},
+	"release2": {
+		"application": "app1",
+		"commit": "deadc0de",
+		"composition": {
+			"services": {
+				"image2": {
+					"build": "./image2/"
+				}
+			}
+		},
+		"is_passing_tests": true,
+		"is_final": false,
+		"release_version": "v2.0.0",
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	},
+	"release3": {
+		"application": "app1",
+		"commit": "deadc0d3",
+		"composition": {
+			"services": {
+				"image3": {
+					"build": "./image3/"
+				}
+			}
+		},
+		"is_passing_tests": true,
+		"is_final": false,
+		"release_version": "v1.0.0",
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	},
+	"app2release1": {
+		"application": "app2",
+		"commit": "de2dc0de",
+		"composition": {
+			"services": {
+				"image4": {
+					"build": "./image4/"
+				}
+			}
+		},
+		"is_passing_tests": true,
+		"is_final": true,
+		"release_version": "v0.0.1",
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	}
+}

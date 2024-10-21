@@ -1,0 +1,38 @@
+{
+	"image1": {
+		"user": "admin",
+		"service": "app1Service1",
+		"releases": [ "release1" ],
+		"image_size": 2048,
+		"project_type": "Dockerfile.template",
+		"build_log": "This is also the build log",
+		"status": "success"
+	},
+	"image2": {
+		"user": "admin",
+		"service": "app1Service2",
+		"releases": [ "release2" ],
+		"image_size": 2048,
+		"project_type": "Dockerfile.template",
+		"build_log": "This is also the build log",
+		"status": "success"
+	},
+	"image3": {
+		"user": "admin",
+		"service": "app1Service3",
+		"releases": [ "release3" ],
+		"image_size": 2048,
+		"project_type": "Dockerfile.template",
+		"build_log": "This is also the build log",
+		"status": "success"
+	},
+	"image4": {
+		"user": "admin",
+		"service": "app2Service1",
+		"releases": [ "app2release1" ],
+		"image_size": 2048,
+		"project_type": "Dockerfile.template",
+		"build_log": "This is also the build log",
+		"status": "success"
+	}
+}

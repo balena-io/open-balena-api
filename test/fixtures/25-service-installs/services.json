@@ -1,0 +1,22 @@
+{
+	"app1Service1": {
+		"user": "admin",
+		"application": "app1",
+		"service_name": "app1Service1"
+	},
+	"app1Service2": {
+		"user": "admin",
+		"application": "app1",
+		"service_name": "app1Service2"
+	},
+	"app1Service3": {
+		"user": "admin",
+		"application": "app1",
+		"service_name": "app1Service3"
+	},
+	"app2Service1": {
+		"user": "admin",
+		"application": "app2",
+		"service_name": "app2Service1"
+	}
+}
