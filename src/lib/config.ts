@@ -85,6 +85,9 @@ export let API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT = intVar(
 );
 export const API_VPN_SERVICE_API_KEY = requiredVar('API_VPN_SERVICE_API_KEY');
 export const VPN_CONNECT_PROXY_PORT = intVar('VPN_CONNECT_PROXY_PORT', 3128);
+
+export const ASYNC_TASKS_ENABLED = boolVar('ASYNC_TASKS_ENABLED', false);
+
 export const AUTH_RESINOS_REGISTRY_CODE = optionalVar(
 	'AUTH_RESINOS_REGISTRY_CODE',
 );
@@ -324,6 +327,12 @@ export const LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL = intVar(
 	5000,
 );
 export const LOGS_WRITE_BUFFER_LIMIT = intVar('LOGS_WRITE_BUFFER_LIMIT', 50);
+
+export const PINEJS_QUEUE_CONCURRENCY = intVar('PINEJS_QUEUE_CONCURRENCY', 1);
+export const PINEJS_QUEUE_INTERVAL_MS = intVar(
+	'PINEJS_QUEUE_INTERVAL_MS',
+	1000,
+);
 
 export const REGISTRY2_HOST = requiredVar('REGISTRY2_HOST');
 export const SENTRY_DSN = optionalVar('SENTRY_DSN');
