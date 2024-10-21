@@ -14,14 +14,11 @@ import {
 	getImageKey,
 } from './storage/index.js';
 
-export const getLogoUrl = multiCacheMemoizee(
+const $getLogoUrl = multiCacheMemoizee(
 	async (
 		normalizedSlug: string,
 		buildId: string,
 	): Promise<string | undefined> => {
-		if (!FILES_HOST) {
-			return;
-		}
 		const pathComponents = [normalizedSlug, buildId, 'logo.svg'];
 		try {
 			const logoKey = getImageKey(...pathComponents);
@@ -31,16 +28,13 @@ export const getLogoUrl = multiCacheMemoizee(
 			}
 
 			// url encode since the buildId can contain a `+`
-			const encodedLogoPath = getImageKey(
-				...pathComponents.map(encodeURIComponent),
-			);
-			return `https://${FILES_HOST}/${encodedLogoPath}`;
+			return getImageKey(...pathComponents.map(encodeURIComponent));
 		} catch {
 			return;
 		}
 	},
 	{
-		cacheKey: 'getLogoUrl',
+		cacheKey: '$getLogoUrl',
 		undefinedAs: false,
 		promise: true,
 		primitive: true,
@@ -49,6 +43,19 @@ export const getLogoUrl = multiCacheMemoizee(
 	},
 	{ useVersion: false },
 );
+export const getLogoUrl = async (
+	normalizedSlug: string,
+	buildId: string,
+): Promise<string | undefined> => {
+	if (!FILES_HOST) {
+		return;
+	}
+	const encodedLogoPath = await $getLogoUrl(normalizedSlug, buildId);
+	if (!encodedLogoPath) {
+		return;
+	}
+	return `https://${FILES_HOST}/${encodedLogoPath}`;
+};
 
 export const getDeviceTypeJson = multiCacheMemoizee(
 	async (
