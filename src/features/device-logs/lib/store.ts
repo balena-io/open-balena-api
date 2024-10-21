@@ -52,27 +52,27 @@ const getWriteContext = (() => {
 			uuid: string,
 			req: permissions.PermissionReq,
 		): Promise<false | LogContext> => {
-			return await sbvrUtils.db.readTransaction(async (tx) => {
-				try {
-					const result = await api.resin.request({
+			try {
+				const result = await sbvrUtils.db.readTransaction(async (tx) => {
+					return await api.resin.request({
 						method: 'POST',
 						// We use a parameter alias to signify to pinejs that it's a beneficial query to cache
 						url: `device(uuid=@uuid)/canAccess?@uuid='${uuid}'`,
 						passthrough: { req, tx },
 						body: { action: 'write-log' },
 					});
-					const deviceId: number | undefined = result?.d?.[0]?.id;
-					if (deviceId == null) {
-						return false;
-					}
-					return addRetentionLimit({
-						id: deviceId,
-						uuid,
-					});
-				} catch {
+				});
+				const deviceId: number | undefined = result?.d?.[0]?.id;
+				if (deviceId == null) {
 					return false;
 				}
-			});
+				return addRetentionLimit({
+					id: deviceId,
+					uuid,
+				});
+			} catch {
+				return false;
+			}
 		},
 		{
 			cacheKey: 'getDeviceLogsWriteContext',
