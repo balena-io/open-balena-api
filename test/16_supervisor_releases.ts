@@ -3,7 +3,7 @@ import * as fixtures from './test-lib/fixtures.js';
 import * as fakeDevice from './test-lib/fake-device.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
-import { assertExists } from './test-lib/common.js';
+import { assertExists, expectToEventually } from './test-lib/common.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -148,38 +148,40 @@ export default () => {
 					});
 
 					it(`should create a service install for the supervisor release after ${titlePart}`, async () => {
-						const { body: serviceInstalls } = await pineUser
-							.get({
-								resource: 'service_install',
-								options: {
-									$expand: {
-										installs__service: {
-											$select: ['id', 'service_name'],
+						await expectToEventually(async () => {
+							const { body: serviceInstalls } = await pineUser
+								.get({
+									resource: 'service_install',
+									options: {
+										$expand: {
+											installs__service: {
+												$select: ['id', 'service_name'],
+											},
 										},
-									},
-									$filter: {
-										device: getDevice().id,
-										installs__service: {
-											$any: {
-												$alias: 'is',
-												$expr: {
-													is: {
-														application: ctx.amd64SupervisorApp.id,
+										$filter: {
+											device: getDevice().id,
+											installs__service: {
+												$any: {
+													$alias: 'is',
+													$expr: {
+														is: {
+															application: ctx.amd64SupervisorApp.id,
+														},
 													},
 												},
 											},
 										},
 									},
-								},
-							} as const)
-							.expect(200);
-						expect(serviceInstalls).to.have.lengthOf(1);
-						const [service] = serviceInstalls[0].installs__service;
-						expect(service).to.have.property(
-							'id',
-							ctx.fixtures.services.amd64_supervisor_app_service1.id,
-						);
-						expect(service).to.have.property('service_name', 'main');
+								} as const)
+								.expect(200);
+							expect(serviceInstalls).to.have.lengthOf(1);
+							const [service] = serviceInstalls[0].installs__service;
+							expect(service).to.have.property(
+								'id',
+								ctx.fixtures.services.amd64_supervisor_app_service1.id,
+							);
+							expect(service).to.have.property('service_name', 'main');
+						});
 					});
 				});
 
@@ -426,39 +428,40 @@ export default () => {
 								update_downloaded: false,
 							},
 						});
-
-						const { body: serviceInstalls } = await pineUser
-							.get({
-								resource: 'service_install',
-								options: {
-									$expand: {
-										installs__service: {
-											$select: ['id', 'service_name'],
+						await expectToEventually(async () => {
+							const { body: serviceInstalls } = await pineUser
+								.get({
+									resource: 'service_install',
+									options: {
+										$expand: {
+											installs__service: {
+												$select: ['id', 'service_name'],
+											},
 										},
-									},
-									$filter: {
-										device: device3.id,
-										installs__service: {
-											$any: {
-												$alias: 'is',
-												$expr: {
-													is: {
-														application: ctx.amd64SupervisorApp.id,
+										$filter: {
+											device: device3.id,
+											installs__service: {
+												$any: {
+													$alias: 'is',
+													$expr: {
+														is: {
+															application: ctx.amd64SupervisorApp.id,
+														},
 													},
 												},
 											},
 										},
 									},
-								},
-							} as const)
-							.expect(200);
-						expect(serviceInstalls).to.have.lengthOf(1);
-						const [service] = serviceInstalls[0].installs__service;
-						expect(service).to.have.property(
-							'id',
-							ctx.fixtures.services.amd64_supervisor_app_service1.id,
-						);
-						expect(service).to.have.property('service_name', 'main');
+								} as const)
+								.expect(200);
+							expect(serviceInstalls).to.have.lengthOf(1);
+							const [service] = serviceInstalls[0].installs__service;
+							expect(service).to.have.property(
+								'id',
+								ctx.fixtures.services.amd64_supervisor_app_service1.id,
+							);
+							expect(service).to.have.property('service_name', 'main');
+						});
 					});
 
 					(
@@ -481,49 +484,51 @@ export default () => {
 								})
 								.expect(200);
 
-							const { body: serviceInstalls } = await pineUser
-								.get<AnyObject[]>({
-									resource: 'service_install',
-									options: {
-										$expand: {
-											installs__service: {
-												$select: ['id', 'service_name'],
+							await expectToEventually(async () => {
+								const { body: serviceInstalls } = await pineUser
+									.get<AnyObject[]>({
+										resource: 'service_install',
+										options: {
+											$expand: {
+												installs__service: {
+													$select: ['id', 'service_name'],
+												},
 											},
-										},
-										$filter: {
-											device: getDevice().id,
-											installs__service: {
-												$any: {
-													$alias: 'is',
-													$expr: {
-														is: {
-															application: ctx.amd64SupervisorApp.id,
+											$filter: {
+												device: getDevice().id,
+												installs__service: {
+													$any: {
+														$alias: 'is',
+														$expr: {
+															is: {
+																application: ctx.amd64SupervisorApp.id,
+															},
 														},
 													},
 												},
 											},
+											$orderby: { created_at: 'asc' },
 										},
-										$orderby: { created_at: 'asc' },
-									},
-								} as const)
-								.expect(200);
-							expect(serviceInstalls).to.have.lengthOf(2);
-							const [oldService, newService] = serviceInstalls.map(
-								(si) => si.installs__service[0],
-							);
-							expect(oldService).to.have.property(
-								'id',
-								ctx.fixtures.services.amd64_supervisor_app_service1.id,
-							);
-							expect(oldService).to.have.property('service_name', 'main');
-							expect(newService).to.have.property(
-								'id',
-								ctx.fixtures.services.amd64_supervisor_app_service2.id,
-							);
-							expect(newService).to.have.property(
-								'service_name',
-								'balena-supervisor',
-							);
+									} as const)
+									.expect(200);
+								expect(serviceInstalls).to.have.lengthOf(2);
+								const [oldService, newService] = serviceInstalls.map(
+									(si) => si.installs__service[0],
+								);
+								expect(oldService).to.have.property(
+									'id',
+									ctx.fixtures.services.amd64_supervisor_app_service1.id,
+								);
+								expect(oldService).to.have.property('service_name', 'main');
+								expect(newService).to.have.property(
+									'id',
+									ctx.fixtures.services.amd64_supervisor_app_service2.id,
+								);
+								expect(newService).to.have.property(
+									'service_name',
+									'balena-supervisor',
+								);
+							});
 						});
 					});
 				});

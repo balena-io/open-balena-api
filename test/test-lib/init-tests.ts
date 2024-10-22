@@ -5,6 +5,7 @@ import {
 	synchronizeContracts,
 } from '../../src/features/contracts/index.js';
 import { getUserFromToken } from './api-helpers.js';
+import * as config from '../../src/lib/config.js';
 
 const version = 'resin';
 
@@ -12,6 +13,10 @@ export const preInit = async () => {
 	augmentStatusAssertionError();
 	await import('./aws-mock.js');
 	await import('./contracts-mock.js');
+
+	config.TEST_MOCK_ONLY.ASYNC_TASKS_ENABLED = true;
+	config.TEST_MOCK_ONLY.ASYNC_TASK_CREATE_SERVICE_INSTALLS_ENABLED = true;
+	config.TEST_MOCK_ONLY.PINEJS_QUEUE_INTERVAL_MS = 100;
 
 	// override the interval used to emit the queue stats event...
 	const { DeviceOnlineStateManager } = await import(

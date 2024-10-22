@@ -13,6 +13,7 @@ import {
 	addImageToRelease,
 } from '../test-lib/api-helpers.js';
 import * as versions from '../test-lib/versions.js';
+import { expectToEventually } from '../test-lib/common.js';
 
 const version = 'resin';
 
@@ -177,19 +178,21 @@ export default () => {
 		});
 
 		it('should add any new service installs of the new release once the device gets unpinned', async function () {
-			const {
-				body: { d: serviceInstalls },
-			} = await supertest(admin)
-				.get(
-					`/${version}/service_install?$select=id&$expand=installs__service($select=service_name)&$filter=device eq ${device.id}`,
-				)
-				.expect(200);
+			await expectToEventually(async () => {
+				const {
+					body: { d: serviceInstalls },
+				} = await supertest(admin)
+					.get(
+						`/${version}/service_install?$select=id&$expand=installs__service($select=service_name)&$filter=device eq ${device.id}`,
+					)
+					.expect(200);
 
-			expect(serviceInstalls).to.be.an('array');
-			const serviceNames = serviceInstalls
-				.map((si: AnyObject) => si.installs__service[0].service_name)
-				.sort();
-			expect(serviceNames).to.deep.equal(['service-1', 'service-2']);
+				expect(serviceInstalls).to.be.an('array');
+				const serviceNames = serviceInstalls
+					.map((si: AnyObject) => si.installs__service[0].service_name)
+					.sort();
+				expect(serviceNames).to.deep.equal(['service-1', 'service-2']);
+			});
 		});
 
 		it('should pull the intended state', async function () {
