@@ -7,6 +7,7 @@ import { captureException } from '../../../infra/error-handling/index.js';
 
 import { postDevices } from '../../device-proxy/device-proxy.js';
 import type { Device } from '../../../balena-model.js';
+import { setTimeout } from 'timers/promises';
 
 interface CustomObject {
 	affectedDevices?: number[];
@@ -78,17 +79,31 @@ const addEnvHooks = <T extends keyof BalenaModel>(
 	};
 
 	const envVarHook: hooks.Hooks<'resin'> = {
-		POSTRUN: async (args) => {
-			const { req, request, tx } = args;
-			const devices =
-				(request.custom as CustomObject).affectedDevices ??
-				(await getAffectedDeviceIds(args));
-			if (!devices || devices.length === 0) {
-				// If we have no devices affected then no point triggering an update.
-				return;
-			}
-			// Send the update requests only after the tx is committed
-			tx.on('end', async () => {
+		POSTRUN: (args) => {
+			const { req, request } = args;
+			// Send the update requests in a separate read tx so that the writer has less work to do.
+			args.tx.on('end', async () => {
+				let devices = (request.custom as CustomObject).affectedDevices;
+				if (devices == null) {
+					// Since we use a new read transaction, we also add an artificial delay
+					// to make sure that the committed data have propagated to the readers.
+					// W/o this there would be a chance for POSTs to never trigger device updates
+					// in case the replication lag is high enough.
+					await setTimeout(1000);
+					devices = await sbvrUtils.db.readTransaction(async (tx) => {
+						return await getAffectedDeviceIds({
+							...args,
+							api: sbvrUtils.api.resin.clone({
+								passthrough: { req, tx },
+							}),
+							tx,
+						});
+					});
+				}
+				if (!devices || devices.length === 0) {
+					// If we have no devices affected then no point triggering an update.
+					return;
+				}
 				try {
 					await postDevices({
 						url: '/v1/update',
