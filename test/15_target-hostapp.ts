@@ -8,7 +8,7 @@ import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import type { Application, Device } from '../src/balena-model.js';
 import { expectResourceToMatch } from './test-lib/api-helpers.js';
-import { assertExists } from './test-lib/common.js';
+import { assertExists, expectToEventually } from './test-lib/common.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -344,35 +344,38 @@ export default () => {
 									fx.services[
 										isEsr ? 'intel-nuc-esr_service1' : 'intel-nuc_service1'
 									];
-								const { body: serviceInstalls } = await pineUser
-									.get({
-										resource: 'service_install',
-										options: {
-											$expand: {
-												installs__service: {
-													$select: ['id', 'service_name'],
+
+								await expectToEventually(async () => {
+									const { body: serviceInstalls } = await pineUser
+										.get({
+											resource: 'service_install',
+											options: {
+												$expand: {
+													installs__service: {
+														$select: ['id', 'service_name'],
+													},
 												},
-											},
-											$filter: {
-												device: registeredDevice.id,
-												installs__service: {
-													$any: {
-														$alias: 'is',
-														$expr: {
-															is: {
-																application: targetHostApp.id,
+												$filter: {
+													device: registeredDevice.id,
+													installs__service: {
+														$any: {
+															$alias: 'is',
+															$expr: {
+																is: {
+																	application: targetHostApp.id,
+																},
 															},
 														},
 													},
 												},
 											},
-										},
-									} as const)
-									.expect(200);
-								expect(serviceInstalls).to.have.lengthOf(1);
-								const [service] = serviceInstalls[0].installs__service;
-								expect(service).to.have.property('id', targetService.id);
-								expect(service).to.have.property('service_name', 'main');
+										} as const)
+										.expect(200);
+									expect(serviceInstalls).to.have.lengthOf(1);
+									const [service] = serviceInstalls[0].installs__service;
+									expect(service).to.have.property('id', targetService.id);
+									expect(service).to.have.property('service_name', 'main');
+								});
 							});
 						});
 					},
