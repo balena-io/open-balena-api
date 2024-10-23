@@ -4,7 +4,12 @@ import { EventEmitter } from 'events';
 import loki from 'loki-grpc-client';
 import type { types } from '@balena/pinejs';
 import { errors, sbvrUtils, permissions } from '@balena/pinejs';
-import { LOKI_HOST, LOKI_PORT } from '../../../../lib/config.js';
+import {
+	LOKI_READ_HOST,
+	LOKI_READ_PORT,
+	LOKI_WRITE_HOST,
+	LOKI_WRITE_PORT,
+} from '../../../../lib/config.js';
 import type {
 	DeviceLog,
 	DeviceLogsBackend,
@@ -37,6 +42,9 @@ const statusKeys = _.transform(
 	},
 	{},
 );
+
+const lokiQueryAddress = `${LOKI_READ_HOST}:${LOKI_READ_PORT}`;
+const lokiPushAddress = `${LOKI_WRITE_HOST}:${LOKI_WRITE_PORT}`;
 
 // Retries disabled so that writes to Redis are not delayed on Loki error
 const RETRIES_ENABLED = false;
@@ -115,11 +123,11 @@ export class LokiBackend implements DeviceLogsBackend {
 	constructor() {
 		this.subscriptions = new EventEmitter();
 		this.querier = new loki.QuerierClient(
-			`${LOKI_HOST}:${LOKI_PORT}`,
+			lokiQueryAddress,
 			loki.createInsecureCredentials(),
 		);
 		this.pusher = new loki.PusherClient(
-			`${LOKI_HOST}:${LOKI_PORT}`,
+			lokiPushAddress,
 			loki.createInsecureCredentials(),
 		);
 		this.tailCalls = new Map();
@@ -172,7 +180,7 @@ export class LokiBackend implements DeviceLogsBackend {
 					streams.push(...queryResponse.getStreamsList());
 				});
 				call.on('error', (error: Error & { details: string }) => {
-					const message = `Failed to query logs from ${LOKI_HOST}:${LOKI_PORT} for device ${ctx.uuid}`;
+					const message = `Failed to query logs from ${lokiQueryAddress} for device ${ctx.uuid}`;
 					captureException(error, message);
 					reject(new BadRequestError(message));
 				});
@@ -203,7 +211,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		} catch (err) {
 			incrementPublishCallFailedTotal();
 			incrementPublishLogMessagesDropped(countLogs);
-			let message = `Failed to publish logs to ${LOKI_HOST}:${LOKI_PORT} for device ${ctx.uuid}`;
+			let message = `Failed to publish logs to ${lokiPushAddress} for device ${ctx.uuid}`;
 			if (VERBOSE_ERROR_MESSAGE) {
 				message += JSON.stringify(
 					logs,
@@ -268,7 +276,7 @@ export class LokiBackend implements DeviceLogsBackend {
 				if (err.details !== 'Cancelled') {
 					captureException(
 						err,
-						`Loki tail call error from ${LOKI_HOST}:${LOKI_PORT} for device ${ctx.uuid}`,
+						`Loki tail call error from ${lokiQueryAddress} for device ${ctx.uuid}`,
 					);
 				}
 				this.subscriptions.removeListener(key, subscription);
