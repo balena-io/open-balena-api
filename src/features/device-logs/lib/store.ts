@@ -102,14 +102,7 @@ export const store: RequestHandler = async (req: Request, res: Response) => {
 		if (logs.length) {
 			const ctx = await getWriteContext(req);
 			// start publishing to both backends
-			await Promise.all([
-				getBackend().publish(ctx, logs),
-				shouldPublishToLoki()
-					? (await getLokiBackend()).publish(ctx, logs).catch((err) => {
-							captureException(err, 'Failed to publish logs to Loki');
-						})
-					: undefined,
-			]);
+			await publishBackend(getBackend(), ctx, logs);
 		}
 		res.status(201).end();
 	} catch (err) {
