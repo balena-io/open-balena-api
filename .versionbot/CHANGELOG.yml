@@ -1,4 +1,16 @@
 - commits:
+    - subject: Standardize loki write % handling
+      hash: d56a5e41e757d0329ae68a4cedb58d72ae927856
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 30.0.17
+  title: ""
+  date: 2024-10-23T15:13:58.861Z
+- commits:
     - subject: Simplify env.tmpl
       hash: 484d49f4bd5db03fd7c7c2e58c7ab5821ae56118
       body: ""
@@ -1041,6 +1053,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.5.0 to 9.0.4
@@ -1057,6 +1070,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -1107,6 +1121,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -1586,6 +1601,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2114,6 +2130,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -2180,6 +2197,7 @@
 
 
 
+
                                                                         As balena-lint
                                                                         rejects `new
                                                                         Boolean()`, `new
@@ -2202,6 +2220,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2258,6 +2277,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2359,6 +2379,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.4.0 to 8.4.1
@@ -2388,6 +2409,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2443,6 +2465,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -2471,6 +2494,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2538,6 +2562,7 @@
 
 
 
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -2572,6 +2597,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2736,6 +2762,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2975,6 +3002,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -2997,6 +3025,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3052,6 +3081,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3185,6 +3215,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -3207,6 +3238,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3262,6 +3294,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5416,6 +5449,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -5438,6 +5472,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5493,6 +5528,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5636,6 +5672,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -5664,6 +5701,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5729,6 +5767,7 @@
 
 
 
+
                                                                 We know what type
                                                                 they return and they
                                                                 should be explicitly
@@ -5763,6 +5802,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5926,6 +5966,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
