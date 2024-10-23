@@ -10,7 +10,12 @@ import {
 
 import type { DeviceLog, DeviceLogsBackend, LogContext } from './struct.js';
 import { StreamState } from './struct.js';
-import { addRetentionLimit, getBackend } from './config.js';
+import {
+	addRetentionLimit,
+	getBackend,
+	getLokiBackend,
+	shouldReadFromLoki,
+} from './config.js';
 import { getNanoTimestamp } from '../../../lib/utils.js';
 import type { SetupOptions } from '../../../index.js';
 import {
@@ -24,6 +29,9 @@ import {
 const { NotFoundError } = errors;
 const { api } = sbvrUtils;
 
+const getReadBackend = async () =>
+	shouldReadFromLoki() ? await getLokiBackend() : getBackend();
+
 export const read =
 	(
 		onLogReadStreamInitialized: SetupOptions['onLogReadStreamInitialized'],
@@ -36,7 +44,7 @@ export const read =
 				onLogReadStreamInitialized?.(req);
 			} else {
 				const logs = await getHistory(
-					getBackend(),
+					await getReadBackend(),
 					ctx,
 					req,
 					LOGS_DEFAULT_HISTORY_COUNT,
@@ -57,7 +65,7 @@ async function handleStreamingRead(
 	req: Request,
 	res: Response,
 ): Promise<void> {
-	const backend = getBackend();
+	const backend = await getReadBackend();
 	let state: StreamState = StreamState.Buffering;
 	let dropped = 0;
 	const buffer: DeviceLog[] = [];

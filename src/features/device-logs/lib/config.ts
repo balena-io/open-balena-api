@@ -5,6 +5,7 @@ import { RedisBackend } from './backends/redis.js';
 import {
 	LOGS_DEFAULT_RETENTION_LIMIT,
 	LOKI_READ_HOST,
+	LOKI_READ_PCT,
 	LOKI_WRITE_HOST,
 	LOKI_WRITE_PCT,
 } from '../../../lib/config.js';
@@ -13,6 +14,8 @@ export const LOKI_ENABLED =
 	LOKI_READ_HOST && LOKI_WRITE_HOST && LOKI_WRITE_PCT > 0;
 export const shouldPublishToLoki = () =>
 	LOKI_ENABLED && LOKI_WRITE_PCT > Math.random() * 100;
+export const shouldReadFromLoki = () =>
+	LOKI_ENABLED && LOKI_READ_PCT > Math.random() * 100;
 
 export function addRetentionLimit(
 	ctx: Omit<LogContext, 'retention_limit'>,

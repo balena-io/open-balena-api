@@ -305,6 +305,14 @@ export const LOKI_WRITE_PORT = intVar('LOKI_WRITE_PORT', LOKI_PORT);
 export const LOKI_READ_PORT = intVar('LOKI_READ_PORT', LOKI_PORT);
 // control the percent of logs written to Loki while scaling up
 export const LOKI_WRITE_PCT = intVar('LOKI_WRITE_PCT', 0);
+/**
+ * This is the percent of log read requests that will go to loki, however the number of logs fetched from loki
+ * will vary based upon the type of those read requests, eg it could be a long streaming request or a one-off fetch
+ */
+export const LOKI_READ_PCT = intVar('LOKI_READ_PCT', 0);
+if (LOKI_WRITE_PCT < 100 && LOKI_READ_PCT > 0) {
+	throw new Error('LOKI_READ_PCT can only be set if LOKI_WRITE_PCT is 100');
+}
 
 export const NDJSON_CTYPE = 'application/x-ndjson';
 
