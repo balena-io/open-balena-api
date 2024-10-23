@@ -172,7 +172,10 @@ export const EXTERNAL_HTTP_TIMEOUT_MS = intVar(
 );
 export const IMAGE_STORAGE_BUCKET = requiredVar('IMAGE_STORAGE_BUCKET');
 export const IMAGE_STORAGE_ENDPOINT = requiredVar('IMAGE_STORAGE_ENDPOINT');
-export const IMAGE_STORAGE_PREFIX = requiredVar('IMAGE_STORAGE_PREFIX');
+export const IMAGE_STORAGE_PREFIX = optionalVar(
+	'IMAGE_STORAGE_PREFIX',
+	'images',
+);
 export const IMAGE_STORAGE_ACCESS_KEY = optionalVar('IMAGE_STORAGE_ACCESS_KEY');
 export const IMAGE_STORAGE_SECRET_KEY = optionalVar('IMAGE_STORAGE_SECRET_KEY');
 export const IMAGE_STORAGE_FORCE_PATH_STYLE = boolVar(
