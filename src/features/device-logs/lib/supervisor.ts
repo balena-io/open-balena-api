@@ -9,7 +9,7 @@ const MAX_LOGS_PER_BATCH = 10;
 
 export class Supervisor {
 	public convertLogs(logs: SupervisorLog[]): DeviceLog[] {
-		if (logs.length > MAX_LOGS_PER_BATCH) {
+		if (Array.isArray(logs) && logs.length > MAX_LOGS_PER_BATCH) {
 			throw new errors.BadRequestError(
 				`Batches cannot include more than ${MAX_LOGS_PER_BATCH} logs`,
 			);
