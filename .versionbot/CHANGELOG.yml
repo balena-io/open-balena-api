@@ -1,4 +1,24 @@
 - commits:
+    - subject: Add `LOKI_READ_PCT` to enable reading logs from loki
+      hash: a34b73b1f75e1409354b2b33dbecd7c65d9fb9e3
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+    - subject: Only get the device logs backend once for streaming read
+      hash: 8a1c5afdec31ff681d135d92e4ce5fe806fa279d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 30.1.0
+  title: ""
+  date: 2024-10-24T11:45:32.924Z
+- commits:
     - subject: Update dependencies
       hash: c5d388814c7aee97f90a01adb0bebe61a918e6f2
       body: |
@@ -1189,6 +1209,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.5.0 to 9.0.4
@@ -1205,6 +1226,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -1257,6 +1279,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -1738,6 +1761,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2270,6 +2294,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -2338,6 +2363,7 @@
 
 
 
+
                                                                         As balena-lint
                                                                         rejects `new
                                                                         Boolean()`, `new
@@ -2360,6 +2386,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2418,6 +2445,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2523,6 +2551,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.4.0 to 8.4.1
@@ -2552,6 +2581,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2611,6 +2641,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -2639,6 +2670,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2710,6 +2742,7 @@
 
 
 
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -2744,6 +2777,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2910,6 +2944,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3153,6 +3188,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -3175,6 +3211,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3232,6 +3269,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3369,6 +3407,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -3391,6 +3430,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3448,6 +3488,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5606,6 +5647,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -5628,6 +5670,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5685,6 +5728,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5832,6 +5876,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -5860,6 +5905,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5929,6 +5975,7 @@
 
 
 
+
                                                                 We know what type
                                                                 they return and they
                                                                 should be explicitly
@@ -5963,6 +6010,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6128,6 +6176,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
