@@ -8,9 +8,14 @@ import {
 	handleHttpErrors,
 } from '../../../infra/error-handling/index.js';
 
-import type { DeviceLog, LogContext } from './struct.js';
+import type { DeviceLog, DeviceLogsBackend, LogContext } from './struct.js';
 import { StreamState } from './struct.js';
-import { addRetentionLimit, getBackend } from './config.js';
+import {
+	addRetentionLimit,
+	getBackend,
+	getLokiBackend,
+	shouldReadFromLoki,
+} from './config.js';
 import { getNanoTimestamp } from '../../../lib/utils.js';
 import type { SetupOptions } from '../../../index.js';
 import {
@@ -24,6 +29,9 @@ import {
 const { NotFoundError } = errors;
 const { api } = sbvrUtils;
 
+const getReadBackend = async () =>
+	shouldReadFromLoki() ? await getLokiBackend() : getBackend();
+
 export const read =
 	(
 		onLogReadStreamInitialized: SetupOptions['onLogReadStreamInitialized'],
@@ -35,7 +43,12 @@ export const read =
 				await handleStreamingRead(ctx, req, res);
 				onLogReadStreamInitialized?.(req);
 			} else {
-				const logs = await getHistory(ctx, req, LOGS_DEFAULT_HISTORY_COUNT);
+				const logs = await getHistory(
+					await getReadBackend(),
+					ctx,
+					req,
+					LOGS_DEFAULT_HISTORY_COUNT,
+				);
 				res.json(logs);
 			}
 		} catch (err) {
@@ -52,6 +65,7 @@ async function handleStreamingRead(
 	req: Request,
 	res: Response,
 ): Promise<void> {
+	const backend = await getReadBackend();
 	let state: StreamState = StreamState.Buffering;
 	let dropped = 0;
 	const buffer: DeviceLog[] = [];
@@ -128,7 +142,7 @@ async function handleStreamingRead(
 	function close() {
 		if (state !== StreamState.Closed) {
 			state = StreamState.Closed;
-			getBackend().unsubscribe(ctx, onLog);
+			backend.unsubscribe(ctx, onLog);
 		}
 		clearInterval(heartbeatInterval);
 		heartbeatInterval = undefined;
@@ -138,9 +152,14 @@ async function handleStreamingRead(
 	onFinished(res, close);
 
 	// Subscribe in parallel so we don't miss logs in between
-	getBackend().subscribe(ctx, onLog);
+	backend.subscribe(ctx, onLog);
 	try {
-		let logs = await getHistory(ctx, req, LOGS_DEFAULT_SUBSCRIPTION_COUNT);
+		let logs = await getHistory(
+			backend,
+			ctx,
+			req,
+			LOGS_DEFAULT_SUBSCRIPTION_COUNT,
+		);
 
 		// We need this cast as typescript narrows to `StreamState.Buffering`
 		// because it ignores that during the `await` break it can be changed
@@ -199,6 +218,7 @@ function getCount(
 }
 
 function getHistory(
+	backend: DeviceLogsBackend,
 	ctx: LogContext,
 	{ query }: Request,
 	defaultCount: number,
@@ -211,7 +231,7 @@ function getHistory(
 	}
 
 	// TODO: Implement `?since` filter here too in the next phase
-	return getBackend().history(ctx, count);
+	return backend.history(ctx, count);
 }
 
 async function getReadContext(req: Request): Promise<LogContext> {
