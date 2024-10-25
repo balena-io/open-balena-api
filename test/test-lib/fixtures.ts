@@ -11,9 +11,9 @@ import type { Headers } from 'request';
 import { API_HOST } from '../../src/lib/config.js';
 import { requestAsync } from '../../src/infra/request-promise/index.js';
 import { supertest } from './supertest.js';
-import type { Organization } from '../../src/balena-model.js';
+import type { Device, Organization } from '../../src/balena-model.js';
 import type Model from '../../src/balena-model.js';
-import { assertExists } from './common.js';
+import { assertExists, expectToEventually, waitFor } from './common.js';
 
 const { api } = sbvrUtils;
 const version = 'resin';
@@ -508,15 +508,18 @@ const loaders: types.Dictionary<LoaderFunc> = {
 			logErrorAndThrow(`Could not find service: ${jsonData.service}`);
 		}
 
-		const si = await api.resin.get({
-			resource: 'service_install',
-			passthrough: { req: permissions.rootRead },
-			id: {
-				device: device.id,
-				installs__service: service.id,
-			},
+		const si = await expectToEventually(async () => {
+			const $si = await api.resin.get({
+				resource: 'service_install',
+				passthrough: { req: permissions.rootRead },
+				id: {
+					device: device.id,
+					installs__service: service.id,
+				},
+			});
+			assertExists($si);
+			return $si;
 		});
-		assertExists(si);
 
 		return await createResource({
 			resource: 'device_service_environment_variable',
@@ -625,7 +628,28 @@ const deleteResource =
 // The order of the properties dictates the order the unloaders run.
 const unloaders: Dictionary<(obj: { id: number }) => PromiseLike<void>> = {
 	// Devices need to be deleted before their linked hostApp & supervisor releases/apps
-	devices: deleteResource('device'),
+	devices: async (device: Pick<Device['Read'], 'id'>) => {
+		// Make sure that all service installs are completed before deleting devices
+		await waitFor({
+			checkFn: async () => {
+				const queudSiCreations = await sbvrUtils.api.tasks.get({
+					resource: 'task',
+					passthrough: { req: permissions.rootRead },
+					options: {
+						$count: {
+							$filter: {
+								is_executed_by__handler: 'create_service_installs',
+								status: 'queued',
+							},
+						},
+					},
+				});
+				return queudSiCreations === 0;
+			},
+		});
+
+		await deleteResource('device')(device);
+	},
 	applications: deleteResource('application'),
 };
 

@@ -101,3 +101,21 @@ export const itExpectsError = (
 export function assertExists(v: unknown): asserts v is NonNullable<typeof v> {
 	expect(v).to.exist;
 }
+
+export async function expectToEventually<T>(
+	fn: () => Promise<T>,
+	attempts = 20,
+	interval = 100,
+): Promise<T> {
+	for (let i = 0; i < attempts; i++) {
+		try {
+			return await fn();
+
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars -- So that the interface is already well defined.
+		} catch (_e) {
+			console.log(`⌚  Waiting ${interval}ms (${i}/${attempts})...`);
+			await setTimeout(interval);
+		}
+	}
+	throw new Error('Expectation failed');
+}

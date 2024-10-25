@@ -2,13 +2,62 @@ import _ from 'lodash';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import type { Filter, FilterObj } from 'pinejs-client-core';
 import type { Device, Release } from '../../../balena-model.js';
+import type { CreateServiceInstallsTaskParams } from '../tasks/service-installs.js';
+import {
+	ASYNC_TASK_ATTEMPT_LIMIT,
+	ASYNC_TASK_CREATE_SERVICE_INSTALLS_BATCH_SIZE,
+	ASYNC_TASK_CREATE_SERVICE_INSTALLS_ENABLED,
+	ASYNC_TASKS_ENABLED,
+} from '../../../lib/config.js';
+
+const createServiceInstallsAsync = async (
+	api: typeof sbvrUtils.api.resin,
+	deviceFilterOrIds: number[] | FilterObj<Device['Read']>,
+	tx: Tx,
+): Promise<void> => {
+	const deviceIds = Array.isArray(deviceFilterOrIds)
+		? deviceFilterOrIds
+		: (
+				await api.get({
+					resource: 'device',
+					options: {
+						$select: 'id',
+						$filter: deviceFilterOrIds,
+					},
+				})
+			).map(({ id }) => id);
+
+	await Promise.all(
+		_.chunk(deviceIds, ASYNC_TASK_CREATE_SERVICE_INSTALLS_BATCH_SIZE).map(
+			async (deviceBatch) => {
+				return await sbvrUtils.api.tasks.post({
+					resource: 'task',
+					passthrough: { req: permissions.root, tx },
+					body: {
+						is_executed_by__handler: 'create_service_installs',
+						is_executed_with__parameter_set: {
+							devices: deviceBatch,
+						} satisfies CreateServiceInstallsTaskParams,
+						attempt_limit: ASYNC_TASK_ATTEMPT_LIMIT,
+					},
+				});
+			},
+		),
+	);
+};
 
 const createReleaseServiceInstalls = async (
 	api: typeof sbvrUtils.api.resin,
 	deviceFilterOrIds: number[] | FilterObj<Device['Read']>,
 	releaseFilter: Filter<Release['Read']>,
+	tx: Tx,
 ): Promise<void> => {
 	if (Array.isArray(deviceFilterOrIds) && deviceFilterOrIds.length === 0) {
+		return;
+	}
+
+	if (ASYNC_TASKS_ENABLED && ASYNC_TASK_CREATE_SERVICE_INSTALLS_ENABLED) {
+		await createServiceInstallsAsync(api, deviceFilterOrIds, tx);
 		return;
 	}
 
@@ -120,15 +169,21 @@ const createAppServiceInstalls = async (
 	api: typeof sbvrUtils.api.resin,
 	appId: number,
 	deviceIds: number[],
+	tx: Tx,
 ): Promise<void> =>
-	createReleaseServiceInstalls(api, deviceIds, {
-		should_be_running_on__application: {
-			$any: {
-				$alias: 'a',
-				$expr: { a: { id: appId } },
+	createReleaseServiceInstalls(
+		api,
+		deviceIds,
+		{
+			should_be_running_on__application: {
+				$any: {
+					$alias: 'a',
+					$expr: { a: { id: appId } },
+				},
 			},
 		},
-	});
+		tx,
+	);
 
 const deleteServiceInstallsForCurrentApp = (
 	api: typeof sbvrUtils.api.resin,
@@ -171,7 +226,7 @@ const deleteServiceInstallsForCurrentApp = (
 	});
 
 hooks.addPureHook('PATCH', 'resin', 'application', {
-	POSTRUN: async ({ api, request }) => {
+	POSTRUN: async ({ api, request, tx }) => {
 		const affectedIds = request.affectedIds!;
 		if (
 			request.values.should_be_running__release != null &&
@@ -187,6 +242,7 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 				{
 					id: request.values.should_be_running__release,
 				},
+				tx,
 			);
 		}
 	},
@@ -203,14 +259,19 @@ hooks.addPureHook('POST', 'resin', 'device', {
 
 		const app = request.values.belongs_to__application;
 		if (app != null) {
-			await createAppServiceInstalls(rootApi, app, [deviceId]);
+			await createAppServiceInstalls(rootApi, app, [deviceId], tx);
 		}
 
 		const release = request.values.is_pinned_on__release;
 		if (release != null) {
-			await createReleaseServiceInstalls(api, [deviceId], {
-				id: release,
-			});
+			await createReleaseServiceInstalls(
+				api,
+				[deviceId],
+				{
+					id: release,
+				},
+				tx,
+			);
 		}
 	},
 });
@@ -226,13 +287,13 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		const affectedIds = await sbvrUtils.getAffectedIds(args);
 		if (affectedIds.length !== 0) {
 			await deleteServiceInstallsForCurrentApp(args.api, newAppId, affectedIds);
-			await createAppServiceInstalls(args.api, newAppId, affectedIds);
+			await createAppServiceInstalls(args.api, newAppId, affectedIds, args.tx);
 		}
 	},
 });
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
-	POSTRUN: async ({ api, request }) => {
+	POSTRUN: async ({ api, request, tx }) => {
 		const affectedIds = request.affectedIds!;
 		if (
 			request.values.is_pinned_on__release !== undefined &&
@@ -241,9 +302,14 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			// If the device was preloaded, and then pinned, service_installs do not exist
 			// for this device+release combination. We need to create these
 			if (request.values.is_pinned_on__release != null) {
-				await createReleaseServiceInstalls(api, affectedIds, {
-					id: request.values.is_pinned_on__release,
-				});
+				await createReleaseServiceInstalls(
+					api,
+					affectedIds,
+					{
+						id: request.values.is_pinned_on__release,
+					},
+					tx,
+				);
 			} else {
 				const devices = (await api.get({
 					resource: 'device',
@@ -267,6 +333,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 							api,
 							devicesByApp[appId][0].belongs_to__application.__id,
 							devicesByApp[appId].map((d) => d.id),
+							tx,
 						),
 					),
 				);
@@ -291,22 +358,32 @@ const addSystemAppServiceInstallHooks = (
 				const rootApi = api.clone({
 					passthrough: { tx, req: permissions.root },
 				});
-				await createReleaseServiceInstalls(rootApi, [deviceId], {
-					id: releaseId,
-				});
+				await createReleaseServiceInstalls(
+					rootApi,
+					[deviceId],
+					{
+						id: releaseId,
+					},
+					tx,
+				);
 			}
 		},
 	});
 
 	hooks.addPureHook('PATCH', 'resin', 'device', {
-		POSTRUN: async ({ api, request }) => {
+		POSTRUN: async ({ api, request, tx }) => {
 			const affectedIds = request.affectedIds!;
 			const releaseId = request.values[fieldName];
 			// Create supervisor/hostApp service installs when the supervisor/hostApp is pinned on device update
 			if (releaseId != null && affectedIds.length !== 0) {
-				await createReleaseServiceInstalls(api, affectedIds, {
-					id: releaseId,
-				});
+				await createReleaseServiceInstalls(
+					api,
+					affectedIds,
+					{
+						id: releaseId,
+					},
+					tx,
+				);
 			}
 		},
 	});
