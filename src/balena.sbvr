@@ -522,7 +522,7 @@ Fact type: device has uuid
 Fact type: device has local id
 	Necessity: each device has at most one local id.
 Fact type: device has device name
-	Necessity: each device has at most one device name.
+	Necessity: each device has exactly one device name.
 Fact type: device has note
 	Necessity: each device has at most one note.
 Fact type: device is of device type

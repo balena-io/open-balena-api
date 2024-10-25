@@ -363,7 +363,7 @@ const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
 
 	const state: StateV3 = {
 		[uuid]: {
-			name: device.device_name!,
+			name: device.device_name,
 			apps,
 			config,
 		},

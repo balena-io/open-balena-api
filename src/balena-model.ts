@@ -685,7 +685,7 @@ export interface Device {
 		changed_api_heartbeat_state_on__date: Types['Date Time']['Read'] | null;
 		uuid: Types['Text']['Read'];
 		local_id: Types['Short Text']['Read'] | null;
-		device_name: Types['Short Text']['Read'] | null;
+		device_name: Types['Short Text']['Read'];
 		note: Types['Text']['Read'] | null;
 		is_of__device_type:
 			| { __id: DeviceType['Read']['id'] }
@@ -790,7 +790,7 @@ export interface Device {
 		changed_api_heartbeat_state_on__date: Types['Date Time']['Write'] | null;
 		uuid: Types['Text']['Write'];
 		local_id: Types['Short Text']['Write'] | null;
-		device_name: Types['Short Text']['Write'] | null;
+		device_name: Types['Short Text']['Write'];
 		note: Types['Text']['Write'] | null;
 		is_of__device_type: DeviceType['Write']['id'];
 		belongs_to__application: Application['Write']['id'] | null;
