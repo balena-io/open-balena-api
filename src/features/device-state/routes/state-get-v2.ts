@@ -252,7 +252,7 @@ const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 	const userAppFromApi = device.belongs_to__application[0];
 
 	const local: StateV2['local'] = {
-		name: device.device_name!,
+		name: device.device_name,
 		config,
 		apps: {
 			[userAppFromApi.id]: userApp,
