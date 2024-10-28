@@ -525,7 +525,7 @@ Fact type: device has uuid
 Fact type: device has local id
 	Necessity: each device has at most one local id.
 Fact type: device has device name
-	Necessity: each device has at most one device name.
+	Necessity: each device has exactly one device name.
 Fact type: device has note
 	Necessity: each device has at most one note.
 Fact type: device is of device type
@@ -881,4 +881,3 @@ Rule: It is necessary that each release that should operate a device that is of 
 Rule: It is necessary that each release that should manage a device, has a status that is equal to "success" and has a semver major that is greater than 0 or has a semver minor that is greater than 0 or has a semver patch that is greater than 0.
 -- The first part of this rule is meant to prevent accidentally setting a host extension as a supervisor (i.e., another public + non-host app)
 Rule: It is necessary that each release that should manage a device that is of a device type1, belongs to an application that is public and is not host and has a slug that is equal to "balena_os/aarch64-supervisor" or "balena_os/amd64-supervisor" or "balena_os/armv7hf-supervisor" or "balena_os/i386-supervisor" or "balena_os/i386-nlp-supervisor" or "balena_os/rpi-supervisor" and is for a device type2 that is of a cpu architecture that is supported by the device type1.
-
