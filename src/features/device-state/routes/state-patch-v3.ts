@@ -355,8 +355,6 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 					// to update b/c of length violation of 255 (SBVR SHORT TEXT type) for ip and mac address.
 					// sbvr-types does not export SHORT TEXT VARCHAR length 255 to import.
 					deviceBody = truncateShortTextFields(deviceBody);
-					// If we're updating anyway then ensure the metrics data is included
-					deviceBody = { ...deviceBody, ...metricsBody };
 					updateFns.push(async (resinApiTx) => {
 						await resinApiTx.patch({
 							resource: 'device',
@@ -364,7 +362,9 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 							options: {
 								$filter: { $not: deviceBody },
 							},
-							body: deviceBody,
+							// If we're updating anyway then ensure the metrics data is included
+							// but don't use it as a factor as to whether we should actually write or not
+							body: { ...deviceBody, ...metricsBody },
 						});
 					});
 				}
