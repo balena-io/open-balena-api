@@ -4,6 +4,11 @@ import {
 	ASYNC_TASK_ATTEMPT_LIMIT,
 	ASYNC_TASK_CREATE_SERVICE_INSTALLS_MAX_TIME_MS,
 } from '../../../lib/config.js';
+import {
+	incrementServiceInstalls,
+	incrementServiceInstallsDevice,
+	updateServiceInstallDurationTime,
+} from '../metrics.js';
 
 const schema = {
 	type: 'object',
@@ -26,12 +31,15 @@ tasks.addTaskHandler(
 	'create_service_installs',
 	async (options) => {
 		try {
+			const start = Date.now();
 			const totalSiCreated = await createServiceInstalls(
 				options.params as CreateServiceInstallsTaskParams,
 			);
-			console.info(
-				`[service-install-task] Created ${totalSiCreated} service installs`,
-			);
+
+			updateServiceInstallDurationTime(Date.now() - start);
+			incrementServiceInstallsDevice(options.params.devices.length);
+			incrementServiceInstalls(totalSiCreated);
+
 			return {
 				status: 'succeeded',
 			};
