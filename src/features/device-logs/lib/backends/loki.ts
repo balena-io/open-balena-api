@@ -31,6 +31,7 @@ import {
 	incrementPublishCallTotal,
 } from './metrics.js';
 import { setTimeout } from 'timers/promises';
+import { omitNanoTimestamp } from '../config.js';
 
 const { BadRequestError } = errors;
 
@@ -213,11 +214,10 @@ export class LokiBackend implements DeviceLogsBackend {
 			incrementPublishLogMessagesDropped(countLogs);
 			let message = `Failed to publish logs to ${lokiPushAddress} for device ${ctx.uuid}`;
 			if (VERBOSE_ERROR_MESSAGE) {
-				message += JSON.stringify(
-					logs,
-					(key, value) => (key === 'nanoTimestamp' ? undefined : value),
-					'\t',
-				).substring(0, 1000);
+				message += JSON.stringify(logs, omitNanoTimestamp, '\t').substring(
+					0,
+					1000,
+				);
 			}
 			captureException(err, message);
 			throw new BadRequestError(
@@ -372,9 +372,7 @@ export class LokiBackend implements DeviceLogsBackend {
 			timestamp.setSeconds(Math.floor(Number(log.nanoTimestamp / 1000000000n)));
 			timestamp.setNanos(Number(log.nanoTimestamp % 1000000000n));
 			// store log line as JSON
-			const logJson = JSON.stringify(log, (key, value) =>
-				key === 'nanoTimestamp' ? undefined : value,
-			);
+			const logJson = JSON.stringify(log, omitNanoTimestamp);
 			// create entry with labels, line and timestamp
 			const entry = new loki.EntryAdapter()
 				.setLine(logJson)

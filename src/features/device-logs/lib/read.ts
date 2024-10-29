@@ -14,6 +14,7 @@ import {
 	addRetentionLimit,
 	getBackend,
 	getLokiBackend,
+	omitNanoTimestamp,
 	shouldReadFromLoki,
 } from './config.js';
 import { getNanoTimestamp } from '../../../lib/utils.js';
@@ -49,7 +50,10 @@ export const read =
 					req,
 					LOGS_DEFAULT_HISTORY_COUNT,
 				);
-				res.json(logs);
+
+				res
+					.set('Content-Type', 'application/json')
+					.send(JSON.stringify(logs, omitNanoTimestamp));
 			}
 		} catch (err) {
 			if (handleHttpErrors(req, res, err)) {
@@ -93,11 +97,7 @@ async function handleStreamingRead(
 			dropped++;
 		} else if (state !== StreamState.Closed) {
 			if (
-				!write(
-					JSON.stringify(log, (key, value) =>
-						key === 'nanoTimestamp' ? undefined : value,
-					) + '\n',
-				) &&
+				!write(JSON.stringify(log, omitNanoTimestamp) + '\n') &&
 				state === StreamState.Writable
 			) {
 				state = StreamState.Saturated;
