@@ -181,7 +181,7 @@ export class LokiBackend implements DeviceLogsBackend {
 					streams.push(...queryResponse.getStreamsList());
 				});
 				call.on('error', (error: Error & { details: string }) => {
-					const message = `Failed to query logs from ${lokiQueryAddress} for device ${ctx.uuid}`;
+					const message = `Failed to query logs for device ${ctx.uuid}`;
 					captureException(error, message);
 					reject(new BadRequestError(message));
 				});
