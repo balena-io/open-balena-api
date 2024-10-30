@@ -132,6 +132,8 @@ function handleStoreErrors(req: Request, res: Response, err: Error) {
 	res.status(500).end();
 }
 
+const lokiBackend = LOKI_ENABLED ? await getLokiBackend() : undefined;
+
 const publishBackend = LOKI_ENABLED
 	? async (
 			backend: DeviceLogsBackend,
@@ -140,7 +142,7 @@ const publishBackend = LOKI_ENABLED
 		) => {
 			const publishingToRedis = backend.publish(ctx, buffer);
 			const publishingToLoki = shouldPublishToLoki()
-				? (await getLokiBackend()).publish(ctx, buffer).catch((err) => {
+				? lokiBackend?.publish(ctx, buffer).catch((err) => {
 						captureException(err, 'Failed to publish logs to Loki');
 					})
 				: undefined;
