@@ -298,11 +298,10 @@ export const REDIS_LOGS_COMPRESSION_ENABLED = boolVar(
 	true,
 );
 const LOKI_HOST = optionalVar('LOKI_HOST');
-export const LOKI_WRITE_HOST = optionalVar('LOKI_WRITE_HOST', LOKI_HOST);
-export const LOKI_READ_HOST = optionalVar('LOKI_READ_HOST', LOKI_HOST);
-const LOKI_PORT = intVar('LOKI_PORT', 9095);
-export const LOKI_WRITE_PORT = intVar('LOKI_WRITE_PORT', LOKI_PORT);
-export const LOKI_READ_PORT = intVar('LOKI_READ_PORT', LOKI_PORT);
+export const LOKI_INGESTER_HOST = optionalVar('LOKI_INGESTER_HOST', LOKI_HOST);
+export const LOKI_QUERY_HOST = optionalVar('LOKI_QUERY_HOST', LOKI_HOST);
+export const LOKI_INGESTER_GRPC_PORT = intVar('LOKI_INGESTER_GRPC_PORT', 9095);
+export const LOKI_QUERY_HTTP_PORT = intVar('LOKI_QUERY_HTTP_PORT', 3100);
 // control the percent of logs written to Loki while scaling up
 export const LOKI_WRITE_PCT = intVar('LOKI_WRITE_PCT', 0);
 /**
