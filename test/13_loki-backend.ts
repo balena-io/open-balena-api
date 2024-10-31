@@ -63,7 +63,7 @@ export default () => {
 				'should be 1 stream since all logs share the same device id',
 			);
 			// @ts-expect-error usage of private function
-			const logsFromStreams = loki.fromStreamsToDeviceLogs(streams);
+			const logsFromStreams = streams.flatMap(loki.fromStreamToDeviceLogs);
 			expect(logsFromStreams).to.deep.equal(logs);
 		});
 

@@ -5,10 +5,10 @@ import loki from 'loki-grpc-client';
 import type { types } from '@balena/pinejs';
 import { errors, sbvrUtils, permissions } from '@balena/pinejs';
 import {
-	LOKI_READ_HOST,
-	LOKI_READ_PORT,
-	LOKI_WRITE_HOST,
-	LOKI_WRITE_PORT,
+	LOKI_QUERY_HOST,
+	LOKI_QUERY_HTTP_PORT,
+	LOKI_INGESTER_HOST,
+	LOKI_INGESTER_GRPC_PORT,
 } from '../../../../lib/config.js';
 import type {
 	DeviceLog,
@@ -32,6 +32,7 @@ import {
 } from './metrics.js';
 import { setTimeout } from 'timers/promises';
 import { omitNanoTimestamp } from '../config.js';
+import { requestAsync } from '../../../../infra/request-promise/index.js';
 
 const { BadRequestError } = errors;
 
@@ -44,8 +45,8 @@ const statusKeys = _.transform(
 	{},
 );
 
-const lokiQueryAddress = `${LOKI_READ_HOST}:${LOKI_READ_PORT}`;
-const lokiPushAddress = `${LOKI_WRITE_HOST}:${LOKI_WRITE_PORT}`;
+const lokiQueryAddress = `${LOKI_QUERY_HOST}:${LOKI_QUERY_HTTP_PORT}`;
+const lokiIngesterAddress = `${LOKI_INGESTER_HOST}:${LOKI_INGESTER_GRPC_PORT}`;
 
 // Retries disabled so that writes to Redis are not delayed on Loki error
 const RETRIES_ENABLED = false;
@@ -124,11 +125,11 @@ export class LokiBackend implements DeviceLogsBackend {
 	constructor() {
 		this.subscriptions = new EventEmitter();
 		this.querier = new loki.QuerierClient(
-			lokiQueryAddress,
+			lokiIngesterAddress,
 			loki.createInsecureCredentials(),
 		);
 		this.pusher = new loki.PusherClient(
-			lokiPushAddress,
+			lokiIngesterAddress,
 			loki.createInsecureCredentials(),
 		);
 		this.tailCalls = new Map();
@@ -161,40 +162,39 @@ export class LokiBackend implements DeviceLogsBackend {
 	 */
 	public async history($ctx: LogContext, count: number): Promise<DeviceLog[]> {
 		const ctx = await assertLokiLogContext($ctx);
-		const oneHourAgo = new Date(Date.now() - 10000 * 60);
 
-		const queryRequest = new loki.QueryRequest();
-		queryRequest.setSelector(this.getDeviceQuery(ctx));
-		queryRequest.setLimit(Number.isFinite(count) ? count : 1000);
-		queryRequest.setStart(createTimestampFromDate(oneHourAgo));
-		queryRequest.setEnd(createTimestampFromDate());
-		queryRequest.setDirection(loki.Direction.BACKWARD);
-
-		const streams: loki.StreamAdapter[] = [];
-		const call = this.querier.query(
-			queryRequest,
-			loki.createOrgIdMetadata(String(ctx.belongs_to__application)),
-		);
-		const responseStreams: loki.StreamAdapter[] = await new Promise(
-			(resolve, reject) => {
-				call.on('data', (queryResponse: loki.QueryResponse) => {
-					streams.push(...queryResponse.getStreamsList());
-				});
-				call.on('error', (error: Error & { details: string }) => {
-					const message = `Failed to query logs for device ${ctx.uuid}`;
-					captureException(error, message);
-					reject(new BadRequestError(message));
-				});
-				call.on('end', () => {
-					resolve(streams);
-				});
+		const [, body] = await requestAsync({
+			url: `http://${lokiQueryAddress}/loki/api/v1/query_range`,
+			headers: {
+				'X-Scope-OrgID': `${ctx.belongs_to__application}`,
 			},
-		);
-		return _.orderBy(
-			this.fromStreamsToDeviceLogs(responseStreams),
-			'nanoTimestamp',
-			'asc',
-		);
+			qs: {
+				query: this.getDeviceQuery(ctx),
+				limit: Number.isFinite(count) ? count : 1000,
+				since: '30d',
+			},
+			json: true,
+		});
+
+		const logs = (
+			body.data.result as Array<{
+				values: Array<[timestamp: string, logLine: string]>;
+			}>
+		)
+			.flatMap(({ values }) => values)
+			.map(([timestamp, logLine]) => {
+				const log = JSON.parse(logLine);
+				log.nanoTimestamp = BigInt(timestamp);
+				if (log.version !== VERSION) {
+					throw new Error(
+						`Invalid Loki serialization version: ${JSON.stringify(log)}`,
+					);
+				}
+				delete log.version;
+				return log as DeviceLog;
+			});
+
+		return _.orderBy(logs, 'nanoTimestamp', 'asc');
 	}
 
 	public async publish(
@@ -212,7 +212,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		} catch (err) {
 			incrementPublishCallFailedTotal();
 			incrementPublishLogMessagesDropped(countLogs);
-			let message = `Failed to publish logs to ${lokiPushAddress} for device ${ctx.uuid}`;
+			let message = `Failed to publish logs for device ${ctx.uuid}`;
 			if (VERBOSE_ERROR_MESSAGE) {
 				message += JSON.stringify(logs, omitNanoTimestamp, '\t').substring(
 					0,
@@ -274,10 +274,7 @@ export class LokiBackend implements DeviceLogsBackend {
 			});
 			call.on('error', (err: Error & { details: string }) => {
 				if (err.details !== 'Cancelled') {
-					captureException(
-						err,
-						`Loki tail call error from ${lokiQueryAddress} for device ${ctx.uuid}`,
-					);
+					captureException(err, `Loki tail call error for device ${ctx.uuid}`);
 				}
 				this.subscriptions.removeListener(key, subscription);
 				this.tailCalls.delete(key);
@@ -331,10 +328,6 @@ export class LokiBackend implements DeviceLogsBackend {
 				'DeviceLog serviceId must be number or undefined',
 			);
 		}
-	}
-
-	private fromStreamsToDeviceLogs(streams: loki.StreamAdapter[]): DeviceLog[] {
-		return streams.flatMap(this.fromStreamToDeviceLogs);
 	}
 
 	private fromStreamToDeviceLogs(stream: loki.StreamAdapter): DeviceLog[] {
