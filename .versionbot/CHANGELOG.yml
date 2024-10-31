@@ -1,4 +1,19 @@
 - commits:
+    - subject: Use loki http api for fetching historical logs
+      hash: 4bc898ab85a4e730c2fec5eae91ad6d9f5c24d73
+      body: |
+        This also changes the loki env vars to be better named for the hosts
+        they actually need to point to, along with whether it is a grpc or http
+        port
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+  version: 31.0.0
+  title: ""
+  date: 2024-10-31T16:55:35.999Z
+- commits:
     - subject: Remove backend address info from error log
       hash: f40297f694fe42ec4bad8e84d9ba5c67b53d1b42
       body: ""
@@ -1438,6 +1453,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.5.0 to 9.0.4
@@ -1454,6 +1470,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -1518,6 +1535,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2011,6 +2029,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2567,6 +2586,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -2614,6 +2634,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2702,6 +2723,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -2739,6 +2761,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2868,6 +2891,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.4.0 to 8.4.1
@@ -2897,6 +2921,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2980,6 +3005,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -3008,6 +3034,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3103,6 +3130,7 @@
 
 
 
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -3137,6 +3165,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3315,6 +3344,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3582,6 +3612,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -3604,6 +3635,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3673,6 +3705,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3834,6 +3867,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -3856,6 +3890,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3925,6 +3960,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6107,6 +6143,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -6129,6 +6166,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6198,6 +6236,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6369,6 +6408,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -6397,6 +6437,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6490,6 +6531,7 @@
 
 
 
+
                                                                 We know what type
                                                                 they return and they
                                                                 should be explicitly
@@ -6524,6 +6566,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6701,6 +6744,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
