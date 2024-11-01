@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { EventEmitter } from 'events';
+import { compressionAlgorithms } from '@grpc/grpc-js';
 
 import loki from 'loki-grpc-client';
 import type { types } from '@balena/pinejs';
@@ -9,6 +10,9 @@ import {
 	LOKI_QUERY_HTTP_PORT,
 	LOKI_INGESTER_HOST,
 	LOKI_INGESTER_GRPC_PORT,
+	LOKI_HISTORY_GZIP,
+	LOKI_GRPC_SEND_GZIP,
+	LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL,
 } from '../../../../lib/config.js';
 import type {
 	DeviceLog,
@@ -124,13 +128,24 @@ export class LokiBackend implements DeviceLogsBackend {
 
 	constructor() {
 		this.subscriptions = new EventEmitter();
+		const compressionAlgorithm = LOKI_GRPC_SEND_GZIP
+			? compressionAlgorithms.gzip
+			: compressionAlgorithms.identity;
 		this.querier = new loki.QuerierClient(
 			lokiIngesterAddress,
 			loki.createInsecureCredentials(),
+			{
+				'grpc.default_compression_algorithm': compressionAlgorithm,
+				'grpc.default_compression_level': LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL,
+			},
 		);
 		this.pusher = new loki.PusherClient(
 			lokiIngesterAddress,
 			loki.createInsecureCredentials(),
+			{
+				'grpc.default_compression_algorithm': compressionAlgorithm,
+				'grpc.default_compression_level': LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL,
+			},
 		);
 		this.tailCalls = new Map();
 		this.push = backoff(
@@ -174,6 +189,7 @@ export class LokiBackend implements DeviceLogsBackend {
 				since: '30d',
 			},
 			json: true,
+			gzip: LOKI_HISTORY_GZIP,
 		});
 
 		const logs = (

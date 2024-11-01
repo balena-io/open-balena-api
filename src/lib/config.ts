@@ -302,6 +302,12 @@ export const LOKI_INGESTER_HOST = optionalVar('LOKI_INGESTER_HOST', LOKI_HOST);
 export const LOKI_QUERY_HOST = optionalVar('LOKI_QUERY_HOST', LOKI_HOST);
 export const LOKI_INGESTER_GRPC_PORT = intVar('LOKI_INGESTER_GRPC_PORT', 9095);
 export const LOKI_QUERY_HTTP_PORT = intVar('LOKI_QUERY_HTTP_PORT', 3100);
+export const LOKI_HISTORY_GZIP = boolVar('LOKI_HISTORY_GZIP', true);
+export const LOKI_GRPC_SEND_GZIP = boolVar('LOKI_GRPC_SEND_GZIP', true);
+export const LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL = intVar(
+	'LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL',
+	2,
+);
 // control the percent of logs written to Loki while scaling up
 export const LOKI_WRITE_PCT = intVar('LOKI_WRITE_PCT', 0);
 /**
