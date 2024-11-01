@@ -9,6 +9,7 @@ import {
 	LOKI_QUERY_HTTP_PORT,
 	LOKI_INGESTER_HOST,
 	LOKI_INGESTER_GRPC_PORT,
+	LOKI_HISTORY_GZIP,
 } from '../../../../lib/config.js';
 import type {
 	DeviceLog,
@@ -174,6 +175,7 @@ export class LokiBackend implements DeviceLogsBackend {
 				since: '30d',
 			},
 			json: true,
+			gzip: LOKI_HISTORY_GZIP,
 		});
 
 		const logs = (
