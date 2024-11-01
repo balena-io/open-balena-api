@@ -76,11 +76,27 @@ export const throttledForEach = async <T, U>(
 	fn: (item: T) => PromiseLike<U> | U,
 ): Promise<U[]> => {
 	const promises: Array<PromiseLike<U> | U> = [];
+	const runFn = async (item: T): Promise<void> => {
+		try {
+			const p = fn(item);
+			promises.push(p);
+			await p;
+		} catch {
+			// Ignore, the caller can handle the error if it needs to but
+			// due to the delays if we don't add a catch handler here then
+			// it'll always be treated as an unhandled error
+		}
+	};
+	// Handle the last item separately so we don't add a delay after it
+	const lastItem = array.pop();
 	for (const item of array) {
 		// We do not wait for each individual fn, we just throttle the calling of them
-		promises.push(fn(item));
+		void runFn(item);
 		// Delay by the throttle rate before we continue to the next item
 		await setTimeout(delayMS);
+	}
+	if (lastItem != null) {
+		void runFn(lastItem);
 	}
 	// We return the results of the iterator so the caller can await them as necessary
 	return await Promise.all(promises);
