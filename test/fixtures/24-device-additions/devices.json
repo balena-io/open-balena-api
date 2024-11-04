@@ -89,6 +89,16 @@
 		"os_version": "Resin OS 2.11.0+rev1",
 		"supervisor_version": "6.4.2"
 	},
+	"deviceVpnOffHeartbeatTimeoutBalenaVpnDisabledResinVpnDisabled": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "timeout",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
 	"deviceVpnOffHeartbeatOffline": {
 		"belongs_to__application": "app1",
 		"device_type": "raspberry-pi",
@@ -109,6 +119,26 @@
 		"os_version": "Resin OS 2.11.0+rev1",
 		"supervisor_version": "6.4.2"
 	},
+	"deviceWithDeviceConfigBalenaVpnDisabled": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceWithDeviceConfigBalenaVpnDisabledResinVpnEnabled": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
 	"deviceWithApplicationConfigResinVpnDisabled": {
 		"belongs_to__application": "appResinVpnDisabled",
 		"device_type": "raspberry-pi",
@@ -120,6 +150,26 @@
 		"supervisor_version": "6.4.2"
 	},
 	"deviceWithDeviceConfigResinVpnEnabled": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceWithDeviceConfigBalenaVpnEnabled": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"is_online": false,
+		"api_heartbeat_state": "online",
+		"os_variant": "prod",
+		"os_version": "Resin OS 2.11.0+rev1",
+		"supervisor_version": "6.4.2"
+	},
+	"deviceWithDeviceConfigBalenaVpnEnabledResinVpnDisabled": {
 		"belongs_to__application": "app1",
 		"device_type": "raspberry-pi",
 		"belongs_to__user": "admin",

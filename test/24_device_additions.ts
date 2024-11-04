@@ -94,10 +94,18 @@ export default () => {
 					fx.devices.deviceVpnOffHeartbeatTimeoutResinVpnDisabled;
 				ctx.deviceWithDeviceConfigResinVpnDisabled =
 					fx.devices.deviceWithDeviceConfigResinVpnDisabled;
+				ctx.deviceWithDeviceConfigBalenaVpnDisabled =
+					fx.devices.deviceWithDeviceConfigBalenaVpnDisabled;
+				ctx.deviceWithDeviceConfigBalenaVpnDisabledResinVpnEnabled =
+					fx.devices.deviceWithDeviceConfigBalenaVpnDisabledResinVpnEnabled;
 				ctx.deviceWithApplicationConfigResinVpnDisabled =
 					fx.devices.deviceWithApplicationConfigResinVpnDisabled;
 				ctx.deviceWithDeviceConfigResinVpnEnabled =
 					fx.devices.deviceWithDeviceConfigResinVpnEnabled;
+				ctx.deviceWithDeviceConfigBalenaVpnEnabled =
+					fx.devices.deviceWithDeviceConfigBalenaVpnEnabled;
+				ctx.deviceWithDeviceConfigBalenaVpnEnabledResinVpnDisabled =
+					fx.devices.deviceWithDeviceConfigBalenaVpnEnabledResinVpnDisabled;
 				ctx.deviceInPreProvisioningState =
 					fx.devices.deviceInPreProvisioningState;
 				ctx.deviceInPostProvisioningState =
@@ -212,9 +220,33 @@ export default () => {
 					);
 
 					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'operational' : 'idle',
+						'should have an ${OVERALL_STATUS} overall_status when the heartbeat is Online and BALENA_SUPERVISOR_VPN_CONTROL is false',
+						'deviceWithDeviceConfigBalenaVpnDisabled',
+					);
+
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'operational' : 'idle',
+						'should have an ${OVERALL_STATUS} overall_status when the heartbeat is Online and BALENA_SUPERVISOR_VPN_CONTROL is false and RESIN_SUPERVISOR_VPN_CONTROL is true',
+						'deviceWithDeviceConfigBalenaVpnDisabledResinVpnEnabled',
+					);
+
+					itShouldHaveOverallStatus(
 						versions.gt(version, 'v6') ? 'reduced-functionality' : 'idle',
 						'should have an ${OVERALL_STATUS} overall_status when the heartbeat is Online and RESIN_SUPERVISOR_VPN_CONTROL is true',
 						'deviceWithDeviceConfigResinVpnEnabled',
+					);
+
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'reduced-functionality' : 'idle',
+						'should have an ${OVERALL_STATUS} overall_status when the heartbeat is Online and BALENA_SUPERVISOR_VPN_CONTROL is true',
+						'deviceWithDeviceConfigBalenaVpnEnabled',
+					);
+
+					itShouldHaveOverallStatus(
+						versions.gt(version, 'v6') ? 'reduced-functionality' : 'idle',
+						'should have an ${OVERALL_STATUS} overall_status when the heartbeat is Online and BALENA_SUPERVISOR_VPN_CONTROL is true and RESIN_SUPERVISOR_VPN_CONTROL is false',
+						'deviceWithDeviceConfigBalenaVpnEnabledResinVpnDisabled',
 					);
 
 					itShouldHaveOverallStatus(

@@ -4,5 +4,23 @@
 		"application": "appResinVpnDisabled",
 		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
 		"value": "false"
+	},
+	"variable2": {
+		"user": "admin",
+		"application": "appBalenaVpnDisabled",
+		"name": "BALENA_SUPERVISOR_VPN_CONTROL",
+		"value": "false"
+	},
+	"variable3": {
+		"user": "admin",
+		"application": "appBalenaVpnDisabledResinVpnDisabled",
+		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
+		"value": "true"
+	},
+	"variable4": {
+		"user": "admin",
+		"application": "appBalenaVpnDisabledResinVpnDisabled",
+		"name": "BALENA_SUPERVISOR_VPN_CONTROL",
+		"value": "false"
 	}
 }
