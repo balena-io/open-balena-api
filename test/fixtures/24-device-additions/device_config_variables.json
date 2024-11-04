@@ -1,19 +1,19 @@
 {
-	"variable1": {
+	"variableDeviceWithVpnDisabled1": {
 		"user": "admin",
-		"device": "deviceWithDeviceConfigVPNDisabled",
+		"device": "deviceWithDeviceConfigResinVpnDisabled",
 		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
 		"value": "false"
 	},
-	"variable2": {
+	"variableDeviceWithVpnEnabled1": {
 		"user": "admin",
-		"device": "deviceWithDeviceConfigVPNEnabled",
+		"device": "deviceWithDeviceConfigResinVpnEnabled",
 		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
 		"value": "true"
 	},
 	"variable3": {
 		"user": "admin",
-		"device": "deviceVpnOffHeartbeatTimeoutVPNDisabled",
+		"device": "deviceVpnOffHeartbeatTimeoutResinVpnDisabled",
 		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
 		"value": "false"
 	}

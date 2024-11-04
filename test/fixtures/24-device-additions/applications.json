@@ -6,9 +6,9 @@
 		"commit": "deadbeef",
 		"should_track_latest_release": 1
 	},
-	"app2": {
+	"appResinVpnDisabled": {
 		"user": "admin",
-		"app_name": "test_config_variables",
+		"app_name": "test_resin_config_variables",
 		"device_type": "raspberry-pi",
 		"commit": "deadbeef",
 		"should_track_latest_release": 1
