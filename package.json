@@ -79,7 +79,6 @@
     "@types/request": "^2.48.12",
     "@types/semver": "^7.5.8",
     "@types/statuses": "^2.0.5",
-    "@types/uuid": "^10.0.0",
     "@types/validator": "^13.12.2",
     "avsc": "^5.7.7",
     "aws-sdk": "^2.1691.0",
