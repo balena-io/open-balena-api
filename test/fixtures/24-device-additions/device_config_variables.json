@@ -1,19 +1,55 @@
 {
-	"variable1": {
+	"variableDeviceWithVpnDisabled1": {
 		"user": "admin",
-		"device": "deviceWithDeviceConfigVPNDisabled",
+		"device": "deviceWithDeviceConfigResinVpnDisabled",
 		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
 		"value": "false"
 	},
-	"variable2": {
+	"variableDeviceWithVpnDisabled2": {
 		"user": "admin",
-		"device": "deviceWithDeviceConfigVPNEnabled",
+		"device": "deviceWithDeviceConfigBalenaVpnDisabled",
+		"name": "BALENA_SUPERVISOR_VPN_CONTROL",
+		"value": "false"
+	},
+	"variableDeviceWithVpnDisabled3": {
+		"user": "admin",
+		"device": "deviceWithDeviceConfigBalenaVpnDisabledResinVpnEnabled",
 		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
+		"value": "true"
+	},
+	"variableDeviceWithVpnDisabled4": {
+		"user": "admin",
+		"device": "deviceWithDeviceConfigBalenaVpnDisabledResinVpnEnabled",
+		"name": "BALENA_SUPERVISOR_VPN_CONTROL",
+		"value": "false"
+	},
+	"variableDeviceWithVpnEnabled1": {
+		"user": "admin",
+		"device": "deviceWithDeviceConfigResinVpnEnabled",
+		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
+		"value": "true"
+	},
+	"variableDeviceWithVpnEnabled2": {
+		"user": "admin",
+		"device": "deviceWithDeviceConfigBalenaVpnEnabled",
+		"name": "BALENA_SUPERVISOR_VPN_CONTROL",
+		"value": "true"
+	},
+	"variableDeviceWithVpnEnabled3": {
+		"user": "admin",
+		"device": "deviceWithDeviceConfigBalenaVpnEnabledResinVpnDisabled",
+		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
+		"value": "false"
+	},
+	"variableDeviceWithVpnEnabled4": {
+		"user": "admin",
+		"device": "deviceWithDeviceConfigBalenaVpnEnabledResinVpnDisabled",
+		"name": "BALENA_SUPERVISOR_VPN_CONTROL",
 		"value": "true"
 	},
 	"variable3": {
 		"user": "admin",
-		"device": "deviceVpnOffHeartbeatTimeoutVPNDisabled",
+		"device": "deviceVpnOffHeartbeatTimeoutResinVpnDisabled",
 		"name": "RESIN_SUPERVISOR_VPN_CONTROL",
 		"value": "false"
 	}

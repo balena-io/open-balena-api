@@ -75,12 +75,19 @@ const isVpnEnabled: NotEqualsNode = [
 						['ReferencedField', 'device', 'id'],
 					],
 					[
-						'Equals',
+						'In',
 						['ReferencedField', 'device config variable', 'name'],
+						['EmbeddedText', 'BALENA_SUPERVISOR_VPN_CONTROL'],
 						['EmbeddedText', 'RESIN_SUPERVISOR_VPN_CONTROL'],
 					],
 				],
 			],
+			// Prefer the `BALENA_` version when both are set, as the Supervisor does.
+			[
+				'OrderBy',
+				['ASC', ['ReferencedField', 'device config variable', 'name']],
+			],
+			['Limit', ['Number', 1]],
 		],
 		[
 			'SelectQuery',
@@ -96,12 +103,19 @@ const isVpnEnabled: NotEqualsNode = [
 						['ReferencedField', 'device', 'belongs to-application'],
 					],
 					[
-						'Equals',
+						'In',
 						['ReferencedField', 'application config variable', 'name'],
+						['EmbeddedText', 'BALENA_SUPERVISOR_VPN_CONTROL'],
 						['EmbeddedText', 'RESIN_SUPERVISOR_VPN_CONTROL'],
 					],
 				],
 			],
+			// Prefer the `BALENA_` version when both are set, as the Supervisor does.
+			[
+				'OrderBy',
+				['ASC', ['ReferencedField', 'application config variable', 'name']],
+			],
+			['Limit', ['Number', 1]],
 		],
 		// Adding a COALESCE default value to avoid the need for NotEquals to compare 'false' with NULL
 		['EmbeddedText', 'not set'],
