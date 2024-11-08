@@ -1,5 +1,5 @@
 import type { DeviceTypeJson } from './device-type-json.js';
-import { errors } from '@balena/pinejs';
+import { errors, permissions, sbvrUtils } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 const { InternalRequestError } = errors;
 
@@ -18,6 +18,8 @@ import {
 	CONTRACT_ALLOWLIST,
 	IMAGE_STORAGE_DEBUG_REQUEST_ERRORS,
 } from '../../lib/config.js';
+
+const { api } = sbvrUtils;
 
 export interface DeviceTypeInfo {
 	latest: DeviceTypeJson;
@@ -61,25 +63,41 @@ const getFirstValidBuild = async (
 	}
 };
 
+const ALLOWLISTED_DT_SLUGS: string[] = [];
+for (const contractPath of CONTRACT_ALLOWLIST) {
+	const allowListedDtSlug = /^hw.device-type\/([\w-]+)$/.exec(
+		contractPath,
+	)?.[1];
+	if (allowListedDtSlug != null) {
+		ALLOWLISTED_DT_SLUGS.push(allowListedDtSlug);
+	}
+}
+
 export const getDeviceTypes = multiCacheMemoizee(
 	async (): Promise<Dictionary<DeviceTypeInfo>> => {
 		const result: Dictionary<DeviceTypeInfo> = {};
-		let slugs = await listFolders(IMAGE_STORAGE_PREFIX);
+		let deviceTypes = await api.resin.get({
+			resource: 'device_type',
+			passthrough: { req: permissions.rootRead },
+			options: {
+				$select: 'slug',
+				...(ALLOWLISTED_DT_SLUGS.length > 0 && {
+					$filter: {
+						slug: { $in: ALLOWLISTED_DT_SLUGS },
+					},
+				}),
+			},
+		});
 
-		// If there are explicit includes, then everything else is excluded so we need to
-		// filter the slugs list to include only contracts that are in the CONTRACT_ALLOWLIST map
-		if (CONTRACT_ALLOWLIST.size > 0) {
-			const before = slugs.length;
-			slugs = slugs.filter((slug) =>
-				CONTRACT_ALLOWLIST.has(`hw.device-type/${slug}`),
-			);
-			console.log(
-				`CONTRACT_ALLOWLIST reduced device type slugs from ${before} to ${slugs.length}`,
-			);
+		if (deviceTypes.length > 0) {
+			// This is an optimization to avoid multiple 404 queries for DTs that
+			// have a DB record but do not have an OS release published yet.
+			const s3DtSlugs = new Set(await listFolders(IMAGE_STORAGE_PREFIX));
+			deviceTypes = deviceTypes.filter(({ slug }) => s3DtSlugs.has(slug));
 		}
 
 		await Promise.all(
-			slugs.map(async (slug) => {
+			deviceTypes.map(async ({ slug }) => {
 				try {
 					const builds = await listFolders(getImageKey(slug));
 					if (builds.length === 0) {
@@ -111,7 +129,7 @@ export const getDeviceTypes = multiCacheMemoizee(
 			}),
 		);
 
-		if (slugs.length > 0 && Object.keys(result).length === 0) {
+		if (deviceTypes.length > 0 && Object.keys(result).length === 0) {
 			throw new InternalRequestError('Could not retrieve any device type');
 		}
 		return result;
