@@ -1,4 +1,27 @@
 - commits:
+    - subject: Default IMAGE_STORAGE_DEBUG_REQUEST_ERRORS to false on unauthenticated
+        setups
+      hash: c58cb7f2232578ac7f2c07b39e55931d4255a78c
+      body: ""
+      footer:
+        Resolves: "#1696"
+        resolves: "#1696"
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Add the IMAGE_STORAGE_DEBUG_REQUEST_ERRORS env var
+      hash: 58cfbbc0cbbffaf15ada7217c75d7ab51c088733
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Thodoris Greasidis
+      nested: []
+  version: 31.1.0
+  title: ""
+  date: 2024-11-08T17:44:25.391Z
+- commits:
     - subject: Improve `getCallerId` accuracy for tagging service requests
       hash: dc8693c5bdc747ba335345d4b3a022066e4fa7d8
       body: ""
@@ -1593,6 +1616,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.5.0 to 9.0.4
@@ -1609,6 +1633,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -1682,6 +1707,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2184,6 +2210,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2758,6 +2785,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -2805,6 +2833,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2911,6 +2940,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -2948,6 +2978,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3095,6 +3126,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/abstract-sql-compiler
                                                                 from 8.4.0 to 8.4.1
@@ -3124,6 +3156,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3225,6 +3258,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -3253,6 +3287,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3366,6 +3401,7 @@
 
 
 
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -3400,6 +3436,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3587,6 +3624,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3872,6 +3910,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -3894,6 +3933,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3972,6 +4012,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4151,6 +4192,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -4173,6 +4215,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4251,6 +4294,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6451,6 +6495,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -6473,6 +6518,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6551,6 +6597,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6740,6 +6787,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -6768,6 +6816,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6879,6 +6928,7 @@
 
 
 
+
                                                                 We know what type
                                                                 they return and they
                                                                 should be explicitly
@@ -6913,6 +6963,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7099,6 +7150,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
