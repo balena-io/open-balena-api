@@ -10,6 +10,7 @@ import {
 	IMAGE_STORAGE_ENDPOINT,
 	IMAGE_STORAGE_FORCE_PATH_STYLE,
 	IMAGE_STORAGE_SECRET_KEY,
+	IMAGE_STORAGE_DEBUG_REQUEST_ERRORS,
 } from '../../../lib/config.js';
 
 export const getKey = (...parts: string[]): string => parts.join('/');
@@ -68,9 +69,11 @@ function isUnauthenticatedError(
 }
 
 function logUnauthenticated(pathS3: string, err: any): void {
-	console.warn(
-		`${err.code} (${err.statusCode}): ${pathS3} belongs to a private device type or has incorrect permissions`,
-	);
+	if (IMAGE_STORAGE_DEBUG_REQUEST_ERRORS) {
+		console.warn(
+			`${err.code} (${err.statusCode}): ${pathS3} belongs to a private device type or has incorrect permissions`,
+		);
+	}
 }
 
 async function getFileInfo(s3Path: string) {

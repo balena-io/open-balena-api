@@ -18,6 +18,7 @@ import {
 	DEVICE_TYPES_CACHE_LOCAL_TIMEOUT,
 	DEVICE_TYPES_CACHE_TIMEOUT,
 	CONTRACT_ALLOWLIST,
+	IMAGE_STORAGE_DEBUG_REQUEST_ERRORS,
 } from '../../lib/config.js';
 
 export interface DeviceTypeInfo {
@@ -45,10 +46,12 @@ const getFirstValidBuild = async (
 		try {
 			deviceType = await getDeviceTypeJson(slug, buildId);
 		} catch (err) {
-			captureException(
-				err,
-				`Failed to get device type build data for ${slug}/${buildId}`,
-			);
+			if (IMAGE_STORAGE_DEBUG_REQUEST_ERRORS) {
+				captureException(
+					err,
+					`Failed to get device type build data for ${slug}/${buildId}`,
+				);
+			}
 		}
 		if (deviceType) {
 			const logoUrl = await getLogoUrl(slug, buildId);

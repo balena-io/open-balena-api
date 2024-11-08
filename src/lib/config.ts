@@ -182,6 +182,12 @@ export const IMAGE_STORAGE_FORCE_PATH_STYLE = boolVar(
 	'IMAGE_STORAGE_FORCE_PATH_STYLE',
 	false,
 );
+export const IMAGE_STORAGE_DEBUG_REQUEST_ERRORS = boolVar(
+	'IMAGE_STORAGE_DEBUG_REQUEST_ERRORS',
+	// Default to false for unauthenticated setups, so that we reduce
+	// the number of expected unauthorized request errors that get logged.
+	IMAGE_STORAGE_ACCESS_KEY != null || IMAGE_STORAGE_SECRET_KEY != null,
+);
 export const JSON_WEB_TOKEN_EXPIRY_MINUTES = intVar(
 	'JSON_WEB_TOKEN_EXPIRY_MINUTES',
 );
