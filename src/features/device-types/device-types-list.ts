@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import type { DeviceTypeJson } from './device-type-json.js';
-import { errors } from '@balena/pinejs';
+import { errors, permissions, sbvrUtils } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 const { InternalRequestError } = errors;
 
@@ -20,6 +20,8 @@ import {
 	CONTRACT_ALLOWLIST,
 	IMAGE_STORAGE_DEBUG_REQUEST_ERRORS,
 } from '../../lib/config.js';
+
+const { api } = sbvrUtils;
 
 export interface DeviceTypeInfo {
 	latest: DeviceTypeJson;
@@ -67,6 +69,19 @@ export const getDeviceTypes = multiCacheMemoizee(
 	async (): Promise<Dictionary<DeviceTypeInfo>> => {
 		const result: Dictionary<DeviceTypeInfo> = {};
 		let slugs = await listFolders(IMAGE_STORAGE_PREFIX);
+
+		const rootApi = api.resin.clone({ passthrough: { req: permissions.root } });
+		const knownDeviceTypeSlugs = new Set(
+			(
+				await rootApi.get({
+					resource: 'device_type',
+					options: {
+						$select: 'slug',
+					},
+				})
+			).map((dt) => dt.slug),
+		);
+		slugs = slugs.filter((slug) => knownDeviceTypeSlugs.has(slug));
 
 		// If there are explicit includes, then everything else is excluded so we need to
 		// filter the slugs list to include only contracts that are in the CONTRACT_ALLOWLIST map
