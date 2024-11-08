@@ -1,6 +1,16 @@
 import { hooks } from '@balena/pinejs';
 import { getDeviceTypes } from '../device-types-list.js';
 
+hooks.addPureHook('POST', 'resin', 'device_type', {
+	POSTRUN: ({ result }) => {
+		if (typeof result !== 'number') {
+			return;
+		}
+		// no need to wait for the cache invalidation
+		void getDeviceTypes.delete();
+	},
+});
+
 hooks.addPureHook('POST', 'resin', 'application', {
 	POSTRUN: ({ request }) => {
 		if (request.values.is_host) {
