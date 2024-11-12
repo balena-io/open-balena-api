@@ -34,5 +34,14 @@
 		"project_type": "Dockerfile.template",
 		"build_log": "This is also the build log",
 		"status": "success"
+	},
+	"image5": {
+		"user": "admin",
+		"service": "app2Service2",
+		"releases": [ "app2release1" ],
+		"image_size": 2048,
+		"project_type": "Dockerfile.template",
+		"build_log": "This is also the build log",
+		"status": "success"
 	}
 }
