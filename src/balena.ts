@@ -3,6 +3,7 @@ import {
 	generateAbstractSqlModel,
 	renameVarResourcesName,
 	optimizeSchema,
+	renameField,
 } from './abstract-sql-utils.js';
 
 import * as userHasDirectAccessToApplication from './features/applications/models/user__has_direct_access_to__application.js';
@@ -23,6 +24,13 @@ export const model = {
 } satisfies ConfigLoader.Model;
 
 renameVarResourcesName(abstractSql);
+renameField(
+	abstractSql,
+	'device-has-application-has-service name-has-env var name',
+	['has'],
+	'env var name',
+	'name'
+);
 
 userHasDirectAccessToApplication.addToModel(abstractSql);
 deviceAdditions.addToModel(abstractSql);

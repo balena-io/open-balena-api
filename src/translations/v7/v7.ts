@@ -1,5 +1,6 @@
 import type { ConfigLoader } from '@balena/pinejs';
 import {
+	aliasTable,
 	generateAbstractSqlModel,
 	overrideFieldType,
 	renameVarResourcesName,
@@ -13,6 +14,10 @@ export const v7AbstractSqlModel = generateAbstractSqlModel(
 );
 
 renameVarResourcesName(v7AbstractSqlModel);
+
+// ???
+// aliasTable(v7AbstractSqlModel, 'device-installs-application-has-service name-has-name', 'device-has-application-has-service name-has-env var name');
+// aliasTable(v7AbstractSqlModel, 'device-has-application-has-service name-has-env var name', 'device-installs-application-has-service name-has-name');
 
 overrideFieldType(v7AbstractSqlModel, 'release', 'version', 'JSON');
 
