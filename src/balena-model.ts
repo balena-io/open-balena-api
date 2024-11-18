@@ -984,8 +984,8 @@ export interface DeviceServiceEnvironmentVariable {
 		name: Types['Short Text']['Read'];
 		id: Types['Serial']['Read'];
 		value: Types['Text']['Read'];
-		service: { __id: Service['Read']['id'] } | [Service['Read']] | [] | null;
-		device: { __id: Device['Read']['id'] } | [Device['Read']] | [] | null;
+		service: { __id: Service['Read']['id'] } | [Service['Read']];
+		device: { __id: Device['Read']['id'] } | [Device['Read']];
 		device__installs__application__has__service_name:
 			| { __id: ServiceInstall['Read']['id'] }
 			| [ServiceInstall['Read']];
@@ -994,9 +994,7 @@ export interface DeviceServiceEnvironmentVariable {
 			| [ServiceInstall['Read']];
 		application__has__service_name:
 			| { __id: Service['Read']['id'] }
-			| [Service['Read']]
-			| []
-			| null;
+			| [Service['Read']];
 	};
 	Write: {
 		created_at: Types['Date Time']['Write'];
@@ -1005,8 +1003,8 @@ export interface DeviceServiceEnvironmentVariable {
 		name: Types['Short Text']['Write'];
 		id: Types['Serial']['Write'];
 		value: Types['Text']['Write'];
-		service: Service['Write']['id'] | null;
-		device: Device['Write']['id'] | null;
+		service: Service['Write']['id'];
+		device: Device['Write']['id'];
 	};
 }
 

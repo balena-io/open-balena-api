@@ -30,7 +30,7 @@ const migration: Migrator.AsyncMigration = {
 	delayMS: 60000,
 	backoffDelayMS: 120000,
 	errorThreshold: 10,
-	finalize: false,
+	finalize: true,
 };
 
 export default migration;
