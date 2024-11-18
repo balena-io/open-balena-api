@@ -25,37 +25,28 @@ export const getV7Translations = (_abstractSqlModel = v7AbstractSqlModel) => {
 			'service install': [
 				'SelectQuery',
 				['Select', [['ReferencedField', 'si', 'id']]],
+				['From', ['Alias', ['Table', 'service install'], 'si']],
 				[
-					'From',
+					'Where',
 					[
-						'Alias',
-						// TODO: should this be changed from table to resource? How?
-						['Table', 'device service environment variable'],
-						'dsev',
-					],
-				],
-				[
-					'Join',
-					[
-						'Alias',
-						// TODO: should this be changed from table to resource? How?
-						['Table', 'service install'],
-						'si',
-					],
-					[
-						'On',
+						'And',
 						[
-							'And',
+							'Equals',
 							[
-								'Equals',
-								['ReferencedField', 'dsev', 'device'],
-								['ReferencedField', 'si', 'device'],
+								'ReferencedField',
+								'device-installs-application-has-service name-has-name',
+								'device',
 							],
+							['ReferencedField', 'si', 'device'],
+						],
+						[
+							'Equals',
 							[
-								'Equals',
-								['ReferencedField', 'dsev', 'service'],
-								['ReferencedField', 'si', 'installs-service'],
+								'ReferencedField',
+								'device-installs-application-has-service name-has-name',
+								'service',
 							],
+							['ReferencedField', 'si', 'installs-service'],
 						],
 					],
 				],

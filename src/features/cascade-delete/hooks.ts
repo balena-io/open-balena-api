@@ -49,34 +49,42 @@ setupDeleteCascade('service', {
 	device_service_environment_variable: 'service',
 });
 
-// hooks.addPureHook('DELETE', 'resin', 'service install', {
-// 	PRERUN: async (args) => {
-// 		const serviceInstallIds = await getAffectedIds(args);
-// 		if (serviceInstallIds.length === 0) {
-// 			return;
-// 		}
+hooks.addPureHook('DELETE', 'resin', 'service_install', {
+	PRERUN: async (args) => {
+		const serviceInstallIds = await getAffectedIds(args);
+		if (serviceInstallIds.length === 0) {
+			return;
+		}
 
-// 		// Delete all device_service_environment_variable (dsev) where
-// 		// dsev.device = service_install.device and dsev.service = service_install.installs__service
-// 		await args.api.delete({
-// 			resource: 'device_service_environment_variable',
-// 			passthrough: {
-// 				tx: args.tx,
-// 				req: permissions.root,
-// 			},
-// 			options: {
-// 				$filter: {
+		const serviceInstalls = await api.resin.get({
+			resource: 'service_install',
+			options: {
+				$filter: {
+					id: { $in: serviceInstallIds },
+				},
+				$select: ['device', 'installs__service'],
+			},
+		});
 
-// 				},
-// 			},
-// 		});
+		const filterConditions = serviceInstalls.map((serviceInstall) => ({
+			device: serviceInstall.device.__id,
+			service: serviceInstall.installs__service.__id,
+		}));
 
-// 	},
-// });
-
-// setupDeleteCascade('service_install', {
-// 	device_service_environment_variable: 'service_install',
-// });
+		await args.api.delete({
+			resource: 'device_service_environment_variable',
+			passthrough: {
+				tx: args.tx,
+				req: permissions.root,
+			},
+			options: {
+				$filter: {
+					$or: filterConditions,
+				},
+			},
+		});
+	},
+});
 
 const deleteApiKeyHooks: hooks.Hooks = {
 	PRERUN: async (args) => {

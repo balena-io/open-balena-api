@@ -260,7 +260,9 @@ export default () => {
 						.post({
 							resource: 'device_service_environment_variable',
 							body: {
-								service_install: serviceInstall.id,
+								...(versions.lte(version, 'v7')
+									? { service_install: serviceInstall.id }
+									: { device: ctx.device.id, service: ctx.app2Service1.id }),
 								name: 'test',
 								value: '123',
 							},
