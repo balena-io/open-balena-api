@@ -11,6 +11,7 @@ import './features/device-urls/hooks.js';
 import './features/hostapp/hooks/index.js';
 import './features/organizations/hooks/index.js';
 import './features/releases/hooks/index.js';
+import './features/service-install/hooks/index.js';
 import './features/supervisor-app/hooks/index.js';
 import './features/tags/hooks.js';
 import './features/vars-schema/hooks/index.js';

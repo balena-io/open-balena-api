@@ -7,6 +7,7 @@ import * as fixtures from './test-lib/fixtures.js';
 
 import { assertExists, expectToEventually } from './test-lib/common.js';
 import * as config from '../src/lib/config.js';
+import { supertest } from './test-lib/supertest.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -40,6 +41,7 @@ export default () => {
 					ctx.app1Service2 = fx.services.app1Service2;
 					ctx.app1Service3 = fx.services.app1Service3;
 					ctx.app2Service1 = fx.services.app2Service1;
+					ctx.app2Service2 = fx.services.app2Service2;
 
 					config.TEST_MOCK_ONLY.ASYNC_TASK_CREATE_SERVICE_INSTALLS_ENABLED =
 						isServiceInstallEnabled;
@@ -168,6 +170,109 @@ export default () => {
 							ctx.app2Service1.id,
 						);
 					});
+				});
+
+				it('should be able to use service_install to create a device_service_environment_variable', async () => {
+					const { body: serviceInstall } = await pineUser
+						.get({
+							resource: 'service_install',
+							id: {
+								device: ctx.device.id,
+								installs__service: ctx.app2Service1.id,
+							},
+						})
+						.expect(200);
+					assertExists(serviceInstall);
+
+					const { body: deviceServiceEnvVar } = await pineUser
+						.post({
+							resource: 'device_service_environment_variable',
+							body: {
+								service_install: serviceInstall.id,
+								name: 'test',
+								value: '123',
+							},
+						})
+						.expect(201);
+					assertExists(deviceServiceEnvVar);
+
+					const {
+						body: {
+							d: [dbDeviceServiceEnvVar],
+						},
+					} = await supertest(ctx.admin)
+						.get(
+							`/resin/device_service_environment_variable(${deviceServiceEnvVar.id})?$select=device,service`,
+						)
+						.expect(200);
+
+					expect(dbDeviceServiceEnvVar.device.__id).to.equal(ctx.device.id);
+					expect(dbDeviceServiceEnvVar.service.__id).to.equal(
+						ctx.app2Service1.id,
+					);
+				});
+
+				it('should be able to update device_service_environment_variable service_install', async () => {
+					const { body: serviceInstallService1 } = await pineUser
+						.get({
+							resource: 'service_install',
+							id: {
+								device: ctx.device.id,
+								installs__service: ctx.app2Service1.id,
+							},
+						})
+						.expect(200);
+					assertExists(serviceInstallService1);
+
+					const { body: serviceInstallService2 } = await pineUser
+						.get({
+							resource: 'service_install',
+							id: {
+								device: ctx.device.id,
+								installs__service: ctx.app2Service2.id,
+							},
+						})
+						.expect(200);
+					assertExists(serviceInstallService2);
+
+					const {
+						body: [deviceServiceEnvVar],
+					} = await pineUser
+						.get({
+							resource: 'device_service_environment_variable',
+							options: {
+								$filter: {
+									service_install: serviceInstallService1.id,
+								},
+							},
+						})
+						.expect(200);
+					assertExists(deviceServiceEnvVar);
+
+					await pineUser
+						.patch({
+							resource: 'device_service_environment_variable',
+							id: deviceServiceEnvVar.id,
+							body: {
+								service_install: serviceInstallService2.id,
+							},
+						})
+						.expect(200);
+
+					const {
+						body: {
+							d: [dbDeviceServiceEnvVar],
+						},
+					} = await supertest(ctx.admin)
+						.get(
+							`/resin/device_service_environment_variable(${deviceServiceEnvVar.id})?$select=device,service`,
+						)
+						.expect(200);
+
+					expect(dbDeviceServiceEnvVar.device.__id).to.equal(ctx.device.id);
+					expect(dbDeviceServiceEnvVar.service.__id).to.equal(
+						ctx.app2Service2.id,
+					);
 				});
 			});
 		});
