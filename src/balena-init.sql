@@ -81,6 +81,13 @@ ON "device family" ("is manufactured by-device manufacturer");
 
 -- "device tag"."device" is the first part of an automated unique index
 
+-- "device environment variable"."device" is created with the unique index
+CREATE UNIQUE INDEX IF NOT EXISTS "device service environment variable_device_service_name_key"
+ON "device service environment variable" ("device", "service", "name");
+
+CREATE INDEX IF NOT EXISTS "device_service_environment_variable_service_idx"
+ON "device service environment variable" ("service");
+
 CREATE INDEX IF NOT EXISTS "device_type_cpu_arch_idx"
 ON "device type" ("is of-cpu architecture");
 CREATE INDEX IF NOT EXISTS "device_type_device_family_idx"
