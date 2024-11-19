@@ -1,4 +1,20 @@
 - commits:
+    - subject: "Service installs: Transform the device object earlier to allow GC"
+      hash: b0a7482099c474fd6951abe7d8b60eeeb7298da6
+      body: |
+        This should allow cleaning up the excess objects earlier so whilst
+        there may be a temporary spike of memory to do the transformation it
+        will enable GC and result in less memory usage whilst the queries are
+        processing concurrently
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 31.2.5
+  title: ""
+  date: 2024-11-19T14:28:15.659Z
+- commits:
     - subject: Lock file maintenance
       hash: 5404b65c3156f1565fb9d7b010d755bca11a440e
       body: |
@@ -1193,10 +1209,8 @@
                                                 - commits:
                                                     - subject: Update dependency @balena/abstract-sql-compiler to v9
                                                       hash: 37684ebb1692f97780dd27056b9cfe299c456b3c
-                                                      body: >
-                                                        Update
-                                                        @balena/abstract-sql-compiler
-                                                        from 8.5.0 to 9.0.4
+                                                      body: |
+                                                        Update @balena/abstract-sql-compiler from 8.5.0 to 9.0.4
                                                       footer:
                                                         Change-type: patch
                                                         change-type: patch
@@ -1656,9 +1670,8 @@
                                                         - commits:
                                                             - subject: Update dependency @balena/abstract-sql-compiler to v9
                                                               hash: 37684ebb1692f97780dd27056b9cfe299c456b3c
-                                                              body: >
+                                                              body: |
                                                                 
-                                                                
 
 
 
@@ -1707,9 +1720,8 @@
 
 
 
-                                                                Update
-                                                                @balena/abstract-sql-compiler
-                                                                from 8.5.0 to 9.0.4
+
+                                                                Update @balena/abstract-sql-compiler from 8.5.0 to 9.0.4
                                                               footer:
                                                                 Change-type: patch
                                                                 change-type: patch
@@ -1723,6 +1735,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -1803,6 +1816,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2309,9 +2323,8 @@
                                                         - commits:
                                                             - subject: Update dependencies
                                                               hash: 0a7bd8ff2e506fa3988b6e1851e0098df5da3f86
-                                                              body: >
+                                                              body: |
                                                                 
-                                                                
 
 
 
@@ -2360,15 +2373,9 @@
 
 
 
-                                                                - Update
-                                                                @balena/lint from
-                                                                6.2.2 to 7.2.4
 
-                                                                - Delete
-                                                                `require-npm4-to-publish`
-                                                                as handled by
-                                                                `engines` parameter
-                                                                in `package.json`
+                                                                - Update @balena/lint from 6.2.2 to 7.2.4
+                                                                - Delete `require-npm4-to-publish` as handled by `engines` parameter in `package.json`
                                                               footer:
                                                                 Change-type: patch
                                                                 change-type: patch
@@ -2582,15 +2589,9 @@
                                                 - commits:
                                                     - subject: Update dependencies
                                                       hash: 0a7bd8ff2e506fa3988b6e1851e0098df5da3f86
-                                                      body: >
-                                                        - Update @balena/lint
-                                                        from 6.2.2 to 7.2.4
-
-                                                        - Delete
-                                                        `require-npm4-to-publish`
-                                                        as handled by `engines`
-                                                        parameter in
-                                                        `package.json`
+                                                      body: |
+                                                        - Update @balena/lint from 6.2.2 to 7.2.4
+                                                        - Delete `require-npm4-to-publish` as handled by `engines` parameter in `package.json`
                                                       footer:
                                                         Change-type: patch
                                                         change-type: patch
@@ -2837,10 +2838,8 @@
                                                       nested: []
                                                     - subject: Update @balena/odata-to-abstract-sql to 6.x
                                                       hash: e7194718065ab98328c0cb3266df9838787c08c3
-                                                      body: >
-                                                        Update
-                                                        @balena/odata-to-abstract-sql
-                                                        from 5.9.3 to 6.0.1
+                                                      body: |
+                                                        Update @balena/odata-to-abstract-sql from 5.9.3 to 6.0.1
                                                       footer:
                                                         Change-type: major
                                                         change-type: major
@@ -2852,6 +2851,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2996,6 +2996,7 @@
 
 
 
+
                                                                         As balena-lint
                                                                         rejects `new
                                                                         Boolean()`, `new
@@ -3018,6 +3019,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3153,6 +3155,7 @@
 
 
 
+
                                                                         Ensure that the
                                                                         input passed in for
                                                                         JSON types is either
@@ -3214,9 +3217,8 @@
                                                         - commits:
                                                             - subject: Improve typings
                                                               hash: 78d4a48022ac0465c5d2c48db53b8ddd08e6e1bf
-                                                              body: >
+                                                              body: |
                                                                 
-                                                                
 
 
 
@@ -3265,9 +3267,8 @@
 
 
 
-                                                                Update
-                                                                @balena/abstract-sql-compiler
-                                                                from 8.4.0 to 8.4.1
+
+                                                                Update @balena/abstract-sql-compiler from 8.4.0 to 8.4.1
                                                               footer:
                                                                 Change-type: patch
                                                                 change-type: patch
@@ -3291,9 +3292,8 @@
                                                         - commits:
                                                             - subject: Update dependencies
                                                               hash: 5aa3c51cbbfc66cddedebd41dacba5eabbacf709
-                                                              body: >
+                                                              body: |
                                                                 
-                                                                
 
 
 
@@ -3342,13 +3342,9 @@
 
 
 
-                                                                Update
-                                                                @balena/abstract-sql-compiler
-                                                                from 8.0.0 to 8.4.0
 
-                                                                Update
-                                                                @balena/odata-parser
-                                                                from 2.4.2 to 2.4.6
+                                                                Update @balena/abstract-sql-compiler from 8.0.0 to 8.4.0
+                                                                Update @balena/odata-parser from 2.4.2 to 2.4.6
                                                               footer:
                                                                 Change-type: patch
                                                                 change-type: patch
@@ -3360,6 +3356,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3437,6 +3434,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3564,6 +3562,7 @@
 
 
 
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -3598,6 +3597,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3792,6 +3792,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4091,6 +4092,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -4113,6 +4115,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4198,6 +4201,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4391,6 +4395,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -4413,6 +4418,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4498,6 +4504,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5653,10 +5660,8 @@
                                                 - commits:
                                                     - subject: Update dependency @balena/abstract-sql-compiler to v9
                                                       hash: 37684ebb1692f97780dd27056b9cfe299c456b3c
-                                                      body: >
-                                                        Update
-                                                        @balena/abstract-sql-compiler
-                                                        from 8.5.0 to 9.0.4
+                                                      body: |
+                                                        Update @balena/abstract-sql-compiler from 8.5.0 to 9.0.4
                                                       footer:
                                                         Change-type: patch
                                                         change-type: patch
@@ -6144,15 +6149,9 @@
                                                 - commits:
                                                     - subject: Update dependencies
                                                       hash: 0a7bd8ff2e506fa3988b6e1851e0098df5da3f86
-                                                      body: >
-                                                        - Update @balena/lint
-                                                        from 6.2.2 to 7.2.4
-
-                                                        - Delete
-                                                        `require-npm4-to-publish`
-                                                        as handled by `engines`
-                                                        parameter in
-                                                        `package.json`
+                                                      body: |
+                                                        - Update @balena/lint from 6.2.2 to 7.2.4
+                                                        - Delete `require-npm4-to-publish` as handled by `engines` parameter in `package.json`
                                                       footer:
                                                         Change-type: patch
                                                         change-type: patch
@@ -6712,6 +6711,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -6734,6 +6734,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6867,6 +6868,7 @@
 
 
 
+
                                                                 Ensure that the
                                                                 input passed in for
                                                                 JSON types is either
@@ -6928,10 +6930,8 @@
                                                 - commits:
                                                     - subject: Improve typings
                                                       hash: 78d4a48022ac0465c5d2c48db53b8ddd08e6e1bf
-                                                      body: >
-                                                        Update
-                                                        @balena/abstract-sql-compiler
-                                                        from 8.4.0 to 8.4.1
+                                                      body: |
+                                                        Update @balena/abstract-sql-compiler from 8.4.0 to 8.4.1
                                                       footer:
                                                         Change-type: patch
                                                         change-type: patch
@@ -6955,14 +6955,9 @@
                                                 - commits:
                                                     - subject: Update dependencies
                                                       hash: 5aa3c51cbbfc66cddedebd41dacba5eabbacf709
-                                                      body: >
-                                                        Update
-                                                        @balena/abstract-sql-compiler
-                                                        from 8.0.0 to 8.4.0
-
-                                                        Update
-                                                        @balena/odata-parser
-                                                        from 2.4.2 to 2.4.6
+                                                      body: |
+                                                        Update @balena/abstract-sql-compiler from 8.0.0 to 8.4.0
+                                                        Update @balena/odata-parser from 2.4.2 to 2.4.6
                                                       footer:
                                                         Change-type: patch
                                                         change-type: patch
@@ -6974,6 +6969,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7050,6 +7046,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7175,6 +7172,7 @@
 
 
 
+
                                                                 We know what type
                                                                 they return and they
                                                                 should be explicitly
@@ -7209,6 +7207,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7402,6 +7401,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -13988,12 +13988,9 @@
         - commits:
             - subject: Empty commit to rebuild open-balena-base to fix CVE-2024-6387.
               hash: 4d7156be75e535ad5ab4a2bf2d574fde1b86d45c
-              body: >
-                Causes a rebuild of the open-balena-base to include
-                openssh-server
-
+              body: |
+                Causes a rebuild of the open-balena-base to include openssh-server
                 1:9.2p1-2+deb12u3 (OpenSSH_9.2p1 Debian-2+deb12u3) which fixes
-
                 [cve-2024-6387](https://www.qualys.com/2024/07/01/cve-2024-6387/regresshion.txt).
               footer:
                 Change-type: patch
@@ -17155,9 +17152,8 @@
         - commits:
             - subject: lock to prevent concurrent config updates
               hash: 7c43074805b0ef670bbe4654cb727d4fd3a4998a
-              body: >
-                * leading to duplicate entries and
-                https://github.com/balena-io/balena-cloud/actions/runs/4801183207/jobs/8543115448
+              body: |
+                * leading to duplicate entries and https://github.com/balena-io/balena-cloud/actions/runs/4801183207/jobs/8543115448
               footer:
                 change-type: patch
               author: ab77
@@ -18697,16 +18693,11 @@
           version: open-balena-base-5.3.0
         - commits:
             - author: Michael Angelos Simos
-              body: >-
+              body: |-
                 We were using `env > /etc/docker.env` for storing a container's
-
                 environment to an envfile, to be used as `EnvironmentFile` for
-
-                `confd.service`. This way, backslash characters were "consumed"
-                as
-
-                described
-                [here](https://www.freedesktop.org/software/systemd/man/systemd.exec.html#EnvironmentFile=)
+                `confd.service`. This way, backslash characters were "consumed" as
+                described [here](https://www.freedesktop.org/software/systemd/man/systemd.exec.html#EnvironmentFile=)
               footers:
                 change-type: patch
                 signed-off-by: Michael Angelos Simos <michalis@balena.io>
@@ -20537,23 +20528,14 @@
 - commits:
     - subject: Bump @babel/traverse from 7.21.2 to 7.23.2
       hash: 19f8a7b4f13ed649f2ed0c6f86f7543ba3c84aaa
-      body: >
-        Bumps
-        [@babel/traverse](https://github.com/babel/babel/tree/HEAD/packages/babel-traverse)
-        from 7.21.2 to 7.23.2.
-
+      body: |
+        Bumps [@babel/traverse](https://github.com/babel/babel/tree/HEAD/packages/babel-traverse) from 7.21.2 to 7.23.2.
         - [Release notes](https://github.com/babel/babel/releases)
-
         - [Changelog](https://github.com/babel/babel/blob/main/CHANGELOG.md)
-
-        -
-        [Commits](https://github.com/babel/babel/commits/v7.23.2/packages/babel-traverse)
-
+        - [Commits](https://github.com/babel/babel/commits/v7.23.2/packages/babel-traverse)
 
         ---
-
         updated-dependencies:
-
         - dependency-name: "@babel/traverse"
           dependency-type: indirect
         ...
@@ -20855,23 +20837,14 @@
 - commits:
     - subject: Bump protobufjs from 7.2.2 to 7.2.5
       hash: 5fd34df187d5c93fc880e4732b6b8b2b28e55003
-      body: >
-        Bumps [protobufjs](https://github.com/protobufjs/protobuf.js) from 7.2.2
-        to 7.2.5.
-
+      body: |
+        Bumps [protobufjs](https://github.com/protobufjs/protobuf.js) from 7.2.2 to 7.2.5.
         - [Release notes](https://github.com/protobufjs/protobuf.js/releases)
-
-        -
-        [Changelog](https://github.com/protobufjs/protobuf.js/blob/master/CHANGELOG.md)
-
-        -
-        [Commits](https://github.com/protobufjs/protobuf.js/compare/protobufjs-v7.2.2...protobufjs-v7.2.5)
-
+        - [Changelog](https://github.com/protobufjs/protobuf.js/blob/master/CHANGELOG.md)
+        - [Commits](https://github.com/protobufjs/protobuf.js/compare/protobufjs-v7.2.2...protobufjs-v7.2.5)
 
         ---
-
         updated-dependencies:
-
         - dependency-name: protobufjs
           dependency-type: indirect
         ...
@@ -24779,9 +24752,8 @@
         - commits:
             - subject: lock to prevent concurrent config updates
               hash: 7c43074805b0ef670bbe4654cb727d4fd3a4998a
-              body: >
-                * leading to duplicate entries and
-                https://github.com/balena-io/balena-cloud/actions/runs/4801183207/jobs/8543115448
+              body: |
+                * leading to duplicate entries and https://github.com/balena-io/balena-cloud/actions/runs/4801183207/jobs/8543115448
               footer:
                 change-type: patch
               author: ab77
@@ -31159,9 +31131,8 @@
                                 - commits:
                                     - subject: Revert "Remove now unnecessary hack for casting SERIAL types"
                                       hash: 60a56423de9262b5b454ff4cd83c1d1fd39d071e
-                                      body: >
-                                        This reverts commit
-                                        187bc075d237a2ced731d0a026ca25aa3e0f5540.
+                                      body: |
+                                        This reverts commit 187bc075d237a2ced731d0a026ca25aa3e0f5540.
                                       footer:
                                         Change-type: patch
                                         change-type: patch
@@ -32903,9 +32874,8 @@
                                 - commits:
                                     - subject: Revert "Remove now unnecessary hack for casting SERIAL types"
                                       hash: 60a56423de9262b5b454ff4cd83c1d1fd39d071e
-                                      body: >
-                                        This reverts commit
-                                        187bc075d237a2ced731d0a026ca25aa3e0f5540.
+                                      body: |
+                                        This reverts commit 187bc075d237a2ced731d0a026ca25aa3e0f5540.
                                       footer:
                                         Change-type: patch
                                         change-type: patch
