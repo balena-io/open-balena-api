@@ -101,60 +101,63 @@ const createServiceInstalls = async ({
 
 	const serviceIds = [...new Set([...targetServicesByDevice.values()].flat())];
 
-	const missingServiceFilters = serviceIds.map((serviceId) => ({
-		$not: {
-			service_install: {
-				$any: {
-					$alias: 'si',
-					$expr: {
-						si: {
-							installs__service: serviceId,
-						},
-					},
-				},
-			},
-		},
-	}));
-
-	if (missingServiceFilters.length === 0) {
+	if (serviceIds.length === 0) {
 		console.info('[service-install-task] No service installs to create');
 		return 0;
 	}
 
-	const devicesToAddServiceInstalls = (
-		await api.resin.get({
-			resource: 'device',
-			passthrough: { req: permissions.rootRead },
-			options: {
-				$select: 'id',
-				$expand: {
-					service_install: {
-						$select: 'installs__service',
-						$filter: {
-							installs__service: { $in: serviceIds },
+	const devicesToAddServiceInstalls = await (async () => {
+		// Creating the filters inside an iife so that they get GCed right after the query.
+		const missingServiceFilters = serviceIds.map((serviceId) => ({
+			$not: {
+				service_install: {
+					$any: {
+						$alias: 'si',
+						$expr: {
+							si: {
+								installs__service: serviceId,
+							},
 						},
 					},
 				},
-				$filter: {
-					id: { $in: devices },
-					...(missingServiceFilters.length === 1
-						? missingServiceFilters[0]
-						: {
-								$or: missingServiceFilters,
-							}),
-				},
 			},
-		} as const)
-	).map((device) => {
-		// Transform the device to the simpler object we will need later which is smaller
-		// and will allow the larger version to be garbage collected sooner
-		return {
-			id: device.id,
-			serviceInstalls: device.service_install.map(
-				(si) => si.installs__service.__id,
-			),
-		};
-	});
+		}));
+
+		return (
+			await api.resin.get({
+				resource: 'device',
+				passthrough: { req: permissions.rootRead },
+				options: {
+					$select: 'id',
+					$expand: {
+						service_install: {
+							$select: 'installs__service',
+							$filter: {
+								installs__service: { $in: serviceIds },
+							},
+						},
+					},
+					$filter: {
+						id: { $in: devices },
+						...(missingServiceFilters.length === 1
+							? missingServiceFilters[0]
+							: {
+									$or: missingServiceFilters,
+								}),
+					},
+				},
+			} as const)
+		).map((device) => {
+			// Transform the device to the simpler object we will need later which is smaller
+			// and will allow the larger version to be garbage collected sooner
+			return {
+				id: device.id,
+				serviceInstalls: device.service_install.map(
+					(si) => si.installs__service.__id,
+				),
+			};
+		});
+	})();
 
 	// This is already batched at one level, does it make sense to batch it again?
 	const remainingDevices = new Set(devices);
