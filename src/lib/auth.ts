@@ -120,12 +120,10 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 
 	'resin.service_environment_variable.read?service/canAccess()',
 
-	'resin.device_service_environment_variable.read?service_install/canAccess()',
+	'resin.device_service_environment_variable.read?device/canAccess()',
 	...writePerms(
 		'resin.device_service_environment_variable',
-		`service_install/any(si:si/device/any(d:${matchesNonFrozenDeviceActor(
-			'd',
-		)}))`,
+		`device/any(d:${matchesNonFrozenDeviceActor('d')})`,
 	),
 
 	'resin.image__is_part_of__release.read?is_part_of__release/canAccess()',
