@@ -4,6 +4,7 @@ import {
 	ASYNC_TASK_ATTEMPT_LIMIT,
 	ASYNC_TASK_CREATE_SERVICE_INSTALLS_MAX_TIME_MS,
 } from '../../../lib/config.js';
+import { ThisShouldNeverHappenError } from '../../../infra/error-handling/index.js';
 
 const schema = {
 	type: 'object',
@@ -67,37 +68,38 @@ const createServiceInstalls = async ({
 		},
 	} as const;
 
-	const deviceWithServices = await api.resin.get({
-		resource: 'device',
-		passthrough: { req: permissions.rootRead },
-		options: {
-			$select: 'id',
-			$expand: {
-				should_be_running__release: releaseExpand,
-				should_be_managed_by__release: releaseExpand,
-				should_be_operated_by__release: releaseExpand,
-			},
-			$filter: {
-				id: { $in: devices },
-			},
-		} as const,
-	});
-
-	const serviceIds = [
-		...new Set(
-			deviceWithServices.flatMap((device) =>
-				[
-					...device.should_be_running__release,
-					...device.should_be_managed_by__release,
-					...device.should_be_operated_by__release,
-				].flatMap((release) =>
-					release.contains__image.flatMap((image) =>
-						image.image.map((img) => img.is_a_build_of__service.__id),
-					),
+	const targetServicesByDevice = new Map(
+		(
+			await api.resin.get({
+				resource: 'device',
+				passthrough: { req: permissions.rootRead },
+				options: {
+					$select: 'id',
+					$expand: {
+						should_be_running__release: releaseExpand,
+						should_be_managed_by__release: releaseExpand,
+						should_be_operated_by__release: releaseExpand,
+					},
+					$filter: {
+						id: { $in: devices },
+					},
+				} as const,
+			})
+		).map((device) => {
+			const deviceServiceIds = [
+				...device.should_be_running__release,
+				...device.should_be_managed_by__release,
+				...device.should_be_operated_by__release,
+			].flatMap((release) =>
+				release.contains__image.flatMap((image) =>
+					image.image.map((img) => img.is_a_build_of__service.__id),
 				),
-			),
-		),
-	];
+			);
+			return [device.id, [...new Set(deviceServiceIds)]];
+		}),
+	);
+
+	const serviceIds = [...new Set([...targetServicesByDevice.values()].flat())];
 
 	const missingServiceFilters = serviceIds.map((serviceId) => ({
 		$not: {
@@ -182,27 +184,39 @@ const createServiceInstalls = async ({
 				return totalSiCreated;
 			}
 
-			// Use existingServiceIds as a Set for faster lookups on the follow up filter
-			const existingServiceIds = device.serviceInstalls;
-			const deviceServiceIds = _.difference(serviceIds, existingServiceIds);
+			const targetServiceIds = targetServicesByDevice.get(device.id);
+			if (targetServiceIds == null) {
+				// This shouldn't be possible since devicesToAddServiceInstalls is a subset of targetServicesByDevice
+				ThisShouldNeverHappenError(
+					`[service-install-task] Could not find device ${device.id} in the target targetServicesByDevice map`,
+				);
+			} else {
+				// Use existingServiceIds as a Set for faster lookups on the follow up filter
+				const existingServiceIds = device.serviceInstalls;
+				const deviceServiceIds = _.difference(
+					targetServiceIds,
+					existingServiceIds,
+				);
 
-			await Promise.all(
-				deviceServiceIds.map(async (serviceId) => {
-					// Create a service_install for this pair of service and device
-					await api.resin.post({
-						resource: 'service_install',
-						passthrough: { req: permissions.root, tx },
-						body: {
-							device: device.id,
-							installs__service: serviceId,
-						},
-						options: { returnResource: false },
-					});
-				}),
-			);
+				await Promise.all(
+					deviceServiceIds.map(async (serviceId) => {
+						// Create a service_install for this pair of service and device
+						await api.resin.post({
+							resource: 'service_install',
+							passthrough: { req: permissions.root, tx },
+							body: {
+								device: device.id,
+								installs__service: serviceId,
+							},
+							options: { returnResource: false },
+						});
+					}),
+				);
 
-			totalSiCreated += deviceServiceIds.length;
+				totalSiCreated += deviceServiceIds.length;
+			}
 			remainingDevices.delete(device.id);
+			targetServicesByDevice.delete(device.id);
 		}
 		return totalSiCreated;
 	});
