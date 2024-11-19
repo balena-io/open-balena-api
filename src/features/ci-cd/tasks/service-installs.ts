@@ -119,29 +119,40 @@ const createServiceInstalls = async ({
 		return 0;
 	}
 
-	const devicesToAddServiceInstalls = await api.resin.get({
-		resource: 'device',
-		passthrough: { req: permissions.rootRead },
-		options: {
-			$select: 'id',
-			$expand: {
-				service_install: {
-					$select: 'installs__service',
-					$filter: {
-						installs__service: { $in: serviceIds },
+	const devicesToAddServiceInstalls = (
+		await api.resin.get({
+			resource: 'device',
+			passthrough: { req: permissions.rootRead },
+			options: {
+				$select: 'id',
+				$expand: {
+					service_install: {
+						$select: 'installs__service',
+						$filter: {
+							installs__service: { $in: serviceIds },
+						},
 					},
 				},
+				$filter: {
+					id: { $in: devices },
+					...(missingServiceFilters.length === 1
+						? missingServiceFilters[0]
+						: {
+								$or: missingServiceFilters,
+							}),
+				},
 			},
-			$filter: {
-				id: { $in: devices },
-				...(missingServiceFilters.length === 1
-					? missingServiceFilters[0]
-					: {
-							$or: missingServiceFilters,
-						}),
-			},
-		},
-	} as const);
+		} as const)
+	).map((device) => {
+		// Transform the device to the simpler object we will need later which is smaller
+		// and will allow the larger version to be garbage collected sooner
+		return {
+			id: device.id,
+			serviceInstalls: device.service_install.map(
+				(si) => si.installs__service.__id,
+			),
+		};
+	});
 
 	// This is already batched at one level, does it make sense to batch it again?
 	const remainingDevices = new Set(devices);
@@ -172,9 +183,7 @@ const createServiceInstalls = async ({
 			}
 
 			// Use existingServiceIds as a Set for faster lookups on the follow up filter
-			const existingServiceIds = device.service_install.map(
-				(si) => si.installs__service.__id,
-			);
+			const existingServiceIds = device.serviceInstalls;
 			const deviceServiceIds = _.difference(serviceIds, existingServiceIds);
 
 			await Promise.all(
