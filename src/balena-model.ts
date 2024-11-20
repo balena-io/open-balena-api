@@ -600,23 +600,23 @@ export interface Service {
 		>;
 		device__installs__service?: Array<ServiceInstall['Read']>;
 		service_install?: Array<ServiceInstall['Read']>;
+		device__installs__application__has__service_name__has__name?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
+		device__installs__service__has__name?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
+		device__installs__service_environment_variable?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
+		service_install__has__name?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
+		device_service_environment_variable?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
 		is_installed_on__device?: Array<ServiceInstall['Read']>;
 		is_built_by__image?: Array<Image['Read']>;
-		is_of__device__installs__application__has__service_name__has__name?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		is_of__device__installs__service__has__name?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		is_of__device__installs__service_environment_variable?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		is_of__service_install__has__name?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		is_of__device_service_environment_variable?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
 	};
 	Write: {
 		created_at: Types['Date Time']['Write'];
@@ -792,24 +792,24 @@ export interface Device {
 		>;
 		device__installs__service?: Array<ServiceInstall['Read']>;
 		service_install?: Array<ServiceInstall['Read']>;
+		device__installs__application__has__service_name__has__name?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
+		device__installs__service__has__name?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
+		device__installs__service_environment_variable?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
+		service_install__has__name?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
+		device_service_environment_variable?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
 		installs__image?: Array<ImageInstall['Read']>;
 		installs__application__has__service_name?: Array<ServiceInstall['Read']>;
 		installs__service?: Array<ServiceInstall['Read']>;
-		is_of__device__installs__application__has__service_name__has__name?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		is_of__device__installs__service__has__name?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		is_of__device__installs__service_environment_variable?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		is_of__service_install__has__name?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		is_of__device_service_environment_variable?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
 	};
 	Write: {
 		created_at: Types['Date Time']['Write'];
