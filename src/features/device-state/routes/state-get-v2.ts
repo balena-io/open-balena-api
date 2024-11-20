@@ -87,18 +87,13 @@ function buildAppFromRelease(
 		// extract the per-image information
 		const image = ipr.image[0];
 
-		const si = device.service_install.find(
-			({ service }) => service.__id === image.is_a_build_of__service[0].id,
-		);
 		const svc = image.is_a_build_of__service[0];
 		const environment: Dictionary<string> = {};
 		varListInsert(ipr.image_environment_variable, environment);
 		varListInsert(application.application_environment_variable, environment);
 		varListInsert(svc.service_environment_variable, environment);
 		varListInsert(device.device_environment_variable, environment);
-		if (si != null) {
-			varListInsert(si.device_service_environment_variable, environment);
-		}
+		varListInsert(svc.device_service_environment_variable, environment);
 
 		const labels: Dictionary<string> = {};
 		for (const { label_name, value } of [
@@ -188,6 +183,21 @@ const stateQuery = _.once(() =>
 											is_a_build_of__service: {
 												$select: ['id', 'service_name'],
 												$expand: {
+													device_service_environment_variable: {
+														$select: ['name', 'value'],
+														$filter: {
+															device: {
+																$any: {
+																	$alias: 'd',
+																	$expr: {
+																		d: {
+																			uuid: { '@': 'uuid' },
+																		},
+																	},
+																},
+															},
+														},
+													},
 													service_environment_variable: {
 														$select: ['name', 'value'],
 													},
@@ -205,14 +215,6 @@ const stateQuery = _.once(() =>
 										$select: ['name', 'value'],
 									},
 								},
-							},
-						},
-					},
-					service_install: {
-						$select: ['id', 'service'],
-						$expand: {
-							device_service_environment_variable: {
-								$select: ['name', 'value'],
 							},
 						},
 					},
