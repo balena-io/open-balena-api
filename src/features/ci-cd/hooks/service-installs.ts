@@ -287,18 +287,18 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		const affectedIds = await sbvrUtils.getAffectedIds(args);
 		if (affectedIds.length !== 0) {
 			await deleteServiceInstallsForCurrentApp(args.api, newAppId, affectedIds);
-			await createAppServiceInstalls(args.api, newAppId, affectedIds, args.tx);
 		}
 	},
-});
-
-hooks.addPureHook('PATCH', 'resin', 'device', {
 	POSTRUN: async ({ api, request, tx }) => {
 		const affectedIds = request.affectedIds!;
-		if (
-			request.values.is_pinned_on__release !== undefined &&
-			affectedIds.length !== 0
-		) {
+		if (affectedIds.length === 0) {
+			return;
+		}
+		const newAppId = request.values.belongs_to__application;
+		if (newAppId != null) {
+			await createAppServiceInstalls(api, newAppId, affectedIds, tx);
+		}
+		if (request.values.is_pinned_on__release !== undefined) {
 			// If the device was preloaded, and then pinned, service_installs do not exist
 			// for this device+release combination. We need to create these
 			if (request.values.is_pinned_on__release != null) {
