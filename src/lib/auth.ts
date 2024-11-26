@@ -121,9 +121,12 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.service_environment_variable.read?service/canAccess()',
 
 	'resin.device_service_environment_variable.read?device/canAccess()',
+	// Should be created for the device itself, and it should be for a service of the app that the device belongs to or for a service of the supervisor/hostApp release that manages/operates the device.
+	`resin.device_service_environment_variable.create?device/any(d:${matchesNonFrozenDeviceActor('d')}) and service/any(s:s/application/any(a:a/owns__device/any(d:d/${matchesActor}) or (a/is_public eq true and a/owns__release/any(r:r/should_manage__device/any(d:d/${matchesActor}) or r/should_operate__device/any(d:d/${matchesActor})))))`,
 	...writePerms(
 		'resin.device_service_environment_variable',
 		`device/any(d:${matchesNonFrozenDeviceActor('d')})`,
+		['update', 'delete'],
 	),
 
 	'resin.image__is_part_of__release.read?is_part_of__release/canAccess()',
