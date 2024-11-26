@@ -1,4 +1,16 @@
 - commits:
+    - subject: Make the device's device_service_environment_variable permission stricter
+      hash: 0ade27344213771d15f55d6c8904b3d3002813f9
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 31.2.17
+  title: ""
+  date: 2024-11-26T18:27:55.866Z
+- commits:
     - subject: "Service installs: Change some comments on device moving"
       hash: ae65384b6c115b1b09c227489dabc8def2f96201
       body: ""
@@ -1979,6 +1991,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -2011,6 +2024,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3117,6 +3131,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -3164,6 +3179,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3308,6 +3324,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -3345,6 +3362,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3667,6 +3685,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -3695,6 +3714,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3846,6 +3866,7 @@
 
 
 
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -3880,6 +3901,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4086,6 +4108,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4409,6 +4432,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -4431,6 +4455,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4528,6 +4553,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4745,6 +4771,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -4767,6 +4794,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4864,6 +4892,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7094,6 +7123,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -7116,6 +7146,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7213,6 +7244,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7433,6 +7465,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -7461,6 +7494,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7610,6 +7644,7 @@
 
 
 
+
                                                                 We know what type
                                                                 they return and they
                                                                 should be explicitly
@@ -7644,6 +7679,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7849,6 +7885,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
