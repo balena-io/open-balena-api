@@ -7,7 +7,9 @@ import type { UserObjectParam } from '../test-lib/supertest.js';
 import { supertest } from '../test-lib/supertest.js';
 import type { TokenUserPayload } from '../../src/index.js';
 import type { RequiredField } from '@balena/pinejs/out/sbvr-api/common-types.js';
-import { assertExists } from './common.js';
+import { assertExists, expectToEventually } from './common.js';
+import { sbvrUtils, permissions } from '@balena/pinejs';
+import type { tasks } from '@balena/pinejs';
 
 const version = 'resin';
 
@@ -208,7 +210,7 @@ export const thatIsDateStringAfter = (
 
 const validJwtProps = ['id', 'jwt_secret', 'authTime', 'iat', 'exp'].sort();
 
-export function expectJwt(tokenOrJwt: string | AnyObject) {
+export function expectJwt(tokenOrJwt: string | object) {
 	const decoded = (
 		typeof tokenOrJwt === 'string'
 			? jsonwebtoken.decode(tokenOrJwt)
@@ -232,3 +234,86 @@ export function expectJwt(tokenOrJwt: string | AnyObject) {
 
 	return decoded;
 }
+
+export type TaskExpectation = Pick<
+	tasks.Task['Read'],
+	'is_executed_with__parameter_set' | 'status'
+>;
+
+const expectTasks = async (
+	handler: string,
+	expectedTasks: TaskExpectation[],
+	lastId = '0',
+) => {
+	const tasks = await sbvrUtils.api.tasks.get({
+		resource: 'task',
+		passthrough: { req: permissions.rootRead },
+		options: {
+			$select: ['id', 'is_executed_with__parameter_set', 'status'],
+			$filter: {
+				id: { $gt: lastId },
+				is_executed_by__handler: handler,
+			},
+			$orderby: { id: 'asc' },
+		},
+	});
+	const actual = tasks.map((t) =>
+		_.pick(t, ['is_executed_with__parameter_set', 'status']),
+	);
+
+	expect(actual).to.deep.equal(expectedTasks);
+	return tasks;
+};
+
+const latestTaskIdByHandler: Dictionary<string | undefined> = {};
+
+export const expectNewTasks = async (
+	handler: string,
+	expectedUsage: TaskExpectation[],
+) => {
+	const tasks = await expectTasks(
+		handler,
+		expectedUsage,
+		latestTaskIdByHandler[handler],
+	);
+	const lastTaskId = tasks.at(-1)?.id;
+	if (lastTaskId != null) {
+		latestTaskIdByHandler[handler] = lastTaskId;
+	}
+};
+
+export const resetLatestTaskIds = async (handler: string) => {
+	await expectToEventually(async () => {
+		const runningTasks = await sbvrUtils.api.tasks.get({
+			resource: 'task',
+			passthrough: { req: permissions.rootRead },
+			options: {
+				$top: 1,
+				$select: 'id',
+				$filter: {
+					status: 'queued',
+					is_executed_by__handler: handler,
+				},
+				$orderby: { id: 'desc' },
+			},
+		});
+		expect(runningTasks).to.have.lengthOf(0);
+	});
+	const [latestTask] = await sbvrUtils.api.tasks.get({
+		resource: 'task',
+		passthrough: { req: permissions.rootRead },
+		options: {
+			$top: 1,
+			$select: 'id',
+			$filter: {
+				status: 'succeeded',
+				is_executed_by__handler: handler,
+			},
+			$orderby: { id: 'desc' },
+		},
+	});
+	if (latestTask == null) {
+		return;
+	}
+	latestTaskIdByHandler[handler] = latestTask?.id;
+};

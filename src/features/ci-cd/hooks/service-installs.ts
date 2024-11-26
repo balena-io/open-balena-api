@@ -287,18 +287,25 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		const affectedIds = await sbvrUtils.getAffectedIds(args);
 		if (affectedIds.length !== 0) {
 			await deleteServiceInstallsForCurrentApp(args.api, newAppId, affectedIds);
-			await createAppServiceInstalls(args.api, newAppId, affectedIds, args.tx);
 		}
 	},
-});
-
-hooks.addPureHook('PATCH', 'resin', 'device', {
 	POSTRUN: async ({ api, request, tx }) => {
 		const affectedIds = request.affectedIds!;
-		if (
-			request.values.is_pinned_on__release !== undefined &&
-			affectedIds.length !== 0
-		) {
+		if (affectedIds.length === 0) {
+			return;
+		}
+		const newAppId = request.values.belongs_to__application;
+		if (newAppId != null) {
+			// We could also have an optimization for the case that `values.is_pinned_on__release != null`
+			// to make the part that finds the target release faster, but chose to keep this simpler since:
+			// a) We expect that in the majority of device move requests users will not be also be pinning
+			//    the device at the same time.
+			// b) Only the sync approach would benefit from it, since creating the service installs via tasks
+			//    (which is going to be the default), only accepts the deviceIds as a parameter,
+			await createAppServiceInstalls(api, newAppId, affectedIds, tx);
+			return;
+		}
+		if (request.values.is_pinned_on__release !== undefined) {
 			// If the device was preloaded, and then pinned, service_installs do not exist
 			// for this device+release combination. We need to create these
 			if (request.values.is_pinned_on__release != null) {

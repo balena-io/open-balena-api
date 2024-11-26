@@ -8,6 +8,7 @@ import * as fixtures from './test-lib/fixtures.js';
 import { assertExists, expectToEventually } from './test-lib/common.js';
 import * as config from '../src/lib/config.js';
 import { supertest } from './test-lib/supertest.js';
+import { expectNewTasks, resetLatestTaskIds } from './test-lib/api-helpers.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -45,6 +46,8 @@ export default () => {
 
 					config.TEST_MOCK_ONLY.ASYNC_TASK_CREATE_SERVICE_INSTALLS_ENABLED =
 						isServiceInstallEnabled;
+
+					await resetLatestTaskIds('create_service_installs');
 				});
 
 				after(async () => {
@@ -74,6 +77,19 @@ export default () => {
 							ctx.app1Service1.id,
 						);
 					});
+					await expectNewTasks(
+						'create_service_installs',
+						isServiceInstallEnabled
+							? [
+									{
+										is_executed_with__parameter_set: {
+											devices: [ctx.device.id],
+										},
+										status: 'succeeded',
+									},
+								]
+							: [],
+					);
 				});
 
 				it('for pinning an application to a release', async () => {
@@ -104,6 +120,19 @@ export default () => {
 							ctx.app1Service2.id,
 						);
 					});
+					await expectNewTasks(
+						'create_service_installs',
+						isServiceInstallEnabled
+							? [
+									{
+										is_executed_with__parameter_set: {
+											devices: [ctx.device.id],
+										},
+										status: 'succeeded',
+									},
+								]
+							: [],
+					);
 				});
 
 				it('when a device is pinned on a different release', async () => {
@@ -133,6 +162,19 @@ export default () => {
 							ctx.app1Service3.id,
 						);
 					});
+					await expectNewTasks(
+						'create_service_installs',
+						isServiceInstallEnabled
+							? [
+									{
+										is_executed_with__parameter_set: {
+											devices: [ctx.device.id],
+										},
+										status: 'succeeded',
+									},
+								]
+							: [],
+					);
 				});
 
 				it('when device is moved to different application', async () => {
@@ -170,6 +212,27 @@ export default () => {
 							ctx.app2Service1.id,
 						);
 					});
+					await expectNewTasks(
+						'create_service_installs',
+						isServiceInstallEnabled
+							? [
+									// the first one is from unpinning
+									{
+										is_executed_with__parameter_set: {
+											devices: [ctx.device.id],
+										},
+										status: 'succeeded',
+									},
+									// the second one is from moving application
+									{
+										is_executed_with__parameter_set: {
+											devices: [ctx.device.id],
+										},
+										status: 'succeeded',
+									},
+								]
+							: [],
+					);
 				});
 
 				it('should be able to use service_install to create a device_service_environment_variable', async () => {
