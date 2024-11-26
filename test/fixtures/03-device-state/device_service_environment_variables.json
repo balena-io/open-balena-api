@@ -5,5 +5,19 @@
 		"service": "app1_service1",
 		"name": "name_si",
 		"value": "value_si"
+	},
+	"si2_svc": {
+		"user": "admin",
+		"device": "device2",
+		"service": "app1_service1",
+		"name": "name_si_2",
+		"value": "value_si_2"
+	},
+	"si3_svc2": {
+		"user": "admin",
+		"device": "device1",
+		"service": "app1_service2",
+		"name": "name_si_3",
+		"value": "value_si_3"
 	}
 }

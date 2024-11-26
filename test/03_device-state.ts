@@ -1135,6 +1135,7 @@ export default () => {
 							name_svc: 'value_app',
 							name_device: 'value_device',
 							name_si: 'value_device',
+							name_si_3: 'value_si_3',
 						};
 
 						if (stateVersion === 'v2') {
