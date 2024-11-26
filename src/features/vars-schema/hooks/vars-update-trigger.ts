@@ -198,6 +198,7 @@ const addDeviceEnvHooks = (resource: keyof BalenaModel) => {
 
 addDeviceEnvHooks('device_config_variable');
 addDeviceEnvHooks('device_environment_variable');
+addDeviceEnvHooks('device_service_environment_variable');
 
 addEnvHooks('service_environment_variable', async (args) => {
 	if (args.req.body.service != null) {
@@ -283,44 +284,6 @@ addEnvHooks('service_environment_variable', async (args) => {
 											},
 										},
 									},
-								},
-							},
-						},
-					},
-				},
-			},
-		}),
-	];
-});
-
-addEnvHooks('device_service_environment_variable', async (args) => {
-	if (args.req.body.service_install != null) {
-		return {
-			service_install: {
-				$any: {
-					$alias: 's',
-					$expr: { s: { id: args.req.body.service_install } },
-				},
-			},
-		};
-	}
-
-	const envVarIds = await sbvrUtils.getAffectedIds(args);
-	if (envVarIds.length === 0) {
-		return;
-	}
-	return [
-		envVarIds,
-		(envVarIdsChunk) => ({
-			service_install: {
-				$any: {
-					$alias: 's',
-					$expr: {
-						s: {
-							device_service_environment_variable: {
-								$any: {
-									$alias: 'e',
-									$expr: { e: { id: { $in: envVarIdsChunk } } },
 								},
 							},
 						},
