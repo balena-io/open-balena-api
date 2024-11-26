@@ -296,13 +296,10 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		}
 		const newAppId = request.values.belongs_to__application;
 		if (newAppId != null) {
-			// We could also have an optimization for the case that `values.is_pinned_on__release != null`
-			// to make the part that finds the target release faster, but chose to keep this simpler since:
-			// a) We expect that in the majority of device move requests users will not be also be pinning
-			//    the device at the same time.
-			// b) Only the sync approach would benefit from it, since creating the service installs via tasks
-			//    (which is going to be the default), only accepts the deviceIds as a parameter,
 			await createAppServiceInstalls(api, newAppId, affectedIds, tx);
+			// Since the device(s) got moved and we just created the service installs based on the
+			// new target release, we don't need to also handle the `is_pinned_on__release` separately,
+			// since that would be duplicate work.
 			return;
 		}
 		if (request.values.is_pinned_on__release !== undefined) {
