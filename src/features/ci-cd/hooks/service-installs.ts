@@ -273,6 +273,23 @@ hooks.addPureHook('POST', 'resin', 'device', {
 				tx,
 			);
 		}
+
+		const svAndHostAppReleaseIds = [
+			request.values.should_be_managed_by__release,
+			request.values.should_be_operated_by__release,
+		].filter((releaseId) => releaseId != null);
+
+		if (svAndHostAppReleaseIds.length > 0) {
+			// Create supervisor/hostApp service installs when the supervisor/hostApp is pinned on device creation
+			await createReleaseServiceInstalls(
+				rootApi,
+				[deviceId],
+				{
+					id: { $in: svAndHostAppReleaseIds },
+				},
+				tx,
+			);
+		}
 	},
 });
 
@@ -346,40 +363,20 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	},
 });
 
-const addSystemAppServiceInstallHooks = (
-	fieldName: 'should_be_managed_by__release' | 'should_be_operated_by__release',
-) => {
-	hooks.addPureHook('POST', 'resin', 'device', {
-		POSTRUN: async ({ request, api, tx, result: deviceId }) => {
-			// Don't try to add service installs if the device wasn't created
-			if (typeof deviceId !== 'number') {
-				return;
-			}
-
-			const releaseId = request.values[fieldName];
-			// Create supervisor/hostApp service installs when the supervisor/hostApp is pinned on device creation
-			if (releaseId != null) {
-				const rootApi = api.clone({
-					passthrough: { tx, req: permissions.root },
-				});
-				await createReleaseServiceInstalls(
-					rootApi,
-					[deviceId],
-					{
-						id: releaseId,
-					},
-					tx,
-				);
-			}
-		},
-	});
-
-	hooks.addPureHook('PATCH', 'resin', 'device', {
-		POSTRUN: async ({ api, request, tx }) => {
-			const affectedIds = request.affectedIds!;
+hooks.addPureHook('PATCH', 'resin', 'device', {
+	POSTRUN: async ({ api, request, tx }) => {
+		const affectedIds = request.affectedIds!;
+		if (affectedIds.length === 0) {
+			return;
+		}
+		// add system app service install PATCH hooks
+		for (const fieldName of [
+			'should_be_managed_by__release',
+			'should_be_operated_by__release',
+		] as const) {
 			const releaseId = request.values[fieldName];
 			// Create supervisor/hostApp service installs when the supervisor/hostApp is pinned on device update
-			if (releaseId != null && affectedIds.length !== 0) {
+			if (releaseId != null) {
 				await createReleaseServiceInstalls(
 					api,
 					affectedIds,
@@ -389,13 +386,6 @@ const addSystemAppServiceInstallHooks = (
 					tx,
 				);
 			}
-		},
-	});
-};
-
-for (const fieldName of [
-	'should_be_managed_by__release',
-	'should_be_operated_by__release',
-] as const) {
-	addSystemAppServiceInstallHooks(fieldName);
-}
+		}
+	},
+});
