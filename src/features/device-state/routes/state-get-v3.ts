@@ -12,7 +12,6 @@ import {
 	getStateDelayingEmpty,
 	getStateEventAdditionalFields,
 	readTransaction,
-	serviceInstallFromImage,
 	varListInsert,
 } from '../state-get-utils.js';
 import { sbvrUtils } from '@balena/pinejs';
@@ -137,6 +136,14 @@ export function buildAppFromRelease(
 		}
 	}
 
+	const dsevsById =
+		device != null
+			? _.groupBy(
+					device.device_service_environment_variable,
+					({ service }) => service.__id,
+				)
+			: {};
+
 	for (const ipr of release.release_image) {
 		const image = ipr.image[0];
 		const svc = image.is_a_build_of__service[0];
@@ -156,9 +163,9 @@ export function buildAppFromRelease(
 
 		if (device != null) {
 			varListInsert(device.device_environment_variable, environment);
-			const si = serviceInstallFromImage(device, image);
-			if (si != null) {
-				varListInsert(si.device_service_environment_variable, environment);
+			const dsevs = dsevsById[svc.id];
+			if (dsevs != null) {
+				varListInsert(dsevs, environment);
 			}
 		}
 
@@ -274,13 +281,8 @@ const deviceExpand = {
 	},
 	// `should_be_running__release` will automatically defer to the app release as necessary
 	should_be_running__release: releaseExpand,
-	service_install: {
-		$select: ['id', 'service'],
-		$expand: {
-			device_service_environment_variable: {
-				$select: ['name', 'value'],
-			},
-		},
+	device_service_environment_variable: {
+		$select: ['name', 'value', 'service'],
 	},
 	belongs_to__application: {
 		$select: appSelect,
