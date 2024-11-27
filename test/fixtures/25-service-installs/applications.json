@@ -1,4 +1,11 @@
 {
+	"intel-nuc-host-app": {
+		"user": "admin",
+		"is_host": true,
+		"is_public": true,
+		"device_type": "intel-nuc",
+		"app_name": "intel-nuc"
+	},
 	"app1": {
 		"user": "admin",
 		"device_type": "intel-nuc",

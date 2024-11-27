@@ -46,6 +46,8 @@ export default () => {
 					ctx.app1Service3 = fx.services.app1Service3;
 					ctx.app2Service1 = fx.services.app2Service1;
 					ctx.app2Service2 = fx.services.app2Service2;
+					ctx.intelNucHostAppService1 =
+						fx.services['intel-nuc-host-appService1'];
 
 					config.TEST_MOCK_ONLY.ASYNC_TASK_CREATE_SERVICE_INSTALLS_ENABLED =
 						isServiceInstallEnabled;
@@ -95,6 +97,61 @@ export default () => {
 					);
 				});
 
+				it('when a device is created with an os release specified', async () => {
+					const { body: provisioningKey } = await supertest(ctx.admin)
+						.post(`/api-key/application/${ctx.app1.id}/provisioning`)
+						.expect(200);
+					const uuid = fakeDevice.generateDeviceUuid();
+					const { body: deviceWithOsVersion } = await supertest()
+						.post(`/device/register?apikey=${provisioningKey}`)
+						.send({
+							user: ctx.admin.id,
+							application: ctx.app1.id,
+							device_type: 'intel-nuc',
+							uuid,
+							os_version: 'balenaOS 2.88.4',
+							os_variant: 'prod',
+						})
+						.expect(201);
+					ctx.deviceWithOsVersion = deviceWithOsVersion;
+
+					await expectToEventually(async () => {
+						const { body: serviceInstalls } = await pineUser
+							.get({
+								resource: 'service_install',
+								options: {
+									$select: ['device', 'installs__service'],
+									$filter: {
+										device: deviceWithOsVersion.id,
+									},
+									$orderby: { installs__service: 'asc' },
+								},
+							})
+							.expect(200);
+						expect(serviceInstalls).to.deep.equal(
+							[ctx.app1Service1.id, ctx.intelNucHostAppService1.id]
+								.sort((a, b) => a - b)
+								.map((serviceInstallId) => ({
+									device: { __id: deviceWithOsVersion.id },
+									installs__service: { __id: serviceInstallId },
+								})),
+						);
+					});
+					await expectNewSettledTasks(
+						'create_service_installs',
+						isServiceInstallEnabled
+							? [
+									{
+										is_executed_with__parameter_set: {
+											devices: [deviceWithOsVersion.id],
+										},
+										status: 'succeeded',
+									},
+								]
+							: [],
+					);
+				});
+
 				it('for pinning an application to a release', async () => {
 					await pineUser
 						.patch({
@@ -129,7 +186,7 @@ export default () => {
 							? [
 									{
 										is_executed_with__parameter_set: {
-											devices: [ctx.device.id],
+											devices: [ctx.device.id, ctx.deviceWithOsVersion.id],
 										},
 										status: 'succeeded',
 									},
