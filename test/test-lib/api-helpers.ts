@@ -10,6 +10,7 @@ import type { RequiredField } from '@balena/pinejs/out/sbvr-api/common-types.js'
 import { assertExists, expectToEventually } from './common.js';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import type { tasks } from '@balena/pinejs';
+import type { CreateServiceInstallsTaskParams } from '../../src/features/ci-cd/tasks/service-installs.js';
 
 const version = 'resin';
 
@@ -240,6 +241,14 @@ export type TaskExpectation = Pick<
 	'is_executed_with__parameter_set' | 'status'
 >;
 
+const isCreateServiceInstallsTaskParam = (
+	taskParams: tasks.Task['Read']['is_executed_with__parameter_set'],
+): taskParams is CreateServiceInstallsTaskParams =>
+	taskParams != null &&
+	!Array.isArray(taskParams) &&
+	'devices' in taskParams &&
+	Array.isArray(taskParams);
+
 const expectTasks = async (
 	handler: string,
 	expectedTasks: TaskExpectation[],
@@ -260,6 +269,24 @@ const expectTasks = async (
 	const actual = tasks.map((t) =>
 		_.pick(t, ['is_executed_with__parameter_set', 'status']),
 	);
+
+	if (handler === 'create_service_installs') {
+		// Sort the device IDs so that the tests are not flaky
+		for (const task of actual) {
+			if (
+				isCreateServiceInstallsTaskParam(task.is_executed_with__parameter_set)
+			) {
+				task.is_executed_with__parameter_set.devices.sort((a, b) => a - b);
+			}
+		}
+		for (const task of expectedTasks) {
+			if (
+				isCreateServiceInstallsTaskParam(task.is_executed_with__parameter_set)
+			) {
+				task.is_executed_with__parameter_set.devices.sort((a, b) => a - b);
+			}
+		}
+	}
 
 	expect(actual).to.deep.equal(expectedTasks);
 	return tasks;

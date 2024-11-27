@@ -260,6 +260,13 @@ hooks.addPureHook('POST', 'resin', 'device', {
 		const app = request.values.belongs_to__application;
 		if (app != null) {
 			await createAppServiceInstalls(rootApi, app, [deviceId], tx);
+			if (ASYNC_TASKS_ENABLED && ASYNC_TASK_CREATE_SERVICE_INSTALLS_ENABLED) {
+				// When creating service installs via the async tasks, a single call to createServiceInstallsAsync()
+				// creates all service installs (target release, hostApp & SV release), so we don't need
+				// to run the extra code below to handle them separately, and doing so would create
+				// duplicate & unnecessary tasks.
+				return;
+			}
 		}
 
 		const release = request.values.is_pinned_on__release;
