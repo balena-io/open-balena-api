@@ -164,6 +164,8 @@ export default () => {
 				});
 
 				it(`should notify the supervisor after deleting ${testVarsCount} device_environment_variables`, async function () {
+					// Use the request timeout, since this is going to delete MAX_SAFE_SQL_BINDS+1 rows
+					this.timeout(59000);
 					await connectDeviceAndWaitForUpdate(
 						device.uuid,
 						version,
