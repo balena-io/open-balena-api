@@ -600,16 +600,10 @@ export interface Service {
 		>;
 		device__installs__service?: Array<ServiceInstall['Read']>;
 		service_install?: Array<ServiceInstall['Read']>;
-		device__installs__application__has__service_name__has__name?: Array<
+		device__has__application__has__service_name__has__env_var_name?: Array<
 			DeviceServiceEnvironmentVariable['Read']
 		>;
-		device__installs__service__has__name?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		device__installs__service_environment_variable?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		service_install__has__name?: Array<
+		device__has__service__has__env_var_name?: Array<
 			DeviceServiceEnvironmentVariable['Read']
 		>;
 		device_service_environment_variable?: Array<
@@ -783,6 +777,15 @@ export interface Device {
 		device_environment_variable?: Array<DeviceEnvironmentVariable['Read']>;
 		device__has__config_var_name?: Array<DeviceConfigVariable['Read']>;
 		device_config_variable?: Array<DeviceConfigVariable['Read']>;
+		device__has__application__has__service_name__has__env_var_name?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
+		device__has__service__has__env_var_name?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
+		device_service_environment_variable?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
 		device__has__tag_key?: Array<DeviceTag['Read']>;
 		device_tag?: Array<DeviceTag['Read']>;
 		device__installs__image?: Array<ImageInstall['Read']>;
@@ -792,21 +795,6 @@ export interface Device {
 		>;
 		device__installs__service?: Array<ServiceInstall['Read']>;
 		service_install?: Array<ServiceInstall['Read']>;
-		device__installs__application__has__service_name__has__name?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		device__installs__service__has__name?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		device__installs__service_environment_variable?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		service_install__has__name?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		device_service_environment_variable?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
 		installs__image?: Array<ImageInstall['Read']>;
 		installs__application__has__service_name?: Array<ServiceInstall['Read']>;
 		installs__service?: Array<ServiceInstall['Read']>;
@@ -941,21 +929,6 @@ export interface ServiceInstall {
 		device: { __id: Device['Read']['id'] } | [Device['Read']];
 		installs__service: { __id: Service['Read']['id'] } | [Service['Read']];
 		id: Types['Serial']['Read'];
-		device__installs__application__has__service_name__has__name?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		device__installs__service__has__name?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		device__installs__service_environment_variable?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		service_install__has__name?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
-		device_service_environment_variable?: Array<
-			DeviceServiceEnvironmentVariable['Read']
-		>;
 		application__has__service_name:
 			| { __id: Service['Read']['id'] }
 			| [Service['Read']];
@@ -964,6 +937,15 @@ export interface ServiceInstall {
 			| { __id: Service['Read']['id'] }
 			| [Service['Read']];
 		is_installed_on__device: { __id: Device['Read']['id'] } | [Device['Read']];
+		is_of__device__has__application__has__service_name__has__env_var_name?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
+		is_of__device__has__service__has__env_var_name?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
+		is_of__device_service_environment_variable?: Array<
+			DeviceServiceEnvironmentVariable['Read']
+		>;
 	};
 	Write: {
 		created_at: Types['Date Time']['Write'];
@@ -978,14 +960,14 @@ export interface DeviceServiceEnvironmentVariable {
 	Read: {
 		created_at: Types['Date Time']['Read'];
 		modified_at: Types['Date Time']['Read'];
-		service_install:
-			| { __id: ServiceInstall['Read']['id'] }
-			| [ServiceInstall['Read']];
+		device: { __id: Device['Read']['id'] } | [Device['Read']];
+		service: { __id: Service['Read']['id'] } | [Service['Read']];
 		name: Types['Short Text']['Read'];
 		id: Types['Serial']['Read'];
 		value: Types['Text']['Read'];
-		service: { __id: Service['Read']['id'] } | [Service['Read']];
-		device: { __id: Device['Read']['id'] } | [Device['Read']];
+		service_install:
+			| { __id: ServiceInstall['Read']['id'] }
+			| [ServiceInstall['Read']];
 		device__installs__application__has__service_name:
 			| { __id: ServiceInstall['Read']['id'] }
 			| [ServiceInstall['Read']];
@@ -999,12 +981,12 @@ export interface DeviceServiceEnvironmentVariable {
 	Write: {
 		created_at: Types['Date Time']['Write'];
 		modified_at: Types['Date Time']['Write'];
-		service_install: ServiceInstall['Write']['id'];
+		device: Device['Write']['id'];
+		service: Service['Write']['id'];
 		name: Types['Short Text']['Write'];
 		id: Types['Serial']['Write'];
 		value: Types['Text']['Write'];
-		service: Service['Write']['id'];
-		device: Device['Write']['id'];
+		service_install: ServiceInstall['Write']['id'];
 	};
 }
 
@@ -1329,7 +1311,7 @@ export default interface $Model {
 	device__has__config_var_name: DeviceConfigVariable;
 	device__installs__image: ImageInstall;
 	device__installs__application__has__service_name: ServiceInstall;
-	device__installs__application__has__service_name__has__name: DeviceServiceEnvironmentVariable;
+	device__has__application__has__service_name__has__env_var_name: DeviceServiceEnvironmentVariable;
 	device__has__tag_key: DeviceTag;
 	release: Release;
 	release__has__tag_key: ReleaseTag;

@@ -395,9 +395,7 @@ Term: device
 		Term Form: service install
 		Database Table Name: service install
 
-		-- Target form for this table is:
-		-- Fact type: device has service has env var name
-		Fact type: service install has name (Auth)
+		Fact type: device has service has env var name
 			Term Form: device service environment variable
 			Database Table Name: device service environment variable
 
@@ -814,16 +812,8 @@ Fact type: image environment variable has value
 
 Fact type: device service environment variable has value
 	Necessity: each device service environment variable has exactly one value.
-Fact type: device service environment variable has service
-	-- This is the default name that will be given to the synonymous form
-	-- once the device service environment variable origin fact type changes
-	Synonymous form: service has device service environment variable
-	Necessity: each device service environment variable has exactly one service.
-Fact type: device service environment variable has device
-	-- This is the default name that will be given to the synonymous form
-	-- once the device service environment variable origin fact type changes
-	Synonymous form: device has device service environment variable
-	Necessity: each device service environment variable has exactly one device.
+Fact type: device service environment variable has service install
+	Necessity: each device service environment variable has exactly one service install.
 
 
 -- application tag
