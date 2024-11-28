@@ -83,6 +83,10 @@ function buildAppFromRelease(
 		}
 	}
 
+	const dsevsById = _.groupBy(
+		device.device_service_environment_variable,
+		({ service }) => service.__id,
+	);
 	for (const ipr of release.release_image) {
 		// extract the per-image information
 		const image = ipr.image[0];
@@ -93,10 +97,10 @@ function buildAppFromRelease(
 		varListInsert(application.application_environment_variable, environment);
 		varListInsert(svc.service_environment_variable, environment);
 		varListInsert(device.device_environment_variable, environment);
-		const dsev = device.device_service_environment_variable.filter(
-			({ service }) => service.__id === svc.id,
-		);
-		varListInsert(dsev, environment);
+		const dsevs = dsevsById[svc.id];
+		if (dsevs != null) {
+			varListInsert(dsevs, environment);
+		}
 
 		const labels: Dictionary<string> = {};
 		for (const { label_name, value } of [
