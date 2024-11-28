@@ -269,11 +269,11 @@ const latestTaskIdByHandler: Dictionary<string | undefined> = {};
 
 export const expectNewTasks = async (
 	handler: string,
-	expectedUsage: TaskExpectation[],
+	expectedTasks: TaskExpectation[],
 ) => {
 	const tasks = await expectTasks(
 		handler,
-		expectedUsage,
+		expectedTasks,
 		latestTaskIdByHandler[handler],
 	);
 	const lastTaskId = tasks.at(-1)?.id;
@@ -282,7 +282,15 @@ export const expectNewTasks = async (
 	}
 };
 
-export const resetLatestTaskIds = async (handler: string) => {
+export const expectNewSettledTasks = async (
+	handler: string,
+	expectedTasks: TaskExpectation[],
+) => {
+	await waitUntilTasksFinish(handler);
+	await expectNewTasks(handler, expectedTasks);
+};
+
+const waitUntilTasksFinish = async function (handler: string) {
 	await expectToEventually(async () => {
 		const runningTasks = await sbvrUtils.api.tasks.get({
 			resource: 'task',
@@ -297,8 +305,15 @@ export const resetLatestTaskIds = async (handler: string) => {
 				$orderby: { id: 'desc' },
 			},
 		});
-		expect(runningTasks).to.have.lengthOf(0);
+		expect(
+			runningTasks,
+			`Found still queued '${handler}' tasks`,
+		).to.have.lengthOf(0);
 	});
+};
+
+export const resetLatestTaskIds = async (handler: string) => {
+	await waitUntilTasksFinish(handler);
 	const [latestTask] = await sbvrUtils.api.tasks.get({
 		resource: 'task',
 		passthrough: { req: permissions.rootRead },
