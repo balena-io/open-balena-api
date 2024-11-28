@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import { stripIndent } from 'common-tags';
 import { setTimeout } from 'timers/promises';
 import { TypedError } from 'typed-error';
+import { ThisShouldNeverHappenError } from '../../src/infra/error-handling/index.js';
 
 type PredicateFunction = () => Resolvable<boolean>;
 
@@ -107,15 +108,24 @@ export async function expectToEventually<T>(
 	attempts = 20,
 	interval = 100,
 ): Promise<T> {
+	let error: Error | undefined;
 	for (let i = 0; i < attempts; i++) {
 		try {
 			return await fn();
-
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars -- So that the interface is already well defined.
-		} catch (_e) {
+		} catch (e) {
+			if (!(e instanceof Error)) {
+				throw ThisShouldNeverHappenError(
+					'Thrown error is not an instanceof Error',
+				);
+			}
+			error = e;
 			console.log(`⌚  Waiting ${interval}ms (${i}/${attempts})...`);
 			await setTimeout(interval);
 		}
 	}
-	throw new Error('Expectation failed');
+	if (error == null) {
+		// error should always be assigned
+		throw ThisShouldNeverHappenError('Unexpected test error');
+	}
+	throw new Error(`Expectation failed: ${error.message}`, { cause: error });
 }

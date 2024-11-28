@@ -8,7 +8,10 @@ import * as fixtures from './test-lib/fixtures.js';
 import { assertExists, expectToEventually } from './test-lib/common.js';
 import * as config from '../src/lib/config.js';
 import { supertest } from './test-lib/supertest.js';
-import { expectNewTasks, resetLatestTaskIds } from './test-lib/api-helpers.js';
+import {
+	expectNewSettledTasks,
+	resetLatestTaskIds,
+} from './test-lib/api-helpers.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -77,7 +80,7 @@ export default () => {
 							ctx.app1Service1.id,
 						);
 					});
-					await expectNewTasks(
+					await expectNewSettledTasks(
 						'create_service_installs',
 						isServiceInstallEnabled
 							? [
@@ -120,7 +123,7 @@ export default () => {
 							ctx.app1Service2.id,
 						);
 					});
-					await expectNewTasks(
+					await expectNewSettledTasks(
 						'create_service_installs',
 						isServiceInstallEnabled
 							? [
@@ -162,7 +165,7 @@ export default () => {
 							ctx.app1Service3.id,
 						);
 					});
-					await expectNewTasks(
+					await expectNewSettledTasks(
 						'create_service_installs',
 						isServiceInstallEnabled
 							? [
@@ -188,6 +191,20 @@ export default () => {
 						})
 						.expect(200);
 
+					await expectNewSettledTasks(
+						'create_service_installs',
+						isServiceInstallEnabled
+							? [
+									{
+										is_executed_with__parameter_set: {
+											devices: [ctx.device.id],
+										},
+										status: 'succeeded',
+									},
+								]
+							: [],
+					);
+
 					await pineUser
 						.patch({
 							resource: 'device',
@@ -212,18 +229,10 @@ export default () => {
 							ctx.app2Service1.id,
 						);
 					});
-					await expectNewTasks(
+					await expectNewSettledTasks(
 						'create_service_installs',
 						isServiceInstallEnabled
 							? [
-									// the first one is from unpinning
-									{
-										is_executed_with__parameter_set: {
-											devices: [ctx.device.id],
-										},
-										status: 'succeeded',
-									},
-									// the second one is from moving application
 									{
 										is_executed_with__parameter_set: {
 											devices: [ctx.device.id],
