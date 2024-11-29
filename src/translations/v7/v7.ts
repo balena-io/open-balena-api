@@ -22,6 +22,44 @@ export const getV7Translations = (_abstractSqlModel = v7AbstractSqlModel) => {
 	return {
 		'device-installs-application-has-service name-has-name': {
 			$toResource: 'device-has-application-has-service name-has-env var name',
+			'service install': [
+				'SelectQuery',
+				['Select', [['ReferencedField', 'si', 'id']]],
+				[
+					'From',
+					[
+						'Alias',
+						// TODO: should this be changed from table to resource? How?
+						['Table', 'device service environment variable'],
+						'dsev',
+					],
+				],
+				[
+					'Join',
+					[
+						'Alias',
+						// TODO: should this be changed from table to resource? How?
+						['Table', 'service install'],
+						'si',
+					],
+					[
+						'On',
+						[
+							'And',
+							[
+								'Equals',
+								['ReferencedField', 'dsev', 'device'],
+								['ReferencedField', 'si', 'device'],
+							],
+							[
+								'Equals',
+								['ReferencedField', 'dsev', 'service'],
+								['ReferencedField', 'si', 'installs-service'],
+							],
+						],
+					],
+				],
+			],
 		},
 	} satisfies ConfigLoader.Model['translations'];
 };

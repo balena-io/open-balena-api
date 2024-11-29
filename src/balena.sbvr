@@ -812,8 +812,6 @@ Fact type: image environment variable has value
 
 Fact type: device service environment variable has value
 	Necessity: each device service environment variable has exactly one value.
-Fact type: device service environment variable has service install
-	Necessity: each device service environment variable has exactly one service install.
 
 
 -- application tag
