@@ -298,6 +298,7 @@ export interface SetupOptions {
 	onInitModel?: SetupFunction;
 	onInitHooks?: SetupFunction;
 	onInitRoutes?: SetupFunction;
+	onInitTasks?: SetupFunction;
 
 	onLogin?: (
 		user: Pick<User['Read'], (typeof defaultFindUser$select)[number]>,
@@ -414,6 +415,7 @@ export async function setup(app: Application, options: SetupOptions) {
 		pine.env.tasks.queueIntervalMS = PINEJS_QUEUE_INTERVAL_MS;
 		await pine.tasks.setup();
 		await import('./tasks.js');
+		await options.onInitTasks?.(app);
 		await pine.tasks.worker?.start();
 	}
 
