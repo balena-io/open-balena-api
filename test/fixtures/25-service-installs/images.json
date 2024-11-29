@@ -1,4 +1,11 @@
 {
+	"intel-nuc-host-app-release2-88-4Image": {
+		"user": "admin",
+		"service": "intel-nuc-host-appService1",
+		"releases": [ "intel-nuc-host-app-release2-88-4" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
 	"image1": {
 		"user": "admin",
 		"service": "app1Service1",

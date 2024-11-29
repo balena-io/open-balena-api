@@ -1,4 +1,12 @@
 {
+	"intel-nuc-host-app-release2-88-4": {
+		"application": "intel-nuc-host-app",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "2.88.4",
+		"user": "admin"
+	},
 	"release1": {
 		"application": "app1",
 		"commit": "de2dc0de",
