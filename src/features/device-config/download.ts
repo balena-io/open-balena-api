@@ -48,6 +48,10 @@ export const downloadImageConfig: RequestHandler = async (req, res) => {
 
 	const deviceTypeSlug = getBodyOrQueryParam(req, 'deviceType');
 	const osVersion = getBodyOrQueryParam(req, 'version');
+	const provisioningKeyExpiryDate = getBodyOrQueryParam(
+		req,
+		'provisioningKeyExpiryDate',
+	);
 
 	if (!osVersion) {
 		res.status(400).send('A version is required.');
@@ -62,7 +66,13 @@ export const downloadImageConfig: RequestHandler = async (req, res) => {
 			resinApi,
 			deviceTypeSlug || app.is_for__device_type[0].slug,
 		);
-		const config = await generateConfig(req, app, deviceTypeJson, osVersion);
+		const config = await generateConfig(
+			req,
+			app,
+			deviceTypeJson,
+			osVersion,
+			provisioningKeyExpiryDate,
+		);
 
 		res.json(config);
 	} catch (err) {

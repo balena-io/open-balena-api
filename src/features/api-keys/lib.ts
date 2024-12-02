@@ -15,7 +15,7 @@ export interface ApiKeyOptions {
 	apiKey?: string;
 	name?: string;
 	description?: string;
-	expiryDate?: string;
+	expiryDate?: string | null;
 	tx?: Tx;
 }
 
