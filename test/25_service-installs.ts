@@ -130,7 +130,7 @@ export default () => {
 							.expect(200);
 						expect(serviceInstalls).to.deep.equal(
 							[ctx.app1Service1.id, ctx.intelNucHostAppService1.id]
-								.sort((a, b) => a - b)
+								.sort()
 								.map((serviceInstallId) => ({
 									device: { __id: deviceWithOsVersion.id },
 									installs__service: { __id: serviceInstallId },
@@ -186,7 +186,11 @@ export default () => {
 							? [
 									{
 										is_executed_with__parameter_set: {
-											devices: [ctx.device.id, ctx.deviceWithOsVersion.id],
+											// Ensure ids are sorted to avoid flakiness
+											devices: [
+												ctx.device.id,
+												ctx.deviceWithOsVersion.id,
+											].sort(),
 										},
 										status: 'succeeded',
 									},
