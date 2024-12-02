@@ -111,7 +111,14 @@ export const createNamedUserApiKey: RequestHandler = async (req, res) => {
 			throw new errors.BadRequestError('Must use user auth');
 		}
 
-		const apiKey = await $createNamedUserApiKey(req, req.user.id);
+		const expiryDate: string | null = req.body.expiryDate ?? null;
+		if (expiryDate != null && typeof expiryDate !== 'string') {
+			throw new errors.BadRequestError('Expiry date must be a string or null');
+		}
+
+		const apiKey = await $createNamedUserApiKey(req, req.user.id, {
+			expiryDate,
+		});
 		res.json(apiKey);
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
