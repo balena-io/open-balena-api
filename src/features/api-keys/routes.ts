@@ -82,9 +82,14 @@ export const createProvisioningApiKey: RequestHandler = async (req, res) => {
  */
 export const createUserApiKey: RequestHandler = async (req, res) => {
 	try {
+		const expiryDate: string | null = req.body.expiryDate ?? null;
+		if (expiryDate != null && typeof expiryDate !== 'string') {
+			throw new errors.BadRequestError('Expiry date must be a string or null');
+		}
+
 		const apiKey = await sbvrUtils.db.transaction(async (tx) => {
 			const user = await getUser(req, tx);
-			return await $createUserApiKey(req, user.id, { tx });
+			return await $createUserApiKey(req, user.id, { expiryDate, tx });
 		});
 		res.json(apiKey);
 	} catch (err) {
