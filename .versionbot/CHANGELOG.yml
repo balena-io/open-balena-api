@@ -1,4 +1,45 @@
 - commits:
+    - subject: Add support for specifying `provisioningKeyExpiryDate` for
+        `/download-config`
+      hash: 9845a1c45dd79cbc39644f7f010b1a781e36f5cb
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+    - subject: Add support for specifying `expiryDate` for `/api-key/user/full`
+      hash: 0420a90a5a99cb00bc1df1ed4a048547127e59cd
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+    - subject: Add support for specifying `expiryDate` for
+        `/application/:appId/generate-api-key`
+      hash: 892ff5a634491343341acfc238b927c6c75c42e4
+      body: |
+        This endpoint is deprecated but adding the argument for consistency
+        with the fact that it will become mandatory in future versions
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+    - subject: Add support for specifying `expiryDate` for
+        `/api-key/application/:appId/provisioning`
+      hash: 141b3db6e90c19a655232dee7138943ee54a1045
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Pagan Gazzard
+      nested: []
+  version: 31.4.0
+  title: ""
+  date: 2024-12-02T17:59:48.016Z
+- commits:
     - subject: Lock file maintenance
       hash: 977cf66fbf5327803a57288db404eafb52ec6847
       body: |
@@ -2137,6 +2178,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -2169,6 +2211,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3295,6 +3338,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -3342,6 +3386,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3506,6 +3551,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -3543,6 +3589,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3885,6 +3932,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -3913,6 +3961,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4084,6 +4133,7 @@
 
 
 
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -4118,6 +4168,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4334,6 +4385,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4677,6 +4729,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -4699,6 +4752,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4806,6 +4860,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5043,6 +5098,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -5065,6 +5121,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5172,6 +5229,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7422,6 +7480,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -7444,6 +7503,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7551,6 +7611,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7791,6 +7852,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -7819,6 +7881,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7988,6 +8051,7 @@
 
 
 
+
                                                                 We know what type
                                                                 they return and they
                                                                 should be explicitly
@@ -8022,6 +8086,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8237,6 +8302,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
