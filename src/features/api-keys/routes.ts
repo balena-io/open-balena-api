@@ -61,7 +61,12 @@ export const createProvisioningApiKey: RequestHandler = async (req, res) => {
 	}
 
 	try {
-		const apiKey = await $createProvisioningApiKey(req, appId);
+		const expiryDate: string | null = req.body.expiryDate ?? null;
+		if (expiryDate != null && typeof expiryDate !== 'string') {
+			throw new errors.BadRequestError('Expiry date must be a string or null');
+		}
+
+		const apiKey = await $createProvisioningApiKey(req, appId, { expiryDate });
 		res.json(apiKey);
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
