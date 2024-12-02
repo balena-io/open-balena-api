@@ -247,7 +247,7 @@ const isCreateServiceInstallsTaskParam = (
 	taskParams != null &&
 	!Array.isArray(taskParams) &&
 	'devices' in taskParams &&
-	Array.isArray(taskParams);
+	Array.isArray(taskParams.devices);
 
 const expectTasks = async (
 	handler: string,
