@@ -1,4 +1,144 @@
 - commits:
+    - subject: Update @balena/pinejs to v19.6.2
+      hash: ee913b7777c7cc06db8974f19472c15a4e3fccb1
+      body: |
+        Update @balena/pinejs from 19.5.0 to 19.6.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested:
+        - commits:
+            - subject: Update dependency @balena/lf-to-abstract-sql to 5.0.3
+              hash: 90c78095c8d41245f69ae6c56de6054034f06d12
+              body: |
+                Update @balena/lf-to-abstract-sql from 5.0.2 to 5.0.3
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+              nested:
+                - commits:
+                    - subject: Add multiple vocabulary ternary FactType test
+                      hash: 9c970468f97eabc70f02987db244162259a2bd9c
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Otavio Jacobi
+                      nested: []
+                    - subject: Only force the first term on a tertiary fact type to not be an
+                        attribute
+                      hash: 4b780c84daa5798ed38f41076fb81dabc202cf36
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Otavio Jacobi
+                      nested: []
+                  version: lf-to-abstract-sql-5.0.3
+                  title: ""
+                  date: 2024-12-03T12:46:45.262Z
+          version: pinejs-19.6.2
+          title: ""
+          date: 2024-12-03T14:55:50.754Z
+        - commits:
+            - subject: Update typescript from 5.6.3 to 5.7.2
+              hash: a033b67687714d1c70754ee62aa7ab96104eea0e
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+              nested: []
+          version: pinejs-19.6.1
+          title: ""
+          date: 2024-12-03T14:41:34.088Z
+        - commits:
+            - subject: Infer async task fn callback arguments typing from schema
+              hash: 377a7c25118b9853f23cc8fdd1a2bf3d093ad1b1
+              body: ""
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Otavio Jacobi
+              nested: []
+          version: pinejs-19.6.0
+          title: ""
+          date: 2024-11-21T22:47:59.119Z
+        - commits:
+            - subject: Run tests on UTC timezone
+              hash: ccf628b9716d281023b4bc88a6227c2f65cd6235
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+              nested: []
+          version: pinejs-19.5.5
+          title: ""
+          date: 2024-11-21T07:57:52.346Z
+        - commits:
+            - subject: Fix async tasks race condition for selecting task to be executed
+              hash: 97936ec9a2b3f5179a9088b6ae3fac14537ed378
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+              nested: []
+            - subject: Run async task tests with cluster mode
+              hash: 8f308c83cbf73125a0d825c28bfe520057ba3d8a
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+              nested: []
+          version: pinejs-19.5.4
+          title: ""
+          date: 2024-10-28T15:58:17.248Z
+        - commits:
+            - subject: Run tests with node cluster mode
+              hash: 64fbd77b96f995b43ee37fe44c5ac569e5408f3a
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+              nested: []
+          version: pinejs-19.5.3
+          title: ""
+          date: 2024-10-28T14:10:29.329Z
+        - commits:
+            - subject: Update dependency webpack-dev-server to v5
+              hash: bc6bb0a5e88091233fbd40b1f14d0df2bea716b5
+              body: |
+                Update webpack-dev-server from 4.15.2 to 5.1.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Self-hosted Renovate Bot
+              nested: []
+          version: pinejs-19.5.2
+          title: ""
+          date: 2024-10-25T12:07:12.024Z
+        - commits:
+            - subject: Expose tasks model on sbvrUtils api
+              hash: 26b94af7df763012382c29a42ea7f50b45240087
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+              nested: []
+          version: pinejs-19.5.1
+          title: ""
+          date: 2024-10-25T10:39:26.156Z
+  version: 31.4.3
+  title: ""
+  date: 2024-12-03T16:34:05.364Z
+- commits:
     - subject: Lock file maintenance
       hash: 27e375e2c5e148a6c670bd3f5abaaffa10bce5e5
       body: |
@@ -2208,6 +2348,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -2240,6 +2381,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3372,6 +3514,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -3419,6 +3562,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3589,6 +3733,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -3626,6 +3771,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3974,6 +4120,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -4002,6 +4149,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4179,6 +4327,7 @@
 
 
 
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -4213,6 +4362,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4432,6 +4582,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4781,6 +4932,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -4803,6 +4955,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4913,6 +5066,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5156,6 +5310,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -5178,6 +5333,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5288,6 +5444,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7544,6 +7701,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -7566,6 +7724,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7676,6 +7835,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7922,6 +8082,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -7950,6 +8111,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8125,6 +8287,7 @@
 
 
 
+
                                                                 We know what type
                                                                 they return and they
                                                                 should be explicitly
@@ -8159,6 +8322,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8377,6 +8541,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
