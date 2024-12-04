@@ -144,7 +144,7 @@
     "copyfiles": "^2.4.1",
     "husky": "^9.1.6",
     "lint-staged": "^15.2.10",
-    "mocha": "^10.7.3",
+    "mocha": "^11.0.0",
     "mockery": "^2.1.0",
     "nock": "^13.5.5",
     "pinejs-client-supertest": "^3.0.1",
