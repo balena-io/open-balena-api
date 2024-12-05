@@ -13,8 +13,8 @@ const { BadRequestError } = errors;
 
 export interface ApiKeyOptions {
 	apiKey?: string;
-	name?: string;
-	description?: string;
+	name?: string | null;
+	description?: string | null;
 	expiryDate?: string | null;
 	tx?: Tx;
 }
@@ -112,10 +112,10 @@ const $createApiKey = async (
 };
 
 const getKeyMetadata = (reqBody: {
-	name?: any;
-	description?: any;
-	expiryDate?: any;
-}) => {
+	name?: unknown;
+	description?: unknown;
+	expiryDate?: unknown;
+}): Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate'> => {
 	const { name, description, expiryDate } = reqBody;
 
 	if (name != null && typeof name !== 'string') {
@@ -138,9 +138,7 @@ const getKeyMetadata = (reqBody: {
 	return {
 		name,
 		description,
-		...(expiryDate && {
-			expiryDate: new Date(expiryDate),
-		}),
+		expiryDate: expiryDate ? new Date(expiryDate).toISOString() : undefined,
 	};
 };
 
@@ -151,58 +149,36 @@ export const createApiKey = async (
 	actorTypeID: number,
 	options: ApiKeyOptions = {},
 ): Promise<string> => {
-	options.apiKey ??= randomstring.generate();
 	const { name, description, expiryDate } = getKeyMetadata(req.body);
-
-	if (!options.name) {
-		options.name = name;
-	}
-	if (!options.description) {
-		options.description = description;
-	}
-	if (!options.expiryDate) {
-		options.expiryDate = expiryDate;
-	}
+	const create = async (tx: Tx) => {
+		return await $createApiKey(actorType, roleName, req, actorTypeID, {
+			...options,
+			apiKey: options.apiKey ?? randomstring.generate(),
+			name: options.name ?? name,
+			description: options.description ?? description,
+			expiryDate: options.expiryDate ?? expiryDate,
+			tx,
+		});
+	};
 
 	if (options.tx != null) {
-		return await $createApiKey(
-			actorType,
-			roleName,
-			req,
-			actorTypeID,
-			options as InternalApiKeyOptions,
-		);
+		return await create(options.tx);
 	} else {
-		return await sbvrUtils.db.transaction(async (tx) => {
-			options.tx = tx;
-			return await $createApiKey(
-				actorType,
-				roleName,
-				req,
-				actorTypeID,
-				options as InternalApiKeyOptions,
-			);
-		});
+		return await sbvrUtils.db.transaction(async (tx) => await create(tx));
 	}
 };
 
-export type PartialCreateKey = (
-	req: Request,
-	actorTypeID: number,
-	options?: ApiKeyOptions,
-) => Promise<string>;
-
-export const createProvisioningApiKey: PartialCreateKey = _.partial(
+export const createProvisioningApiKey = _.partial(
 	createApiKey,
 	'application',
 	'provisioning-api-key',
 );
-export const createDeviceApiKey: PartialCreateKey = _.partial(
+export const createDeviceApiKey = _.partial(
 	createApiKey,
 	'device',
 	'device-api-key',
 );
-export const createNamedUserApiKey: PartialCreateKey = _.partial(
+export const createNamedUserApiKey = _.partial(
 	createApiKey,
 	'user',
 	'named-user-api-key',
@@ -211,11 +187,7 @@ export const createNamedUserApiKey: PartialCreateKey = _.partial(
 /**
  * @deprecated this is a legacy api key for very old devices and should not be used any more
  */
-export const createUserApiKey: PartialCreateKey = _.partial(
-	createApiKey,
-	'user',
-	'user-api-key',
-);
+export const createUserApiKey = _.partial(createApiKey, 'user', 'user-api-key');
 
 export type ApiKeyParameters = {
 	actorType: (typeof supportedActorTypes)[number];
