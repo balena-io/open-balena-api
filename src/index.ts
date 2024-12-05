@@ -144,7 +144,10 @@ import * as baseAuth from './lib/auth.js';
 import { varListInsert } from './features/device-state/state-get-utils.js';
 import type { GetUrlFunction } from './features/request-logging/index.js';
 import { setupRequestLogging } from './features/request-logging/index.js';
-import { startContractSynchronization } from './features/contracts/index.js';
+import {
+	setOnContractsSynced,
+	startContractSynchronization,
+} from './features/contracts/index.js';
 
 import { addToModel as addUserHasDirectAccessToApplicationToModel } from './features/applications/models/user__has_direct_access_to__application.js';
 import { getApplicationSlug } from './features/applications/index.js';
@@ -270,6 +273,7 @@ export const envVarsConfig = {
 // Needed so that the augmented `@balena/sbvr-types` typings
 // automatically become available to consumer projects.
 import './translations/v6/numeric-big-integer-hack.js';
+import { getDeviceTypes } from './features/device-types/device-types-list.js';
 
 export const translations = {
 	v7: {
@@ -429,6 +433,11 @@ export async function setup(app: Application, options: SetupOptions) {
 	getDeviceOnlineStateManager().start();
 
 	startContractSynchronization();
+	setOnContractsSynced((stats) => {
+		if (stats['hw.device-type']?.added.length ?? 0 > 0) {
+			void getDeviceTypes.delete();
+		}
+	});
 
 	return {
 		app,
