@@ -34,7 +34,7 @@ export const generateConfig = async (
 	app: deviceConfig.GenerateOptions['application'],
 	deviceType: DeviceTypeJson,
 	osVersion?: string,
-	provisioningKeyExpiryDate?: string | null,
+	provisioningKeyExpiryDate: string | null = null,
 ) => {
 	// Devices running ResinOS >=1.2.1 are capable of using Registry v2, while earlier ones must use v1
 	if (osVersion != null && semver.lte(osVersion, '1.2.0')) {
@@ -50,8 +50,10 @@ export const generateConfig = async (
 			userPromise,
 			(async () => {
 				const apiKeyOptions: ApiKeyOptions = {
-					expiryDate: provisioningKeyExpiryDate,
 					tx,
+					expiryDate: provisioningKeyExpiryDate,
+					name: null,
+					description: null,
 				};
 
 				// Devices running ResinOS >= 2.7.8 can use provisioning keys

@@ -13,9 +13,9 @@ const { BadRequestError } = errors;
 
 export interface ApiKeyOptions {
 	apiKey?: string;
-	name?: string | null;
-	description?: string | null;
-	expiryDate?: string | null;
+	name: string | null;
+	description: string | null;
+	expiryDate: string | null;
 	tx?: Tx;
 }
 
@@ -111,7 +111,7 @@ const $createApiKey = async (
 	return apiKey;
 };
 
-const getKeyMetadata = (reqBody: {
+export const getKeyMetadata = (reqBody: {
 	name?: unknown;
 	description?: unknown;
 	expiryDate?: unknown;
@@ -136,9 +136,9 @@ const getKeyMetadata = (reqBody: {
 	}
 
 	return {
-		name,
-		description,
-		expiryDate: expiryDate ? new Date(expiryDate).toISOString() : undefined,
+		name: name ?? null,
+		description: description ?? null,
+		expiryDate: expiryDate ? new Date(expiryDate).toISOString() : null,
 	};
 };
 
@@ -147,7 +147,7 @@ export const createApiKey = async (
 	roleName: string,
 	req: Request,
 	actorTypeID: number,
-	options: ApiKeyOptions = {},
+	options: ApiKeyOptions,
 ): Promise<string> => {
 	const { name, description, expiryDate } = getKeyMetadata(req.body);
 	const create = async (tx: Tx) => {

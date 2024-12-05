@@ -95,8 +95,11 @@ export const register: RequestHandler = async (req, res) => {
 				throw new Error('Failed to create device');
 			}
 			const apiKey = await createDeviceApiKey(req, device.id, {
-				apiKey: deviceApiKey,
 				tx,
+				apiKey: deviceApiKey,
+				name: null,
+				description: null,
+				expiryDate: null,
 			});
 			return {
 				id: device.id,
