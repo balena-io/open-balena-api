@@ -111,12 +111,13 @@ const $createApiKey = async (
 	return apiKey;
 };
 
-export const getKeyMetadata = (reqBody: {
-	name?: unknown;
-	description?: unknown;
-	expiryDate?: unknown;
-}): Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate'> => {
-	const { name, description, expiryDate } = reqBody;
+export const getKeyMetadata = (
+	reqBody: Dictionary<unknown>,
+	prefix?: string,
+): Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate'> => {
+	const name = reqBody[prefix ? `${prefix}Name` : 'name'];
+	const description = reqBody[prefix ? `${prefix}Description` : 'description'];
+	const expiryDate = reqBody[prefix ? `${prefix}ExpiryDate` : 'expiryDate'];
 
 	if (name != null && typeof name !== 'string') {
 		throw new errors.BadRequestError('Key name should be a string value');

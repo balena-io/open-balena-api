@@ -32,9 +32,9 @@ import { getBodyOrQueryParam } from '../../lib/utils.js';
 export const generateConfig = async (
 	req: Request,
 	app: deviceConfig.GenerateOptions['application'],
+	provisioningKeyOptions: ApiKeyOptions,
 	deviceType: DeviceTypeJson,
 	osVersion?: string,
-	provisioningKeyExpiryDate: string | null = null,
 ) => {
 	// Devices running ResinOS >=1.2.1 are capable of using Registry v2, while earlier ones must use v1
 	if (osVersion != null && semver.lte(osVersion, '1.2.0')) {
@@ -51,9 +51,7 @@ export const generateConfig = async (
 			(async () => {
 				const apiKeyOptions: ApiKeyOptions = {
 					tx,
-					expiryDate: provisioningKeyExpiryDate,
-					name: null,
-					description: null,
+					...provisioningKeyOptions,
 				};
 
 				// Devices running ResinOS >= 2.7.8 can use provisioning keys
@@ -65,25 +63,6 @@ export const generateConfig = async (
 						apiKeyOptions,
 					);
 				}
-
-				// Checking both req.body and req.query given both GET and POST support
-				// Ref: https://github.com/balena-io/balena-api/blob/master/src/routes/applications.ts#L95
-				apiKeyOptions.name = getBodyOrQueryParam(
-					req,
-					'provisioningKeyName',
-					'Automatically generated provisioning key',
-				);
-
-				apiKeyOptions.description = getBodyOrQueryParam(
-					req,
-					'provisioningKeyDescription',
-					'Automatically generated for an image download or config file generation',
-				);
-
-				apiKeyOptions.expiryDate = getBodyOrQueryParam(
-					req,
-					'provisioningKeyExpiryDate',
-				);
 
 				return await createProvisioningApiKey(req, app.id, apiKeyOptions);
 			})(),
