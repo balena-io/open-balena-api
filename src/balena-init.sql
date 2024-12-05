@@ -81,10 +81,7 @@ ON "device family" ("is manufactured by-device manufacturer");
 
 -- "device tag"."device" is the first part of an automated unique index
 
--- "device environment variable"."device" is created with the unique index
-CREATE UNIQUE INDEX IF NOT EXISTS "device service environment variable_device_service_name_key"
-ON "device service environment variable" ("device", "service", "name");
-
+-- "device environment variable"."device" is created with the unique index created by the "device service environment variable_device_service_name_key" constraint
 CREATE INDEX IF NOT EXISTS "device_service_environment_variable_service_idx"
 ON "device service environment variable" ("service");
 
@@ -206,3 +203,20 @@ ADD CONSTRAINT "user$M+9koFfMHn7kQFDNBaQZbS7gAvNMB1QkrTtsaVZoETw=" CHECK (NOT (
 ));
 
 ALTER TABLE "user" ADD UNIQUE ("email");
+
+-- This is here temporarily due to a change on the sbvr for device service environment variable
+-- in order to keep the database schema in sync with the sbvr
+-- and will be removed once we drop the service install column
+DO $$
+BEGIN
+	IF NOT EXISTS (
+		SELECT 1
+		FROM pg_constraint
+		WHERE conname = 'device service environment variable_service install_name_key'
+	) THEN
+		ALTER TABLE "device service environment variable"
+		ADD CONSTRAINT "device service environment variable_service install_name_key"
+		UNIQUE ("service install", "name");
+	END IF;
+END
+$$;
