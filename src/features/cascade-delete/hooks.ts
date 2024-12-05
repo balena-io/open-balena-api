@@ -21,6 +21,7 @@ setupDeleteCascade('device', {
 	device_tag: 'device',
 	image_install: 'device',
 	service_install: 'device',
+	device_service_environment_variable: 'device',
 });
 
 setupDeleteCascade('image', {
@@ -45,10 +46,44 @@ setupDeleteCascade('service', {
 	service_install: 'installs__service',
 	image: 'is_a_build_of__service',
 	service_label: 'service',
+	device_service_environment_variable: 'service',
 });
 
-setupDeleteCascade('service_install', {
-	device_service_environment_variable: 'service_install',
+hooks.addPureHook('DELETE', 'resin', 'service_install', {
+	PRERUN: async (args) => {
+		const serviceInstallIds = await getAffectedIds(args);
+		if (serviceInstallIds.length === 0) {
+			return;
+		}
+
+		const serviceInstalls = await api.resin.get({
+			resource: 'service_install',
+			options: {
+				$filter: {
+					id: { $in: serviceInstallIds },
+				},
+				$select: ['device', 'installs__service'],
+			},
+		});
+
+		const filterConditions = serviceInstalls.map((serviceInstall) => ({
+			device: serviceInstall.device.__id,
+			service: serviceInstall.installs__service.__id,
+		}));
+
+		await args.api.delete({
+			resource: 'device_service_environment_variable',
+			passthrough: {
+				tx: args.tx,
+				req: permissions.root,
+			},
+			options: {
+				$filter: {
+					$or: filterConditions,
+				},
+			},
+		});
+	},
 });
 
 const deleteApiKeyHooks: hooks.Hooks = {

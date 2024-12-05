@@ -19,5 +19,38 @@ overrideFieldType(v7AbstractSqlModel, 'release', 'version', 'JSON');
 userHasDirectAccessToApplication.addToModel(v7AbstractSqlModel);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- So that the interface is already well defined.
 export const getV7Translations = (_abstractSqlModel = v7AbstractSqlModel) => {
-	return {} satisfies ConfigLoader.Model['translations'];
+	return {
+		'device-installs-application-has-service name-has-name': {
+			$toResource: 'device-has-application-has-service name-has-env var name',
+			'service install': [
+				'SelectQuery',
+				['Select', [['ReferencedField', 'si', 'id']]],
+				['From', ['Alias', ['Table', 'service install'], 'si']],
+				[
+					'Where',
+					[
+						'And',
+						[
+							'Equals',
+							[
+								'ReferencedField',
+								'device-installs-application-has-service name-has-name',
+								'device',
+							],
+							['ReferencedField', 'si', 'device'],
+						],
+						[
+							'Equals',
+							[
+								'ReferencedField',
+								'device-installs-application-has-service name-has-name',
+								'service',
+							],
+							['ReferencedField', 'si', 'installs-service'],
+						],
+					],
+				],
+			],
+		},
+	} satisfies ConfigLoader.Model['translations'];
 };
