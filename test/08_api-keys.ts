@@ -704,165 +704,199 @@ export default () => {
 		});
 
 		describe('generic-api-key-endpoint', function () {
-			before(async function () {
-				const fx = await fixtures.load();
-				this.loadedFixtures = fx;
-				this.user = fx.users.admin;
-			});
+			for (const apiKeyVersion of ['v1', 'v2'] as const) {
+				describe(apiKeyVersion, function () {
+					before(async function () {
+						const fx = await fixtures.load();
+						this.loadedFixtures = fx;
+						this.user = fx.users.admin;
+					});
 
-			after(async function () {
-				await supertest(this.user).delete(`/${version}/api_key`).expect(200);
-				await fixtures.clean(this.loadedFixtures);
-			});
+					after(async function () {
+						await supertest(this.user)
+							.delete(`/${version}/api_key`)
+							.expect(200);
+						await fixtures.clean(this.loadedFixtures);
+					});
 
-			describe('parameter checks', function () {
-				it('should reject unauthorized requests', async function () {
-					await supertest()
-						.post(`/api-key/v1`)
-						.send({
-							actorType: 'user',
-							actorTypeId: this.user.id,
-							roles: ['named-user-api-key'],
-							name: 'a-different-name',
-						})
-						.expect(401);
+					const defaultExpiryDate =
+						apiKeyVersion === 'v1' ? undefined : new Date().toISOString();
+
+					describe('parameter checks', function () {
+						it('should reject unauthorized requests', async function () {
+							await supertest()
+								.post(`/api-key/${apiKeyVersion}/`)
+								.send({
+									actorType: 'user',
+									actorTypeId: this.user.id,
+									roles: ['named-user-api-key'],
+									name: 'a-different-name',
+									expiryDate: defaultExpiryDate,
+								})
+								.expect(401);
+						});
+
+						it('should reject requests for an unsupported actor type', async function () {
+							await supertest(this.user)
+								.post(`/api-key/${apiKeyVersion}/`)
+								.send({
+									actorType: 'organization',
+									actorTypeId: this.user.id,
+									roles: ['named-user-api-key'],
+									name: 'a-different-name',
+									expiryDate: defaultExpiryDate,
+								})
+								.expect(400, '"Unsupported actor type"');
+						});
+
+						it('should reject requests when the actor type id is missing', async function () {
+							await supertest(this.user)
+								.post(`/api-key/${apiKeyVersion}/`)
+								.send({
+									actorType: 'user',
+									roles: ['named-user-api-key'],
+									name: 'a-different-name',
+									expiryDate: defaultExpiryDate,
+								})
+								.expect(400, '"Actor type id must be a number"');
+						});
+
+						it('should reject requests when no roles are provided', async function () {
+							await supertest(this.user)
+								.post(`/api-key/${apiKeyVersion}/`)
+								.send({
+									actorType: 'user',
+									actorTypeId: this.user.id,
+									roles: [],
+									name: 'a-different-name',
+									expiryDate: defaultExpiryDate,
+								})
+								.expect(400);
+						});
+
+						it('should reject requests when the roles are not an array', async function () {
+							await supertest(this.user)
+								.post(`/api-key/${apiKeyVersion}/`)
+								.send({
+									actorType: 'user',
+									actorTypeId: this.user.id,
+									roles: 'named-user-api-key',
+									name: 'a-different-name',
+									expiryDate: defaultExpiryDate,
+								})
+								.expect(400, '"Roles should be an array of role names"');
+						});
+
+						it('should reject requests when the role is not a non-empty string', async function () {
+							await supertest(this.user)
+								.post(`/api-key/${apiKeyVersion}/`)
+								.send({
+									actorType: 'user',
+									actorTypeId: this.user.id,
+									roles: [''],
+									name: 'a-different-name',
+									expiryDate: defaultExpiryDate,
+								})
+								.expect(400, '"Roles should be an array of role names"');
+
+							await supertest(this.user)
+								.post(`/api-key/${apiKeyVersion}/`)
+								.send({
+									actorType: 'user',
+									actorTypeId: this.user.id,
+									roles: [5],
+									name: 'a-different-name',
+									expiryDate: defaultExpiryDate,
+								})
+								.expect(400, '"Roles should be an array of role names"');
+						});
+
+						it('should reject requests when more than one roles are provided', async function () {
+							await supertest(this.user)
+								.post(`/api-key/${apiKeyVersion}/`)
+								.send({
+									actorType: 'user',
+									actorTypeId: this.user.id,
+									roles: ['named-user-api-key', 'provisioning-api-key'],
+									name: 'a-different-name',
+									expiryDate: defaultExpiryDate,
+								})
+								.expect(400, '"API Keys currently only support a single role"');
+						});
+
+						it('should reject requests for named api keys without a name', async function () {
+							await supertest(this.user)
+								.post(`/api-key/${apiKeyVersion}/`)
+								.send({
+									actorType: 'user',
+									actorTypeId: this.user.id,
+									roles: ['named-user-api-key'],
+									expiryDate: defaultExpiryDate,
+								})
+								.expect(
+									400,
+									`"API keys with the 'named-user-api-key' role require a name"`,
+								);
+						});
+
+						it('should reject requests for named api keys with an empty name', async function () {
+							await supertest(this.user)
+								.post(`/api-key/${apiKeyVersion}/`)
+								.send({
+									actorType: 'user',
+									actorTypeId: this.user.id,
+									roles: ['named-user-api-key'],
+									name: '',
+									expiryDate: defaultExpiryDate,
+								})
+								.expect(
+									400,
+									`"API keys with the 'named-user-api-key' role require a name"`,
+								);
+						});
+
+						it('should be able to create a named api key', async function () {
+							await supertest(this.user)
+								.post(`/api-key/${apiKeyVersion}/`)
+								.send({
+									actorType: 'user',
+									actorTypeId: this.user.id,
+									roles: ['named-user-api-key'],
+									name: 'a-different-name',
+									expiryDate: defaultExpiryDate,
+								})
+								.expect(200);
+						});
+
+						it('should be able to create an api key with expiry date', async function () {
+							await supertest(this.user)
+								.post(`/api-key/${apiKeyVersion}/`)
+								.send({
+									actorType: 'user',
+									actorTypeId: this.user.id,
+									roles: ['named-user-api-key'],
+									name: 'Named Key',
+									expiryDate: new Date(Date.now() + 86400000).toISOString(), // one day in future
+								})
+								.expect(200);
+						});
+
+						if (apiKeyVersion !== 'v1') {
+							it('should fail to create an api key without an expiry date', async function () {
+								await supertest(this.user)
+									.post(`/api-key/${apiKeyVersion}/`)
+									.send({
+										actorType: 'user',
+										actorTypeId: this.user.id,
+										roles: ['named-user-api-key'],
+										name: 'Named Key',
+									})
+									.expect(400, '"Key expiry date should be a valid date"');
+							});
+						}
+					});
 				});
-
-				it('should reject requests for an unsupported actor type', async function () {
-					await supertest(this.user)
-						.post(`/api-key/v1`)
-						.send({
-							actorType: 'organization',
-							actorTypeId: this.user.id,
-							roles: ['named-user-api-key'],
-							name: 'a-different-name',
-						})
-						.expect(400, '"Unsupported actor type"');
-				});
-
-				it('should reject requests when the actor type id is missing', async function () {
-					await supertest(this.user)
-						.post(`/api-key/v1`)
-						.send({
-							actorType: 'user',
-							roles: ['named-user-api-key'],
-							name: 'a-different-name',
-						})
-						.expect(400, '"Actor type id must be a number"');
-				});
-
-				it('should reject requests when no roles are provided', async function () {
-					await supertest(this.user)
-						.post(`/api-key/v1`)
-						.send({
-							actorType: 'user',
-							actorTypeId: this.user.id,
-							roles: [],
-							name: 'a-different-name',
-						})
-						.expect(400);
-				});
-
-				it('should reject requests when the roles are not an array', async function () {
-					await supertest(this.user)
-						.post(`/api-key/v1`)
-						.send({
-							actorType: 'user',
-							actorTypeId: this.user.id,
-							roles: 'named-user-api-key',
-							name: 'a-different-name',
-						})
-						.expect(400, '"Roles should be an array of role names"');
-				});
-
-				it('should reject requests when the role is not a non-empty string', async function () {
-					await supertest(this.user)
-						.post(`/api-key/v1`)
-						.send({
-							actorType: 'user',
-							actorTypeId: this.user.id,
-							roles: [''],
-							name: 'a-different-name',
-						})
-						.expect(400, '"Roles should be an array of role names"');
-
-					await supertest(this.user)
-						.post(`/api-key/v1`)
-						.send({
-							actorType: 'user',
-							actorTypeId: this.user.id,
-							roles: [5],
-							name: 'a-different-name',
-						})
-						.expect(400, '"Roles should be an array of role names"');
-				});
-
-				it('should reject requests when more than one roles are provided', async function () {
-					await supertest(this.user)
-						.post(`/api-key/v1`)
-						.send({
-							actorType: 'user',
-							actorTypeId: this.user.id,
-							roles: ['named-user-api-key', 'provisioning-api-key'],
-							name: 'a-different-name',
-						})
-						.expect(400, '"API Keys currently only support a single role"');
-				});
-
-				it('should reject requests for named api keys without a name', async function () {
-					await supertest(this.user)
-						.post(`/api-key/v1`)
-						.send({
-							actorType: 'user',
-							actorTypeId: this.user.id,
-							roles: ['named-user-api-key'],
-						})
-						.expect(
-							400,
-							`"API keys with the 'named-user-api-key' role require a name"`,
-						);
-				});
-
-				it('should reject requests for named api keys with an empty name', async function () {
-					await supertest(this.user)
-						.post(`/api-key/v1`)
-						.send({
-							actorType: 'user',
-							actorTypeId: this.user.id,
-							roles: ['named-user-api-key'],
-							name: '',
-						})
-						.expect(
-							400,
-							`"API keys with the 'named-user-api-key' role require a name"`,
-						);
-				});
-
-				it('should be able to create a named api key', async function () {
-					await supertest(this.user)
-						.post(`/api-key/v1`)
-						.send({
-							actorType: 'user',
-							actorTypeId: this.user.id,
-							roles: ['named-user-api-key'],
-							name: 'a-different-name',
-						})
-						.expect(200);
-				});
-
-				it('should be able to create an api key with expiry date', async function () {
-					await supertest(this.user)
-						.post(`/api-key/v1`)
-						.send({
-							actorType: 'user',
-							actorTypeId: this.user.id,
-							roles: ['named-user-api-key'],
-							name: 'Named Key',
-							expiryDate: new Date(Date.now() + 86400000).toISOString(), // one day in future
-						})
-						.expect(200);
-				});
-			});
+			}
 		});
 	});
 };
