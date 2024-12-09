@@ -18,6 +18,7 @@ setupDeleteCascade('application', {
 setupDeleteCascade('device', {
 	device_config_variable: 'device',
 	device_environment_variable: 'device',
+	device_service_environment_variable: 'device',
 	device_tag: 'device',
 	image_install: 'device',
 	service_install: 'device',
@@ -41,14 +42,11 @@ setupDeleteCascade('release', {
 });
 
 setupDeleteCascade('service', {
+	device_service_environment_variable: 'service',
 	service_environment_variable: 'service',
 	service_install: 'installs__service',
 	image: 'is_a_build_of__service',
 	service_label: 'service',
-});
-
-setupDeleteCascade('service_install', {
-	device_service_environment_variable: 'service_install',
 });
 
 const deleteApiKeyHooks: hooks.Hooks = {
