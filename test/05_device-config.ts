@@ -53,7 +53,7 @@ export default () => {
 					);
 					expect(apiKeyResp).to.have.property(
 						'description',
-						'Automatically generated for an image download or config file generation',
+						'Automatically generated for a config file generation',
 					);
 				});
 
