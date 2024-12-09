@@ -1,4 +1,33 @@
 - commits:
+    - subject: Require passing in api key options to `generateConfig`
+      hash: a9520c445aee5db5d8a95bd55a07c97eb4048991
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+    - subject: Switch the fetching of api key metadata to be handled explicitly by
+        route handlers
+      hash: e40d70cefeafbaa5badb7400463f06da2bbb147e
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+    - subject: Improve typings of api-key creation
+      hash: 118f2d4162a19e6eaaa2d752c229598958ade058
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 32.0.0
+  title: ""
+  date: 2024-12-09T12:03:44.986Z
+- commits:
     - subject: Rewrite service install FKs on balena model
       hash: 8994bf41f95b28b21cbb4a6498d46edc55ab11e8
       body: ""
@@ -2458,6 +2487,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -2490,6 +2520,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3636,6 +3667,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -3683,6 +3715,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3867,6 +3900,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -3904,6 +3938,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4266,6 +4301,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -4294,6 +4330,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4485,6 +4522,7 @@
 
 
 
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -4519,6 +4557,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4745,6 +4784,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -5108,6 +5148,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -5130,6 +5171,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5247,6 +5289,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5504,6 +5547,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -5526,6 +5570,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5643,6 +5688,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7913,6 +7959,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -7935,6 +7982,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8052,6 +8100,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8312,6 +8361,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -8340,6 +8390,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8529,6 +8580,7 @@
 
 
 
+
                                                                 We know what type
                                                                 they return and they
                                                                 should be explicitly
@@ -8563,6 +8615,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8788,6 +8841,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
