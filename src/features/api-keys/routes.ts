@@ -18,56 +18,63 @@ import {
 	supportedActorTypes,
 } from './lib.js';
 
-export const createGenericApiKey: RequestHandler = async (req, res) => {
-	try {
-		const apiKeyOptions = getApiKeyOptsFromRequest(req.body);
-		const {
-			actorType,
-			actorTypeId,
-			roles,
-			apiKey: chosenApiKey,
-		} = req.body as Dictionary<unknown>;
-
-		if (
-			typeof actorType !== 'string' ||
-			!supportedActorTypes.includes(
-				actorType as (typeof supportedActorTypes)[number],
-			)
-		) {
-			throw new errors.BadRequestError('Unsupported actor type');
-		}
-		if (typeof actorTypeId !== 'number' || !Number.isFinite(actorTypeId)) {
-			throw new errors.BadRequestError('Actor type id must be a number');
-		}
-		if (
-			!Array.isArray(roles) ||
-			roles.length === 0 ||
-			roles.some((r) => typeof r !== 'string' || r.length === 0)
-		) {
-			throw new errors.BadRequestError(
-				'Roles should be an array of role names',
+export const createGenericApiKey = (version: 'v1' | 'v2'): RequestHandler => {
+	const mandatoryExpiryDate = version !== 'v1';
+	return async (req, res) => {
+		try {
+			const apiKeyOptions = getApiKeyOptsFromRequest(
+				req.body,
+				undefined,
+				mandatoryExpiryDate,
 			);
-		}
+			const {
+				actorType,
+				actorTypeId,
+				roles,
+				apiKey: chosenApiKey,
+			} = req.body as Dictionary<unknown>;
 
-		if (chosenApiKey != null && typeof chosenApiKey !== 'string') {
-			throw new errors.BadRequestError('API key must be a string');
-		}
+			if (
+				typeof actorType !== 'string' ||
+				!supportedActorTypes.includes(
+					actorType as (typeof supportedActorTypes)[number],
+				)
+			) {
+				throw new errors.BadRequestError('Unsupported actor type');
+			}
+			if (typeof actorTypeId !== 'number' || !Number.isFinite(actorTypeId)) {
+				throw new errors.BadRequestError('Actor type id must be a number');
+			}
+			if (
+				!Array.isArray(roles) ||
+				roles.length === 0 ||
+				roles.some((r) => typeof r !== 'string' || r.length === 0)
+			) {
+				throw new errors.BadRequestError(
+					'Roles should be an array of role names',
+				);
+			}
 
-		const apiKey = await $createGenericApiKey(req, {
-			actorType: actorType as (typeof supportedActorTypes)[number],
-			actorTypeId,
-			roles,
-			apiKey: chosenApiKey ?? undefined,
-			...apiKeyOptions,
-		});
-		res.json(apiKey);
-	} catch (err) {
-		if (handleHttpErrors(req, res, err)) {
-			return;
+			if (chosenApiKey != null && typeof chosenApiKey !== 'string') {
+				throw new errors.BadRequestError('API key must be a string');
+			}
+
+			const apiKey = await $createGenericApiKey(req, {
+				actorType: actorType as (typeof supportedActorTypes)[number],
+				actorTypeId,
+				roles,
+				apiKey: chosenApiKey ?? undefined,
+				...apiKeyOptions,
+			});
+			res.json(apiKey);
+		} catch (err) {
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
+			captureException(err, 'Error generating API key', { req });
+			res.status(500).send(translateError(err));
 		}
-		captureException(err, 'Error generating API key', { req });
-		res.status(500).send(translateError(err));
-	}
+	};
 };
 
 export const createDeviceApiKey: RequestHandler = async (req, res) => {
