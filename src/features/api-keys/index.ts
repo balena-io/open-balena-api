@@ -38,6 +38,12 @@ export const setup = (app: Application) => {
 	app.post(
 		'/api-key/v1',
 		middleware.fullyAuthenticatedUser,
-		createGenericApiKey,
+		createGenericApiKey('v1'),
+	);
+
+	app.post(
+		'/api-key/v2',
+		middleware.fullyAuthenticatedUser,
+		createGenericApiKey('v2'),
 	);
 };
