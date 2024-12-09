@@ -15,7 +15,7 @@ import {
 	createNamedUserApiKey as $createNamedUserApiKey,
 	createProvisioningApiKey as $createProvisioningApiKey,
 	createUserApiKey as $createUserApiKey,
-	getKeyMetadata,
+	getApiKeyOptsFromRequest,
 } from './lib.js';
 
 export const createGenericApiKey: RequestHandler = async (req, res) => {
@@ -43,7 +43,7 @@ export const createDeviceApiKey: RequestHandler = async (req, res) => {
 	try {
 		const apiKey = await $createDeviceApiKey(req, deviceId, {
 			apiKey: req.body.apiKey,
-			...getKeyMetadata(req.body),
+			...getApiKeyOptsFromRequest(req.body),
 		});
 		res.json(apiKey);
 	} catch (err) {
@@ -66,7 +66,7 @@ export const createProvisioningApiKey: RequestHandler = async (req, res) => {
 		const apiKey = await $createProvisioningApiKey(
 			req,
 			appId,
-			getKeyMetadata(req.body),
+			getApiKeyOptsFromRequest(req.body),
 		);
 		res.json(apiKey);
 	} catch (err) {
@@ -83,7 +83,7 @@ export const createProvisioningApiKey: RequestHandler = async (req, res) => {
  */
 export const createUserApiKey: RequestHandler = async (req, res) => {
 	try {
-		const keyMetadata = getKeyMetadata(req.body);
+		const keyMetadata = getApiKeyOptsFromRequest(req.body);
 
 		const apiKey = await sbvrUtils.db.transaction(async (tx) => {
 			const user = await getUser(req, tx);
@@ -112,7 +112,7 @@ export const createNamedUserApiKey: RequestHandler = async (req, res) => {
 		const apiKey = await $createNamedUserApiKey(
 			req,
 			req.user.id,
-			getKeyMetadata(req.body),
+			getApiKeyOptsFromRequest(req.body),
 		);
 		res.json(apiKey);
 	} catch (err) {

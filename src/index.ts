@@ -101,6 +101,7 @@ import { middleware as authMiddleware } from './infra/auth/index.js';
 import {
 	augmentReqApiKeyPermissions,
 	isApiKeyWithRole,
+	getApiKeyOptsFromRequest,
 } from './features/api-keys/lib.js';
 import { setupDeleteCascade as addDeleteHookForDependents } from './features/cascade-delete/setup-delete-cascade.js';
 import {
@@ -232,6 +233,7 @@ export const utils = {
 export const apiKeys = {
 	augmentReqApiKeyPermissions,
 	isApiKeyWithRole,
+	getApiKeyOptsFromRequest,
 };
 export const application = {
 	addUserHasDirectAccessToApplicationToModel,

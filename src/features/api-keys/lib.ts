@@ -111,13 +111,13 @@ const $createApiKey = async (
 	return apiKey;
 };
 
-export const getKeyMetadata = (
-	reqBody: Dictionary<unknown>,
+export const getApiKeyOptsFromRequest = (
+	params: Dictionary<unknown>,
 	prefix?: string,
 ): Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate'> => {
-	const name = reqBody[prefix ? `${prefix}Name` : 'name'];
-	const description = reqBody[prefix ? `${prefix}Description` : 'description'];
-	const expiryDate = reqBody[prefix ? `${prefix}ExpiryDate` : 'expiryDate'];
+	const name = params[prefix ? `${prefix}Name` : 'name'];
+	const description = params[prefix ? `${prefix}Description` : 'description'];
+	const expiryDate = params[prefix ? `${prefix}ExpiryDate` : 'expiryDate'];
 
 	if (name != null && typeof name !== 'string') {
 		throw new errors.BadRequestError('Key name should be a string value');
@@ -150,7 +150,7 @@ export const createApiKey = async (
 	actorTypeID: number,
 	options: ApiKeyOptions,
 ): Promise<string> => {
-	const { name, description, expiryDate } = getKeyMetadata(req.body);
+	const { name, description, expiryDate } = getApiKeyOptsFromRequest(req.body);
 	const create = async (tx: Tx) => {
 		return await $createApiKey(actorType, roleName, req, actorTypeID, {
 			...options,

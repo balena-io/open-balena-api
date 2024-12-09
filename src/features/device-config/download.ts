@@ -11,7 +11,7 @@ import {
 import { generateConfig } from './device-config.js';
 import { getDeviceTypeJsonBySlug } from '../device-types/device-types.js';
 import { checkInt, getBodyOrQueryParam } from '../../lib/utils.js';
-import { getKeyMetadata } from '../api-keys/lib.js';
+import { getApiKeyOptsFromRequest } from '../api-keys/lib.js';
 
 const { UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
@@ -58,8 +58,11 @@ export const downloadImageConfig: RequestHandler = async (req, res) => {
 	try {
 		// Checking both req.body and req.query given both GET and POST support
 		// Ref: https://github.com/balena-io/balena-api/blob/master/src/routes/applications.ts#L95
-		const provisioningKeyOptions = getKeyMetadata(req.body, 'provisioningKey');
-		const provisioningKeyQueryOptions = getKeyMetadata(
+		const provisioningKeyOptions = getApiKeyOptsFromRequest(
+			req.body,
+			'provisioningKey',
+		);
+		const provisioningKeyQueryOptions = getApiKeyOptsFromRequest(
 			req.query,
 			'provisioningKey',
 		);
@@ -69,7 +72,7 @@ export const downloadImageConfig: RequestHandler = async (req, res) => {
 			'Automatically generated provisioning key';
 		provisioningKeyOptions.description ??=
 			provisioningKeyQueryOptions.description ??
-			'Automatically generated for an image download or config file generation';
+			'Automatically generated for a config file generation';
 		provisioningKeyOptions.expiryDate ??=
 			provisioningKeyQueryOptions.expiryDate;
 
