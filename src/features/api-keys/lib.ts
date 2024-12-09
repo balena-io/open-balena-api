@@ -196,7 +196,7 @@ export type ApiKeyParameters = {
 	roles: string[];
 } & Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate' | 'apiKey'>;
 
-const supportedActorTypes = ['application', 'user', 'device'] as const;
+export const supportedActorTypes = ['application', 'user', 'device'] as const;
 
 export const createGenericApiKey = async (
 	req: Request,
@@ -214,23 +214,15 @@ export const createGenericApiKey = async (
 		throw new BadRequestError('Unsupported actor type');
 	}
 
-	if (!Number.isFinite(actorTypeId)) {
-		throw new BadRequestError('Actor type id must be a number');
-	}
-
-	if (
-		!Array.isArray(roles) ||
-		roles.length === 0 ||
-		roles.some((r) => typeof r !== 'string' || r.length === 0)
-	) {
-		throw new BadRequestError('Roles should be an array of role names');
-	}
-
 	if (roles.length !== 1) {
 		throw new BadRequestError('API Keys currently only support a single role');
 	}
+	const roleName = roles[0];
 
-	if (!name) {
+	if (name === '') {
+		name = null;
+	}
+	if (name == null) {
 		const namedRole = roles.find((r) => r.startsWith('named-'));
 
 		if (namedRole != null) {
@@ -239,8 +231,6 @@ export const createGenericApiKey = async (
 			);
 		}
 	}
-
-	const roleName = roles[0];
 
 	return createApiKey(
 		actorType,
