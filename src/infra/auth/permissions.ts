@@ -280,7 +280,7 @@ export async function createAllPermissions(
 
 	const rolesPromise = Bluebird.props<Dictionary<{ id: number }>>(
 		_.mapValues(roleMap, createRolePermissions),
-	).tap(async (roles) => {
+	).tap(async (resolvedRoleMap) => {
 		// Assign user roles
 		await Promise.all(
 			_.map(userMap, async (userEmails, roleName) => {
@@ -290,7 +290,7 @@ export async function createAllPermissions(
 						if (user?.id == null) {
 							throw new Error(`User ${email} not found.`);
 						}
-						await assignUserRole(user.id, roles[roleName].id, tx);
+						await assignUserRole(user.id, resolvedRoleMap[roleName].id, tx);
 					} catch {
 						// Ignore errors
 					}
@@ -370,8 +370,6 @@ export async function createAllPermissions(
 		),
 	);
 
-	return await Bluebird.props({
-		roles: rolesPromise,
-		apiKeys: apiKeysPromise,
-	});
+	const [roles, apiKeys] = await Promise.all([rolesPromise, apiKeysPromise]);
+	return { roles, apiKeys };
 }

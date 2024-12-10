@@ -1,6 +1,5 @@
 /// <reference path="./typings/supertest-extension.ts" />
 
-import Bluebird from 'bluebird';
 import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
@@ -23,19 +22,20 @@ const testFiles = _(process.env.TEST_FILES)
 
 const prefixes: Dictionary<true> = {};
 
-Bluebird.resolve(fs.promises.readdir(new URL('.', import.meta.url)))
-	.call('sort')
-	.each(async (fileName) => {
+try {
+	for (let fileName of (
+		await fs.promises.readdir(new URL('.', import.meta.url))
+	).sort()) {
 		const ext = path.extname(fileName);
 		if (ext !== '.ts') {
-			return;
+			continue;
 		}
 		fileName = path.basename(fileName, ext);
 		if (
 			testFiles.length > 0 &&
 			!testFiles.some((testFile) => testFile(fileName))
 		) {
-			return;
+			continue;
 		}
 		const prefix = fileName.split('_', 1)[0];
 		if (prefixes[prefix]) {
@@ -44,18 +44,19 @@ Bluebird.resolve(fs.promises.readdir(new URL('.', import.meta.url)))
 		prefixes[prefix] = true;
 		if (prefix === '00') {
 			// Don't double load this file
-			return;
+			continue;
 		}
 		const { default: initFn } = await import(`./${fileName}.js`);
 		describe(fileName, () => {
 			initFn();
 		});
-	})
-	.then(() => fs.promises.readdir(new URL('scenarios/', import.meta.url)))
-	.each(async (fileName) => {
+	}
+	for (let fileName of await fs.promises.readdir(
+		new URL('scenarios/', import.meta.url),
+	)) {
 		const ext = path.extname(fileName);
 		if (ext !== '.ts') {
-			return;
+			continue;
 		}
 		fileName = path.basename(fileName, ext);
 
@@ -63,12 +64,14 @@ Bluebird.resolve(fs.promises.readdir(new URL('.', import.meta.url)))
 			testFiles.length > 0 &&
 			!testFiles.some((testFile) => testFile(fileName))
 		) {
-			return;
+			continue;
 		}
 
 		const { default: initFn } = await import(`./scenarios/${fileName}.js`);
 		describe(`Scenario: ${fileName}`, () => {
 			initFn();
 		});
-	})
-	.done(run);
+	}
+} finally {
+	run();
+}

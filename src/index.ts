@@ -1,6 +1,5 @@
 /// <reference path="./typings/index.ts" />
 
-import Bluebird from 'bluebird';
 import bodyParser from 'body-parser';
 import compression from 'compression-next';
 import compressible from 'compressible';
@@ -511,8 +510,8 @@ async function startServer(
 	app.use((_request, response) => {
 		response.status(404).end();
 	});
-	await Bluebird.fromCallback((cb) => {
-		server = app.listen(port, cb as (...args: any[]) => void);
+	await new Promise<void>((resolve) => {
+		server = app.listen(port, resolve);
 	});
 	console.log(`Server listening in ${app.get('env')} mode on port ${port}`);
 	return server!;

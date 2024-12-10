@@ -1,5 +1,4 @@
 import type AWS from 'aws-sdk';
-import Bluebird from 'bluebird';
 import { assert } from 'chai';
 import _ from 'lodash';
 import mockery from 'mockery';
@@ -42,20 +41,28 @@ class NotFoundError extends Error {
 	}
 }
 
-const toReturnType = <T extends (...args: any[]) => any>(result: {
-	[key: string]: any;
-}) => {
+const toReturnType = <T extends (...args: any[]) => any>(
+	result:
+		| Error
+		| {
+				[key: string]: any;
+		  },
+) => {
 	return {
-		promise: () => {
+		// eslint-disable-next-line @typescript-eslint/require-await -- We need to return a promise for mocking reasons but we don't need to await.
+		promise: async () => {
+			if (result instanceof Error) {
+				throw result;
+			}
 			if (result.Error) {
 				const error = new Error();
 				Object.assign(error, result.Error);
 
-				return Bluebird.reject(error);
+				throw error;
 			}
-			return Bluebird.resolve(result);
+			return result;
 		},
-	} as unknown as ReturnType<T>;
+	} as ReturnType<T>;
 };
 
 interface UnauthenticatedRequestParams {
@@ -101,9 +108,7 @@ class S3Mock {
 
 		// treat not found IGNORE file mocks as 404
 		if (_.endsWith(params.Key, '/IGNORE')) {
-			return toReturnType<AWS.S3['headObject']>(
-				Bluebird.reject(new NotFoundError()),
-			);
+			return toReturnType<AWS.S3['headObject']>(new NotFoundError());
 		}
 
 		throw new Error(
