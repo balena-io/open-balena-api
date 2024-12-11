@@ -57,14 +57,10 @@ export default () => {
 				createLog({ serviceId: 3 }),
 			];
 			// @ts-expect-error usage of private function
-			const streams = loki.fromDeviceLogsToStreams(ctx, _.cloneDeep(logs));
-			expect(streams.length).to.equal(
-				1,
-				'should be 1 stream since all logs share the same device id',
-			);
+			const stream = loki.fromDeviceLogsToStream(ctx, _.cloneDeep(logs));
 			// @ts-expect-error usage of private function
-			const logsFromStreams = streams.flatMap(loki.fromStreamToDeviceLogs);
-			expect(logsFromStreams).to.deep.equal(logs);
+			const logsFromStream = loki.fromStreamToDeviceLogs(stream);
+			expect(logsFromStream).to.deep.equal(logs);
 		});
 
 		it('should push multiple logs with different labels and return in order', async function () {
