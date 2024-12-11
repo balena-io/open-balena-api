@@ -382,6 +382,34 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			},
 		},
 	),
+	...getDefinitionWithMinimumSupervisorVersion(
+		{
+			'16.10.0': [
+				'jetson-agx-orin-devkit',
+				'jetson-agx-orin-devkit-64gb',
+				'jetson-orin-nano-devkit-nvme',
+				'jetson-orin-nano-seeed-j3010',
+				'jetson-orin-nx-seeed-j4012',
+				'jetson-orin-nx-xavier-nx-devkit',
+			],
+		},
+		{
+			BALENA_HOST_CONFIG_power_mode: {
+				type: 'string',
+				description:
+					'Define the device power mode. Supported by OS with Jetpack 6 or higher.',
+				examples: ['low', 'mid', 'high', 'default'],
+				will_reboot: true,
+			},
+			BALENA_HOST_CONFIG_fan_profile: {
+				type: 'string',
+				description:
+					'Define the device fan profile. Supported by OS with Jetpack 6 or higher.',
+				examples: ['quiet', 'cool', 'default'],
+				will_reboot: false,
+			},
+		},
+	),
 ];
 
 const startsWithAny = (ns: string[], name: string) => {
