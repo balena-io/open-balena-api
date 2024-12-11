@@ -220,10 +220,10 @@ export class LokiBackend implements DeviceLogsBackend {
 		const countLogs = logs.length;
 		incrementPublishCallTotal();
 		incrementPublishLogMessagesTotal(countLogs);
-		const streams = this.fromDeviceLogsToStreams(ctx, logs);
+		const stream = this.fromDeviceLogsToStream(ctx, logs);
 		const lokiCtx = await assertLokiLogContext(ctx);
 		try {
-			await this.push(lokiCtx.belongs_to__application, streams);
+			await this.push(lokiCtx.belongs_to__application, stream);
 			incrementPublishCallSuccessTotal();
 		} catch (err) {
 			incrementPublishCallFailedTotal();
@@ -242,10 +242,10 @@ export class LokiBackend implements DeviceLogsBackend {
 		}
 	}
 
-	private push(appId: number, streams: loki.StreamAdapter[]): Promise<any> {
+	private push(appId: number, stream: loki.StreamAdapter): Promise<any> {
 		incrementLokiPushTotal();
 		const pushRequest = new loki.PushRequest();
-		pushRequest.setStreamsList(streams);
+		pushRequest.addStreams(stream);
 		const startAt = Date.now();
 		return new Promise<loki.PushResponse>((resolve, reject) => {
 			this.pusher.push(
@@ -368,12 +368,13 @@ export class LokiBackend implements DeviceLogsBackend {
 		}
 	}
 
-	private fromDeviceLogsToStreams(
+	private fromDeviceLogsToStream(
 		ctx: LogContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	) {
-		const streams: loki.StreamAdapter[] = [];
-		const streamIndex: { [key: string]: loki.StreamAdapter } = {}; // index streams by labels for fast lookup
+		const labels = this.getLabels(ctx);
+		const stream = new loki.StreamAdapter();
+		stream.setLabels(labels);
 		for (const log of logs) {
 			this.validateLog(log);
 			log.version = VERSION;
@@ -386,18 +387,9 @@ export class LokiBackend implements DeviceLogsBackend {
 			const entry = new loki.EntryAdapter()
 				.setLine(logJson)
 				.setTimestamp(timestamp);
-			const labels = this.getLabels(ctx);
 			// append entry to stream
-			let stream = streamIndex[labels];
-			if (!stream) {
-				// new stream if none exist for labels
-				stream = new loki.StreamAdapter();
-				stream.setLabels(labels);
-				streams.push(stream);
-				streamIndex[labels] = stream;
-			}
 			stream.addEntries(entry);
 		}
-		return streams;
+		return stream;
 	}
 }
