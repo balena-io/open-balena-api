@@ -1,4 +1,21 @@
 - commits:
+    - subject: Add support for power mode & fan profile boot configs
+      hash: 4969049bc7959912e4d77c658f2cd9b01ef5c4f5
+      body: |
+        The boot configs will apply to devices with Jetpack 6 OS's initially,
+        and require Supervisor v16.8.0 or newer. This may change in the future
+        if we add support for older Jetpack versions.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Christina Ying Wang <christina@balena.io>
+        signed-off-by: Christina Ying Wang <christina@balena.io>
+      author: Christina Ying Wang
+      nested: []
+  version: 32.2.0
+  title: ""
+  date: 2024-12-11T00:22:34.659Z
+- commits:
     - subject: Convert some bluebird usage to native promises
       hash: 78045078b7d3a497a070f2994c8af5480d3d8705
       body: ""
@@ -2583,6 +2600,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -2615,6 +2633,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3775,6 +3794,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -3822,6 +3842,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4020,6 +4041,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -4057,6 +4079,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4433,6 +4456,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -4461,6 +4485,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4666,6 +4691,7 @@
 
 
 
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -4700,6 +4726,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4933,6 +4960,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -5310,6 +5338,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -5332,6 +5361,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5456,6 +5486,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5727,6 +5758,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -5749,6 +5781,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5873,6 +5906,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8157,6 +8191,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -8179,6 +8214,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8303,6 +8339,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8577,6 +8614,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -8605,6 +8643,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8808,6 +8847,7 @@
 
 
 
+
                                                                 We know what type
                                                                 they return and they
                                                                 should be explicitly
@@ -8842,6 +8882,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -9074,6 +9115,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
