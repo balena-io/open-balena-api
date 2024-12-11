@@ -49,6 +49,10 @@ setupDeleteCascade('service', {
 	service_label: 'service',
 });
 
+setupDeleteCascade('service_install', {
+	device_service_environment_variable: 'service_install',
+});
+
 const deleteApiKeyHooks: hooks.Hooks = {
 	PRERUN: async (args) => {
 		const keyIds = await getAffectedIds(args);
