@@ -214,16 +214,16 @@ export class LokiBackend implements DeviceLogsBackend {
 	}
 
 	public async publish(
-		ctx: LogContext,
+		$ctx: LogContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	): Promise<any> {
+		const ctx = await assertLokiLogContext($ctx);
 		const countLogs = logs.length;
 		incrementPublishCallTotal();
 		incrementPublishLogMessagesTotal(countLogs);
-		const streams = this.fromDeviceLogsToStreams(ctx, logs);
-		const lokiCtx = await assertLokiLogContext(ctx);
+		const stream = this.fromDeviceLogsToStream(ctx, logs);
 		try {
-			await this.push(lokiCtx.belongs_to__application, streams);
+			await this.push(ctx.belongs_to__application, stream);
 			incrementPublishCallSuccessTotal();
 		} catch (err) {
 			incrementPublishCallFailedTotal();
@@ -242,10 +242,10 @@ export class LokiBackend implements DeviceLogsBackend {
 		}
 	}
 
-	private push(appId: number, streams: loki.StreamAdapter[]): Promise<any> {
+	private push(appId: number, stream: loki.StreamAdapter): Promise<any> {
 		incrementLokiPushTotal();
 		const pushRequest = new loki.PushRequest();
-		pushRequest.setStreamsList(streams);
+		pushRequest.addStreams(stream);
 		const startAt = Date.now();
 		return new Promise<loki.PushResponse>((resolve, reject) => {
 			this.pusher.push(
@@ -315,16 +315,22 @@ export class LokiBackend implements DeviceLogsBackend {
 		call?.cancel();
 	}
 
-	private getDeviceQuery(ctx: LogContext) {
-		return `{device_id="${ctx.id}"}`;
+	private getDeviceQuery(ctx: LokiLogContext) {
+		return `{application_id="${ctx.belongs_to__application}"} | device_id="${ctx.id}"`;
 	}
 
 	private getKey(ctx: LokiLogContext, suffix = 'logs') {
 		return `app:${ctx.belongs_to__application}:device:${ctx.id}:${suffix}`;
 	}
 
-	private getLabels(ctx: LogContext): string {
-		return `{device_id="${ctx.id}"}`;
+	private getStructuredMetadata(ctx: LogContext): loki.LabelPairAdapter[] {
+		return [
+			new loki.LabelPairAdapter().setName('device_id').setValue(`${ctx.id}`),
+		];
+	}
+
+	private getLabels(ctx: LokiLogContext): string {
+		return `{application_id="${ctx.belongs_to__application}"}`;
 	}
 
 	private validateLog(log: DeviceLog): asserts log is DeviceLog {
@@ -348,7 +354,7 @@ export class LokiBackend implements DeviceLogsBackend {
 
 	private fromStreamToDeviceLogs(stream: loki.StreamAdapter): DeviceLog[] {
 		try {
-			return stream.getEntriesList().map((entry: loki.EntryAdapter) => {
+			return stream.getEntriesList().map((entry) => {
 				const log = JSON.parse(entry.getLine());
 				const timestamp = entry.getTimestamp()!;
 				log.nanoTimestamp =
@@ -368,12 +374,13 @@ export class LokiBackend implements DeviceLogsBackend {
 		}
 	}
 
-	private fromDeviceLogsToStreams(
-		ctx: LogContext,
+	private fromDeviceLogsToStream(
+		ctx: LokiLogContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	) {
-		const streams: loki.StreamAdapter[] = [];
-		const streamIndex: { [key: string]: loki.StreamAdapter } = {}; // index streams by labels for fast lookup
+		const labels = this.getLabels(ctx);
+		const stream = new loki.StreamAdapter();
+		stream.setLabels(labels);
 		for (const log of logs) {
 			this.validateLog(log);
 			log.version = VERSION;
@@ -382,22 +389,15 @@ export class LokiBackend implements DeviceLogsBackend {
 			timestamp.setNanos(Number(log.nanoTimestamp % 1000000000n));
 			// store log line as JSON
 			const logJson = JSON.stringify(log, omitNanoTimestamp);
+			const structuredMetadata = this.getStructuredMetadata(ctx);
 			// create entry with labels, line and timestamp
 			const entry = new loki.EntryAdapter()
 				.setLine(logJson)
-				.setTimestamp(timestamp);
-			const labels = this.getLabels(ctx);
+				.setTimestamp(timestamp)
+				.setStructuredmetadataList(structuredMetadata);
 			// append entry to stream
-			let stream = streamIndex[labels];
-			if (!stream) {
-				// new stream if none exist for labels
-				stream = new loki.StreamAdapter();
-				stream.setLabels(labels);
-				streams.push(stream);
-				streamIndex[labels] = stream;
-			}
 			stream.addEntries(entry);
 		}
-		return streams;
+		return stream;
 	}
 }

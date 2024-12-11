@@ -103,7 +103,7 @@
     "ipaddr.js": "^2.2.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
-    "loki-grpc-client": "^2.0.0",
+    "loki-grpc-client": "^2.2.0",
     "memoizee": "^0.4.17",
     "morgan": "^1.10.0",
     "ndjson": "^2.0.0",
