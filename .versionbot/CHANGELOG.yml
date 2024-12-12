@@ -1,4 +1,20 @@
 - commits:
+    - subject: 'vars-schema/env-vars: Drop "default" setting from power_mode'
+      hash: bfc8b39d16476cdfa5a190ff6af6297882a3b592
+      body: >
+        The 'default' setting is only supported for fan-profile, and not for
+        power mode. Let's drop this from the examples.
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Alexandru Costache <alexandru@balena.io>
+        signed-off-by: Alexandru Costache <alexandru@balena.io>
+      author: Alexandru
+      nested: []
+  version: 33.0.3
+  title: ""
+  date: 2024-12-12T16:59:44.798Z
+- commits:
     - subject: Rollback nullable service install FK on device service environment
         variable
       hash: 9a86235c89a95a5bfd4457c2b9f229abb403c380
@@ -2708,6 +2724,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -2740,6 +2757,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3912,6 +3930,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -3959,6 +3978,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4169,6 +4189,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -4206,6 +4227,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4594,6 +4616,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -4622,6 +4645,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4839,6 +4863,7 @@
 
 
 
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -4873,6 +4898,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -5112,6 +5138,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -5501,6 +5528,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -5523,6 +5551,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5653,6 +5682,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5936,6 +5966,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -5958,6 +5989,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6088,6 +6120,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8384,6 +8417,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -8406,6 +8440,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8536,6 +8571,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8822,6 +8858,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -8850,6 +8887,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -9065,6 +9103,7 @@
 
 
 
+
                                                                 We know what type
                                                                 they return and they
                                                                 should be explicitly
@@ -9099,6 +9138,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -9337,6 +9377,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
