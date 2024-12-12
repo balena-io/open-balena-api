@@ -398,7 +398,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 				type: 'string',
 				description:
 					'Define the device power mode. Supported by OS with Jetpack 6 or higher.',
-				examples: ['low', 'mid', 'high', 'default'],
+				examples: ['low', 'mid', 'high'],
 				will_reboot: true,
 			},
 			BALENA_HOST_CONFIG_fan_profile: {
