@@ -288,8 +288,8 @@ export class LokiBackend implements DeviceLogsBackend {
 					}
 				}
 			});
-			call.on('error', (err: Error & { details: string }) => {
-				if (err.details !== 'Cancelled') {
+			call.on('error', (err: Error & { code: loki.status }) => {
+				if (err.code !== loki.status.CANCELLED) {
 					captureException(err, `Loki tail call error for device ${ctx.uuid}`);
 				}
 				this.subscriptions.removeListener(key, subscription);
