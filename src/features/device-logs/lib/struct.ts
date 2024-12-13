@@ -4,6 +4,7 @@ export interface LogContext {
 	readonly retention_limit: number;
 }
 export interface LokiLogContext extends LogContext {
+	readonly orgId: string;
 	readonly appId: string;
 }
 
