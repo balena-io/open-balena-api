@@ -113,9 +113,17 @@ async function assertLokiLogContext(
 		},
 	});
 
+	if (device == null) {
+		throw new Error(`Device '${ctx.id}' not found`);
+	}
+
 	// Mutate so that we don't have to repeatedly amend the same context and instead cache it
 	(ctx as Writable<typeof ctx>).appId =
-		`${device?.belongs_to__application?.__id}`;
+		`${device.belongs_to__application?.__id}`;
+
+	if (ctx.appId == null) {
+		throw new Error(`Device '${ctx.id}' app not found`);
+	}
 
 	return ctx as types.RequiredField<typeof ctx, 'appId'>;
 }
