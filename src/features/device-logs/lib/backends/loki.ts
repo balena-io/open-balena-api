@@ -71,7 +71,7 @@ function backoff<T extends (...args: any[]) => any>(
 	fn: T,
 	retryIf: (err: Error) => boolean,
 ) {
-	return async (...args: Parameters<T>): Promise<ReturnType<T> | undefined> => {
+	return async (...args: Parameters<T>): Promise<Awaited<ReturnType<T>>> => {
 		let nextBackoff = MIN_BACKOFF;
 		let prevBackoff = MIN_BACKOFF;
 		while (nextBackoff <= MAX_BACKOFF) {
@@ -250,29 +250,34 @@ export class LokiBackend implements DeviceLogsBackend {
 		}
 	}
 
-	private push(ctx: LokiLogContext, stream: loki.StreamAdapter): Promise<any> {
+	private async push(
+		ctx: LokiLogContext,
+		stream: loki.StreamAdapter,
+	): Promise<void> {
 		incrementLokiPushTotal();
 		const pushRequest = new loki.PushRequest();
 		pushRequest.addStreams(stream);
 		const startAt = Date.now();
-		return new Promise<loki.PushResponse>((resolve, reject) => {
-			this.pusher.push(
-				pushRequest,
-				loki.createOrgIdMetadata(ctx.appId),
-				{
-					deadline: startAt + PUSH_TIMEOUT,
-				},
-				(err, response) => {
-					if (err) {
-						reject(err);
-					} else {
-						resolve(response);
-					}
-				},
-			);
-		}).finally(() => {
+		try {
+			await new Promise<loki.PushResponse>((resolve, reject) => {
+				this.pusher.push(
+					pushRequest,
+					loki.createOrgIdMetadata(ctx.appId),
+					{
+						deadline: startAt + PUSH_TIMEOUT,
+					},
+					(err, response) => {
+						if (err) {
+							reject(err);
+						} else {
+							resolve(response);
+						}
+					},
+				);
+			});
+		} finally {
 			updateLokiPushDurationHistogram(Date.now() - startAt);
-		});
+		}
 	}
 
 	public async subscribe($ctx: LogContext, subscription: Subscription) {
