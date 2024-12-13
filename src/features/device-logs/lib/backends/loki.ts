@@ -332,8 +332,8 @@ export class LokiBackend implements DeviceLogsBackend {
 		return `{application_id="${ctx.appId}"} | device_id="${ctx.id}"`;
 	}
 
-	private getKey(ctx: LokiLogContext, suffix = 'logs') {
-		return `app:${ctx.appId}:device:${ctx.id}:${suffix}`;
+	private getKey(ctx: LokiLogContext) {
+		return `a${ctx.appId}:d${ctx.id}`;
 	}
 
 	private getStructuredMetadata(ctx: LogContext): loki.LabelPairAdapter[] {
