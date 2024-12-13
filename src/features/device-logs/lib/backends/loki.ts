@@ -231,7 +231,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		incrementPublishLogMessagesTotal(countLogs);
 		const stream = this.fromDeviceLogsToStream(ctx, logs);
 		try {
-			await this.push(ctx.appId, stream);
+			await this.push(ctx, stream);
 			incrementPublishCallSuccessTotal();
 		} catch (err) {
 			incrementPublishCallFailedTotal();
@@ -250,7 +250,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		}
 	}
 
-	private push(appId: string, stream: loki.StreamAdapter): Promise<any> {
+	private push(ctx: LokiLogContext, stream: loki.StreamAdapter): Promise<any> {
 		incrementLokiPushTotal();
 		const pushRequest = new loki.PushRequest();
 		pushRequest.addStreams(stream);
@@ -258,7 +258,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		return new Promise<loki.PushResponse>((resolve, reject) => {
 			this.pusher.push(
 				pushRequest,
-				loki.createOrgIdMetadata(appId),
+				loki.createOrgIdMetadata(ctx.appId),
 				{
 					deadline: startAt + PUSH_TIMEOUT,
 				},
