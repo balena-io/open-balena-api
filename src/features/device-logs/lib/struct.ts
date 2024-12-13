@@ -4,7 +4,7 @@ export interface LogContext {
 	readonly retention_limit: number;
 }
 export interface LokiLogContext extends LogContext {
-	readonly belongs_to__application: number;
+	readonly belongs_to__application: string;
 }
 
 // This is the format we store and that we output to consumers

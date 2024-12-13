@@ -115,7 +115,7 @@ async function assertLokiLogContext(
 
 	// Mutate so that we don't have to repeatedly amend the same context and instead cache it
 	(ctx as Writable<typeof ctx>).belongs_to__application =
-		device?.belongs_to__application?.__id;
+		`${device?.belongs_to__application?.__id}`;
 
 	return ctx as types.RequiredField<typeof ctx, 'belongs_to__application'>;
 }
@@ -181,7 +181,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		const [, body] = await requestAsync({
 			url: `http://${lokiQueryAddress}/loki/api/v1/query_range`,
 			headers: {
-				'X-Scope-OrgID': `${ctx.belongs_to__application}`,
+				'X-Scope-OrgID': ctx.belongs_to__application,
 			},
 			qs: {
 				query: this.getDeviceQuery(ctx),
@@ -242,7 +242,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		}
 	}
 
-	private push(appId: number, stream: loki.StreamAdapter): Promise<any> {
+	private push(appId: string, stream: loki.StreamAdapter): Promise<any> {
 		incrementLokiPushTotal();
 		const pushRequest = new loki.PushRequest();
 		pushRequest.addStreams(stream);
@@ -250,7 +250,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		return new Promise<loki.PushResponse>((resolve, reject) => {
 			this.pusher.push(
 				pushRequest,
-				loki.createOrgIdMetadata(String(appId)),
+				loki.createOrgIdMetadata(appId),
 				{
 					deadline: startAt + PUSH_TIMEOUT,
 				},
@@ -277,7 +277,7 @@ export class LokiBackend implements DeviceLogsBackend {
 
 			const call = this.querier.tail(
 				request,
-				loki.createOrgIdMetadata(String(ctx.belongs_to__application)),
+				loki.createOrgIdMetadata(ctx.belongs_to__application),
 			);
 			call.on('data', (response: loki.TailResponse) => {
 				const stream = response.getStream();

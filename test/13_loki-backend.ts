@@ -22,7 +22,7 @@ const createContext = (extra = {}): LokiLogContext => {
 	return {
 		id: 1,
 		uuid: '1',
-		belongs_to__application: 1,
+		belongs_to__application: '1',
 		retention_limit: 100,
 		...extra,
 	};
