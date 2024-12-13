@@ -100,8 +100,8 @@ function backoff<T extends (...args: any[]) => any>(
 async function assertLokiLogContext(
 	ctx: LogContext & Partial<LokiLogContext>,
 ): Promise<LokiLogContext> {
-	if ('appId' in ctx) {
-		return ctx as types.RequiredField<typeof ctx, 'appId'>;
+	if ('appId' in ctx && 'orgId' in ctx) {
+		return ctx as types.RequiredField<typeof ctx, 'appId' | 'orgId'>;
 	}
 
 	const device = await sbvrUtils.api.resin.get({
@@ -110,6 +110,11 @@ async function assertLokiLogContext(
 		passthrough: { req: permissions.root },
 		options: {
 			$select: ['belongs_to__application'],
+			$expand: {
+				belongs_to__application: {
+					$select: ['id', 'organization'],
+				},
+			},
 		},
 	});
 
@@ -117,15 +122,17 @@ async function assertLokiLogContext(
 		throw new Error(`Device '${ctx.id}' not found`);
 	}
 
-	// Mutate so that we don't have to repeatedly amend the same context and instead cache it
-	(ctx as Writable<typeof ctx>).appId =
-		`${device.belongs_to__application?.__id}`;
-
-	if (ctx.appId == null) {
+	if (device.belongs_to__application[0] == null) {
 		throw new Error(`Device '${ctx.id}' app not found`);
 	}
 
-	return ctx as types.RequiredField<typeof ctx, 'appId'>;
+	// Mutate so that we don't have to repeatedly amend the same context and instead cache it
+	(ctx as Writable<typeof ctx>).appId =
+		`${device.belongs_to__application[0].id}`;
+	(ctx as Writable<typeof ctx>).orgId =
+		`${device.belongs_to__application[0].organization.__id}`;
+
+	return ctx as types.RequiredField<typeof ctx, 'appId' | 'orgId'>;
 }
 
 export class LokiBackend implements DeviceLogsBackend {
@@ -189,7 +196,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		const [, body] = await requestAsync({
 			url: `http://${lokiQueryAddress}/loki/api/v1/query_range`,
 			headers: {
-				'X-Scope-OrgID': ctx.appId,
+				'X-Scope-OrgID': ctx.orgId,
 			},
 			qs: {
 				query: this.getDeviceQuery(ctx),
@@ -262,7 +269,7 @@ export class LokiBackend implements DeviceLogsBackend {
 			await new Promise<loki.PushResponse>((resolve, reject) => {
 				this.pusher.push(
 					pushRequest,
-					loki.createOrgIdMetadata(ctx.appId),
+					loki.createOrgIdMetadata(ctx.orgId),
 					{
 						deadline: startAt + PUSH_TIMEOUT,
 					},
@@ -290,7 +297,7 @@ export class LokiBackend implements DeviceLogsBackend {
 
 			const call = this.querier.tail(
 				request,
-				loki.createOrgIdMetadata(ctx.appId),
+				loki.createOrgIdMetadata(ctx.orgId),
 			);
 			call.on('data', (response: loki.TailResponse) => {
 				const stream = response.getStream();
@@ -329,11 +336,11 @@ export class LokiBackend implements DeviceLogsBackend {
 	}
 
 	private getDeviceQuery(ctx: LokiLogContext) {
-		return `{application_id="${ctx.appId}"} | device_id="${ctx.id}"`;
+		return `{fleet_id="${ctx.appId}"} | device_id="${ctx.id}"`;
 	}
 
 	private getKey(ctx: LokiLogContext) {
-		return `a${ctx.appId}:d${ctx.id}`;
+		return `o${ctx.orgId}:a${ctx.appId}:d${ctx.id}`;
 	}
 
 	private getStructuredMetadata(ctx: LogContext): loki.LabelPairAdapter[] {
@@ -343,7 +350,7 @@ export class LokiBackend implements DeviceLogsBackend {
 	}
 
 	private getLabels(ctx: LokiLogContext): string {
-		return `{application_id="${ctx.appId}"}`;
+		return `{fleet_id="${ctx.appId}"}`;
 	}
 
 	private validateLog(log: DeviceLog): asserts log is DeviceLog {

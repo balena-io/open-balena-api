@@ -23,6 +23,7 @@ const createContext = (extra = {}): LokiLogContext => {
 		id: 1,
 		uuid: '1',
 		appId: '1',
+		orgId: '1',
 		retention_limit: 100,
 		...extra,
 	};
