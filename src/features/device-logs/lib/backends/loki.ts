@@ -100,8 +100,8 @@ function backoff<T extends (...args: any[]) => any>(
 async function assertLokiLogContext(
 	ctx: LogContext & Partial<LokiLogContext>,
 ): Promise<LokiLogContext> {
-	if ('belongs_to__application' in ctx) {
-		return ctx as types.RequiredField<typeof ctx, 'belongs_to__application'>;
+	if ('appId' in ctx) {
+		return ctx as types.RequiredField<typeof ctx, 'appId'>;
 	}
 
 	const device = await sbvrUtils.api.resin.get({
@@ -114,10 +114,10 @@ async function assertLokiLogContext(
 	});
 
 	// Mutate so that we don't have to repeatedly amend the same context and instead cache it
-	(ctx as Writable<typeof ctx>).belongs_to__application =
+	(ctx as Writable<typeof ctx>).appId =
 		`${device?.belongs_to__application?.__id}`;
 
-	return ctx as types.RequiredField<typeof ctx, 'belongs_to__application'>;
+	return ctx as types.RequiredField<typeof ctx, 'appId'>;
 }
 
 export class LokiBackend implements DeviceLogsBackend {
@@ -181,7 +181,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		const [, body] = await requestAsync({
 			url: `http://${lokiQueryAddress}/loki/api/v1/query_range`,
 			headers: {
-				'X-Scope-OrgID': ctx.belongs_to__application,
+				'X-Scope-OrgID': ctx.appId,
 			},
 			qs: {
 				query: this.getDeviceQuery(ctx),
@@ -223,7 +223,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		incrementPublishLogMessagesTotal(countLogs);
 		const stream = this.fromDeviceLogsToStream(ctx, logs);
 		try {
-			await this.push(ctx.belongs_to__application, stream);
+			await this.push(ctx.appId, stream);
 			incrementPublishCallSuccessTotal();
 		} catch (err) {
 			incrementPublishCallFailedTotal();
@@ -277,7 +277,7 @@ export class LokiBackend implements DeviceLogsBackend {
 
 			const call = this.querier.tail(
 				request,
-				loki.createOrgIdMetadata(ctx.belongs_to__application),
+				loki.createOrgIdMetadata(ctx.appId),
 			);
 			call.on('data', (response: loki.TailResponse) => {
 				const stream = response.getStream();
@@ -316,11 +316,11 @@ export class LokiBackend implements DeviceLogsBackend {
 	}
 
 	private getDeviceQuery(ctx: LokiLogContext) {
-		return `{application_id="${ctx.belongs_to__application}"} | device_id="${ctx.id}"`;
+		return `{application_id="${ctx.appId}"} | device_id="${ctx.id}"`;
 	}
 
 	private getKey(ctx: LokiLogContext, suffix = 'logs') {
-		return `app:${ctx.belongs_to__application}:device:${ctx.id}:${suffix}`;
+		return `app:${ctx.appId}:device:${ctx.id}:${suffix}`;
 	}
 
 	private getStructuredMetadata(ctx: LogContext): loki.LabelPairAdapter[] {
@@ -330,7 +330,7 @@ export class LokiBackend implements DeviceLogsBackend {
 	}
 
 	private getLabels(ctx: LokiLogContext): string {
-		return `{application_id="${ctx.belongs_to__application}"}`;
+		return `{application_id="${ctx.appId}"}`;
 	}
 
 	private validateLog(log: DeviceLog): asserts log is DeviceLog {
