@@ -111,10 +111,39 @@ const $createApiKey = async (
 	return apiKey;
 };
 
-export const getApiKeyOptsFromRequest = (
+function validateFieldProp<U>(
+	field: unknown,
+	mandatory: boolean,
+	fn: (field: unknown) => field is U,
+): field is U | null {
+	if (mandatory) {
+		return field != null && fn(field);
+	}
+	return field == null || fn(field);
+}
+export function getApiKeyOptsFromRequest(
 	params: Dictionary<unknown>,
 	prefix?: string,
-): Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate'> => {
+	mandatoryExpiryDate?: false,
+): Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate'>;
+export function getApiKeyOptsFromRequest(
+	params: Dictionary<unknown>,
+	prefix: string | undefined,
+	mandatoryExpiryDate: true,
+): NonNullableField<
+	Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate'>,
+	'expiryDate'
+>;
+export function getApiKeyOptsFromRequest(
+	params: Dictionary<unknown>,
+	prefix?: string,
+	mandatoryExpiryDate?: boolean,
+): Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate'>;
+export function getApiKeyOptsFromRequest(
+	params: Dictionary<unknown>,
+	prefix?: string,
+	mandatoryExpiryDate = false,
+): Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate'> {
 	const name = params[prefix ? `${prefix}Name` : 'name'];
 	const description = params[prefix ? `${prefix}Description` : 'description'];
 	const expiryDate = params[prefix ? `${prefix}ExpiryDate` : 'expiryDate'];
@@ -130,8 +159,12 @@ export const getApiKeyOptsFromRequest = (
 	}
 
 	if (
-		expiryDate != null &&
-		(typeof expiryDate !== 'string' || isNaN(new Date(expiryDate).getTime()))
+		!validateFieldProp(
+			expiryDate,
+			mandatoryExpiryDate,
+			(f): f is string =>
+				typeof f === 'string' && !isNaN(new Date(f).getTime()),
+		)
 	) {
 		throw new errors.BadRequestError('Key expiry date should be a valid date');
 	}
@@ -141,7 +174,7 @@ export const getApiKeyOptsFromRequest = (
 		description: description ?? null,
 		expiryDate: expiryDate ? new Date(expiryDate).toISOString() : null,
 	};
-};
+}
 
 export const createApiKey = async (
 	actorType: ApiKeyActor,
