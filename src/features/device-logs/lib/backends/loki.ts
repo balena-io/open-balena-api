@@ -229,21 +229,23 @@ export class LokiBackend implements DeviceLogsBackend {
 	}
 
 	public async publish(
-		$ctx: LogContext,
+		ctx: LogContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	): Promise<any> {
-		const ctx = await assertLokiLogContext($ctx);
+		const logEntries = this.fromDeviceLogsToEntries(ctx, logs);
+
 		const countLogs = logs.length;
 		incrementPublishCallTotal();
 		incrementPublishLogMessagesTotal(countLogs);
-		const stream = this.fromDeviceLogsToStream(ctx, logs);
+		const lokiCtx = await assertLokiLogContext(ctx);
+		const stream = this.fromLogEntriesToStream(lokiCtx, logEntries);
 		try {
-			await this.push(ctx, stream);
+			await this.push(lokiCtx, stream);
 			incrementPublishCallSuccessTotal();
 		} catch (err) {
 			incrementPublishCallFailedTotal();
 			incrementPublishLogMessagesDropped(countLogs);
-			let message = `Failed to publish logs for device ${ctx.uuid}`;
+			let message = `Failed to publish logs for device ${lokiCtx.uuid}`;
 			if (VERBOSE_ERROR_MESSAGE) {
 				message += JSON.stringify(logs, omitNanoTimestamp, '\t').substring(
 					0,
@@ -252,7 +254,7 @@ export class LokiBackend implements DeviceLogsBackend {
 			}
 			captureException(err, message);
 			throw new BadRequestError(
-				`Failed to publish logs for device ${ctx.uuid}`,
+				`Failed to publish logs for device ${lokiCtx.uuid}`,
 			);
 		}
 	}
@@ -394,14 +396,11 @@ export class LokiBackend implements DeviceLogsBackend {
 		}
 	}
 
-	private fromDeviceLogsToStream(
-		ctx: LokiLogContext,
+	private fromDeviceLogsToEntries(
+		ctx: LogContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	) {
-		const labels = this.getLabels(ctx);
-		const stream = new loki.StreamAdapter();
-		stream.setLabels(labels);
-		for (const log of logs) {
+		return logs.map((log) => {
 			this.validateLog(log);
 			log.version = VERSION;
 			const timestamp = new loki.Timestamp();
@@ -411,13 +410,20 @@ export class LokiBackend implements DeviceLogsBackend {
 			const logJson = JSON.stringify(log, omitNanoTimestamp);
 			const structuredMetadata = this.getStructuredMetadata(ctx);
 			// create entry with labels, line and timestamp
-			const entry = new loki.EntryAdapter()
+			return new loki.EntryAdapter()
 				.setLine(logJson)
 				.setTimestamp(timestamp)
 				.setStructuredmetadataList(structuredMetadata);
-			// append entry to stream
-			stream.addEntries(entry);
-		}
+		});
+	}
+	private fromLogEntriesToStream(
+		ctx: LokiLogContext,
+		logEntries: loki.EntryAdapter[],
+	) {
+		const labels = this.getLabels(ctx);
+		const stream = new loki.StreamAdapter();
+		stream.setLabels(labels);
+		stream.setEntriesList(logEntries);
 		return stream;
 	}
 }

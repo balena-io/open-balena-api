@@ -58,7 +58,11 @@ export default () => {
 				createLog({ serviceId: 3 }),
 			];
 			// @ts-expect-error usage of private function
-			const stream = loki.fromDeviceLogsToStream(ctx, _.cloneDeep(logs));
+			const stream = loki.fromLogEntriesToStream(
+				ctx,
+				// @ts-expect-error usage of private function
+				loki.fromDeviceLogsToEntries(ctx, _.cloneDeep(logs)),
+			);
 			// @ts-expect-error usage of private function
 			const logsFromStream = loki.fromStreamToDeviceLogs(stream);
 			expect(logsFromStream).to.deep.equal(logs);
