@@ -13,6 +13,8 @@ import {
 	LOKI_HISTORY_GZIP,
 	LOKI_GRPC_SEND_GZIP,
 	LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL,
+	LOKI_RETRIES_ENABLED,
+	LOKI_PUSH_TIMEOUT,
 } from '../../../../lib/config.js';
 import type {
 	DeviceLog,
@@ -52,10 +54,6 @@ const statusKeys = _.transform(
 const lokiQueryAddress = `${LOKI_QUERY_HOST}:${LOKI_QUERY_HTTP_PORT}`;
 const lokiIngesterAddress = `${LOKI_INGESTER_HOST}:${LOKI_INGESTER_GRPC_PORT}`;
 
-// Retries disabled so that writes to Redis are not delayed on Loki error
-const RETRIES_ENABLED = false;
-// Timeout set to 1s so that writes to Redis are not delayed if Loki is slow
-const PUSH_TIMEOUT = 1000;
 const MIN_BACKOFF = 100;
 const MAX_BACKOFF = 10 * 1000;
 const VERSION = 2;
@@ -170,7 +168,7 @@ export class LokiBackend implements DeviceLogsBackend {
 					err.code ? statusKeys[err.code] : 'UNDEFINED',
 				);
 				return (
-					RETRIES_ENABLED &&
+					LOKI_RETRIES_ENABLED &&
 					[loki.status.UNAVAILABLE, loki.status.RESOURCE_EXHAUSTED].includes(
 						err.code ?? -1,
 					)
@@ -273,7 +271,7 @@ export class LokiBackend implements DeviceLogsBackend {
 					pushRequest,
 					loki.createOrgIdMetadata(ctx.orgId),
 					{
-						deadline: startAt + PUSH_TIMEOUT,
+						deadline: startAt + LOKI_PUSH_TIMEOUT,
 					},
 					(err, response) => {
 						if (err) {

@@ -325,6 +325,11 @@ if (LOKI_WRITE_PCT < 100 && LOKI_READ_PCT > 0) {
 	throw new Error('LOKI_READ_PCT can only be set if LOKI_WRITE_PCT is 100');
 }
 
+// Retries disabled so that writes to Redis are not delayed on Loki error
+export const LOKI_RETRIES_ENABLED = boolVar('LOKI_RETRIES_ENABLED', false);
+// Timeout set to 1s so that writes to Redis are not delayed if Loki is slow
+export const LOKI_PUSH_TIMEOUT = intVar('LOKI_PUSH_TIMEOUT', 1000);
+
 export const NDJSON_CTYPE = 'application/x-ndjson';
 
 // Logs read config
