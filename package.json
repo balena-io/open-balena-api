@@ -45,11 +45,11 @@
   },
   "dependencies": {
     "@balena/abstract-sql-compiler": "^10.0.1",
-    "@balena/abstract-sql-to-typescript": "^5.0.1",
+    "@balena/abstract-sql-to-typescript": "^5.1.0",
     "@balena/env-parsing": "^1.2.0",
     "@balena/es-version": "^1.0.3",
     "@balena/node-metrics-gatherer": "^6.0.3",
-    "@balena/pinejs": "^19.6.2",
+    "@balena/pinejs": "^19.7.0-build-joshbwlng-convert-serial-option-13e62a4a1a9671ded893cb7d7945d6fe55a2fa8c-1",
     "@balena/pinejs-webresource-cloudfront": "^0.2.1",
     "@sentry/node": "^8.35.0",
     "@types/basic-auth": "^1.1.8",
