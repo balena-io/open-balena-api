@@ -400,12 +400,14 @@ export class LokiBackend implements DeviceLogsBackend {
 	) {
 		return logs.map((log) => {
 			this.validateLog(log);
-			log.version = VERSION;
 			const timestamp = new loki.Timestamp();
 			timestamp.setSeconds(Math.floor(Number(log.nanoTimestamp / 1000000000n)));
 			timestamp.setNanos(Number(log.nanoTimestamp % 1000000000n));
 			// store log line as JSON
-			const logJson = JSON.stringify(log, omitNanoTimestamp);
+			const logJson = JSON.stringify(
+				{ ...log, version: VERSION },
+				omitNanoTimestamp,
+			);
 			const structuredMetadata = this.getStructuredMetadata(ctx);
 			// create entry with labels, line and timestamp
 			return new loki.EntryAdapter()

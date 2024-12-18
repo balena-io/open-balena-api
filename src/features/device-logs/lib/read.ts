@@ -12,10 +12,10 @@ import type { DeviceLog, DeviceLogsBackend, LogContext } from './struct.js';
 import { StreamState } from './struct.js';
 import {
 	addRetentionLimit,
-	getBackend,
-	getLokiBackend,
+	getPrimaryBackend,
+	getSecondaryBackend,
 	omitNanoTimestamp,
-	shouldReadFromLoki,
+	shouldReadFromSecondary,
 } from './config.js';
 import { getNanoTimestamp } from '../../../lib/utils.js';
 import type { SetupOptions } from '../../../index.js';
@@ -31,7 +31,9 @@ const { NotFoundError } = errors;
 const { api } = sbvrUtils;
 
 const getReadBackend = async () =>
-	shouldReadFromLoki() ? await getLokiBackend() : getBackend();
+	shouldReadFromSecondary()
+		? await getSecondaryBackend()
+		: await getPrimaryBackend();
 
 export const read =
 	(
