@@ -1,10 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express';
-import type {
-	DeviceLog,
-	DeviceLogsBackend,
-	LogContext,
-	SupervisorLog,
-} from './struct.js';
+import type { DeviceLog, LogContext, SupervisorLog } from './struct.js';
 
 import onFinished from 'on-finished';
 import type { permissions } from '@balena/pinejs';
@@ -19,15 +14,16 @@ import {
 } from '../../../infra/error-handling/index.js';
 import {
 	addRetentionLimit,
-	getBackend,
-	getLokiBackend,
-	LOKI_ENABLED,
-	shouldPublishToLoki,
+	getPrimaryBackend,
+	getSecondaryBackend,
+	LOGS_SECONDARY_BACKEND_ENABLED,
+	shouldPublishToSecondary,
 } from './config.js';
 import type { SetupOptions } from '../../../index.js';
 import {
 	DEVICE_LOGS_WRITE_AUTH_CACHE_TIMEOUT,
 	LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL,
+	LOGS_PRIMARY_BACKEND,
 	LOGS_STREAM_FLUSH_INTERVAL,
 	LOGS_WRITE_BUFFER_LIMIT,
 	NDJSON_CTYPE,
@@ -102,7 +98,7 @@ export const store: RequestHandler = async (req: Request, res: Response) => {
 		if (logs.length) {
 			const ctx = await getWriteContext(req);
 			// start publishing to both backends
-			await publishBackend(getBackend(), ctx, logs);
+			await publishBackend(ctx, logs);
 		}
 		res.status(201).end();
 	} catch (err) {
@@ -132,38 +128,31 @@ function handleStoreErrors(req: Request, res: Response, err: Error) {
 	res.status(500).end();
 }
 
-const lokiBackend = LOKI_ENABLED ? await getLokiBackend() : undefined;
+const primaryBackend = await getPrimaryBackend();
+const secondaryBackend = LOGS_SECONDARY_BACKEND_ENABLED
+	? await getSecondaryBackend()
+	: undefined;
 
-const publishBackend = LOKI_ENABLED
-	? async (
-			backend: DeviceLogsBackend,
-			ctx: LogContext,
-			buffer: DeviceLog[],
-		) => {
-			const publishingToRedis = backend.publish(ctx, buffer);
-			const publishingToLoki = shouldPublishToLoki()
-				? lokiBackend?.publish(ctx, buffer).catch((err) => {
-						captureException(err, 'Failed to publish logs to Loki');
-					})
-				: undefined;
-			await Promise.all([publishingToRedis, publishingToLoki]);
-		}
-	: async (
-			backend: DeviceLogsBackend,
-			ctx: LogContext,
-			buffer: DeviceLog[],
-		) => {
-			await backend.publish(ctx, buffer);
-		};
+const publishBackend = async (ctx: LogContext, buffer: DeviceLog[]) => {
+	const primaryBackendPromise = primaryBackend.publish(ctx, buffer);
+	const secondaryBackendPromise = shouldPublishToSecondary()
+		? secondaryBackend?.publish(ctx, buffer).catch((err) => {
+				captureException(
+					err,
+					`Failed to publish logs to ${LOGS_PRIMARY_BACKEND === 'loki' ? 'redis' : 'loki'}`,
+				);
+			})
+		: undefined;
+	await Promise.all([primaryBackendPromise, secondaryBackendPromise]);
+};
 
 function handleStreamingWrite(
 	ctx: LogContext,
 	req: Request,
 	res: Response,
 ): void {
-	const backend = getBackend();
 	// If the backend is down, reject right away, don't take in new connections
-	if (!backend.available) {
+	if (!primaryBackend.available) {
 		throw new ServiceUnavailableError('The logs storage is unavailable');
 	}
 	if (req.get('Content-Type') !== NDJSON_CTYPE) {
@@ -200,7 +189,7 @@ function handleStreamingWrite(
 		}
 		buffer.push(log);
 		// If we buffer too much or the backend goes down, pause it for back-pressure
-		if (buffer.length >= bufferLimit || !backend.available) {
+		if (buffer.length >= bufferLimit || !primaryBackend.available) {
 			req.pause();
 		}
 	});
@@ -220,7 +209,7 @@ function handleStreamingWrite(
 	async function tryPublish() {
 		try {
 			// Don't flush if the backend is reporting as unavailable
-			if (buffer.length && backend.available) {
+			if (buffer.length && primaryBackend.available) {
 				if (buffer.length > bufferLimit) {
 					// Ensure the buffer cannot be larger than the buffer limit, adding a warning message if we removed messages
 					const deleteCount = buffer.length - bufferLimit;
@@ -234,7 +223,7 @@ function handleStreamingWrite(
 					});
 				}
 				// Even if the connection was closed, still flush the buffer
-				const publishPromise = publishBackend(backend, ctx, buffer);
+				const publishPromise = publishBackend(ctx, buffer);
 				// Clear the buffer
 				buffer.length = 0;
 				// Resume in case it was paused due to buffering
@@ -259,7 +248,7 @@ function handleStreamingWrite(
 			return;
 		}
 		// If the backend goes down temporarily, ease down the polling
-		const delay = backend.available
+		const delay = primaryBackend.available
 			? LOGS_STREAM_FLUSH_INTERVAL
 			: LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL;
 		setTimeout(tryPublish, delay);

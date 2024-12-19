@@ -325,10 +325,34 @@ if (LOKI_WRITE_PCT < 100 && LOKI_READ_PCT > 0) {
 	throw new Error('LOKI_READ_PCT can only be set if LOKI_WRITE_PCT is 100');
 }
 
+export const LOGS_LOKI_ENABLED = boolVar(
+	'LOGS_LOKI_ENABLED',
+	LOKI_INGESTER_HOST != null && LOKI_QUERY_HOST != null,
+);
+if (LOGS_LOKI_ENABLED && (!LOKI_INGESTER_HOST || !LOKI_QUERY_HOST)) {
+	throw new Error(
+		'If LOGS_LOKI_ENABLED is true then LOKI_INGESTER_HOST and LOKI_QUERY_HOST must be set',
+	);
+}
+
 // Retries disabled so that writes to Redis are not delayed on Loki error
 export const LOKI_RETRIES_ENABLED = boolVar('LOKI_RETRIES_ENABLED', false);
 // Timeout set to 1s so that writes to Redis are not delayed if Loki is slow
 export const LOKI_PUSH_TIMEOUT = intVar('LOKI_PUSH_TIMEOUT', 1000);
+
+// control the percent of logs written to redis when running as a secondary backend
+export const LOGS_REDIS_WRITE_PCT = intVar('LOGS_REDIS_WRITE_PCT', 100);
+/**
+ * This is the percent of log read requests that will go to redis, however the number of logs fetched from redis
+ * will vary based upon the type of those read requests, eg it could be a long streaming request or a one-off fetch
+ */
+export const LOGS_REDIS_READ_PCT = intVar('LOGS_REDIS_READ_PCT', 100);
+if (LOGS_REDIS_WRITE_PCT < 100 && LOGS_REDIS_READ_PCT > 0) {
+	throw new Error(
+		'LOGS_REDIS_READ_PCT can only be set if LOGS_REDIS_WRITE_PCT is 100',
+	);
+}
+export const LOGS_REDIS_ENABLED = boolVar('LOGS_REDIS_ENABLED', true);
 
 export const NDJSON_CTYPE = 'application/x-ndjson';
 
@@ -341,6 +365,38 @@ export const LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS =
 	LOGS_SUBSCRIPTION_EXPIRY_SECONDS / 2;
 
 export const LOGS_DEFAULT_RETENTION_LIMIT = 1000;
+
+export const LOGS_PRIMARY_BACKEND = optionalVar(
+	'LOGS_PRIMARY_BACKEND',
+	'redis',
+);
+if (LOGS_PRIMARY_BACKEND !== 'redis' && LOGS_PRIMARY_BACKEND !== 'loki') {
+	throw new Error('LOGS_PRIMARY_BACKEND must be either "redis" or "loki"');
+}
+if (LOGS_PRIMARY_BACKEND === 'loki' && !LOGS_LOKI_ENABLED) {
+	throw new Error(
+		'LOGS_PRIMARY_BACKEND cannot be "loki" if LOGS_LOKI_ENABLED is false',
+	);
+} else if (LOGS_PRIMARY_BACKEND === 'redis' && !LOGS_REDIS_ENABLED) {
+	throw new Error(
+		'LOGS_PRIMARY_BACKEND cannot be "redis" if LOGS_REDIS_ENABLED is false',
+	);
+}
+if (
+	LOGS_PRIMARY_BACKEND === 'redis' &&
+	(LOGS_REDIS_READ_PCT < 100 || LOGS_REDIS_WRITE_PCT < 100)
+) {
+	throw new Error(
+		'LOGS_REDIS_READ_PCT and LOGS_REDIS_WRITE_PCT must be 100 if using redis as the primary logs backend',
+	);
+} else if (
+	LOGS_PRIMARY_BACKEND === 'loki' &&
+	(LOKI_READ_PCT < 100 || LOKI_WRITE_PCT < 100)
+) {
+	throw new Error(
+		'LOKI_READ_PCT and LOKI_WRITE_PCT must be 100 if using loki as the primary logs backend',
+	);
+}
 
 // Logs read config
 export const LOGS_READ_STREAM_FLUSH_INTERVAL = intVar(
