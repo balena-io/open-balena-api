@@ -379,6 +379,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		ctx: LogContext,
 		logs: Array<DeviceLog & { version?: number }>,
 	) {
+		const structuredMetadata = this.getStructuredMetadata(ctx);
 		return logs.map((log) => {
 			const timestamp = new loki.Timestamp();
 			timestamp.setSeconds(Math.floor(Number(log.nanoTimestamp / 1000000000n)));
@@ -388,7 +389,6 @@ export class LokiBackend implements DeviceLogsBackend {
 				{ ...log, version: VERSION },
 				omitNanoTimestamp,
 			);
-			const structuredMetadata = this.getStructuredMetadata(ctx);
 			// create entry with labels, line and timestamp
 			return new loki.EntryAdapter()
 				.setLine(logJson)
