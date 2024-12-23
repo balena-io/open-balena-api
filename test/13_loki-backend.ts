@@ -3,18 +3,31 @@ import Bluebird from 'bluebird';
 import { expect } from 'chai';
 import { LokiBackend } from '../src/features/device-logs/lib/backends/loki.js';
 import { getNanoTimestamp } from '../src/lib/utils.js';
-import type { LokiLogContext } from '../src/features/device-logs/lib/struct.js';
+import type {
+	InternalDeviceLog,
+	LokiLogContext,
+	OutputDeviceLog,
+} from '../src/features/device-logs/lib/struct.js';
 import { setTimeout } from 'timers/promises';
 
-const createLog = (extra = {}) => {
+const createLog = (
+	extra: Partial<InternalDeviceLog> = {},
+): InternalDeviceLog => {
+	const nanoTimestamp = extra.nanoTimestamp ?? getNanoTimestamp();
 	return {
 		isStdErr: true,
 		isSystem: true,
 		message: `a log line`,
-		nanoTimestamp: getNanoTimestamp(),
+		nanoTimestamp,
 		timestamp: Date.now(),
-		createdAt: Date.now(),
 		...extra,
+	};
+};
+const convertToOutputLog = (log: InternalDeviceLog): OutputDeviceLog => {
+	const { nanoTimestamp, ...outputLog } = log;
+	return {
+		...outputLog,
+		createdAt: Math.floor(Number(nanoTimestamp / 1000000n)),
 	};
 };
 
@@ -44,7 +57,7 @@ export default () => {
 			const response = await loki.publish(ctx, [_.clone(log)]);
 			expect(response).to.be.not.null;
 			const history = await loki.history(ctx, 1000);
-			expect(history.at(-1)).to.deep.equal(log);
+			expect(history.at(-1)).to.deep.equal(convertToOutputLog(log));
 		});
 
 		it('should convert multiple logs with different labels to streams and then back to logs', function () {
@@ -65,7 +78,7 @@ export default () => {
 			);
 			// @ts-expect-error usage of private function
 			const logsFromStream = loki.fromStreamToDeviceLogs(stream);
-			expect(logsFromStream).to.deep.equal(logs);
+			expect(logsFromStream).to.deep.equal(logs.map(convertToOutputLog));
 		});
 
 		it('should push multiple logs with different labels and return in order', async function () {
@@ -82,7 +95,7 @@ export default () => {
 			const response = await loki.publish(ctx, _.cloneDeep(logs));
 			expect(response).to.be.not.null;
 			const history = await loki.history(ctx, 1000);
-			expect(history.slice(-5)).to.deep.equal(logs);
+			expect(history.slice(-5)).to.deep.equal(logs.map(convertToOutputLog));
 		});
 
 		it('should de-duplicate multiple identical logs', async function () {
@@ -100,12 +113,11 @@ export default () => {
 			const ctx = createContext();
 			const loki = new LokiBackend();
 			const log = createLog();
-			const incomingLog = await new Bluebird(async (resolve) => {
+			await new Bluebird(async (resolve) => {
 				void loki.subscribe(ctx, resolve);
 				await setTimeout(100); // wait for the subscription to connect
 				await loki.publish(ctx, [_.clone(log)]);
 			}).timeout(5000, 'Subscription did not receive log');
-			expect(incomingLog).to.deep.equal(incomingLog);
 		});
 
 		it('should subscribe and receive multiple published logs', async function () {

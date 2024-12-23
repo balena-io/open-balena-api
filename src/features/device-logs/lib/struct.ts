@@ -8,16 +8,22 @@ export interface LokiLogContext extends LogContext {
 	readonly appId: string;
 }
 
-// This is the format we store and that we output to consumers
-export interface DeviceLog {
+// This is the base format that we receive from consumers after validation
+interface DeviceLog {
 	message: string;
-	nanoTimestamp: bigint;
-	// These 2 dates are timestamps including milliseconds
-	createdAt: number;
+	// This is a timestamp including milliseconds
 	timestamp: number;
 	isSystem: boolean;
 	isStdErr: boolean;
 	serviceId?: number;
+}
+// This is the format we use internally
+export interface InternalDeviceLog extends DeviceLog {
+	nanoTimestamp: bigint;
+}
+// This is the format that we output to consumers
+export interface OutputDeviceLog extends DeviceLog {
+	createdAt: number;
 }
 
 // This is the format we get from new supervisors
@@ -42,15 +48,15 @@ export interface OldSupervisorLog {
 	image_id?: number;
 }
 
-export type Subscription = (log: DeviceLog) => void;
+export type Subscription = (log: OutputDeviceLog) => void;
 
 export interface DeviceLogsBackend {
-	history(ctx: LogContext, count: number): Promise<DeviceLog[]>;
+	history(ctx: LogContext, count: number): Promise<OutputDeviceLog[]>;
 	available: boolean;
 	/**
 	 * `logs` will be mutated to empty and so must be handled synchronously
 	 */
-	publish(ctx: LogContext, logs: DeviceLog[]): Promise<any>;
+	publish(ctx: LogContext, logs: InternalDeviceLog[]): Promise<any>;
 	subscribe(ctx: LogContext, subscription: Subscription): void;
 	unsubscribe(ctx: LogContext, subscription: Subscription): void;
 }

@@ -2,13 +2,17 @@ import _ from 'lodash';
 
 import { errors } from '@balena/pinejs';
 
-import type { DeviceLog, OldSupervisorLog, SupervisorLog } from './struct.js';
+import type {
+	InternalDeviceLog,
+	OldSupervisorLog,
+	SupervisorLog,
+} from './struct.js';
 import { getNanoTimestamp } from '../../../lib/utils.js';
 
 const MAX_LOGS_PER_BATCH = 10;
 
 export class Supervisor {
-	public convertLogs(logs: SupervisorLog[]): DeviceLog[] {
+	public convertLogs(logs: SupervisorLog[]): InternalDeviceLog[] {
 		if (logs.length > MAX_LOGS_PER_BATCH) {
 			throw new errors.BadRequestError(
 				`Batches cannot include more than ${MAX_LOGS_PER_BATCH} logs`,
@@ -22,7 +26,7 @@ export class Supervisor {
 			.value();
 	}
 
-	private convertAnyLog(log: SupervisorLog): DeviceLog | undefined {
+	private convertAnyLog(log: SupervisorLog): InternalDeviceLog | undefined {
 		if (this.isOldLog(log)) {
 			// Old format supervisor logs are no longer supported
 			throw new errors.BadRequestError();
@@ -32,7 +36,7 @@ export class Supervisor {
 
 	public convertLog(log: {
 		[key in keyof SupervisorLog]: unknown;
-	}): DeviceLog | undefined {
+	}): InternalDeviceLog | undefined {
 		// see struct.ts for explanation on this
 		if (log.uuid) {
 			return;
@@ -43,9 +47,8 @@ export class Supervisor {
 		if (typeof log.timestamp !== 'number') {
 			throw new errors.BadRequestError('DeviceLog timestamp must be number');
 		}
-		const validatedLog: DeviceLog = {
+		const validatedLog: InternalDeviceLog = {
 			nanoTimestamp: getNanoTimestamp(),
-			createdAt: Date.now(),
 			timestamp: log.timestamp,
 			isSystem: log.isSystem === true,
 			isStdErr: log.isStdErr === true,

@@ -17,10 +17,11 @@ import {
 	LOKI_PUSH_TIMEOUT,
 } from '../../../../lib/config.js';
 import type {
-	DeviceLog,
 	DeviceLogsBackend,
+	InternalDeviceLog,
 	LogContext,
 	LokiLogContext,
+	OutputDeviceLog,
 	Subscription,
 } from '../struct.js';
 import { captureException } from '../../../../infra/error-handling/index.js';
@@ -42,6 +43,11 @@ import { requestAsync } from '../../../../infra/request-promise/index.js';
 
 const { BadRequestError } = errors;
 
+interface LokiDeviceLog extends Omit<InternalDeviceLog, 'nanoTimestamp'> {
+	version?: number;
+	createdAt?: number;
+}
+
 // invert status object for quick lookup of status identifier using status code
 const statusKeys = _.transform(
 	loki.status,
@@ -57,7 +63,6 @@ const lokiIngesterAddress = `${LOKI_INGESTER_HOST}:${LOKI_INGESTER_GRPC_PORT}`;
 const MIN_BACKOFF = 100;
 const MAX_BACKOFF = 10 * 1000;
 const VERSION = 2;
-const VERBOSE_ERROR_MESSAGE = false;
 
 function createTimestampFromDate(date = new Date()) {
 	const timestamp = new loki.Timestamp();
@@ -188,7 +193,10 @@ export class LokiBackend implements DeviceLogsBackend {
 	 * @param ctx
 	 * @param count
 	 */
-	public async history($ctx: LogContext, count: number): Promise<DeviceLog[]> {
+	public async history(
+		$ctx: LogContext,
+		count: number,
+	): Promise<OutputDeviceLog[]> {
 		const ctx = await assertLokiLogContext($ctx);
 
 		const [, body] = await requestAsync({
@@ -205,30 +213,32 @@ export class LokiBackend implements DeviceLogsBackend {
 			gzip: LOKI_HISTORY_GZIP,
 		});
 
-		const logs = (
+		return _(
 			body.data.result as Array<{
 				values: Array<[timestamp: string, logLine: string]>;
-			}>
+			}>,
 		)
 			.flatMap(({ values }) => values)
-			.map(([timestamp, logLine]) => {
-				const log = JSON.parse(logLine);
-				log.nanoTimestamp = BigInt(timestamp);
+			.map(([timestamp, logLine]): [bigint, OutputDeviceLog] => {
+				const log: LokiDeviceLog = JSON.parse(logLine);
 				if (log.version !== VERSION) {
 					throw new Error(
 						`Invalid Loki serialization version: ${JSON.stringify(log)}`,
 					);
 				}
 				delete log.version;
-				return log as DeviceLog;
-			});
-
-		return _.orderBy(logs, 'nanoTimestamp', 'asc');
+				const nanoTimestamp = BigInt(timestamp);
+				log.createdAt = Math.floor(Number(nanoTimestamp / 1000000n));
+				return [nanoTimestamp, log as OutputDeviceLog];
+			})
+			.sortBy(([timestamp]) => timestamp)
+			.map(([, log]) => log)
+			.value();
 	}
 
 	public async publish(
 		ctx: LogContext,
-		logs: Array<DeviceLog & { version?: number }>,
+		logs: Array<InternalDeviceLog & { version?: number }>,
 	): Promise<any> {
 		const logEntries = this.fromDeviceLogsToEntries(ctx, logs);
 
@@ -243,14 +253,10 @@ export class LokiBackend implements DeviceLogsBackend {
 		} catch (err) {
 			incrementPublishCallFailedTotal();
 			incrementPublishLogMessagesDropped(countLogs);
-			let message = `Failed to publish logs for device ${lokiCtx.uuid}`;
-			if (VERBOSE_ERROR_MESSAGE) {
-				message += JSON.stringify(logs, omitNanoTimestamp, '\t').substring(
-					0,
-					1000,
-				);
-			}
-			captureException(err, message);
+			captureException(
+				err,
+				`Failed to publish logs for device ${lokiCtx.uuid}`,
+			);
 			throw new BadRequestError(
 				`Failed to publish logs for device ${lokiCtx.uuid}`,
 			);
@@ -353,21 +359,24 @@ export class LokiBackend implements DeviceLogsBackend {
 		return `{fleet_id="${ctx.appId}"}`;
 	}
 
-	private fromStreamToDeviceLogs(stream: loki.StreamAdapter): DeviceLog[] {
+	private fromStreamToDeviceLogs(
+		stream: loki.StreamAdapter,
+	): OutputDeviceLog[] {
 		try {
 			return stream.getEntriesList().map((entry) => {
-				const log = JSON.parse(entry.getLine());
-				const timestamp = entry.getTimestamp()!;
-				log.nanoTimestamp =
-					BigInt(timestamp.getSeconds()) * 1000000000n +
-					BigInt(timestamp.getNanos());
+				const log: LokiDeviceLog = JSON.parse(entry.getLine());
 				if (log.version !== VERSION) {
 					throw new Error(
 						`Invalid Loki serialization version: ${JSON.stringify(log)}`,
 					);
 				}
 				delete log.version;
-				return log as DeviceLog;
+				const timestampEntry = entry.getTimestamp()!;
+				const nanoTimestamp =
+					BigInt(timestampEntry.getSeconds()) * 1000000000n +
+					BigInt(timestampEntry.getNanos());
+				log.createdAt = Math.floor(Number(nanoTimestamp / 1000000n));
+				return log as OutputDeviceLog;
 			});
 		} catch (err) {
 			captureException(err, `Failed to convert stream to device log`);
@@ -377,7 +386,7 @@ export class LokiBackend implements DeviceLogsBackend {
 
 	private fromDeviceLogsToEntries(
 		ctx: LogContext,
-		logs: Array<DeviceLog & { version?: number }>,
+		logs: Array<InternalDeviceLog & { version?: number }>,
 	) {
 		const structuredMetadata = this.getStructuredMetadata(ctx);
 		return logs.map((log) => {
