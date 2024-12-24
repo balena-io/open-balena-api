@@ -353,25 +353,6 @@ export class LokiBackend implements DeviceLogsBackend {
 		return `{fleet_id="${ctx.appId}"}`;
 	}
 
-	private validateLog(log: DeviceLog): asserts log is DeviceLog {
-		if (typeof log.message !== 'string') {
-			throw new BadRequestError('DeviceLog message must be string');
-		} else if (typeof log.timestamp !== 'number') {
-			throw new BadRequestError('DeviceLog timestamp must be number');
-		} else if (typeof log.isSystem !== 'boolean') {
-			throw new BadRequestError('DeviceLog isSystem must be boolean');
-		} else if (typeof log.isStdErr !== 'boolean') {
-			throw new BadRequestError('DeviceLog isStdErr must be boolean');
-		} else if (
-			typeof log.serviceId !== 'number' &&
-			log.serviceId !== undefined
-		) {
-			throw new BadRequestError(
-				'DeviceLog serviceId must be number or undefined',
-			);
-		}
-	}
-
 	private fromStreamToDeviceLogs(stream: loki.StreamAdapter): DeviceLog[] {
 		try {
 			return stream.getEntriesList().map((entry) => {
@@ -399,7 +380,6 @@ export class LokiBackend implements DeviceLogsBackend {
 		logs: Array<DeviceLog & { version?: number }>,
 	) {
 		return logs.map((log) => {
-			this.validateLog(log);
 			const timestamp = new loki.Timestamp();
 			timestamp.setSeconds(Math.floor(Number(log.nanoTimestamp / 1000000000n)));
 			timestamp.setNanos(Number(log.nanoTimestamp % 1000000000n));

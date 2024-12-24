@@ -30,20 +30,36 @@ export class Supervisor {
 		return this.convertLog(log);
 	}
 
-	public convertLog(log: SupervisorLog): DeviceLog | undefined {
+	public convertLog(log: {
+		[key in keyof SupervisorLog]: unknown;
+	}): DeviceLog | undefined {
 		// see struct.ts for explanation on this
 		if (log.uuid) {
 			return;
 		}
-		return {
+		if (typeof log.message !== 'string') {
+			throw new errors.BadRequestError('DeviceLog message must be string');
+		}
+		if (typeof log.timestamp !== 'number') {
+			throw new errors.BadRequestError('DeviceLog timestamp must be number');
+		}
+		const validatedLog: DeviceLog = {
 			nanoTimestamp: getNanoTimestamp(),
 			createdAt: Date.now(),
 			timestamp: log.timestamp,
 			isSystem: log.isSystem === true,
 			isStdErr: log.isStdErr === true,
 			message: log.message,
-			serviceId: log.serviceId,
 		};
+		if ('serviceId' in log) {
+			if (typeof log.serviceId !== 'number') {
+				throw new errors.BadRequestError(
+					'DeviceLog serviceId must be number or undefined',
+				);
+			}
+			validatedLog.serviceId = log.serviceId;
+		}
+		return validatedLog;
 	}
 
 	private isOldLog(log: any): log is OldSupervisorLog {

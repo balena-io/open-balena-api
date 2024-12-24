@@ -180,7 +180,12 @@ function handleStreamingWrite(
 	}
 
 	parser.on('error', close).on('data', (sLog: SupervisorLog) => {
-		const log = supervisor.convertLog(sLog);
+		let log;
+		try {
+			log = supervisor.convertLog(sLog);
+		} catch {
+			return;
+		}
 		if (!log) {
 			return;
 		}
