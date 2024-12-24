@@ -21,6 +21,7 @@ import { getNanoTimestamp } from '../../../lib/utils.js';
 import type { SetupOptions } from '../../../index.js';
 import {
 	LOGS_DEFAULT_HISTORY_COUNT,
+	LOGS_DEFAULT_RETENTION_LIMIT,
 	LOGS_DEFAULT_SUBSCRIPTION_COUNT,
 	LOGS_HEARTBEAT_INTERVAL,
 	LOGS_READ_STREAM_FLUSH_INTERVAL,
@@ -202,21 +203,20 @@ function getCount(
 	countParam: string | undefined,
 	defaultCount: number,
 ): number {
+	let count: number;
 	if (countParam == null) {
-		return defaultCount;
-	}
-
-	if (countParam === 'all') {
-		return Infinity;
-	}
-
-	const parsedCount = parseInt(countParam, 10);
-
-	if (!Number.isNaN(parsedCount)) {
-		return parsedCount;
+		count = defaultCount;
+	} else if (countParam === 'all') {
+		count = Infinity;
 	} else {
-		return defaultCount;
+		const parsedCount = parseInt(countParam, 10);
+		if (!Number.isNaN(parsedCount)) {
+			count = parsedCount;
+		} else {
+			count = defaultCount;
+		}
 	}
+	return Math.min(count, LOGS_DEFAULT_RETENTION_LIMIT);
 }
 
 function getHistory(
