@@ -12,9 +12,10 @@ import {
 } from '../../../../lib/config.js';
 import { DAYS } from '@balena/env-parsing';
 import type {
-	DeviceLog,
 	DeviceLogsBackend,
+	InternalDeviceLog,
 	LogContext,
+	OutputDeviceLog,
 	Subscription,
 } from '../struct.js';
 import {
@@ -52,6 +53,10 @@ const schema = avro.Type.forSchema({
 		{ name: 'message', type: 'string' },
 	],
 });
+
+interface RedisDeviceLog extends OutputDeviceLog {
+	version: number;
+}
 
 declare module 'ioredis' {
 	interface RedisCommander<Context> {
@@ -145,7 +150,10 @@ export class RedisBackend implements DeviceLogsBackend {
 		this.subscriptions = new EventEmitter();
 	}
 
-	public async history(ctx: LogContext, count: number): Promise<DeviceLog[]> {
+	public async history(
+		ctx: LogContext,
+		count: number,
+	): Promise<OutputDeviceLog[]> {
 		if (!this.connected) {
 			throw new ServiceUnavailableError();
 		}
@@ -163,7 +171,10 @@ export class RedisBackend implements DeviceLogsBackend {
 		return this.connected;
 	}
 
-	public async publish(ctx: LogContext, logs: DeviceLog[]): Promise<void> {
+	public async publish(
+		ctx: LogContext,
+		logs: InternalDeviceLog[],
+	): Promise<void> {
 		if (!this.connected) {
 			throw new ServiceUnavailableError();
 		}
@@ -246,7 +257,9 @@ export class RedisBackend implements DeviceLogsBackend {
 		}
 	};
 
-	private async fromRedisLog(payload: string): Promise<DeviceLog | undefined> {
+	private async fromRedisLog(
+		payload: string,
+	): Promise<RedisDeviceLog | undefined> {
 		try {
 			let decompressedBuffer = Buffer.from(payload, BUFFER_ENCODING);
 			const compression = await getCompressionLib();
@@ -268,15 +281,18 @@ export class RedisBackend implements DeviceLogsBackend {
 				delete log.serviceId;
 			}
 			delete log.version;
-			return log as DeviceLog;
+			return log as RedisDeviceLog;
 		} catch (err) {
 			captureException(err, `Failed to deserialize a Redis log: ${payload}`);
 		}
 	}
 
-	private async toRedisLog(log: DeviceLog): Promise<string> {
+	private async toRedisLog(log: InternalDeviceLog): Promise<string> {
 		try {
-			let compressedLog = schema.toBuffer(log);
+			let compressedLog = schema.toBuffer({
+				...log,
+				createdAt: Math.floor(Number(log.nanoTimestamp / 1000000n)),
+			});
 			const compression = await getCompressionLib();
 			if (compression != null) {
 				compressedLog = await compression.compress(compressedLog);

@@ -8,16 +8,18 @@ import {
 	handleHttpErrors,
 } from '../../../infra/error-handling/index.js';
 
-import type { DeviceLog, DeviceLogsBackend, LogContext } from './struct.js';
+import type {
+	DeviceLogsBackend,
+	LogContext,
+	OutputDeviceLog,
+} from './struct.js';
 import { StreamState } from './struct.js';
 import {
 	addRetentionLimit,
 	getPrimaryBackend,
 	getSecondaryBackend,
-	omitNanoTimestamp,
 	shouldReadFromSecondary,
 } from './config.js';
-import { getNanoTimestamp } from '../../../lib/utils.js';
 import type { SetupOptions } from '../../../index.js';
 import {
 	LOGS_DEFAULT_HISTORY_COUNT,
@@ -54,9 +56,7 @@ export const read =
 					LOGS_DEFAULT_HISTORY_COUNT,
 				);
 
-				res
-					.set('Content-Type', 'application/json')
-					.send(JSON.stringify(logs, omitNanoTimestamp));
+				res.json(logs);
 			}
 		} catch (err) {
 			if (handleHttpErrors(req, res, err)) {
@@ -75,7 +75,7 @@ async function handleStreamingRead(
 	const backend = await getReadBackend();
 	let state: StreamState = StreamState.Buffering;
 	let dropped = 0;
-	const buffer: DeviceLog[] = [];
+	const buffer: OutputDeviceLog[] = [];
 
 	res.setHeader('Content-Type', NDJSON_CTYPE);
 	res.setHeader('Cache-Control', 'no-cache');
@@ -93,14 +93,14 @@ async function handleStreamingRead(
 		return r;
 	}
 
-	function onLog(log: DeviceLog) {
+	function onLog(log: OutputDeviceLog) {
 		if (state === StreamState.Buffering) {
 			buffer.push(log);
 		} else if (state === StreamState.Saturated) {
 			dropped++;
 		} else if (state !== StreamState.Closed) {
 			if (
-				!write(JSON.stringify(log, omitNanoTimestamp) + '\n') &&
+				!write(JSON.stringify(log) + '\n') &&
 				state === StreamState.Writable
 			) {
 				state = StreamState.Saturated;
@@ -121,7 +121,6 @@ async function handleStreamingRead(
 		if (dropped) {
 			const now = Date.now();
 			onLog({
-				nanoTimestamp: getNanoTimestamp(),
 				createdAt: now,
 				timestamp: now,
 				isStdErr: true,
@@ -224,7 +223,7 @@ function getHistory(
 	ctx: LogContext,
 	{ query }: Request,
 	defaultCount: number,
-): Resolvable<DeviceLog[]> {
+): Resolvable<OutputDeviceLog[]> {
 	const count = getCount(query.count as string | undefined, defaultCount);
 
 	// Optimize the case where the caller doesn't need any history

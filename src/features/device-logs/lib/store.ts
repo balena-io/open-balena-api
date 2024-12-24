@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express';
-import type { DeviceLog, LogContext, SupervisorLog } from './struct.js';
+import type { InternalDeviceLog, LogContext, SupervisorLog } from './struct.js';
 
 import onFinished from 'on-finished';
 import type { permissions } from '@balena/pinejs';
@@ -94,7 +94,7 @@ const getWriteContext = (() => {
 export const store: RequestHandler = async (req: Request, res: Response) => {
 	try {
 		const body: SupervisorLog[] = req.body;
-		const logs: DeviceLog[] = supervisor.convertLogs(body);
+		const logs = supervisor.convertLogs(body);
 		if (logs.length) {
 			const ctx = await getWriteContext(req);
 			// start publishing to both backends
@@ -133,7 +133,7 @@ const secondaryBackend = LOGS_SECONDARY_BACKEND_ENABLED
 	? await getSecondaryBackend()
 	: undefined;
 
-const publishBackend = async (ctx: LogContext, buffer: DeviceLog[]) => {
+const publishBackend = async (ctx: LogContext, buffer: InternalDeviceLog[]) => {
 	const primaryBackendPromise = primaryBackend.publish(ctx, buffer);
 	const secondaryBackendPromise = shouldPublishToSecondary()
 		? secondaryBackend?.publish(ctx, buffer).catch((err) => {
@@ -162,7 +162,7 @@ function handleStreamingWrite(
 	}
 
 	const bufferLimit = Math.min(LOGS_WRITE_BUFFER_LIMIT, ctx.retention_limit);
-	const buffer: DeviceLog[] = [];
+	const buffer: InternalDeviceLog[] = [];
 	const parser = ndjson.parse();
 
 	function close(err?: Error | null) {
@@ -220,7 +220,6 @@ function handleStreamingWrite(
 					const deleteCount = buffer.length - bufferLimit;
 					buffer.splice(0, deleteCount, {
 						nanoTimestamp: buffer[0].nanoTimestamp,
-						createdAt: buffer[0].createdAt,
 						timestamp: buffer[0].timestamp,
 						isStdErr: true,
 						isSystem: true,
