@@ -1,4 +1,124 @@
 - commits:
+    - subject: Update dependencies
+      hash: c1ec6225327d141b2b4a2715abda22dbe78326c8
+      body: |
+        Update @balena/pinejs from 19.7.0 to 19.7.1
+        Update @balena/pinejs-webresource-cloudfront from 0.2.1 to 1.0.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Use/export explicit functions for loading SBVR files
+              hash: c47a755613fec8293547c7cfb34cc9e707a7c703
+              body: >
+                This is in preference to using the require loader which is not
+                very
+
+                portable when mixing commonjs and esm code
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: Log the async migration status on initialization rather than on import
+              hash: 83eacbb700f89dd2730c9a879b96a456503a1d2a
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: Use `import` instead of `require` where possible
+              hash: e16a795d1ff549bb08beeb121cf129a61473d5bd
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: Fetch version from package.json without using `require`
+              hash: 2f5777afb3694498bc80335efee1ca1a5842c223
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: Remove use of commonjs specific `exports` property
+              hash: b4c11fe904ac2c8fa2f0ba7ffc87804101be1b56
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-19.7.1
+          title: ""
+          date: 2024-12-30T14:24:28.696Z
+        - commits:
+            - subject: Use standalone S3 Handler instead of pinejs core one
+              hash: 700204a6cb69b71634037e0716a4d3ae4c2cfe4f
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+          version: pinejs-webresource-cloudfront-1.0.2
+          title: ""
+          date: 2025-01-02T15:44:26.505Z
+        - commits:
+            - subject: Add minimum supported node and npm versions
+              hash: 14ac975309148d26efbbe45a4bd7c34b68fade5f
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+            - subject: Bump target to ES2022
+              hash: 861d6e6941a9aaf496fc9534b612925241935dbf
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+          version: pinejs-webresource-cloudfront-1.0.1
+          title: ""
+          date: 2025-01-02T15:32:11.176Z
+        - commits:
+            - subject: Convert to ESM
+              hash: 0aaeea334be207420e8fd549405068b094c781f0
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+          version: pinejs-webresource-cloudfront-1.0.0
+          title: ""
+          date: 2025-01-02T12:37:27.439Z
+        - commits:
+            - subject: Use node16 module resolution in tsconfig
+              hash: c0043798b095a6ab5211d257068044631aa84a93
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+            - subject: Update dependencies
+              hash: 61d56145c698982a8e1aef6c606441e1d9dbced9
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-webresource-cloudfront-0.2.2
+          title: ""
+          date: 2025-01-02T12:32:04.985Z
+  version: 34.3.11
+  title: ""
+  date: 2025-01-02T16:23:09.448Z
+- commits:
     - subject: Lock file maintenance
       hash: a38b57fb03729d1ce434bb3679ef493161595e0c
       body: |
@@ -2975,6 +3095,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -3007,6 +3128,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4217,6 +4339,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -4264,6 +4387,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4512,6 +4636,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -4549,6 +4674,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4975,6 +5101,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -5003,6 +5130,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -5145,6 +5273,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -5405,6 +5534,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -5550,6 +5680,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -5977,6 +6108,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -5999,6 +6131,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6148,6 +6281,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6469,6 +6603,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -6491,6 +6626,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6640,6 +6776,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8974,6 +9111,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -8996,6 +9134,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -9145,6 +9284,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -9469,6 +9609,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -9497,6 +9638,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -9638,6 +9780,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -9896,6 +10039,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/sbvr-types
                                                                 from 3.4.18 to 3.5.0
@@ -10041,6 +10185,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
