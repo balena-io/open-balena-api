@@ -1,6 +1,8 @@
-import { webResourceHandler } from '@balena/pinejs';
+import type { webResourceHandler } from '@balena/pinejs';
 import type { CloudFrontHandlerProps } from '@balena/pinejs-webresource-cloudfront';
 import { CloudFrontHandler } from '@balena/pinejs-webresource-cloudfront';
+import type { S3HandlerProps } from '@balena/pinejs-webresource-s3';
+import { S3Handler } from '@balena/pinejs-webresource-s3';
 import * as fs from 'fs';
 
 import {
@@ -19,7 +21,7 @@ const getEndpointFromHost = (host: string): string => {
 	return host.startsWith('http') ? host : `https://${host}`;
 };
 
-const getS3Config = (): webResourceHandler.S3HandlerProps | undefined => {
+const getS3Config = (): S3HandlerProps | undefined => {
 	if (
 		WEBRESOURCES_S3_ACCESS_KEY != null &&
 		WEBRESOURCES_S3_SECRET_KEY != null &&
@@ -84,7 +86,7 @@ export const getFileUploadHandler = () => {
 
 		const s3Config = getS3Config();
 		if (s3Config != null) {
-			handler = new webResourceHandler.S3Handler(s3Config);
+			handler = new S3Handler(s3Config);
 			console.log('Successfully initialised webresource S3 handler.');
 			console.log({
 				region: s3Config.region,
