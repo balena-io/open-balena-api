@@ -51,6 +51,7 @@
     "@balena/node-metrics-gatherer": "^6.0.3",
     "@balena/pinejs": "^19.7.1",
     "@balena/pinejs-webresource-cloudfront": "^1.0.2",
+    "@balena/pinejs-webresource-s3": "^1.0.2",
     "@sentry/node": "^8.47.0",
     "@types/basic-auth": "^1.1.8",
     "@types/bluebird": "^3.5.42",
