@@ -158,6 +158,7 @@ services:
         - ./tsconfig.json:/usr/src/app/tsconfig.json
         - ./tsconfig.build.json:/usr/src/app/tsconfig.build.json
         - ./.materialized-config.json:/usr/src/app/.materialized-config.json
+        - ./.pinejs-cache.json:/usr/src/app/.pinejs-cache.json
       privileged: true
       environment:
         <<: *env
