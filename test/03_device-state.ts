@@ -1,6 +1,5 @@
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import _ from 'lodash';
-import mockery from 'mockery';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import * as fakeDevice from './test-lib/fake-device.js';
@@ -8,7 +7,12 @@ import type { UserObjectParam } from './test-lib/supertest.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import * as config from '../src/lib/config.js';
-import * as stateMock from '../src/features/device-heartbeat/index.js';
+import {
+	DeviceOnlineStates,
+	getInstance as getDeviceOnlineStateManager,
+	getPollInterval,
+	POLL_JITTER_FACTOR,
+} from '../src/features/device-heartbeat/index.js';
 import { assertExists, itExpectsError, waitFor } from './test-lib/common.js';
 import * as fixtures from './test-lib/fixtures.js';
 import {
@@ -27,15 +31,10 @@ const { api } = sbvrUtils;
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
 
-const { DeviceOnlineStates } = stateMock;
-
 class StateTracker {
-	public states: { [key: number]: stateMock.DeviceOnlineStates } = {};
+	public states: { [key: number]: DeviceOnlineStates } = {};
 
-	public stateUpdated = (
-		deviceId: number,
-		newState: stateMock.DeviceOnlineStates,
-	) => {
+	public stateUpdated = (deviceId: number, newState: DeviceOnlineStates) => {
 		this.states[deviceId] = newState;
 	};
 }
@@ -55,7 +54,7 @@ config.TEST_MOCK_ONLY.DEFAULT_SUPERVISOR_POLL_INTERVAL = POLL_MSEC;
 config.TEST_MOCK_ONLY.API_HEARTBEAT_STATE_TIMEOUT_SECONDS = TIMEOUT_SEC;
 
 const devicePollInterval =
-	Math.ceil((POLL_MSEC * stateMock.POLL_JITTER_FACTOR) / 1000) * 1000;
+	Math.ceil((POLL_MSEC * POLL_JITTER_FACTOR) / 1000) * 1000;
 
 /**
  * The 'get-state' event has to be consumed in a short period of time.
@@ -82,7 +81,8 @@ export default () => {
 
 				/** Tracks updateDeviceModel() calls */
 				const tracker = new StateTracker();
-				const updateDeviceModel = stateMock.getInstance()['updateDeviceModel'];
+				const updateDeviceModel =
+					getDeviceOnlineStateManager()['updateDeviceModel'];
 
 				const expectDeviceHeartbeat = async (
 					deviceId: number,
@@ -132,30 +132,24 @@ export default () => {
 					device = await fakeDevice.provisionDevice(admin, application.id);
 					existingDevice = fx.devices.device1;
 
-					stateMock.getInstance()['updateDeviceModel'] = function (
+					getDeviceOnlineStateManager()['updateDeviceModel'] = function (
 						deviceId: number,
-						newState: stateMock.DeviceOnlineStates,
+						newState: DeviceOnlineStates,
 					) {
 						tracker.stateUpdated(deviceId, newState);
 						return updateDeviceModel.call(this, deviceId, newState);
 					};
-
-					mockery.registerMock('../src/lib/device-online-state', stateMock);
 				});
 
 				after(async () => {
 					await fixtures.clean(fx);
-					mockery.deregisterMock('../src/lib/env-vars');
-					mockery.deregisterMock('../src/lib/device-online-state');
 				});
 
 				describe(`API heartbeat state`, () => {
 					describe('Poll Interval Acquisition', () => {
 						it('Should see default value when not overridden', async () => {
-							const pollInterval = await stateMock.getPollInterval(device.id);
-							expect(pollInterval).to.equal(
-								POLL_MSEC * stateMock.POLL_JITTER_FACTOR,
-							);
+							const pollInterval = await getPollInterval(device.id);
+							expect(pollInterval).to.equal(POLL_MSEC * POLL_JITTER_FACTOR);
 						});
 
 						it('Should see the application-specific value if one exists', async () => {
@@ -168,10 +162,8 @@ export default () => {
 								})
 								.expect(201);
 
-							const pollInterval = await stateMock.getPollInterval(device.id);
-							expect(pollInterval).to.equal(
-								123000 * stateMock.POLL_JITTER_FACTOR,
-							);
+							const pollInterval = await getPollInterval(device.id);
+							expect(pollInterval).to.equal(123000 * POLL_JITTER_FACTOR);
 						});
 
 						it('Should see the device-specific value if one exists', async () => {
@@ -184,10 +176,8 @@ export default () => {
 								})
 								.expect(201);
 
-							const pollInterval = await stateMock.getPollInterval(device.id);
-							expect(pollInterval).to.equal(
-								321000 * stateMock.POLL_JITTER_FACTOR,
-							);
+							const pollInterval = await getPollInterval(device.id);
+							expect(pollInterval).to.equal(321000 * POLL_JITTER_FACTOR);
 						});
 
 						it('Should see the default value if the device-specific value is less than it', async () => {
@@ -200,10 +190,8 @@ export default () => {
 								})
 								.expect(200);
 
-							const pollInterval = await stateMock.getPollInterval(device.id);
-							expect(pollInterval).to.equal(
-								POLL_MSEC * stateMock.POLL_JITTER_FACTOR,
-							);
+							const pollInterval = await getPollInterval(device.id);
+							expect(pollInterval).to.equal(POLL_MSEC * POLL_JITTER_FACTOR);
 
 							await supertest(admin)
 								.delete(
@@ -222,10 +210,8 @@ export default () => {
 								})
 								.expect(200);
 
-							const pollInterval = await stateMock.getPollInterval(device.id);
-							expect(pollInterval).to.equal(
-								POLL_MSEC * stateMock.POLL_JITTER_FACTOR,
-							);
+							const pollInterval = await getPollInterval(device.id);
+							expect(pollInterval).to.equal(POLL_MSEC * POLL_JITTER_FACTOR);
 
 							await supertest(admin)
 								.delete(
@@ -245,7 +231,7 @@ export default () => {
 								application.id,
 							);
 
-							stateMock.getInstance().on('change', (args) => {
+							getDeviceOnlineStateManager().on('change', (args) => {
 								if (
 									![device.id, deviceUserRequestedState.id].includes(
 										args.deviceId,
@@ -260,11 +246,11 @@ export default () => {
 
 						it('Should see the stats event emitted more than three times', async () => {
 							const statsEventSpy = sinon.spy();
-							stateMock.getInstance().on('stats', statsEventSpy);
+							getDeviceOnlineStateManager().on('stats', statsEventSpy);
 
 							await waitFor({ checkFn: () => statsEventSpy.callCount >= 3 });
 
-							stateMock.getInstance().off('stats', statsEventSpy);
+							getDeviceOnlineStateManager().off('stats', statsEventSpy);
 						});
 
 						[
@@ -581,7 +567,7 @@ export default () => {
 
 						before(async () => {
 							device2 = await fakeDevice.provisionDevice(admin, application.id);
-							stateMock.getInstance().on('change', (args) => {
+							getDeviceOnlineStateManager().on('change', (args) => {
 								if (device2.id === args.deviceId) {
 									device2ChangeEventSpy(args);
 									lastPersistedTimestamp = Date.now();
@@ -678,7 +664,7 @@ export default () => {
 										admin,
 										application.id,
 									);
-									stateMock.getInstance().on('change', (args) => {
+									getDeviceOnlineStateManager().on('change', (args) => {
 										if (device3.id === args.deviceId) {
 											device3ChangeEventSpy(args);
 										}
@@ -797,7 +783,7 @@ export default () => {
 										admin,
 										application.id,
 									);
-									stateMock.getInstance().on('change', (args) => {
+									getDeviceOnlineStateManager().on('change', (args) => {
 										if (device3.id === args.deviceId) {
 											device3ChangeEventSpy(args);
 										}
