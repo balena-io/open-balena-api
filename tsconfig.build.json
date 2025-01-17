@@ -24,11 +24,5 @@
 	"exclude": [
 		"node_modules",
 		"**/*.d.ts"
-	],
-	"ts-node": {
-		"esm": true,
-		"experimentalResolver": true,
-		"experimentalTsImportSpecifiers": true,
-		"transpileOnly": true
-	}
+	]
 }
