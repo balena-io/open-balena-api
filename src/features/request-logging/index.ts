@@ -2,6 +2,7 @@ import type { Application, Request, RequestHandler } from 'express';
 import morgan from 'morgan';
 import { getServiceFromRequest } from '../../lib/auth.js';
 import { getIP } from '../../lib/utils.js';
+import { trace } from '@opentelemetry/api';
 
 export type GetUrlFunction = (req: Request) => string;
 
@@ -67,8 +68,9 @@ export const setupRequestLogging = (
 				const responseTime = tokens['response-time'](req, res) ?? '-';
 				const balenaClient = req.headers['x-balena-client'] ?? '-';
 				const callerId = getCallerId(req);
+				const traceId = trace.getActiveSpan()?.spanContext().traceId ?? '-';
 
-				return `${date} ${getIP(req)} ${callerId} ${
+				return `${date} ${getIP(req)} ${traceId} ${callerId} ${
 					req.method
 				} ${url} ${statusCode} ${responseTime}ms ${balenaClient}`;
 			},
