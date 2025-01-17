@@ -146,7 +146,6 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.3.0",
     "mocha": "^11.1.0",
-    "mockery": "^2.1.0",
     "nock": "^13.5.6",
     "pinejs-client-supertest": "^3.0.1",
     "rimraf": "^6.0.1",

@@ -1,8 +1,6 @@
-import AWSWrapper from './aws-sdk-wrapper.cjs';
+import AWS from './aws-sdk-wrapper.js';
 import _ from 'lodash';
 import path from 'path';
-
-const { AWS } = AWSWrapper;
 
 import {
 	IMAGE_STORAGE_ACCESS_KEY,
@@ -59,7 +57,7 @@ function createS3Client() {
 const s3Client = createS3Client();
 
 function isUnauthenticatedError(
-	clientS3: UnauthenticatedS3Facade | AWSWrapper.AWS.S3,
+	clientS3: UnauthenticatedS3Facade | AWS.S3,
 	err: any,
 ): boolean {
 	return (

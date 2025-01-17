@@ -2,9 +2,6 @@ const start = async () => {
 	// Set the desired es version for downstream modules that support it
 	(await import('@balena/es-version')).set('es2022');
 
-	// Support import of *.cts files
-	(await import('ts-node')).register({ transpileOnly: true });
-
 	await import('./init.js');
 };
 

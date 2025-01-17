@@ -1,11 +1,11 @@
 import type AWS from 'aws-sdk';
 import { assert } from 'chai';
 import _ from 'lodash';
-import mockery from 'mockery';
 import {
 	IMAGE_STORAGE_ACCESS_KEY,
 	IMAGE_STORAGE_SECRET_KEY,
 } from '../../src/lib/config.js';
+import { TEST_MOCK_ONLY } from '../../src/features/device-types/storage/aws-sdk-wrapper.js';
 
 import $getObjectMocks from '../fixtures/s3/getObject.json' with { type: 'json' };
 import listObjectsV2Mocks from '../fixtures/s3/listObjectsV2.json' with { type: 'json' };
@@ -146,5 +146,4 @@ export const AWSSdkMock = {
 	S3: S3Mock,
 };
 
-mockery.enable({ warnOnUnregistered: false });
-mockery.registerMock('aws-sdk', AWSSdkMock);
+TEST_MOCK_ONLY.S3 = S3Mock as typeof AWS.S3;
