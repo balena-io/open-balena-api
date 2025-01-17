@@ -4,6 +4,7 @@ import escapeHtml from 'escape-html';
 
 import type { hooks } from '@balena/pinejs';
 import { errors, sbvrUtils } from '@balena/pinejs';
+import { trace } from '@opentelemetry/api';
 
 const { InternalRequestError, HttpError } = errors;
 
@@ -35,11 +36,13 @@ export function captureException(
 		extra?: AnyObject;
 	},
 ): void {
+	const traceId = trace.getActiveSpan()?.spanContext().traceId ?? '';
+
 	// if err does not have a message or a stack, we have no information about that error
 	if (_.isObject(err) && err.message == null) {
-		console.error(message, err);
+		console.error(traceId, message, err);
 	} else {
-		console.error(message, err.message, err.stack);
+		console.error(traceId, message, err.message, err.stack);
 	}
 
 	Sentry.withScope((scope) => {

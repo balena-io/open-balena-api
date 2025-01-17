@@ -2,6 +2,20 @@ const start = async () => {
 	// Set the desired es version for downstream modules that support it
 	(await import('@balena/es-version')).set('es2022');
 
+	const { NodeSDK } = await import('@opentelemetry/sdk-node');
+	const { ExpressInstrumentation } = await import(
+		'@opentelemetry/instrumentation-express'
+	);
+	const { HttpInstrumentation } = await import(
+		'@opentelemetry/instrumentation-http'
+	);
+
+	const sdk = new NodeSDK({
+		instrumentations: [new ExpressInstrumentation(), new HttpInstrumentation()],
+	});
+
+	sdk.start();
+
 	await import('./init.js');
 };
 
