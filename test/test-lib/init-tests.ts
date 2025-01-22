@@ -6,12 +6,17 @@ import {
 } from '../../src/features/contracts/index.js';
 import { getUserFromToken } from './api-helpers.js';
 import * as config from '../../src/lib/config.js';
+import $getObjectMocks from '../fixtures/s3/getObject.json' with { type: 'json' };
+import listObjectsV2Mocks from '../fixtures/s3/listObjectsV2.json' with { type: 'json' };
+import awsMockSetup from './aws-mock.js';
 
 const version = 'resin';
 
 export const preInit = async () => {
 	augmentStatusAssertionError();
-	await import('./aws-mock.js');
+
+	awsMockSetup($getObjectMocks, listObjectsV2Mocks);
+
 	await import('./contracts-mock.js');
 
 	config.TEST_MOCK_ONLY.ASYNC_TASKS_ENABLED = true;
