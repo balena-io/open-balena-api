@@ -17,7 +17,8 @@
     "./models/balena-model.d.ts": "./dist/balena-model.d.ts",
     "./models/balena-init.sql": "./dist/balena-init.sql",
     "./models/v6.sbvr": "./dist/translations/v6/v6.sbvr",
-    "./models/v7.sbvr": "./dist/translations/v7/v7.sbvr"
+    "./models/v7.sbvr": "./dist/translations/v7/v7.sbvr",
+    "./mocks/aws-sdk-wrapper": "./dist/features/device-types/storage/aws-sdk-wrapper.js"
   },
   "files": [
     "dist/"
