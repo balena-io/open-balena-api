@@ -45,12 +45,12 @@
     "prepare": "node -e \"try { (await import('husky')).default() } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e }\" --input-type module"
   },
   "dependencies": {
-    "@balena/abstract-sql-compiler": "^10.1.2",
+    "@balena/abstract-sql-compiler": "^10.2.0",
     "@balena/abstract-sql-to-typescript": "^5.1.0",
     "@balena/env-parsing": "^1.2.0",
     "@balena/es-version": "^1.0.3",
     "@balena/node-metrics-gatherer": "^6.0.3",
-    "@balena/pinejs": "^20.0.0",
+    "@balena/pinejs": "20.0.3-build-compile-in-as-eq-any-bf6b98ce4d142cf629b97a4879fb0cfd285a07ea-1",
     "@balena/pinejs-webresource-cloudfront": "^1.0.2",
     "@balena/pinejs-webresource-s3": "^1.0.2",
     "@sentry/node": "^8.48.0",
@@ -168,5 +168,10 @@
   },
   "versionist": {
     "publishedAt": "2025-02-03T22:10:12.508Z"
+  },
+  "overrides": {
+    "@balena/pinejs-webresource-s3": {
+      "@balena/pinejs": "20.0.3-build-compile-in-as-eq-any-bf6b98ce4d142cf629b97a4879fb0cfd285a07ea-1"
+    }
   }
 }
