@@ -45,16 +45,18 @@ export const read =
 	async (req: Request, res: Response) => {
 		try {
 			const ctx = await getReadContext(req);
-			if (req.query.stream === '1') {
-				await handleStreamingRead(ctx, req, res);
+			const isStreamingRead = req.query.stream === '1';
+			const count = getCount(
+				req.query.count as string | undefined,
+				isStreamingRead
+					? LOGS_DEFAULT_SUBSCRIPTION_COUNT
+					: LOGS_DEFAULT_HISTORY_COUNT,
+			);
+			if (isStreamingRead) {
+				await handleStreamingRead(ctx, req, res, count);
 				onLogReadStreamInitialized?.(req);
 			} else {
-				const logs = await getHistory(
-					await getReadBackend(),
-					ctx,
-					req,
-					LOGS_DEFAULT_HISTORY_COUNT,
-				);
+				const logs = await getHistory(await getReadBackend(), ctx, count);
 
 				res.json(logs);
 			}
@@ -71,6 +73,7 @@ async function handleStreamingRead(
 	ctx: LogContext,
 	req: Request,
 	res: Response,
+	count: number,
 ): Promise<void> {
 	const backend = await getReadBackend();
 	let state: StreamState = StreamState.Buffering;
@@ -156,12 +159,7 @@ async function handleStreamingRead(
 	// Subscribe in parallel so we don't miss logs in between
 	backend.subscribe(ctx, onLog);
 	try {
-		let logs = await getHistory(
-			backend,
-			ctx,
-			req,
-			LOGS_DEFAULT_SUBSCRIPTION_COUNT,
-		);
+		let logs = await getHistory(backend, ctx, count);
 
 		// We need this cast as typescript narrows to `StreamState.Buffering`
 		// because it ignores that during the `await` break it can be changed
@@ -221,11 +219,8 @@ function getCount(
 function getHistory(
 	backend: DeviceLogsBackend,
 	ctx: LogContext,
-	{ query }: Request,
-	defaultCount: number,
+	count: number,
 ): Resolvable<OutputDeviceLog[]> {
-	const count = getCount(query.count as string | undefined, defaultCount);
-
 	// Optimize the case where the caller doesn't need any history
 	if (!count) {
 		return [];
