@@ -6,7 +6,10 @@ import { expect } from 'chai';
 import type { UserObjectParam } from './test-lib/supertest.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
-import type { Application, Device } from '../src/balena-model.js';
+import type {
+	Application,
+	Device,
+} from '@balena/open-balena-api/models/balena-model.d.ts';
 import { expectResourceToMatch } from './test-lib/api-helpers.js';
 import { assertExists, expectToEventually } from './test-lib/common.js';
 

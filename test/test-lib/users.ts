@@ -1,7 +1,7 @@
 import { fakeTx } from './fixtures.js';
 import { expectJwt, getUserFromToken } from './api-helpers.js';
-import type { TokenUserPayload } from '../../src/infra/auth/jwt.js';
-import { createSessionToken } from '../../src/infra/auth/jwt.js';
+import type { TokenUserPayload } from '@balena/open-balena-api';
+import { auth } from '@balena/open-balena-api';
 
 /**
  * Issues a JWT that's from 30' in the past, so that it's no longer a sudo JWT
@@ -16,7 +16,7 @@ export const loginUserSudoTimeoutAgo = async (
 		: {};
 
 	existingToken.authTime = Date.now() - 30 * 60 * 1000;
-	const newToken = await createSessionToken(userId, {
+	const newToken = await auth.createSessionToken(userId, {
 		existingToken,
 		tx: fakeTx,
 	});

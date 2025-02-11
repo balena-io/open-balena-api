@@ -8,7 +8,7 @@
     "url": "https://github.com/balena-io/open-balena-api"
   },
   "type": "module",
-  "main": "dist/index",
+  "main": "dist/index.js",
   "exports": {
     ".": "./dist/index.js",
     "./cache": "./dist/infra/cache/index.js",
@@ -39,10 +39,9 @@
     "cleanup": "rm .fast-boot.json .pinejs-cache.json || true",
     "lint": "balena-lint src/ test/ init.ts index.js && tsc --noEmit --project .",
     "lint-fix": "balena-lint --fix src/ test/ init.ts index.js",
-    "prepack": "npm run build",
     "test:compose": "./automation/test.sh",
     "test": "npm run lint",
-    "prepare": "node -e \"try { (await import('husky')).default() } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e }\" --input-type module"
+    "prepare": "node -e \"try { (await import('husky')).default() } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e }\" --input-type module && npm run build"
   },
   "dependencies": {
     "@balena/abstract-sql-compiler": "^10.1.2",
@@ -136,6 +135,7 @@
   },
   "devDependencies": {
     "@balena/lint": "^9.1.3",
+    "@balena/open-balena-api": "file:./",
     "@types/chai": "^5.0.1",
     "@types/mocha": "^10.0.10",
     "@types/mockery": "^1.4.33",

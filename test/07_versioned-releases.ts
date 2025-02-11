@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import _ from 'lodash';
 import semverLib from 'semver';
-import type { Release } from '../src/balena-model.js';
+import type { Release } from '@balena/open-balena-api/models/balena-model.d.ts';
 import { expectResourceToMatch } from './test-lib/api-helpers.js';
 import * as fixtures from './test-lib/fixtures.js';
 import { expect } from 'chai';

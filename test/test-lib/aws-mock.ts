@@ -4,7 +4,7 @@ import _ from 'lodash';
 import {
 	IMAGE_STORAGE_ACCESS_KEY,
 	IMAGE_STORAGE_SECRET_KEY,
-} from '../../src/lib/config.js';
+} from '@balena/open-balena-api/config';
 import { TEST_MOCK_ONLY } from '../../src/features/device-types/storage/aws-sdk-wrapper.js';
 
 type MockedError = {

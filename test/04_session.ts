@@ -3,19 +3,15 @@ import {
 	JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH,
 	SUPERUSER_EMAIL,
 	SUPERUSER_PASSWORD,
-} from '../src/lib/config.js';
-import { createScopedAccessToken } from '../src/infra/auth/jwt.js';
+} from '@balena/open-balena-api/config';
+import { auth } from '@balena/open-balena-api';
 
 import * as fixtures from './test-lib/fixtures.js';
 import type { UserObjectParam } from './test-lib/supertest.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import type { Device } from './test-lib/fake-device.js';
-import type { Application } from '../src/balena-model.js';
-import {
-	assignUserRole,
-	revokeUserRole,
-} from '../src/infra/auth/permissions.js';
+import type { Application } from '@balena/open-balena-api/models/balena-model.d.ts';
 import { permissions as pinePermissions, sbvrUtils } from '@balena/pinejs';
 const { api } = sbvrUtils;
 import { setTimeout } from 'timers/promises';
@@ -105,7 +101,7 @@ export default () => {
 					: record.actor;
 
 				// Create a token that only has access to the granting users document
-				const accessToken = createScopedAccessToken({
+				const accessToken = auth.createScopedAccessToken({
 					actor,
 					permissions: ['resin.user.read?actor eq @__ACTOR_ID'],
 					expiresIn: 60 * 10,
@@ -133,7 +129,7 @@ export default () => {
 				const permissions = ['resin.application.read?actor eq @__ACTOR_ID'];
 
 				// Create a token that only has access to the granting users applications
-				const accessToken = createScopedAccessToken({
+				const accessToken = auth.createScopedAccessToken({
 					actor,
 					permissions,
 					expiresIn: 60 * 10,
@@ -292,7 +288,7 @@ export default () => {
 					: record.actor;
 
 				// Create a token that only has access to the granting users document
-				const accessToken = createScopedAccessToken({
+				const accessToken = auth.createScopedAccessToken({
 					actor,
 					permissions: ['resin.user.read?actor eq @__ACTOR_ID'],
 					expiresIn: 60 * 10,
@@ -322,7 +318,7 @@ export default () => {
 				const permissions = ['resin.application.read?actor eq @__ACTOR_ID'];
 
 				// Create a token that only has access to the granting users applications
-				const accessToken = createScopedAccessToken({
+				const accessToken = auth.createScopedAccessToken({
 					actor,
 					permissions,
 					expiresIn: 60 * 10,
@@ -352,7 +348,7 @@ export default () => {
 				expect(role).to.have.property('id').that.is.a('number');
 
 				await sbvrUtils.db.transaction(async (tx) => {
-					await revokeUserRole(user.id, role.id, tx);
+					await auth.revokeUserRole(user.id, role.id, tx);
 				});
 
 				await supertest()
@@ -364,7 +360,7 @@ export default () => {
 					.expect(401);
 
 				await sbvrUtils.db.transaction(async (tx) => {
-					await assignUserRole(user.id, role.id, tx);
+					await auth.assignUserRole(user.id, role.id, tx);
 				});
 
 				await supertest()

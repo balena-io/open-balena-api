@@ -11,13 +11,17 @@ import {
 	mockRepo,
 	addContractInterceptors,
 } from './test-lib/contracts-mock.js';
-import type { RepositoryInfo } from '../src/features/contracts/index.js';
-import { synchronizeContracts } from '../src/features/contracts/index.js';
+import { contracts as $contracts } from '@balena/open-balena-api';
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import type { DeviceType, DeviceTypeAlias } from '../src/balena-model.js';
+import type {
+	DeviceType,
+	DeviceTypeAlias,
+} from '@balena/open-balena-api/models/balena-model.d.ts';
 import { assertExists } from './test-lib/common.js';
 
-const contractRepository: RepositoryInfo = {
+const { synchronizeContracts } = $contracts;
+
+const contractRepository: $contracts.RepositoryInfo = {
 	owner: 'balena-io',
 	name: 'contracts',
 };

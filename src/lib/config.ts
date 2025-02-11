@@ -453,6 +453,9 @@ export let DEFAULT_SUPERVISOR_POLL_INTERVAL = intVar(
 	10 * MINUTES,
 );
 
+// the maximum time the supervisor will wait between polls...
+export const POLL_JITTER_FACTOR = 1.5;
+
 export const HIDE_UNVERSIONED_ENDPOINT = boolVar(
 	'HIDE_UNVERSIONED_ENDPOINT',
 	true,

@@ -1,4 +1,4 @@
-import { VPN_SERVICE_API_KEY } from '../src/lib/config.js';
+import { VPN_SERVICE_API_KEY } from '@balena/open-balena-api/config';
 import { expect } from 'chai';
 import * as fixtures from './test-lib/fixtures.js';
 import { generateDeviceUuid } from './test-lib/fake-device.js';
