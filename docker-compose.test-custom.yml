@@ -1,7 +1,7 @@
 version: "2.4"
 services:
   db:
-    image: balena/open-balena-db:v5.2.2
+    image: balena/open-balena-db:6.0.0
     ports:
       - "5432"
       - "5431:5432"
