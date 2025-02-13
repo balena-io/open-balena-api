@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update grafana/loki Docker tag to v3.3.3
+      hash: b4da80a1d06bf22171f5bc088d05228fbf8a494f
+      body: |
+        Update grafana/loki from 3.3.2 to 3.3.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: balena-renovate[bot]
+      nested: []
+  version: 34.4.3
+  title: ""
+  date: 2025-02-13T18:05:39.261Z
+- commits:
     - subject: Update @balena/pinejs to v20.0.3
       hash: c7e874509d6ee01f6eb1ca2496081aa5cf3104c8
       body: |
@@ -641,6 +654,7 @@
                                                               hash: 37e2d446c0ec11f2e3a1ab41b1a205280062bd5d
                                                               body: >
                                                                 
+                                                                
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -671,6 +685,7 @@
                                                             - subject: Update dependency @types/chai-datetime to ^0.0.39
                                                               hash: 428c5a2c94bd753cc2ffc6d1e012c3a743e1b4d2
                                                               body: >
+                                                                
                                                                 
                                                                 Update
                                                                 @types/chai-datetime
@@ -1607,6 +1622,7 @@
                                                               hash: d749289e311ad22e2b09793ad1dd472762bdf402
                                                               body: >
                                                                 
+                                                                
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -1654,6 +1670,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         As balena-lint
                                                                         rejects `new
                                                                         Boolean()`, `new
@@ -1676,6 +1693,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -1713,6 +1731,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         Ensure that the
                                                                         input passed in for
                                                                         JSON types is either
@@ -1813,6 +1832,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -1841,6 +1861,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         It can in fact be a
                                                                         lot of different
                                                                         things and that is
@@ -1870,6 +1891,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -1904,6 +1926,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -2049,6 +2072,7 @@
                                                                       body: >
                                                                         
                                                                         
+
                                                                         This also deprecates
                                                                         the legacy use of
                                                                         direct true/false
@@ -2250,6 +2274,7 @@
                                                               hash: be8fc31c3754186dd4c43ca8d4c056b0def7ffbd
                                                               body: >
                                                                 
+                                                                
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -2271,11 +2296,12 @@
                                                               hash: 46a369117c9d1222089498a8794c32d14edef85b
                                                               body: >
                                                                 
-                                                                As engine and
-                                                                npm is now required
-                                                                as part of
-                                                                package.json we can
-                                                                drop this dependency
+                                                                
+                                                                As engine and npm is
+                                                                now required as part
+                                                                of package.json we
+                                                                can drop this
+                                                                dependency
                                                               footer:
                                                                 Change-type: patch
                                                                 change-type: patch
@@ -2306,6 +2332,7 @@
                                                             - subject: Assert that JSON input typeof is object
                                                               hash: 1819ee97811e20da93c6e0f227db6a62ada8c00e
                                                               body: >
+                                                                
                                                                 
                                                                 Ensure that the
                                                                 input passed in for
@@ -2403,6 +2430,7 @@
                                                               hash: be8fc31c3754186dd4c43ca8d4c056b0def7ffbd
                                                               body: >
                                                                 
+                                                                
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -2424,11 +2452,12 @@
                                                               hash: 46a369117c9d1222089498a8794c32d14edef85b
                                                               body: >
                                                                 
-                                                                As engine and
-                                                                npm is now required
-                                                                as part of
-                                                                package.json we can
-                                                                drop this dependency
+                                                                
+                                                                As engine and npm is
+                                                                now required as part
+                                                                of package.json we
+                                                                can drop this
+                                                                dependency
                                                               footer:
                                                                 Change-type: patch
                                                                 change-type: patch
@@ -2459,6 +2488,7 @@
                                                             - subject: Assert that JSON input typeof is object
                                                               hash: 1819ee97811e20da93c6e0f227db6a62ada8c00e
                                                               body: >
+                                                                
                                                                 
                                                                 Ensure that the
                                                                 input passed in for
@@ -6526,6 +6556,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -6558,6 +6589,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7806,6 +7838,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -7853,6 +7886,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -8139,6 +8173,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -8176,6 +8211,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -8640,6 +8676,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -8668,6 +8705,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -8829,6 +8867,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -9127,6 +9166,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -9272,6 +9312,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -9737,6 +9778,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -9759,6 +9801,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -9927,6 +9970,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -10286,6 +10330,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -10308,6 +10353,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -10476,6 +10522,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -12848,6 +12895,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -12870,6 +12918,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -13038,6 +13087,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -13400,6 +13450,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -13428,6 +13479,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -13588,6 +13640,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -13884,6 +13937,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/sbvr-types
                                                                 from 3.4.18 to 3.5.0
@@ -14029,6 +14083,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
