@@ -24,6 +24,10 @@ export const checkInt = (num?: string): number | false => {
 	if (num == null) {
 		return false;
 	}
+	// If the string contains non-integer characters then it's not a valid integer, even if `parseInt` might turn it into one
+	if (!/^-?[0-9]+$/.test(num)) {
+		return false;
+	}
 	const n = parseInt(num, 10);
 	if (Number.isNaN(n)) {
 		return false;
