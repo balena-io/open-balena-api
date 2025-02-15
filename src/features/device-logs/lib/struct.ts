@@ -50,8 +50,10 @@ export interface OldSupervisorLog {
 
 export type Subscription = (log: OutputDeviceLog) => void;
 
+export type HistoryOpts = { count: number; start?: number };
+
 export interface DeviceLogsBackend {
-	history(ctx: LogContext, count: number): Promise<OutputDeviceLog[]>;
+	history(ctx: LogContext, opts: HistoryOpts): Promise<OutputDeviceLog[]>;
 	available: boolean;
 	/**
 	 * `logs` will be mutated to empty and so must be handled synchronously

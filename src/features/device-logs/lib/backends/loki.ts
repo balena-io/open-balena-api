@@ -18,6 +18,7 @@ import {
 } from '../../../../lib/config.js';
 import type {
 	DeviceLogsBackend,
+	HistoryOpts,
 	InternalDeviceLog,
 	LogContext,
 	LokiLogContext,
@@ -178,7 +179,7 @@ export class LokiBackend implements DeviceLogsBackend {
 	 */
 	public async history(
 		$ctx: LogContext,
-		count: number,
+		{ count, start }: HistoryOpts,
 	): Promise<OutputDeviceLog[]> {
 		const ctx = await assertLokiLogContext($ctx);
 
@@ -189,6 +190,7 @@ export class LokiBackend implements DeviceLogsBackend {
 				query: this.getDeviceQuery(ctx),
 				limit: Number.isFinite(count) ? count : 1000,
 				since: '30d',
+				...(start != null ? { start: `${BigInt(start) * 1000000n}` } : {}),
 			},
 			json: true,
 			gzip: LOKI_HISTORY_GZIP,

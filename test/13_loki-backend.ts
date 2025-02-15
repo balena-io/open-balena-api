@@ -56,7 +56,7 @@ export default () => {
 			const log = createLog();
 			const response = await loki.publish(ctx, [_.clone(log)]);
 			expect(response).to.be.not.null;
-			const history = await loki.history(ctx, 1000);
+			const history = await loki.history(ctx, { count: 1000 });
 			expect(history.at(-1)).to.deep.equal(convertToOutputLog(log));
 		});
 
@@ -73,7 +73,7 @@ export default () => {
 			];
 			const response = await loki.publish(ctx, _.cloneDeep(logs));
 			expect(response).to.be.not.null;
-			const history = await loki.history(ctx, 1000);
+			const history = await loki.history(ctx, { count: 1000 });
 			expect(history.slice(-5)).to.deep.equal(logs.map(convertToOutputLog));
 		});
 
@@ -84,7 +84,7 @@ export default () => {
 			const logs = [_.clone(log), _.clone(log), _.clone(log)];
 			const response = await loki.publish(ctx, _.cloneDeep(logs));
 			expect(response).to.be.not.null;
-			const history = await loki.history(ctx, 1000);
+			const history = await loki.history(ctx, { count: 1000 });
 			expect(history[1].timestamp).to.not.equal(log.timestamp);
 		});
 

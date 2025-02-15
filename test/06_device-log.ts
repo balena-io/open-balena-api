@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { expect } from 'chai';
 import * as fixtures from './test-lib/fixtures.js';
 import { supertest } from './test-lib/supertest.js';
+import { DAYS } from '@balena/env-parsing';
 
 const createLog = (extra = {}) => {
 	return {
@@ -163,7 +164,9 @@ export default () => {
 
 		// Stream Reading Logs
 
+		let dateBeforeStreamedLogs: Date;
 		it('should allow users to stream-read device logs with a JWT', async () => {
+			dateBeforeStreamedLogs = new Date();
 			const logChunks: string[] = [];
 			let extraLogsSent = 0;
 			const req = supertest(ctx.user)
@@ -225,5 +228,31 @@ export default () => {
 				'streamed log line 1',
 			]);
 		});
+
+		for (const fn of ['toISOString', 'getTime'] as const) {
+			it(`should allow specifying logs start date as a ${fn}`, async () => {
+				const res = await supertest(ctx.user)
+					.get(
+						`/device/v2/${ctx.device.uuid}/logs?start=${dateBeforeStreamedLogs[fn]()}`,
+					)
+					.expect(200);
+
+				expect(res.body).to.have.lengthOf(2);
+				expect(res.body[0])
+					.to.have.property('message')
+					.equals('streamed log line 0');
+				expect(res.body[1])
+					.to.have.property('message')
+					.equals('streamed log line 1');
+
+				// And double check that putting the date further back does fetch all the expected logs..
+				const res2 = await supertest(ctx.user)
+					.get(
+						`/device/v2/${ctx.device.uuid}/logs?start=${new Date(dateBeforeStreamedLogs.getTime() - 1 * DAYS)[fn]()}`,
+					)
+					.expect(200);
+				expect(res2.body).to.have.lengthOf(8);
+			});
+		}
 	});
 };
