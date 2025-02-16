@@ -40,6 +40,8 @@ import {
 import { setTimeout } from 'timers/promises';
 import { omitNanoTimestamp } from '../config.js';
 import { requestAsync } from '../../../../infra/request-promise/index.js';
+import WebSocket from 'ws';
+import querystring from 'node:querystring';
 
 const { BadRequestError } = errors;
 
@@ -63,12 +65,6 @@ const lokiIngesterAddress = `${LOKI_INGESTER_HOST}:${LOKI_INGESTER_GRPC_PORT}`;
 const MIN_BACKOFF = 100;
 const MAX_BACKOFF = 10 * 1000;
 const VERSION = 2;
-
-function createTimestampFromDate(date = new Date()) {
-	const timestamp = new loki.Timestamp();
-	timestamp.fromDate(date);
-	return timestamp;
-}
 
 function backoff<T extends (...args: any[]) => any>(
 	fn: T,
@@ -113,11 +109,7 @@ async function assertLokiLogContext(
 		passthrough: { req: permissions.root },
 		options: {
 			$select: ['belongs_to__application'],
-			$expand: {
-				belongs_to__application: {
-					$select: ['id', 'organization'],
-				},
-			},
+			$expand: { belongs_to__application: { $select: ['id', 'organization'] } },
 		},
 	});
 
@@ -140,23 +132,14 @@ async function assertLokiLogContext(
 
 export class LokiBackend implements DeviceLogsBackend {
 	private subscriptions: EventEmitter;
-	private querier: loki.QuerierClient;
 	private pusher: loki.PusherClient;
-	private tailCalls: Map<string, loki.ClientReadableStream<loki.TailResponse>>;
+	private tailCalls: Map<string, WebSocket>;
 
 	constructor() {
 		this.subscriptions = new EventEmitter();
 		const compressionAlgorithm = LOKI_GRPC_SEND_GZIP
 			? compressionAlgorithms.gzip
 			: compressionAlgorithms.identity;
-		this.querier = new loki.QuerierClient(
-			lokiIngesterAddress,
-			loki.createInsecureCredentials(),
-			{
-				'grpc.default_compression_algorithm': compressionAlgorithm,
-				'grpc.default_compression_level': LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL,
-			},
-		);
 		this.pusher = new loki.PusherClient(
 			lokiIngesterAddress,
 			loki.createInsecureCredentials(),
@@ -201,9 +184,7 @@ export class LokiBackend implements DeviceLogsBackend {
 
 		const [, body] = await requestAsync({
 			url: `http://${lokiQueryAddress}/loki/api/v1/query_range`,
-			headers: {
-				'X-Scope-OrgID': ctx.orgId,
-			},
+			headers: { 'X-Scope-OrgID': ctx.orgId },
 			qs: {
 				query: this.getDeviceQuery(ctx),
 				limit: Number.isFinite(count) ? count : 1000,
@@ -276,9 +257,7 @@ export class LokiBackend implements DeviceLogsBackend {
 				this.pusher.push(
 					pushRequest,
 					loki.createOrgIdMetadata(ctx.orgId),
-					{
-						deadline: startAt + LOKI_PUSH_TIMEOUT,
-					},
+					{ deadline: startAt + LOKI_PUSH_TIMEOUT },
 					(err, response) => {
 						if (err) {
 							reject(err);
@@ -297,37 +276,65 @@ export class LokiBackend implements DeviceLogsBackend {
 		const ctx = await assertLokiLogContext($ctx);
 		const key = this.getKey(ctx);
 		if (!this.tailCalls.has(key)) {
-			const request = new loki.TailRequest();
-			request.setQuery(this.getDeviceQuery(ctx));
-			request.setStart(createTimestampFromDate());
-
-			const call = this.querier.tail(
-				request,
-				loki.createOrgIdMetadata(ctx.orgId),
+			const ws = new WebSocket(
+				`ws://${lokiQueryAddress}/loki/api/v1/tail?${querystring.stringify({
+					query: this.getDeviceQuery(ctx),
+					start: `${BigInt(Date.now()) * 1000000n}`,
+				})}`,
+				{ headers: { 'X-Scope-OrgID': ctx.orgId } },
 			);
-			call.on('data', (response: loki.TailResponse) => {
-				const stream = response.getStream();
-				if (stream) {
-					const logs = this.fromStreamToDeviceLogs(stream);
-					for (const log of logs) {
-						this.subscriptions.emit(key, log);
+
+			ws.on('error', (err) => {
+				captureException(
+					err,
+					`Loki tail call message error for device ${ctx.uuid}`,
+				);
+				this.subscriptions.removeListener(key, subscription);
+				this.tailCalls.delete(key);
+				setCurrentSubscriptions(this.tailCalls.size);
+			});
+			ws.on('close', () => {
+				this.subscriptions.removeListener(key, subscription);
+				this.tailCalls.delete(key);
+				setCurrentSubscriptions(this.tailCalls.size);
+			});
+
+			ws.on('open', function open() {
+				console.log('connected');
+			});
+
+			ws.on('message', (data) => {
+				try {
+					const result = JSON.parse(data.toString()) as {
+						streams: Array<{
+							stream: Record<string, string>;
+							values: Array<[timestamp: string, logLine: string]>;
+						}>;
+					};
+
+					for (const stream of result.streams) {
+						// TODO: if there are multiple streams we may have to buffer the logs and sort them by timestamp
+						for (const [timestamp, logLine] of stream.values) {
+							const log: LokiDeviceLog = JSON.parse(logLine);
+							if (log.version !== VERSION) {
+								throw new Error(
+									`Invalid Loki serialization version: ${JSON.stringify(log)}`,
+								);
+							}
+							delete log.version;
+							const nanoTimestamp = BigInt(timestamp);
+							log.createdAt = Math.floor(Number(nanoTimestamp / 1000000n));
+							this.subscriptions.emit(key, log as OutputDeviceLog);
+						}
 					}
+				} catch (err) {
+					captureException(
+						err,
+						`Loki tail call message error for device ${ctx.uuid}`,
+					);
 				}
 			});
-			call.on('error', (err: Error & { code: loki.status }) => {
-				if (err.code !== loki.status.CANCELLED) {
-					captureException(err, `Loki tail call error for device ${ctx.uuid}`);
-				}
-				this.subscriptions.removeListener(key, subscription);
-				this.tailCalls.delete(key);
-				setCurrentSubscriptions(this.tailCalls.size);
-			});
-			call.on('end', () => {
-				this.subscriptions.removeListener(key, subscription);
-				this.tailCalls.delete(key);
-				setCurrentSubscriptions(this.tailCalls.size);
-			});
-			this.tailCalls.set(key, call);
+			this.tailCalls.set(key, ws);
 			incrementSubscriptionTotal();
 			setCurrentSubscriptions(this.tailCalls.size);
 		}
@@ -338,7 +345,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		const ctx = await assertLokiLogContext($ctx);
 		const key = this.getKey(ctx);
 		const call = this.tailCalls.get(key);
-		call?.cancel();
+		call?.close();
 	}
 
 	private getDeviceQuery(ctx: LokiLogContext) {
@@ -357,31 +364,6 @@ export class LokiBackend implements DeviceLogsBackend {
 
 	private getLabels(ctx: LokiLogContext): string {
 		return `{fleet_id="${ctx.appId}"}`;
-	}
-
-	private fromStreamToDeviceLogs(
-		stream: loki.StreamAdapter,
-	): OutputDeviceLog[] {
-		try {
-			return stream.getEntriesList().map((entry) => {
-				const log: LokiDeviceLog = JSON.parse(entry.getLine());
-				if (log.version !== VERSION) {
-					throw new Error(
-						`Invalid Loki serialization version: ${JSON.stringify(log)}`,
-					);
-				}
-				delete log.version;
-				const timestampEntry = entry.getTimestamp()!;
-				const nanoTimestamp =
-					BigInt(timestampEntry.getSeconds()) * 1000000000n +
-					BigInt(timestampEntry.getNanos());
-				log.createdAt = Math.floor(Number(nanoTimestamp / 1000000n));
-				return log as OutputDeviceLog;
-			});
-		} catch (err) {
-			captureException(err, `Failed to convert stream to device log`);
-			return [];
-		}
 	}
 
 	private fromDeviceLogsToEntries(
