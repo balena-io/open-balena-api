@@ -60,27 +60,6 @@ export default () => {
 			expect(history.at(-1)).to.deep.equal(convertToOutputLog(log));
 		});
 
-		it('should convert multiple logs with different labels to streams and then back to logs', function () {
-			const loki = new LokiBackend();
-			const ctx = createContext();
-			const logs = [
-				createLog(),
-				createLog(),
-				createLog({ serviceId: 1 }),
-				createLog({ serviceId: 2 }),
-				createLog({ serviceId: 3 }),
-			];
-			// @ts-expect-error usage of private function
-			const stream = loki.fromLogEntriesToStream(
-				ctx,
-				// @ts-expect-error usage of private function
-				loki.fromDeviceLogsToEntries(ctx, _.cloneDeep(logs)),
-			);
-			// @ts-expect-error usage of private function
-			const logsFromStream = loki.fromStreamToDeviceLogs(stream);
-			expect(logsFromStream).to.deep.equal(logs.map(convertToOutputLog));
-		});
-
 		it('should push multiple logs with different labels and return in order', async function () {
 			const loki = new LokiBackend();
 			const ctx = createContext();

@@ -83,6 +83,7 @@
     "@types/semver": "^7.5.8",
     "@types/statuses": "^2.0.5",
     "@types/validator": "^13.12.2",
+    "@types/ws": "^8.5.14",
     "avsc": "^5.7.7",
     "aws-sdk": "^2.1692.0",
     "balena-device-config": "^6.3.0",
@@ -90,6 +91,7 @@
     "basic-auth": "^2.0.1",
     "bluebird": "^3.7.2",
     "body-parser": "^1.20.3",
+    "bufferutil": "^4.0.9",
     "cache-manager": "^4.1.0",
     "cache-manager-ioredis": "^2.1.0",
     "common-tags": "^1.8.2",
@@ -132,7 +134,8 @@
     "typed-error": "^3.2.2",
     "typescript": "^5.7.3",
     "uuid": "^11.0.5",
-    "validator": "^13.12.0"
+    "validator": "^13.12.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@balena/lint": "^9.1.3",
