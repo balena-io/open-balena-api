@@ -35,6 +35,22 @@ export default () => {
 				const filePath = fileURLToPath(
 					new URL('fixtures/23-release-asset/sample.txt', import.meta.url),
 				);
+
+				it('should succeed with empty asset', async function () {
+					const res = await supertest(this.user)
+						.post(`/${version}/release_asset`)
+						.field('release', this.release1.id)
+						.field('asset_key', 'unique_key_0')
+						.expect(201);
+
+					expect(res.body).to.have.property('id').that.is.a('number');
+					expect(res.body).to.have.property('asset').that.is.null;
+					expect(res.body)
+						.to.have.nested.property('release.__id')
+						.that.equals(this.release1.id);
+					expect(res.body.asset_key).to.equal('unique_key_0');
+				});
+
 				it('should succeed with mandatory properties', async function () {
 					const res = await supertest(this.user)
 						.post(`/${version}/release_asset`)
