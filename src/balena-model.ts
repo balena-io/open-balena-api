@@ -1260,7 +1260,7 @@ export interface ReleaseAsset {
 		release: { __id: Release['Read']['id'] } | [Release['Read']];
 		asset_key: Types['Short Text']['Read'];
 		id: Types['Serial']['Read'];
-		asset: Types['WebResource']['Read'];
+		asset: Types['WebResource']['Read'] | null;
 	};
 	Write: {
 		created_at: Types['Date Time']['Write'];
@@ -1268,7 +1268,7 @@ export interface ReleaseAsset {
 		release: Release['Write']['id'];
 		asset_key: Types['Short Text']['Write'];
 		id: Types['Serial']['Write'];
-		asset: Types['WebResource']['Write'];
+		asset: Types['WebResource']['Write'] | null;
 	};
 }
 
