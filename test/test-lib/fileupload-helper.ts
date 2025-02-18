@@ -1,4 +1,7 @@
-import * as fs from 'fs/promises';
+import fs from 'fs/promises';
+import path from 'path';
+import os from 'os';
+import crypto from 'node:crypto';
 import { requestAsync } from '../../src/infra/request-promise/index.js';
 import { expect } from 'chai';
 
@@ -35,3 +38,10 @@ export async function expectEqualBlobs(url: string, localBlobPath: string) {
 	const diff = originalFile.compare(fileRes);
 	expect(diff).to.equal(0);
 }
+
+export const createTempFile = async (sizeInBytes: number) => {
+	const content = crypto.randomBytes(sizeInBytes);
+	const tempFilePath = path.join(os.tmpdir(), `temp-${Date.now()}.tmp`);
+	await fs.writeFile(tempFilePath, content, 'utf8');
+	return { tempFilePath, content };
+};

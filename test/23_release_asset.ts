@@ -4,6 +4,7 @@ import * as fixtures from './test-lib/fixtures.js';
 import { supertest } from './test-lib/supertest.js';
 import {
 	checkFileExists,
+	createTempFile,
 	expectEqualBlobs,
 } from './test-lib/fileupload-helper.js';
 import * as versions from './test-lib/versions.js';
@@ -35,6 +36,22 @@ export default () => {
 				const filePath = fileURLToPath(
 					new URL('fixtures/23-release-asset/sample.txt', import.meta.url),
 				);
+
+				it('should succeed with empty asset', async function () {
+					const res = await supertest(this.user)
+						.post(`/${version}/release_asset`)
+						.field('release', this.release1.id)
+						.field('asset_key', 'unique_key_0')
+						.expect(201);
+
+					expect(res.body).to.have.property('id').that.is.a('number');
+					expect(res.body).to.have.property('asset').that.is.null;
+					expect(res.body)
+						.to.have.nested.property('release.__id')
+						.that.equals(this.release1.id);
+					expect(res.body.asset_key).to.equal('unique_key_0');
+				});
+
 				it('should succeed with mandatory properties', async function () {
 					const res = await supertest(this.user)
 						.post(`/${version}/release_asset`)
@@ -117,6 +134,112 @@ export default () => {
 							contentType: 'text/plain',
 						})
 						.expect(500); // This should ideally be 4xx
+				});
+
+				it('should be able to upload using multipart uploads', async function () {
+					const res = await supertest(this.user)
+						.post(`/${version}/release_asset`)
+						.field('release', this.release1.id)
+						.field('asset_key', 'unique_key_3')
+						.expect(201);
+
+					expect(res.body).to.have.property('id').that.is.a('number');
+					expect(res.body).to.have.property('asset').that.is.null;
+					expect(res.body)
+						.to.have.nested.property('release.__id')
+						.that.equals(this.release1.id);
+					expect(res.body.asset_key).to.equal('unique_key_3');
+
+					const releaseAssetId = res.body.id;
+					const testFileSize = 6291456;
+					const { tempFilePath, content } = await createTempFile(testFileSize);
+
+					const { body } = await supertest(this.user)
+						.post(`/${version}/release_asset(${releaseAssetId})/beginUpload`)
+						.send({
+							asset: {
+								filename: 'sample.txt',
+								content_type: 'text/plain',
+								size: testFileSize,
+								chunk_size: 6000000,
+							},
+						});
+
+					expect(body).to.have.property('asset').that.is.an('object');
+					expect(body.asset).to.have.property('uuid').that.is.a('string');
+					expect(body.asset.uploadParts).to.be.an('array').that.has.length(2);
+					expect(body.asset.uploadParts[0].chunkSize).to.be.eq(6000000);
+					expect(body.asset.uploadParts[0].partNumber).to.be.eq(1);
+					expect(body.asset.uploadParts[1].chunkSize).to.be.eq(291456);
+					expect(body.asset.uploadParts[1].partNumber).to.be.eq(2);
+
+					const uploadRes = await Promise.all([
+						fetch(body.asset.uploadParts[0].url, {
+							method: 'PUT',
+							body: Uint8Array.prototype.slice.call(content, 0, 6000000),
+						}),
+						fetch(body.asset.uploadParts[1].url, {
+							method: 'PUT',
+							body: Uint8Array.prototype.slice.call(content, 6000000),
+						}),
+					]);
+
+					expect(uploadRes[0].status).to.be.eq(200);
+					expect(uploadRes[0].headers.get('Etag')).to.be.a('string');
+
+					expect(uploadRes[1].status).to.be.eq(200);
+					expect(uploadRes[1].headers.get('Etag')).to.be.a('string');
+
+					const { body: commitResponse } = await supertest(this.user)
+						.post(`/${version}/release_asset(${releaseAssetId})/commitUpload`)
+						.send({
+							uuid: body.asset.uuid,
+							providerCommitData: {
+								Parts: [
+									{
+										PartNumber: 1,
+										ETag: uploadRes[0].headers.get('Etag'),
+									},
+									{
+										PartNumber: 2,
+										ETag: uploadRes[1].headers.get('Etag'),
+									},
+								],
+							},
+						})
+						.expect(200);
+
+					expect(commitResponse).to.have.property('href').that.is.a('string');
+					expect(commitResponse)
+						.to.have.property('filename')
+						.that.is.eq('sample.txt');
+					expect(commitResponse)
+						.to.have.property('size')
+						.that.is.eq(testFileSize);
+
+					const { body: releaseAsset } = await supertest(this.user)
+						.get(
+							`/${version}/release_asset(${releaseAssetId})?$select=id,release,asset&$orderby=release asc`,
+						)
+						.expect(200);
+
+					expect(releaseAsset)
+						.to.have.property('d')
+						.that.is.an('array')
+						.and.has.length(1);
+					expect(releaseAsset)
+						.to.have.nested.property('d[0].id')
+						.that.is.a('number');
+					expect(releaseAsset)
+						.to.have.nested.property('d[0].release.__id')
+						.that.is.a('number');
+					expect(releaseAsset)
+						.to.have.nested.property('d[0].asset.href')
+						.that.is.a('string');
+
+					const href = releaseAsset.d[0].asset.href;
+					expect(await checkFileExists(href, 450)).to.be.true;
+					await expectEqualBlobs(href, tempFilePath);
 				});
 			});
 
