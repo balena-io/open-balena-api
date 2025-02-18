@@ -13,6 +13,7 @@ import {
 import { DAYS } from '@balena/env-parsing';
 import type {
 	DeviceLogsBackend,
+	HistoryOpts,
 	InternalDeviceLog,
 	LogContext,
 	OutputDeviceLog,
@@ -152,7 +153,7 @@ export class RedisBackend implements DeviceLogsBackend {
 
 	public async history(
 		ctx: LogContext,
-		count: number,
+		{ count, start }: HistoryOpts,
 	): Promise<OutputDeviceLog[]> {
 		if (!this.connected) {
 			throw new ServiceUnavailableError();
@@ -163,8 +164,17 @@ export class RedisBackend implements DeviceLogsBackend {
 			count === Infinity ? 0 : -count,
 			-1,
 		);
-		const parsedLogs = await Promise.all(payloads.map(this.fromRedisLog));
-		return _.compact(parsedLogs);
+		return (await Promise.all(payloads.map(this.fromRedisLog))).filter(
+			(log): log is NonNullable<typeof log> => {
+				if (log == null) {
+					return false;
+				}
+				if (start == null) {
+					return true;
+				}
+				return log.createdAt >= start;
+			},
+		);
 	}
 
 	public get available(): boolean {

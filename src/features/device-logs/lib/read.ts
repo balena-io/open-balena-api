@@ -10,6 +10,7 @@ import {
 
 import type {
 	DeviceLogsBackend,
+	HistoryOpts,
 	LogContext,
 	OutputDeviceLog,
 } from './struct.js';
@@ -29,6 +30,8 @@ import {
 	LOGS_READ_STREAM_FLUSH_INTERVAL,
 	NDJSON_CTYPE,
 } from '../../../lib/config.js';
+import { DAYS } from '@balena/env-parsing';
+import { checkInt } from '../../../lib/utils.js';
 
 const { NotFoundError } = errors;
 const { api } = sbvrUtils;
@@ -45,16 +48,22 @@ export const read =
 	async (req: Request, res: Response) => {
 		try {
 			const ctx = await getReadContext(req);
-			if (req.query.stream === '1') {
-				await handleStreamingRead(ctx, req, res);
+			const isStreamingRead = req.query.stream === '1';
+			const count = getCount(
+				req.query.count as string | undefined,
+				isStreamingRead
+					? LOGS_DEFAULT_SUBSCRIPTION_COUNT
+					: LOGS_DEFAULT_HISTORY_COUNT,
+			);
+			const start = getStart(req.query.start as string | undefined, undefined);
+			if (isStreamingRead) {
+				await handleStreamingRead(ctx, req, res, { count, start });
 				onLogReadStreamInitialized?.(req);
 			} else {
-				const logs = await getHistory(
-					await getReadBackend(),
-					ctx,
-					req,
-					LOGS_DEFAULT_HISTORY_COUNT,
-				);
+				const logs = await getHistory(await getReadBackend(), ctx, {
+					count,
+					start,
+				});
 
 				res.json(logs);
 			}
@@ -71,6 +80,7 @@ async function handleStreamingRead(
 	ctx: LogContext,
 	req: Request,
 	res: Response,
+	{ count, start }: HistoryOpts,
 ): Promise<void> {
 	const backend = await getReadBackend();
 	let state: StreamState = StreamState.Buffering;
@@ -156,12 +166,7 @@ async function handleStreamingRead(
 	// Subscribe in parallel so we don't miss logs in between
 	backend.subscribe(ctx, onLog);
 	try {
-		let logs = await getHistory(
-			backend,
-			ctx,
-			req,
-			LOGS_DEFAULT_SUBSCRIPTION_COUNT,
-		);
+		let logs = await getHistory(backend, ctx, { count, start });
 
 		// We need this cast as typescript narrows to `StreamState.Buffering`
 		// because it ignores that during the `await` break it can be changed
@@ -218,21 +223,37 @@ function getCount(
 	return Math.min(count, LOGS_DEFAULT_RETENTION_LIMIT);
 }
 
+function getStart(
+	startParam: string | undefined,
+	defaultStart?: number,
+): number | undefined {
+	let start: number | undefined;
+	if (typeof startParam !== 'string') {
+		start = defaultStart;
+	} else {
+		start = checkInt(startParam) || new Date(startParam).getTime();
+		if (isNaN(start)) {
+			start = defaultStart;
+		}
+	}
+	if (start == null) {
+		return start;
+	}
+	return Math.max(start, Date.now() - 30 * DAYS);
+}
+
 function getHistory(
 	backend: DeviceLogsBackend,
 	ctx: LogContext,
-	{ query }: Request,
-	defaultCount: number,
+	opts: HistoryOpts,
 ): Resolvable<OutputDeviceLog[]> {
-	const count = getCount(query.count as string | undefined, defaultCount);
-
 	// Optimize the case where the caller doesn't need any history
-	if (!count) {
+	if (!opts.count) {
 		return [];
 	}
 
 	// TODO: Implement `?since` filter here too in the next phase
-	return backend.history(ctx, count);
+	return backend.history(ctx, opts);
 }
 
 async function getReadContext(req: Request): Promise<LogContext> {
