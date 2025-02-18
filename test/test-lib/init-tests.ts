@@ -23,6 +23,8 @@ export const preInit = async () => {
 	config.TEST_MOCK_ONLY.ASYNC_TASK_CREATE_SERVICE_INSTALLS_ENABLED = true;
 	config.TEST_MOCK_ONLY.PINEJS_QUEUE_INTERVAL_MS = 100;
 
+	config.TEST_MOCK_ONLY.PINEJS_WEBRESOURCE_MULTIPART_ENABLED = true;
+
 	// override the interval used to emit the queue stats event...
 	const { DeviceOnlineStateManager } = await import(
 		'../../src/features/device-heartbeat/index.js'

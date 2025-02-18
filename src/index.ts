@@ -56,6 +56,7 @@ import {
 	ASYNC_TASKS_ENABLED,
 	PINEJS_QUEUE_INTERVAL_MS,
 	PINEJS_QUEUE_CONCURRENCY,
+	PINEJS_WEBRESOURCE_MULTIPART_ENABLED,
 } from './lib/config.js';
 
 import {
@@ -322,6 +323,9 @@ export async function setup(app: Application, options: SetupOptions) {
 	if (DB_QUERY_TIMEOUT != null) {
 		pine.env.db.queryTimeout = DB_QUERY_TIMEOUT;
 	}
+
+	pine.env.webResource.multipartUploadEnabled =
+		PINEJS_WEBRESOURCE_MULTIPART_ENABLED;
 
 	app.disable('x-powered-by');
 
