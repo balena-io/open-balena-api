@@ -14,7 +14,11 @@ import {
 	addImageToRelease,
 	expectResourceToMatch,
 } from './test-lib/api-helpers.js';
-import type { Application, DeviceType, Release } from '../src/balena-model.js';
+import type {
+	Application,
+	DeviceType,
+	Release,
+} from '@balena/open-balena-api/models/balena-model.d.ts';
 import { assertExists, expectToEventually } from './test-lib/common.js';
 
 export default () => {

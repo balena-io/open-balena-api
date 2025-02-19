@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { stripIndent } from 'common-tags';
 import { setTimeout } from 'timers/promises';
 import { TypedError } from 'typed-error';
-import { ThisShouldNeverHappenError } from '../../src/infra/error-handling/index.js';
+import { errors } from '@balena/open-balena-api';
 
 type PredicateFunction = () => Resolvable<boolean>;
 
@@ -114,7 +114,7 @@ export async function expectToEventually<T>(
 			return await fn();
 		} catch (e) {
 			if (!(e instanceof Error)) {
-				throw ThisShouldNeverHappenError(
+				throw errors.ThisShouldNeverHappenError(
 					'Thrown error is not an instanceof Error',
 				);
 			}
@@ -125,7 +125,7 @@ export async function expectToEventually<T>(
 	}
 	if (error == null) {
 		// error should always be assigned
-		throw ThisShouldNeverHappenError('Unexpected test error');
+		throw errors.ThisShouldNeverHappenError('Unexpected test error');
 	}
 	throw new Error(`Expectation failed: ${error.message}`, { cause: error });
 }

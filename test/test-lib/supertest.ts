@@ -1,7 +1,7 @@
 import { app } from '../../init.js';
 import $supertest from 'supertest';
-import type { TokenUserPayload } from '../../src/infra/auth/jwt.js';
-import { ThisShouldNeverHappenError } from '../../src/infra/error-handling/index.js';
+import type { TokenUserPayload } from '@balena/open-balena-api';
+import { errors } from '@balena/open-balena-api';
 
 export type UserObjectParam = Partial<TokenUserPayload> & { token: string };
 
@@ -41,7 +41,7 @@ export const supertest = function (user?: string | UserObjectParam) {
 	let token = user;
 	if (user != null && typeof user === 'object') {
 		if (user.token == null) {
-			throw ThisShouldNeverHappenError(
+			throw errors.ThisShouldNeverHappenError(
 				'Heads-up: You provided an object as a parameter to supertest that does not include a token, making requests that require authentication to always return 401!!!',
 			);
 		}

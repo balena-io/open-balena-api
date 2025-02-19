@@ -1,5 +1,5 @@
-import { withRetries } from '../src/lib/utils.js';
 import { expect } from 'chai';
+import { withRetries } from '../src/lib/utils.js';
 
 export default () => {
 	describe('Utils', () => {

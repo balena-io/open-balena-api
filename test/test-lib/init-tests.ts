@@ -1,11 +1,9 @@
 import * as fixtures from './fixtures.js';
 import { supertest, augmentStatusAssertionError } from './supertest.js';
-import {
-	getContractRepos,
-	synchronizeContracts,
-} from '../../src/features/contracts/index.js';
+import { getContractRepos } from '../../src/features/contracts/index.js';
+import { contracts, device } from '@balena/open-balena-api';
 import { getUserFromToken } from './api-helpers.js';
-import * as config from '../../src/lib/config.js';
+import * as config from '@balena/open-balena-api/config';
 import $getObjectMocks from '../fixtures/s3/getObject.json' with { type: 'json' };
 import listObjectsV2Mocks from '../fixtures/s3/listObjectsV2.json' with { type: 'json' };
 import awsMockSetup from './aws-mock.js';
@@ -24,16 +22,14 @@ export const preInit = async () => {
 	config.TEST_MOCK_ONLY.PINEJS_QUEUE_INTERVAL_MS = 100;
 
 	// override the interval used to emit the queue stats event...
-	const { DeviceOnlineStateManager } = await import(
-		'../../src/features/device-heartbeat/index.js'
-	);
-	(DeviceOnlineStateManager as any)['QUEUE_STATS_INTERVAL_MSEC'] = 1000;
+	(device.getDeviceOnlineStateManager() as any)['QUEUE_STATS_INTERVAL_MSEC'] =
+		1000;
 };
 
 const loadAdminUserAndOrganization = async () => {
 	// any user we try to create will be the superuser...
 	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } = await import(
-		'../../src/lib/config.js'
+		'@balena/open-balena-api/config'
 	);
 
 	if (!SUPERUSER_EMAIL || !SUPERUSER_PASSWORD) {
@@ -67,7 +63,7 @@ const loadAdminUserAndOrganization = async () => {
 };
 
 export const postInit = async () => {
-	await synchronizeContracts(getContractRepos());
+	await contracts.synchronizeContracts(getContractRepos());
 	(await import('./device-type.js')).loadDefaultFixtures();
 
 	const { user, org } = await loadAdminUserAndOrganization();

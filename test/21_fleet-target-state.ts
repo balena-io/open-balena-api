@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import type { UserObjectParam } from './test-lib/supertest.js';
 import { supertest } from './test-lib/supertest.js';
-import * as config from '../src/lib/config.js';
+import * as config from '@balena/open-balena-api/config';
 import * as fixtures from './test-lib/fixtures.js';
-import type { Application } from '../src/balena-model.js';
+import type { Application } from '@balena/open-balena-api/models/balena-model.d.ts';
 
 const version = 'resin';
 const POLL_MSEC = 2000;

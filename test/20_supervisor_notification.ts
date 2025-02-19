@@ -5,7 +5,7 @@ import * as fakeDevice from './test-lib/fake-device.js';
 import type { UserObjectParam } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import * as fixtures from './test-lib/fixtures.js';
-import type { Application } from '../src/balena-model.js';
+import type { Application } from '@balena/open-balena-api/models/balena-model.d.ts';
 import { sbvrUtils } from '@balena/pinejs';
 import type { PineTest } from 'pinejs-client-supertest';
 

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { supertest } from './test-lib/supertest.js';
-import { LOGS_HOST, VPN_HOST, VPN_PORT } from '../src/lib/config.js';
+import { LOGS_HOST, VPN_HOST, VPN_PORT } from '@balena/open-balena-api/config';
 
 export default () => {
 	describe('OS configuration endpoints', () => {

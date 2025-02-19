@@ -3,7 +3,10 @@ import * as fixtures from './test-lib/fixtures.js';
 import * as fakeDevice from './test-lib/fake-device.js';
 
 import type { UserObjectParam } from './test-lib/supertest.js';
-import type { Application, Release } from '../src/balena-model.js';
+import type {
+	Application,
+	Release,
+} from '@balena/open-balena-api/models/balena-model.d.ts';
 import { expectResourceToMatch } from './test-lib/api-helpers.js';
 import type { PineTest } from 'pinejs-client-supertest';
 import * as versions from './test-lib/versions.js';

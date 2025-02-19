@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import jsonwebtoken from 'jsonwebtoken';
 import type { PineTest } from 'pinejs-client-supertest';
-import type { Release } from '../../src/balena-model.js';
+import type { Release } from '@balena/open-balena-api/models/balena-model.d.ts';
 import { expect } from 'chai';
 import type { UserObjectParam } from '../test-lib/supertest.js';
 import { supertest } from '../test-lib/supertest.js';
-import type { TokenUserPayload } from '../../src/index.js';
+import type { TokenUserPayload } from '@balena/open-balena-api';
 import type { RequiredField } from '@balena/pinejs/out/sbvr-api/common-types.js';
 import { assertExists, expectToEventually } from './common.js';
 import { sbvrUtils, permissions } from '@balena/pinejs';

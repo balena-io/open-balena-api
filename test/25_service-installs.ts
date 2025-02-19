@@ -6,7 +6,7 @@ import * as versions from './test-lib/versions.js';
 import * as fixtures from './test-lib/fixtures.js';
 
 import { assertExists, expectToEventually } from './test-lib/common.js';
-import * as config from '../src/lib/config.js';
+import * as config from '@balena/open-balena-api/config';
 import { supertest } from './test-lib/supertest.js';
 import {
 	expectNewSettledTasks,
