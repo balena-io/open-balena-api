@@ -184,7 +184,7 @@ export class LokiBackend implements DeviceLogsBackend {
 	): Promise<OutputDeviceLog[]> {
 		const ctx = await assertLokiLogContext($ctx);
 
-		const [, body] = await requestAsync({
+		const [{ statusCode }, body] = await requestAsync({
 			url: `http://${lokiQueryAddress}/loki/api/v1/query_range`,
 			headers: { 'X-Scope-OrgID': ctx.orgId },
 			qs: {
@@ -197,6 +197,12 @@ export class LokiBackend implements DeviceLogsBackend {
 			json: true,
 			gzip: LOKI_HISTORY_GZIP,
 		});
+
+		if (statusCode !== 200) {
+			throw new Error(
+				`Failed to fetch loki history, statusCode=${statusCode}, body=${body}`,
+			);
+		}
 
 		return _(
 			body.data.result as Array<{
