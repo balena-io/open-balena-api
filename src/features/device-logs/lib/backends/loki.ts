@@ -190,8 +190,7 @@ export class LokiBackend implements DeviceLogsBackend {
 			qs: {
 				query: this.getDeviceQuery(ctx),
 				limit: Number.isFinite(count) ? count : 1000,
-				since: '30d',
-				...(start != null ? { start: `${BigInt(start) * 1000000n}` } : {}),
+				start: `${BigInt(start) * 1000000n}`,
 			},
 			timeout: LOKI_HISTORY_TIMEOUT,
 			json: true,

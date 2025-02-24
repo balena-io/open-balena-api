@@ -24,6 +24,8 @@ import {
 import type { SetupOptions } from '../../../index.js';
 import {
 	LOGS_DEFAULT_HISTORY_COUNT,
+	LOGS_DEFAULT_HISTORY_LOOKBACK,
+	LOGS_DEFAULT_HISTORY_STREAMING_LOOKBACK,
 	LOGS_DEFAULT_RETENTION_LIMIT,
 	LOGS_DEFAULT_SUBSCRIPTION_COUNT,
 	LOGS_HEARTBEAT_INTERVAL,
@@ -55,7 +57,12 @@ export const read =
 					? LOGS_DEFAULT_SUBSCRIPTION_COUNT
 					: LOGS_DEFAULT_HISTORY_COUNT,
 			);
-			const start = getStart(req.query.start as string | undefined, undefined);
+			const start = getStart(
+				req.query.start as string | undefined,
+				isStreamingRead
+					? LOGS_DEFAULT_HISTORY_STREAMING_LOOKBACK
+					: LOGS_DEFAULT_HISTORY_LOOKBACK,
+			);
 			if (isStreamingRead) {
 				await handleStreamingRead(ctx, req, res, { count, start });
 				onLogReadStreamInitialized?.(req);
@@ -225,15 +232,15 @@ function getCount(
 
 function getStart(
 	startParam: string | undefined,
-	defaultStart?: number,
-): number | undefined {
+	defaultSince: number,
+): number {
 	let start: number | undefined;
 	if (typeof startParam !== 'string') {
-		start = defaultStart;
+		start = Date.now() - defaultSince;
 	} else {
 		start = checkInt(startParam) || new Date(startParam).getTime();
 		if (isNaN(start)) {
-			start = defaultStart;
+			start = Date.now() - defaultSince;
 		}
 	}
 	if (start == null) {

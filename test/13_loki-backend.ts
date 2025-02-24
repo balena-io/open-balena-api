@@ -42,6 +42,8 @@ const createContext = (extra = {}): LokiLogContext => {
 	};
 };
 
+const start = Date.now();
+
 export default () => {
 	describe('loki backend', () => {
 		it('should successfully publish log', async () => {
@@ -56,7 +58,7 @@ export default () => {
 			const log = createLog();
 			const response = await loki.publish(ctx, [_.clone(log)]);
 			expect(response).to.be.not.null;
-			const history = await loki.history(ctx, { count: 1000 });
+			const history = await loki.history(ctx, { count: 1000, start });
 			expect(history.at(-1)).to.deep.equal(convertToOutputLog(log));
 		});
 
@@ -73,7 +75,7 @@ export default () => {
 			];
 			const response = await loki.publish(ctx, _.cloneDeep(logs));
 			expect(response).to.be.not.null;
-			const history = await loki.history(ctx, { count: 1000 });
+			const history = await loki.history(ctx, { count: 1000, start });
 			expect(history.slice(-5)).to.deep.equal(logs.map(convertToOutputLog));
 		});
 
@@ -84,7 +86,7 @@ export default () => {
 			const logs = [_.clone(log), _.clone(log), _.clone(log)];
 			const response = await loki.publish(ctx, _.cloneDeep(logs));
 			expect(response).to.be.not.null;
-			const history = await loki.history(ctx, { count: 1000 });
+			const history = await loki.history(ctx, { count: 1000, start });
 			expect(history[1].timestamp).to.not.equal(log.timestamp);
 		});
 
