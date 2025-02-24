@@ -5,12 +5,12 @@ import _ from 'lodash';
 import { errors } from '@balena/pinejs';
 import { captureException } from '../../../../infra/error-handling/index.js';
 import {
+	LOGS_DEFAULT_RETENTION_DURATION,
 	LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS,
 	LOGS_SUBSCRIPTION_EXPIRY_SECONDS,
 	REDIS_LOGS_COMPRESSION_ENABLED,
 	REDIS_LOGS_SHARDED_PUBSUB,
 } from '../../../../lib/config.js';
-import { DAYS } from '@balena/env-parsing';
 import type {
 	DeviceLogsBackend,
 	HistoryOpts,
@@ -36,8 +36,7 @@ const redisRO = createIsolatedRedis({ instance: 'logs', readOnly: true });
 
 const { ServiceUnavailableError, BadRequestError } = errors;
 
-// Expire after 30 days of inactivity
-const KEY_EXPIRATION = 30 * DAYS;
+const KEY_EXPIRATION = LOGS_DEFAULT_RETENTION_DURATION;
 const VERSION = 1;
 const BUFFER_ENCODING = 'binary';
 

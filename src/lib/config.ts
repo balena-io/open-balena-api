@@ -10,6 +10,7 @@ import {
 	hostPortsVar,
 	trustProxyVar,
 	arrayVar,
+	DAYS,
 } from '@balena/env-parsing';
 
 // Even though we only use these when TRUST_PROXY we do not conditionally
@@ -366,6 +367,16 @@ export const LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS =
 	LOGS_SUBSCRIPTION_EXPIRY_SECONDS / 2;
 
 export const LOGS_DEFAULT_RETENTION_LIMIT = 1000;
+export const LOGS_DEFAULT_RETENTION_DURATION = 30 * DAYS;
+
+export const LOGS_DEFAULT_HISTORY_STREAMING_LOOKBACK = intVar(
+	'LOGS_DEFAULT_HISTORY_STREAMING_LOOKBACK',
+	1 * DAYS,
+);
+export const LOGS_DEFAULT_HISTORY_LOOKBACK = intVar(
+	'LOGS_DEFAULT_HISTORY_LOOKBACK',
+	LOGS_DEFAULT_RETENTION_DURATION,
+);
 
 export const LOGS_PRIMARY_BACKEND = optionalVar(
 	'LOGS_PRIMARY_BACKEND',
