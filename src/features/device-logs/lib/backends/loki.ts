@@ -15,6 +15,7 @@ import {
 	LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL,
 	LOKI_RETRIES_ENABLED,
 	LOKI_PUSH_TIMEOUT,
+	LOKI_HISTORY_TIMEOUT,
 } from '../../../../lib/config.js';
 import type {
 	DeviceLogsBackend,
@@ -192,6 +193,7 @@ export class LokiBackend implements DeviceLogsBackend {
 				since: '30d',
 				...(start != null ? { start: `${BigInt(start) * 1000000n}` } : {}),
 			},
+			timeout: LOKI_HISTORY_TIMEOUT,
 			json: true,
 			gzip: LOKI_HISTORY_GZIP,
 		});
