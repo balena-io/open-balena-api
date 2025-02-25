@@ -111,6 +111,22 @@ export default () => {
 					expect(body).to.have.a.property('logsEndpoint');
 					expect(body.logsEndpoint).to.match(/^https:\/\//);
 				});
+
+				it('should contain installer: secureboot in response config if asked for secureboot', async function () {
+					const { body } = await supertest(this.user)
+						.post('/download-config')
+						.send({
+							appId: this.application.id,
+							version: 'v2.24.0',
+							deviceType: 'raspberrypi3',
+							secureboot: true,
+						})
+						.expect(200)
+						.expect('content-type', /^application\/json/);
+
+					expect(body).to.have.a.property('installer');
+					expect(body.installer).to.have.a.property('secureboot', true);
+				});
 			});
 		});
 	});

@@ -150,5 +150,13 @@ export const generateConfig = async (
 		config.developmentMode = true;
 	}
 
+	const securebootInstaller = getBodyOrQueryParam(
+		req,
+		'secureboot',
+	)?.toString();
+	if (['true', 'on', '1'].includes(securebootInstaller || '')) {
+		config.installer = { secureboot: true };
+	}
+
 	return config;
 };
