@@ -15,6 +15,7 @@ import {
 	API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT,
 	DEFAULT_SUPERVISOR_POLL_INTERVAL,
 	REDIS,
+	POLL_JITTER_FACTOR,
 } from '../../lib/config.js';
 import { redis, redisRO } from '../../infra/redis/index.js';
 import { setTimeout } from 'timers/promises';
@@ -134,9 +135,6 @@ export const getPollInterval = async (
 	// adjust the value for the jitter in the Supervisor...
 	return pollInterval * POLL_JITTER_FACTOR;
 };
-
-// the maximum time the supervisor will wait between polls...
-export const POLL_JITTER_FACTOR = 1.5;
 
 // these align to the text enums coming from the SBVR definition of available values...
 export enum DeviceOnlineStates {

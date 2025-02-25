@@ -3,13 +3,13 @@ import {
 	CONTRACTS_PUBLIC_REPO_OWNER,
 	CONTRACTS_PUBLIC_REPO_NAME,
 	CONTRACTS_PUBLIC_REPO_BRANCH,
-} from '../../src/lib/config.js';
-import type { RepositoryInfo } from '../../src/features/contracts/index.js';
+} from '@balena/open-balena-api/config';
+import type { contracts } from '@balena/open-balena-api';
 import nock from 'nock';
 import * as tar from 'tar';
 
 export const mockRepo = (
-	repo: RepositoryInfo,
+	repo: contracts.RepositoryInfo,
 	filename = repo.name,
 	persist = false,
 ) => {

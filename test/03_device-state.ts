@@ -6,35 +6,40 @@ import * as fakeDevice from './test-lib/fake-device.js';
 import type { UserObjectParam } from './test-lib/supertest.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
-import * as config from '../src/lib/config.js';
 import {
-	DeviceOnlineStates,
-	getInstance as getDeviceOnlineStateManager,
-	getPollInterval,
-	POLL_JITTER_FACTOR,
-} from '../src/features/device-heartbeat/index.js';
+	config,
+	device as $device,
+	redis as $redis,
+} from '@balena/open-balena-api';
 import { assertExists, itExpectsError, waitFor } from './test-lib/common.js';
 import * as fixtures from './test-lib/fixtures.js';
 import {
 	expectResourceToMatch,
 	thatIsDateStringAfter,
 } from './test-lib/api-helpers.js';
-import { redis, redisRO } from '../src/infra/redis/index.js';
 import { setTimeout } from 'timers/promises';
 import { MINUTES, SECONDS } from '@balena/env-parsing';
 import type { PineTest } from 'pinejs-client-supertest';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
-import type { Application } from '../src/balena-model.js';
+import type { Application } from '@balena/open-balena-api/models/balena-model.d.ts';
 
 const { api } = sbvrUtils;
+
+const { DeviceOnlineStates, getDeviceOnlineStateManager, getPollInterval } =
+	$device;
+const { redis, redisRO } = $redis;
+const { POLL_JITTER_FACTOR } = config;
 
 const POLL_MSEC = 2000;
 const TIMEOUT_SEC = 1;
 
 class StateTracker {
-	public states: { [key: number]: DeviceOnlineStates } = {};
+	public states: { [key: number]: typeof DeviceOnlineStates } = {};
 
-	public stateUpdated = (deviceId: number, newState: DeviceOnlineStates) => {
+	public stateUpdated = (
+		deviceId: number,
+		newState: typeof DeviceOnlineStates,
+	) => {
 		this.states[deviceId] = newState;
 	};
 }
@@ -134,7 +139,7 @@ export default () => {
 
 					getDeviceOnlineStateManager()['updateDeviceModel'] = function (
 						deviceId: number,
-						newState: DeviceOnlineStates,
+						newState: typeof DeviceOnlineStates,
 					) {
 						tracker.stateUpdated(deviceId, newState);
 						return updateDeviceModel.call(this, deviceId, newState);

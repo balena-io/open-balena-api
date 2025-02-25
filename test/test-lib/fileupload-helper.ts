@@ -1,5 +1,5 @@
 import * as fs from 'fs/promises';
-import { requestAsync } from '../../src/infra/request-promise/index.js';
+import { request } from '@balena/open-balena-api';
 import { expect } from 'chai';
 
 export async function checkFileExists(
@@ -10,7 +10,7 @@ export async function checkFileExists(
 	const start = Date.now();
 	while (Date.now() - start < timeout) {
 		try {
-			const [response] = await requestAsync({ url, method: 'GET' });
+			const [response] = await request.requestAsync({ url, method: 'GET' });
 			if (response.statusCode !== 200) {
 				return false;
 			}
@@ -23,7 +23,7 @@ export async function checkFileExists(
 }
 
 export async function expectEqualBlobs(url: string, localBlobPath: string) {
-	const [response, fileRes] = await requestAsync({
+	const [response, fileRes] = await request.requestAsync({
 		url,
 		method: 'GET',
 		encoding: null,

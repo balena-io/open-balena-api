@@ -8,11 +8,14 @@ import path from 'path';
 import { randomUUID } from 'node:crypto';
 
 import type { Headers } from 'request';
-import { API_HOST } from '../../src/lib/config.js';
-import { requestAsync } from '../../src/infra/request-promise/index.js';
+import { API_HOST } from '@balena/open-balena-api/config';
+import { request } from '@balena/open-balena-api';
 import { supertest } from './supertest.js';
-import type { Device, Organization } from '../../src/balena-model.js';
-import type Model from '../../src/balena-model.js';
+import type {
+	Device,
+	Organization,
+} from '@balena/open-balena-api/models/balena-model.d.ts';
+import type Model from '@balena/open-balena-api/models/balena-model.d.ts';
 import { assertExists, expectToEventually, waitFor } from './common.js';
 
 const { api } = sbvrUtils;
@@ -54,7 +57,7 @@ const createResource = async (args: {
 		headers.Authorization = `Bearer ${user.token}`;
 	}
 
-	const [response, responseBody] = await requestAsync({
+	const [response, responseBody] = await request.requestAsync({
 		url: `http://${API_HOST}/${version}/${resource}`,
 		headers,
 		method,

@@ -3,7 +3,7 @@ import type { UserObjectParam } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import * as fixtures from './test-lib/fixtures.js';
 import _ from 'lodash';
-import type { Application } from '../src/balena-model.js';
+import type { Application } from '@balena/open-balena-api/models/balena-model.d.ts';
 import { setTimeout } from 'timers/promises';
 import type { PineTest } from 'pinejs-client-supertest';
 import { assertExists, itExpectsError } from './test-lib/common.js';
