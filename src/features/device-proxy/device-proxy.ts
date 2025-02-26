@@ -217,12 +217,16 @@ async function requestDevices({
 		// Check for device update permission, except for
 		// internal operation of the platform.
 		if (method !== 'GET' && req !== permissions.root) {
+			const urlAction = url.split('/').pop() ?? '';
+			const action = ['purge', 'shutdown'].includes(urlAction)
+				? urlAction
+				: 'update';
 			await Promise.all(
 				deviceIds.map(async (deviceId) => {
 					const res = (await resinApi.request({
 						method: 'POST',
 						url: `device(${deviceId})/canAccess`,
-						body: { action: 'update' },
+						body: { action },
 					})) as { d?: Array<{ id: number }> };
 
 					if (res?.d?.[0]?.id !== deviceId) {
