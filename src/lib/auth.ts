@@ -56,6 +56,11 @@ export const ROLES: {
 		'resin.device_environment_variable.all',
 		'resin.device_tag.all',
 		'resin.device_service_environment_variable.all',
+
+		// These are for the supervisor proxy
+		'resin.device.purge',
+		'resin.device.shutdown',
+
 		'resin.image.all',
 		'resin.image__is_part_of__release.all',
 		'resin.image_environment_variable.all',
@@ -80,6 +85,11 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.device_type.read?describes__device/canAccess()',
 	`resin.device.read?${matchesNonFrozenDeviceActor()}`,
 	`resin.device.update?${matchesNonFrozenDeviceActor()}`,
+
+	// These are for the supervisor proxy
+	'resin.device.purge',
+	'resin.device.shutdown',
+
 	'resin.application.read?owns__device/canAccess() or (is_public eq true and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
 	'resin.application_tag.read?application/canAccess()',
 	'resin.device_config_variable.read?device/canAccess()',
