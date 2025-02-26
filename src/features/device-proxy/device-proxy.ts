@@ -125,7 +125,16 @@ export const proxy = async (req: Request, res: Response) => {
 			throw new BadRequestError('At least one filter must be specified');
 		}
 
-		const responses = await requestDevices({ url, req, filter, data, method });
+		const responses = await requestDevices({
+			url,
+			req,
+			filter,
+			data,
+			method,
+			// Only pass appId if we're not filtering by deviceId or uuid
+			// This means we can check permissions on the application level only
+			...(deviceId == null && uuid == null ? { appId } : {}),
+		});
 		if (responses.length === 1) {
 			validateSupervisorResponse(responses[0], req, res, filter);
 			return;
@@ -146,10 +155,29 @@ interface FixedMethodRequestDevicesOpts {
 	data?: AnyObject;
 	req?: sbvrUtils.Passthrough['req'];
 	wait?: boolean;
+	appId?: number;
 }
 
 interface RequestDevicesOpts extends FixedMethodRequestDevicesOpts {
 	method: string;
+}
+
+// Check user resource access via /canAccess
+async function checkResourceAccess(
+	client: typeof api.resin,
+	resource: 'application' | 'device',
+	id: number,
+	permission: string,
+): Promise<void> {
+	const res = (await client.request({
+		method: 'POST',
+		url: `${resource}(${id})/canAccess`,
+		body: { action: permission },
+	})) as { d?: Array<{ id: number }> };
+
+	if (res?.d?.[0]?.id !== id) {
+		throw new errors.ForbiddenError();
+	}
 }
 
 // - req is the express req object, if passed then(the permissions of the user making
@@ -178,6 +206,7 @@ async function requestDevices({
 	req,
 	wait = true,
 	method = 'POST',
+	appId,
 }: RequestDevicesOpts): Promise<undefined | RequestResponse[]> {
 	if (url == null) {
 		throw new BadRequestError('You must specify a url to request!');
@@ -214,22 +243,20 @@ async function requestDevices({
 			}
 			throw new NotFoundError('No online device(s) found');
 		}
-		// Check for device update permission, except for
-		// internal operation of the platform.
+		// Check resource access, unless request is for internal operations of the platform.
 		if (method !== 'GET' && req !== permissions.root) {
-			await Promise.all(
-				deviceIds.map(async (deviceId) => {
-					const res = (await resinApi.request({
-						method: 'POST',
-						url: `device(${deviceId})/canAccess`,
-						body: { action: 'update' },
-					})) as { d?: Array<{ id: number }> };
-
-					if (res?.d?.[0]?.id !== deviceId) {
-						throw new errors.ForbiddenError();
-					}
-				}),
-			);
+			const permission = ['PUT', 'PATCH', 'POST', 'DELETE'].includes(method)
+				? 'supervisor-proxy-write'
+				: 'update';
+			if (appId != null) {
+				await checkResourceAccess(resinApi, 'application', appId, permission);
+			} else {
+				await Promise.all(
+					deviceIds.map(async (deviceId) =>
+						checkResourceAccess(resinApi, 'device', deviceId, permission),
+					),
+				);
+			}
 		}
 		// And now fetch device data with full privs
 		return await api.resin.get({

@@ -43,6 +43,7 @@ export const ROLES: {
 		'resin.actor.delete?id eq @__ACTOR_ID',
 		'resin.api_key.read?is_of__actor eq @__ACTOR_ID',
 		'resin.application.all',
+		'resin.application.supervisor-proxy-write',
 		'resin.device_type.read',
 		'resin.device_type_alias.read',
 		'resin.cpu_architecture.read',
@@ -51,6 +52,7 @@ export const ROLES: {
 		'resin.application_tag.all',
 		'resin.application_type.all',
 		'resin.device.all',
+		'resin.device.supervisor-proxy-write',
 		'resin.device.tunnel-22222',
 		'resin.device_config_variable.all',
 		'resin.device_environment_variable.all',
@@ -79,6 +81,7 @@ export const ROLES: {
 export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.device_type.read?describes__device/canAccess()',
 	`resin.device.read?${matchesNonFrozenDeviceActor()}`,
+	`resin.device.supervisor-proxy-write?${matchesNonFrozenDeviceActor()}`,
 	`resin.device.update?${matchesNonFrozenDeviceActor()}`,
 	'resin.application.read?owns__device/canAccess() or (is_public eq true and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
 	'resin.application_tag.read?application/canAccess()',
