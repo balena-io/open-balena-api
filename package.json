@@ -136,7 +136,7 @@
     "tar": "^7.4.3",
     "thirty-two": "^1.0.2",
     "typed-error": "^3.2.2",
-    "typescript": "^5.7.3",
+    "typescript": "^5.8.2",
     "uuid": "^11.0.5",
     "validator": "^13.12.0",
     "ws": "^8.18.0"
