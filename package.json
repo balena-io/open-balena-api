@@ -141,6 +141,9 @@
     "validator": "^13.12.0",
     "ws": "^8.18.0"
   },
+  "overrides": {
+    "@balena/odata-to-abstract-sql": "7.2.0-build-orderby-reverse-navigation-resource-dc1da8e6a2b77da550885044a80d7778d3887903-1"
+  },
   "devDependencies": {
     "@balena/lint": "^9.1.3",
     "@types/chai": "^5.0.1",
