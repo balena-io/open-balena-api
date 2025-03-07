@@ -1,4 +1,4 @@
-FROM balena/open-balena-base:18.0.26 AS runtime
+FROM balena/open-balena-base:18.0.27 AS runtime
 
 EXPOSE 80
 
