@@ -93,6 +93,27 @@ function backoff<T extends (...args: any[]) => any>(
 	};
 }
 
+const getLokiContext = _.once(() =>
+	sbvrUtils.api.resin.prepare(
+		{
+			resource: 'application',
+			passthrough: { req: permissions.rootRead },
+			options: {
+				$select: ['id', 'organization'],
+				$filter: {
+					owns__device: {
+						$any: {
+							$alias: 'd',
+							$expr: { d: { id: { '@': 'id' } } },
+						},
+					},
+				},
+			},
+		},
+		{ id: ['number'] },
+	),
+);
+
 /**
  * This converts a standard log context to a loki context, if a loki context is the most common
  * then it would make sense to combine this fetch in the initial context fetch but currently that
@@ -105,29 +126,15 @@ async function assertLokiLogContext(
 		return ctx as types.RequiredField<typeof ctx, 'appId' | 'orgId'>;
 	}
 
-	const device = await sbvrUtils.api.resin.get({
-		resource: 'device',
-		id: ctx.id,
-		passthrough: { req: permissions.root },
-		options: {
-			$select: ['belongs_to__application'],
-			$expand: { belongs_to__application: { $select: ['id', 'organization'] } },
-		},
-	});
+	const [app] = await getLokiContext()({ id: ctx.id });
 
-	if (device == null) {
-		throw new Error(`Device '${ctx.id}' not found`);
-	}
-
-	if (device.belongs_to__application[0] == null) {
+	if (app == null) {
 		throw new Error(`Device '${ctx.id}' app not found`);
 	}
 
 	// Mutate so that we don't have to repeatedly amend the same context and instead cache it
-	(ctx as Writable<typeof ctx>).appId =
-		`${device.belongs_to__application[0].id}`;
-	(ctx as Writable<typeof ctx>).orgId =
-		`${device.belongs_to__application[0].organization.__id}`;
+	(ctx as Writable<typeof ctx>).appId = `${app.id}`;
+	(ctx as Writable<typeof ctx>).orgId = `${app.organization.__id}`;
 
 	return ctx as types.RequiredField<typeof ctx, 'appId' | 'orgId'>;
 }
