@@ -16,6 +16,7 @@ import {
 	LOKI_RETRIES_ENABLED,
 	LOKI_PUSH_TIMEOUT,
 	LOKI_HISTORY_TIMEOUT,
+	DEVICE_LOGS_LOKI_CONTEXT_CACHE_TIMEOUT,
 } from '../../../../lib/config.js';
 import type {
 	DeviceLogsBackend,
@@ -44,6 +45,7 @@ import { omitNanoTimestamp } from '../config.js';
 import { requestAsync } from '../../../../infra/request-promise/index.js';
 import WebSocket from 'ws';
 import querystring from 'node:querystring';
+import { multiCacheMemoizee } from '../../../../infra/cache/multi-level-memoizee.js';
 
 const { BadRequestError } = errors;
 
@@ -92,27 +94,49 @@ function backoff<T extends (...args: any[]) => any>(
 		throw Error(`Backoff exceeded`);
 	};
 }
-
-const getLokiContext = _.once(() =>
-	sbvrUtils.api.resin.prepare(
-		{
-			resource: 'application',
-			passthrough: { req: permissions.rootRead },
-			options: {
-				$select: ['id', 'organization'],
-				$filter: {
-					owns__device: {
-						$any: {
-							$alias: 'd',
-							$expr: { d: { id: { '@': 'id' } } },
+const getLokiContext = (() => {
+	const $getLokiContext = _.once(() =>
+		sbvrUtils.api.resin.prepare(
+			{
+				resource: 'application',
+				passthrough: { req: permissions.rootRead },
+				options: {
+					$select: ['id', 'organization'],
+					$filter: {
+						owns__device: {
+							$any: {
+								$alias: 'd',
+								$expr: { d: { id: { '@': 'id' } } },
+							},
 						},
 					},
 				},
 			},
+			{ id: ['number'] },
+		),
+	);
+	return multiCacheMemoizee(
+		async (
+			deviceId: number,
+		): Promise<false | { id: string; orgId: string }> => {
+			const [app] = await $getLokiContext()({ id: deviceId });
+			if (app == null) {
+				return false;
+			}
+			return {
+				id: `${app.id}`,
+				orgId: `${app.organization.__id}`,
+			};
 		},
-		{ id: ['number'] },
-	),
-);
+		{
+			cacheKey: 'getLokiContext',
+			promise: true,
+			primitive: true,
+			maxAge: DEVICE_LOGS_LOKI_CONTEXT_CACHE_TIMEOUT,
+		},
+		{ useVersion: false },
+	);
+})();
 
 /**
  * This converts a standard log context to a loki context, if a loki context is the most common
@@ -126,15 +150,15 @@ async function assertLokiLogContext(
 		return ctx as types.RequiredField<typeof ctx, 'appId' | 'orgId'>;
 	}
 
-	const [app] = await getLokiContext()({ id: ctx.id });
+	const app = await getLokiContext(ctx.id);
 
-	if (app == null) {
+	if (app === false) {
 		throw new Error(`Device '${ctx.id}' app not found`);
 	}
 
 	// Mutate so that we don't have to repeatedly amend the same context and instead cache it
-	(ctx as Writable<typeof ctx>).appId = `${app.id}`;
-	(ctx as Writable<typeof ctx>).orgId = `${app.organization.__id}`;
+	(ctx as Writable<typeof ctx>).appId = app.id;
+	(ctx as Writable<typeof ctx>).orgId = app.orgId;
 
 	return ctx as types.RequiredField<typeof ctx, 'appId' | 'orgId'>;
 }
