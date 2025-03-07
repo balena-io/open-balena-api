@@ -75,6 +75,24 @@ export default () => {
 							});
 						}),
 					);
+					await pineUser.post({
+						resource: 'application_tag',
+						body: {
+							application: appId,
+							tag_key: `test-app-sorting-tag`,
+							value: `pos:${Math.floor((applicationCount - i) / 2) * 10}`,
+						},
+					});
+					if (i > 0) {
+						await pineUser.post({
+							resource: 'application_tag',
+							body: {
+								application: appId,
+								tag_key: `test-app-sorting-partial-tag`,
+								value: `pos:${Math.floor((applicationCount - i) / 2) * 10}`,
+							},
+						});
+					}
 					await setTimeout(100);
 				}
 
@@ -405,34 +423,90 @@ export default () => {
 				});
 
 				// This should be fixed once https://github.com/balena-io-modules/odata-to-abstract-sql/pull/160 is also merged & bumped
-				itExpectsError(
-					'should also include the unpinned devices when ordering by the commit of their pinned release',
-					async () => {
-						const { body } = await pineUser.get({
-							resource: 'device',
-							options: {
-								$select: 'device_name',
-								$expand: {
-									[isPinnedOnReleaseProp]: {
-										$select: 'commit',
+				it('should also include the unpinned devices when ordering by the commit of their pinned release', async () => {
+					const { body } = await pineUser.get({
+						resource: 'device',
+						options: {
+							$select: 'device_name',
+							$expand: {
+								[isPinnedOnReleaseProp]: {
+									$select: 'commit',
+								},
+							},
+							$orderby: [`${isPinnedOnReleaseProp}/commit desc`],
+						},
+					});
+					expect(
+						body.map((d) => [
+							d.device_name,
+							d[isPinnedOnReleaseProp][0]?.commit,
+						]),
+					).deep.equal([
+						['device3', undefined],
+						['device1', 'deadc0de'],
+						['device2', 'deadc0d3'],
+					]);
+				});
+			});
+
+			describe('Ordering by fields of reverse navigation resources', () => {
+				it('should order applications by the value of a specific tag', async () => {
+					const { body } = await pineUser.get({
+						resource: 'application',
+						options: {
+							$select: 'app_name',
+							$expand: {
+								application_tag: {
+									$select: 'value',
+									$filter: {
+										tag_key: 'test-app-sorting-tag',
 									},
 								},
-								$orderby: [`${isPinnedOnReleaseProp}/commit desc`],
 							},
-						});
-						expect(
-							body.map((d) => [
-								d.device_name,
-								d[isPinnedOnReleaseProp][0]?.commit,
-							]),
-						).deep.equal([
-							['device3', undefined],
-							['device1', 'deadc0de'],
-							['device2', 'deadc0d3'],
-						]);
-					},
-					`expected [ [ 'device1', 'deadc0de' ], …(1) ] to deeply equal [ [ 'device3', undefined ], …(2) ]`,
-				);
+							$orderby: [
+								`application_tag(tag_key='test-app-sorting-tag')/value asc`,
+								{ app_name: 'asc' },
+							],
+						},
+					});
+					expect(
+						body.map((app) => [app.app_name, app.application_tag[0].value]),
+					).deep.equal([
+						['appapp3', 'pos:0'],
+						['appapp1', 'pos:10'],
+						['appapp2', 'pos:10'],
+						['appapp0', 'pos:20'],
+					]);
+				});
+
+				it('should order applications by the value of a specific tag that is not defined in all applications', async () => {
+					const { body } = await pineUser.get({
+						resource: 'application',
+						options: {
+							$select: 'app_name',
+							$expand: {
+								application_tag: {
+									$select: 'value',
+									$filter: {
+										tag_key: 'test-app-sorting-partial-tag',
+									},
+								},
+							},
+							$orderby: [
+								`application_tag(tag_key='test-app-sorting-partial-tag')/value asc`,
+								{ app_name: 'asc' },
+							],
+						},
+					});
+					expect(
+						body.map((app) => [app.app_name, app.application_tag[0]?.value]),
+					).deep.equal([
+						['appapp3', 'pos:0'],
+						['appapp1', 'pos:10'],
+						['appapp2', 'pos:10'],
+						['appapp0', undefined],
+					]);
+				});
 			});
 		});
 	});

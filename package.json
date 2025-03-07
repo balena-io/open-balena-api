@@ -141,6 +141,9 @@
     "validator": "^13.12.0",
     "ws": "^8.18.0"
   },
+  "overrides": {
+    "@balena/odata-to-abstract-sql": "7.1.5-build-left-join-orderby-reverse-navigation-resource-53673b4ed6def46271c95cb316a6d589df516413-1"
+  },
   "devDependencies": {
     "@balena/lint": "^9.1.3",
     "@types/chai": "^5.0.1",
