@@ -1,6 +1,6 @@
 import type Model from '../../balena-model.js';
 import _ from 'lodash';
-import Bluebird from 'bluebird';
+import pMap from 'p-map';
 import { fetchContractsLocally, getContracts } from './contracts-directory.js';
 import type { types } from '@balena/pinejs';
 import { sbvrUtils, permissions } from '@balena/pinejs';
@@ -159,7 +159,7 @@ const upsertEntries = async (
 	existingData: Map<string | number | boolean, AnyObject>,
 	newData: Array<Promise<AnyObject>>,
 ) => {
-	await Bluebird.map(
+	await pMap(
 		newData,
 		async (fullEntry) => {
 			// Has only the fields that the DB's resource has (primitives & FK),

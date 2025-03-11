@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import Bluebird from 'bluebird';
+import pTimeout from 'p-timeout';
 import { expect } from 'chai';
 import { LokiBackend } from '../src/features/device-logs/lib/backends/loki.js';
 import { getNanoTimestamp } from '../src/lib/utils.js';
@@ -94,36 +94,44 @@ export default () => {
 			const ctx = createContext();
 			const loki = new LokiBackend();
 			const log = createLog();
-			await new Bluebird(async (resolve) => {
-				void loki.subscribe(ctx, resolve);
-				await setTimeout(100); // wait for the subscription to connect
-				await loki.publish(ctx, [_.clone(log)]);
-			}).timeout(5000, 'Subscription did not receive log');
+			const p = pTimeout(
+				new Promise((resolve) => {
+					void loki.subscribe(ctx, resolve);
+				}),
+				{ milliseconds: 5000, message: 'Subscription did not receive log' },
+			);
+			await setTimeout(100); // wait for the subscription to connect
+			await loki.publish(ctx, [_.clone(log)]);
+			await p;
 		});
 
 		it('should subscribe and receive multiple published logs', async function () {
 			const ctx = createContext({ belongs_to__application: 2 });
 			const loki = new LokiBackend();
-			await new Bluebird(async (resolve) => {
-				let countLogs = 0;
-				void loki.subscribe(ctx, () => {
-					countLogs += 1;
-					if (countLogs === 5) {
-						resolve();
-					}
-				});
-				// let time pass after subscription so multiple logs with different times can be published
-				await setTimeout(100);
-				const now = getNanoTimestamp();
-				const logs = [
-					createLog({ nanoTimestamp: now - 4n }),
-					createLog({ nanoTimestamp: now - 3n }),
-					createLog({ nanoTimestamp: now - 2n, isStdErr: false }),
-					createLog({ nanoTimestamp: now - 1n, isStdErr: false }),
-					createLog({ nanoTimestamp: now, isStdErr: false, isSystem: false }),
-				];
-				await loki.publish(ctx, logs);
-			}).timeout(5000, 'Subscription did not receive logs');
+			const p = pTimeout(
+				new Promise<void>((resolve) => {
+					let countLogs = 0;
+					void loki.subscribe(ctx, () => {
+						countLogs += 1;
+						if (countLogs === 5) {
+							resolve();
+						}
+					});
+				}),
+				{ milliseconds: 5000, message: 'Subscription did not receive logs' },
+			);
+			// let time pass after subscription so multiple logs with different times can be published
+			await setTimeout(100);
+			const now = getNanoTimestamp();
+			const logs = [
+				createLog({ nanoTimestamp: now - 4n }),
+				createLog({ nanoTimestamp: now - 3n }),
+				createLog({ nanoTimestamp: now - 2n, isStdErr: false }),
+				createLog({ nanoTimestamp: now - 1n, isStdErr: false }),
+				createLog({ nanoTimestamp: now, isStdErr: false, isSystem: false }),
+			];
+			await loki.publish(ctx, logs);
+			await p;
 		});
 	});
 };
