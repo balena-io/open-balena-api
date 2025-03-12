@@ -1,4 +1,4 @@
-import Bluebird from 'bluebird';
+import pProps from 'p-props';
 import _ from 'lodash';
 import randomstring from 'randomstring';
 import memoize from 'memoizee';
@@ -219,7 +219,7 @@ export async function createAllPermissions(
 						.then(({ id }) => id);
 				}
 			}
-			return await Bluebird.props<Dictionary<number>>(result);
+			return await pProps(result);
 		});
 
 	const createRolePermissions = async (
@@ -278,9 +278,10 @@ export async function createAllPermissions(
 		}
 	};
 
-	const rolesPromise = Bluebird.props<Dictionary<{ id: number }>>(
-		_.mapValues(roleMap, createRolePermissions),
-	).tap(async (resolvedRoleMap) => {
+	const rolesPromise = (async () => {
+		const resolvedRoleMap = await pProps(
+			_.mapValues(roleMap, createRolePermissions),
+		);
 		// Assign user roles
 		await Promise.all(
 			_.map(userMap, async (userEmails, roleName) => {
@@ -340,7 +341,8 @@ export async function createAllPermissions(
 			captureException(err, 'Error on clearing stale permissions');
 			throw err;
 		}
-	});
+		return resolvedRoleMap;
+	})();
 
 	const apiKeysPromise = Promise.all(
 		_.toPairs(apiKeyMap).map(

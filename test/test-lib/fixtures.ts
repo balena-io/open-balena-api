@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 import type { types } from '@balena/pinejs';
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import Bluebird from 'bluebird';
+import pProps from 'p-props';
 import fs from 'fs';
 import _ from 'lodash';
 import path from 'path';
@@ -674,9 +674,7 @@ const loadFixtureModel = (
 	fixtures: PendingFixtures,
 	data: types.AnyObject,
 ) => {
-	return _.mapValues(data, async (d) =>
-		loader(d, await Bluebird.props(fixtures)),
-	);
+	return _.mapValues(data, async (d) => loader(d, await pProps(fixtures)));
 };
 
 const defaultFixtures: PendingFixtures = {};
@@ -696,9 +694,7 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 	const fixtures = { ...defaultFixtures };
 
 	if (fixtureName == null) {
-		return await Bluebird.props(
-			_.mapValues(fixtures, (fx) => Bluebird.props(fx)),
-		);
+		return await pProps(_.mapValues(fixtures, async (fx) => pProps(await fx)));
 	}
 
 	const files = await fs.promises.readdir(
@@ -725,7 +721,5 @@ export const load = async (fixtureName?: string): Promise<Fixtures> => {
 		})();
 	}
 
-	return await Bluebird.props(
-		_.mapValues(fixtures, (fx) => Bluebird.props(fx)),
-	);
+	return await pProps(_.mapValues(fixtures, async (fx) => pProps(await fx)));
 };
