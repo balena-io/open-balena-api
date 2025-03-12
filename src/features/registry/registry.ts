@@ -22,6 +22,7 @@ import {
 	AUTH_RESINOS_REGISTRY_CODE,
 	GET_SUBJECT_CACHE_TIMEOUT,
 	REGISTRY2_HOST,
+	REGISTRY_TOKEN_EXPIRY_SECONDS,
 	RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
 	RESOLVE_IMAGE_LOCATION_CACHE_TIMEOUT,
 	RESOLVE_IMAGE_READ_ACCESS_CACHE_TIMEOUT,
@@ -30,10 +31,6 @@ import {
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
-
-// Set a large expiry so that huge pulls/pushes go through
-// without needing to re-authenticate mid-process.
-const TOKEN_EXPIRY_MINUTES = 240; // 4 hours
 
 const RESINOS_REPOSITORY = 'resin/resinos';
 const SUPERVISOR_REPOSITORIES = /^resin\/(?:[a-zA-Z0-9]+-)+supervisor$/;
@@ -573,7 +570,7 @@ const generateToken = (
 		issuer: CERT.issuer,
 		audience,
 		subject,
-		expiresIn: 60 * TOKEN_EXPIRY_MINUTES,
+		expiresIn: REGISTRY_TOKEN_EXPIRY_SECONDS,
 		keyid: CERT.kid,
 	};
 	return jsonwebtoken.sign(payload, CERT.key, options);

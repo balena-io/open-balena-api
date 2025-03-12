@@ -11,6 +11,7 @@ import {
 	trustProxyVar,
 	arrayVar,
 	DAYS,
+	SECONDS_PER_HOUR,
 } from '@balena/env-parsing';
 
 // Even though we only use these when TRUST_PROXY we do not conditionally
@@ -459,6 +460,12 @@ export const TOKEN_AUTH_CERT_PUB = requiredVar('TOKEN_AUTH_CERT_PUB');
 export const TOKEN_AUTH_JWT_ALGO = requiredVar('TOKEN_AUTH_JWT_ALGO');
 export const VPN_SERVICE_API_KEY = requiredVar('VPN_SERVICE_API_KEY');
 export const VPN_GUEST_API_KEY = optionalVar('VPN_GUEST_API_KEY');
+
+/** Set a large expiry so that huge pulls/pushes go through without needing to re-authenticate mid-process. */
+export const REGISTRY_TOKEN_EXPIRY_SECONDS = intVar(
+	'REGISTRY_TOKEN_EXPIRY_SECONDS',
+	4 * SECONDS_PER_HOUR,
+);
 
 export let DEFAULT_SUPERVISOR_POLL_INTERVAL = intVar(
 	'DEFAULT_SUPERVISOR_POLL_INTERVAL',
