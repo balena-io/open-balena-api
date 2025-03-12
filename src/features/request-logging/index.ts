@@ -62,7 +62,6 @@ export const setupRequestLogging = (
 	app.use(
 		morgan(
 			(tokens, req, res) => {
-				const date = new Date().toISOString();
 				const url = $getUrl(req);
 				const statusCode = tokens.status(req, res) ?? '-';
 				const responseTime = tokens['response-time'](req, res) ?? '-';
@@ -70,9 +69,7 @@ export const setupRequestLogging = (
 				const callerId = getCallerId(req);
 				const traceId = trace.getActiveSpan()?.spanContext().traceId ?? '-';
 
-				return `${date} ${getIP(req)} ${traceId} ${callerId} ${
-					req.method
-				} ${url} ${statusCode} ${responseTime}ms ${balenaClient}`;
+				return `${getIP(req)} ${traceId} ${callerId} ${req.method} ${url} ${statusCode} ${responseTime}ms ${balenaClient}`;
 			},
 			{
 				skip: (req) => req.skipLogging as boolean,
