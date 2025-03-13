@@ -717,6 +717,8 @@ export interface Device {
 		mac_address: Types['Short Text']['Read'] | null;
 		memory_usage: Types['Integer']['Read'] | null;
 		memory_total: Types['Integer']['Read'] | null;
+		secureboot_enabled: Types['Boolean']['Read'] | null;
+		storage_encrypted: Types['Boolean']['Read'] | null;
 		storage_block_device: Types['Short Text']['Read'] | null;
 		storage_usage: Types['Integer']['Read'] | null;
 		storage_total: Types['Integer']['Read'] | null;
@@ -828,6 +830,8 @@ export interface Device {
 		mac_address: Types['Short Text']['Write'] | null;
 		memory_usage: Types['Integer']['Write'] | null;
 		memory_total: Types['Integer']['Write'] | null;
+		secureboot_enabled: Types['Boolean']['Write'] | null;
+		storage_encrypted: Types['Boolean']['Write'] | null;
 		storage_block_device: Types['Short Text']['Write'] | null;
 		storage_usage: Types['Integer']['Write'] | null;
 		storage_total: Types['Integer']['Write'] | null;

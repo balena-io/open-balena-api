@@ -1465,8 +1465,10 @@ export default () => {
 							api_port: 48484,
 							cpu_usage: 34,
 							cpu_temp: 56,
+							secureboot_enabled: false,
 							memory_usage: 1000, // 1GB in MiB
 							memory_total: 4000, // 4GB in MiB
+							storage_encrypted: false,
 							storage_block_device: '/dev/mmcblk0',
 							storage_usage: 1000, // 1GB in MiB
 							storage_total: 64000, // 64GB in MiB
