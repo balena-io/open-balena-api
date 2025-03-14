@@ -48,6 +48,8 @@ export type StatePatchV3Body = {
 		api_secret?: string;
 		memory_usage?: number;
 		memory_total?: number;
+		secureboot_enabled?: boolean;
+		storage_encrypted?: boolean;
 		storage_block_device?: string;
 		storage_usage?: number;
 		storage_total?: number;
