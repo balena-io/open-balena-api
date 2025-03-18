@@ -146,6 +146,9 @@ services:
         - /usr/src/app/node_modules/nan
         - /usr/src/app/node_modules/node-addon-api
         - /usr/src/app/node_modules/@napi-rs
+        - /usr/src/app/node_modules/@swc
+        - /usr/src/app/node_modules/@oxc-resolver
+        - /usr/src/app/node_modules/oxc-resolver
         - ./package.json:/usr/src/app/package.json
         - ./package-lock.json:/usr/src/app/package-lock.json
         - ./config.ts:/usr/src/app/config.ts
