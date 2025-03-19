@@ -1,4 +1,3 @@
-import Bluebird from 'bluebird';
 import type { RequestHandler } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import passport from 'passport';
@@ -58,48 +57,54 @@ export const createStrategy = (
 			secretOrKey: JSON_WEB_TOKEN_SECRET,
 			jwtFromRequest,
 		},
-		(jwtUser: UnparsedCreds, done) =>
-			Bluebird.try(async (): Promise<Creds> => {
-				if (jwtUser == null) {
-					throw new InvalidJwtSecretError();
-				}
-				if ('service' in jwtUser && jwtUser.service) {
-					const { service, apikey } = jwtUser;
-					const apiKeyPermissions =
-						await permissions.getApiKeyPermissions(apikey);
-					return { service, apikey, permissions: apiKeyPermissions };
-				} else if (
-					'access' in jwtUser &&
-					jwtUser.access?.actor &&
-					jwtUser.access?.permissions
-				) {
-					return jwtUser.access;
-				} else if ('id' in jwtUser) {
-					const user = await fetchUser(jwtUser.id);
-					if (user == null) {
+		async (jwtUser: UnparsedCreds, done) => {
+			try {
+				const result = await (async () => {
+					if (jwtUser == null) {
 						throw new InvalidJwtSecretError();
 					}
+					if ('service' in jwtUser && jwtUser.service) {
+						const { service, apikey } = jwtUser;
+						const apiKeyPermissions =
+							await permissions.getApiKeyPermissions(apikey);
+						return { service, apikey, permissions: apiKeyPermissions };
+					} else if (
+						'access' in jwtUser &&
+						jwtUser.access?.actor &&
+						jwtUser.access?.permissions
+					) {
+						return jwtUser.access;
+					} else if ('id' in jwtUser) {
+						const user = await fetchUser(jwtUser.id);
+						if (user == null) {
+							throw new InvalidJwtSecretError();
+						}
 
-					// Default both to null so that we don't hit issues with null !== undefined
-					const userSecret = user.jwt_secret ?? null;
-					const jwtSecret = jwtUser.jwt_secret ?? null;
+						// Default both to null so that we don't hit issues with null !== undefined
+						const userSecret = user.jwt_secret ?? null;
+						const jwtSecret = jwtUser.jwt_secret ?? null;
 
-					if (userSecret !== jwtSecret) {
-						throw new InvalidJwtSecretError();
+						if (userSecret !== jwtSecret) {
+							throw new InvalidJwtSecretError();
+						}
+
+						const userPermissions = await permissions.getUserPermissions(
+							jwtUser.id,
+						);
+
+						const processedJwtUser = jwtUser as ResolvedUserPayload;
+						processedJwtUser.actor = user.actor.__id;
+						processedJwtUser.permissions = userPermissions;
+						return processedJwtUser;
+					} else {
+						throw new Error('Invalid JWT');
 					}
-
-					const userPermissions = await permissions.getUserPermissions(
-						jwtUser.id,
-					);
-
-					const processedJwtUser = jwtUser as ResolvedUserPayload;
-					processedJwtUser.actor = user.actor.__id;
-					processedJwtUser.permissions = userPermissions;
-					return processedJwtUser;
-				} else {
-					throw new Error('Invalid JWT');
-				}
-			}).nodeify(done),
+				})();
+				done(null, result);
+			} catch (e) {
+				done(e);
+			}
+		},
 	);
 
 export const middleware: RequestHandler = (req, res, next) => {
