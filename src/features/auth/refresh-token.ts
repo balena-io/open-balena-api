@@ -27,7 +27,7 @@ export const refreshToken: RequestHandler = async (req, res) => {
 			res.status(401).end();
 			return;
 		}
-		captureException(err, 'Error creating refreshed token', { req });
+		captureException(err, 'Error creating refreshed token');
 		res.status(404).end();
 	}
 };

@@ -38,7 +38,7 @@ const badSupervisorResponse = (
 	const err = new Error(
 		`${reason} (device: ${JSON.stringify(filter)}) (url: ${req.originalUrl})`,
 	);
-	captureException(err, 'Received invalid supervisor response', { req });
+	captureException(err, 'Received invalid supervisor response');
 	res.status(500).json({ error: 'Bad API response from supervisor' });
 };
 

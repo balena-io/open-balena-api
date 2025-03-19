@@ -71,7 +71,7 @@ export const createGenericApiKey = (version: 'v1' | 'v2'): RequestHandler => {
 			if (handleHttpErrors(req, res, err)) {
 				return;
 			}
-			captureException(err, 'Error generating API key', { req });
+			captureException(err, 'Error generating API key');
 			res.status(500).send(translateError(err));
 		}
 	};
@@ -94,7 +94,7 @@ export const createDeviceApiKey: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		captureException(err, 'Error generating device API key', { req });
+		captureException(err, 'Error generating device API key');
 		res.status(500).send(translateError(err));
 	}
 };
@@ -117,7 +117,7 @@ export const createProvisioningApiKey: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		captureException(err, 'Error generating provisioning API key', { req });
+		captureException(err, 'Error generating provisioning API key');
 		res.status(500).send(translateError(err));
 	}
 };
@@ -138,7 +138,7 @@ export const createUserApiKey: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		captureException(err, 'Error generating user API key', { req });
+		captureException(err, 'Error generating user API key');
 		res.status(500).send(translateError(err));
 	}
 };
@@ -163,7 +163,7 @@ export const createNamedUserApiKey: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		captureException(err, 'Error generating named user API key', { req });
+		captureException(err, 'Error generating named user API key');
 		res.status(500).send(translateError(err));
 	}
 };

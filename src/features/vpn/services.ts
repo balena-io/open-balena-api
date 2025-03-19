@@ -77,7 +77,7 @@ export const authDevice = async (
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		captureException(err, 'Error authenticating device for VPN', { req });
+		captureException(err, 'Error authenticating device for VPN');
 		res.status(500).send(translateError(err));
 	}
 };
@@ -109,7 +109,7 @@ export const clientConnect = async (
 		});
 		res.status(200).end();
 	} catch (err) {
-		captureException(err, 'Error with vpn client connect', { req });
+		captureException(err, 'Error with vpn client connect');
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
@@ -145,7 +145,7 @@ export const clientDisconnect = async (
 		});
 		res.status(200).end();
 	} catch (err) {
-		captureException(err, 'Error with vpn client disconnect', { req });
+		captureException(err, 'Error with vpn client disconnect');
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}

@@ -100,7 +100,7 @@ export const downloadImageConfig: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, errorToReturn)) {
 			return;
 		}
-		captureException(errorToReturn, 'Error generating config', { req });
+		captureException(errorToReturn, 'Error generating config');
 		res.status(500).send(translateError(errorToReturn));
 	}
 };

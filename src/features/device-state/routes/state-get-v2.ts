@@ -277,7 +277,7 @@ export const stateV2: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		captureException(err, 'Error getting device state', { req });
+		captureException(err, 'Error getting device state');
 		res.status(500).end();
 	}
 };

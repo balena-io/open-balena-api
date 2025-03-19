@@ -20,7 +20,7 @@ export const getDeviceTypes: RequestHandler = async (req, res) => {
 			await deviceTypesLib.getAccessibleDeviceTypeJsons(resinApi);
 		res.json(deviceTypes);
 	} catch (err) {
-		captureException(err, 'Error getting device types', { req });
+		captureException(err, 'Error getting device types');
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
@@ -35,9 +35,7 @@ export const getDeviceType: RequestHandler = async (req, res) => {
 		const data = await deviceTypesLib.getDeviceTypeJsonBySlug(resinApi, slug);
 		res.json(data);
 	} catch (err) {
-		captureException(err, 'Error getting device type', {
-			req,
-		});
+		captureException(err, 'Error getting device type');
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
@@ -52,7 +50,7 @@ export const listAvailableImageVersions: RequestHandler = async (req, res) => {
 		const data = await deviceTypesLib.getImageVersions(resinApi, slug);
 		res.json(data);
 	} catch (err) {
-		captureException(err, 'Error getting image versions', { req });
+		captureException(err, 'Error getting image versions');
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
@@ -74,7 +72,7 @@ export const downloadImageSize: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		captureException(err, 'Error getting download size', { req });
+		captureException(err, 'Error getting download size');
 		res.status(500).send(translateError(err));
 	}
 };

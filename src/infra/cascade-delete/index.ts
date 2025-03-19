@@ -12,7 +12,7 @@ export function addDeleteHookForDependents(
 
 	hooks.addPureHook('DELETE', model, resource, {
 		PRERUN: async (args) => {
-			const { api, req } = args;
+			const { api } = args;
 
 			const resourceIds = await sbvrUtils.getAffectedIds(args);
 			if (resourceIds.length === 0) {
@@ -34,10 +34,7 @@ export function addDeleteHookForDependents(
 				} catch (err) {
 					captureException(
 						err,
-						`Error deleting resource '${dependentResource}' before deleting '${resource}' `,
-						{
-							req,
-						},
+						`Error deleting resource '${dependentResource}' before deleting '${resource}'`,
 					);
 					throw err;
 				}

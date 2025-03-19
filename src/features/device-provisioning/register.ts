@@ -124,7 +124,7 @@ export const register: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		captureException(err, 'Error registering device', { req });
+		captureException(err, 'Error registering device');
 		res.status(403).send(translateError(err));
 	}
 };

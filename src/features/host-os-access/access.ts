@@ -81,7 +81,7 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 			return;
 		}
 
-		captureException(err, 'Error checking hostOS access', { req });
+		captureException(err, 'Error checking hostOS access');
 		res.status(401).end();
 	}
 }

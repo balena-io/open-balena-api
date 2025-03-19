@@ -156,9 +156,7 @@ const $createRateLimitMiddleware = (
 					try {
 						await Promise.all([rateLimiter.delete(key), resetRatelimit?.()]);
 					} catch (err) {
-						captureException(err, 'Error failed to reset rate limit counter', {
-							req,
-						});
+						captureException(err, 'Error failed to reset rate limit counter');
 					}
 				};
 			};
@@ -173,7 +171,7 @@ const $createRateLimitMiddleware = (
 			if (handleHttpErrors(req, res, err)) {
 				return;
 			}
-			captureException(err, 'Error during rate limiting', { req });
+			captureException(err, 'Error during rate limiting');
 			res.status(500).end();
 		}
 	};
