@@ -129,7 +129,7 @@ export const middleware: RequestHandler = (req, res, next) => {
 				return res.status(401).end();
 			}
 			if (err) {
-				captureException(err, 'Error JWT auth', { req });
+				captureException(err, 'Error JWT auth');
 				next(err);
 				return;
 			}

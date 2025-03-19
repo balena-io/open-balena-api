@@ -71,9 +71,7 @@ const addEnvHooks = <T extends keyof BalenaModel>(
 			).flat();
 			return deviceIds;
 		} catch (err) {
-			captureException(err, `Error building the ${resource} filter`, {
-				req: args.req,
-			});
+			captureException(err, `Error building the ${resource} filter`);
 			throw err;
 		}
 	};

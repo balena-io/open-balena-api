@@ -318,7 +318,7 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 			preventChangingFinalToDraft(args),
 		]);
 	},
-	POSTRUN: async ({ api, request, tx, req }) => {
+	POSTRUN: async ({ api, request, tx }) => {
 		const { is_final, releasesToSetRevision, semverObject } =
 			request.custom as PatchCustomObject;
 		if (releasesToSetRevision == null) {
@@ -390,7 +390,6 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 										captureException(
 											sentryError,
 											`Could not parse the semver of ${release.id} while updating release revision.`,
-											{ req },
 										);
 										throw new BadRequestError(
 											'Could not parse the semver a pre-existing release',

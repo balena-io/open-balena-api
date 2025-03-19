@@ -78,7 +78,7 @@ export const read =
 			if (handleHttpErrors(req, res, err)) {
 				return;
 			}
-			captureException(err, 'Failed to read device logs', { req });
+			captureException(err, 'Failed to read device logs');
 			res.status(500).end();
 		}
 	};

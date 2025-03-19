@@ -104,7 +104,7 @@ export const whoami: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		captureException(err, 'Error while getting user info', { req });
+		captureException(err, 'Error while getting user info');
 		res.status(500).end();
 	}
 };
@@ -166,7 +166,7 @@ export const actorWhoami: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		captureException(err, 'Error while getting actor info', { req });
+		captureException(err, 'Error while getting actor info');
 		res.status(500).end();
 	}
 };

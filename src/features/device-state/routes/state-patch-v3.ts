@@ -472,7 +472,7 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		captureException(err, 'Error setting device state', { req });
+		captureException(err, 'Error setting device state');
 		res.sendStatus(500);
 	}
 };

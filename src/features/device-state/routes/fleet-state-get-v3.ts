@@ -180,7 +180,7 @@ export const fleetStateV3: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		captureException(err, 'Error getting default flee state', { req });
+		captureException(err, 'Error getting default flee state');
 		res.status(500).end();
 	}
 };

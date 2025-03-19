@@ -2,7 +2,6 @@ import _ from 'lodash';
 import * as Sentry from '@sentry/node';
 import escapeHtml from 'escape-html';
 
-import type { hooks } from '@balena/pinejs';
 import { errors, sbvrUtils } from '@balena/pinejs';
 import { trace } from '@opentelemetry/api';
 
@@ -32,7 +31,6 @@ export function captureException(
 	message?: string,
 	options?: {
 		tags?: { [key: string]: string };
-		req?: Sentry.PolymorphicRequest | hooks.HookReq;
 		extra?: AnyObject;
 	},
 ): void {
@@ -47,14 +45,9 @@ export function captureException(
 
 	Sentry.withScope((scope) => {
 		if (options != null) {
-			const { tags, req, extra } = options;
+			const { tags, extra } = options;
 			if (tags != null) {
 				scope.setTags(tags);
-			}
-			if (req != null) {
-				scope.addEventProcessor((evt) =>
-					Sentry.addRequestDataToEvent(evt, req),
-				);
 			}
 			if (extra != null) {
 				scope.setExtras(extra);
@@ -86,9 +79,9 @@ export const ThisShouldNeverHappenError = (
 	return error;
 };
 
-sbvrUtils.onHandleHttpError((req, err) => {
+sbvrUtils.onHandleHttpError((_req, err) => {
 	if (err instanceof InternalRequestError) {
-		captureException(err, 'Internal server error', { req });
+		captureException(err, 'Internal server error');
 		err.body ??= 'Server error';
 	}
 });

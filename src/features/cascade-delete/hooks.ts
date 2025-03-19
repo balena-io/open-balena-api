@@ -75,9 +75,7 @@ const deleteApiKeyHooks: hooks.Hooks = {
 							},
 						});
 					} catch (err) {
-						captureException(err, 'Error deleting api key ' + resource, {
-							req: args.req,
-						});
+						captureException(err, 'Error deleting api key ' + resource);
 						throw err;
 					}
 				},
@@ -90,7 +88,7 @@ hooks.addPureHook('DELETE', 'Auth', 'api_key', deleteApiKeyHooks);
 hooks.addPureHook('DELETE', 'resin', 'api_key', deleteApiKeyHooks);
 
 hooks.addPureHook('DELETE', 'resin', 'user', {
-	PRERUN: async ({ req, request, tx, api: resinApi }) => {
+	PRERUN: async ({ request, tx, api: resinApi }) => {
 		const { userId } = request.custom;
 
 		const authApiTx = sbvrUtils.api.Auth.clone({
@@ -113,7 +111,7 @@ hooks.addPureHook('DELETE', 'resin', 'user', {
 							},
 						});
 					} catch (err) {
-						captureException(err, `Error deleting user ${resource}`, { req });
+						captureException(err, `Error deleting user ${resource}`);
 						throw err;
 					}
 				},
@@ -143,7 +141,7 @@ hooks.addPureHook('DELETE', 'resin', 'user', {
 						},
 					});
 				} catch (err) {
-					captureException(err, 'Error deleting user api_key', { req });
+					captureException(err, 'Error deleting user api_key');
 					throw err;
 				}
 			});

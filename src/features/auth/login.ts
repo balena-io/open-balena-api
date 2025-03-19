@@ -46,7 +46,7 @@ export const login =
 				res.status(401).end();
 				return;
 			}
-			captureException(err, 'Error logging in', { req });
+			captureException(err, 'Error logging in');
 			res.status(401).end();
 		}
 	};

@@ -124,7 +124,7 @@ function handleStoreErrors(req: Request, res: Response, err: Error) {
 	if (handleHttpErrors(req, res, err)) {
 		return;
 	}
-	captureException(err, 'Failed to store device logs', { req });
+	captureException(err, 'Failed to store device logs');
 	res.status(500).end();
 }
 

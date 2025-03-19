@@ -43,7 +43,7 @@ export const getUserPublicKeys: RequestHandler = async (req, res) => {
 		if (handleHttpErrors(req, res, err)) {
 			return;
 		}
-		captureException(err, 'Error getting public keys', { req });
+		captureException(err, 'Error getting public keys');
 		res.status(500).end();
 	}
 };

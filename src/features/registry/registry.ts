@@ -76,7 +76,7 @@ export interface Access {
 }
 type Scope = [Access['type'], Access['name'], Access['actions']];
 
-const parseScope = (req: Request, scope: string): Scope | undefined => {
+const parseScope = (scope: string): Scope | undefined => {
 	try {
 		if (!scope) {
 			return;
@@ -94,7 +94,7 @@ const parseScope = (req: Request, scope: string): Scope | undefined => {
 
 		return [params[1], params[2], params[3].split(',')];
 	} catch (err) {
-		captureException(err, `Failed to parse scope '${scope}'`, { req });
+		captureException(err, `Failed to parse scope '${scope}'`);
 	}
 	return;
 };
@@ -193,9 +193,7 @@ const resolveWriteAccess = async (
 		return res.d?.[0]?.id === imageId;
 	} catch (err) {
 		if (!(err instanceof UnauthorizedError)) {
-			captureException(err, 'Failed to resolve registry write access', {
-				req,
-			});
+			captureException(err, 'Failed to resolve registry write access');
 		}
 		return false;
 	}
@@ -389,7 +387,7 @@ const resolveAccess = async (
 			allowedActions = actions;
 		} catch (err) {
 			if (!(err instanceof UnauthorizedError)) {
-				captureException(err, 'Failed to resolve registry access', { req });
+				captureException(err, 'Failed to resolve registry access');
 			}
 			allowedActions = defaultActions;
 		}
@@ -409,7 +407,7 @@ const authorizeRequest = async (
 	tx: Tx,
 ): Promise<Access[]> => {
 	const parsedScopes: Scope[] = _(scopes)
-		.map((scope) => parseScope(req, scope))
+		.map((scope) => parseScope(scope))
 		.compact()
 		.value();
 
