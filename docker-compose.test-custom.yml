@@ -55,7 +55,7 @@ services:
     build:
       context: ./
       target: test
-    command: npx mocha
+    command: npx c8 mocha
     depends_on:
       - "db"
       - "redis"
