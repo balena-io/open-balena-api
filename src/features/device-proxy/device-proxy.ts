@@ -152,6 +152,48 @@ interface RequestDevicesOpts extends FixedMethodRequestDevicesOpts {
 	method: string;
 }
 
+// Permissions required to access supervisor endpoints
+// Any new supervisor endpoints must be added to this list or they will be blocked
+const permissionByRequest: {
+	[permission: string]: Array<[method: string, url: string | RegExp]>;
+} = {
+	purge: [
+		['POST', '/v1/purge'],
+		['POST', /\/v2\/applications\/\d+\/purge$/],
+	],
+	shutdown: [['POST', '/v1/shutdown']],
+	update: [
+		['POST', '/v2/local/target-state'],
+		['POST', '/v1/blink'],
+		['POST', '/v1/update'],
+		['POST', '/v1/reboot'],
+		['POST', '/v1/restart'],
+		['POST', '/v1/regenerate-api-key'],
+		['POST', '/v2/journal-logs'],
+		['PATCH', '/v1/device/host-config'],
+		['POST', /\/v1\/apps\/\d+\/stop$/],
+		['POST', /\/v1\/apps\/\d+\/start$/],
+		['POST', /\/v2\/applications\/\d+\/restart-service$/],
+		['POST', /\/v2\/applications\/\d+\/stop-service$/],
+		['POST', /\/v2\/applications\/\d+\/start-service$/],
+		['POST', /\/v2\/applications\/\d+\/restart$/],
+	],
+};
+
+// Find the permission required to access a given request
+function getPermissionForRequest(
+	method: string,
+	url: string,
+): string | undefined {
+	return Object.entries(permissionByRequest).find(([_perm, requests]) =>
+		requests.some(
+			([permMethod, permUrl]) =>
+				permMethod === method &&
+				(permUrl instanceof RegExp ? permUrl.test(url) : permUrl === url),
+		),
+	)?.[0];
+}
+
 // - req is the express req object, if passed then(the permissions of the user making
 // the request will be used to get devices,
 // if it is not passed then("guest" permissions will be used to get the devices.
@@ -214,15 +256,21 @@ async function requestDevices({
 			}
 			throw new NotFoundError('No online device(s) found');
 		}
-		// Check for device update permission, except for
+		// Check for device permission, except for
 		// internal operation of the platform.
 		if (method !== 'GET' && req !== permissions.root) {
+			// Find required permission, throw if not found
+			const permission = getPermissionForRequest(method, url);
+			if (permission == null) {
+				throw new errors.ForbiddenError('Unknown endpoint');
+			}
+
 			await Promise.all(
 				deviceIds.map(async (deviceId) => {
 					const res = (await resinApi.request({
 						method: 'POST',
 						url: `device(${deviceId})/canAccess`,
-						body: { action: 'update' },
+						body: { action: permission },
 					})) as { d?: Array<{ id: number }> };
 
 					if (res?.d?.[0]?.id !== deviceId) {
