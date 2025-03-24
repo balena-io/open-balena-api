@@ -1,4 +1,412 @@
 - commits:
+    - subject: Update @balena/pinejs to 21.0.0
+      hash: ebe9f194345bba9b2128d7bcac3045349af835b6
+      body: |
+        Update @balena/pinejs from 20.0.3 to 21.0.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update @balena/lint to 9.x
+              hash: a48d8d3e901671a0e0a9c836e60340445c770eb6
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+            - subject: "Translations: switch warning to an error when aliasing a $toResource"
+              hash: 3d55c635df0614509d535da40b587dd2040bf91a
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+            - subject: Replace the cached abstractSqlQuery with the compiled sqlQuery once
+                generated
+              hash: b5d51b27fa6bfa6e38093a00ba7ecfb21db38520
+              body: >
+                This allows freeing up all the memory used by the
+                abstractSqlQuery tree
+
+                once the sqlQuery has been generated at the cost that the
+
+                abstractSqlQuery cannot be recompiled for another db engines. In
+
+                practice this shouldn't be a limitation as using multiple db
+                engines
+
+                with a single model is not supported and unlikely to work.
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+            - subject: Drop sbvr-server built-in module
+              hash: ef648b0c43ca67aeed637250964ccdbf34f609d7
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+            - subject: Drop http-transactions built-in module
+              hash: 94ca15ace9b736bb212a8863527c5bf6e24d7694
+              body: ""
+              footer:
+                Change-type: major
+                change-type: major
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-21.0.0
+          title: ""
+          date: 2025-03-24T15:16:13.363Z
+        - commits:
+            - subject: Update cron-parser to v5
+              hash: 44721754b32264e048f2b5aa695ca18224a17fb9
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: joshbwlng
+              nested: []
+          version: pinejs-20.0.12
+          title: ""
+          date: 2025-03-24T09:16:04.798Z
+        - commits:
+            - subject: "Tests: use faster config for postgres"
+              hash: bd764d463a99e9b05082de3c96365ba3d7d03ca6
+              body: >
+                These settings are not safe for data we care about as we might
+                lose
+
+                or corrupt data in the case of power failure, but for test data
+                where
+
+                that is not an issue they offer a performance benefit
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-20.0.11
+          title: ""
+          date: 2025-03-21T23:48:29.813Z
+        - commits:
+            - subject: Fix some linting issues
+              hash: 9e15788b2a6c0b3e353ab13f25a46dc6c3167fe4
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-20.0.10
+          title: ""
+          date: 2025-03-21T17:30:02.249Z
+        - commits:
+            - subject: Update dependencies
+              hash: 78d8cc5744e904762f52eb2fc893773da79296a2
+              body: |
+                Update @balena/abstract-sql-compiler from 10.2.0 to 10.2.3
+                Update @balena/odata-parser from 4.1.0 to 4.2.1
+                Update @balena/odata-to-abstract-sql from 7.1.0 to 7.1.3
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: "Tests: convert test/abstract-sql/case-when-else.js to typescript"
+                      hash: 0edb21cc4ee30ead2a6eeb290623f3a0adc7a0fe
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: "Tests: convert test/abstract-sql/test.js to typescript"
+                      hash: 43c24e87e4af08c8dd803a1cc4dfcb8bead301e9
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: "Tests: simplify handling of variadic test helper functions"
+                      hash: f07fa0857b22c99c019cb1d3ea04a9b6fa7449e7
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-10.2.3
+                  title: ""
+                  date: 2025-03-19T14:16:28.813Z
+                - commits:
+                    - subject: Clarify the `['Bind', string, string]` form of `BindNode` is legacy
+                      hash: aa72d3c77c2b6dae37d517ca149a27ea7e5a9bc1
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-10.2.2
+                  title: ""
+                  date: 2025-02-14T17:34:12.685Z
+                - commits:
+                    - subject: Fix @balena/sbvr-types peer dependency version specifier
+                      hash: 228e9411aa5c502db92e2c5227e1c88b3b3ef288
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-10.2.1
+                  title: ""
+                  date: 2025-01-29T12:57:29.155Z
+                - commits:
+                    - subject: Add the missing MethodCall type
+                      hash: 78efcd852c6ff653da7eb17c9d15cdfaf18f177e
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Thodoris Greasidis
+                    - subject: Add the missing properties in the PropertyPath typings
+                      hash: dde814052753c19020bdf069050cb96c03229f24
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                        See: https://github.com/balena-io-modules/odata-parser/pull/96
+                        see: https://github.com/balena-io-modules/odata-parser/pull/96
+                      author: Thodoris Greasidis
+                  version: odata-parser-4.2.1
+                  title: ""
+                  date: 2025-03-18T11:16:09.003Z
+                - commits:
+                    - subject: Support ordering by a Collection Navigation property using a Key
+                        notation
+                      hash: 460e4f3775068621b914c3c4a12cac34aba5e0e0
+                      body: ""
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                        See: https://balena.fibery.io/Work/Project/Shape--Build-Add-support-for-sorting-on-user-selected-tag-columns-in-the-server-side-paginated-devic-912
+                        see: https://balena.fibery.io/Work/Project/Shape--Build-Add-support-for-sorting-on-user-selected-tag-columns-in-the-server-side-paginated-devic-912
+                      author: Thodoris Greasidis
+                  version: odata-parser-4.2.0
+                  title: ""
+                  date: 2025-03-12T23:08:54.233Z
+                - commits:
+                    - subject: Test that multiple $select & $orderby on the same resource result it
+                        being JOINed just once
+                      hash: cd87826ae0972d8f0ac6493cbb25d8a5301cca3e
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Thodoris Greasidis
+                      nested: []
+                    - subject: Add tests capturing the current behavior when using incorrect property
+                        paths
+                      hash: dcd9258b0498ca5f504dc717288f222923d90d31
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Thodoris Greasidis
+                      nested: []
+                    - subject: Add more $any & $all tests
+                      hash: 4c59dcdaf87127b684f4850f7127bf4e6d1910d8
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Thodoris Greasidis
+                      nested: []
+                  version: odata-to-abstract-sql-7.1.3
+                  title: ""
+                  date: 2025-03-21T15:59:08.312Z
+                - commits:
+                    - subject: Add support for also shortening translation suffix names, eg `x$test`
+                        -> `x$t`
+                      hash: 3b16beeadf1f2fde59dab5be924623b015abae7f
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Treat $ as a word separator for alias shortening for better translation
+                        support
+                      hash: 9f96bf9bb28538b3c961a635560bf77e4e1f5bea
+                      body: >
+                        Since translations in pinejs use $ as their boundary
+                        this allows for
+
+                        shortening translated models much better
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Also shorten the overall alias if it is possible and beneficial to do
+                        so
+                      hash: c0010bd4613ea489e37000d01b3b5132cf2cf87a
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Always look up short aliases using lower case, to avoid issues with
+                        mixed cases
+                      hash: d66df2195a347e86471bd356f9efa68a5c7fa301
+                      body: >
+                        This could happen if eg you have `Some Term` and `some
+                        other term`
+
+                        where the mixing of cases would mean one version would
+                        not be correctly
+
+                        shortened due to not matching the case-sensitive check
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Generate short versions both short and long versions of the `-`
+                        containing aliases
+                      hash: 3dedcc1ac808b5dd88c21cd09f64dac8c37d820d
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Generate short versions both short and long versions of the ` `
+                        containing aliases
+                      hash: 48f7ca9b0a3bf3f486ed943cde2bb5aa3e7b1c2b
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                    - subject: Properly handle the case where there is no shorter alias available
+                      hash: a6d160e826424ef261b71bb0f13668c22112bedf
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: odata-to-abstract-sql-7.1.2
+                  title: ""
+                  date: 2025-03-20T17:49:23.847Z
+                - commits:
+                    - subject: "tests: Remove unnecessary returns & add curly braces"
+                      hash: 9ad21e94dc29b333542caa92a1b465d89579e2ef
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Thodoris Greasidis
+                      nested: []
+                  version: odata-to-abstract-sql-7.1.1
+                  title: ""
+                  date: 2025-03-18T13:55:56.178Z
+          version: pinejs-20.0.9
+          title: ""
+          date: 2025-03-21T16:12:40.605Z
+        - commits:
+            - subject: "Tasks: add a 100ms retry delay after a failed poll"
+              hash: 908e687c9d9e315ef3a9a649ffcd3c3abf3336f4
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-20.0.8
+          title: ""
+          date: 2025-03-07T18:06:36.151Z
+        - commits:
+            - subject: Free up migration related memory after the models get executed
+              hash: 6dde0e76a1bc1b70b1d212fb76b2222e72742fed
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Thodoris Greasidis
+              nested: []
+          version: pinejs-20.0.7
+          title: ""
+          date: 2025-02-20T10:39:41.686Z
+        - commits:
+            - subject: "fix: Resolve `\\canAccess` for term forms"
+              hash: 3695f922218b0f40bcfa24c2426a280be26c5582
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+              nested: []
+          version: pinejs-20.0.6
+          title: ""
+          date: 2025-02-19T17:11:29.159Z
+        - commits:
+            - subject: Optimise webresource upload permissions check for multiple uploads in
+                single request
+              hash: 40f30c18e26bcb3de0d4f0bc5ef1f7b92dbe6ffa
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+              nested: []
+            - subject: Avoid non-blob webresources fields on multipart requests
+              hash: 978b425e1d90bb8fa6c09944e8a70c06ea68b1a8
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+              nested: []
+          version: pinejs-20.0.5
+          title: ""
+          date: 2025-02-17T17:33:46.101Z
+        - commits:
+            - subject: Fix missing required validation on bindings
+              hash: 5eac96faefde83ce9d1964b407cf6a490df83920
+              body: |
+                In previous commit `bdb34d` the code path for `getAndCheckBindValues` was simplified
+                considering the declared type of `{dataType: string}`. That typing is not complete and thus the simplification was wrong.
+
+                The field property may also contain a `required` property which is used for doing oData validation (from sbvr-types)
+                In that simplification we excluded the required information for bound variables: https://github.com/balena-io/pinejs/commit/bdb34d9df39e0d9d00db492cbb1ef6dfc61e8450#diff-abade937407ef92d95cd36b5719e481229475da7d3f8bdc613bebef8971c35d2R107
+
+                This reverts back the code simplification but keeping the necessary changes for List binding type.
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+              nested: []
+          version: pinejs-20.0.4
+          title: ""
+          date: 2025-02-14T04:13:50.720Z
+  version: 35.0.2
+  title: ""
+  date: 2025-03-24T15:53:36.101Z
+- commits:
     - subject: "Tests: use faster config for postgres"
       hash: ba11f2b388f2e68482362745c9db88e885f9f76a
       body: |
@@ -1111,6 +1519,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -1143,6 +1552,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -2137,6 +2547,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -2184,6 +2595,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2266,6 +2678,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -2303,6 +2716,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2463,6 +2877,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -2491,6 +2906,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2580,6 +2996,7 @@
 
 
 
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -2614,6 +3031,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -2789,6 +3207,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -3050,6 +3469,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -3072,6 +3492,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3138,6 +3559,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3293,6 +3715,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -3315,6 +3738,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -3381,6 +3805,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7506,6 +7931,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -7538,6 +7964,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8846,6 +9273,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -8893,6 +9321,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -9239,6 +9668,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -9276,6 +9706,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -9800,6 +10231,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -9828,6 +10260,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -10019,6 +10452,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -10377,6 +10811,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -10522,6 +10957,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -11047,6 +11483,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -11069,6 +11506,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -11267,6 +11705,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -11686,6 +12125,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -11708,6 +12148,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -11906,6 +12347,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -14338,6 +14780,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -14360,6 +14803,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -14558,6 +15002,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -14980,6 +15425,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -15008,6 +15454,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -15198,6 +15645,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -15554,6 +16002,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/sbvr-types
                                                                 from 3.4.18 to 3.5.0
@@ -15699,6 +16148,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
