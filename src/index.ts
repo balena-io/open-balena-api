@@ -414,7 +414,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	if (ASYNC_TASKS_ENABLED) {
 		pine.env.tasks.queueConcurrency = PINEJS_QUEUE_CONCURRENCY;
 		pine.env.tasks.queueIntervalMS = PINEJS_QUEUE_INTERVAL_MS;
-		await pine.tasks.setup();
+		pine.tasks.setup();
 		await import('./tasks.js');
 		await options.onInitTasks?.(app);
 		await pine.tasks.worker?.start();
