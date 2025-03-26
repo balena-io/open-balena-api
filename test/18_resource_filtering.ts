@@ -10,49 +10,59 @@ import { assertExists, itExpectsError } from './test-lib/common.js';
 import { provisionDevice } from './test-lib/fake-device.js';
 
 export default () => {
-	versions.test((_version, pineTest) => {
+	versions.test((version, pineTest) => {
+		const isPinnedOnReleaseProp = versions.lt(version, 'v7')
+			? 'should_be_running__release'
+			: 'is_pinned_on__release';
 		describe('Resource Filtering', () => {
 			let fx: fixtures.Fixtures;
 			let user: UserObjectParam;
-			let testTimes: Array<Pick<Application['Read'], 'id' | 'created_at'>>;
+			let testApps: Array<Pick<Application['Read'], 'id' | 'created_at'>>;
 			let pineUser: PineTest;
 			const applicationCount = 4;
 			let device1: ResolvableReturnType<typeof provisionDevice>;
 			let device2: ResolvableReturnType<typeof provisionDevice>;
+			let device3: ResolvableReturnType<typeof provisionDevice>;
 
 			before(async () => {
-				fx = await fixtures.load();
+				fx = await fixtures.load('18-resource-filtering');
 				user = fx.users.admin;
+				const app0 = fx.applications.app0;
 				pineUser = pineTest.clone({
 					passthrough: {
 						user,
 					},
 				});
 
-				const {
-					body: [devicetype],
-				} = await pineUser
+				const { body: devicetype } = await pineUser
 					.get({
 						resource: 'device_type',
+						id: { slug: 'intel-nuc' },
 						options: {
 							$select: ['id'],
 						},
 					})
 					.expect(200);
+				assertExists(devicetype);
 
 				// create couple of applications with ensuring different created_at timestamps
 				for (let i = 0; i < applicationCount; i++) {
-					const {
-						body: { id: appId },
-					} = await pineUser.post({
-						resource: 'application',
-						body: {
-							app_name: `appapp${i}`,
-							slug: `admin/test-app-${i}`,
-							organization: 1,
-							is_for__device_type: devicetype.id,
-						},
-					});
+					// The first app is created using fixtures so that we can easily create releases as well
+					const { id: appId } =
+						i === 0
+							? app0
+							: // The rest are created in code so that we can add some extra time between their creation dates
+								(
+									await pineUser.post({
+										resource: 'application',
+										body: {
+											app_name: `appapp${i}`,
+											organization: 1,
+											is_for__device_type: devicetype.id,
+										},
+									})
+								).body;
+
 					await Promise.all(
 						_.times(i + 1, async (tagNo) => {
 							await pineUser.post({
@@ -68,7 +78,7 @@ export default () => {
 					await setTimeout(100);
 				}
 
-				const { body: apps } = await pineUser
+				({ body: testApps } = await pineUser
 					.get<Array<Pick<Application['Read'], 'id' | 'created_at'>>>({
 						resource: 'application',
 						options: {
@@ -78,29 +88,54 @@ export default () => {
 							},
 						},
 					})
-					.expect(200);
+					.expect(200));
 
-				testTimes = apps;
-
-				const testApp = apps[0];
-				device1 = await provisionDevice(user, testApp.id);
+				device1 = await provisionDevice(user, app0.id);
 				await device1.patchStateV3({
 					[device1.uuid]: {
 						cpu_temp: 50,
 					},
 				});
-				device2 = await provisionDevice(user, testApp.id);
+				device2 = await provisionDevice(user, app0.id);
 				await device2.patchStateV3({
 					[device2.uuid]: {
 						cpu_temp: 30,
 					},
 				});
+				device3 = await provisionDevice(user, app0.id);
+
+				const devicePropMap = {
+					[device1.id]: {
+						device_name: 'device1',
+						[isPinnedOnReleaseProp]: fx.releases.release1.id,
+					},
+					[device2.id]: {
+						device_name: 'device2',
+						[isPinnedOnReleaseProp]: fx.releases.release2.id,
+					},
+					[device3.id]: {
+						device_name: 'device3',
+					},
+				};
+
+				for (const [id, body] of Object.entries(devicePropMap)) {
+					await pineUser.patch({
+						resource: 'device',
+						id,
+						body,
+					});
+				}
 			});
 
 			after(async () => {
+				const fxAppIds = new Set(
+					Object.values(fx.applications).map((a) => a.id),
+				);
 				await fixtures.clean(fx);
 				await fixtures.clean({
-					applications: Object.fromEntries(testTimes.map((a) => [a.id, a])),
+					applications: Object.fromEntries(
+						testApps.filter((a) => !fxAppIds.has(a.id)).map((a) => [a.id, a]),
+					),
 				});
 			});
 
@@ -190,19 +225,19 @@ export default () => {
 						resource: 'application',
 						options: {
 							$filter: {
-								created_at: { $gt: testTimes[0].created_at },
+								created_at: { $gt: testApps[0].created_at },
 							},
 						},
 					});
 					expect(body)
 						.to.be.an('array')
 						.to.have.lengthOf(applicationCount - 1);
-					expect(_.find(body, { created_at: testTimes[0].created_at })).to.not
+					expect(_.find(body, { created_at: testApps[0].created_at })).to.not
 						.exist;
 				});
 
 				it('Should filter applications with created_at less or equal than last', async () => {
-					const lastTestTime = testTimes.at(-1);
+					const lastTestTime = testApps.at(-1);
 					assertExists(lastTestTime);
 					const { body } = await pineUser.get({
 						resource: 'application',
@@ -221,12 +256,11 @@ export default () => {
 						resource: 'application',
 						options: {
 							$filter: {
-								created_at: { $eq: testTimes[0].created_at },
+								created_at: { $eq: testApps[0].created_at },
 							},
 						},
 					});
-					expect(_.find(body, { created_at: testTimes[0].created_at })).to
-						.exist;
+					expect(_.find(body, { created_at: testApps[0].created_at })).to.exist;
 				});
 
 				it('Should filter applications with created_at not equal first one', async () => {
@@ -234,16 +268,18 @@ export default () => {
 						resource: 'application',
 						options: {
 							$filter: {
-								created_at: { $ne: testTimes[0].created_at },
+								created_at: { $ne: testApps[0].created_at },
 							},
 						},
 					});
 					expect(body)
 						.to.be.an('array')
 						.to.have.lengthOf(applicationCount - 1);
-					expect(body.map((app) => app.id)).to.not.include(testTimes[0].id);
+					expect(body.map((app) => app.id)).to.not.include(testApps[0].id);
 				});
+			});
 
+			describe('Ordering by counts', () => {
 				it('Should order applications by tag count', async () => {
 					const { body } = await pineUser.get({
 						resource: 'application',
@@ -336,6 +372,67 @@ export default () => {
 						'appapp1',
 					]);
 				});
+			});
+
+			describe('Ordering by fields of navigation resources', () => {
+				it('should order pinned devices by the commit of their pinned release', async () => {
+					const { body } = await pineUser.get({
+						resource: 'device',
+						options: {
+							$select: 'device_name',
+							$expand: {
+								[isPinnedOnReleaseProp]: {
+									$select: 'commit',
+								},
+							},
+							$filter: {
+								[isPinnedOnReleaseProp]: {
+									$ne: null,
+								},
+							},
+							$orderby: [`${isPinnedOnReleaseProp}/commit desc`],
+						},
+					});
+					expect(
+						body.map((d) => [
+							d.device_name,
+							d[isPinnedOnReleaseProp][0].commit,
+						]),
+					).deep.equal([
+						['device1', 'deadc0de'],
+						['device2', 'deadc0d3'],
+					]);
+				});
+
+				// This should be fixed once https://github.com/balena-io-modules/odata-to-abstract-sql/pull/160 is also merged & bumped
+				itExpectsError(
+					'should also include the unpinned devices when ordering by the commit of their pinned release',
+					async () => {
+						const { body } = await pineUser.get({
+							resource: 'device',
+							options: {
+								$select: 'device_name',
+								$expand: {
+									[isPinnedOnReleaseProp]: {
+										$select: 'commit',
+									},
+								},
+								$orderby: [`${isPinnedOnReleaseProp}/commit desc`],
+							},
+						});
+						expect(
+							body.map((d) => [
+								d.device_name,
+								d[isPinnedOnReleaseProp][0]?.commit,
+							]),
+						).deep.equal([
+							['device3', undefined],
+							['device1', 'deadc0de'],
+							['device2', 'deadc0d3'],
+						]);
+					},
+					`expected [ [ 'device1', 'deadc0de' ], …(1) ] to deeply equal [ [ 'device3', undefined ], …(2) ]`,
+				);
 			});
 		});
 	});

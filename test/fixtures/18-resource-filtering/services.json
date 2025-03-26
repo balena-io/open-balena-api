@@ -1,0 +1,12 @@
+{
+	"app0_service1": {
+		"user": "admin",
+		"application": "app0",
+		"service_name": "app1_service1"
+	},
+	"app0_service2": {
+		"user": "admin",
+		"application": "app0",
+		"service_name": "app1_service2"
+	}
+}
