@@ -133,7 +133,7 @@ export const proxy = async (req: Request, res: Response) => {
 			method,
 			// Only pass appId if we're not filtering by deviceId or uuid
 			// This means we can check permissions on the application level only
-			...(deviceId == null && uuid == null ? { appId } : {}),
+			...(deviceId == null && uuid == null && { appId }),
 		});
 		if (responses.length === 1) {
 			validateSupervisorResponse(responses[0], req, res, filter);
@@ -167,12 +167,11 @@ async function checkResourceAccess(
 	client: typeof api.resin,
 	resource: 'application' | 'device',
 	id: number,
-	permission: string,
 ): Promise<void> {
 	const res = (await client.request({
 		method: 'POST',
 		url: `${resource}(${id})/canAccess`,
-		body: { action: permission },
+		body: { action: 'supervisor-proxy-write' },
 	})) as { d?: Array<{ id: number }> };
 
 	if (res?.d?.[0]?.id !== id) {
@@ -244,16 +243,13 @@ async function requestDevices({
 			throw new NotFoundError('No online device(s) found');
 		}
 		// Check resource access, unless request is for internal operations of the platform.
-		if (method !== 'GET' && req !== permissions.root) {
-			const permission = ['PUT', 'PATCH', 'POST', 'DELETE'].includes(method)
-				? 'supervisor-proxy-write'
-				: 'update';
+		if (method !== 'GET' && method !== 'HEAD' && req !== permissions.root) {
 			if (appId != null) {
-				await checkResourceAccess(resinApi, 'application', appId, permission);
+				await checkResourceAccess(resinApi, 'application', appId);
 			} else {
 				await Promise.all(
 					deviceIds.map(async (deviceId) =>
-						checkResourceAccess(resinApi, 'device', deviceId, permission),
+						checkResourceAccess(resinApi, 'device', deviceId),
 					),
 				);
 			}
