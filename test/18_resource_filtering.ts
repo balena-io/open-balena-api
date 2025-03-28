@@ -404,35 +404,30 @@ export default () => {
 					]);
 				});
 
-				// This should be fixed once https://github.com/balena-io-modules/odata-to-abstract-sql/pull/160 is also merged & bumped
-				itExpectsError(
-					'should also include the unpinned devices when ordering by the commit of their pinned release',
-					async () => {
-						const { body } = await pineUser.get({
-							resource: 'device',
-							options: {
-								$select: 'device_name',
-								$expand: {
-									[isPinnedOnReleaseProp]: {
-										$select: 'commit',
-									},
+				it('should also include the unpinned devices when ordering by the commit of their pinned release', async () => {
+					const { body } = await pineUser.get({
+						resource: 'device',
+						options: {
+							$select: 'device_name',
+							$expand: {
+								[isPinnedOnReleaseProp]: {
+									$select: 'commit',
 								},
-								$orderby: [`${isPinnedOnReleaseProp}/commit desc`],
 							},
-						});
-						expect(
-							body.map((d) => [
-								d.device_name,
-								d[isPinnedOnReleaseProp][0]?.commit,
-							]),
-						).deep.equal([
-							['device3', undefined],
-							['device1', 'deadc0de'],
-							['device2', 'deadc0d3'],
-						]);
-					},
-					`expected [ [ 'device1', 'deadc0de' ], …(1) ] to deeply equal [ [ 'device3', undefined ], …(2) ]`,
-				);
+							$orderby: [`${isPinnedOnReleaseProp}/commit desc`],
+						},
+					});
+					expect(
+						body.map((d) => [
+							d.device_name,
+							d[isPinnedOnReleaseProp][0]?.commit,
+						]),
+					).deep.equal([
+						['device3', undefined],
+						['device1', 'deadc0de'],
+						['device2', 'deadc0d3'],
+					]);
+				});
 			});
 		});
 	});
