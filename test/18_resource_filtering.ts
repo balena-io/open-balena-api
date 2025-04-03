@@ -75,6 +75,26 @@ export default () => {
 							});
 						}),
 					);
+					await pineUser.post({
+						resource: 'application_tag',
+						body: {
+							application: appId,
+							tag_key: `test-app-sorting-tag`,
+							value: `pos:${Math.floor((applicationCount - i) / 2) * 10}`,
+						},
+					});
+					// Don't add the tag to app0 so that we can later test whether
+					// it's included in the list of apps when ordering by that tag_key.
+					if (appId !== app0.id) {
+						await pineUser.post({
+							resource: 'application_tag',
+							body: {
+								application: appId,
+								tag_key: `test-app-sorting-partial-tag`,
+								value: `pos:${Math.floor((applicationCount - i) / 2) * 10}`,
+							},
+						});
+					}
 					await setTimeout(100);
 				}
 
@@ -426,6 +446,66 @@ export default () => {
 						['device3', undefined],
 						['device1', 'deadc0de'],
 						['device2', 'deadc0d3'],
+					]);
+				});
+			});
+
+			describe('Ordering by fields of reverse navigation resources', () => {
+				it('should order applications by the value of a specific tag', async () => {
+					const { body } = await pineUser.get({
+						resource: 'application',
+						options: {
+							$select: 'app_name',
+							$expand: {
+								application_tag: {
+									$select: 'value',
+									$filter: {
+										tag_key: 'test-app-sorting-tag',
+									},
+								},
+							},
+							$orderby: [
+								`application_tag(tag_key='test-app-sorting-tag')/value asc`,
+								{ app_name: 'asc' },
+							],
+						},
+					});
+					expect(
+						body.map((app) => [app.app_name, app.application_tag[0].value]),
+					).deep.equal([
+						['appapp3', 'pos:0'],
+						['appapp1', 'pos:10'],
+						['appapp2', 'pos:10'],
+						['appapp0', 'pos:20'],
+					]);
+				});
+
+				it('should order applications by the value of a specific tag that is not defined in all applications', async () => {
+					const { body } = await pineUser.get({
+						resource: 'application',
+						options: {
+							$select: 'app_name',
+							$expand: {
+								application_tag: {
+									$select: 'value',
+									$filter: {
+										tag_key: 'test-app-sorting-partial-tag',
+									},
+								},
+							},
+							$orderby: [
+								`application_tag(tag_key='test-app-sorting-partial-tag')/value asc`,
+								{ app_name: 'asc' },
+							],
+						},
+					});
+					expect(
+						body.map((app) => [app.app_name, app.application_tag[0]?.value]),
+					).deep.equal([
+						['appapp3', 'pos:0'],
+						['appapp1', 'pos:10'],
+						['appapp2', 'pos:10'],
+						['appapp0', undefined],
 					]);
 				});
 			});
