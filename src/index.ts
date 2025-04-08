@@ -337,6 +337,13 @@ export async function setup(app: Application, options: SetupOptions) {
 			dsn: SENTRY_DSN,
 			release: options.version,
 			environment: NODE_ENV,
+			integrations: [
+				Sentry.httpIntegration({
+					ignoreIncomingRequestBody(url) {
+						return /\/device\/v2\/.*\/log-stream/.test(url);
+					},
+				}),
+			],
 		});
 	}
 
