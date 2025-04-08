@@ -63,58 +63,52 @@ const isVpnEnabled: NotEqualsNode = [
 		'Coalesce',
 		[
 			'SelectQuery',
-			['Select', [['ReferencedField', 'device config variable', 'value']]],
-			['From', ['Table', 'device config variable']],
+			['Select', [['ReferencedField', 'dcv', 'value']]],
+			['From', ['Alias', ['Table', 'device config variable'], 'dcv']],
 			[
 				'Where',
 				[
 					'And',
 					[
 						'Equals',
-						['ReferencedField', 'device config variable', 'device'],
+						['ReferencedField', 'dcv', 'device'],
 						['ReferencedField', 'device', 'id'],
 					],
 					[
 						'In',
-						['ReferencedField', 'device config variable', 'name'],
+						['ReferencedField', 'dcv', 'name'],
 						['EmbeddedText', 'BALENA_SUPERVISOR_VPN_CONTROL'],
 						['EmbeddedText', 'RESIN_SUPERVISOR_VPN_CONTROL'],
 					],
 				],
 			],
 			// Prefer the `BALENA_` version when both are set, as the Supervisor does.
-			[
-				'OrderBy',
-				['ASC', ['ReferencedField', 'device config variable', 'name']],
-			],
+			['OrderBy', ['ASC', ['ReferencedField', 'dcv', 'name']]],
 			['Limit', ['Number', 1]],
 		],
 		[
 			'SelectQuery',
-			['Select', [['ReferencedField', 'application config variable', 'value']]],
-			['From', ['Table', 'application config variable']],
+			['Select', [['ReferencedField', 'acv', 'value']]],
+			['From', ['Alias', ['Table', 'application config variable'], 'acv']],
 			[
 				'Where',
 				[
 					'And',
 					[
 						'Equals',
-						['ReferencedField', 'application config variable', 'application'],
+						['ReferencedField', 'acv', 'application'],
 						['ReferencedField', 'device', 'belongs to-application'],
 					],
 					[
 						'In',
-						['ReferencedField', 'application config variable', 'name'],
+						['ReferencedField', 'acv', 'name'],
 						['EmbeddedText', 'BALENA_SUPERVISOR_VPN_CONTROL'],
 						['EmbeddedText', 'RESIN_SUPERVISOR_VPN_CONTROL'],
 					],
 				],
 			],
 			// Prefer the `BALENA_` version when both are set, as the Supervisor does.
-			[
-				'OrderBy',
-				['ASC', ['ReferencedField', 'application config variable', 'name']],
-			],
+			['OrderBy', ['ASC', ['ReferencedField', 'acv', 'name']]],
 			['Limit', ['Number', 1]],
 		],
 		// Adding a COALESCE default value to avoid the need for NotEquals to compare 'false' with NULL
@@ -230,23 +224,20 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 						[
 							'SelectQuery',
 							['Select', []],
-							['From', ['Table', 'image install']],
+							['From', ['Alias', ['Table', 'image install'], 'ii']],
 							[
 								'Where',
 								[
 									'And',
 									[
 										'Equals',
-										['ReferencedField', 'image install', 'device'],
+										['ReferencedField', 'ii', 'device'],
 										['ReferencedField', 'device', 'id'],
 									],
-									[
-										'Exists',
-										['ReferencedField', 'image install', 'download progress'],
-									],
+									['Exists', ['ReferencedField', 'ii', 'download progress']],
 									[
 										'Equals',
-										['ReferencedField', 'image install', 'status'],
+										['ReferencedField', 'ii', 'status'],
 										['EmbeddedText', 'Downloading'],
 									],
 								],
@@ -322,23 +313,20 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 					[
 						'SelectQuery',
 						['Select', []],
-						['From', ['Table', 'image install']],
+						['From', ['Alias', ['Table', 'image install'], 'ii']],
 						[
 							'Where',
 							[
 								'And',
 								[
 									'Equals',
-									['ReferencedField', 'image install', 'device'],
+									['ReferencedField', 'ii', 'device'],
 									['ReferencedField', 'device', 'id'],
 								],
-								[
-									'Exists',
-									['ReferencedField', 'image install', 'download progress'],
-								],
+								['Exists', ['ReferencedField', 'ii', 'download progress']],
 								[
 									'Equals',
-									['ReferencedField', 'image install', 'status'],
+									['ReferencedField', 'ii', 'status'],
 									['EmbeddedText', 'Downloading'],
 								],
 							],
@@ -361,7 +349,7 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 										'Average',
 										[
 											'Coalesce',
-											['ReferencedField', 'image install', 'download progress'],
+											['ReferencedField', 'ii', 'download progress'],
 											['Number', 100],
 										],
 									],
@@ -370,35 +358,31 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 							],
 						],
 					],
-					['From', ['Table', 'image install']],
+					['From', ['Alias', ['Table', 'image install'], 'ii']],
 					[
 						'Where',
 						[
 							'And',
 							[
 								'Equals',
-								['ReferencedField', 'image install', 'device'],
+								['ReferencedField', 'ii', 'device'],
 								['ReferencedField', 'device', 'id'],
 							],
 							[
 								'NotEquals',
-								['ReferencedField', 'image install', 'status'],
+								['ReferencedField', 'ii', 'status'],
 								['EmbeddedText', 'deleted'],
 							],
 							[
 								'Or',
 								[
 									'Equals',
-									['ReferencedField', 'image install', 'status'],
+									['ReferencedField', 'ii', 'status'],
 									['EmbeddedText', 'Downloading'],
 								],
 								[
 									'Equals',
-									[
-										'ReferencedField',
-										'image install',
-										'is provided by-release',
-									],
+									['ReferencedField', 'ii', 'is provided by-release'],
 									[
 										'Coalesce',
 										['ReferencedField', 'device', 'is pinned on-release'],
@@ -406,15 +390,9 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 											'SelectQuery',
 											[
 												'Select',
-												[
-													[
-														'ReferencedField',
-														'application',
-														'should be running-release',
-													],
-												],
+												[['ReferencedField', 'a', 'should be running-release']],
 											],
-											['From', ['Table', 'application']],
+											['From', ['Alias', ['Table', 'application'], 'a']],
 											[
 												'Where',
 												[
@@ -424,7 +402,7 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 														'device',
 														'belongs to-application',
 													],
-													['ReferencedField', 'application', 'id'],
+													['ReferencedField', 'a', 'id'],
 												],
 											],
 										],
@@ -462,16 +440,13 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 			'Else',
 			[
 				'SelectQuery',
-				[
-					'Select',
-					[['ReferencedField', 'application', 'should be running-release']],
-				],
-				['From', ['Table', 'application']],
+				['Select', [['ReferencedField', 'a', 'should be running-release']]],
+				['From', ['Alias', ['Table', 'application'], 'a']],
 				[
 					'Where',
 					[
 						'Equals',
-						['ReferencedField', 'application', 'id'],
+						['ReferencedField', 'a', 'id'],
 						['ReferencedField', 'device', 'belongs to-application'],
 					],
 				],
