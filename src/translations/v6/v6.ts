@@ -161,7 +161,7 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) => {
 									// Without it, requests that have permissions to access the device resource,
 									// but do not have permissions to access image_installs would start failing.
 									['Resource', `device-installs-image$${toVersion}$bypass`],
-									'image install',
+									'ii',
 								],
 							],
 							[
@@ -170,16 +170,13 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) => {
 									'And',
 									[
 										'Equals',
-										['ReferencedField', 'image install', 'device'],
+										['ReferencedField', 'ii', 'device'],
 										['ReferencedField', 'device', 'id'],
 									],
-									[
-										'Exists',
-										['ReferencedField', 'image install', 'download progress'],
-									],
+									['Exists', ['ReferencedField', 'ii', 'download progress']],
 									[
 										'Equals',
-										['ReferencedField', 'image install', 'status'],
+										['ReferencedField', 'ii', 'status'],
 										['EmbeddedText', 'Downloading'],
 									],
 								],
