@@ -125,10 +125,8 @@ addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'release', {
 
 addReadOnlyHook(['all'], 'all', {
 	PRERESPOND({ response }) {
-		if (response.body == null) {
-			// Use the default body message for the status code when the body is empty
-			// to support clients that checked the body rather than status code for old versions
-			response.body = statuses.message[response.statusCode];
-		}
+		// Use the default body message for the status code when the body is empty
+		// to support clients that checked the body rather than status code for old versions
+		response.body ??= statuses.message[response.statusCode];
 	},
 });
