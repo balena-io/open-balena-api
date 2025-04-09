@@ -55,7 +55,7 @@
     "@balena/pinejs-webresource-s3": "^1.0.4",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/instrumentation-express": "^0.47.1",
-    "@opentelemetry/instrumentation-http": "^0.57.2",
+    "@opentelemetry/instrumentation-http": "^0.200.0",
     "@opentelemetry/sdk-node": "^0.57.2",
     "@sentry/node": "^9.12.0",
     "@swc-node/register": "^1.10.9",
