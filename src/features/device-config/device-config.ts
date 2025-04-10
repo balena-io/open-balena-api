@@ -146,7 +146,7 @@ export const generateConfig = async (
 	const developmentMode = (
 		getBodyOrQueryParam(req, 'developmentMode') ?? osVersion?.endsWith('.dev')
 	)?.toString();
-	if (['true', 'on', '1'].includes(developmentMode || '')) {
+	if (['true', 'on', '1'].includes(developmentMode)) {
 		config.developmentMode = true;
 	}
 
@@ -154,7 +154,7 @@ export const generateConfig = async (
 		req,
 		'secureboot',
 	)?.toString();
-	if (['true', 'on', '1'].includes(securebootInstaller || '')) {
+	if (['true', 'on', '1'].includes(securebootInstaller)) {
 		config.installer = { secureboot: true };
 	}
 
