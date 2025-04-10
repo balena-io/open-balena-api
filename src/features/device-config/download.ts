@@ -13,7 +13,7 @@ import { getDeviceTypeJsonBySlug } from '../device-types/device-types.js';
 import { checkInt, getBodyOrQueryParam } from '../../lib/utils.js';
 import { getApiKeyOptsFromRequest } from '../api-keys/lib.js';
 
-const { UnauthorizedError, NotFoundError } = errors;
+const { UnauthorizedError, NotFoundError, BadRequestError } = errors;
 const { api } = sbvrUtils;
 
 const getApp = async (appId: number, req: Request) => {
@@ -41,21 +41,23 @@ const getApp = async (appId: number, req: Request) => {
 };
 
 export const downloadImageConfig: RequestHandler = async (req, res) => {
-	const appId = checkInt(getBodyOrQueryParam(req, 'appId'));
-	if (!appId) {
-		res.status(400).send('An appId is required.');
-		return;
-	}
-
-	const deviceTypeSlug = getBodyOrQueryParam(req, 'deviceType');
-	const osVersion = getBodyOrQueryParam(req, 'version');
-
-	if (!osVersion) {
-		res.status(400).send('A version is required.');
-		return;
-	}
-
 	try {
+		const appId = checkInt(getBodyOrQueryParam(req, 'appId'));
+		if (!appId) {
+			throw new BadRequestError('An appId is required.');
+		}
+
+		const deviceTypeSlug = getBodyOrQueryParam(req, 'deviceType');
+		const osVersion = getBodyOrQueryParam(req, 'version');
+
+		if (!osVersion) {
+			throw new BadRequestError('A version is required.');
+		}
+
+		if (deviceTypeSlug != null && typeof deviceTypeSlug !== 'string') {
+			throw new BadRequestError('Device type must be a string if provided');
+		}
+
 		// Checking both req.body and req.query given both GET and POST support
 		// Ref: https://github.com/balena-io/balena-api/blob/master/src/routes/applications.ts#L95
 		const provisioningKeyOptions = getApiKeyOptsFromRequest(
