@@ -173,7 +173,13 @@ async function handleStreamingRead(
 	// Subscribe in parallel so we don't miss logs in between
 	backend.subscribe(ctx, onLog);
 	try {
-		let logs = await getHistory(backend, ctx, { count, start });
+		let logs: OutputDeviceLog[];
+		try {
+			logs = await getHistory(backend, ctx, { count, start });
+		} catch {
+			// Continue with streaming logs if we fail to get history
+			logs = [];
+		}
 
 		// We need this cast as typescript narrows to `StreamState.Buffering`
 		// because it ignores that during the `await` break it can be changed
