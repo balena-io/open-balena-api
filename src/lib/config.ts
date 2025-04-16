@@ -140,6 +140,7 @@ export const DB_QUERY_TIMEOUT = intVar(
 	'DB_QUERY_TIMEOUT',
 	DB_STATEMENT_TIMEOUT + 1 * SECONDS,
 );
+export const DB_PREPARE_AFTER_N = intVar('DB_PREPARE_AFTER_N', false);
 export const DELTA_HOST = requiredVar('DELTA_HOST');
 export const FILES_HOST = optionalVar('FILES_HOST', '');
 export const DEVICE_CONFIG_OPENVPN_CA = requiredVar('DEVICE_CONFIG_OPENVPN_CA');
