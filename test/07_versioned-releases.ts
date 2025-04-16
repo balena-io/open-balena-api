@@ -27,7 +27,7 @@ export default () => {
 					commit: '57d00829-492d-4124-bca2-fde28df9e590',
 					status: 'success',
 					composition: {},
-					source: 'test',
+					source: 'local',
 					start_timestamp: Date.now(),
 				};
 				pineUser = pineTest.clone({
@@ -539,7 +539,7 @@ export default () => {
 					commit: 'test-commit',
 					status: 'success',
 					composition: {},
-					source: 'test',
+					source: 'local',
 					start_timestamp: Date.now(),
 				};
 			});
@@ -1510,7 +1510,7 @@ export default () => {
 					commit: 'test-commit',
 					status: 'success',
 					composition: {},
-					source: 'test',
+					source: 'local',
 					is_final: false,
 					start_timestamp: Date.now(),
 				};
