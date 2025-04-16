@@ -41,6 +41,7 @@ Term: user
 	Concept Type: actor
 Fact type: user has username
 	Necessity: Each user has exactly one username.
+	Necessity: Each user has a username that has a Length (Type) that is less than or equal to 75.
 	Necessity: Each username is of exactly one user.
 Fact type: user has password
 	Necessity: Each user has at most one password.
@@ -444,7 +445,7 @@ Fact type: organization has handle
 
 Fact type: user (Auth) has email
 	Necessity: each user (Auth) has at most one email.
-	Necessity: each user (Auth) that has an email, has an email that has a Length (Type) that is greater than 4.
+	Necessity: each user (Auth) that has an email, has an email that has a Length (Type) that is greater than 4 and is less than or equal to 254.
 	Necessity: each email is of exactly one user (Auth).
 
 Fact type: user (Auth) has public key
