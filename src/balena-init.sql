@@ -191,18 +191,45 @@ ON "application" ("slug" varchar_pattern_ops, "is public", "is host");
 CREATE INDEX IF NOT EXISTS "scheduled_job_run_start_timestamp_idx"
 ON "scheduled job run" (DATE_TRUNC('milliseconds', "start timestamp", 'UTC'));
 
+ALTER TABLE "api key"
+-- It is necessary that each api key that has a name, has a name that has a Length (Type) that is less than or equal to 1564.
+ADD CONSTRAINT "api key$D14eZaZBafMEz7iBkiFFzvWJrzbdLPx8lH0CuwnDJhQ=" CHECK (NOT (
+	"name" IS NOT NULL
+	AND NOT (
+		LENGTH("name") <= 1564
+		AND LENGTH("name") IS NOT NULL
+		AND "name" IS NOT NULL
+	)
+)),
+-- It is necessary that each api key that has a description, has a description that has a Length (Type) that is less than or equal to 1244.
+ADD CONSTRAINT "api key$WIi1hzHsE7BNiWt0Mu65TeJLI+msputiiPog1eFUDC4=" CHECK (NOT (
+	"description" IS NOT NULL
+	AND NOT (
+		LENGTH("description") <= 1244
+		AND LENGTH("description") IS NOT NULL
+		AND "description" IS NOT NULL
+	)
+));
+
 ALTER TABLE "user"
--- It is necessary that each user (Auth) that has an email, has an email that has a Length (Type) that is greater than 4.
-ADD CONSTRAINT "user$M+9koFfMHn7kQFDNBaQZbS7gAvNMB1QkrTtsaVZoETw=" CHECK (NOT (
+-- It is necessary that Each user has a username that has a Length (Type) that is less than or equal to 73.
+ADD CONSTRAINT "user$X4wTdmwFnA5OK/O8sut0Idrym4db2iVYraIIJSST5GY=" CHECK (LENGTH("username") <= 73
+AND LENGTH("username") IS NOT NULL
+AND "username" IS NOT NULL);
+
+ALTER TABLE "user"
+-- It is necessary that each email is of exactly one user (Auth).
+ADD UNIQUE ("email"),
+-- It is necessary that each user (Auth) that has an email, has an email that has a Length (Type) that is greater than 4 and is less than or equal to 254.
+ADD CONSTRAINT "user$d5eBtWZrArLycRLjuBoVdWS/P4w6MdcM5lTjNKTcxQ4=" CHECK (NOT (
 	"email" IS NOT NULL
 	AND NOT (
 		4 < LENGTH("email")
+		AND LENGTH("email") <= 254
 		AND LENGTH("email") IS NOT NULL
 		AND "email" IS NOT NULL
 	)
 ));
-
-ALTER TABLE "user" ADD UNIQUE ("email");
 
 -- This is here temporarily due to a change on the sbvr for device service environment variable
 -- in order to keep the database schema in sync with the sbvr
