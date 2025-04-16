@@ -450,12 +450,14 @@ Fact type: user (Auth) has email
 
 Fact type: user (Auth) has public key
 	Term Form: user public key
+	Necessity: each user public key has a public key that has a Length (Type) that less than or equal to 2850.
 
 
 -- user public key
 
 Fact type: user public key has title
 	Necessity: each user public key has exactly one title
+	Necessity: each user public key has a title that has a Length (Type) that less than or equal to 120.
 
 
 -- application type
