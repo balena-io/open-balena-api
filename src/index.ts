@@ -1,7 +1,7 @@
 /// <reference path="./typings/index.ts" />
 
 import bodyParser from 'body-parser';
-import compression from 'compression-next';
+import compression from 'compression';
 import compressible from 'compressible';
 import cookieParser from 'cookie-parser';
 import cookieSession from 'cookie-session';
@@ -473,11 +473,13 @@ function setupMiddleware(app: Application) {
 	app.use(
 		compression({
 			level: GZIP_COMPRESSION_QUALITY,
-			params: {
-				[zlib.constants.BROTLI_PARAM_QUALITY]: BROTLI_COMPRESSION_QUALITY,
-				[zlib.constants.BROTLI_PARAM_LGWIN]:
-					BROTLI_COMPRESSION_WINDOW_BITS ??
-					zlib.constants.BROTLI_DEFAULT_WINDOW,
+			brotli: {
+				params: {
+					[zlib.constants.BROTLI_PARAM_QUALITY]: BROTLI_COMPRESSION_QUALITY,
+					[zlib.constants.BROTLI_PARAM_LGWIN]:
+						BROTLI_COMPRESSION_WINDOW_BITS ??
+						zlib.constants.BROTLI_DEFAULT_WINDOW,
+				},
 			},
 			// We use a custom filter so that we can explicitly enable compression for ndjson (ie logs)
 			filter(_req, res) {
