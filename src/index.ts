@@ -341,8 +341,13 @@ export async function setup(app: Application, options: SetupOptions) {
 			environment: NODE_ENV,
 			integrations: [
 				Sentry.httpIntegration({
+					ignoreIncomingRequests(url) {
+						return /^\/(:ping|connectivity-check|csp-report|config\/vars)/.test(
+							url,
+						);
+					},
 					ignoreIncomingRequestBody(url) {
-						return /\/device\/v2\/.*\/log-stream/.test(url);
+						return /^\/device\/v2\/.*\/log-stream/.test(url);
 					},
 				}),
 			],
