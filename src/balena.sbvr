@@ -655,6 +655,7 @@ Fact type: device type is referenced by alias
 
 Fact type: cpu architecture has slug
 	Necessity: each cpu architecture has exactly one slug
+	Definition: "rpi" or "armv7hf" or "aarch64" or "i386-nlp" or "i386" or "amd64"
 	Necessity: each slug is of exactly one cpu architecture
 
 -- device manufacturer
