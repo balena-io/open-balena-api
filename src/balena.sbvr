@@ -736,7 +736,7 @@ Fact type: release has asset key
 
 -- release asset
 Fact type: release asset has asset
-	Necessity: each release asset has exactly one asset.
+	Necessity: each release asset has at most one asset.
 
 
 -- service environment variable
