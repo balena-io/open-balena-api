@@ -8,6 +8,7 @@ import * as fixtures from './test-lib/fixtures.js';
 import type { Application } from '../src/balena-model.js';
 import { sbvrUtils } from '@balena/pinejs';
 import type { PineTest } from 'pinejs-client-supertest';
+import nock from 'nock';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -146,6 +147,7 @@ export default () => {
 
 				// Just to confirm that the MAX_SAFE_SQL_BINDS limitation is still valid
 				it('should fail when providing more parameters to $in than PG support', async function () {
+					nock.restore();
 					await pineUser
 						.delete({
 							resource: 'device_environment_variable',
@@ -161,6 +163,7 @@ export default () => {
 							},
 						})
 						.expect(431);
+					nock.activate();
 				});
 
 				it(`should notify the supervisor after deleting ${testVarsCount} device_environment_variables`, async function () {
