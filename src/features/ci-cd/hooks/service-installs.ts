@@ -98,21 +98,6 @@ const createReleaseServiceInstalls = async (
 	}
 	const serviceIds = services.map(({ id }) => id);
 
-	const missingServiceFilters = serviceIds.map((serviceId) => ({
-		$not: {
-			service_install: {
-				$any: {
-					$alias: 'si',
-					$expr: {
-						si: {
-							installs__service: serviceId,
-						},
-					},
-				},
-			},
-		},
-	}));
-
 	const devicesToAddServiceInstalls = await api.get({
 		resource: 'device',
 		options: {
@@ -126,18 +111,26 @@ const createReleaseServiceInstalls = async (
 				},
 			},
 			$filter: {
-				// Pass the device filters instead of IDs, since a using $in errors with `code: '08P01'` for more than 66k IDs.
-				...(Array.isArray(deviceFilterOrIds)
-					? { id: { $in: deviceFilterOrIds } }
-					: deviceFilterOrIds),
-				// TODO: Once Pine support it, change this with a filtered-count filter like:
-				// $filter=... service_install/$filter(installs__service $in (...serviceIds))/$count lt ${serviceIds.length}
-				// See: http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_RequestingtheNumberofItemsinaCollect
-				...(missingServiceFilters.length === 1
-					? missingServiceFilters[0]
-					: {
-							$or: missingServiceFilters,
-						}),
+				$and: [
+					// Pass the device filters instead of IDs, since a using $in errors with `code: '08P01'` for more than 66k IDs.
+					Array.isArray(deviceFilterOrIds)
+						? { id: { $in: deviceFilterOrIds } }
+						: deviceFilterOrIds,
+					{
+						$lt: [
+							{
+								service_install: {
+									$count: {
+										$filter: {
+											installs__service: { $in: serviceIds },
+										},
+									},
+								},
+							},
+							serviceIds.length,
+						],
+					},
+				],
 			},
 		},
 	} as const);
