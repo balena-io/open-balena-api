@@ -187,6 +187,9 @@ Term: memory usage
 Term: memory total
 	Concept Type: Integer (Type)
 
+Term= secureboot keys metadata
+	Concept Type: Short Text (Type)
+
 Term: storage block device
 	Concept Type: Short Text (Type)
 
@@ -557,10 +560,14 @@ Fact type: device has memory usage
 	Necessity: each device has at most one memory usage
 Fact type: device has memory total
 	Necessity: each device has at most one memory total
+Fact type: device is secureboot enabled
+Fact type: device has secureboot key metadata
+	Necessity: each device has at most one secureboot key metadata
 Fact type: device has storage block device
 	Necessity: each device has at most one storage block device
 Fact type: device has storage usage
 	Necessity: each device has at most one storage usage
+Fact type: device is storage encrypted
 Fact type: device has storage total
 	Necessity: each device has at most one storage total
 Fact type: device has cpu usage
