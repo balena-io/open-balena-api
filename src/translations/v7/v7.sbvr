@@ -91,6 +91,12 @@ Term: api secret
 Term: app name
 	Concept Type: Text (Type)
 
+Term: asset
+	Concept Type: WebResource (Type)
+
+Term: asset key
+	Concept Type: Short Text (Type)
+
 Term: build log
 	Concept Type: Text (Type)
 
@@ -746,6 +752,14 @@ Fact type: release has note
 Fact type: release has invalidation reason
 	Necessity: each release has at most one invalidation reason.
 	Necessity: each release that has an invalidation reason, is invalidated.
+Fact type: release has asset key
+	Term Form: release asset
+	Database Table Name: release asset
+	Necessity: each release asset has an asset key that has a Length (Type) that is greater than 0.
+
+-- release asset
+Fact type: release asset has asset
+	Necessity: each release asset has at most one asset.
 
 
 -- service environment variable
