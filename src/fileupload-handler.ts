@@ -15,6 +15,7 @@ import {
 	WEBRESOURCES_CLOUDFRONT_PRIVATEKEY_PATH,
 	WEBRESOURCES_CLOUDFRONT_PUBLICKEY,
 	WEBRESOURCES_CLOUDFRONT_HOST,
+	WEBRESOURCES_S3_STORAGE_CLASS,
 } from './lib/config.js';
 
 const getEndpointFromHost = (host: string): string => {
@@ -36,6 +37,8 @@ const getS3Config = (): S3HandlerProps | undefined => {
 			region: WEBRESOURCES_S3_REGION,
 			bucket: WEBRESOURCES_S3_BUCKET,
 			maxSize: WEBRESOURCES_S3_MAX_FILESIZE,
+			storageClass:
+				WEBRESOURCES_S3_STORAGE_CLASS as S3HandlerProps['storageClass'],
 		};
 	}
 };
