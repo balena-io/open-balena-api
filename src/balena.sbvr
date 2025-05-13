@@ -666,9 +666,11 @@ Fact type: cpu architecture has slug
 
 Fact type: device manufacturer has slug
 	Necessity: each device manufacturer has exactly one slug
+	Necessity: each device manufacturer has a slug that has a Length (Type) that is less than or equal to 50.
 	Necessity: each slug is of exactly one device manufacturer
 Fact type: device manufacturer has name (Auth)
 	Necessity: each device manufacturer has exactly one name (Auth)
+	Necessity: each device manufacturer has a name (Auth) that has a Length (Type) that is less than or equal to 100.
 
 -- device family
 
