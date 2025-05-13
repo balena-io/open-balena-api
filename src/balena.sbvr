@@ -464,18 +464,22 @@ Fact type: user public key has title
 
 Fact type: application type has name (Auth)
 	Necessity: each application type has exactly one name (Auth)
+	Necessity: each application type has a name (Auth) that has a Length (Type) that is less than or equal to 20.
 Fact type: application type supports web url
 Fact type: application type supports multicontainer
 Fact type: application type supports gateway mode
 Fact type: application type needs os version range
 	Necessity: each application type needs at most one os version range
+	Necessity: each application type that needs an os version range, needs an os version range that has a Length (Type) that is less than or equal to 50.
 Fact type: application type requires payment
 Fact type: application type is legacy
 Fact type: application type has slug
 	Necessity: each application type has exactly one slug
+	Necessity: each application type has a slug that has a Length (Type) that is less than or equal to 25.
 	Necessity: each slug is of exactly one application type
 Fact type: application type has description (Auth)
 	Necessity: each application type has at most one description (Auth).
+	Necessity: each application type that has a description (Auth), has a description (Auth) that has a Length (Type) that is less than or equal to 180.
 Fact type: application type has maximum device count
 	Necessity: each application type has at most one maximum device count
 
