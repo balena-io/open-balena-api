@@ -526,12 +526,14 @@ Fact type: service instance has last heartbeat
 Fact type: device has uuid
 	Necessity: each device has exactly one uuid.
 	Necessity: each uuid is of exactly one device.
+	Necessity: each device has a uuid that has a Length (Type) that is less than or equal to 62.
 Fact type: device has local id
 	Necessity: each device has at most one local id.
 Fact type: device has device name
 	Necessity: each device has exactly one device name.
 Fact type: device has note
 	Necessity: each device has at most one note.
+	Necessity: each device has a note that has a Length (Type) that is less than or equal to 1000000. -- 1MB
 Fact type: device is of device type
 	Synonymous Form: device type describes device
 	Necessity: each device is of exactly one device type.
