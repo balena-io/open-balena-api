@@ -57,6 +57,7 @@ import {
 	PINEJS_QUEUE_INTERVAL_MS,
 	PINEJS_QUEUE_CONCURRENCY,
 	DB_PREPARE_AFTER_N,
+	PINEJS_WEBRESOURCE_MULTIPART_ENABLED,
 } from './lib/config.js';
 
 import {
@@ -433,6 +434,9 @@ export async function setup(app: Application, options: SetupOptions) {
 		await options.onInitTasks?.(app);
 		await pine.tasks.worker?.start();
 	}
+
+	pine.env.webResource.multipartUploadEnabled =
+		PINEJS_WEBRESOURCE_MULTIPART_ENABLED;
 
 	const routes = await import('./routes.js');
 	routes.setup(app, options);
