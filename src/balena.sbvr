@@ -526,12 +526,16 @@ Fact type: service instance has last heartbeat
 Fact type: device has uuid
 	Necessity: each device has exactly one uuid.
 	Necessity: each uuid is of exactly one device.
+	-- B/c of existing data we enforce this to 32/62 using a hook
+	Necessity: each device has a uuid that has a Length (Type) that is less than or equal to 62.
 Fact type: device has local id
 	Necessity: each device has at most one local id.
 Fact type: device has device name
 	Necessity: each device has exactly one device name.
 Fact type: device has note
 	Necessity: each device has at most one note.
+	-- 1MB
+	Necessity: each device that has a note, has a note that has a Length (Type) that is less than or equal to 1000000.
 Fact type: device is of device type
 	Synonymous Form: device type describes device
 	Necessity: each device is of exactly one device type.
@@ -579,10 +583,13 @@ Fact type: device has status
 	Necessity: each device has at most one status.
 Fact type: device has os version
 	Necessity: each device has at most one os version
+	Necessity: each device that has an os version, has an os version that has a Length (Type) that is less than or equal to 30.
 Fact type: device has os variant
 	Necessity: each device has at most one os variant
+	Definition: "prod" or "dev"
 Fact type: device has supervisor version
 	Necessity: each device has at most one supervisor version
+	Necessity: each device that has a supervisor version, has a supervisor version that has a Length (Type) that is less than or equal to 20.
 Fact type: device has provisioning progress
 	Necessity: each device has at most one provisioning progress
 Fact type: device has provisioning state
