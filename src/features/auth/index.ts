@@ -8,12 +8,20 @@ import {
 } from '../../infra/rate-limiting/index.js';
 import { middleware } from '../../infra/auth/index.js';
 import { login } from './login.js';
-import { getUserPublicKeys } from './public-keys.js';
+import {
+	getUserPublicKeys,
+	defaultGetAuthorizedKeysFn,
+	setGetAuthorizedKeysFn,
+} from './public-keys.js';
 import { refreshToken } from './refresh-token.js';
 import { whoami, actorWhoami } from './whoami.js';
 
 export * from './handles.js';
 export { refreshToken };
+export const publicKeys = {
+	defaultGetAuthorizedKeysFn,
+	setGetAuthorizedKeysFn,
+};
 
 // Rate limit for unauthenticated access
 export const loginRateLimiter = createRateLimitMiddleware(
