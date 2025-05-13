@@ -1,10 +1,9 @@
 import { sbvrUtils, hooks, errors } from '@balena/pinejs';
 import { findUser } from '../../../infra/auth/auth.js';
 import { normalizeHandle } from '../handles.js';
+import { USERNAME_BLACKLIST } from '../../../lib/config.js';
 
 const { ConflictError } = errors;
-
-const USERNAME_BLACKLIST = ['root'];
 
 for (const method of ['POST', 'PATCH'] as const) {
 	hooks.addPureHook(method, 'resin', 'user', {
