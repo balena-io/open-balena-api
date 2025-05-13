@@ -700,14 +700,23 @@ Fact type: release belongs to application
 	Necessity: each release belongs to exactly one application.
 Fact type: release has commit
 	Necessity: each release has exactly one commit.
+	Necessity: each release has a commit that has a Length (Type) that is less than or equal to 40.
 Fact type: release has composition
 	Necessity: each release has exactly one composition.
+	-- TODO: Depends on adding support for JSON size in pinejs
+	-- 1MB
+	-- Necessity: each release has a composition that has a Length (Type) that is less than or equal to 1000000.
 Fact type: release has status
 	Necessity: each release has exactly one status.
+	Note: "interrupted" is legacy pre-multicontainer
+	Definition: "running" or "success" or "failed" or "error" or "cancelled" or "interrupted"
 Fact type: release has source
 	Necessity: each release has exactly one source.
+	Definition: "cloud" or "local"
 Fact type: release has build log
 	Necessity: each release has at most one build log.
+	-- 1MB
+	Necessity: each release that has a build log, has a build log that has a Length (Type) that is less than or equal to 1000000.
 Fact type: release is invalidated
 Fact type: release has start timestamp
 	Necessity: each release has exactly one start timestamp.
@@ -717,9 +726,13 @@ Fact type: release has update timestamp
 	Necessity: each release has exactly one update timestamp.
 Fact type: release has release version
 	Necessity: each release has at most one release version
+	Necessity: each release that has a release version, has a release version that has a Length (Type) that is less than or equal to 100.
 	Note: Deprecated.
 Fact type: release has contract
 	Necessity: each release has at most one contract
+	-- TODO: Depends on adding support for JSON size in pinejs
+	-- 1MB
+	-- Necessity: each release that has a contract, has a contract that has a Length (Type) that is less than or equal to 1000000.
 Fact type: release is passing tests
 Fact type: release is finalized at date
 	Necessity: each release is finalized at at most one date.
@@ -734,19 +747,26 @@ Fact type: release has semver patch
 	Necessity: each release has exactly one semver patch.
 Fact type: release has semver prerelease
 	Necessity: each release has exactly one semver prerelease.
+	Necessity: each release has a semver prerelease that has a Length (Type) that is less than or equal to 80.
 Fact type: release has semver build
 	Necessity: each release has exactly one semver build.
+	Necessity: each release has a semver build that has a Length (Type) that is less than or equal to 50.
 Fact type: release has variant
 	Necessity: each release has exactly one variant.
+	Necessity: each release has a variant that has a Length (Type) that is less than or equal to 50.
 Fact type: release has revision
 	Necessity: each release has at most one revision.
 	Necessity: each release that has a revision, has a revision that is greater than or equal to 0.
 Fact type: release has known issue list
 	Necessity: each release has at most one known issue list.
+	Necessity: each release that has a known issue list, has a known issue list that has a Length (Type) that is less than or equal to 600.
 Fact type: release has note
 	Necessity: each release has at most one note.
+	-- 1MB
+	Necessity: each release that has a note, has a note that has a Length (Type) that is less than or equal to 1000000.
 Fact type: release has invalidation reason
 	Necessity: each release has at most one invalidation reason.
+	Necessity: each release has an invalidation reason, has an invalidation reason that has a Length (Type) that is less than or equal to 255.
 	Necessity: each release that has an invalidation reason, is invalidated.
 Fact type: release has asset key
 	Term Form: release asset

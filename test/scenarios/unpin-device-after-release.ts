@@ -46,7 +46,7 @@ export default () => {
 				build_log: '',
 				commit: 'deadbeef',
 				composition: {},
-				source: '',
+				source: 'local',
 				status: 'success',
 				start_timestamp: Date.now(),
 			});
@@ -110,7 +110,7 @@ export default () => {
 				build_log: '',
 				commit: 'abcd0001',
 				composition: {},
-				source: '',
+				source: 'local',
 				status: 'success',
 				start_timestamp: Date.now(),
 			});
