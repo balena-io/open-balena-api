@@ -153,8 +153,8 @@ function buildAppFromRelease(
 		commit: release.commit,
 		name: application.app_name,
 		services,
-		networks: composition?.networks || {},
-		volumes: composition?.volumes || {},
+		networks: composition?.networks ?? {},
+		volumes: composition?.volumes ?? {},
 	};
 }
 
