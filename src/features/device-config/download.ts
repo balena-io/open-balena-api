@@ -83,7 +83,7 @@ export const downloadImageConfig: RequestHandler = async (req, res) => {
 		const app = await getApp(appId, req);
 		const deviceTypeJson = await getDeviceTypeJsonBySlug(
 			resinApi,
-			deviceTypeSlug || app.is_for__device_type[0].slug,
+			deviceTypeSlug ?? app.is_for__device_type[0].slug,
 		);
 		const config = await generateConfig(
 			req,

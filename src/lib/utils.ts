@@ -38,7 +38,9 @@ export const checkInt = (num?: string): number | false => {
 export const getIP = (req: Request): string | undefined =>
 	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 	req.ip ||
+	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 	(req as any)._remoteAddress ||
+	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 	req.connection?.remoteAddress ||
 	undefined;
 

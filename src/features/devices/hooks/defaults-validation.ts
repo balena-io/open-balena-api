@@ -10,25 +10,43 @@ export const isDeviceNameValid = (name: string) => {
 hooks.addPureHook('POST', 'resin', 'device', {
 	POSTPARSE: ({ request }) => {
 		// Check for extra whitespace characters
-		if (
-			request.values.device_name != null &&
-			!isDeviceNameValid(request.values.device_name)
-		) {
-			throw new errors.BadRequestError(
-				'Device name cannot contain any newline characters.',
-			);
+		let deviceName = request.values.device_name;
+		if (deviceName != null) {
+			if (typeof deviceName !== 'string') {
+				throw new errors.BadRequestError(
+					'Device name must be a string if provided.',
+				);
+			}
+			if (!isDeviceNameValid(deviceName)) {
+				throw new errors.BadRequestError(
+					'Device name cannot contain any newline characters.',
+				);
+			}
+		}
+		if (deviceName == null || deviceName === '') {
+			deviceName = haikuName.generate();
 		}
 
-		request.values.device_name =
-			request.values.device_name || haikuName.generate();
-		request.values.uuid =
-			request.values.uuid || randomUUID().replaceAll('-', '');
+		request.values.device_name = deviceName;
 
-		if (!/^[a-f0-9]{32}([a-f0-9]{30})?$/.test(request.values.uuid)) {
+		let uuid = request.values.uuid;
+		if (uuid != null) {
+			if (typeof uuid !== 'string') {
+				throw new errors.BadRequestError(
+					'Device UUID must be a string if provided.',
+				);
+			}
+		}
+		if (uuid == null || uuid === '') {
+			uuid = randomUUID().replaceAll('-', '');
+		}
+
+		if (!/^[a-f0-9]{32}([a-f0-9]{30})?$/.test(uuid)) {
 			throw new errors.BadRequestError(
 				'Device UUID must be a 32 or 62 character long lower case hex string.',
 			);
 		}
+		request.values.uuid = uuid;
 	},
 });
 
