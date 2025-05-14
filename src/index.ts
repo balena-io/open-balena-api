@@ -108,7 +108,11 @@ import {
 	updateOrInsertModel,
 	getOrInsertModelId,
 } from './infra/pinejs-client-helpers/index.js';
-import { normalizeHandle, refreshToken } from './features/auth/index.js';
+import {
+	normalizeHandle,
+	refreshToken,
+	publicKeys,
+} from './features/auth/index.js';
 import {
 	getIP,
 	getIPv4,
@@ -209,6 +213,7 @@ export const auth = {
 	getUserIDFromCreds,
 	registryAuth,
 	normalizeHandle,
+	publicKeys,
 	/** @deprecated Will be removed in a future version */
 	refreshToken,
 };
