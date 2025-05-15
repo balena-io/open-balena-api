@@ -495,6 +495,8 @@ Fact type: application has app name
 Fact type: application has slug
 	Necessity: each application has exactly one slug
 	Necessity: each slug is of exactly one application
+	-- handle [1, 220] + '/' + name [4, 100]
+	Necessity: each application has a slug that has a Length (Type) that is greater than or equal to 6 and is less than or equal to 301.
 Fact type: application is for device type
 	Synonymous Form: device type is default for application
 	Necessity: each application is for exactly one device type
