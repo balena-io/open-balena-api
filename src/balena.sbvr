@@ -434,11 +434,11 @@ Fact type: user (Auth) is member of organization
 
 Fact type: organization has name (Auth)
 	Necessity: each organization has exactly one name (Auth).
-	Necessity: each name (Auth) of an organization, has a Length (Type) that is greater than 0.
+	Necessity: each name (Auth) of an organization, has a Length (Type) that is greater than 0 and is less than or equal to 220.
 Fact type: organization has handle
 	Necessity: each organization has exactly one handle.
 	Necessity: each handle is of exactly one organization.
-	Necessity: each handle of an organization, has a Length (Type) that is greater than 0.
+	Necessity: each handle of an organization, has a Length (Type) that is greater than 0 and is less than or equal to 220.
 
 
 -- user
