@@ -368,7 +368,7 @@ Term: application
 	Fact type: application has tag key
 		Term Form: application tag
 		Database Table Name: application tag
-		Necessity: each application tag has a tag key that has a Length (Type) that is greater than 0.
+		Necessity: each application tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 100.
 
 Term: device
 	Concept Type: actor (Auth)
@@ -405,14 +405,14 @@ Term: device
 	Fact type: device has tag key
 		Term Form: device tag
 		Database Table Name: device tag
-		Necessity: each device tag has a tag key that has a Length (Type) that is greater than 0.
+		Necessity: each device tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 100.
 
 Term: release
 
 Fact type: release has tag key
 	Term Form: release tag
 	Database Table Name: release tag
-	Necessity: each release tag has a tag key that has a Length (Type) that is greater than 0.
+	Necessity: each release tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 100.
 
 Fact type: image is part of release
 	Synonymous Form: release contains image
@@ -629,12 +629,16 @@ Fact type: device has last update status event
 
 Fact type: application config variable has value
 	Necessity: each application config variable has exactly one value.
+	-- 500KB
+	Necessity: each application config variable has a value that has a Length (Type) that is less than or equal to 500000.
 
 
 -- device config variable
 
 Fact type: device config variable has value
 	Necessity: each device config variable has exactly one value.
+	-- 500KB
+	Necessity: each device config variable has a value that has a Length (Type) that is less than or equal to 500000.
 
 -- device type
 
@@ -793,6 +797,8 @@ Fact type: release asset has asset
 
 Fact type: service environment variable has value
 	Necessity: each service environment variable has exactly one value.
+	-- 100KB
+	Necessity: each service environment variable has a value that has a Length (Type) that is less than or equal to 100000.
 
 
 -- image
@@ -832,36 +838,46 @@ Fact type: image has contract
 
 Fact type: image label has value
 	Necessity: each image label has exactly one value.
+	Necessity: each image label has a value that has a Length (Type) that is less than or equal to 300.
 
 
 -- service label
 
 Fact type: service label has value
 	Necessity: each service label has exactly one value.
+	Necessity: each service label has a value that has a Length (Type) that is less than or equal to 255.
 
 
 -- device environment variable
 
 Fact type: device environment variable has value
 	Necessity: each device environment variable has exactly one value.
+	-- 600KB
+	Necessity: each device environment variable has a value that has a Length (Type) that is less than or equal to 600000.
 
 
 -- application environment variable
 
 Fact type: application environment variable has value
 	Necessity: each application environment variable has exactly one value.
+	-- 150KB
+	Necessity: each application environment variable has a value that has a Length (Type) that is less than or equal to 150000.
 
 
 -- image environment variable
 
 Fact type: image environment variable has value
 	Necessity: each image environment variable has exactly one value.
+	-- 100KB
+	Necessity: each image environment variable has a value that has a Length (Type) that is less than or equal to 100000.
 
 
 -- device service environment variable
 
 Fact type: device service environment variable has value
 	Necessity: each device service environment variable has exactly one value.
+	-- 300KB
+	Necessity: each device service environment variable has a value that has a Length (Type) that is less than or equal to 300000.
 Fact type: device service environment variable has service install
 	Necessity: each device service environment variable has exactly one service install.
 
@@ -870,18 +886,24 @@ Fact type: device service environment variable has service install
 
 Fact type: application tag has value
 	Necessity: each application tag has exactly one value.
+	-- 1KB
+	Necessity: each application tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 1000.
 
 
 -- device tag
 
 Fact type: device tag has value
 	Necessity: each device tag has exactly one value.
+	-- 61KB
+	Necessity: each device tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 61000.
 
 
 -- release tag
 
 Fact type: release tag has value
 	Necessity: each release tag has exactly one value.
+	-- 4KB
+	Necessity: each release tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 4000.
 
 
 -- image install
