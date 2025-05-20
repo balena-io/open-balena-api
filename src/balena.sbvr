@@ -811,6 +811,8 @@ Fact type: image has end timestamp
 	Necessity: each image has at most one end timestamp.
 Fact type: image has dockerfile
 	Necessity: each image has at most one dockerfile.
+	-- 1MB
+	Necessity: each image that has a dockerfile, has a dockerfile that has a Length (Type) that is less than or equal to 1000000.
 Fact type: image is a build of service
 	Synonymous Form: service is built by image
 	Necessity: each image is a build of exactly one service.
@@ -822,18 +824,28 @@ Fact type: image is stored at image location
 	Necessity: each image location hosts exactly one image.
 Fact type: image has project type
 	Necessity: each image has at most one project type.
+	Definition: "Standard Dockerfile" or "project type unavailable" or "NodeJS" or "node.js" or "local deploy" or "external service" or "Dockerfile.template" or "dockerfile template" or "dockerfile" or "Could not be detected" or "Architecture-specific Dockerfile" or "Archicture-specific Dockerfile"
 Fact type: image has error message
 	Necessity: each image has at most one error message
+	-- 500KB
+	Necessity: each image that has an error message, has an error message that has a Length (Type) that is less than or equal to 500000.
 Fact type: image has build log
 	Necessity: each image has at most one build log.
+	-- 1.1MB
+	Necessity: each image that has a build log, has a build log that has a Length (Type) that is less than or equal to 1100000.
 Fact type: image has push timestamp
 	Necessity: each image has at most one push timestamp.
 Fact type: image has status
 	Necessity: each image has exactly one status.
+	Definition: "running" or "success" or "failed" or "error" or "cancelled" or "interrupted"
 Fact type: image has content hash
 	Necessity: each image has at most one content hash.
+	Necessity: each image that has a content hash, has a content hash that has a Length (Type) that is less than or equal to 71.
 Fact type: image has contract
 	Necessity: each image has at most one contract
+	-- TODO: Depends on adding support for JSON size in pinejs
+	-- 1MB
+	-- Necessity: each image that has a contract, has a contract that has a Length (Type) that is less than or equal to 1000000.
 
 
 -- image label
