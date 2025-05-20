@@ -916,6 +916,7 @@ Fact type: image install has download progress
 	Necessity: each image install has at most one download progress.
 Fact type: image install has status
 	Necessity: each image install has exactly one status.
+	Definition: "Downloading" or "Downloaded" or "Installing" or "Installed" or "Starting" or "Running" or "Idle" or "Handing over" or "Awaiting handover" or "Stopping" or "Stopped" or "exited" or "Deleting" or "deleted" or "Dead" or "removing" or "configuring" or "Unknown"
 Fact type: image install is provided by release
 	Synonymous Form: release provides image install
 	Necessity: each image install is provided by exactly one release.
