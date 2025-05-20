@@ -519,8 +519,10 @@ Fact type: application is public
 
 Fact type: service instance has service type
 	Necessity: each service instance has exactly one service type.
+	Definition: "vpn"
 Fact type: service instance has ip address
 	Necessity: each service instance has exactly one ip address.
+	Necessity: each service instance has an ip address that has a Length (Type) that is less than or equal to 39.
 Fact type: service instance has last heartbeat
 	Necessity: each service instance has exactly one last heartbeat.
 
