@@ -60,6 +60,7 @@ Term: api key
 	Reference Scheme: key
 Fact type: api key has key
 	Necessity: each api key has exactly one key
+	Necessity: each api key has a key that has a Length (Type) that is less than or equal to 1300.
 	Necessity: each key is of exactly one api key
 Fact type: api key has expiry date
 	Necessity: each api key has at most one expiry date.
@@ -72,6 +73,7 @@ Fact type: api key has name
 	Necessity: Each api key has at most one name.
 Fact type: api key has description
 	Necessity: Each api key has at most one description.
+	Necessity: each api key has a description that has a Length (Type) that is less than or equal to 1300.
 
 
 Vocabulary: balena
