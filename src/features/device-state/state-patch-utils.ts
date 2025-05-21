@@ -66,8 +66,13 @@ type ValidPatchField =
 	| (typeof v2ValidPatchFields)[number];
 
 const constrainedDeviceTextFields = [
+	['status', 50, null],
+	['os_version', 70, null],
+	['supervisor_version', 20, null],
+	['api_secret', 64, null],
 	['ip_address', 2000, ADDRESS_DELIMITER],
 	['mac_address', 900, ADDRESS_DELIMITER],
+	['note', 1_000_000, null],
 ] satisfies Array<
 	[ValidPatchField, maxLength: number, delimiter: string | null]
 >;
