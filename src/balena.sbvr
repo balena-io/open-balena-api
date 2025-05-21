@@ -41,6 +41,7 @@ Term: user
 	Concept Type: actor
 Fact type: user has username
 	Necessity: Each user has exactly one username.
+	Necessity: Each user has a username that has a Length (Type) that is less than or equal to 75.
 	Necessity: Each username is of exactly one user.
 Fact type: user has password
 	Necessity: Each user has at most one password.
@@ -59,6 +60,7 @@ Term: api key
 	Reference Scheme: key
 Fact type: api key has key
 	Necessity: each api key has exactly one key
+	Necessity: each api key has a key that has a Length (Type) that is less than or equal to 1300.
 	Necessity: each key is of exactly one api key
 Fact type: api key has expiry date
 	Necessity: each api key has at most one expiry date.
@@ -71,6 +73,7 @@ Fact type: api key has name
 	Necessity: Each api key has at most one name.
 Fact type: api key has description
 	Necessity: Each api key has at most one description.
+	Necessity: each api key has a description that has a Length (Type) that is less than or equal to 1300.
 
 
 Vocabulary: balena
@@ -365,7 +368,7 @@ Term: application
 	Fact type: application has tag key
 		Term Form: application tag
 		Database Table Name: application tag
-		Necessity: each application tag has a tag key that has a Length (Type) that is greater than 0.
+		Necessity: each application tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 100.
 
 Term: device
 	Concept Type: actor (Auth)
@@ -402,14 +405,14 @@ Term: device
 	Fact type: device has tag key
 		Term Form: device tag
 		Database Table Name: device tag
-		Necessity: each device tag has a tag key that has a Length (Type) that is greater than 0.
+		Necessity: each device tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 100.
 
 Term: release
 
 Fact type: release has tag key
 	Term Form: release tag
 	Database Table Name: release tag
-	Necessity: each release tag has a tag key that has a Length (Type) that is greater than 0.
+	Necessity: each release tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 100.
 
 Fact type: image is part of release
 	Synonymous Form: release contains image
@@ -433,46 +436,52 @@ Fact type: user (Auth) is member of organization
 
 Fact type: organization has name (Auth)
 	Necessity: each organization has exactly one name (Auth).
-	Necessity: each name (Auth) of an organization, has a Length (Type) that is greater than 0.
+	Necessity: each name (Auth) of an organization, has a Length (Type) that is greater than 0 and is less than or equal to 220.
 Fact type: organization has handle
 	Necessity: each organization has exactly one handle.
 	Necessity: each handle is of exactly one organization.
-	Necessity: each handle of an organization, has a Length (Type) that is greater than 0.
+	Necessity: each handle of an organization, has a Length (Type) that is greater than 0 and is less than or equal to 220.
 
 
 -- user
 
 Fact type: user (Auth) has email
 	Necessity: each user (Auth) has at most one email.
-	Necessity: each user (Auth) that has an email, has an email that has a Length (Type) that is greater than 4.
+	Necessity: each user (Auth) that has an email, has an email that has a Length (Type) that is greater than 4 and is less than or equal to 254.
 	Necessity: each email is of exactly one user (Auth).
 
 Fact type: user (Auth) has public key
 	Term Form: user public key
+	Necessity: each user public key has a public key that has a Length (Type) that is less than or equal to 2850.
 
 
 -- user public key
 
 Fact type: user public key has title
 	Necessity: each user public key has exactly one title
+	Necessity: each user public key has a title that has a Length (Type) that is less than or equal to 120.
 
 
 -- application type
 
 Fact type: application type has name (Auth)
 	Necessity: each application type has exactly one name (Auth)
+	Necessity: each application type has a name (Auth) that has a Length (Type) that is less than or equal to 20.
 Fact type: application type supports web url
 Fact type: application type supports multicontainer
 Fact type: application type supports gateway mode
 Fact type: application type needs os version range
 	Necessity: each application type needs at most one os version range
+	Necessity: each application type that needs an os version range, needs an os version range that has a Length (Type) that is less than or equal to 50.
 Fact type: application type requires payment
 Fact type: application type is legacy
 Fact type: application type has slug
 	Necessity: each application type has exactly one slug
+	Necessity: each application type has a slug that has a Length (Type) that is less than or equal to 25.
 	Necessity: each slug is of exactly one application type
 Fact type: application type has description (Auth)
 	Necessity: each application type has at most one description (Auth).
+	Necessity: each application type that has a description (Auth), has a description (Auth) that has a Length (Type) that is less than or equal to 180.
 Fact type: application type has maximum device count
 	Necessity: each application type has at most one maximum device count
 
@@ -488,6 +497,8 @@ Fact type: application has app name
 Fact type: application has slug
 	Necessity: each application has exactly one slug
 	Necessity: each slug is of exactly one application
+	-- handle [1, 220] + '/' + name [4, 100]
+	Necessity: each application has a slug that has a Length (Type) that is greater than or equal to 6 and is less than or equal to 301.
 Fact type: application is for device type
 	Synonymous Form: device type is default for application
 	Necessity: each application is for exactly one device type
@@ -508,8 +519,10 @@ Fact type: application is public
 
 Fact type: service instance has service type
 	Necessity: each service instance has exactly one service type.
+	Definition: "vpn"
 Fact type: service instance has ip address
 	Necessity: each service instance has exactly one ip address.
+	Necessity: each service instance has an ip address that has a Length (Type) that is less than or equal to 39.
 Fact type: service instance has last heartbeat
 	Necessity: each service instance has exactly one last heartbeat.
 
@@ -519,12 +532,16 @@ Fact type: service instance has last heartbeat
 Fact type: device has uuid
 	Necessity: each device has exactly one uuid.
 	Necessity: each uuid is of exactly one device.
+	-- B/c of existing data we enforce this to 32/62 using a hook
+	Necessity: each device has a uuid that has a Length (Type) that is less than or equal to 62.
 Fact type: device has local id
 	Necessity: each device has at most one local id.
 Fact type: device has device name
 	Necessity: each device has exactly one device name.
 Fact type: device has note
 	Necessity: each device has at most one note.
+	-- 1MB
+	Necessity: each device that has a note, has a note that has a Length (Type) that is less than or equal to 1000000.
 Fact type: device is of device type
 	Synonymous Form: device type describes device
 	Necessity: each device is of exactly one device type.
@@ -572,10 +589,13 @@ Fact type: device has status
 	Necessity: each device has at most one status.
 Fact type: device has os version
 	Necessity: each device has at most one os version
+	Necessity: each device that has an os version, has an os version that has a Length (Type) that is less than or equal to 30.
 Fact type: device has os variant
 	Necessity: each device has at most one os variant
+	Definition: "prod" or "dev"
 Fact type: device has supervisor version
 	Necessity: each device has at most one supervisor version
+	Necessity: each device that has a supervisor version, has a supervisor version that has a Length (Type) that is less than or equal to 20.
 Fact type: device has provisioning progress
 	Necessity: each device has at most one provisioning progress
 Fact type: device has provisioning state
@@ -611,21 +631,27 @@ Fact type: device has last update status event
 
 Fact type: application config variable has value
 	Necessity: each application config variable has exactly one value.
+	-- 500KB
+	Necessity: each application config variable has a value that has a Length (Type) that is less than or equal to 500000.
 
 
 -- device config variable
 
 Fact type: device config variable has value
 	Necessity: each device config variable has exactly one value.
+	-- 500KB
+	Necessity: each device config variable has a value that has a Length (Type) that is less than or equal to 500000.
 
 -- device type
 
 Fact type: device type has slug
 	Necessity: each device type has exactly one slug
+	Necessity: each device type has a slug that has a Length (Type) that is less than or equal to 255.
 	Necessity: each slug is of exactly one device type
 
 Fact type: device type has name (Auth)
 	Necessity: each device type has exactly one name (Auth)
+	Necessity: each device type has a name (Auth) that has a Length (Type) that is less than or equal to 255.
 
 Fact type: device type is of cpu architecture
 	Synonymous form: device type supports cpu architecture
@@ -634,9 +660,14 @@ Fact type: device type is of cpu architecture
 
 Fact type: device type has logo
 	Necessity: each device type has at most one logo
+	-- 300KB in base64
+	Necessity: each device type that has a logo, has a logo that has a Length (Type) that is less than or equal to 400000.
 
 Fact type: device type has contract
 	Necessity: each device type has at most one contract
+	-- TODO: Depends on adding support for JSON size in pinejs
+	-- 5MB
+	-- Necessity: each device type that has a contract, has a contract that has a Length (Type) that is less than or equal to 5000000.
 
 Fact type: device type belongs to device family
 	Synonymous form: device family has device type
@@ -652,23 +683,28 @@ Fact type: device type is referenced by alias
 
 Fact type: cpu architecture has slug
 	Necessity: each cpu architecture has exactly one slug
+	Definition: "rpi" or "armv7hf" or "aarch64" or "i386-nlp" or "i386" or "amd64"
 	Necessity: each slug is of exactly one cpu architecture
 
 -- device manufacturer
 
 Fact type: device manufacturer has slug
 	Necessity: each device manufacturer has exactly one slug
+	Necessity: each device manufacturer has a slug that has a Length (Type) that is less than or equal to 50.
 	Necessity: each slug is of exactly one device manufacturer
 Fact type: device manufacturer has name (Auth)
 	Necessity: each device manufacturer has exactly one name (Auth)
+	Necessity: each device manufacturer has a name (Auth) that has a Length (Type) that is less than or equal to 100.
 
 -- device family
 
 Fact type: device family has slug
 	Necessity: each device family has exactly one slug
+	Necessity: each device family has a slug that has a Length (Type) that is less than or equal to 50.
 	Necessity: each slug is of exactly one device family
 Fact type: device family has name (Auth)
 	Necessity: each device family has exactly one name (Auth)
+	Necessity: each device family has a name (Auth) that has a Length (Type) that is less than or equal to 50.
 Fact type: device family is manufactured by device manufacturer
 	Synonymous Form: device manufacturer manufactures device family
 	Necessity: each device family is manufactured by at most one device manufacturer
@@ -681,14 +717,23 @@ Fact type: release belongs to application
 	Necessity: each release belongs to exactly one application.
 Fact type: release has commit
 	Necessity: each release has exactly one commit.
+	Necessity: each release has a commit that has a Length (Type) that is less than or equal to 40.
 Fact type: release has composition
 	Necessity: each release has exactly one composition.
+	-- TODO: Depends on adding support for JSON size in pinejs
+	-- 1MB
+	-- Necessity: each release has a composition that has a Length (Type) that is less than or equal to 1000000.
 Fact type: release has status
 	Necessity: each release has exactly one status.
+	Note: "interrupted" is legacy pre-multicontainer
+	Definition: "running" or "success" or "failed" or "error" or "cancelled" or "interrupted"
 Fact type: release has source
 	Necessity: each release has exactly one source.
+	Definition: "cloud" or "local"
 Fact type: release has build log
 	Necessity: each release has at most one build log.
+	-- 1MB
+	Necessity: each release that has a build log, has a build log that has a Length (Type) that is less than or equal to 1000000.
 Fact type: release is invalidated
 Fact type: release has start timestamp
 	Necessity: each release has exactly one start timestamp.
@@ -698,9 +743,13 @@ Fact type: release has update timestamp
 	Necessity: each release has exactly one update timestamp.
 Fact type: release has release version
 	Necessity: each release has at most one release version
+	Necessity: each release that has a release version, has a release version that has a Length (Type) that is less than or equal to 100.
 	Note: Deprecated.
 Fact type: release has contract
 	Necessity: each release has at most one contract
+	-- TODO: Depends on adding support for JSON size in pinejs
+	-- 1MB
+	-- Necessity: each release that has a contract, has a contract that has a Length (Type) that is less than or equal to 1000000.
 Fact type: release is passing tests
 Fact type: release is finalized at date
 	Necessity: each release is finalized at at most one date.
@@ -715,19 +764,26 @@ Fact type: release has semver patch
 	Necessity: each release has exactly one semver patch.
 Fact type: release has semver prerelease
 	Necessity: each release has exactly one semver prerelease.
+	Necessity: each release has a semver prerelease that has a Length (Type) that is less than or equal to 80.
 Fact type: release has semver build
 	Necessity: each release has exactly one semver build.
+	Necessity: each release has a semver build that has a Length (Type) that is less than or equal to 50.
 Fact type: release has variant
 	Necessity: each release has exactly one variant.
+	Necessity: each release has a variant that has a Length (Type) that is less than or equal to 50.
 Fact type: release has revision
 	Necessity: each release has at most one revision.
 	Necessity: each release that has a revision, has a revision that is greater than or equal to 0.
 Fact type: release has known issue list
 	Necessity: each release has at most one known issue list.
+	Necessity: each release that has a known issue list, has a known issue list that has a Length (Type) that is less than or equal to 600.
 Fact type: release has note
 	Necessity: each release has at most one note.
+	-- 1MB
+	Necessity: each release that has a note, has a note that has a Length (Type) that is less than or equal to 1000000.
 Fact type: release has invalidation reason
 	Necessity: each release has at most one invalidation reason.
+	Necessity: each release has an invalidation reason, has an invalidation reason that has a Length (Type) that is less than or equal to 255.
 	Necessity: each release that has an invalidation reason, is invalidated.
 Fact type: release has asset key
 	Term Form: release asset
@@ -743,6 +799,8 @@ Fact type: release asset has asset
 
 Fact type: service environment variable has value
 	Necessity: each service environment variable has exactly one value.
+	-- 100KB
+	Necessity: each service environment variable has a value that has a Length (Type) that is less than or equal to 100000.
 
 
 -- image
@@ -753,6 +811,8 @@ Fact type: image has end timestamp
 	Necessity: each image has at most one end timestamp.
 Fact type: image has dockerfile
 	Necessity: each image has at most one dockerfile.
+	-- 1MB
+	Necessity: each image that has a dockerfile, has a dockerfile that has a Length (Type) that is less than or equal to 1000000.
 Fact type: image is a build of service
 	Synonymous Form: service is built by image
 	Necessity: each image is a build of exactly one service.
@@ -764,54 +824,74 @@ Fact type: image is stored at image location
 	Necessity: each image location hosts exactly one image.
 Fact type: image has project type
 	Necessity: each image has at most one project type.
+	Definition: "Standard Dockerfile" or "project type unavailable" or "NodeJS" or "node.js" or "local deploy" or "external service" or "Dockerfile.template" or "dockerfile template" or "dockerfile" or "Could not be detected" or "Architecture-specific Dockerfile" or "Archicture-specific Dockerfile"
 Fact type: image has error message
 	Necessity: each image has at most one error message
+	-- 500KB
+	Necessity: each image that has an error message, has an error message that has a Length (Type) that is less than or equal to 500000.
 Fact type: image has build log
 	Necessity: each image has at most one build log.
+	-- 1.1MB
+	Necessity: each image that has a build log, has a build log that has a Length (Type) that is less than or equal to 1100000.
 Fact type: image has push timestamp
 	Necessity: each image has at most one push timestamp.
 Fact type: image has status
 	Necessity: each image has exactly one status.
+	Definition: "running" or "success" or "failed" or "error" or "cancelled" or "interrupted"
 Fact type: image has content hash
 	Necessity: each image has at most one content hash.
+	Necessity: each image that has a content hash, has a content hash that has a Length (Type) that is less than or equal to 71.
 Fact type: image has contract
 	Necessity: each image has at most one contract
+	-- TODO: Depends on adding support for JSON size in pinejs
+	-- 1MB
+	-- Necessity: each image that has a contract, has a contract that has a Length (Type) that is less than or equal to 1000000.
 
 
 -- image label
 
 Fact type: image label has value
 	Necessity: each image label has exactly one value.
+	Necessity: each image label has a value that has a Length (Type) that is less than or equal to 300.
 
 
 -- service label
 
 Fact type: service label has value
 	Necessity: each service label has exactly one value.
+	Necessity: each service label has a value that has a Length (Type) that is less than or equal to 255.
 
 
 -- device environment variable
 
 Fact type: device environment variable has value
 	Necessity: each device environment variable has exactly one value.
+	-- 600KB
+	Necessity: each device environment variable has a value that has a Length (Type) that is less than or equal to 600000.
 
 
 -- application environment variable
 
 Fact type: application environment variable has value
 	Necessity: each application environment variable has exactly one value.
+	-- 150KB
+	Necessity: each application environment variable has a value that has a Length (Type) that is less than or equal to 150000.
 
 
 -- image environment variable
 
 Fact type: image environment variable has value
 	Necessity: each image environment variable has exactly one value.
+	-- 100KB
+	Necessity: each image environment variable has a value that has a Length (Type) that is less than or equal to 100000.
 
 
 -- device service environment variable
 
 Fact type: device service environment variable has value
 	Necessity: each device service environment variable has exactly one value.
+	-- 300KB
+	Necessity: each device service environment variable has a value that has a Length (Type) that is less than or equal to 300000.
 Fact type: device service environment variable has service install
 	Necessity: each device service environment variable has exactly one service install.
 
@@ -820,18 +900,24 @@ Fact type: device service environment variable has service install
 
 Fact type: application tag has value
 	Necessity: each application tag has exactly one value.
+	-- 1KB
+	Necessity: each application tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 1000.
 
 
 -- device tag
 
 Fact type: device tag has value
 	Necessity: each device tag has exactly one value.
+	-- 61KB
+	Necessity: each device tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 61000.
 
 
 -- release tag
 
 Fact type: release tag has value
 	Necessity: each release tag has exactly one value.
+	-- 4KB
+	Necessity: each release tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 4000.
 
 
 -- image install
@@ -842,6 +928,7 @@ Fact type: image install has download progress
 	Necessity: each image install has at most one download progress.
 Fact type: image install has status
 	Necessity: each image install has exactly one status.
+	Definition: "Downloading" or "Downloaded" or "Installing" or "Installed" or "Starting" or "Running" or "Idle" or "Handing over" or "Awaiting handover" or "Stopping" or "Stopped" or "exited" or "Deleting" or "deleted" or "Dead" or "removing" or "configuring" or "Unknown"
 Fact type: image install is provided by release
 	Synonymous Form: release provides image install
 	Necessity: each image install is provided by exactly one release.

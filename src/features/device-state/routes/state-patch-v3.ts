@@ -15,7 +15,8 @@ import {
 	limitMetricNumbers,
 	upsertImageInstall,
 	shouldUpdateMetrics,
-	truncateShortTextFields,
+	truncateConstrainedFields,
+	normalizeStatePatchDeviceBody,
 } from '../state-patch-utils.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 
@@ -277,16 +278,16 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 			const state = body[uuid];
 
 			const { apps } = state;
-
-			let deviceBody: Pick<
+			type DeviceBodyBeforeNormalization = Pick<
 				StatePatchV3Body[string] &
 					Partial<Pick<Device['Write'], 'update_status'>>,
 				(typeof v3ValidPatchFields)[number]
 			> &
-				Partial<Pick<Device['Write'], 'is_running__release'>> = _.pick(
-				state,
-				v3ValidPatchFields,
-			);
+				Partial<Pick<Device['Write'], 'is_running__release'>>;
+			let deviceBody =
+				normalizeStatePatchDeviceBody<DeviceBodyBeforeNormalization>(
+					_.pick(state, v3ValidPatchFields),
+				);
 			let metricsBody: Pick<
 				StatePatchV3Body[string],
 				(typeof metricsPatchFields)[number]
@@ -357,7 +358,7 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 					// truncate for resilient legacy compatible device state patch so that supervisors don't fail
 					// to update b/c of length violation of 255 (SBVR SHORT TEXT type) for ip and mac address.
 					// sbvr-types does not export SHORT TEXT VARCHAR length 255 to import.
-					deviceBody = truncateShortTextFields(deviceBody);
+					deviceBody = truncateConstrainedFields(deviceBody);
 					updateFns.push(async (resinApiTx) => {
 						await resinApiTx.patch({
 							resource: 'device',
