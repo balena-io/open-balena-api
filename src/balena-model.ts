@@ -273,14 +273,14 @@ export interface CpuArchitecture {
 		created_at: Types['Date Time']['Read'];
 		modified_at: Types['Date Time']['Read'];
 		id: Types['Serial']['Read'];
-		slug: Types['Short Text']['Read'];
+		slug: 'rpi' | 'armv7hf' | 'aarch64' | 'i386-nlp' | 'i386' | 'amd64';
 		is_supported_by__device_type?: Array<DeviceType['Read']>;
 	};
 	Write: {
 		created_at: Types['Date Time']['Write'];
 		modified_at: Types['Date Time']['Write'];
 		id: Types['Serial']['Write'];
-		slug: Types['Short Text']['Write'];
+		slug: 'rpi' | 'armv7hf' | 'aarch64' | 'i386-nlp' | 'i386' | 'amd64';
 	};
 }
 
@@ -375,11 +375,30 @@ export interface Image {
 		is_a_build_of__service: { __id: Service['Read']['id'] } | [Service['Read']];
 		image_size: Types['Big Integer']['Read'] | null;
 		is_stored_at__image_location: Types['Short Text']['Read'];
-		project_type: Types['Short Text']['Read'] | null;
+		project_type:
+			| 'Standard Dockerfile'
+			| 'project type unavailable'
+			| 'NodeJS'
+			| 'node.js'
+			| 'local deploy'
+			| 'external service'
+			| 'Dockerfile.template'
+			| 'dockerfile template'
+			| 'dockerfile'
+			| 'Could not be detected'
+			| 'Architecture-specific Dockerfile'
+			| 'Archicture-specific Dockerfile'
+			| null;
 		error_message: Types['Text']['Read'] | null;
 		build_log: Types['Text']['Read'] | null;
 		push_timestamp: Types['Date Time']['Read'] | null;
-		status: Types['Short Text']['Read'];
+		status:
+			| 'running'
+			| 'success'
+			| 'failed'
+			| 'error'
+			| 'cancelled'
+			| 'interrupted';
 		content_hash: Types['Short Text']['Read'] | null;
 		contract: Types['JSON']['Read'] | null;
 		device__installs__image?: Array<ImageInstall['Read']>;
@@ -402,11 +421,30 @@ export interface Image {
 		is_a_build_of__service: Service['Write']['id'];
 		image_size: Types['Big Integer']['Write'] | null;
 		is_stored_at__image_location: Types['Short Text']['Write'];
-		project_type: Types['Short Text']['Write'] | null;
+		project_type:
+			| 'Standard Dockerfile'
+			| 'project type unavailable'
+			| 'NodeJS'
+			| 'node.js'
+			| 'local deploy'
+			| 'external service'
+			| 'Dockerfile.template'
+			| 'dockerfile template'
+			| 'dockerfile'
+			| 'Could not be detected'
+			| 'Architecture-specific Dockerfile'
+			| 'Archicture-specific Dockerfile'
+			| null;
 		error_message: Types['Text']['Write'] | null;
 		build_log: Types['Text']['Write'] | null;
 		push_timestamp: Types['Date Time']['Write'] | null;
-		status: Types['Short Text']['Write'];
+		status:
+			| 'running'
+			| 'success'
+			| 'failed'
+			| 'error'
+			| 'cancelled'
+			| 'interrupted';
 		content_hash: Types['Short Text']['Write'] | null;
 		contract: Types['JSON']['Write'] | null;
 	};
@@ -732,7 +770,7 @@ export interface Device {
 		download_progress: Types['Integer']['Read'] | null;
 		status: Types['Short Text']['Read'] | null;
 		os_version: Types['Short Text']['Read'] | null;
-		os_variant: Types['Short Text']['Read'] | null;
+		os_variant: 'prod' | 'dev' | null;
 		supervisor_version: Types['Short Text']['Read'] | null;
 		provisioning_progress: Types['Integer']['Read'] | null;
 		provisioning_state: Types['Short Text']['Read'] | null;
@@ -839,7 +877,7 @@ export interface Device {
 		download_progress: Types['Integer']['Write'] | null;
 		status: Types['Short Text']['Write'] | null;
 		os_version: Types['Short Text']['Write'] | null;
-		os_variant: Types['Short Text']['Write'] | null;
+		os_variant: 'prod' | 'dev' | null;
 		supervisor_version: Types['Short Text']['Write'] | null;
 		provisioning_progress: Types['Integer']['Write'] | null;
 		provisioning_state: Types['Short Text']['Write'] | null;
@@ -908,7 +946,25 @@ export interface ImageInstall {
 		id: Types['Serial']['Read'];
 		install_date: Types['Date Time']['Read'];
 		download_progress: Types['Integer']['Read'] | null;
-		status: Types['Short Text']['Read'];
+		status:
+			| 'Downloading'
+			| 'Downloaded'
+			| 'Installing'
+			| 'Installed'
+			| 'Starting'
+			| 'Running'
+			| 'Idle'
+			| 'Handing over'
+			| 'Awaiting handover'
+			| 'Stopping'
+			| 'Stopped'
+			| 'exited'
+			| 'Deleting'
+			| 'deleted'
+			| 'Dead'
+			| 'removing'
+			| 'configuring'
+			| 'Unknown';
 		is_provided_by__release:
 			| { __id: Release['Read']['id'] }
 			| [Release['Read']];
@@ -923,7 +979,25 @@ export interface ImageInstall {
 		id: Types['Serial']['Write'];
 		install_date: Types['Date Time']['Write'];
 		download_progress: Types['Integer']['Write'] | null;
-		status: Types['Short Text']['Write'];
+		status:
+			| 'Downloading'
+			| 'Downloaded'
+			| 'Installing'
+			| 'Installed'
+			| 'Starting'
+			| 'Running'
+			| 'Idle'
+			| 'Handing over'
+			| 'Awaiting handover'
+			| 'Stopping'
+			| 'Stopped'
+			| 'exited'
+			| 'Deleting'
+			| 'deleted'
+			| 'Dead'
+			| 'removing'
+			| 'configuring'
+			| 'Unknown';
 		is_provided_by__release: Release['Write']['id'];
 	};
 }
@@ -1028,8 +1102,14 @@ export interface Release {
 			| [Application['Read']];
 		commit: Types['Short Text']['Read'];
 		composition: Types['JSON']['Read'];
-		status: Types['Short Text']['Read'];
-		source: Types['Short Text']['Read'];
+		status:
+			| 'running'
+			| 'success'
+			| 'failed'
+			| 'error'
+			| 'cancelled'
+			| 'interrupted';
+		source: 'cloud' | 'local';
 		build_log: Types['Text']['Read'] | null;
 		is_invalidated: Types['Boolean']['Read'];
 		start_timestamp: Types['Date Time']['Read'];
@@ -1077,8 +1157,14 @@ export interface Release {
 		belongs_to__application: Application['Write']['id'];
 		commit: Types['Short Text']['Write'];
 		composition: Types['JSON']['Write'];
-		status: Types['Short Text']['Write'];
-		source: Types['Short Text']['Write'];
+		status:
+			| 'running'
+			| 'success'
+			| 'failed'
+			| 'error'
+			| 'cancelled'
+			| 'interrupted';
+		source: 'cloud' | 'local';
 		build_log: Types['Text']['Write'] | null;
 		is_invalidated: Types['Boolean']['Write'];
 		start_timestamp: Types['Date Time']['Write'];
