@@ -1,5 +1,5 @@
 import type { Filter } from 'pinejs-client-core';
-import type { ImageInstall } from '../../balena-model.js';
+import type { Device, ImageInstall } from '../../balena-model.js';
 import type { StatePatchV2Body } from './routes/state-patch-v2.js';
 import type { StatePatchV3Body } from './routes/state-patch-v3.js';
 import {
@@ -46,9 +46,12 @@ const ADDRESS_DELIMITER = ' ';
 // Truncate text at delimiters to input length or less
 const truncateText = (
 	longText: string,
-	length: number = SHORT_TEXT_LENGTH,
-	delimiter: string = ADDRESS_DELIMITER,
+	length: number,
+	delimiter: string | null,
 ): string => {
+	if (delimiter == null) {
+		return longText.substring(0, length);
+	}
 	return longText
 		.split(delimiter)
 		.reduce((text, fragment) => {
@@ -58,26 +61,40 @@ const truncateText = (
 		.trim();
 };
 
-type ValidPatchFields = Array<
-	(typeof v3ValidPatchFields)[number] | (typeof v2ValidPatchFields)[number]
->;
+type ValidPatchField =
+	| (typeof v3ValidPatchFields)[number]
+	| (typeof v2ValidPatchFields)[number];
 
-const defaultShortTextFieldsToTruncate: ValidPatchFields = [
-	'ip_address',
-	'mac_address',
+export function normalizeStatePatchDeviceBody<
+	T extends Partial<Record<'os_variant', string>>,
+>(deviceBody: T) {
+	if (
+		deviceBody.os_variant != null &&
+		deviceBody.os_variant !== 'dev' &&
+		deviceBody.os_variant !== 'prod'
+	) {
+		delete deviceBody.os_variant;
+	}
+	return deviceBody as Overwrite<
+		T,
+		{ os_variant?: Device['Write']['os_variant'] }
+	>;
+}
+
+const constrainedTextFieldsToTruncate: Array<
+	[ValidPatchField, maxLength: number, delimiter: string | null]
+> = [
+	['os_version', 30, null],
+	['supervisor_version', 20, null],
+	['ip_address', SHORT_TEXT_LENGTH, ADDRESS_DELIMITER],
+	['mac_address', SHORT_TEXT_LENGTH, ADDRESS_DELIMITER],
 ];
-export const truncateShortTextFields = (
-	object: Dictionary<any>,
-	keysToTruncate: ValidPatchFields = defaultShortTextFieldsToTruncate,
-) => {
-	for (const key of keysToTruncate) {
-		if (
-			typeof object[key] !== 'string' ||
-			object[key].length <= SHORT_TEXT_LENGTH
-		) {
+export const truncateConstrainedFields = (object: Dictionary<any>) => {
+	for (const [key, maxLength, delimiter] of constrainedTextFieldsToTruncate) {
+		if (typeof object[key] !== 'string' || object[key].length <= maxLength) {
 			continue;
 		}
-		object[key] = truncateText(object[key]);
+		object[key] = truncateText(object[key], maxLength, delimiter);
 	}
 	return object;
 };
@@ -137,7 +154,7 @@ export const shouldUpdateMetrics = (() => {
 })();
 
 export type ImageInstallUpdateBody = {
-	status?: string;
+	status?: ImageInstall['Write']['status'];
 	is_provided_by__release: number;
 	download_progress?: number | null;
 };
@@ -191,13 +208,53 @@ const shouldUpdateImageInstall = (() => {
 	};
 })();
 
+const imageInstallKnownStatuses = [
+	'Downloading',
+	'Downloaded',
+	'Installing',
+	'Installed',
+	'Starting',
+	'Running',
+	'Idle',
+	'Handing over',
+	'Awaiting handover',
+	'Stopping',
+	'Stopped',
+	'exited',
+	'Deleting',
+	'deleted',
+	'Dead',
+	'removing',
+	'configuring',
+	'Unknown',
+] as const;
+
+function normalizeImageInstallStatus(
+	status: string | undefined,
+): (typeof imageInstallKnownStatuses)[number] | undefined {
+	let normalizedStatus: (typeof imageInstallKnownStatuses)[number] | undefined;
+	if (
+		status != null &&
+		!imageInstallKnownStatuses.includes(
+			status as (typeof imageInstallKnownStatuses)[number],
+		)
+	) {
+		normalizedStatus = 'Unknown' as const;
+	} else {
+		normalizedStatus = status as
+			| (typeof imageInstallKnownStatuses)[number]
+			| undefined;
+	}
+	return normalizedStatus;
+}
+
 export const upsertImageInstall = async (
 	resinApi: typeof sbvrUtils.api.resin,
 	imgInstall: Pick<ImageInstall['Read'], 'id'>,
 	{
 		imageId,
 		releaseId,
-		status,
+		status: $status,
 		downloadProgress,
 	}: {
 		imageId: number;
@@ -207,6 +264,9 @@ export const upsertImageInstall = async (
 	},
 	deviceId: number,
 ): Promise<void> => {
+	// Make sure that we only set a known value so that the state patch doesn't fail even
+	const status = normalizeImageInstallStatus($status);
+
 	if (imgInstall == null) {
 		// we need to create it with a POST
 		await resinApi.post({
@@ -258,7 +318,7 @@ export const deleteOldImageInstalls = async (
 		passthrough: { req: permissions.root },
 	});
 
-	const body = { status: 'deleted', download_progress: null };
+	const body = { status: 'deleted' as const, download_progress: null };
 	const filter: Filter<ImageInstall['Read']> = {
 		device: deviceId,
 	};
