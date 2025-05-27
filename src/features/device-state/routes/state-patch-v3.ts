@@ -327,9 +327,14 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 
 				if (apps != null) {
 					const userAppUuid = device.belongs_to__application[0].uuid;
-					if (releasesByAppUuid[userAppUuid] != null) {
+					const userAppPayload = apps[userAppUuid];
+					if (userAppPayload?.release_uuid == null) {
+						// `apps: {}`: The device is not currently running any app.
+						// absent `release_uuid`: The device is not currently running any release of the app.
+						deviceBody.is_running__release = null;
+					} else if (releasesByAppUuid[userAppUuid] != null) {
 						const release = releasesByAppUuid[userAppUuid].find(
-							(r) => r.commit === apps[userAppUuid].release_uuid,
+							(r) => r.commit === userAppPayload.release_uuid,
 						);
 						if (release) {
 							deviceBody.is_running__release = release.id;
