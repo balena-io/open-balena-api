@@ -508,6 +508,14 @@ export const EMPTY_DEVICE_STATE_GET_DELAY_SECONDS = intVar(
 	DEFAULT_SUPERVISOR_POLL_INTERVAL / SECONDS,
 );
 
+/**
+ * The delay before responding to deleted/frozen devices device logs requests as a sort of backoff mechanism
+ */
+export const DELETED_FROZEN_DEVICE_LOGS_DELAY_MS = intVar(
+	'DELETED_FROZEN_DEVICE_LOGS_DELAY_MS',
+	55 * SECONDS,
+);
+
 // Cache timeouts
 export const IMAGE_INSTALL_CACHE_TIMEOUT_SECONDS = intVar(
 	'IMAGE_INSTALL_CACHE_TIMEOUT_SECONDS',

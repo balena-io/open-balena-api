@@ -9,6 +9,7 @@ import { read } from './lib/read.js';
 import { store, storeStream } from './lib/store.js';
 import type { SetupOptions } from '../../index.js';
 import { resolveOrDenyDevicesWithStatus } from '../device-state/middleware.js';
+import { DELETED_FROZEN_DEVICE_LOGS_DELAY_MS } from '../../lib/config.js';
 
 // Rate limit for device log creation, a maximum of 15 batches every 10 second window
 const deviceLogsRateLimiter = createRateLimitMiddleware(
@@ -34,14 +35,22 @@ export const setup = (
 	);
 	app.post(
 		'/device/v2/:uuid/logs',
-		resolveOrDenyDevicesWithStatus(401),
+		resolveOrDenyDevicesWithStatus(
+			401,
+			undefined,
+			DELETED_FROZEN_DEVICE_LOGS_DELAY_MS,
+		),
 		deviceLogsRateLimiter('params.uuid'),
 		middleware.authenticatedApiKey,
 		store,
 	);
 	app.post(
 		'/device/v2/:uuid/log-stream',
-		resolveOrDenyDevicesWithStatus(401),
+		resolveOrDenyDevicesWithStatus(
+			401,
+			undefined,
+			DELETED_FROZEN_DEVICE_LOGS_DELAY_MS,
+		),
 		middleware.authenticatedApiKey,
 		storeStream(onLogWriteStreamInitialized),
 	);
