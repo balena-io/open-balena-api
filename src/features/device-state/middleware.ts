@@ -1,11 +1,11 @@
-import type { RequestHandler } from 'express';
+import type { RequestHandler, Request, Response } from 'express';
 import _ from 'lodash';
 import { multiCacheMemoizee } from '../../infra/cache/index.js';
 import type { Device } from '../../balena-model.js';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import { DEVICE_EXISTS_CACHE_TIMEOUT } from '../../lib/config.js';
-import type { Request } from 'express-serve-static-core';
+import { setTimeout } from 'timers/promises';
 
 const { api } = sbvrUtils;
 
@@ -52,16 +52,24 @@ const requestParamsUuidResolver = (req: Request) => [req.params.uuid];
 export const resolveOrDenyDevicesWithStatus = (
 	statusCode: number | { deleted: number; frozen: number },
 	uuidResolver: (req: Request) => string[] = requestParamsUuidResolver,
+	delayMs = 0,
 ): RequestHandler => {
 	const deletedStatusCode =
 		typeof statusCode === 'number' ? statusCode : statusCode.deleted;
 	const frozenStatusCode =
 		typeof statusCode === 'number' ? statusCode : statusCode.frozen;
 
+	const respond = async (res: Response, status: number): Promise<void> => {
+		if (delayMs > 0) {
+			await setTimeout(delayMs);
+		}
+		res.status(status).end();
+	};
+
 	return async (req, res, next) => {
 		const uuids = uuidResolver(req);
 		if (!uuids.length) {
-			res.status(deletedStatusCode).end();
+			await respond(res, deletedStatusCode);
 			return;
 		}
 		const deviceIds: number[] = [];
@@ -73,12 +81,12 @@ export const resolveOrDenyDevicesWithStatus = (
 			// per request.
 			if (device == null) {
 				// Gracefully deny deleted devices
-				res.status(deletedStatusCode).end();
+				await respond(res, deletedStatusCode);
 				return;
 			}
 			if (device.is_frozen) {
 				// Gracefully deny frozen devices
-				res.status(frozenStatusCode).end();
+				await respond(res, frozenStatusCode);
 				return;
 			}
 			deviceIds.push(device.id);
