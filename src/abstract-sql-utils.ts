@@ -172,7 +172,7 @@ export const joinTextParts = (
 		...(parts.map(
 			([showPart, partValue]): CastNode => [
 				'Cast',
-				['Case', ['When', showPart, partValue], ['Else', ['Null']]],
+				['Case', ['When', showPart, partValue]],
 				'Text',
 			],
 		) as [CastNode, ...CastNode[]]),

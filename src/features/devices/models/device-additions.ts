@@ -413,11 +413,7 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 					],
 				],
 			],
-			[
-				// And if we haven't found any download progress yet we return null
-				'Else',
-				['Null'],
-			],
+			// And if we haven't found any download progress yet then the default ELSE returns null
 		],
 	});
 
