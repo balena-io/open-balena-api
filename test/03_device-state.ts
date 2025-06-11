@@ -1552,32 +1552,28 @@ export default () => {
 					);
 				});
 
-				it('should accept addresses longer than 255 chars and truncate at space delimiters', async () => {
-					const generateValidAddress = (
-						addr: string,
-						truncLen: number,
-						delimiter = '',
-					): string => {
-						let validAddress = '';
-						while (
-							validAddress.length + addr.length + delimiter.length <=
-							truncLen
-						) {
-							validAddress += addr + delimiter;
-						}
-						return validAddress.trim();
-					};
-					const IP = '10.0.0.10';
-					const MAC = 'aa:bb:cc:dd:ee:ff';
-					const DELIMITER = ' ';
+				it('should accept ip & mac addresses longer than 2000 & 900 chars respectively and truncate at space delimiters', async () => {
 					// Generate valid address strings just shy of 255 chars
-					const validIp = generateValidAddress(IP, 255, DELIMITER);
-					const validMac = generateValidAddress(MAC, 255, DELIMITER);
+					const ipv6Addresses: string[] = [];
+					const macAddresses: string[] = [];
+					for (let i = 1; i <= 51; i++) {
+						ipv6Addresses.push(
+							`2001:0db8:3c4d:0015:0000:0000:0000:${i.toString(16).padStart(4, '0')}`,
+						);
+						macAddresses.push(
+							`aa:bb:cc:dd:ee:${i.toString(16).padStart(2, '0')}`,
+						);
+					}
+					const DELIMITER = ' ';
+					const patchedIp = ipv6Addresses.join(DELIMITER);
+					const patchedMac = macAddresses.join(DELIMITER);
+					expect(patchedIp).to.have.length.greaterThan(2000);
+					expect(patchedMac).to.have.length.greaterThan(900);
 					// Simulate a report with space-separated addresses longer than 255 chars
 					const devicePatchBody = {
 						[stateKey]: {
-							ip_address: validIp + DELIMITER + IP,
-							mac_address: validMac + DELIMITER + MAC,
+							ip_address: patchedIp,
+							mac_address: patchedMac,
 						},
 					};
 
@@ -1588,6 +1584,10 @@ export default () => {
 						stateVersion,
 					);
 
+					const validIp = ipv6Addresses.slice(0, 50).join(DELIMITER);
+					const validMac = macAddresses.slice(0, 50).join(DELIMITER);
+					expect(validIp).to.have.length.lessThanOrEqual(2000);
+					expect(validMac).to.have.length.lessThanOrEqual(900);
 					// Addresses should truncate at the space delimiter
 					await expectResourceToMatch(pineUser, 'device', device.id, {
 						ip_address: validIp,
