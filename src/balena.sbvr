@@ -158,7 +158,7 @@ Term: invalidation reason
 	Concept Type: Text (Type)
 
 Term: ip address
-	Concept Type: Short Text (Type)
+	Concept Type: Text (Type)
 
 Term: known issue list
 	Concept Type: Text (Type)
@@ -185,7 +185,7 @@ Term: logo
 	Concept Type: Text (Type)
 
 Term: mac address
-	Concept Type: Short Text (Type)
+	Concept Type: Text (Type)
 
 Term: memory usage
 	Concept Type: Integer (Type)
@@ -510,6 +510,8 @@ Fact type: service instance has service type
 	Necessity: each service instance has exactly one service type.
 Fact type: service instance has ip address
 	Necessity: each service instance has exactly one ip address.
+	-- TODO: Reduce to 39 in a follow-up major
+	Necessity: each service instance has an ip address that has a Length (Type) that is less than or equal to 255.
 Fact type: service instance has last heartbeat
 	Necessity: each service instance has exactly one last heartbeat.
 
@@ -543,8 +545,12 @@ Fact type: device has public address
 	Necessity: each device has at most one public address
 Fact type: device has ip address
 	Necessity: each device has at most one ip address
+	-- Enough to fit 50 IPv6 addresses (39 chars long) space delimited
+	Necessity: each device that has an ip address, has an ip address that has a Length (Type) that is less than or equal to 2000.
 Fact type: device has mac address
 	Necessity: each device has at most one mac address
+	-- Enough to fit 50 MAC addresses (17 chars logs) space delimited
+	Necessity: each device that has a mac address, has a mac address that has a Length (Type) that is less than or equal to 900.
 Fact type: device has memory usage
 	Necessity: each device has at most one memory usage
 Fact type: device has memory total

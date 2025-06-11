@@ -460,7 +460,7 @@ export interface ServiceInstance {
 		modified_at: Types['Date Time']['Read'];
 		id: Types['Serial']['Read'];
 		service_type: Types['Short Text']['Read'];
-		ip_address: Types['Short Text']['Read'];
+		ip_address: Types['Text']['Read'];
 		last_heartbeat: Types['Date Time']['Read'];
 		manages__device?: Array<Device['Read']>;
 	};
@@ -469,7 +469,7 @@ export interface ServiceInstance {
 		modified_at: Types['Date Time']['Write'];
 		id: Types['Serial']['Write'];
 		service_type: Types['Short Text']['Write'];
-		ip_address: Types['Short Text']['Write'];
+		ip_address: Types['Text']['Write'];
 		last_heartbeat: Types['Date Time']['Write'];
 	};
 }
@@ -713,8 +713,8 @@ export interface Device {
 		last_vpn_event: Types['Date Time']['Read'] | null;
 		is_locked_until__date: Types['Date Time']['Read'] | null;
 		public_address: Types['Short Text']['Read'] | null;
-		ip_address: Types['Short Text']['Read'] | null;
-		mac_address: Types['Short Text']['Read'] | null;
+		ip_address: Types['Text']['Read'] | null;
+		mac_address: Types['Text']['Read'] | null;
 		memory_usage: Types['Integer']['Read'] | null;
 		memory_total: Types['Integer']['Read'] | null;
 		storage_block_device: Types['Short Text']['Read'] | null;
@@ -824,8 +824,8 @@ export interface Device {
 		last_vpn_event: Types['Date Time']['Write'] | null;
 		is_locked_until__date: Types['Date Time']['Write'] | null;
 		public_address: Types['Short Text']['Write'] | null;
-		ip_address: Types['Short Text']['Write'] | null;
-		mac_address: Types['Short Text']['Write'] | null;
+		ip_address: Types['Text']['Write'] | null;
+		mac_address: Types['Text']['Write'] | null;
 		memory_usage: Types['Integer']['Write'] | null;
 		memory_total: Types['Integer']['Write'] | null;
 		storage_block_device: Types['Short Text']['Write'] | null;
