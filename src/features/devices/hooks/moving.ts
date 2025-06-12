@@ -72,7 +72,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			const { movedDevices } = request.custom;
 			if (movedDevices != null && movedDevices.length > 0) {
 				const body = {
-					status: 'deleted',
+					status: 'deleted' as const,
 					download_progress: null,
 				};
 				await api.patch({

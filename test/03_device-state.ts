@@ -24,7 +24,11 @@ import { setTimeout } from 'timers/promises';
 import { MINUTES, SECONDS } from '@balena/env-parsing';
 import type { PineTest } from 'pinejs-client-supertest';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
-import type { Application, Service } from '../src/balena-model.js';
+import type {
+	Application,
+	ImageInstall,
+	Service,
+} from '../src/balena-model.js';
 
 const { api } = sbvrUtils;
 
@@ -1325,11 +1329,11 @@ export default () => {
 				const getServiceUpdatePatchBody = (
 					images: AnyObject[],
 					{
-						status = 'Downloading',
+						status,
 						download_progress,
 					}: {
-						status?: string;
-						download_progress: number;
+						status: string;
+						download_progress?: number | null;
 					},
 				) => {
 					return {
@@ -1368,6 +1372,36 @@ export default () => {
 										},
 									},
 					};
+				};
+
+				const expectImageInstallsToMatch = async (
+					deviceId: number,
+					expectations: Array<Partial<ImageInstall['Read']>>,
+				) => {
+					const fields = [
+						...new Set(
+							expectations.flatMap(
+								(exp) =>
+									Object.keys(exp) as Array<
+										Extract<keyof ImageInstall['Read'], string>
+									>,
+							),
+						),
+					];
+
+					const { body: imageInstalls } = await pineUser.get({
+						resource: 'image_install',
+						options: {
+							$select: fields,
+							$filter: {
+								device: deviceId,
+							},
+							$orderby: {
+								'installs__image/is_a_build_of__service/service_name': 'asc',
+							},
+						},
+					});
+					expect(imageInstalls).to.deep.equal(expectations);
 				};
 
 				it('should limit metric values when they exceed safe limit', async () => {
@@ -1553,6 +1587,27 @@ export default () => {
 					);
 				});
 
+				it('should not save an invalid os variant', async () => {
+					const devicePatchBody = {
+						[stateKey]: {
+							os_variant: 'invalid_os_variant',
+							cpu_id: 'cpuidreportedwithinvalidosvariant',
+						},
+					};
+
+					await fakeDevice.patchState(
+						device,
+						device.uuid,
+						devicePatchBody,
+						stateVersion,
+					);
+
+					await expectResourceToMatch(pineUser, 'device', device.id, {
+						os_variant: 'prod',
+						cpu_id: devicePatchBody[stateKey].cpu_id,
+					});
+				});
+
 				it('should accept ip & mac addresses longer than 2000 & 900 chars respectively and truncate at space delimiters', async () => {
 					// Generate valid address strings just shy of 255 chars
 					const ipv6Addresses: string[] = [];
@@ -1691,31 +1746,156 @@ export default () => {
 				});
 
 				it('should save the update progress of the device state', async () => {
+					for (const progress of [20, 50]) {
+						await fakeDevice.patchState(
+							device,
+							device.uuid,
+							getServiceUpdatePatchBody([release1Image1, release1Image2], {
+								status: 'Downloading',
+								download_progress: progress,
+							}),
+							stateVersion,
+						);
+						await expectImageInstallsToMatch(device.id, [
+							{
+								status: 'Downloading',
+								download_progress: progress,
+							},
+							{
+								status: 'Downloading',
+								download_progress: progress,
+							},
+						]);
+						await expectResourceToMatch(pineUser, 'device', device.id, {
+							overall_progress: progress,
+						});
+					}
+				});
+
+				it('should throttle updating the download progress when it is updated too often', async () => {
+					for (const progress of [51, 52]) {
+						await fakeDevice.patchState(
+							device,
+							device.uuid,
+							getServiceUpdatePatchBody([release1Image1, release1Image2], {
+								status: 'Downloading',
+								download_progress: progress,
+							}),
+							stateVersion,
+						);
+						await expectImageInstallsToMatch(device.id, [
+							{
+								status: 'Downloading',
+								download_progress: 50,
+							},
+							{
+								status: 'Downloading',
+								download_progress: 50,
+							},
+						]);
+						await expectResourceToMatch(pineUser, 'device', device.id, {
+							overall_progress: 50,
+						});
+					}
+
+					// wait for the update progress throttling to expire
+					await setTimeout(
+						config.DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS * 1000,
+					);
+				});
+
+				it('should not throw when an invalid service status is reported', async () => {
+					// confirm that the rest service fields are updated when the status is incorrect
 					await fakeDevice.patchState(
 						device,
 						device.uuid,
 						getServiceUpdatePatchBody([release1Image1, release1Image2], {
-							download_progress: 20,
+							status: 'Incorrect Downloading Status',
+							download_progress: 55,
 						}),
 						stateVersion,
 					);
+					await expectImageInstallsToMatch(device.id, [
+						{
+							status: 'Downloading',
+							download_progress: 55,
+						},
+						{
+							status: 'Downloading',
+							download_progress: 55,
+						},
+					]);
 
-					await expectResourceToMatch(pineUser, 'device', device.id, {
-						overall_progress: 20,
-					});
-
+					// confirm that it doesn't throw when the incorrect status is the only reported field
 					await fakeDevice.patchState(
 						device,
 						device.uuid,
 						getServiceUpdatePatchBody([release1Image1, release1Image2], {
-							download_progress: 50,
+							status: 'Incorrect Service Status',
 						}),
 						stateVersion,
 					);
+					await expectImageInstallsToMatch(device.id, [
+						{
+							status: 'Downloading',
+							download_progress: 55,
+						},
+						{
+							status: 'Downloading',
+							download_progress: 55,
+						},
+					]);
+				});
 
+				it('should save the update progress & status of the services running on the device state', async () => {
+					await fakeDevice.patchState(
+						device,
+						device.uuid,
+						getServiceUpdatePatchBody([release1Image1, release1Image2], {
+							status: 'Downloaded',
+							download_progress: null,
+						}),
+						stateVersion,
+					);
+					await expectImageInstallsToMatch(device.id, [
+						{
+							status: 'Downloaded',
+							download_progress: null,
+						},
+						{
+							status: 'Downloaded',
+							download_progress: null,
+						},
+					]);
 					await expectResourceToMatch(pineUser, 'device', device.id, {
-						overall_progress: 50,
+						overall_progress: null,
 					});
+
+					for (const status of [
+						'Installing',
+						'Installed',
+						'Starting',
+						'Running',
+					] as const) {
+						await fakeDevice.patchState(
+							device,
+							device.uuid,
+							getServiceUpdatePatchBody([release1Image1, release1Image2], {
+								status,
+							}),
+							stateVersion,
+						);
+						await expectImageInstallsToMatch(device.id, [
+							{
+								status,
+								download_progress: null,
+							},
+							{
+								status,
+								download_progress: null,
+							},
+						]);
+					}
 				});
 
 				it('should save the updated running release of the device state', async () => {
