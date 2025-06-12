@@ -508,6 +508,7 @@ Fact type: application is public
 
 Fact type: service instance has service type
 	Necessity: each service instance has exactly one service type.
+	Definition: "vpn"
 Fact type: service instance has ip address
 	Necessity: each service instance has exactly one ip address.
 	-- TODO: Reduce to 39 in a follow-up major
@@ -580,6 +581,7 @@ Fact type: device has os version
 	Necessity: each device has at most one os version
 Fact type: device has os variant
 	Necessity: each device has at most one os variant
+	Definition: "prod" or "dev"
 Fact type: device has supervisor version
 	Necessity: each device has at most one supervisor version
 Fact type: device has provisioning progress
@@ -658,6 +660,7 @@ Fact type: device type is referenced by alias
 
 Fact type: cpu architecture has slug
 	Necessity: each cpu architecture has exactly one slug
+	Definition: "rpi" or "armv7hf" or "aarch64" or "i386-nlp" or "i386" or "amd64"
 	Necessity: each slug is of exactly one cpu architecture
 
 -- device manufacturer
@@ -691,8 +694,11 @@ Fact type: release has composition
 	Necessity: each release has exactly one composition.
 Fact type: release has status
 	Necessity: each release has exactly one status.
+	-- "interrupted" is a legacy pre-multicontainer status
+	Definition: "running" or "success" or "failed" or "error" or "cancelled" or "interrupted"
 Fact type: release has source
 	Necessity: each release has exactly one source.
+	Definition: "cloud" or "local"
 Fact type: release has build log
 	Necessity: each release has at most one build log.
 Fact type: release is invalidated
@@ -770,6 +776,8 @@ Fact type: image is stored at image location
 	Necessity: each image location hosts exactly one image.
 Fact type: image has project type
 	Necessity: each image has at most one project type.
+	-- TODO: Pitch cleanup of the legacy buggy/inconsistent values like "Archicture-specific Dockerfile"
+	Definition: "Standard Dockerfile" or "project type unavailable" or "NodeJS" or "node.js" or "local deploy" or "external service" or "Dockerfile.template" or "dockerfile template" or "dockerfile" or "Could not be detected" or "Architecture-specific Dockerfile" or "Archicture-specific Dockerfile"
 Fact type: image has error message
 	Necessity: each image has at most one error message
 Fact type: image has build log
@@ -778,6 +786,7 @@ Fact type: image has push timestamp
 	Necessity: each image has at most one push timestamp.
 Fact type: image has status
 	Necessity: each image has exactly one status.
+	Definition: "running" or "success" or "failed" or "error" or "cancelled" or "interrupted"
 Fact type: image has content hash
 	Necessity: each image has at most one content hash.
 Fact type: image has contract
@@ -848,6 +857,14 @@ Fact type: image install has download progress
 	Necessity: each image install has at most one download progress.
 Fact type: image install has status
 	Necessity: each image install has exactly one status.
+	-- It's union of the supervisor's image & service statuses, plus the custom handover statuses.
+	-- https://github.com/balena-os/balena-supervisor/blob/v17.0.3/src/compose/application-manager.ts#L989-L1017
+	-- https://github.com/balena-os/balena-supervisor/blob/v17.0.3/src/compose/types/service.ts#L341-L374
+	-- https://github.com/balena-os/balena-supervisor/blob/v17.0.3/src/compose/types/image.ts#L27
+	-- The lower case statuses come unmodified from the docker statuses.
+	-- https://docs.docker.com/reference/api/engine/version/v1.49/#tag/Container/operation/ContainerList
+	-- Idle, Stopped & configuring seem to be from old (v7) supervisors.
+	Definition: "Stopping" or "Stopped" or "Downloading" or "Downloaded" or "Installing" or "Installed" or "Starting" or "Running" or "Idle" or "Handing over" or "Awaiting handover" or "Deleting" or "deleted" or "Dead" or "paused" or "restarting" or "removing" or "exited" or "configuring" or "Unknown"
 Fact type: image install is provided by release
 	Synonymous Form: release provides image install
 	Necessity: each image install is provided by exactly one release.
