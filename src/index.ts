@@ -151,6 +151,10 @@ import { varListInsert } from './features/device-state/state-get-utils.js';
 import type { GetUrlFunction } from './features/request-logging/index.js';
 import { setupRequestLogging } from './features/request-logging/index.js';
 import { startContractSynchronization } from './features/contracts/index.js';
+import {
+	defaultRespondFn,
+	setRespondFn,
+} from './features/device-state/middleware.js';
 
 import { addToModel as addUserHasDirectAccessToApplicationToModel } from './features/applications/models/user__has_direct_access_to__application.js';
 import { getApplicationSlug } from './features/applications/index.js';
@@ -182,6 +186,10 @@ export const errors = {
 	handleHttpErrors,
 	ThisShouldNeverHappenError,
 	translateError,
+};
+export const deletedFrozenDevices = {
+	defaultRespondFn,
+	setRespondFn,
 };
 export const auth = {
 	...baseAuth,
