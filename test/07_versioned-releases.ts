@@ -137,17 +137,32 @@ export default () => {
 				);
 			});
 
-			for (const [propName, maxSize] of [
+			for (const [propName, maxSize, getValue] of [
 				['build_log', 1_000_000],
 				['dockerfile', 1_000_000],
+				[
+					'contract',
+					1_000_000,
+					() => ({
+						testField: ''.padEnd(
+							1_000_000 + 1 - '{"testField":""}'.length,
+							'a',
+						),
+					}),
+				],
 			] as const) {
 				it(`should not be able to set a ${propName} longer than ${maxSize} chars on an image`, async () => {
+					const value =
+						getValue?.() ?? `too long propName value `.padEnd(maxSize + 1, 'a');
+					expect(
+						typeof value === 'string' ? value : JSON.stringify(value),
+					).to.have.length(maxSize + 1);
 					await pineUser
 						.patch({
 							resource: 'image',
 							id: fx.images.release1_image1.id,
 							body: {
-								[propName]: `too long propName value `.padEnd(maxSize + 1, 'a'),
+								[propName]: value,
 							},
 						})
 						.expect(
@@ -159,12 +174,19 @@ export default () => {
 				});
 			}
 
-			for (const [propName, maxSize] of [
+			for (const [propName, maxSize, value] of [
 				// express is configured to not parse json request bodies larger than 512kb,
 				// but it seems that that's before decompressing so we are able to use values
 				// slightly larger than that.
 				['build_log', 524_200],
 				['dockerfile', 524_200],
+				[
+					'contract',
+					524_200,
+					() => ({
+						testField: ''.padEnd(524_200 - '{"testField":""}'.length, 'a'),
+					}),
+				],
 			] as const) {
 				it(`should be able to set a ${maxSize} char long ${propName} on an image`, async () => {
 					await pineUser
@@ -172,7 +194,8 @@ export default () => {
 							resource: 'image',
 							id: fx.images.release1_image1.id,
 							body: {
-								[propName]: `long propName value `.padEnd(maxSize + 1, 'a'),
+								[propName]:
+									value?.() ?? `long propName value `.padEnd(maxSize + 1, 'a'),
 							},
 						})
 						.expect(200);
@@ -277,17 +300,42 @@ export default () => {
 				);
 			});
 
-			for (const [propName, maxSize] of [
+			for (const [propName, maxSize, getValue] of [
 				['note', 1_000_000],
 				['build_log', 1_000_000],
+				[
+					'composition',
+					1_000_000,
+					() => ({
+						testField: ''.padEnd(
+							1_000_000 + 1 - '{"testField":""}'.length,
+							'a',
+						),
+					}),
+				],
+				[
+					'contract',
+					1_000_000,
+					() => ({
+						testField: ''.padEnd(
+							1_000_000 + 1 - '{"testField":""}'.length,
+							'a',
+						),
+					}),
+				],
 			] as const) {
 				it(`should not be able to set a ${propName} longer than ${maxSize} chars on a release`, async () => {
+					const value =
+						getValue?.() ?? `too long propName value `.padEnd(maxSize + 1, 'a');
+					expect(
+						typeof value === 'string' ? value : JSON.stringify(value),
+					).to.have.length(maxSize + 1);
 					await pineUser
 						.patch({
 							resource: 'release',
 							id: fx.releases.release1.id,
 							body: {
-								[propName]: `too long propName value `.padEnd(maxSize + 1, 'a'),
+								[propName]: value,
 							},
 						})
 						.expect(
@@ -299,9 +347,23 @@ export default () => {
 				});
 			}
 
-			for (const [propName, maxSize] of [
+			for (const [propName, maxSize, value] of [
 				['note', 524_200],
 				['build_log', 524_200],
+				[
+					'composition',
+					524_200,
+					() => ({
+						testField: ''.padEnd(524_200 - '{"testField":""}'.length, 'a'),
+					}),
+				],
+				[
+					'contract',
+					524_200,
+					() => ({
+						testField: ''.padEnd(524_200 - '{"testField":""}'.length, 'a'),
+					}),
+				],
 			] as const) {
 				it(`should be able to set a ${maxSize} char long ${propName} on a release`, async () => {
 					await pineUser
@@ -309,7 +371,8 @@ export default () => {
 							resource: 'release',
 							id: fx.releases.release1.id,
 							body: {
-								[propName]: `long propName value `.padEnd(maxSize + 1, 'a'),
+								[propName]:
+									value?.() ?? `long propName value `.padEnd(maxSize + 1, 'a'),
 							},
 						})
 						.expect(200);

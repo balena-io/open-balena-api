@@ -134,6 +134,36 @@ export default () => {
 						})
 						.expect(500); // This should ideally be 4xx
 				});
+
+				it('should fail when using a too long filename', async function () {
+					await supertest(this.user)
+						.post(`/${version}/release_asset`)
+						.field('release', this.release1.id)
+						.field('asset_key', 'unique_key_1')
+						.attach('asset', filePath, {
+							filename: 'too_long_file_name.txt'.padStart(300, 'a'),
+							contentType: 'text/plain',
+						})
+						.expect(
+							400,
+							'"It is necessary that each release asset that has an asset, has an asset that has a Filename (Type) that has a Length (Type) that is less than or equal to 255 and has a Content Type (Type) that has a Length (Type) that is less than or equal to 129."',
+						);
+				});
+
+				it('should fail when using a too long contentType', async function () {
+					await supertest(this.user)
+						.post(`/${version}/release_asset`)
+						.field('release', this.release1.id)
+						.field('asset_key', 'unique_key_1')
+						.attach('asset', filePath, {
+							filename: 'sample.txt',
+							contentType: 'text/plain'.padEnd(300, 'a'),
+						})
+						.expect(
+							400,
+							'"It is necessary that each release asset that has an asset, has an asset that has a Filename (Type) that has a Length (Type) that is less than or equal to 255 and has a Content Type (Type) that has a Length (Type) that is less than or equal to 129."',
+						);
+				});
 			});
 
 			describe('retrieve release assets', function () {
