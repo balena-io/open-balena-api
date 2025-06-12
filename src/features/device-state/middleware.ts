@@ -46,6 +46,26 @@ export interface ResolveDeviceInfoCustomObject {
 
 const requestParamsUuidResolver = (req: Request) => [req.params.uuid];
 
+export const defaultRespondFn = async (
+	_req: Request,
+	res: Response,
+	delayMs: number,
+	status: number,
+): Promise<void> => {
+	if (delayMs > 0) {
+		await setTimeout(delayMs);
+	}
+	res.status(status).end();
+};
+
+let respondFn = defaultRespondFn;
+/**
+ * Set the function used to respond to the deleted/frozen device request.
+ */
+export const setRespondFn = ($respondFn: typeof respondFn) => {
+	respondFn = $respondFn;
+};
+
 /**
  * This checks if a device is deleted or frozen and responds according to the passed statusCode(s)
  */
@@ -59,17 +79,10 @@ export const resolveOrDenyDevicesWithStatus = (
 	const frozenStatusCode =
 		typeof statusCode === 'number' ? statusCode : statusCode.frozen;
 
-	const respond = async (res: Response, status: number): Promise<void> => {
-		if (delayMs > 0) {
-			await setTimeout(delayMs);
-		}
-		res.status(status).end();
-	};
-
 	return async (req, res, next) => {
 		const uuids = uuidResolver(req);
 		if (!uuids.length) {
-			await respond(res, deletedStatusCode);
+			await respondFn(req, res, delayMs, deletedStatusCode);
 			return;
 		}
 		const deviceIds: number[] = [];
@@ -81,12 +94,12 @@ export const resolveOrDenyDevicesWithStatus = (
 			// per request.
 			if (device == null) {
 				// Gracefully deny deleted devices
-				await respond(res, deletedStatusCode);
+				await respondFn(req, res, delayMs, deletedStatusCode);
 				return;
 			}
 			if (device.is_frozen) {
 				// Gracefully deny frozen devices
-				await respond(res, frozenStatusCode);
+				await respondFn(req, res, delayMs, frozenStatusCode);
 				return;
 			}
 			deviceIds.push(device.id);
