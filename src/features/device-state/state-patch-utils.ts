@@ -1,5 +1,5 @@
 import type { Filter } from 'pinejs-client-core';
-import type { ImageInstall } from '../../balena-model.js';
+import type { Device, ImageInstall } from '../../balena-model.js';
 import type { StatePatchV2Body } from './routes/state-patch-v2.js';
 import type { StatePatchV3Body } from './routes/state-patch-v3.js';
 import {
@@ -11,6 +11,7 @@ import {
 import { createMultiLevelStore } from '../../infra/cache/index.js';
 import type { sbvrUtils } from '@balena/pinejs';
 import { permissions } from '@balena/pinejs';
+import { ThisShouldNeverHappenError } from '../../infra/error-handling/index.js';
 
 export const v3ValidPatchFields = [
 	'status',
@@ -40,15 +41,17 @@ export const v2ValidPatchFields: Array<
 	'download_progress',
 ];
 
-const SHORT_TEXT_LENGTH = 255;
 const ADDRESS_DELIMITER = ' ';
 
 // Truncate text at delimiters to input length or less
 const truncateText = (
 	longText: string,
-	length: number = SHORT_TEXT_LENGTH,
-	delimiter: string = ADDRESS_DELIMITER,
+	length: number,
+	delimiter: string | null,
 ): string => {
+	if (delimiter == null) {
+		return longText.substring(0, length);
+	}
 	return longText
 		.split(delimiter)
 		.reduce((text, fragment) => {
@@ -58,29 +61,53 @@ const truncateText = (
 		.trim();
 };
 
-type ValidPatchFields = Array<
-	(typeof v3ValidPatchFields)[number] | (typeof v2ValidPatchFields)[number]
->;
+type ValidPatchField =
+	| (typeof v3ValidPatchFields)[number]
+	| (typeof v2ValidPatchFields)[number];
 
-const defaultShortTextFieldsToTruncate: ValidPatchFields = [
-	'ip_address',
-	'mac_address',
-];
-export const truncateShortTextFields = (
-	object: Dictionary<any>,
-	keysToTruncate: ValidPatchFields = defaultShortTextFieldsToTruncate,
-) => {
-	for (const key of keysToTruncate) {
-		if (
-			typeof object[key] !== 'string' ||
-			object[key].length <= SHORT_TEXT_LENGTH
-		) {
+const constrainedDeviceTextFields = [
+	['status', 50, null],
+	['os_version', 70, null],
+	['supervisor_version', 20, null],
+	['api_secret', 64, null],
+	['ip_address', 2000, ADDRESS_DELIMITER],
+	['mac_address', 900, ADDRESS_DELIMITER],
+	['note', 1_000_000, null],
+] satisfies Array<
+	[ValidPatchField, maxLength: number, delimiter: string | null]
+>;
+export function truncateConstrainedDeviceFields<
+	T extends Partial<
+		Pick<Device['Write'], (typeof constrainedDeviceTextFields)[number][0]>
+	>,
+>(object: T, deviceId: number): T {
+	for (const [key, maxLength, delimiter] of constrainedDeviceTextFields) {
+		if (typeof object[key] !== 'string' || object[key].length <= maxLength) {
 			continue;
 		}
-		object[key] = truncateText(object[key]);
+		ThisShouldNeverHappenError(
+			`Received unexpected device.${key}: '${object[key]}' from device: ${deviceId}`,
+		);
+		object[key] = truncateText(object[key], maxLength, delimiter);
 	}
 	return object;
-};
+}
+
+export function normalizeStatePatchDeviceBody<
+	T extends { os_variant?: string },
+>(deviceBody: T, uuid: string) {
+	if (
+		deviceBody.os_variant != null &&
+		deviceBody.os_variant !== 'dev' &&
+		deviceBody.os_variant !== 'prod'
+	) {
+		ThisShouldNeverHappenError(
+			`Received unexpected device.os_variant: '${deviceBody.os_variant}' from device: ${uuid}`,
+		);
+		delete deviceBody.os_variant;
+	}
+	return deviceBody as T & Partial<Pick<Device['Write'], 'os_variant'>>;
+}
 
 const metricsPatchNumbers = [
 	'memory_usage',
@@ -137,7 +164,7 @@ export const shouldUpdateMetrics = (() => {
 })();
 
 export type ImageInstallUpdateBody = {
-	status?: string;
+	status?: ImageInstall['Write']['status'];
 	is_provided_by__release: number;
 	download_progress?: number | null;
 };
@@ -191,13 +218,52 @@ const shouldUpdateImageInstall = (() => {
 	};
 })();
 
+const imageInstallKnownStatuses = [
+	'Downloading',
+	'Downloaded',
+	'Installing',
+	'Installed',
+	'Starting',
+	'Running',
+	'Idle',
+	'Handing over',
+	'Awaiting handover',
+	'Stopping',
+	'Stopped',
+	'exited',
+	'Deleting',
+	'deleted',
+	'Dead',
+	'removing',
+	'configuring',
+	'Unknown',
+] as const;
+
+function normalizeImageInstallStatus(
+	deviceId: number,
+	status: string | undefined,
+): (typeof imageInstallKnownStatuses)[number] | undefined {
+	if (
+		status != null &&
+		!imageInstallKnownStatuses.includes(
+			status as (typeof imageInstallKnownStatuses)[number],
+		)
+	) {
+		ThisShouldNeverHappenError(
+			`Received unexpected image_install.status: '${status}' from device: ${deviceId}`,
+		);
+		return undefined;
+	}
+	return status as (typeof imageInstallKnownStatuses)[number] | undefined;
+}
+
 export const upsertImageInstall = async (
 	resinApi: typeof sbvrUtils.api.resin,
 	imgInstall: Pick<ImageInstall['Read'], 'id'>,
 	{
 		imageId,
 		releaseId,
-		status,
+		status: $status,
 		downloadProgress,
 	}: {
 		imageId: number;
@@ -207,6 +273,8 @@ export const upsertImageInstall = async (
 	},
 	deviceId: number,
 ): Promise<void> => {
+	const status = normalizeImageInstallStatus(deviceId, $status);
+
 	if (imgInstall == null) {
 		// we need to create it with a POST
 		await resinApi.post({
@@ -258,7 +326,7 @@ export const deleteOldImageInstalls = async (
 		passthrough: { req: permissions.root },
 	});
 
-	const body = { status: 'deleted', download_progress: null };
+	const body = { status: 'deleted' as const, download_progress: null };
 	const filter: Filter<ImageInstall['Read']> = {
 		device: deviceId,
 	};

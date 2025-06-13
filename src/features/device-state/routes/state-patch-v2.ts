@@ -14,8 +14,9 @@ import {
 	v2ValidPatchFields,
 	upsertImageInstall,
 	deleteOldImageInstalls,
-	truncateShortTextFields,
+	truncateConstrainedDeviceFields,
 	limitMetricNumbers,
+	normalizeStatePatchDeviceBody,
 } from '../state-patch-utils.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 
@@ -143,10 +144,18 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 		if (local != null) {
 			const { apps } = local;
 
-			let deviceBody: Pick<LocalBody, (typeof v2ValidPatchFields)[number]> &
+			type DeviceBodyBeforeNormalization = Pick<
+				LocalBody,
+				(typeof v2ValidPatchFields)[number]
+			> &
 				Partial<
 					Pick<Device['Write'], 'is_running__release' | 'is_pinned_on__release'>
-				> = _.pick(local, v2ValidPatchFields);
+				>;
+			let deviceBody =
+				normalizeStatePatchDeviceBody<DeviceBodyBeforeNormalization>(
+					_.pick(local, v2ValidPatchFields),
+					uuid,
+				);
 			let metricsBody: Pick<LocalBody, (typeof metricsPatchFields)[number]> =
 				_.pick(local, metricsPatchFields);
 			limitMetricNumbers(metricsBody);
@@ -206,7 +215,7 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 						// truncate for resilient legacy compatible device state patch so that supervisors don't fail
 						// to update b/c of length violation of 255 (SBVR SHORT TEXT type) for ip and mac address.
 						// sbvr-types does not export SHORT TEXT VARCHAR length 255 to import.
-						deviceBody = truncateShortTextFields(deviceBody);
+						deviceBody = truncateConstrainedDeviceFields(deviceBody, deviceId);
 						await resinApiTx.patch({
 							resource: 'device',
 							id: deviceId,
