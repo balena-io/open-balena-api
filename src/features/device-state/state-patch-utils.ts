@@ -1,5 +1,5 @@
 import type { Filter } from 'pinejs-client-core';
-import type { ImageInstall } from '../../balena-model.js';
+import type { Device, ImageInstall } from '../../balena-model.js';
 import type { StatePatchV2Body } from './routes/state-patch-v2.js';
 import type { StatePatchV3Body } from './routes/state-patch-v3.js';
 import {
@@ -11,6 +11,7 @@ import {
 import { createMultiLevelStore } from '../../infra/cache/index.js';
 import type { sbvrUtils } from '@balena/pinejs';
 import { permissions } from '@balena/pinejs';
+import { ThisShouldNeverHappenError } from '../../infra/error-handling/index.js';
 
 export const v3ValidPatchFields = [
 	'status',
@@ -40,15 +41,17 @@ export const v2ValidPatchFields: Array<
 	'download_progress',
 ];
 
-const SHORT_TEXT_LENGTH = 255;
 const ADDRESS_DELIMITER = ' ';
 
 // Truncate text at delimiters to input length or less
 const truncateText = (
 	longText: string,
-	length: number = SHORT_TEXT_LENGTH,
-	delimiter: string = ADDRESS_DELIMITER,
+	length: number,
+	delimiter: string | null,
 ): string => {
+	if (delimiter == null) {
+		return longText.substring(0, length);
+	}
 	return longText
 		.split(delimiter)
 		.reduce((text, fragment) => {
@@ -58,29 +61,32 @@ const truncateText = (
 		.trim();
 };
 
-type ValidPatchFields = Array<
-	(typeof v3ValidPatchFields)[number] | (typeof v2ValidPatchFields)[number]
->;
+type ValidPatchField =
+	| (typeof v3ValidPatchFields)[number]
+	| (typeof v2ValidPatchFields)[number];
 
-const defaultShortTextFieldsToTruncate: ValidPatchFields = [
-	'ip_address',
-	'mac_address',
-];
-export const truncateShortTextFields = (
-	object: Dictionary<any>,
-	keysToTruncate: ValidPatchFields = defaultShortTextFieldsToTruncate,
-) => {
-	for (const key of keysToTruncate) {
-		if (
-			typeof object[key] !== 'string' ||
-			object[key].length <= SHORT_TEXT_LENGTH
-		) {
+const constrainedDeviceTextFields = [
+	['ip_address', 2000, ADDRESS_DELIMITER],
+	['mac_address', 900, ADDRESS_DELIMITER],
+] satisfies Array<
+	[ValidPatchField, maxLength: number, delimiter: string | null]
+>;
+export function truncateConstrainedDeviceFields<
+	T extends Partial<
+		Pick<Device['Write'], (typeof constrainedDeviceTextFields)[number][0]>
+	>,
+>(object: T, deviceId: number): T {
+	for (const [key, maxLength, delimiter] of constrainedDeviceTextFields) {
+		if (typeof object[key] !== 'string' || object[key].length <= maxLength) {
 			continue;
 		}
-		object[key] = truncateText(object[key]);
+		ThisShouldNeverHappenError(
+			`Device ${deviceId} sent a(n) ${key} that was too long and had to be truncated: ${object[key].length} chars`,
+		);
+		object[key] = truncateText(object[key], maxLength, delimiter);
 	}
 	return object;
-};
+}
 
 const metricsPatchNumbers = [
 	'memory_usage',
