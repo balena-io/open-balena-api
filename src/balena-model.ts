@@ -274,6 +274,7 @@ export interface CpuArchitecture {
 		modified_at: Types['Date Time']['Read'];
 		id: Types['Serial']['Read'];
 		slug: Types['Short Text']['Read'];
+		device_type?: Array<DeviceType['Read']>;
 		is_supported_by__device_type?: Array<DeviceType['Read']>;
 	};
 	Write: {
@@ -346,9 +347,13 @@ export interface DeviceType {
 			| []
 			| null;
 		is_default_for__application?: Array<Application['Read']>;
+		device?: Array<Device['Read']>;
 		describes__device?: Array<Device['Read']>;
 		device_type__is_referenced_by__alias?: Array<DeviceTypeAlias['Read']>;
 		device_type_alias?: Array<DeviceTypeAlias['Read']>;
+		supports__cpu_architecture:
+			| { __id: CpuArchitecture['Read']['id'] }
+			| [CpuArchitecture['Read']];
 		is_referenced_by__alias?: Array<DeviceTypeAlias['Read']>;
 	};
 	Write: {
@@ -422,6 +427,7 @@ export interface Organization {
 		user__is_member_of__organization?: Array<OrganizationMembership['Read']>;
 		organization_membership?: Array<OrganizationMembership['Read']>;
 		includes__user?: Array<OrganizationMembership['Read']>;
+		is_of__application?: Array<Application['Read']>;
 		application?: Array<Application['Read']>;
 	};
 	Write: {
