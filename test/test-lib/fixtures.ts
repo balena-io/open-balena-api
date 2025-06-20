@@ -22,6 +22,7 @@ const version = 'resin';
 // a Tx based on how they should be used within the main api code, but
 // can actually work without one and makes tests life easier
 export const fakeTx = undefined as any as Tx;
+export const fakeSbvrUtils = undefined as any as typeof sbvrUtils;
 
 type PendingFixtures = types.Dictionary<
 	PromiseLike<types.Dictionary<PromiseLike<any>>>
