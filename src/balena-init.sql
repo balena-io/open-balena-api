@@ -63,7 +63,7 @@ CREATE INDEX IF NOT EXISTS "device_device_type_idx"
 ON "device" ("is of-device type");
 CREATE INDEX IF NOT EXISTS "device_is_running_release_idx"
 ON "device" ("is running-release");
--- Also optimizes is pinned on successful release rule 
+-- Also optimizes is pinned on successful release rule
 CREATE INDEX IF NOT EXISTS "device_is_pinned_on_release_application_idx"
 ON "device" ("is pinned on-release", "belongs to-application");
 CREATE INDEX IF NOT EXISTS "device_should_be_operated_by_release_device_type_idx"
@@ -189,9 +189,9 @@ CREATE INDEX "application_slug_public_host_idx"
 ON "application" ("slug" varchar_pattern_ops, "is public", "is host");
 
 CREATE INDEX IF NOT EXISTS "scheduled_job_run_start_timestamp_idx"
-ON "scheduled job run" (DATE_TRUNC('milliseconds', "start timestamp"));
+ON "scheduled job run" (DATE_TRUNC('milliseconds', "start timestamp", 'UTC'));
 
-ALTER TABLE "user" 
+ALTER TABLE "user"
 -- It is necessary that each user (Auth) that has an email, has an email that has a Length (Type) that is greater than 4.
 ADD CONSTRAINT "user$M+9koFfMHn7kQFDNBaQZbS7gAvNMB1QkrTtsaVZoETw=" CHECK (NOT (
 	"email" IS NOT NULL
