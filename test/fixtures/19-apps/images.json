@@ -13,7 +13,7 @@
 		"service": "service1",
 		"releases": [ "release1" ],
 		"image_size": 12345678,
-		"project_type": "project type goes here",
+		"project_type": "Dockerfile.template",
 		"build_log": "This is also the build log",
 		"status": "success"
 	},
@@ -22,7 +22,7 @@
 		"service": "supervisorService",
 		"releases": [ "supervisorRelease1" ],
 		"image_size": 2048,
-		"project_type": "project type goes here",
+		"project_type": "Dockerfile.template",
 		"build_log": "This is also the build log",
 		"status": "success"
 	},
@@ -31,7 +31,7 @@
 		"service": "supervisorService",
 		"releases": [ "supervisorRelease2" ],
 		"image_size": 2048,
-		"project_type": "project type goes here",
+		"project_type": "Dockerfile.template",
 		"build_log": "This is also the build log",
 		"status": "success"
 	},
@@ -40,7 +40,7 @@
 		"service": "supervisorService",
 		"releases": [ "supervisorReleasePi" ],
 		"image_size": 2048,
-		"project_type": "project type goes here",
+		"project_type": "Dockerfile.template",
 		"build_log": "This is also the build log",
 		"status": "success"
 	},
@@ -49,7 +49,7 @@
 		"service": "rpi3HostAppService",
 		"releases": [ "rpi3HostAppRelease0" ],
 		"image_size": 2048,
-		"project_type": "project type goes here",
+		"project_type": "Dockerfile.template",
 		"build_log": "This is also the build log",
 		"status": "success"
 	},
@@ -58,7 +58,7 @@
 		"service": "intelNucHostAppService",
 		"releases": [ "intelNucHostAppRelease0" ],
 		"image_size": 2048,
-		"project_type": "project type goes here",
+		"project_type": "Dockerfile.template",
 		"build_log": "This is also the build log",
 		"status": "success"
 	},
@@ -67,7 +67,7 @@
 		"service": "intelNucHostAppService",
 		"releases": [ "intelNucHostAppRelease1" ],
 		"image_size": 2048,
-		"project_type": "project type goes here",
+		"project_type": "Dockerfile.template",
 		"build_log": "This is also the build log",
 		"status": "success"
 	},
@@ -76,7 +76,7 @@
 		"service": "intelNucHostAppService",
 		"releases": [ "intelNucHostAppUnifiedRelease1" ],
 		"image_size": 2048,
-		"project_type": "project type goes here",
+		"project_type": "Dockerfile.template",
 		"build_log": "This is also the build log",
 		"status": "success"
 	}
