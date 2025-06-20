@@ -27,7 +27,7 @@ export default () => {
 					commit: '57d00829-492d-4124-bca2-fde28df9e590',
 					status: 'success',
 					composition: {},
-					source: 'test',
+					source: 'local',
 					start_timestamp: Date.now(),
 				};
 				pineUser = pineTest.clone({
@@ -410,7 +410,7 @@ export default () => {
 			'created_at',
 			'raw_version',
 			'version',
-		];
+		] as const;
 
 		const testCorrectReleaseComputedTerms = async (
 			pineUser: typeof pineTest,
@@ -482,7 +482,7 @@ export default () => {
 				semver?: string;
 				variant?: string;
 				shouldError?: boolean;
-			}) {
+			}): Promise<Release['Read'] | undefined> {
 				const { body: releasePostResult } = await pineUser
 					.post({
 						resource: 'release',
@@ -539,7 +539,7 @@ export default () => {
 					commit: 'test-commit',
 					status: 'success',
 					composition: {},
-					source: 'test',
+					source: 'local',
 					start_timestamp: Date.now(),
 				};
 			});
@@ -636,7 +636,7 @@ export default () => {
 					.that.is.a('string');
 
 				const { body: freshlyGetRelease } = await pineUser
-					.get<Release['Read']>({
+					.get({
 						resource: 'release',
 						id: newRelease.id,
 						options: {
@@ -645,8 +645,9 @@ export default () => {
 								'is_finalized_at__date',
 							],
 						},
-					})
+					} as const)
 					.expect(200);
+				assertExists(freshlyGetRelease);
 				expect(freshlyGetRelease).to.have.property('semver', '0.0.0');
 				expect(freshlyGetRelease).to.have.property('semver_major', 0);
 				expect(freshlyGetRelease).to.have.property('semver_minor', 0);
@@ -1510,7 +1511,7 @@ export default () => {
 					commit: 'test-commit',
 					status: 'success',
 					composition: {},
-					source: 'test',
+					source: 'local',
 					is_final: false,
 					start_timestamp: Date.now(),
 				};
