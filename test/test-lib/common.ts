@@ -99,8 +99,11 @@ export const itExpectsError = (
 	});
 };
 
-export function assertExists(v: unknown): asserts v is NonNullable<typeof v> {
-	expect(v).to.exist;
+export function assertExists(
+	v: unknown,
+	message?: string,
+): asserts v is NonNullable<typeof v> {
+	expect(v, message).to.exist;
 }
 
 export async function expectToEventually<T>(
