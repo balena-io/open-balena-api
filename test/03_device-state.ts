@@ -24,7 +24,7 @@ import { setTimeout } from 'timers/promises';
 import { MINUTES, SECONDS } from '@balena/env-parsing';
 import type { PineTest } from 'pinejs-client-supertest';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
-import type { Application } from '../src/balena-model.js';
+import type { Application, Service } from '../src/balena-model.js';
 
 const { api } = sbvrUtils;
 
@@ -1286,7 +1286,7 @@ export default () => {
 				let release2: AnyObject;
 				let release1Image1: AnyObject;
 				let release1Image2: AnyObject;
-				let servicesById: Dictionary<AnyObject>;
+				let servicesById: Dictionary<PickDeferred<Service['Read']>>;
 				let device: fakeDevice.Device;
 				let stateKey: string;
 				const getMetricsRecentlyUpdatedCacheKey = (uuid: string) =>
@@ -1353,7 +1353,8 @@ export default () => {
 													[release1.commit]: {
 														services: Object.fromEntries(
 															images.map((image) => [
-																servicesById[image.is_a_build_of__service.__id],
+																servicesById[image.is_a_build_of__service.__id]
+																	.service_name,
 																{
 																	image: image.is_stored_at__image_location,
 																	status,
