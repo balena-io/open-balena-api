@@ -16,6 +16,7 @@ import {
 	upsertImageInstall,
 	shouldUpdateMetrics,
 	truncateConstrainedDeviceFields,
+	normalizeStatePatchDeviceBody,
 } from '../state-patch-utils.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 
@@ -277,16 +278,17 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 			const state = body[uuid];
 
 			const { apps } = state;
-
-			let deviceBody: Pick<
+			type DeviceBodyBeforeNormalization = Pick<
 				StatePatchV3Body[string] &
 					Partial<Pick<Device['Write'], 'update_status'>>,
 				(typeof v3ValidPatchFields)[number]
 			> &
-				Partial<Pick<Device['Write'], 'is_running__release'>> = _.pick(
-				state,
-				v3ValidPatchFields,
-			);
+				Partial<Pick<Device['Write'], 'is_running__release'>>;
+			let deviceBody =
+				normalizeStatePatchDeviceBody<DeviceBodyBeforeNormalization>(
+					_.pick(state, v3ValidPatchFields),
+					uuid,
+				);
 			let metricsBody: Pick<
 				StatePatchV3Body[string],
 				(typeof metricsPatchFields)[number]

@@ -66,8 +66,13 @@ type ValidPatchField =
 	| (typeof v2ValidPatchFields)[number];
 
 const constrainedDeviceTextFields = [
+	['status', 50, null],
+	['os_version', 70, null],
+	['supervisor_version', 20, null],
+	['api_secret', 64, null],
 	['ip_address', 2000, ADDRESS_DELIMITER],
 	['mac_address', 900, ADDRESS_DELIMITER],
+	['note', 1_000_000, null],
 ] satisfies Array<
 	[ValidPatchField, maxLength: number, delimiter: string | null]
 >;
@@ -86,6 +91,22 @@ export function truncateConstrainedDeviceFields<
 		object[key] = truncateText(object[key], maxLength, delimiter);
 	}
 	return object;
+}
+
+export function normalizeStatePatchDeviceBody<
+	T extends { os_variant?: string },
+>(deviceBody: T, uuid: string) {
+	if (
+		deviceBody.os_variant != null &&
+		deviceBody.os_variant !== 'dev' &&
+		deviceBody.os_variant !== 'prod'
+	) {
+		ThisShouldNeverHappenError(
+			`Received unexpected device.os_variant: '${deviceBody.os_variant}' from device: ${uuid}`,
+		);
+		delete deviceBody.os_variant;
+	}
+	return deviceBody as T & Partial<Pick<Device['Write'], 'os_variant'>>;
 }
 
 const metricsPatchNumbers = [
@@ -143,7 +164,7 @@ export const shouldUpdateMetrics = (() => {
 })();
 
 export type ImageInstallUpdateBody = {
-	status?: string;
+	status?: ImageInstall['Write']['status'];
 	is_provided_by__release: number;
 	download_progress?: number | null;
 };
@@ -197,13 +218,54 @@ const shouldUpdateImageInstall = (() => {
 	};
 })();
 
+const imageInstallKnownStatuses = [
+	'Downloading',
+	'Downloaded',
+	'Installing',
+	'Installed',
+	'Starting',
+	'Running',
+	'Idle',
+	'Handing over',
+	'Awaiting handover',
+	'Stopping',
+	'Stopped',
+	'exited',
+	'Deleting',
+	'deleted',
+	'Dead',
+	'paused',
+	'restarting',
+	'removing',
+	'configuring',
+	'Unknown',
+] as const;
+
+function normalizeImageInstallStatus(
+	deviceId: number,
+	status: string | undefined,
+): (typeof imageInstallKnownStatuses)[number] | undefined {
+	if (
+		status != null &&
+		!imageInstallKnownStatuses.includes(
+			status as (typeof imageInstallKnownStatuses)[number],
+		)
+	) {
+		ThisShouldNeverHappenError(
+			`Received unexpected image_install.status: '${status}' from device: ${deviceId}`,
+		);
+		return undefined;
+	}
+	return status as (typeof imageInstallKnownStatuses)[number] | undefined;
+}
+
 export const upsertImageInstall = async (
 	resinApi: typeof sbvrUtils.api.resin,
 	imgInstall: Pick<ImageInstall['Read'], 'id'>,
 	{
 		imageId,
 		releaseId,
-		status,
+		status: $status,
 		downloadProgress,
 	}: {
 		imageId: number;
@@ -213,6 +275,8 @@ export const upsertImageInstall = async (
 	},
 	deviceId: number,
 ): Promise<void> => {
+	const status = normalizeImageInstallStatus(deviceId, $status);
+
 	if (imgInstall == null) {
 		// we need to create it with a POST
 		await resinApi.post({
@@ -264,7 +328,7 @@ export const deleteOldImageInstalls = async (
 		passthrough: { req: permissions.root },
 	});
 
-	const body = { status: 'deleted', download_progress: null };
+	const body = { status: 'deleted' as const, download_progress: null };
 	const filter: Filter<ImageInstall['Read']> = {
 		device: deviceId,
 	};
