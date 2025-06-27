@@ -16,6 +16,7 @@ import {
 	deleteOldImageInstalls,
 	truncateConstrainedDeviceFields,
 	limitMetricNumbers,
+	normalizeStatePatchDeviceBody,
 } from '../state-patch-utils.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 
@@ -143,10 +144,18 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 		if (local != null) {
 			const { apps } = local;
 
-			let deviceBody: Pick<LocalBody, (typeof v2ValidPatchFields)[number]> &
+			type DeviceBodyBeforeNormalization = Pick<
+				LocalBody,
+				(typeof v2ValidPatchFields)[number]
+			> &
 				Partial<
 					Pick<Device['Write'], 'is_running__release' | 'is_pinned_on__release'>
-				> = _.pick(local, v2ValidPatchFields);
+				>;
+			let deviceBody =
+				normalizeStatePatchDeviceBody<DeviceBodyBeforeNormalization>(
+					_.pick(local, v2ValidPatchFields),
+					uuid,
+				);
 			let metricsBody: Pick<LocalBody, (typeof metricsPatchFields)[number]> =
 				_.pick(local, metricsPatchFields);
 			limitMetricNumbers(metricsBody);
