@@ -61,11 +61,48 @@ const truncateText = (
 		.trim();
 };
 
+export type TextFieldsOf<T> = {
+	[K in Extract<keyof T, string>]: T[K] extends string | null ? K : never;
+}[Extract<keyof T, string>];
+
+export function truncateConstrainedFieldsFactory<T extends object>(
+	resource: string,
+	constrainedTextFields: Array<
+		[
+			validPatchField: TextFieldsOf<T>,
+			maxLength: number,
+			delimiter: string | null,
+		]
+	>,
+) {
+	return function truncateConstrainedFields<O extends Partial<T>>(
+		object: O,
+		recordId: number,
+	): O {
+		for (const [key, maxLength, delimiter] of constrainedTextFields) {
+			const value = object[key];
+			if (typeof value !== 'string' || value.length <= maxLength) {
+				continue;
+			}
+			ThisShouldNeverHappenError(
+				`Received ${resource}.${key} for id ${recordId} that was too long and had to be truncated: ${value.length} chars`,
+			);
+			const truncatedText = truncateText(value, maxLength, delimiter);
+			// We need to cast since TypeScript complains that object[key] can be a subtype of string,
+			// while we are assigning a plain string value.
+			object[key] = truncatedText as typeof value;
+		}
+		return object;
+	};
+}
+
 type ValidPatchField =
 	| (typeof v3ValidPatchFields)[number]
 	| (typeof v2ValidPatchFields)[number];
 
-const constrainedDeviceTextFields = [
+export const truncateConstrainedDeviceFields = truncateConstrainedFieldsFactory<
+	Device['Write']
+>('device', [
 	['status', 50, null],
 	['os_version', 70, null],
 	['supervisor_version', 20, null],
@@ -75,23 +112,7 @@ const constrainedDeviceTextFields = [
 	['note', 1_000_000, null],
 ] satisfies Array<
 	[ValidPatchField, maxLength: number, delimiter: string | null]
->;
-export function truncateConstrainedDeviceFields<
-	T extends Partial<
-		Pick<Device['Write'], (typeof constrainedDeviceTextFields)[number][0]>
-	>,
->(object: T, deviceId: number): T {
-	for (const [key, maxLength, delimiter] of constrainedDeviceTextFields) {
-		if (typeof object[key] !== 'string' || object[key].length <= maxLength) {
-			continue;
-		}
-		ThisShouldNeverHappenError(
-			`Device ${deviceId} sent a(n) ${key} that was too long and had to be truncated: ${object[key].length} chars`,
-		);
-		object[key] = truncateText(object[key], maxLength, delimiter);
-	}
-	return object;
-}
+>);
 
 export function normalizeDeviceWriteBody<T extends { os_variant?: string }>(
 	deviceBody: T,

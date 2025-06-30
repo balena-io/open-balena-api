@@ -27,6 +27,7 @@ export {
 	metricsPatchFields,
 	v2ValidPatchFields,
 	v3ValidPatchFields,
+	truncateConstrainedFieldsFactory,
 } from './state-patch-utils.js';
 
 const gracefulGet = resolveOrDenyDevicesWithStatus(304);
