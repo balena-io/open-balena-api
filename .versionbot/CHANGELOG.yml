@@ -1,4 +1,152 @@
 - commits:
+    - subject: Constrain the allowed values on fields that are supposed to be enums
+      hash: 544c5e945e23edd407d524d7d19a53bdf791e2b1
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+        See: https://balena.fibery.io/Work/Project/API-Limit-size-of-large-fields-975
+        see: https://balena.fibery.io/Work/Project/API-Limit-size-of-large-fields-975
+      author: Thodoris Greasidis
+      nested: []
+    - subject: Update @balena/pinejs to 21.6.12
+      hash: 472c7212a8989d49728ae56b7b9d3929a35df8ca
+      body: |
+        Update @balena/pinejs from 21.6.9 to 21.6.12
+        Update @balena/abstract-sql-compiler from 10.3.2 to 10.4.0
+        Update @balena/abstract-sql-to-typescript from 5.1.1 to 5.1.2
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested:
+        - commits:
+            - subject: Update @balena/sbvr-parser to 1.4.10
+              hash: bb08f1ff0d318172f88978dfdf75a8451a9a3c65
+              body: |
+                Update @balena/sbvr-parser from 1.4.9 to 1.4.10
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Thodoris Greasidis
+              nested:
+                - commits:
+                    - subject: Allow using single value Definitions
+                      hash: ed36e9f54a6e99347010a88e27c877f136ddfe4a
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Thodoris Greasidis
+                  version: sbvr-parser-1.4.10
+                  title: ""
+                  date: 2025-06-26T13:22:09.508Z
+          version: pinejs-21.6.12
+          title: ""
+          date: 2025-06-26T14:57:38.195Z
+        - commits:
+            - subject: Optimize the abstract-sql schema whilst creating it
+              hash: 6923276da34d847275493b5ecde3c1353c45abc1
+              body: |
+                Update @balena/abstract-sql-compiler from 10.3.3 to 10.4.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested:
+                - commits:
+                    - subject: Export an `optimizeSchema` variant that is database engine agnostic
+                      hash: 9b52888ca68ed9298b469fbda89eb2dbbb861668
+                      body: >
+                        This can be used to optimize the schema without yet
+                        committing to a
+
+                        specific database engine, useful for a pass over
+                        abstractSql prior to
+
+                        generating a db engine specific sql model
+                      footer:
+                        Change-type: minor
+                        change-type: minor
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-10.4.0
+                  title: ""
+                  date: 2025-06-20T14:45:59.796Z
+                - commits:
+                    - subject: Switch to using a duplicate function exception to handle double
+                        function creation
+                      hash: 4354e067178bf7b462eb01182b078a8885b38031
+                      body: >
+                        This should have slightly less edge cases than trying to
+                        execute the
+
+                        function and checking that it does not already exist,
+                        particularly if
+
+                        we add arguments or similar in future where the
+                        `PERFORM` command would
+
+                        need to match precisely
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-10.3.5
+                  title: ""
+                  date: 2025-06-20T13:28:03.428Z
+                - commits:
+                    - subject: Throw an error when trying to combine computed fields with a definition
+                      hash: 0092dd499c9b4e8a3418144acbdf37084f73a3bc
+                      body: >
+                        This is poorly/unsupported and will cause all sorts of
+                        edge cases and
+
+                        breaking behavior so blocking it early will avoid bugs
+                        and allow
+
+                        handling computed fields in a better way in future
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Pagan Gazzard
+                      nested: []
+                  version: abstract-sql-compiler-10.3.4
+                  title: ""
+                  date: 2025-06-20T13:11:18.564Z
+          version: pinejs-21.6.11
+          title: ""
+          date: 2025-06-24T04:34:10.559Z
+        - commits:
+            - subject: Bump @balena/abstract-sql-to-typescript to v5.1.2
+              hash: 0f724993cc836232702ad28a7d271ecef645f065
+              body: |
+                Update @balena/abstract-sql-to-typescript from 5.1.1 to 5.1.2
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Otavio Jacobi
+              nested:
+                - commits:
+                    - subject: Allow sbvr-types v10 as peer dependency
+                      hash: 769015a6e199bbc4c497a6d29d6b79f3761fe884
+                      body: ""
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                      author: Otavio Jacobi
+                      nested: []
+                  version: abstract-sql-to-typescript-5.1.2
+                  title: ""
+                  date: 2025-06-19T19:45:38.533Z
+          version: pinejs-21.6.10
+          title: ""
+          date: 2025-06-20T14:58:24.529Z
+  version: 38.0.0
+  title: ""
+  date: 2025-07-01T08:23:24.138Z
+- commits:
     - subject: Bump @sentry/node to 9.30.0
       hash: 444f76ed4abe974686871d08cf0907b283576cde
       body: ""
@@ -2940,6 +3088,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -2972,6 +3121,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -4072,6 +4222,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -4119,6 +4270,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4307,6 +4459,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -4344,6 +4497,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4610,6 +4764,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -4638,6 +4793,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -4833,6 +4989,7 @@
 
 
 
+
                                                                         We know what type
                                                                         they return and they
                                                                         should be explicitly
@@ -4867,6 +5024,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -5095,6 +5253,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -5462,6 +5621,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -5484,6 +5644,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5603,6 +5764,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -5864,6 +6026,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -5886,6 +6049,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -6005,6 +6169,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -10236,6 +10401,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -10268,6 +10434,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -11682,6 +11849,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -11729,6 +11897,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -12181,6 +12350,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -12218,6 +12388,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -12848,6 +13019,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -12876,6 +13048,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -13120,6 +13293,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -13584,6 +13758,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -13729,6 +13904,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -14360,6 +14536,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -14382,6 +14559,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -14633,6 +14811,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -15158,6 +15337,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -15180,6 +15360,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -15431,6 +15612,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -17969,6 +18151,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -17991,6 +18174,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -18242,6 +18426,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -18770,6 +18955,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -18798,6 +18984,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -19041,6 +19228,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -19503,6 +19691,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/sbvr-types
                                                                 from 3.4.18 to 3.5.0
@@ -19648,6 +19837,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
