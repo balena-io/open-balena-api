@@ -228,7 +228,7 @@ export default () => {
 						build_log: '',
 						commit: `deadbeef${testRunsCount}`,
 						composition: {},
-						source: '',
+						source: 'local',
 						status: 'running',
 						start_timestamp: Date.now(),
 					});
@@ -239,7 +239,7 @@ export default () => {
 						build_log: '',
 						commit: `deadbeef${testRunsCount}`,
 						composition: {},
-						source: '',
+						source: 'local',
 						status: 'running',
 						start_timestamp: Date.now(),
 					});
@@ -385,7 +385,7 @@ export default () => {
 						build_log: '',
 						commit: `deadbeef`,
 						composition: {},
-						source: '',
+						source: 'local',
 						status: 'running',
 						start_timestamp: Date.now(),
 						semver: '9.9.9',
@@ -397,7 +397,7 @@ export default () => {
 						build_log: '',
 						commit: `deadbeef2`,
 						composition: {},
-						source: '',
+						source: 'local',
 						status: 'running',
 						start_timestamp: Date.now(),
 					});
@@ -408,7 +408,7 @@ export default () => {
 						build_log: '',
 						commit: `deadbeef3`,
 						composition: {},
-						source: '',
+						source: 'local',
 						status: 'running',
 						start_timestamp: Date.now(),
 					});
@@ -419,7 +419,7 @@ export default () => {
 						build_log: '',
 						commit: `deadbeef4`,
 						composition: {},
-						source: '',
+						source: 'local',
 						status: 'running',
 						start_timestamp: Date.now(),
 					});
