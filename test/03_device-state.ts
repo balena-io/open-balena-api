@@ -1651,6 +1651,103 @@ export default () => {
 					});
 				});
 
+				const deviceFieldMaxSizes = {
+					status: 50,
+					os_version: 70,
+					supervisor_version: 20,
+					api_secret: 64,
+					note: 1_000_000,
+				};
+
+				it('should accept excessively long device fields and truncate them to the max allowed size', async () => {
+					const devicePatchBody = {
+						status: 'Running OS update',
+						os_version: 'balenaOS 2.50.1+rev1',
+						supervisor_version: '11.4.10',
+						api_secret: 'super-secret-thing',
+					};
+					const truncatedValues = { ...devicePatchBody };
+
+					for (const [key, value] of Object.entries(devicePatchBody) as Array<
+						[keyof typeof devicePatchBody, string]
+					>) {
+						devicePatchBody[key] = value.padEnd(
+							deviceFieldMaxSizes[key] + 100,
+							'1234567890',
+						);
+						truncatedValues[key] = devicePatchBody[key].substring(
+							0,
+							deviceFieldMaxSizes[key],
+						);
+						expect(truncatedValues[key]).to.have.lengthOf(
+							deviceFieldMaxSizes[key],
+						);
+						expect(truncatedValues[key]).to.have.length.that.is.lessThan(
+							devicePatchBody[key].length,
+						);
+					}
+
+					await fakeDevice.patchState(
+						device,
+						device.uuid,
+						{
+							[stateKey]: devicePatchBody,
+						},
+						stateVersion,
+					);
+
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						device.id,
+						truncatedValues,
+					);
+				});
+
+				if (stateVersion === 'v2') {
+					// We would expect this to fail with a DB constraint error,
+					// but the payload has a size that's above the max json size limit
+					// that we have configured express to allow parsing in bodyParser.json middleware.
+					itExpectsError(
+						'should accept excessively long device notes and truncate them to the max allowed size',
+						async () => {
+							const note = 'this is a long device note'.padEnd(
+								deviceFieldMaxSizes.note + 1,
+								'a',
+							);
+							await fakeDevice.patchState(
+								device,
+								device.uuid,
+								{
+									[stateKey]: {
+										note,
+									},
+								},
+								stateVersion,
+							);
+						},
+						/expected 200 "OK", got 413 "Payload Too Large"/,
+					);
+
+					it('should be able to set a note as long as the max payload size allows', async () => {
+						const note = 'this is a long device note'.padEnd(524_200, 'a');
+						await fakeDevice.patchState(
+							device,
+							device.uuid,
+							{
+								[stateKey]: {
+									note,
+								},
+							},
+							stateVersion,
+						);
+
+						await expectResourceToMatch(pineUser, 'device', device.id, {
+							note,
+						});
+					});
+				}
+
 				it('should set the metrics throttling key in redis', async () => {
 					const cachedValue = await redisRO.get(
 						getMetricsRecentlyUpdatedCacheKey(device.uuid),

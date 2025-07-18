@@ -6,13 +6,15 @@ import type { UserObjectParam } from './test-lib/supertest.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import { sbvrUtils, permissions } from '@balena/pinejs';
+import { expectResourceToMatch } from './test-lib/api-helpers.js';
 import { assertExists } from './test-lib/common.js';
 import { loginUserSudoTimeoutAgo } from './test-lib/users.js';
+import type { ApiKey } from '../src/balena-model.js';
 
 const { api } = sbvrUtils;
 
 export default () => {
-	versions.test((version) => {
+	versions.test((version, pineTest) => {
 		describe('create provisioning apikey', function () {
 			before(async function () {
 				const fx = await fixtures.load('08-create-device-apikey');
@@ -424,11 +426,17 @@ export default () => {
 
 		describe('create named user apikey', function () {
 			let userIdForUnauthorizedRequest = 0;
+			let pineUser: typeof pineTest;
 
 			before(async function () {
 				const fx = await fixtures.load();
 				this.loadedFixtures = fx;
 				this.user = fx.users.admin;
+				pineUser = pineTest.clone({
+					passthrough: {
+						user: this.user,
+					},
+				});
 				userIdForUnauthorizedRequest = this.user.id;
 			});
 			after(async function () {
@@ -501,6 +509,121 @@ export default () => {
 
 						expect(apiKey).to.be.a('string');
 						expect(apiKey).to.not.be.empty;
+					});
+
+					it('should not allow requests with a name longer than 50 characters', async function () {
+						const name = 'too-long-name-'.padEnd(51, 'a');
+						const description = 'too long name test description';
+						await fn(this.user, { name, description }).expect(
+							400,
+							'"It is necessary that each api key that has a name, has a name that has a Length (Type) that is less than or equal to 50."',
+						);
+					});
+
+					it('should not allow requests with a description longer than 150 characters', async function () {
+						const name = 'too-long-description-test-name';
+						const description = 'too long description '.padEnd(151, 'a');
+						await fn(this.user, { name, description }).expect(
+							400,
+							'"It is necessary that each api key that has a description, has a description that has a Length (Type) that is less than or equal to 150."',
+						);
+					});
+
+					it('should allow requests with a 50 chars long name & 150 chars long description', async function () {
+						const name = 'loooong-name-'.padEnd(50, 'a');
+						const description = 'loooong description '.padEnd(150, 'a');
+						const { body: apiKey } = await fn(this.user, {
+							name,
+							description,
+						}).expect(200);
+						expect(apiKey).to.be.a('string');
+						expect(apiKey).to.not.be.empty;
+					});
+				});
+			});
+
+			describe('update named user apikey', function () {
+				let testApiKey: Pick<ApiKey['Read'], 'id'>;
+				before(async function () {
+					const name = 'name-to-update';
+					const description = 'description-to-update';
+					await supertest(this.user)
+						.post(`/api-key/v1/`)
+						.send({
+							actorType: 'user',
+							actorTypeId: this.user.id,
+							roles: ['named-user-api-key'],
+							name,
+							description,
+						});
+
+					const {
+						body: [apiKey],
+					} = await pineUser
+						.get({
+							resource: 'api_key',
+							options: {
+								$top: 1,
+								$select: 'id',
+								$filter: {
+									name,
+								},
+								$orderby: { id: 'desc' },
+							},
+						})
+						.expect(200);
+					assertExists(apiKey, 'Api key not found');
+					testApiKey = apiKey as Pick<ApiKey['Read'], 'id'>;
+				});
+
+				it('should not allow updating the name of an api key to a value longer than 50 characters', async function () {
+					const name = 'too-long-name-'.padEnd(51, 'a');
+					await pineUser
+						.patch({
+							resource: 'api_key',
+							id: testApiKey.id,
+							body: {
+								name,
+							},
+						})
+						.expect(
+							400,
+							'"It is necessary that each api key that has a name, has a name that has a Length (Type) that is less than or equal to 50."',
+						);
+				});
+
+				it('should not allow updating the description of an api key to a value longer than 150 characters', async function () {
+					const description = 'too long description '.padEnd(151, 'a');
+					await pineUser
+						.patch({
+							resource: 'api_key',
+							id: testApiKey.id,
+							body: {
+								description,
+							},
+						})
+						.expect(
+							400,
+							'"It is necessary that each api key that has a description, has a description that has a Length (Type) that is less than or equal to 150."',
+						);
+				});
+
+				it('should allow updating an api key to a 50 chars long name & 150 chars long description', async function () {
+					const name = 'loooong-name-updated-'.padEnd(50, 'b');
+					const description = 'too long description updated '.padEnd(150, 'b');
+					await pineUser
+						.patch({
+							resource: 'api_key',
+							id: testApiKey.id,
+							body: {
+								name,
+								description,
+							},
+						})
+						.expect(200);
+					await expectResourceToMatch(pineUser, 'api_key', testApiKey.id, {
+						name,
+						description,
 					});
 				});
 			});
