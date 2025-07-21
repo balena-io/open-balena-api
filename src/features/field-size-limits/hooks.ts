@@ -25,5 +25,5 @@ for (const resource of [
 }
 
 addHooksForFieldSizeLimitChecks('resin', 'device_tag', {
-	value: { min: 0, max: 10_000 },
+	value: 10_000,
 });
