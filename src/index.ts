@@ -105,6 +105,7 @@ import {
 	getApiKeyOptsFromRequest,
 } from './features/api-keys/lib.js';
 import { setupDeleteCascade as addDeleteHookForDependents } from './features/cascade-delete/setup-delete-cascade.js';
+import { addHooksForFieldSizeLimitChecks } from './features/field-size-limits/setup-field-size-limits.js';
 import {
 	updateOrInsertModel,
 	getOrInsertModelId,
@@ -233,6 +234,7 @@ export const rateLimiting = {
 export * as middleware from './exports/middleware.js';
 export const hooks = {
 	addDeleteHookForDependents,
+	addHooksForFieldSizeLimitChecks,
 };
 export const utils = {
 	updateOrInsertModel,

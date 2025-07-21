@@ -137,6 +137,48 @@ export default () => {
 				);
 			});
 
+			for (const [propName, maxSize] of [
+				['build_log', 1_000_000],
+				['dockerfile', 1_000_000],
+			] as const) {
+				it(`should not be able to set a ${propName} longer than ${maxSize} chars on an image`, async () => {
+					await pineUser
+						.patch({
+							resource: 'image',
+							id: fx.images.release1_image1.id,
+							body: {
+								[propName]: `too long propName value `.padEnd(maxSize + 1, 'a'),
+							},
+						})
+						.expect(
+							// We would expect this to fail with a DB constraint error,
+							// but the payload has a size that's above the max json size limit
+							// that we have configured express to allow parsing in bodyParser.json middleware.
+							413,
+						);
+				});
+			}
+
+			for (const [propName, maxSize] of [
+				// express is configured to not parse json request bodies larger than 512kb,
+				// but it seems that that's before decompressing so we are able to use values
+				// slightly larger than that.
+				['build_log', 524_200],
+				['dockerfile', 524_200],
+			] as const) {
+				it(`should be able to set a ${maxSize} char long ${propName} on an image`, async () => {
+					await pineUser
+						.patch({
+							resource: 'image',
+							id: fx.images.release1_image1.id,
+							body: {
+								[propName]: `long propName value `.padEnd(maxSize + 1, 'a'),
+							},
+						})
+						.expect(200);
+				});
+			}
+
 			it('should be able to create a new failed release for a given commit', async () => {
 				await supertest(user)
 					.post(`/${version}/release`)
@@ -234,6 +276,45 @@ export default () => {
 					},
 				);
 			});
+
+			for (const [propName, maxSize] of [
+				['note', 1_000_000],
+				['build_log', 1_000_000],
+			] as const) {
+				it(`should not be able to set a ${propName} longer than ${maxSize} chars on a release`, async () => {
+					await pineUser
+						.patch({
+							resource: 'release',
+							id: fx.releases.release1.id,
+							body: {
+								[propName]: `too long propName value `.padEnd(maxSize + 1, 'a'),
+							},
+						})
+						.expect(
+							// We would expect this to fail with a DB constraint error,
+							// but the payload has a size that's above the max json size limit
+							// that we have configured express to allow parsing in bodyParser.json middleware.
+							413,
+						);
+				});
+			}
+
+			for (const [propName, maxSize] of [
+				['note', 524_200],
+				['build_log', 524_200],
+			] as const) {
+				it(`should be able to set a ${maxSize} char long ${propName} on a release`, async () => {
+					await pineUser
+						.patch({
+							resource: 'release',
+							id: fx.releases.release1.id,
+							body: {
+								[propName]: `long propName value `.padEnd(maxSize + 1, 'a'),
+							},
+						})
+						.expect(200);
+				});
+			}
 
 			it('should not be able to set an invalid value to the phase of a release', async () => {
 				for (const phase of ['', 'my phase']) {
