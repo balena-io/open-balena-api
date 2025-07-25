@@ -77,13 +77,13 @@ const checkJobShouldExecute = async (
 	return (
 		jobInfo.nextInvocation == null ||
 		jobInfo.nextInvocation <= fireDate.getTime() ||
-		jobInfo.nextInvocation > job.nextInvocation().getTime()
+		jobInfo.nextInvocation > job.nextInvocation()!.getTime()
 	);
 };
 
 const updateJobInfoExecute = async (jobInfoKey: string, job: schedule.Job) => {
 	const jobInfo: JobInfo = {
-		nextInvocation: job.nextInvocation().getTime(),
+		nextInvocation: job.nextInvocation()!.getTime(),
 	};
 	const serializedJobInfo = JSON.stringify(jobInfo);
 	await redis.set(jobInfoKey, serializedJobInfo);
