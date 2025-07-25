@@ -21,7 +21,7 @@ services:
     networks:
       - local-test
   loki:
-    image: grafana/loki:3.5.1
+    image: grafana/loki:3.5.3
     ports:
       - "9095:9095"
       - "3100:3100"
