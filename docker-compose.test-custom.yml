@@ -36,7 +36,7 @@ services:
     networks:
       - local-test
   minio-client:
-    image: minio/mc:RELEASE.2025-05-21T01-59-54Z
+    image: minio/mc:RELEASE.2025-07-21T05-28-08Z
     depends_on:
       - minio-server
     entrypoint: >
