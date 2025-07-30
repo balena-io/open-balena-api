@@ -392,6 +392,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 				'jetson-orin-nx-seeed-j4012',
 				'jetson-orin-nx-xavier-nx-devkit',
 			],
+			'17.1.2': ['forecr-dsb-ornx-orin-nano-8gb'],
 		},
 		{
 			BALENA_HOST_CONFIG_power_mode: {
