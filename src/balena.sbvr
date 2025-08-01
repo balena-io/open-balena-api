@@ -677,6 +677,8 @@ Fact type: device type has logo
 
 Fact type: device type has contract
 	Necessity: each device type has at most one contract
+	-- 5MB
+	Necessity: each device type that has a contract, has a contract that is represented by a Text (Type) that has a Length (Type) that is less than or equal to 5000000.
 
 Fact type: device type belongs to device family
 	Synonymous form: device family has device type
@@ -729,6 +731,8 @@ Fact type: release has commit
 	Necessity: each release has a commit that has a Length (Type) that is less than or equal to 40.
 Fact type: release has composition
 	Necessity: each release has exactly one composition.
+	-- 1MB
+	Necessity: each release has a composition that is represented by a Text (Type) that has a Length (Type) that is less than or equal to 1000000.
 Fact type: release has status
 	Necessity: each release has exactly one status.
 	-- "interrupted" is a legacy pre-multicontainer status
@@ -753,6 +757,8 @@ Fact type: release has release version
 	Note: Deprecated.
 Fact type: release has contract
 	Necessity: each release has at most one contract
+	-- 1MB
+	Necessity: each release that has a contract, has a contract that is represented by a Text (Type) that has a Length (Type) that is less than or equal to 1000000.
 Fact type: release is passing tests
 Fact type: release is finalized at date
 	Necessity: each release is finalized at at most one date.
@@ -796,6 +802,8 @@ Fact type: release has asset key
 -- release asset
 Fact type: release asset has asset
 	Necessity: each release asset has at most one asset.
+	-- The content_type size is as per RFC6838 recommendation: "<type-name> and <subtype-name> SHOULD be limited to 64 characters."
+	Necessity: each release asset that has an asset, has an asset that has a Filename (Type) that has a Length (Type) that is less than or equal to 255 and has a Content Type (Type) that has a Length (Type) that is less than or equal to 129.
 
 
 -- service environment variable
@@ -848,6 +856,8 @@ Fact type: image has content hash
 	Necessity: each image that has a content hash, has a content hash that has a Length (Type) that is less than or equal to 71.
 Fact type: image has contract
 	Necessity: each image has at most one contract
+	-- 1MB
+	Necessity: each image that has a contract, has a contract that is represented by a Text (Type) that has a Length (Type) that is less than or equal to 1000000.
 
 
 -- image label
