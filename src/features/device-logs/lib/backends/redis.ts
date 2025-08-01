@@ -270,7 +270,7 @@ export class RedisBackend implements DeviceLogsBackend {
 		payload: string,
 	): Promise<RedisDeviceLog | undefined> {
 		try {
-			let decompressedBuffer = Buffer.from(payload, BUFFER_ENCODING);
+			let decompressedBuffer: Buffer = Buffer.from(payload, BUFFER_ENCODING);
 			const compression = await getCompressionLib();
 			if (compression != null) {
 				try {
