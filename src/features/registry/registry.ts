@@ -577,6 +577,11 @@ const generateToken = (
 export const token: RequestHandler = async (req, res) => {
 	try {
 		const { scope } = req.query;
+		const serviceParam = req.query['service'];
+		const audience =
+			typeof serviceParam === 'string' && serviceParam.length > 0
+				? serviceParam
+				: REGISTRY2_HOST;
 		let scopes: string[];
 		if (typeof scope === 'string') {
 			scopes = [scope];
@@ -595,8 +600,13 @@ export const token: RequestHandler = async (req, res) => {
 					authorizeRequest(req, scopes, tx),
 				]),
 		);
+		const issuedAt = new Date();
+		const generatedToken = generateToken(sub, audience, access);
 		res.json({
-			token: generateToken(sub, REGISTRY2_HOST, access),
+			token: generatedToken,
+			access_token: generatedToken,
+			expires_in: REGISTRY_TOKEN_EXPIRY_SECONDS,
+			issued_at: issuedAt.toISOString(),
 		});
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
