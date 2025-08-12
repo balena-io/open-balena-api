@@ -70,7 +70,11 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 		fieldName: 'semver',
 		dataType: 'Short Text',
 		required: true,
-		computed: semverField,
+		computed: {
+			parallel: 'SAFE',
+			volatility: 'IMMUTABLE',
+			definition: semverField,
+		},
 	});
 
 	const createdAtTimestampNode: CastNode = [
@@ -131,13 +135,22 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 			fieldName: 'raw version',
 			dataType: 'Short Text',
 			required: true,
-			computed: rawVersionField,
+			computed: {
+				parallel: 'SAFE',
+				volatility: 'IMMUTABLE',
+				definition: rawVersionField,
+			},
 		},
 		{
 			fieldName: 'version',
 			dataType: 'JSON',
 			required: true,
-			computed: oneLineTrimSqlConcat`{
+			computed: {
+				parallel: 'SAFE',
+				volatility: 'IMMUTABLE',
+				definition: [
+					'Cast',
+					oneLineTrimSqlConcat`{
 			"raw": "${rawVersionField}",
 			"major": ${majorField},
 			"minor": ${minorField},
@@ -155,6 +168,9 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 			)}],
 			"version": "${versionCoreAndPrerelease}"
 		}`,
+					'JSON',
+				],
+			},
 		},
 	);
 };

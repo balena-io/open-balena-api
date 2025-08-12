@@ -178,47 +178,143 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 	abstractSql.tables['device'].fields.push({
 		fieldName: 'overall status',
 		dataType: 'Short Text',
-		computed: [
-			// TODO: should use `is managed by-service instance` with timeout for informing online/offline
-			'Case',
-			['When', isInactive, ['EmbeddedText', 'inactive']],
-			['When', isPostProvisioning, ['EmbeddedText', 'post-provisioning']],
-			['When', isPreProvisioning, ['EmbeddedText', 'configuring']],
-			['When', isOverallOffline, ['EmbeddedText', 'disconnected']],
-			[
-				'When',
+		computed: {
+			parallel: 'SAFE',
+			volatility: 'STABLE',
+			definition: [
+				// TODO: should use `is managed by-service instance` with timeout for informing online/offline
+				'Case',
+				['When', isInactive, ['EmbeddedText', 'inactive']],
+				['When', isPostProvisioning, ['EmbeddedText', 'post-provisioning']],
+				['When', isPreProvisioning, ['EmbeddedText', 'configuring']],
+				['When', isOverallOffline, ['EmbeddedText', 'disconnected']],
 				[
-					'And',
+					'When',
 					[
-						'In',
-						['ReferencedField', 'device', 'api heartbeat state'],
-						['EmbeddedText', 'online'],
-						['EmbeddedText', 'timeout'],
+						'And',
+						[
+							'In',
+							['ReferencedField', 'device', 'api heartbeat state'],
+							['EmbeddedText', 'online'],
+							['EmbeddedText', 'timeout'],
+						],
+						['Exists', ['ReferencedField', 'device', 'download progress']],
+						[
+							'Equals',
+							['ReferencedField', 'device', 'status'],
+							['EmbeddedText', 'Downloading'],
+						],
 					],
-					['Exists', ['ReferencedField', 'device', 'download progress']],
-					[
-						'Equals',
-						['ReferencedField', 'device', 'status'],
-						['EmbeddedText', 'Downloading'],
-					],
+					['EmbeddedText', 'updating'],
 				],
-				['EmbeddedText', 'updating'],
-			],
-			[
-				'When',
-				['Exists', ['ReferencedField', 'device', 'provisioning progress']],
-				['EmbeddedText', 'configuring'],
-			],
-			[
-				'When',
 				[
-					'And',
+					'When',
+					['Exists', ['ReferencedField', 'device', 'provisioning progress']],
+					['EmbeddedText', 'configuring'],
+				],
+				[
+					'When',
 					[
-						'In',
-						['ReferencedField', 'device', 'api heartbeat state'],
-						['EmbeddedText', 'online'],
-						['EmbeddedText', 'timeout'],
+						'And',
+						[
+							'In',
+							['ReferencedField', 'device', 'api heartbeat state'],
+							['EmbeddedText', 'online'],
+							['EmbeddedText', 'timeout'],
+						],
+						[
+							'Exists',
+							[
+								'SelectQuery',
+								['Select', []],
+								['From', ['Alias', ['Table', 'image install'], 'ii']],
+								[
+									'Where',
+									[
+										'And',
+										[
+											'Equals',
+											['ReferencedField', 'ii', 'device'],
+											['ReferencedField', 'device', 'id'],
+										],
+										['Exists', ['ReferencedField', 'ii', 'download progress']],
+										[
+											'Equals',
+											['ReferencedField', 'ii', 'status'],
+											['EmbeddedText', 'Downloading'],
+										],
+									],
+								],
+							],
+						],
 					],
+					['EmbeddedText', 'updating'],
+				],
+				[
+					'When',
+					hasPartialConnectivity,
+					['EmbeddedText', 'reduced-functionality'],
+				],
+				['Else', ['EmbeddedText', 'operational']],
+			],
+		},
+	});
+
+	abstractSql.tables['device'].fields.push({
+		fieldName: 'overall progress',
+		dataType: 'Integer',
+		computed: {
+			parallel: 'SAFE',
+			volatility: 'STABLE',
+			definition: [
+				'Case',
+				[
+					'When',
+					isInactive,
+					// If the device is inactive then we return null progress as we have no more info
+					['Null'],
+				],
+				[
+					'When',
+					isPostProvisioning,
+					// If the device is in a post provisioning state then we return the provisioning progress
+					['ReferencedField', 'device', 'provisioning progress'],
+				],
+				[
+					'When',
+					isPreProvisioning,
+					// If the device is offline and has always been offline we return the provisioning progress
+					['ReferencedField', 'device', 'provisioning progress'],
+				],
+				[
+					'When',
+					isOverallOffline,
+					// Otherwise if the device is offline but has previously been online we return no info
+					['Null'],
+				],
+				[
+					'When',
+					[
+						'And',
+						['Exists', ['ReferencedField', 'device', 'download progress']],
+						[
+							'Equals',
+							['ReferencedField', 'device', 'status'],
+							['EmbeddedText', 'Downloading'],
+						],
+					],
+					// If the device itself is downloading then we return its download progress in isolation (ignoring image installs)
+					['ReferencedField', 'device', 'download progress'],
+				],
+				[
+					'When',
+					['Exists', ['ReferencedField', 'device', 'provisioning progress']],
+					['ReferencedField', 'device', 'provisioning progress'],
+				],
+				[
+					// If there are any image installs in the 'downloading' status then we return the average download progress of all image installs
+					// that are either for the current release or in the 'downloading' status
+					'When',
 					[
 						'Exists',
 						[
@@ -244,75 +340,31 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 							],
 						],
 					],
-				],
-				['EmbeddedText', 'updating'],
-			],
-			[
-				'When',
-				hasPartialConnectivity,
-				['EmbeddedText', 'reduced-functionality'],
-			],
-			['Else', ['EmbeddedText', 'operational']],
-		],
-	});
-
-	abstractSql.tables['device'].fields.push({
-		fieldName: 'overall progress',
-		dataType: 'Integer',
-		computed: [
-			'Case',
-			[
-				'When',
-				isInactive,
-				// If the device is inactive then we return null progress as we have no more info
-				['Null'],
-			],
-			[
-				'When',
-				isPostProvisioning,
-				// If the device is in a post provisioning state then we return the provisioning progress
-				['ReferencedField', 'device', 'provisioning progress'],
-			],
-			[
-				'When',
-				isPreProvisioning,
-				// If the device is offline and has always been offline we return the provisioning progress
-				['ReferencedField', 'device', 'provisioning progress'],
-			],
-			[
-				'When',
-				isOverallOffline,
-				// Otherwise if the device is offline but has previously been online we return no info
-				['Null'],
-			],
-			[
-				'When',
-				[
-					'And',
-					['Exists', ['ReferencedField', 'device', 'download progress']],
-					[
-						'Equals',
-						['ReferencedField', 'device', 'status'],
-						['EmbeddedText', 'Downloading'],
-					],
-				],
-				// If the device itself is downloading then we return its download progress in isolation (ignoring image installs)
-				['ReferencedField', 'device', 'download progress'],
-			],
-			[
-				'When',
-				['Exists', ['ReferencedField', 'device', 'provisioning progress']],
-				['ReferencedField', 'device', 'provisioning progress'],
-			],
-			[
-				// If there are any image installs in the 'downloading' status then we return the average download progress of all image installs
-				// that are either for the current release or in the 'downloading' status
-				'When',
-				[
-					'Exists',
 					[
 						'SelectQuery',
-						['Select', []],
+						[
+							'Select',
+							[
+								[
+									// W/o the Cast, Round(Average()) will return values of the Numeric DB type,
+									// and node-pg will convert that to a string, since it can't represent it
+									// with the same accuracy otherwise (might have too many decimals or be greater than a big int).
+									'Cast',
+									[
+										'Round',
+										[
+											'Average',
+											[
+												'Coalesce',
+												['ReferencedField', 'ii', 'download progress'],
+												['Number', 100],
+											],
+										],
+									],
+									'Integer',
+								],
+							],
+						],
 						['From', ['Alias', ['Table', 'image install'], 'ii']],
 						[
 							'Where',
@@ -323,86 +375,48 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 									['ReferencedField', 'ii', 'device'],
 									['ReferencedField', 'device', 'id'],
 								],
-								['Exists', ['ReferencedField', 'ii', 'download progress']],
 								[
-									'Equals',
+									'NotEquals',
 									['ReferencedField', 'ii', 'status'],
-									['EmbeddedText', 'Downloading'],
+									['EmbeddedText', 'deleted'],
 								],
-							],
-						],
-					],
-				],
-				[
-					'SelectQuery',
-					[
-						'Select',
-						[
-							[
-								// W/o the Cast, Round(Average()) will return values of the Numeric DB type,
-								// and node-pg will convert that to a string, since it can't represent it
-								// with the same accuracy otherwise (might have too many decimals or be greater than a big int).
-								'Cast',
 								[
-									'Round',
+									'Or',
 									[
-										'Average',
+										'Equals',
+										['ReferencedField', 'ii', 'status'],
+										['EmbeddedText', 'Downloading'],
+									],
+									[
+										'Equals',
+										['ReferencedField', 'ii', 'is provided by-release'],
 										[
 											'Coalesce',
-											['ReferencedField', 'ii', 'download progress'],
-											['Number', 100],
-										],
-									],
-								],
-								'Integer',
-							],
-						],
-					],
-					['From', ['Alias', ['Table', 'image install'], 'ii']],
-					[
-						'Where',
-						[
-							'And',
-							[
-								'Equals',
-								['ReferencedField', 'ii', 'device'],
-								['ReferencedField', 'device', 'id'],
-							],
-							[
-								'NotEquals',
-								['ReferencedField', 'ii', 'status'],
-								['EmbeddedText', 'deleted'],
-							],
-							[
-								'Or',
-								[
-									'Equals',
-									['ReferencedField', 'ii', 'status'],
-									['EmbeddedText', 'Downloading'],
-								],
-								[
-									'Equals',
-									['ReferencedField', 'ii', 'is provided by-release'],
-									[
-										'Coalesce',
-										['ReferencedField', 'device', 'is pinned on-release'],
-										[
-											'SelectQuery',
+											['ReferencedField', 'device', 'is pinned on-release'],
 											[
-												'Select',
-												[['ReferencedField', 'a', 'should be running-release']],
-											],
-											['From', ['Alias', ['Table', 'application'], 'a']],
-											[
-												'Where',
+												'SelectQuery',
 												[
-													'Equals',
+													'Select',
 													[
-														'ReferencedField',
-														'device',
-														'belongs to-application',
+														[
+															'ReferencedField',
+															'a',
+															'should be running-release',
+														],
 													],
-													['ReferencedField', 'a', 'id'],
+												],
+												['From', ['Alias', ['Table', 'application'], 'a']],
+												[
+													'Where',
+													[
+														'Equals',
+														[
+															'ReferencedField',
+															'device',
+															'belongs to-application',
+														],
+														['ReferencedField', 'a', 'id'],
+													],
 												],
 											],
 										],
@@ -412,9 +426,9 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 						],
 					],
 				],
+				// And if we haven't found any download progress yet then the default ELSE returns null
 			],
-			// And if we haven't found any download progress yet then the default ELSE returns null
-		],
+		},
 	});
 
 	const deviceShouldBeRunningReleaseField = abstractSql.tables[
@@ -425,28 +439,32 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 			"Could not find 'should be running-release' field in device model",
 		);
 	}
-	deviceShouldBeRunningReleaseField.computed = [
-		'Case',
-		[
-			'When',
-			['Exists', ['ReferencedField', 'device', 'is pinned on-release']],
-			['ReferencedField', 'device', 'is pinned on-release'],
-		],
-		[
-			'Else',
+	deviceShouldBeRunningReleaseField.computed = {
+		parallel: 'SAFE',
+		volatility: 'STABLE',
+		definition: [
+			'Case',
 			[
-				'SelectQuery',
-				['Select', [['ReferencedField', 'a', 'should be running-release']]],
-				['From', ['Alias', ['Table', 'application'], 'a']],
+				'When',
+				['Exists', ['ReferencedField', 'device', 'is pinned on-release']],
+				['ReferencedField', 'device', 'is pinned on-release'],
+			],
+			[
+				'Else',
 				[
-					'Where',
+					'SelectQuery',
+					['Select', [['ReferencedField', 'a', 'should be running-release']]],
+					['From', ['Alias', ['Table', 'application'], 'a']],
 					[
-						'Equals',
-						['ReferencedField', 'a', 'id'],
-						['ReferencedField', 'device', 'belongs to-application'],
+						'Where',
+						[
+							'Equals',
+							['ReferencedField', 'a', 'id'],
+							['ReferencedField', 'device', 'belongs to-application'],
+						],
 					],
 				],
 			],
 		],
-	];
+	};
 };
