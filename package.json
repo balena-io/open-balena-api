@@ -75,7 +75,7 @@
     "@types/memoizee": "^0.4.12",
     "@types/morgan": "^1.9.10",
     "@types/ndjson": "^2.0.4",
-    "@types/node": "^22.16.5",
+    "@types/node": "^24.2.1",
     "@types/node-schedule": "^2.1.8",
     "@types/on-finished": "^2.3.5",
     "@types/passport-jwt": "^4.0.1",
@@ -161,8 +161,8 @@
     "supertest": "^7.1.4"
   },
   "engines": {
-    "node": "^22.2.0",
-    "npm": "^11.0.0"
+    "node": "^24.5.0",
+    "npm": "^11.5.2"
   },
   "mocha": {
     "reporter": "spec",
