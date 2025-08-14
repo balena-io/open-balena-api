@@ -64,9 +64,7 @@ services:
     networks:
       - local-test
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup
       - ./automation/check-model-types-generated.sh:/usr/src/app/automation/check-model-types-generated.sh
-    privileged: true
     environment: &env
       API_HOST: 127.0.0.1
       API_VPN_SERVICE_API_KEY: api_vpn_service_api_key
@@ -141,7 +139,6 @@ services:
       networks:
         - local-test
       volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup
         - ./node_modules:/usr/src/app/node_modules
         # Exclude syncing node_modules that have a native build step
         # to avoid hostOS/container incompatibility issues.
@@ -168,7 +165,6 @@ services:
         - ./tsconfig.build.json:/usr/src/app/tsconfig.build.json
         - ./.materialized-config.json:/usr/src/app/.materialized-config.json
         - ./.pinejs-cache.json:/usr/src/app/.pinejs-cache.json
-      privileged: true
       environment:
         <<: *env
 networks:
