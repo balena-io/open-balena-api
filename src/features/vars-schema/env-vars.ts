@@ -86,7 +86,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 } = {
 	RESIN_SUPERVISOR_CONNECTIVITY_CHECK: {
 		enum: ['false', 'true'],
-		description: 'Enable / Disable VPN connectivity check',
+		description: 'Enable / Disable Cloudlink connectivity check',
 		default: 'true',
 	},
 	RESIN_SUPERVISOR_LOG_CONTROL: {
@@ -103,7 +103,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 	},
 	RESIN_SUPERVISOR_VPN_CONTROL: {
 		enum: ['false', 'true'],
-		description: 'Enable / Disable VPN service on device',
+		description: 'Enable / Disable Cloudlink service on device',
 		default: 'true',
 	},
 	RESIN_SUPERVISOR_PERSISTENT_LOGGING: {
