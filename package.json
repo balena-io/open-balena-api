@@ -45,12 +45,12 @@
     "prepare": "node -e \"try { (await import('husky')).default() } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e }\" --input-type module"
   },
   "dependencies": {
-    "@balena/abstract-sql-compiler": "^11.0.1",
-    "@balena/abstract-sql-to-typescript": "^6.1.0",
+    "@balena/abstract-sql-compiler": "^11.2.0",
+    "@balena/abstract-sql-to-typescript": "^6.1.1",
     "@balena/env-parsing": "^1.2.5",
     "@balena/es-version": "^1.0.3",
     "@balena/node-metrics-gatherer": "^6.0.3",
-    "@balena/pinejs": "^23.1.0",
+    "@balena/pinejs": "^23.1.1",
     "@balena/pinejs-webresource-cloudfront": "^2.0.0",
     "@balena/pinejs-webresource-s3": "^2.1.7",
     "@opentelemetry/api": "^1.9.0",
