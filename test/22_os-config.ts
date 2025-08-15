@@ -64,6 +64,19 @@ reneg-sec 0
 						},
 					});
 			});
+
+			it('should return a non empty string as ssh authorized_keys response for unauthenticated request', async () => {
+				const { body } = await supertest().get('/os/v1/config').expect(200);
+				expect(body.services.ssh.authorized_keys).to.not.equal('');
+			});
+
+			it('should return an empty string as ssh authorized_keys response for authenticated request', async () => {
+				const { body } = await supertest()
+					.set('Authorization', `Bearer ABCDEF`)
+					.get('/os/v1/config')
+					.expect(200);
+				expect(body.services.ssh.authorized_keys).to.equal('');
+			});
 		});
 	});
 };
