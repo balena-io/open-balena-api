@@ -125,9 +125,15 @@ const prepareContractDirectory = async (repo: RepositoryInfo) => {
 };
 
 const getRequestOptions = (repo: RepositoryInfo) => {
-	const auth = repo.token
-		? `Basic ${Buffer.from(repo.token).toString('base64')}`
-		: '';
+	const auth =
+		repo.token == null
+			? ''
+			: // legacy `username:token` Basic authentication.
+				// TODO: Consider dropping in the next major
+				/^([\w-])+:\w+$/.test(repo.token)
+				? `Basic ${Buffer.from(repo.token).toString('base64')}`
+				: // direct token consumption (eg: Personal Access Token authentication)
+					`Bearer ${repo.token}`;
 	return {
 		followRedirect: true,
 		headers: {
