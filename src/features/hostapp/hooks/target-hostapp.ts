@@ -63,7 +63,8 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 
 /**
  * When a device checks in with it's initial OS version, set the corresponding should_be_operated_by__release resource
- * using its current reported version.
+ * using its current reported version only if should_be_operated_by__release is null or older than the current OS version.
+ * This ensures the target hostapp field isn't overwritten by an older OS release when a device reports OS info on provision.
  */
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	async PRERUN(args) {
@@ -121,7 +122,7 @@ async function setOSReleaseResource(
 				id: { $in: deviceIds },
 				os_version: null,
 			},
-			$select: ['id', 'is_of__device_type'],
+			$select: ['id', 'should_be_operated_by__release', 'is_of__device_type'],
 		},
 	});
 
@@ -147,8 +148,6 @@ async function setOSReleaseResource(
 	return Promise.all(
 		Array.from(devicesByDeviceTypeId.entries()).map(
 			async ([deviceTypeId, affectedDevices]) => {
-				const affectedDeviceIds = affectedDevices.map((d) => d.id);
-
 				const osRelease = await getOSReleaseResource(
 					api,
 					osVersion,
@@ -157,6 +156,19 @@ async function setOSReleaseResource(
 				);
 
 				if (osRelease == null) {
+					return;
+				}
+
+				// Only patch should_be_operated_by__release if it's null or older than the reported OS release
+				const affectedDeviceIds = affectedDevices
+					.filter(
+						(d) =>
+							d.should_be_operated_by__release == null ||
+							d.should_be_operated_by__release.__id < osRelease.id,
+					)
+					.map((d) => d.id);
+
+				if (affectedDeviceIds.length === 0) {
 					return;
 				}
 
