@@ -2,6 +2,7 @@
 // Reference: https://docs.docker.com/registry/spec/auth/jwt/
 
 import type { Request, RequestHandler } from 'express';
+import type { JwtHeader } from 'jsonwebtoken';
 import jsonwebtoken from 'jsonwebtoken';
 import _ from 'lodash';
 import {
@@ -563,6 +564,13 @@ const generateToken = (
 		nbf: Math.floor(Date.now() / 1000) - 10,
 		access,
 	};
+	let header: JwtHeader | undefined;
+	if (CERT.algo != null) {
+		header = {
+			alg: CERT.algo,
+			x5c: [CERT.x5c],
+		};
+	}
 	const options = {
 		algorithm: CERT.algo,
 		issuer: CERT.issuer,
@@ -570,6 +578,7 @@ const generateToken = (
 		subject,
 		expiresIn: REGISTRY_TOKEN_EXPIRY_SECONDS,
 		keyid: CERT.kid,
+		...(header != null ? { header } : {}),
 	};
 	return jsonwebtoken.sign(payload, CERT.key, options);
 };
