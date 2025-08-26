@@ -1,6 +1,10 @@
 #!/bin/bash
+# shellcheck disable=SC1091,SC2154
 
-if [ "$PRODUCTION_MODE" == "true" ]; then
+set -a # Automatically export all variables
+[[ -f config/env ]] && source config/env # Load environment variables from config/env
+
+if [[ "${PRODUCTION_MODE}" == "true" ]]; then
 	exec node --enable-source-maps --loader @swc-node/register/esm-register index.js
 else
 	exec node_modules/.bin/supervisor \

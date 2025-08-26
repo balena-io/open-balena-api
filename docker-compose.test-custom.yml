@@ -14,12 +14,14 @@ services:
       - fsync=off
       - -c
       - full_page_writes=off
+
   redis:
     image: valkey/valkey:8-alpine
     ports:
       - "6378:6379"
     networks:
       - local-test
+
   loki:
     image: grafana/loki:3.5.3
     ports:
@@ -27,6 +29,7 @@ services:
       - "3100:3100"
     networks:
       - local-test
+
   minio-server:
     image: minio/minio:RELEASE.2025-07-23T15-54-02Z
     environment:
@@ -35,6 +38,7 @@ services:
     command: server /data --console-address ":9001"
     networks:
       - local-test
+
   minio-client:
     image: minio/mc:RELEASE.2025-07-21T05-28-08Z
     depends_on:
@@ -49,11 +53,13 @@ services:
       "
     networks:
       - local-test
+
   sut:
     build:
       context: ./
       target: test
-    command: npx mocha
+    entrypoint: []
+    command: ["npx", "mocha"]
     depends_on:
       - "db"
       - "redis"
@@ -64,9 +70,7 @@ services:
     networks:
       - local-test
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup
       - ./automation/check-model-types-generated.sh:/usr/src/app/automation/check-model-types-generated.sh
-    privileged: true
     environment: &env
       API_HOST: 127.0.0.1
       API_VPN_SERVICE_API_KEY: api_vpn_service_api_key
@@ -77,8 +81,8 @@ services:
       DEBUG:
       DELTA_HOST: delta_host.com
       DEPLOYMENT: TEST
-      DEVICE_CONFIG_OPENVPN_CA: 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNXRENDQWNHZ0F3SUJBZ0lKQVBTeHZhSG5zanVpTUEwR0NTcUdTSWIzRFFFQkJRVUFNRVV4Q3pBSkJnTlYKQkFZVEFrRlZNUk13RVFZRFZRUUlEQXBUYjIxbExWTjBZWFJsTVNFd0h3WURWUVFLREJoSmJuUmxjbTVsZENCWAphV1JuYVhSeklGQjBlU0JNZEdRd0hoY05NVE14TWpFeU1UUTBOelUyV2hjTk1qTXhNakV3TVRRME56VTJXakJGCk1Rc3dDUVlEVlFRR0V3SkJWVEVUTUJFR0ExVUVDQXdLVTI5dFpTMVRkR0YwWlRFaE1COEdBMVVFQ2d3WVNXNTAKWlhKdVpYUWdWMmxrWjJsMGN5QlFkSGtnVEhSa01JR2ZNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0R05BRENCaVFLQgpnUURsTXZRMmp1WnJ6WFJxV3BYN3Q0RlhYTGw0RzhuY05UMXYyTW1UM3BwNnVGNG5rVkd1UjRZdFczYmlwQ0thClRYRnZ5aFp1eEUvN2ZKWUdoYWZNV1pzMjZrUHQ3dnNtaVRSRUVHQytCSHFOUWIwd0ltckxaT0syVzk3R2R1U2UKZThuWmNXU0MzWjhVQ1hSQkg3WmtzNHphRndodGNnZ3ZkSi9Qdzl3MTJ0Tkl6UUlEQVFBQm8xQXdUakFkQmdOVgpIUTRFRmdRVVU0V3FYMmZMeDdnVTJRcFF2VkgwblpOUXNSWXdId1lEVlIwakJCZ3dGb0FVVTRXcVgyZkx4N2dVCjJRcFF2VkgwblpOUXNSWXdEQVlEVlIwVEJBVXdBd0VCL3pBTkJna3Foa2lHOXcwQkFRVUZBQU9CZ1FBWWhUTWQKUHNDQ3hIbHFCak91c3dQNlBZT2c1TXo1QXFnNzBaWmZoTGpFV3lvU0VzclZKTTRlcyt4cnRIQUl0VDI4QXhreQpSUE43cnpMc2QzR2lIOWE2V3phZU5kcFdkWU1TaTMrTnJOYmtPU3ZuTmhHeHUvUUhiMEx0bWV0eHBENlNERmZQCkoxMUVuTjM0dldHMUpCWUh2NVNvditFOTkzclJKdkU0VUV1bFpRPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo='
-      DEVICE_CONFIG_SSH_AUTHORIZED_KEYS: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCc5cLVsu7b52tzxwa8A6cs4LC2I+IMtyKeVZFVAWdhfEWGEJL78rn0tC4YmHBSWW0hBeZmn8f7ZKcZ/r1W2RpuH7wpUc56/3hffJ0GoktMOX69pjNsE3rWr8/cZbl/LaJjeHBpyFZ6VimYl5KiYyHJH7RZwlEYYiJ2YDCbte51jvmotFTqiOJNPCM3SXWFjsUGDOWwNi7GDxG+ulb0cBnYzyYlHTj5dS/uya0v8S267TYO2jZ9lUvZHYYQBilYoN3qT79B/lRJq/AKsaSPI2VWkwoAWLObJRjQjoIsClxcfaSfRg6fgdezv3saeorVMIdEYAj3CQVmLszCNGC8dgqB9OoKdjd/OUG/bFUc86S+y0dZX3vqKBfZjE1dHNzNkQeulsbRj0FGFTxFYL0Ng7jlr98iXusnNg236LGsBTeod2MLfMRsrOc0Utfc5Pq2Zkyak4aJ6URBFqZnKlJwvI3AFznxvHD1PmIrwzCCmLA409v3WbXEK4KZrUIs81wlQWAK3919ViozdnR23f4hZtq3P5M6AbnMMdIOB1jDjPK//eaTMf3erHVa0nTMMwScBDnrT86yJBBEwpUVpIp6YUBFaVMQscX3gBTd+RyOU9jOvyinGjosJfF38qsMJTNHh48zgic5sSLhtPQgkUjWhpcnfjqrLRewKbVd+VZQc1WsdQ=='
+      DEVICE_CONFIG_OPENVPN_CA: "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNXRENDQWNHZ0F3SUJBZ0lKQVBTeHZhSG5zanVpTUEwR0NTcUdTSWIzRFFFQkJRVUFNRVV4Q3pBSkJnTlYKQkFZVEFrRlZNUk13RVFZRFZRUUlEQXBUYjIxbExWTjBZWFJsTVNFd0h3WURWUVFLREJoSmJuUmxjbTVsZENCWAphV1JuYVhSeklGQjBlU0JNZEdRd0hoY05NVE14TWpFeU1UUTBOelUyV2hjTk1qTXhNakV3TVRRME56VTJXakJGCk1Rc3dDUVlEVlFRR0V3SkJWVEVUTUJFR0ExVUVDQXdLVTI5dFpTMVRkR0YwWlRFaE1COEdBMVVFQ2d3WVNXNTAKWlhKdVpYUWdWMmxrWjJsMGN5QlFkSGtnVEhSa01JR2ZNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0R05BRENCaVFLQgpnUURsTXZRMmp1WnJ6WFJxV3BYN3Q0RlhYTGw0RzhuY05UMXYyTW1UM3BwNnVGNG5rVkd1UjRZdFczYmlwQ0thClRYRnZ5aFp1eEUvN2ZKWUdoYWZNV1pzMjZrUHQ3dnNtaVRSRUVHQytCSHFOUWIwd0ltckxaT0syVzk3R2R1U2UKZThuWmNXU0MzWjhVQ1hSQkg3WmtzNHphRndodGNnZ3ZkSi9Qdzl3MTJ0Tkl6UUlEQVFBQm8xQXdUakFkQmdOVgpIUTRFRmdRVVU0V3FYMmZMeDdnVTJRcFF2VkgwblpOUXNSWXdId1lEVlIwakJCZ3dGb0FVVTRXcVgyZkx4N2dVCjJRcFF2VkgwblpOUXNSWXdEQVlEVlIwVEJBVXdBd0VCL3pBTkJna3Foa2lHOXcwQkFRVUZBQU9CZ1FBWWhUTWQKUHNDQ3hIbHFCak91c3dQNlBZT2c1TXo1QXFnNzBaWmZoTGpFV3lvU0VzclZKTTRlcyt4cnRIQUl0VDI4QXhreQpSUE43cnpMc2QzR2lIOWE2V3phZU5kcFdkWU1TaTMrTnJOYmtPU3ZuTmhHeHUvUUhiMEx0bWV0eHBENlNERmZQCkoxMUVuTjM0dldHMUpCWUh2NVNvditFOTkzclJKdkU0VUV1bFpRPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo="
+      DEVICE_CONFIG_SSH_AUTHORIZED_KEYS: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCc5cLVsu7b52tzxwa8A6cs4LC2I+IMtyKeVZFVAWdhfEWGEJL78rn0tC4YmHBSWW0hBeZmn8f7ZKcZ/r1W2RpuH7wpUc56/3hffJ0GoktMOX69pjNsE3rWr8/cZbl/LaJjeHBpyFZ6VimYl5KiYyHJH7RZwlEYYiJ2YDCbte51jvmotFTqiOJNPCM3SXWFjsUGDOWwNi7GDxG+ulb0cBnYzyYlHTj5dS/uya0v8S267TYO2jZ9lUvZHYYQBilYoN3qT79B/lRJq/AKsaSPI2VWkwoAWLObJRjQjoIsClxcfaSfRg6fgdezv3saeorVMIdEYAj3CQVmLszCNGC8dgqB9OoKdjd/OUG/bFUc86S+y0dZX3vqKBfZjE1dHNzNkQeulsbRj0FGFTxFYL0Ng7jlr98iXusnNg236LGsBTeod2MLfMRsrOc0Utfc5Pq2Zkyak4aJ6URBFqZnKlJwvI3AFznxvHD1PmIrwzCCmLA409v3WbXEK4KZrUIs81wlQWAK3919ViozdnR23f4hZtq3P5M6AbnMMdIOB1jDjPK//eaTMf3erHVa0nTMMwScBDnrT86yJBBEwpUVpIp6YUBFaVMQscX3gBTd+RyOU9jOvyinGjosJfF38qsMJTNHh48zgic5sSLhtPQgkUjWhpcnfjqrLRewKbVd+VZQc1WsdQ=="
       DEVICE_CONFIG_SSH_AUTHORIZED_KEYS_EMPTY_OVERRIDE: true
       FILES_HOST: files_host.com
       GENERATE_CONFIG: ${GENERATE_CONFIG:-}
@@ -111,10 +115,10 @@ services:
       SUPERUSER_EMAIL: test@balena.io
       SUPERUSER_PASSWORD: Password01
       TOKEN_AUTH_BUILDER_TOKEN: token_auth_builder_token
-      TOKEN_AUTH_CERT_ISSUER: 'api.balenadev.io'
-      TOKEN_AUTH_CERT_KEY: 'LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUs0VWtLQ1RFamlJamtNVnNtaG96emhScmxrZ2REOU1RN01jdWd2MFZTbHhvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFYVZQN21pUGdTU0JTWjBLYnp4L2pvZnVlWE1KVHpITkpuYno2enlTWHBJS1I3RzFXQkROYwpRRXZpWFZqUk45MWVybHdSMDNITWpjUm81Ymt4b2gzREdnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo='
-      TOKEN_AUTH_CERT_KID: 'NVJXMzpRREhTOldDUjQ6NzdLUjpVSTJZOldPS086UTUzVTpNUFVXOlFWRVA6QUZZWDpBMkMyOkRLNDcK'
-      TOKEN_AUTH_CERT_PUB: 'LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFYVZQN21pUGdTU0JTWjBLYnp4L2pvZnVlWE1KVAp6SE5KbmJ6Nnp5U1hwSUtSN0cxV0JETmNRRXZpWFZqUk45MWVybHdSMDNITWpjUm81Ymt4b2gzREdnPT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg=='
+      TOKEN_AUTH_CERT_ISSUER: "api.balenadev.io"
+      TOKEN_AUTH_CERT_KEY: "LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUs0VWtLQ1RFamlJamtNVnNtaG96emhScmxrZ2REOU1RN01jdWd2MFZTbHhvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFYVZQN21pUGdTU0JTWjBLYnp4L2pvZnVlWE1KVHpITkpuYno2enlTWHBJS1I3RzFXQkROYwpRRXZpWFZqUk45MWVybHdSMDNITWpjUm81Ymt4b2gzREdnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo="
+      TOKEN_AUTH_CERT_KID: "NVJXMzpRREhTOldDUjQ6NzdLUjpVSTJZOldPS086UTUzVTpNUFVXOlFWRVA6QUZZWDpBMkMyOkRLNDcK"
+      TOKEN_AUTH_CERT_PUB: "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJemowREFRY0RRZ0FFYVZQN21pUGdTU0JTWjBLYnp4L2pvZnVlWE1KVAp6SE5KbmJ6Nnp5U1hwSUtSN0cxV0JETmNRRXZpWFZqUk45MWVybHdSMDNITWpjUm81Ymt4b2gzREdnPT0KLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg=="
       TOKEN_AUTH_JWT_ALGO: ES256
       VPN_HOST: vpn.balenadev.io
       VPN_POLL_INTERVAL: 5
@@ -127,50 +131,50 @@ services:
       WEBRESOURCES_S3_HOST: http://minio-server:9000
       WEBRESOURCES_S3_BUCKET: balena-pine-web-resources
       WEBRESOURCES_S3_MAX_FILESIZE: 50000000
+      S6_KEEP_ENV: 1
 
   sut-fast:
-      build:
-        context: ./
-        target: test
-      depends_on:
-        - "db"
-        - "redis"
-        - "loki"
-        - "minio-client"
-      ports:
-        - "9228:9229"
-      networks:
-        - local-test
-      volumes:
-        - /sys/fs/cgroup:/sys/fs/cgroup
-        - ./node_modules:/usr/src/app/node_modules
-        # Exclude syncing node_modules that have a native build step
-        # to avoid hostOS/container incompatibility issues.
-        # Search for '-gyp' in the `package.json`s in node_modules.
-        - /usr/src/app/node_modules/@mapbox/node-pre-gyp
-        - /usr/src/app/node_modules/bcrypt
-        - /usr/src/app/node_modules/grpc
-        - /usr/src/app/node_modules/nan
-        - /usr/src/app/node_modules/node-addon-api
-        - /usr/src/app/node_modules/@napi-rs
-        - /usr/src/app/node_modules/@swc
-        - /usr/src/app/node_modules/@oxc-resolver
-        - /usr/src/app/node_modules/oxc-resolver
-        - ./package.json:/usr/src/app/package.json
-        - ./package-lock.json:/usr/src/app/package-lock.json
-        - ./config.ts:/usr/src/app/config.ts
-        - ./src:/usr/src/app/src
-        - ./test:/usr/src/app/test
-        - ./typings:/usr/src/app/typings
-        - ./bin:/usr/src/app/bin
-        - ./index.js:/usr/src/app/index.js
-        - ./init.ts:/usr/src/app/init.ts
-        - ./tsconfig.json:/usr/src/app/tsconfig.json
-        - ./tsconfig.build.json:/usr/src/app/tsconfig.build.json
-        - ./.materialized-config.json:/usr/src/app/.materialized-config.json
-        - ./.pinejs-cache.json:/usr/src/app/.pinejs-cache.json
-      privileged: true
-      environment:
-        <<: *env
+    build:
+      context: ./
+      target: test
+    depends_on:
+      - "db"
+      - "redis"
+      - "loki"
+      - "minio-client"
+    ports:
+      - "9228:9229"
+    networks:
+      - local-test
+    volumes:
+      - ./node_modules:/usr/src/app/node_modules
+      # Exclude syncing node_modules that have a native build step
+      # to avoid hostOS/container incompatibility issues.
+      # Search for '-gyp' in the `package.json`s in node_modules.
+      - /usr/src/app/node_modules/@mapbox/node-pre-gyp
+      - /usr/src/app/node_modules/bcrypt
+      - /usr/src/app/node_modules/grpc
+      - /usr/src/app/node_modules/nan
+      - /usr/src/app/node_modules/node-addon-api
+      - /usr/src/app/node_modules/@napi-rs
+      - /usr/src/app/node_modules/@swc
+      - /usr/src/app/node_modules/@oxc-resolver
+      - /usr/src/app/node_modules/oxc-resolver
+      - ./package.json:/usr/src/app/package.json
+      - ./package-lock.json:/usr/src/app/package-lock.json
+      - ./config.ts:/usr/src/app/config.ts
+      - ./src:/usr/src/app/src
+      - ./test:/usr/src/app/test
+      - ./typings:/usr/src/app/typings
+      - ./bin:/usr/src/app/bin
+      - ./index.js:/usr/src/app/index.js
+      - ./init.ts:/usr/src/app/init.ts
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./tsconfig.build.json:/usr/src/app/tsconfig.build.json
+      - ./.materialized-config.json:/usr/src/app/.materialized-config.json
+      - ./.pinejs-cache.json:/usr/src/app/.pinejs-cache.json
+    environment:
+      <<: *env
+
 networks:
   local-test:
