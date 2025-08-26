@@ -37,7 +37,7 @@ export default () => {
 				{
 					title:
 						'application when filtering by is_directly_accessible_by__user',
-					odataPart: `application?$select=id&$filter=is_directly_accessible_by__user/any(dau:1 eq 1)&$orderby=app_name asc`,
+					odataPart: `application?$select=id&$filter=is_directly_accessible_by__user/any(dau:true)&$orderby=app_name asc`,
 				},
 			].forEach(({ title, odataPart, appIdField = 'id', errorCode }) => {
 				describe(`${title} access`, function () {
