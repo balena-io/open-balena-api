@@ -353,6 +353,32 @@ export default () => {
 						.that.equals(ctx.supervisorReleases['8.0.1'].id);
 				});
 
+				it('should provision to a succesful release with the latest revision matching the semver', async () => {
+					expect(ctx.supervisorReleases['8.0.4-draft']).to.have.property(
+						'revision',
+						null,
+					);
+
+					await supertest(ctx.admin)
+						.patch(`/${version}/device(${device.id})`)
+						.send({
+							supervisor_version: null,
+							should_be_managed_by__release: null,
+						})
+						.expect(200);
+					await supertest(ctx.admin)
+						.patch(`/${version}/device(${device.id})`)
+						.send({
+							supervisor_version: '8.0.4',
+						})
+						.expect(200);
+					await expectResourceToMatch(pineUser, 'device', device.id, {
+						should_be_managed_by__release: {
+							__id: ctx.supervisorReleases['8.0.4+rev1'].id,
+						},
+					});
+				});
+
 				it('should provision to an invalidated release', async () => {
 					await supertest(ctx.admin)
 						.patch(`/${version}/device(${device.id})`)
