@@ -63,7 +63,7 @@ export const register: RequestHandler = async (req, res) => {
 		req = augmentReqApiKeyPermissions(req, [
 			'resin.device.read',
 			'resin.device.create-device-api-key',
-			`resin.application.read?is_public eq true and is_host eq true and is_for__device_type/canAccess()`,
+			`resin.application.read?is_public and is_host and is_for__device_type/canAccess()`,
 			'resin.release.read?belongs_to__application/canAccess()',
 			`resin.release_tag.read?release/canAccess()`,
 		]);

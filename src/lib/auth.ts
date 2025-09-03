@@ -26,7 +26,7 @@ const matchesNonFrozenDeviceActor = (alias = '') => {
 		alias += '/';
 	}
 	const andIsNotFrozen = !IGNORE_FROZEN_DEVICE_PERMISSIONS
-		? ` and ${alias}is_frozen eq false`
+		? ` and not ${alias}is_frozen`
 		: '';
 	return `${alias}${matchesActor}${andIsNotFrozen}`;
 };
@@ -83,7 +83,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	`resin.device.read?${matchesNonFrozenDeviceActor()}`,
 	`resin.device.supervisor-proxy-write?${matchesNonFrozenDeviceActor()}`,
 	`resin.device.update?${matchesNonFrozenDeviceActor()}`,
-	'resin.application.read?owns__device/canAccess() or (is_public eq true and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
+	'resin.application.read?owns__device/canAccess() or (is_public and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
 	'resin.application_tag.read?application/canAccess()',
 	'resin.device_config_variable.read?device/canAccess()',
 	`resin.device_config_variable.create?device/any(d:${matchesNonFrozenDeviceActor(
@@ -113,7 +113,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	// Should be created for the device itself, and it should be for a service of the app that the device belongs to or for a service of the supervisor/hostApp release that manages/operates the device.
 	`resin.service_install.create?device/any(d:${matchesNonFrozenDeviceActor(
 		'd',
-	)}) and installs__service/any(s:s/application/any(a:a/owns__device/any(d:d/${matchesActor}) or (a/is_public eq true and a/owns__release/any(r:r/should_manage__device/any(d:d/${matchesActor}) or r/should_operate__device/any(d:d/${matchesActor})))))`,
+	)}) and installs__service/any(s:s/application/any(a:a/owns__device/any(d:d/${matchesActor}) or (a/is_public and a/owns__release/any(r:r/should_manage__device/any(d:d/${matchesActor}) or r/should_operate__device/any(d:d/${matchesActor})))))`,
 	// A device should be able to manage its own service installs, even from apps its not or no longer part of (past/supervisor/os)
 	...writePerms(
 		'resin.service_install',
@@ -125,7 +125,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 
 	'resin.device_service_environment_variable.read?device/canAccess()',
 	// Should be created for the device itself, and it should be for a service of the app that the device belongs to or for a service of the supervisor/hostApp release that manages/operates the device.
-	`resin.device_service_environment_variable.create?device/any(d:${matchesNonFrozenDeviceActor('d')}) and service/any(s:s/application/any(a:a/owns__device/any(d:d/${matchesActor}) or (a/is_public eq true and a/owns__release/any(r:r/should_manage__device/any(d:d/${matchesActor}) or r/should_operate__device/any(d:d/${matchesActor})))))`,
+	`resin.device_service_environment_variable.create?device/any(d:${matchesNonFrozenDeviceActor('d')}) and service/any(s:s/application/any(a:a/owns__device/any(d:d/${matchesActor}) or (a/is_public and a/owns__release/any(r:r/should_manage__device/any(d:d/${matchesActor}) or r/should_operate__device/any(d:d/${matchesActor})))))`,
 	...writePerms(
 		'resin.device_service_environment_variable',
 		`device/any(d:${matchesNonFrozenDeviceActor('d')})`,
@@ -139,7 +139,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.image_install.read?device/canAccess()',
 	`resin.image_install.create?device/any(d:${matchesNonFrozenDeviceActor(
 		'd',
-	)}) and installs__image/any(i:i/image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/belongs_to__application/any(a:a/${ownsDevice} or a/is_public eq true))))`,
+	)}) and installs__image/any(i:i/image__is_part_of__release/any(ipr:ipr/is_part_of__release/any(r:r/belongs_to__application/any(a:a/${ownsDevice} or a/is_public))))`,
 	`resin.image_install.update?device/any(d:${matchesNonFrozenDeviceActor(
 		'd',
 	)})`,
