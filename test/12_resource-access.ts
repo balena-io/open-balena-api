@@ -22,7 +22,7 @@ export default () => {
 			[
 				{
 					title: 'application',
-					odataPart: `application?$select=id&$filter=is_host eq false&$orderby=app_name asc`,
+					odataPart: `application?$select=id&$filter=not is_host&$orderby=app_name asc`,
 				},
 				{
 					title: 'my_application',
