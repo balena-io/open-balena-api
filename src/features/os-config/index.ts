@@ -4,7 +4,6 @@ import {
 	DEVICE_CONFIG_OPENVPN_CA,
 	DEVICE_CONFIG_OPENVPN_CONFIG,
 	DEVICE_CONFIG_SSH_AUTHORIZED_KEYS,
-	DEVICE_CONFIG_SSH_AUTHORIZED_KEYS_EMPTY_OVERRIDE,
 	LOGS_HOST,
 } from '../../lib/config.js';
 import { b64decode } from '../../lib/utils.js';
@@ -37,13 +36,11 @@ export const setup = (app: Application) => {
 		// Clear SSH authorized keys if authorization header is present
 		// This mechanism is an heuristic to determine balenaOS version >= 6.1.0
 		// If it is, it can use a temporary JIT SSH key and don't require this one to to be set
-		// This behaviour can be activated by setting the DEVICE_CONFIG_SSH_AUTHORIZED_KEYS_EMPTY_OVERRIDE environment variable to `true`
 		// We can't completely remove `ssh` from the services otherwise it won't pass schema verification done by `os-config`
-		const servicesOverride =
-			DEVICE_CONFIG_SSH_AUTHORIZED_KEYS_EMPTY_OVERRIDE &&
-			req.headers.authorization
-				? { ...services, ssh: { authorized_keys: '' } }
-				: services;
+		// Note balenaOS >= v6.6 will completely ignore the content of the ssh entry
+		const servicesOverride = req.headers.authorization
+			? { ...services, ssh: { authorized_keys: '' } }
+			: services;
 
 		res.json({
 			services: servicesOverride,
