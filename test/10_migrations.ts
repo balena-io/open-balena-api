@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 import { strict as assert } from 'assert';
 import fs from 'fs';
 import _ from 'lodash';
-import { execSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import path from 'path';
 import configJson from '../config.js';
 import type { Migrator } from '@balena/pinejs';
@@ -11,13 +11,27 @@ import { fakeSbvrUtils } from './test-lib/fixtures.js';
 import { expect } from 'chai';
 
 // Validate SQL files using squawk
-function validateSql(file: string): void {
+async function validateSql(file: string): Promise<void> {
+	let stderr = '';
 	try {
-		execSync(`pgpp -t ${file}`, {
-			stdio: ['ignore', 'ignore', 'pipe'],
+		await new Promise<void>((resolve, reject) => {
+			spawn('pgpp', ['-t', file], {
+				stdio: ['ignore', 'ignore', 'pipe'],
+			})
+				.on('error', reject)
+				.on('exit', (code) => {
+					if (code === 0) {
+						resolve();
+					} else {
+						reject(new Error(`Received exit code '${code}'`));
+					}
+				})
+				.stderr.on('data', (data) => {
+					stderr += data.toString();
+				});
 		});
-	} catch (e) {
-		throw new Error(`Invalid SQL in ${file}: ${e.stderr.toString()}`);
+	} catch {
+		throw new Error(`Invalid SQL in ${file}: ${stderr}`);
 	}
 }
 
@@ -85,8 +99,8 @@ export default () => {
 				for (const fileName of fileNames.filter((f) => {
 					return f.endsWith('.sql');
 				})) {
-					it(`should have valid sql in ${fileName}`, () => {
-						validateSql(path.join(migrationsPath!, fileName));
+					it(`should have valid sql in ${fileName}`, async () => {
+						await validateSql(path.join(migrationsPath!, fileName));
 					});
 
 					it(`should have valid filename: ${fileName}`, () => {
@@ -161,8 +175,8 @@ export default () => {
 							)}.sql`;
 							fs.writeFileSync(asyncPath, asyncSql);
 							fs.writeFileSync(syncPath, syncSql);
-							validateSql(asyncPath);
-							validateSql(syncPath);
+							await validateSql(asyncPath);
+							await validateSql(syncPath);
 							fs.unlinkSync(asyncPath);
 							fs.unlinkSync(syncPath);
 						}
@@ -173,8 +187,8 @@ export default () => {
 	});
 
 	describe('balena-init.sql', () => {
-		it('should have valid sql', () => {
-			validateSql('src/balena-init.sql');
+		it('should have valid sql', async () => {
+			await validateSql('src/balena-init.sql');
 		});
 	});
 };
