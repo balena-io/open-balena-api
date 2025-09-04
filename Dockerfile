@@ -1,4 +1,4 @@
-FROM balena/open-balena-base:19.1.3 AS runtime
+FROM balena/open-balena-base:19.1.5 AS runtime
 
 EXPOSE 80
 
