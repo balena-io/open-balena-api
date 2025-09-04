@@ -1,9 +1,9 @@
-FROM balena/open-balena-base:19.2.1-s6-overlay AS runtime
+FROM balena/open-balena-base:20.0.0-s6-overlay AS runtime
 
 EXPOSE 80
 
 COPY package.json package-lock.json /usr/src/app/
-RUN HUSKY=0 npm ci --unsafe-perm --omit=dev && npm cache clean --force
+RUN HUSKY=0 npm ci --omit=dev && npm cache clean --force
 
 COPY . /usr/src/app
 
