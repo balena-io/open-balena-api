@@ -192,8 +192,11 @@ export default () => {
 	});
 
 	describe('balena-init.sql', () => {
+		// Start the validation immediately in the background and only await it in the `it` in order
+		// to be able to run the checks concurrently and have much faster tests
+		const validationPromise = validateSql('src/balena-init.sql');
 		it('should have valid sql', async () => {
-			await validateSql('src/balena-init.sql');
+			await validationPromise;
 		});
 	});
 };
