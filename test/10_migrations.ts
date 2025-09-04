@@ -99,8 +99,13 @@ export default () => {
 				for (const fileName of fileNames.filter((f) => {
 					return f.endsWith('.sql');
 				})) {
+					// Start the validation immediately in the background and only await it in the `it` in order
+					// to be able to run the checks concurrently and have much faster tests
+					const validationPromise = validateSql(
+						path.join(migrationsPath!, fileName),
+					);
 					it(`should have valid sql in ${fileName}`, async () => {
-						await validateSql(path.join(migrationsPath!, fileName));
+						await validationPromise;
 					});
 
 					it(`should have valid filename: ${fileName}`, () => {
