@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 import { strict as assert } from 'assert';
 import fs from 'fs';
 import _ from 'lodash';
-import { execSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import path from 'path';
 import configJson from '../config.js';
 import type { Migrator } from '@balena/pinejs';
@@ -11,13 +11,27 @@ import { fakeSbvrUtils } from './test-lib/fixtures.js';
 import { expect } from 'chai';
 
 // Validate SQL files using squawk
-function validateSql(file: string): void {
+async function validateSql(file: string): Promise<void> {
+	let stderr = '';
 	try {
-		execSync(`pgpp -t ${file}`, {
-			stdio: ['ignore', 'ignore', 'pipe'],
+		await new Promise<void>((resolve, reject) => {
+			spawn('pgpp', ['-t', file], {
+				stdio: ['ignore', 'ignore', 'pipe'],
+			})
+				.on('error', reject)
+				.on('exit', (code) => {
+					if (code === 0) {
+						resolve();
+					} else {
+						reject(new Error(`Received exit code '${code}'`));
+					}
+				})
+				.stderr.on('data', (data) => {
+					stderr += data.toString();
+				});
 		});
-	} catch (e) {
-		throw new Error(`Invalid SQL in ${file}: ${e.stderr.toString()}`);
+	} catch {
+		throw new Error(`Invalid SQL in ${file}: ${stderr}`);
 	}
 }
 
@@ -85,8 +99,13 @@ export default () => {
 				for (const fileName of fileNames.filter((f) => {
 					return f.endsWith('.sql');
 				})) {
-					it(`should have valid sql in ${fileName}`, () => {
-						validateSql(path.join(migrationsPath!, fileName));
+					// Start the validation immediately in the background and only await it in the `it` in order
+					// to be able to run the checks concurrently and have much faster tests
+					const validationPromise = validateSql(
+						path.join(migrationsPath!, fileName),
+					);
+					it(`should have valid sql in ${fileName}`, async () => {
+						await validationPromise;
 					});
 
 					it(`should have valid filename: ${fileName}`, () => {
@@ -94,12 +113,57 @@ export default () => {
 					});
 				}
 
+				const validateAsyncMigration = async (
+					migration: Migrator.AsyncMigration,
+					asyncMigrationPath: string,
+					type: 'sync' | 'async',
+					asyncBatchSize: number,
+				) => {
+					const sql =
+						(type === 'sync'
+							? migration.syncSql
+							: migration.asyncSql?.replaceAll(
+									'%%ASYNC_BATCH_SIZE%%',
+									`${asyncBatchSize}`,
+								)) ??
+						(await (async () => {
+							const txSpy = getTxSpy();
+							if (type === 'sync') {
+								await migration.syncFn?.(txSpy.fakeTx, fakeSbvrUtils);
+							} else {
+								await migration.asyncFn?.(
+									txSpy.fakeTx,
+									{ batchSize: asyncBatchSize },
+									fakeSbvrUtils,
+								);
+							}
+							return txSpy.getSqlRun();
+						})());
+					assertExists(
+						sql,
+						`${type} parts of migration did not resolve to a string`,
+					);
+					expect(sql).to.be.a(
+						'string',
+						`${type} parts of migration did not resolve to a string`,
+					);
+
+					const tmpPath = `/tmp/${type}-${path.basename(
+						asyncMigrationPath,
+					)}.sql`;
+					await fs.promises.writeFile(tmpPath, sql);
+					await validateSql(tmpPath);
+					await fs.promises.unlink(tmpPath);
+				};
+
 				// Sanity check async migrations
 				const asyncMigrationPaths = fileNames
 					.filter((fileName) => fileName.match(/\.async\.(ts|js)$/) != null)
 					.map((fileName) => path.join(migrationsPath!, fileName));
 				for (const asyncMigrationPath of asyncMigrationPaths) {
-					it(`should have valid sql in ${asyncMigrationPath}`, async () => {
+					// Start the validation immediately in the background and only await it in the `it` in order
+					// to be able to run the checks concurrently and have much faster tests
+					const validationPromise = (async () => {
 						const migration = (await import(asyncMigrationPath))
 							.default as Migrator.AsyncMigration;
 						if (migration.syncSql != null || migration.asyncSql != null) {
@@ -111,61 +175,28 @@ export default () => {
 									),
 								'Missing required async migration options',
 							);
+
 							const { asyncBatchSize } = migration;
 							assertExists(asyncBatchSize, 'Missing required asyncBatchSize');
 
-							const asyncSql =
-								migration.asyncSql?.replaceAll(
-									'%%ASYNC_BATCH_SIZE%%',
-									asyncBatchSize.toString(),
-								) ??
-								(await (async () => {
-									const txSpy = getTxSpy();
-									await migration.asyncFn?.(
-										txSpy.fakeTx,
-										{ batchSize: asyncBatchSize },
-										fakeSbvrUtils,
-									);
-									return txSpy.getSqlRun();
-								})());
-							assertExists(
-								asyncSql,
-								'async parts of migration did not resolve to a string',
-							);
-							expect(asyncSql).to.be.a(
-								'string',
-								'async parts of migration did not resolve to a string',
-							);
-
-							const syncSql =
-								migration.syncSql ??
-								(await (async () => {
-									const txSpy = getTxSpy();
-									await migration.syncFn?.(txSpy.fakeTx, fakeSbvrUtils);
-									return txSpy.getSqlRun();
-								})());
-							assertExists(
-								syncSql,
-								'sync parts of migration did not resolve to a string',
-							);
-							expect(syncSql).to.be.a(
-								'string',
-								'sync parts of migration did not resolve to a string',
-							);
-
-							const asyncPath = `/tmp/async-${path.basename(
-								asyncMigrationPath,
-							)}.sql`;
-							const syncPath = `/tmp/sync-${path.basename(
-								asyncMigrationPath,
-							)}.sql`;
-							fs.writeFileSync(asyncPath, asyncSql);
-							fs.writeFileSync(syncPath, syncSql);
-							validateSql(asyncPath);
-							validateSql(syncPath);
-							fs.unlinkSync(asyncPath);
-							fs.unlinkSync(syncPath);
+							await Promise.all([
+								validateAsyncMigration(
+									migration,
+									asyncMigrationPath,
+									'async',
+									asyncBatchSize,
+								),
+								validateAsyncMigration(
+									migration,
+									asyncMigrationPath,
+									'sync',
+									asyncBatchSize,
+								),
+							]);
 						}
+					})();
+					it(`should have valid sql in ${asyncMigrationPath}`, async () => {
+						await validationPromise;
 					});
 				}
 			});
@@ -173,8 +204,11 @@ export default () => {
 	});
 
 	describe('balena-init.sql', () => {
-		it('should have valid sql', () => {
-			validateSql('src/balena-init.sql');
+		// Start the validation immediately in the background and only await it in the `it` in order
+		// to be able to run the checks concurrently and have much faster tests
+		const validationPromise = validateSql('src/balena-init.sql');
+		it('should have valid sql', async () => {
+			await validationPromise;
 		});
 	});
 };
