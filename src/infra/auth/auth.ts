@@ -275,7 +275,7 @@ export async function findUser<TProps extends Array<keyof User['Read']>>(
 		return;
 	}
 
-	let loginField;
+	let loginField: 'email' | 'username';
 	if (loginInfo.includes('@')) {
 		loginField = 'email';
 	} else {
