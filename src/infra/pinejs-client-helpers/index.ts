@@ -104,4 +104,10 @@ export const updateOrInsertModel = <T extends keyof BalenaModel>(
 	updateFields: Partial<BalenaModel[T]['Write']>,
 	tx?: Tx,
 ): Promise<{ id: number }> =>
-	$updateOrInsert(sbvrUtils.api.resin, resource, filter, updateFields, tx);
+	$updateOrInsert(
+		sbvrUtils.api.resin,
+		resource,
+		filter as FilterObj,
+		updateFields,
+		tx,
+	);
