@@ -4,6 +4,7 @@ import * as fakeDevice from './test-lib/fake-device.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import { assertExists, expectToEventually } from './test-lib/common.js';
+import { expectResourceToMatch } from './test-lib/api-helpers.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -250,6 +251,32 @@ export default () => {
 					expect(res.body)
 						.to.have.nested.property('d[0].should_be_managed_by__release.__id')
 						.that.equals(ctx.supervisorReleases['8.0.1'].id);
+				});
+
+				it('should provision to a succesful release with the latest revision matching the semver', async () => {
+					expect(ctx.supervisorReleases['8.0.4-draft']).to.have.property(
+						'revision',
+						null,
+					);
+
+					await supertest(ctx.admin)
+						.patch(`/${version}/device(${device.id})`)
+						.send({
+							supervisor_version: null,
+							should_be_managed_by__release: null,
+						})
+						.expect(200);
+					await supertest(ctx.admin)
+						.patch(`/${version}/device(${device.id})`)
+						.send({
+							supervisor_version: '8.0.4',
+						})
+						.expect(200);
+					await expectResourceToMatch(pineUser, 'device', device.id, {
+						should_be_managed_by__release: {
+							__id: ctx.supervisorReleases['8.0.4+rev1'].id,
+						},
+					});
 				});
 
 				it('should provision to an invalidated release', async () => {
