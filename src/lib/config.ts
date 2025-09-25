@@ -219,17 +219,17 @@ type RedisAuth = {
 
 type RedisOpts =
 	| {
-			isCluster: true;
-			hosts: HostPort[];
-			auth: RedisAuth;
-	  }
+		isCluster: true;
+		hosts: HostPort[];
+		auth: RedisAuth;
+	}
 	| {
-			isCluster: false;
-			host: HostPort;
-			auth: RedisAuth;
-			roHost: HostPort;
-			roAuth: RedisAuth;
-	  };
+		isCluster: false;
+		host: HostPort;
+		auth: RedisAuth;
+		roHost: HostPort;
+		roAuth: RedisAuth;
+	};
 function redisOpts(prefix: string): RedisOpts;
 function redisOpts(
 	prefix: string,
@@ -311,6 +311,13 @@ export const REDIS_LOGS_COMPRESSION_ENABLED = boolVar(
 	true,
 );
 const LOKI_HOST = optionalVar('LOKI_HOST');
+
+export const AUDIT_LOG_LOKI_INGESTER_HOST = optionalVar('AUDIT_LOG_LOKI_INGESTER_HOST', LOKI_HOST);
+export const AUDIT_LOG_LOKI_INGESTER_PORT = intVar('AUDIT_LOG_LOKI_INGESTER_PORT', 9095);
+export const AUDIT_LOG_LOKI_QUERY_HOST = optionalVar('AUDIT_LOG_LOKI_QUERY_HOST', LOKI_HOST);
+export const AUDIT_LOG_LOKI_QUERY_PORT = intVar('AUDIT_LOG_LOKI_QUERY_PORT', 3100);
+export const AUDIT_LOG_QUERY_TIMEOUT = intVar('AUDIT_LOG_QUERY_TIMEOUT', 30_000);
+
 export const LOKI_INGESTER_HOST = optionalVar('LOKI_INGESTER_HOST', LOKI_HOST);
 export const LOKI_QUERY_HOST = optionalVar('LOKI_QUERY_HOST', LOKI_HOST);
 export const LOKI_INGESTER_GRPC_PORT = intVar('LOKI_INGESTER_GRPC_PORT', 9095);

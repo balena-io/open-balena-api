@@ -29,6 +29,9 @@ services:
       - "3100:3100"
     networks:
       - local-test
+    volumes:
+      - ./loki-config.yaml:/etc/loki/loki-config.yaml
+    command: -config.file=/etc/loki/loki-config.yaml
 
   minio-server:
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z
@@ -109,6 +112,10 @@ services:
       LOKI_QUERY_HTTP_PORT: 3100
       LOKI_INGESTER_GRPC_PORT: 9095
       LOKI_WRITE_PCT: 100
+      AUDIT_LOG_LOKI_INGESTER_HOST: loki
+      AUDIT_LOG_LOKI_INGESTER_PORT: 3100
+      AUDIT_LOG_LOKI_QUERY_HOST: loki
+      AUDIT_LOG_LOKI_QUERY_PORT: 3100
       REGISTRY2_HOST: registry2.balenadev.io
       REQUEST_MOCK_DEBUG: 0
       RUN_TESTS: 1
