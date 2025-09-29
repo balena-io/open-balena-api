@@ -1,6 +1,7 @@
 // Implements the server part of: https://docs.docker.com/registry/spec/auth/token/
 // Reference: https://docs.docker.com/registry/spec/auth/jwt/
 
+import { SECONDS } from '@balena/env-parsing';
 import type { Request, RequestHandler } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import _ from 'lodash';
@@ -8,7 +9,9 @@ import {
 	multiCacheMemoizee,
 	reqPermissionNormalizer,
 } from '../../infra/cache/index.js';
+import { requestAsync } from '../../infra/request-promise/index.js';
 import { randomUUID } from 'node:crypto';
+import { setTimeout } from 'node:timers/promises';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
@@ -22,6 +25,8 @@ import {
 	AUTH_RESINOS_REGISTRY_CODE,
 	GET_SUBJECT_CACHE_TIMEOUT,
 	REGISTRY_TOKEN_AUDIENCE,
+	REGISTRY_REQUEST_DELAY,
+	REGISTRY2_HOST,
 	REGISTRY_TOKEN_EXPIRY_SECONDS,
 	RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
 	RESOLVE_IMAGE_LOCATION_CACHE_TIMEOUT,
@@ -711,3 +716,120 @@ const getSubject = async (
 		return user?.username;
 	}
 };
+
+// Find and delete any multi-stage cache images for a given repo
+export async function deleteMultiStageCacheImages(
+	subject: string,
+	repo: string,
+	stages: number,
+) {
+	for (let stage = 0; stage <= stages; stage++) {
+		const cacheRepo = `${repo}-${stage}`;
+		const registryToken = generateToken(subject, REGISTRY2_HOST, [
+			{ name: cacheRepo, type: 'repository', actions: ['pull', 'delete'] },
+		]);
+		const [{ statusCode, statusMessage, headers }] = await requestAsync({
+			url: `https://${REGISTRY2_HOST}/v2/${encodeURIComponent(cacheRepo)}/manifests/latest`,
+			headers: {
+				Authorization: `Bearer ${registryToken}`,
+				// TODO: Ensure this Accept header works for both Docker Distribution and Harbor
+				Accept: 'application/vnd.docker.distribution.manifest.v2+json',
+			},
+			method: 'HEAD',
+		});
+
+		// If not found, assume all cache images have been deleted
+		if (statusCode === 404) {
+			break;
+		}
+
+		const digest = headers['docker-content-digest'];
+		if (statusCode !== 200 || typeof digest !== 'string') {
+			throw new Error(
+				`Failed to mark ${cacheRepo}:${digest} for deletion: ${statusCode} ${statusMessage}`,
+			);
+		}
+		await deleteImage(subject, cacheRepo, digest, {
+			token: registryToken,
+		});
+	}
+}
+
+// Make an API call to the registry service to mark images for deletion on next garbage collection
+const RATE_LIMIT_DELAY_BASE = 1000;
+const RATE_LIMIT_RETRIES = 5;
+export async function deleteImage(
+	subject: string,
+	repo: string,
+	hash: string,
+	options?: {
+		token: string;
+	},
+) {
+	// Generate an admin-level token with delete permission
+	const getToken = () =>
+		generateToken(subject, REGISTRY2_HOST, [
+			{
+				name: repo,
+				type: 'repository',
+				actions: ['delete'],
+			},
+		]);
+	let registryToken = options?.token ?? getToken();
+
+	// Need to make requests one image at a time, no batch endpoint available
+	for (let retries = 0; retries < RATE_LIMIT_RETRIES; retries++) {
+		const [{ statusCode, statusMessage, headers }] = await requestAsync({
+			url: `https://${REGISTRY2_HOST}/v2/${encodeURIComponent(repo)}/manifests/${encodeURIComponent(hash)}`,
+			headers: { Authorization: `Bearer ${registryToken}` },
+			method: 'DELETE',
+		});
+
+		// Return on success or not found
+		if (statusCode === 202) {
+			await setTimeout(REGISTRY_REQUEST_DELAY);
+			return;
+		} else if (statusCode === 401) {
+			// In case the token expires during retries
+			registryToken = getToken();
+		} else if (statusCode === 404) {
+			return;
+		} else if (statusCode === 429) {
+			// Default delay value to exponential backoff
+			let delay = RATE_LIMIT_DELAY_BASE * Math.pow(2, retries);
+
+			// Use the retry-after header value if available
+			const retryAfterHeader = headers?.['retry-after'];
+			if (retryAfterHeader) {
+				const headerDelay = parseInt(retryAfterHeader, 10);
+				if (!isNaN(headerDelay)) {
+					delay = headerDelay * 1000;
+				} else {
+					const retryDate = Date.parse(retryAfterHeader);
+					const waitMillis = retryDate - Date.now();
+					if (waitMillis > 0) {
+						delay = waitMillis;
+					}
+				}
+			}
+
+			// Apply some jitter and cap
+			delay += Math.random() * 1000;
+			delay = Math.min(delay, 60 * SECONDS);
+
+			console.warn(
+				`Received 429 for ${repo}/${hash}. Retrying in ${delay}ms...`,
+			);
+			await setTimeout(delay);
+		} else {
+			throw new Error(
+				`Failed to mark ${repo}/${hash} for deletion: [${statusCode}] ${statusMessage}`,
+			);
+		}
+	}
+
+	// Throw if we haven't gotten a 202 or 404 after all retries
+	throw new Error(
+		`Failed to mark ${repo}/${hash} for deletion: exceeded retry limit due to rate limiting`,
+	);
+}
