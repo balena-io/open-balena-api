@@ -74,6 +74,7 @@ services:
     environment: &env
       API_HOST: 127.0.0.1
       API_VPN_SERVICE_API_KEY: api_vpn_service_api_key
+      ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED: true
       BLUEBIRD_DEBUG: 1
       BLUEBIRD_LONG_STACK_TRACES: 0
       COOKIE_SESSION_SECRET: fuschia
