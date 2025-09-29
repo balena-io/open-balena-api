@@ -293,6 +293,7 @@ const loaders: types.Dictionary<LoaderFunc> = {
 				'end_timestamp',
 				'push_timestamp',
 				'is_stored_at__image_location',
+				'content_hash',
 			);
 
 			const newImage = await createResource({
