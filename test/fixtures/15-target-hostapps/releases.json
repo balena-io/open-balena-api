@@ -1,4 +1,12 @@
 {
+	"release2_49_0_rev1": {
+		"notes": "release_tag only",
+		"application": "intel-nuc",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"user": "admin"
+	},
 	"release2_50_0_rev1": {
 		"notes": "release_tag only",
 		"application": "intel-nuc",
