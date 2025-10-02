@@ -528,8 +528,10 @@ export default () => {
 					],
 				] as const
 			).forEach(([osTypeTitlePart, initialOsVersion, getHostAppReleaseId]) => {
+				let invalidatedReleaseDevice: fakeDevice.Device;
+
 				it(`should provision with an invalidated ${osTypeTitlePart} hostapp release`, async () => {
-					const invalidatedReleaseDevice = await fakeDevice.provisionDevice(
+					invalidatedReleaseDevice = await fakeDevice.provisionDevice(
 						admin,
 						applicationId,
 					);
@@ -552,7 +554,9 @@ export default () => {
 							},
 						},
 					);
+				});
 
+				it(`...should be able to update from an invalidated ${osTypeTitlePart} to a newer release`, async () => {
 					const supervisorVersion = 'v12.3.5';
 					const newOsVersion = 'balenaOS 2.88.5+rev1';
 					await invalidatedReleaseDevice.patchStateV2({
@@ -575,7 +579,7 @@ export default () => {
 							// Atm the should_be_operated_by__release is only updated when the device provisions.
 							// We might change this during the scheduled or tri-app HUP.
 							should_be_operated_by__release: {
-								__id: initialInvalidatedReleaseId,
+								__id: unifiedSemverRevHostAppReleaseId,
 							},
 						},
 					);
