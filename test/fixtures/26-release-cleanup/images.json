@@ -1,0 +1,39 @@
+{
+	"intel-nuc-host-app-release2-88-4Image": {
+		"user": "admin",
+		"service": "intel-nuc-host-appService1",
+		"releases": [ "intel-nuc-host-app-release2-88-4" ],
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"image1": {
+		"user": "admin",
+		"service": "service1",
+		"releases": [ "release1" ],
+		"image_size": 2048,
+		"project_type": "Dockerfile.template",
+		"build_log": "This is the build log",
+		"status": "success",
+		"content_hash": "sha256:a73de7a74f6d2d22fe776b86b96d68aa23e167a507ff2b9c2e06c0cdbc156c1a"
+	},
+	"image2": {
+		"user": "admin",
+		"service": "service1",
+		"releases": [ "release2" ],
+		"image_size": 2048,
+		"project_type": "Dockerfile.template",
+		"build_log": "This is the build log",
+		"status": "success",
+		"content_hash": "sha256:a73de7a74f6d2d22fe776b86b96d68aa23e167a507ff2b9c2e06c0cdbc156c1b"
+	},
+	"image3": {
+		"user": "admin",
+		"service": "service1",
+		"releases": [ "release1" ],
+		"image_size": 2048,
+		"project_type": "Dockerfile.template",
+		"build_log": "This is the build log",
+		"status": "success",
+		"content_hash": "sha256:a73de7a74f6d2d22fe776b86b96d68aa23e167a507ff2b9c2e06c0cdbc156c1c"
+	}
+}
