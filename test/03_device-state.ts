@@ -1500,8 +1500,12 @@ export default () => {
 							api_port: 48484,
 							cpu_usage: 34,
 							cpu_temp: 56,
+							is_secureboot_enabled: false,
 							memory_usage: 1000, // 1GB in MiB
 							memory_total: 4000, // 4GB in MiB
+							is_storage_encrypted: false,
+							secureboot_keys_metadata:
+								'[{"type":"PK","issuer":"CN = balenaOS PK","subject":"CN = balenaOS PK","validity":"notBefore=Apr 11 14:23:52 2023 GMT notAfter=Apr 11 14:23:52 2043 GMT","serial":"11AFA8270B745848117A4649E7D42B2FB8876F62","sha256":"A25DBA1EE7D0FF6E77ED267AE782FDED2237E0F057E418A43B05F5C702D74FD3"},{"type":"KEK","issuer":"CN = balenaOS KEK","subject":"CN = balenaOS KEK","validity":"notBefore=Apr 11 14:23:52 2023 GMT notAfter=Apr 11 14:23:52 2043 GMT","serial":"3F89E8613C09E7813BA0020BAF8D649769FFD491","sha256":"3AD25718D2A3652FFEF0AC0868D8586CD7DD96A3EBDB64174E6950934E6E954F"}]',
 							storage_block_device: '/dev/mmcblk0',
 							storage_usage: 1000, // 1GB in MiB
 							storage_total: 64000, // 64GB in MiB
