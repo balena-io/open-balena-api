@@ -115,21 +115,6 @@ const createServiceInstalls = async ({
 			return 0;
 		}
 
-		const missingServiceFilters = serviceIds.map((serviceId) => ({
-			$not: {
-				service_install: {
-					$any: {
-						$alias: 'si',
-						$expr: {
-							si: {
-								installs__service: serviceId,
-							},
-						},
-					},
-				},
-			},
-		}));
-
 		const devicesToAddServiceInstalls = (
 			await api.resin.get({
 				resource: 'device',
@@ -146,11 +131,18 @@ const createServiceInstalls = async ({
 					},
 					$filter: {
 						id: { $in: devices },
-						...(missingServiceFilters.length === 1
-							? missingServiceFilters[0]
-							: {
-									$or: missingServiceFilters,
-								}),
+						$lt: [
+							{
+								service_install: {
+									$count: {
+										$filter: {
+											installs__service: { $in: serviceIds },
+										},
+									},
+								},
+							},
+							serviceIds.length,
+						],
 					},
 				},
 			} as const)
