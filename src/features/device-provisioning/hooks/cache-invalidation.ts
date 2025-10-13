@@ -20,7 +20,7 @@ const setupCacheInvalidation = <K extends string>(
 				resource,
 				passthrough: { req: permissions.root, tx },
 				options: {
-					$select: keyProperty,
+					$select: [keyProperty],
 					$filter: {
 						id: { $in: affectedIds },
 					},
