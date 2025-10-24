@@ -633,6 +633,109 @@ export default () => {
 					.expect(200);
 				expect(dev.d[0].should_be_operated_by__release).to.be.null;
 			});
+
+			it('should overwrite existing should_be_operated_by__release when device reports OS info if should_be_operated_by__release is null', async () => {
+				// First set up a device with a specific target release
+				const device = await fakeDevice.provisionDevice(admin, applicationId);
+				await supertest(admin)
+					.patch(`/${version}/device(${device.id})`)
+					.send({
+						should_be_operated_by__release: null,
+					})
+					.expect(200);
+
+				// Verify initial state
+				await expectResourceToMatch(pineUser, 'device', device.id, {
+					should_be_operated_by__release: null,
+				});
+
+				// Now patch the device with OS info
+				await device.patchStateV2({
+					local: {
+						os_version: 'balenaOS 2.50.0+rev1',
+						os_variant: 'prod',
+					},
+				});
+
+				// Verify the should_be_operated_by__release was updated with OS info
+				await expectResourceToMatch(pineUser, 'device', device.id, {
+					should_be_operated_by__release: {
+						__id: nuc2_50_0_rev1prodId,
+					},
+					os_version: 'balenaOS 2.50.0+rev1',
+					os_variant: 'prod',
+				});
+			});
+
+			it('should not overwrite existing should_be_operated_by__release when device reports OS info if should_be_operated_by__release is newer', async () => {
+				// First set up a device with a specific target release
+				const device = await fakeDevice.provisionDevice(admin, applicationId);
+				await supertest(admin)
+					.patch(`/${version}/device(${device.id})`)
+					.send({
+						should_be_operated_by__release: nuc2_51_0_rev1prodTagAndSemverId,
+					})
+					.expect(200);
+
+				// Verify initial state
+				await expectResourceToMatch(pineUser, 'device', device.id, {
+					should_be_operated_by__release: {
+						__id: nuc2_51_0_rev1prodTagAndSemverId,
+					},
+				});
+
+				// Now patch the device with OS info that would normally map to a different & older release
+				await device.patchStateV2({
+					local: {
+						os_version: 'balenaOS 2.50.0+rev1',
+						os_variant: 'prod',
+					},
+				});
+
+				// Verify the should_be_operated_by__release was not changed
+				await expectResourceToMatch(pineUser, 'device', device.id, {
+					should_be_operated_by__release: {
+						__id: nuc2_51_0_rev1prodTagAndSemverId,
+					},
+					os_version: 'balenaOS 2.50.0+rev1',
+					os_variant: 'prod',
+				});
+			});
+
+			it('should overwrite existing should_be_operated_by__release when device reports OS info if should_be_operated_by__release is older', async () => {
+				// First set up a device with a specific target release
+				const device = await fakeDevice.provisionDevice(admin, applicationId);
+				await supertest(admin)
+					.patch(`/${version}/device(${device.id})`)
+					.send({
+						should_be_operated_by__release: unifiedSemverOnlyHostAppReleaseId,
+					})
+					.expect(200);
+
+				// Verify initial state
+				await expectResourceToMatch(pineUser, 'device', device.id, {
+					should_be_operated_by__release: {
+						__id: unifiedSemverOnlyHostAppReleaseId,
+					},
+				});
+
+				// Now patch the device with OS info that would normally map to a different & newer release
+				await device.patchStateV2({
+					local: {
+						os_version: 'balenaOS 2.88.5+rev1',
+						os_variant: 'prod',
+					},
+				});
+
+				// Verify the should_be_operated_by__release was updated with newer release
+				await expectResourceToMatch(pineUser, 'device', device.id, {
+					should_be_operated_by__release: {
+						__id: unifiedSemverRevHostAppReleaseId,
+					},
+					os_version: 'balenaOS 2.88.5+rev1',
+					os_variant: 'prod',
+				});
+			});
 		});
 	});
 };
