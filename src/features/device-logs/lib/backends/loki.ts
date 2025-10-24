@@ -29,8 +29,8 @@ import type {
 } from '../struct.js';
 import { captureException } from '../../../../infra/error-handling/index.js';
 import {
-	setCurrentSubscriptions,
-	incrementSubscriptionTotal,
+	decrementSubscription,
+	incrementSubscription,
 	incrementPublishCallSuccessTotal,
 	incrementPublishCallFailedTotal,
 	incrementLokiPushErrorTotal,
@@ -345,12 +345,8 @@ export class LokiBackend implements DeviceLogsBackend {
 					`Loki tail call message error for device ${ctx.uuid}`,
 				);
 				reconnect();
-				setCurrentSubscriptions(this.tailCalls.size);
 			});
-			ws.on('close', () => {
-				reconnect();
-				setCurrentSubscriptions(this.tailCalls.size);
-			});
+			ws.on('close', reconnect);
 
 			ws.on('message', (data) => {
 				try {
@@ -390,16 +386,17 @@ export class LokiBackend implements DeviceLogsBackend {
 		const ctx = await assertLokiLogContext($ctx);
 		const key = this.getKey(ctx);
 		this.createTailCall(ctx, key);
-		incrementSubscriptionTotal();
-		setCurrentSubscriptions(this.tailCalls.size);
 
 		this.subscriptions.on(key, subscription);
+		incrementSubscription();
 	}
 
 	public async unsubscribe($ctx: LogContext, subscription: Subscription) {
 		const ctx = await assertLokiLogContext($ctx);
 		const key = this.getKey(ctx);
 		this.subscriptions.removeListener(key, subscription);
+		decrementSubscription();
+
 		if (!this.subscriptions.listenerCount(key)) {
 			const call = this.tailCalls.get(key);
 			if (call != null) {
