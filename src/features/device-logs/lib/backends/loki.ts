@@ -29,8 +29,8 @@ import type {
 } from '../struct.js';
 import { captureException } from '../../../../infra/error-handling/index.js';
 import {
-	setCurrentSubscriptions,
-	incrementSubscriptionTotal,
+	decrementSubscription,
+	incrementSubscription,
 	incrementPublishCallSuccessTotal,
 	incrementPublishCallFailedTotal,
 	incrementLokiPushErrorTotal,
@@ -312,36 +312,41 @@ export class LokiBackend implements DeviceLogsBackend {
 		}
 	}
 
-	public async subscribe($ctx: LogContext, subscription: Subscription) {
-		const ctx = await assertLokiLogContext($ctx);
-		const key = this.getKey(ctx);
+	private createTailCall(ctx: LokiLogContext, key: string) {
 		if (!this.tailCalls.has(key)) {
-			const ws = new WebSocket(
+			let ws: WebSocket | undefined = new WebSocket(
 				`ws://${lokiQueryAddress}/loki/api/v1/tail?${querystring.stringify({
 					query: this.getDeviceQuery(ctx),
 					start: `${BigInt(Date.now()) * 1000000n}`,
 				})}`,
 				{ headers: { 'X-Scope-OrgID': ctx.orgId } },
 			);
+			this.tailCalls.set(key, ws);
+
+			const reconnect = () => {
+				if (ws == null) {
+					return;
+				}
+				ws.removeAllListeners();
+				if (this.tailCalls.get(key) === ws) {
+					// Only clean up/reconnect if the current tailCall matches
+					this.tailCalls.delete(key);
+					if (this.subscriptions.listenerCount(key) > 0) {
+						// If there are still listeners, recreate the tail call
+						this.createTailCall(ctx, key);
+					}
+				}
+				ws = undefined;
+			};
 
 			ws.on('error', (err) => {
 				captureException(
 					err,
 					`Loki tail call message error for device ${ctx.uuid}`,
 				);
-				this.subscriptions.removeListener(key, subscription);
-				this.tailCalls.delete(key);
-				setCurrentSubscriptions(this.tailCalls.size);
+				reconnect();
 			});
-			ws.on('close', () => {
-				this.subscriptions.removeListener(key, subscription);
-				this.tailCalls.delete(key);
-				setCurrentSubscriptions(this.tailCalls.size);
-			});
-
-			ws.on('open', function open() {
-				console.log('connected');
-			});
+			ws.on('close', reconnect);
 
 			ws.on('message', (data) => {
 				try {
@@ -374,18 +379,31 @@ export class LokiBackend implements DeviceLogsBackend {
 					);
 				}
 			});
-			this.tailCalls.set(key, ws);
-			incrementSubscriptionTotal();
-			setCurrentSubscriptions(this.tailCalls.size);
 		}
-		this.subscriptions.on(key, subscription);
 	}
 
-	public async unsubscribe($ctx: LogContext) {
+	public async subscribe($ctx: LogContext, subscription: Subscription) {
 		const ctx = await assertLokiLogContext($ctx);
 		const key = this.getKey(ctx);
-		const call = this.tailCalls.get(key);
-		call?.close();
+		this.createTailCall(ctx, key);
+
+		this.subscriptions.on(key, subscription);
+		incrementSubscription();
+	}
+
+	public async unsubscribe($ctx: LogContext, subscription: Subscription) {
+		const ctx = await assertLokiLogContext($ctx);
+		const key = this.getKey(ctx);
+		this.subscriptions.removeListener(key, subscription);
+		decrementSubscription();
+
+		if (!this.subscriptions.listenerCount(key)) {
+			const call = this.tailCalls.get(key);
+			if (call != null) {
+				this.tailCalls.delete(key);
+				call.close();
+			}
+		}
 	}
 
 	private getDeviceQuery(ctx: LokiLogContext) {

@@ -66,40 +66,41 @@ metrics.describe.histogram(
 	},
 );
 
-export function setCurrentSubscriptions(value: number) {
-	metrics.gauge(names.api_device_logs_current_subscriptions, value);
+export function incrementSubscription() {
+	metrics.counter(names.api_device_logs_subscription_total, 1);
+	metrics.inc(names.api_device_logs_current_subscriptions, 1);
 }
 
-export function incrementSubscriptionTotal(value = 1) {
-	metrics.counter(names.api_device_logs_subscription_total, value);
+export function decrementSubscription() {
+	metrics.dec(names.api_device_logs_current_subscriptions, 1);
 }
 
-export function incrementPublishLogMessagesTotal(value = 1) {
+export function incrementPublishLogMessagesTotal(value: number) {
 	metrics.counter(names.api_device_logs_publish_log_messages_total, value);
 }
 
-export function incrementPublishLogMessagesDropped(value = 1) {
+export function incrementPublishLogMessagesDropped(value: number) {
 	metrics.counter(names.api_device_logs_publish_log_messages_dropped, value);
 }
 
-export function incrementPublishCallTotal(value = 1) {
-	metrics.counter(names.api_device_logs_publish_call_total, value);
+export function incrementPublishCallTotal() {
+	metrics.counter(names.api_device_logs_publish_call_total, 1);
 }
 
-export function incrementPublishCallSuccessTotal(value = 1) {
-	metrics.counter(names.api_device_logs_publish_call_success_total, value);
+export function incrementPublishCallSuccessTotal() {
+	metrics.counter(names.api_device_logs_publish_call_success_total, 1);
 }
 
-export function incrementPublishCallFailedTotal(value = 1) {
-	metrics.counter(names.api_device_logs_publish_call_failed_total, value);
+export function incrementPublishCallFailedTotal() {
+	metrics.counter(names.api_device_logs_publish_call_failed_total, 1);
 }
 
-export function incrementLokiPushTotal(value = 1) {
-	metrics.counter(names.api_device_logs_loki_push_total, value);
+export function incrementLokiPushTotal() {
+	metrics.counter(names.api_device_logs_loki_push_total, 1);
 }
 
-export function incrementLokiPushErrorTotal(errorCode: string, value = 1) {
-	metrics.counter(names.api_device_logs_loki_push_error_total, value, {
+export function incrementLokiPushErrorTotal(errorCode: string) {
+	metrics.counter(names.api_device_logs_loki_push_error_total, 1, {
 		errorCode,
 	});
 }
