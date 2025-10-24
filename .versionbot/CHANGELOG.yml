@@ -1,4 +1,86 @@
 - commits:
+    - subject: Update balena/open-balena-base Docker tag to v20.2.0
+      hash: 42e699eac0753ab029107065af89ac8d7b2aa766
+      body: |
+        Update balena/open-balena-base from 20.1.4 to 20.2.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: balena-renovate[bot]
+      nested:
+        - commits:
+            - subject: Fix load_env_file to use xenv for exact systemd compatibility
+              hash: a9535db87f71657857ffde88a59596690dec4048
+              body: |
+                The load_env_file function now uses xenv (github.com/michurin/systemd-env-file)
+                which wraps systemd v256's actual EnvironmentFile parser. This ensures exact
+                compatibility when migrating from systemd to s6-overlay.
+
+                Key behavior (matching systemd, NOT POSIX):
+                - Unquoted values: process escape sequences (value\;text → value;text)
+                - Double-quoted values: NO escape processing (diverges from POSIX shell)
+                - Single-quoted values: NO escape processing
+
+                Example: BUCKETS=balena-images\;balena-delta now correctly expands to
+                "balena-images;balena-delta" (semicolons, not literal backslashes).
+
+                References:
+                - xenv: https://github.com/michurin/systemd-env-file
+                - systemd v256 parser: https://github.com/systemd/systemd/blob/v256/src/basic/env-file.c
+                - systemd issue #10659: https://github.com/systemd/systemd/issues/10659
+              footer:
+                Change-type: minor
+                change-type: minor
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+            - subject: Fix load_env_file to follow POSIX shell quoting rules
+              hash: a56a4d516a166d1990c9c7a6cd0fe99aace304c6
+              body: >
+                The load_env_file function previously did not correctly handle
+                escape
+
+                sequences according to POSIX standards (IEEE Std 1003.1-2017,
+                sections
+
+                2.2.1-2.2.3), causing issues with values containing escaped
+                characters
+
+                like semicolons.
+
+
+                This matches systemd's EnvironmentFile behavior after PR #11427,
+                which
+
+                fixed escape handling to follow shell syntax for quotes.
+
+
+                Example: BUCKETS="balena-images\;balena-delta" now correctly
+                expands
+
+                to "balena-images;balena-delta" (semicolons, not literal
+                backslashes).
+
+
+                References:
+                  - https://github.com/systemd/systemd/issues/10659
+                  - https://github.com/systemd/systemd/pull/11427
+                  - IEEE Std 1003.1-2017, sections 2.2.1-2.2.3
+              footer:
+                Change-type: patch
+                change-type: patch
+                Signed-off-by: Kyle Harding <kyle@balena.io>
+                signed-off-by: Kyle Harding <kyle@balena.io>
+              author: Kyle Harding
+              nested: []
+          version: open-balena-base-20.2.0
+          title: ""
+          date: 2025-10-21T04:33:03.133Z
+  version: 43.0.26
+  title: ""
+  date: 2025-10-24T17:19:10.773Z
+- commits:
     - subject: Update balena/open-balena-base Docker tag to v20.1.4
       hash: c4cf6253451506208029dd0a208f60051ce0e6cc
       body: |
@@ -6430,6 +6512,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -6462,6 +6545,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -7680,6 +7764,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -7727,6 +7812,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -8033,6 +8119,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -8070,6 +8157,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -8454,6 +8542,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -8482,6 +8571,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -8653,6 +8743,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -8971,6 +9062,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -9116,6 +9208,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -9601,6 +9694,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -9623,6 +9717,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -9801,6 +9896,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -10180,6 +10276,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -10202,6 +10299,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -10380,6 +10478,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -14729,6 +14828,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -14761,6 +14861,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -16293,6 +16394,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -16340,6 +16442,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -16910,6 +17013,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -16947,6 +17051,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -17695,6 +17800,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -17723,6 +17829,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -18026,6 +18133,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -18608,6 +18716,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -18753,6 +18862,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -19502,6 +19612,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -19524,6 +19635,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -19834,6 +19946,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -20477,6 +20590,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -20499,6 +20613,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -20809,6 +20924,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -23465,6 +23581,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -23487,6 +23604,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -23797,6 +23915,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -24443,6 +24562,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -24471,6 +24591,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -24773,6 +24894,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -25353,6 +25475,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/sbvr-types
                                                                 from 3.4.18 to 3.5.0
@@ -25498,6 +25621,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
