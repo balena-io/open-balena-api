@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
-import { requestAsync } from '../../src/infra/request-promise/index.js';
 import { expect } from 'chai';
+import { setTimeout } from 'timers/promises';
 
 export async function checkFileExists(
 	url: string,
@@ -10,26 +10,24 @@ export async function checkFileExists(
 	const start = Date.now();
 	while (Date.now() - start < timeout) {
 		try {
-			const [response] = await requestAsync({ url, method: 'GET' });
-			if (response.statusCode !== 200) {
+			const response = await fetch(url);
+			if (response.status !== 200) {
 				return false;
 			}
 		} catch (error) {
 			console.error(error);
 		}
-		await new Promise((resolve) => setTimeout(resolve, pollInterval));
+		await setTimeout(pollInterval);
 	}
 	return true;
 }
 
 export async function expectEqualBlobs(url: string, localBlobPath: string) {
-	const [response, fileRes] = await requestAsync({
-		url,
-		method: 'GET',
-		encoding: null,
-	});
+	const response = await fetch(url);
 
-	expect(response.statusCode).to.equal(200);
+	expect(response.status).to.equal(200);
+
+	const fileRes = Buffer.from(await response.arrayBuffer());
 
 	const originalFile = await fs.readFile(localBlobPath);
 	const diff = originalFile.compare(fileRes);

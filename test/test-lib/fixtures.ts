@@ -7,9 +7,7 @@ import _ from 'lodash';
 import path from 'path';
 import { randomUUID } from 'node:crypto';
 
-import type { Headers } from 'request';
 import { API_HOST } from '../../src/lib/config.js';
-import { requestAsync } from '../../src/infra/request-promise/index.js';
 import { supertest } from './supertest.js';
 import type { Device, Organization } from '../../src/balena-model.js';
 import type Model from '../../src/balena-model.js';
@@ -49,29 +47,29 @@ const createResource = async (args: {
 	user?: { token: string };
 }) => {
 	const { resource, method = 'POST', body = {}, user } = args;
-	const headers: Headers = {};
+	const headers: HeadersInit = {
+		'Content-Type': 'application/json',
+	};
 
 	if (user != null) {
 		headers.Authorization = `Bearer ${user.token}`;
 	}
 
-	const [response, responseBody] = await requestAsync({
-		url: `http://${API_HOST}/${version}/${resource}`,
+	const response = await fetch(`http://${API_HOST}/${version}/${resource}`, {
 		headers,
 		method,
-		json: true,
-		body,
+		body: JSON.stringify(body),
 	});
 
-	if (response.statusCode !== 201) {
+	if (response.status !== 201) {
 		logErrorAndThrow(
 			`Failed to create: ${resource}`,
-			response.statusCode,
-			responseBody,
+			response.status,
+			await response.text(),
 		);
 	}
 
-	return responseBody;
+	return await response.json();
 };
 
 const loaders: types.Dictionary<LoaderFunc> = {
