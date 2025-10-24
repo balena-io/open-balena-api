@@ -339,10 +339,6 @@ export class LokiBackend implements DeviceLogsBackend {
 				setCurrentSubscriptions(this.tailCalls.size);
 			});
 
-			ws.on('open', function open() {
-				console.log('connected');
-			});
-
 			ws.on('message', (data) => {
 				try {
 					const result = JSON.parse(data.toString()) as {
