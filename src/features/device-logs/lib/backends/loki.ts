@@ -381,11 +381,13 @@ export class LokiBackend implements DeviceLogsBackend {
 		this.subscriptions.on(key, subscription);
 	}
 
-	public async unsubscribe($ctx: LogContext) {
+	public async unsubscribe($ctx: LogContext, subscription: Subscription) {
 		const ctx = await assertLokiLogContext($ctx);
 		const key = this.getKey(ctx);
-		const call = this.tailCalls.get(key);
-		call?.close();
+		this.subscriptions.removeListener(key, subscription);
+		if (!this.subscriptions.listenerCount(key)) {
+			this.tailCalls.get(key)?.close();
+		}
 	}
 
 	private getDeviceQuery(ctx: LokiLogContext) {
