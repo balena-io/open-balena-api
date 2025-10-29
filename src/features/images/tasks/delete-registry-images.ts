@@ -1,19 +1,9 @@
 import { permissions, sbvrUtils, tasks } from '@balena/pinejs';
 import _ from 'lodash';
-import { generateToken } from '../../registry/registry.js';
-import {
-	ASYNC_TASK_DELETE_REGISTRY_IMAGES_BATCH_SIZE,
-	REGISTRY2_HOST,
-} from '../../../lib/config.js';
-import { requestAsync } from '../../../infra/request-promise/index.js';
-import { setTimeout } from 'node:timers/promises';
+import { ASYNC_TASK_DELETE_REGISTRY_IMAGES_BATCH_SIZE } from '../../../lib/config.js';
+import { deleteImage } from '../../../features/registry/registry.js';
 
 const { api } = sbvrUtils;
-
-// For registry API requests
-const DELAY = 200;
-const RATE_LIMIT_DELAY_BASE = 1000;
-const RATE_LIMIT_RETRIES = 5;
 
 const schema = {
 	type: 'object',
@@ -44,9 +34,8 @@ tasks.addTaskHandler(
 	handlerName,
 	async (options) => {
 		try {
-			const images =
-				(options.params as DeleteRegistryImagesTaskParams).images ?? [];
-			if (images.length === 0) {
+			const images = (options.params as DeleteRegistryImagesTaskParams).images;
+			if (images == null || images.length === 0) {
 				return {
 					status: 'succeeded',
 				};
@@ -71,12 +60,10 @@ tasks.addTaskHandler(
 										is_stored_at__image_location: chunk[0][0],
 										content_hash: chunk[0][1],
 									}
-								: {
-										$or: chunk.map(([repo, hash]) => ({
-											is_stored_at__image_location: repo,
-											content_hash: hash,
-										})),
-									},
+								: chunk.map(([repo, hash]) => ({
+										is_stored_at__image_location: repo,
+										content_hash: hash,
+									})),
 					},
 				});
 				const safeToDelete = chunk.filter(
@@ -94,7 +81,7 @@ tasks.addTaskHandler(
 						);
 						continue;
 					}
-					await markForDeletion(repo, hash);
+					await deleteImage(`task:${handlerName}`, repo, hash);
 				}
 			}
 
@@ -111,67 +98,3 @@ tasks.addTaskHandler(
 	},
 	schema,
 );
-
-// Make an API call to the registry service to mark images for deletion on next garbage collection
-async function markForDeletion(repo: string, hash: string) {
-	// Generate an admin-level token with delete permission
-	const token = generateToken('admin', REGISTRY2_HOST, [
-		{
-			name: repo,
-			type: 'repository',
-			actions: ['delete'],
-		},
-	]);
-
-	// Need to make requests one image at a time, no batch endpoint available
-	for (let retries = 0; retries < RATE_LIMIT_RETRIES; retries++) {
-		const [{ statusCode, statusMessage, headers }] = await requestAsync({
-			url: `https://${REGISTRY2_HOST}/v2/${repo}/manifests/${hash}`,
-			headers: { Authorization: `Bearer ${token}` },
-			method: 'DELETE',
-		});
-
-		// Return on success or not found
-		if (statusCode === 202 || statusCode === 404) {
-			await setTimeout(DELAY);
-			return;
-		} else if (statusCode === 429) {
-			// Give up if we've hit the retry limit
-			if (retries === RATE_LIMIT_RETRIES - 1) {
-				throw new Error(
-					`Failed to mark ${repo}/${hash} for deletion: exceeded retry limit due to rate limiting`,
-				);
-			}
-
-			// Default delay value to exponential backoff
-			let delay = RATE_LIMIT_DELAY_BASE * Math.pow(2, retries);
-
-			// Use the retry-after header value if available
-			const retryAfterHeader = headers?.['retry-after'];
-			if (retryAfterHeader) {
-				const headerDelay = parseInt(retryAfterHeader, 10);
-				if (!isNaN(headerDelay)) {
-					delay = headerDelay * 1000;
-				} else {
-					const retryDate = Date.parse(retryAfterHeader);
-					const waitMillis = retryDate - Date.now();
-					if (waitMillis > 0) {
-						delay = waitMillis;
-					}
-				}
-			}
-
-			// Apply some jitter for good measure
-			delay += Math.random() * 1000;
-
-			console.warn(
-				`[${logHeader}] Received 429 for ${repo}/${hash}. Retrying in ${delay}ms...`,
-			);
-			await setTimeout(delay);
-		} else {
-			throw new Error(
-				`Failed to mark ${repo}/${hash} for deletion: [${statusCode}] ${statusMessage}`,
-			);
-		}
-	}
-}
