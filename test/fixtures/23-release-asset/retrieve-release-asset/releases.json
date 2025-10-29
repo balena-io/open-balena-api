@@ -52,5 +52,35 @@
 		"source": "cloud",
 		"commit": "00000003",
 		"is_final": false
+	},
+	"publicApp_release": {
+		"user": "admin",
+		"application": "publicApp",
+		"composition": {
+			"services": {
+				"image1": {
+					"build": "./image1/"
+				}
+			}
+		},
+		"status": "success",
+		"source": "cloud",
+		"commit": "publicrelease001",
+		"is_final": false
+	},
+	"privateApp_release": {
+		"user": "admin",
+		"application": "privateApp",
+		"composition": {
+			"services": {
+				"image1": {
+					"build": "./image1/"
+				}
+			}
+		},
+		"status": "success",
+		"source": "cloud",
+		"commit": "privaterelease001",
+		"is_final": false
 	}
 }

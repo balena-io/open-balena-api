@@ -16,5 +16,17 @@
         "release": "release3",
         "asset_key": "retrievereleaseasset3.txt",
         "asset": "retrievereleaseasset3.txt"
+    },
+    "publicApp_releaseasset": {
+        "user": "admin",
+        "release": "publicApp_release",
+        "asset_key": "public-app-asset.key",
+        "asset": "sample.txt"
+    },
+    "privateApp_releaseasset": {
+        "user": "admin",
+        "release": "privateApp_release",
+        "asset_key": "private-app-asset.key",
+        "asset": "sample.txt"
     }
 }
