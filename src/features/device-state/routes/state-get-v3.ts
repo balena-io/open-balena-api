@@ -36,7 +36,19 @@ type ExpandedApplication = NonNullable<
 		},
 		number
 	>
->;
+> &
+	Partial<
+		NonNullable<
+			OptionsToResponse<
+				Application['Read'],
+				{
+					$select: typeof appSelect;
+					$expand: typeof appExpand & typeof updaterBlockExpand;
+				},
+				number
+			>
+		>
+	>;
 
 type TargetReleaseField =
 	| 'should_be_running__release'
@@ -185,6 +197,21 @@ export function buildAppFromRelease(
 			}
 		});
 
+		const updaterImage =
+			application.is_updated_by__application != null &&
+			Array.isArray(application.is_updated_by__application)
+				? application.is_updated_by__application[0]
+						?.should_be_running__release[0]?.release_image[0]?.image[0]
+				: undefined;
+		if (updaterImage != null) {
+			const updaterImageRegistryUrl =
+				updaterImage.is_stored_at__image_location +
+				(updaterImage.content_hash != null
+					? `@${updaterImage.content_hash}`
+					: '');
+			labels['io.balena.private.updater'] = updaterImageRegistryUrl;
+		}
+
 		const imgRegistry =
 			image.is_stored_at__image_location +
 			(image.content_hash != null ? `@${image.content_hash}` : '');
@@ -272,6 +299,26 @@ const appExpand = {
 		$select: ['name', 'value'],
 	},
 } as const;
+const updaterBlockExpand = {
+	is_updated_by__application: {
+		$select: 'id',
+		$expand: {
+			should_be_running__release: {
+				$select: 'id',
+				$expand: {
+					release_image: {
+						$select: 'id',
+						$expand: {
+							image: {
+								$select: ['is_stored_at__image_location', 'content_hash'],
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+} as const;
 const deviceExpand = {
 	device_config_variable: {
 		$select: ['name', 'value'],
@@ -309,7 +356,10 @@ const deviceExpand = {
 			...releaseExpand.$expand,
 			belongs_to__application: {
 				$select: appSelect,
-				$expand: appExpand,
+				$expand: {
+					...appExpand,
+					...updaterBlockExpand,
+				},
 			},
 		},
 	},

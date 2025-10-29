@@ -520,6 +520,13 @@ Fact type: application has uuid
 	Necessity: each uuid is of exactly one application.
 	Necessity: each application has a uuid that has a Length (Type) that is equal to 32.
 Fact type: application is public
+Fact type: application is updated by application1
+	Synonymous Form: application1 updates application
+	Necessity: each application is updated by at most one application.
+	Necessity: each application that is updated by an application, is host.
+	Necessity: each application that updates an application, is of a class that is equal to "block"
+	Necessity: each application that is updated by an application, is host and is updated by an application that is of a class that is equal to "block".
+	Necessity: each application that updates an application, is of a class that is equal to "block" and updates an application that is host
 
 -- service instance
 
