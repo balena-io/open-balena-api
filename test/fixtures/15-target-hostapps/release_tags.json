@@ -1,4 +1,16 @@
 {
+	"release2_49_0_rev1-variant": {
+		"user": "admin",
+		"release": "release2_49_0_rev1",
+		"tag_key": "variant",
+		"value": "production"
+	},
+	"release2_49_0_rev1-version": {
+		"user": "admin",
+		"release": "release2_49_0_rev1",
+		"tag_key": "version",
+		"value": "2.49.0+rev1"
+	},
 	"release2_50_0_rev1-variant": {
 		"user": "admin",
 		"release": "release2_50_0_rev1",

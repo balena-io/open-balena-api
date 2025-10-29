@@ -62,8 +62,11 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 });
 
 /**
- * When a device checks in with it's initial OS version, set the corresponding should_be_operated_by__release resource
- * using its current reported version.
+ * Enforce the "device.should_be_operated_by__release[0].semver >= device.os_version" invariant.
+ * When a device reports its current OS version and the release pointed to by the should_be_operated_by__release
+ * is lower than the reported os_version or null, we find the hostApp release for the os_version and update the
+ * device's should_be_operated_by__release.
+ * Setting the should_be_operated_by__release when it's null has the semantics of pinning the device to its current OS release.
  */
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	async PRERUN(args) {
@@ -71,11 +74,17 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			args.request.values.os_version != null &&
 			args.request.values.os_variant != null
 		) {
+			const parsedOsVersion = semver.parse(args.request.values.os_version);
+			// If balena-semver can't parse the os_version, then we can be sure
+			// that there is no hostApp release matching it.
+			if (parsedOsVersion == null) {
+				return;
+			}
 			const ids = await sbvrUtils.getAffectedIds(args);
-			await setOSReleaseResource(
+			await setOSReleaseIfNewer(
 				args.api,
 				ids,
-				args.request.values.os_version,
+				parsedOsVersion,
 				args.request.values.os_variant,
 			);
 		}
@@ -89,9 +98,15 @@ hooks.addPureHook('POST', 'resin', 'device', {
 			request.values.os_variant != null &&
 			request.values.is_of__device_type != null
 		) {
+			const parsedOsVersion = semver.parse(request.values.os_version);
+			// If balena-semver can't parse the os_version, then we can be sure
+			// that there is no hostApp release matching it.
+			if (parsedOsVersion == null) {
+				return;
+			}
 			const hostappRelease = await getOSReleaseResource(
 				api,
-				request.values.os_version,
+				parsedOsVersion,
 				request.values.os_variant,
 				request.values.is_of__device_type,
 			);
@@ -104,11 +119,11 @@ hooks.addPureHook('POST', 'resin', 'device', {
 	},
 });
 
-async function setOSReleaseResource(
+async function setOSReleaseIfNewer(
 	api: typeof sbvrUtils.api.resin,
 	deviceIds: number[],
-	osVersion: string,
-	osVariant: string,
+	newOsVersion: SemVer,
+	newOsVariant: string,
 ) {
 	if (deviceIds.length === 0) {
 		return;
@@ -116,21 +131,42 @@ async function setOSReleaseResource(
 	const devices = await api.get({
 		resource: 'device',
 		options: {
-			// if the device already has an os_version, just bail.
+			$select: ['id', 'is_of__device_type'],
+			$expand: {
+				should_be_operated_by__release: {
+					$select: 'semver',
+					$expand: {
+						release_tag: {
+							$select: 'value',
+							$filter: { tag_key: 'version' },
+						},
+					},
+				},
+			},
 			$filter: {
 				id: { $in: deviceIds },
-				os_version: null,
 			},
-			$select: ['id', 'is_of__device_type'],
 		},
 	});
+	const devicesToUpdate = devices.filter((device) => {
+		const targetHostappRelease = device.should_be_operated_by__release[0];
+		if (targetHostappRelease == null) {
+			return true;
+		}
+		const targetHostappVersion =
+			getBaseVersionFromReleaseSemverOrTag(targetHostappRelease);
+		return (
+			targetHostappVersion == null ||
+			semver.gt(newOsVersion.raw, targetHostappVersion)
+		);
+	});
 
-	if (devices.length === 0) {
+	if (devicesToUpdate.length === 0) {
 		return;
 	}
 
 	const devicesByDeviceTypeId = groupByMap(
-		devices,
+		devicesToUpdate,
 		(d) => d.is_of__device_type.__id,
 	);
 	if (devicesByDeviceTypeId.size === 0) {
@@ -147,19 +183,27 @@ async function setOSReleaseResource(
 	return Promise.all(
 		Array.from(devicesByDeviceTypeId.entries()).map(
 			async ([deviceTypeId, affectedDevices]) => {
-				const affectedDeviceIds = affectedDevices.map((d) => d.id);
-
-				const osRelease = await getOSReleaseResource(
+				const newOsRelease = await getOSReleaseResource(
 					api,
-					osVersion,
-					osVariant,
+					newOsVersion,
+					newOsVariant,
 					deviceTypeId,
 				);
 
-				if (osRelease == null) {
-					return;
+				if (newOsRelease == null) {
+					// When the newOsRelease is not found, and since we have already checked that
+					// newOsVersion > should_be_operated_by__release, we need to clear the
+					// should_be_operated_by__release of devices that have it set, otherwise the
+					// should_be_operated_by__release >= os_version invariant would be violated.
+					affectedDevices = affectedDevices.filter(
+						(d) => d.should_be_operated_by__release[0] != null,
+					);
+					if (affectedDevices.length === 0) {
+						return;
+					}
 				}
 
+				const affectedDeviceIds = affectedDevices.map((d) => d.id);
 				await rootApi.patch({
 					resource: 'device',
 					options: {
@@ -168,7 +212,7 @@ async function setOSReleaseResource(
 						},
 					},
 					body: {
-						should_be_operated_by__release: osRelease.id,
+						should_be_operated_by__release: newOsRelease?.id ?? null,
 					},
 				});
 			},
@@ -178,17 +222,10 @@ async function setOSReleaseResource(
 
 async function getOSReleaseResource(
 	api: typeof sbvrUtils.api.resin,
-	osVersion: string,
+	parsedOsVersion: SemVer,
 	osVariant: string,
 	deviceTypeId: number,
 ): Promise<PickDeferred<Release['Read'], 'id' | 'is_final'> | undefined> {
-	const parsedOsVersion = semver.parse(osVersion);
-	// balena-semver is able to parse all OS versions that we support,
-	// so if it can't parse the given version string, then we can be sure
-	// that there can't be a hostApp release matching it.
-	if (parsedOsVersion == null) {
-		return;
-	}
 	const releases = await api.get({
 		resource: 'release',
 		options: {
@@ -241,7 +278,7 @@ async function getOSReleaseResource(
 												// b/c balena-semver normalizes invalid semvers like
 												// 2022.01.0 to 2022.1.0 and that would no longer
 												// match the tag value.
-												value: normalizeOsVersion(osVersion),
+												value: normalizeOsVersion(parsedOsVersion.raw),
 												tag_key: 'version',
 											},
 										},
@@ -306,7 +343,7 @@ async function getOSReleaseResource(
 	const [release] = releases;
 	if (releases.filter((r) => r.is_final).length > 1) {
 		ThisShouldNeverHappenError(
-			`Found more than one finalized hostApp release matching version ${osVersion} ${osVariant} for device type ${deviceTypeId} and returned ${release.id}.`,
+			`Found more than one finalized hostApp release matching version ${parsedOsVersion.raw} ${osVariant} for device type ${deviceTypeId} and returned ${release.id}.`,
 		);
 	}
 
