@@ -72,7 +72,11 @@ async function createRelease(appId: number, serviceId: number) {
 	};
 }
 
-const offsetSeconds = 3;
+function stripRegistryHost(location: string) {
+	return location.replace(`${config.REGISTRY2_HOST}/`, '');
+}
+
+const offsetMs = 200;
 export default () => {
 	describe('registry image deletion', () => {
 		const ctx: AnyObject = {};
@@ -82,8 +86,8 @@ export default () => {
 			ctx.fixtures = fx;
 			ctx.app1 = fx.applications.app1;
 			ctx.service1 = fx.services.service1;
-			config.TEST_MOCK_ONLY.ASYNC_TASK_DELETE_REGISTRY_IMAGES_OFFSET_SECONDS =
-				offsetSeconds;
+			config.TEST_MOCK_ONLY.ASYNC_TASK_DELETE_REGISTRY_IMAGES_OFFSET_MS =
+				offsetMs;
 		});
 
 		after(async () => {
@@ -91,7 +95,7 @@ export default () => {
 			await fixtures.clean(ctx.fixtures);
 		});
 
-		it('should mark blobs for deletion when images are deleted directly', async () => {
+		it('should mark for deletion when images are deleted directly', async () => {
 			const { image, registryImage } = await createImage(ctx.service1.id);
 			await api.resin.delete({
 				resource: 'image',
@@ -108,13 +112,18 @@ export default () => {
 				{
 					status: 'succeeded',
 					is_executed_with__parameter_set: {
-						images: [[image.is_stored_at__image_location, image.content_hash!]],
+						images: [
+							[
+								stripRegistryHost(image.is_stored_at__image_location),
+								image.content_hash!,
+							],
+						],
 					},
 				},
 			]);
 		});
 
-		it('should eventually mark blobs for deletion when rate limited', async () => {
+		it('should eventually mark for deletion when rate limited', async () => {
 			const consoleSpy = sinon.spy(console, 'warn');
 			registryMock.setNextDeleteResponseCode(429);
 			const { image, registryImage } = await createImage(ctx.service1.id);
@@ -133,15 +142,17 @@ export default () => {
 				{
 					status: 'succeeded',
 					is_executed_with__parameter_set: {
-						images: [[image.is_stored_at__image_location, image.content_hash!]],
+						images: [
+							[
+								stripRegistryHost(image.is_stored_at__image_location),
+								image.content_hash!,
+							],
+						],
 					},
 				},
 			]);
 
-			sinon.assert.calledWithMatch(
-				consoleSpy,
-				sinon.match(/\[delete-registry-images\] Received 429/),
-			);
+			sinon.assert.calledWithMatch(consoleSpy, sinon.match(/Received 429 for/));
 			consoleSpy.restore();
 		});
 
@@ -159,12 +170,17 @@ export default () => {
 			});
 
 			// Assert task eventually succeeds after giving it time to run
-			await setTimeout(offsetSeconds * 1000);
+			await setTimeout(offsetMs);
 			await expectNewSettledTasks('delete_registry_images', [
 				{
 					status: 'succeeded',
 					is_executed_with__parameter_set: {
-						images: [[image.is_stored_at__image_location, image.content_hash!]],
+						images: [
+							[
+								stripRegistryHost(image.is_stored_at__image_location),
+								image.content_hash!,
+							],
+						],
 					},
 				},
 			]);
@@ -173,14 +189,14 @@ export default () => {
 				consoleSpy,
 				sinon.match(
 					new RegExp(
-						`Failed to mark ${image.is_stored_at__image_location}/${image.content_hash} for deletion: \\[500\\]`,
+						`Failed to mark ${stripRegistryHost(image.is_stored_at__image_location)}/${image.content_hash} for deletion: \\[500\\]`,
 					),
 				),
 			);
 			consoleSpy.restore();
 		});
 
-		it('should not fail when blob does not exist in registry', async () => {
+		it('should not fail when image does not exist in registry', async () => {
 			const { image, registryImage } = await createImage(ctx.service1.id);
 			registryMock.deleteImage(registryImage);
 			await api.resin.delete({
@@ -190,21 +206,26 @@ export default () => {
 			});
 
 			// Assert task succeeded after giving it time to run
-			await setTimeout(offsetSeconds * 1000);
+			await setTimeout(offsetMs);
 			await expectNewSettledTasks('delete_registry_images', [
 				{
 					status: 'succeeded',
 					is_executed_with__parameter_set: {
-						images: [[image.is_stored_at__image_location, image.content_hash!]],
+						images: [
+							[
+								stripRegistryHost(image.is_stored_at__image_location),
+								image.content_hash!,
+							],
+						],
 					},
 				},
 			]);
 		});
 
-		it('should mark blobs for deletion when images are deleted via a cascade', async () => {
+		it('should mark for deletion when images are deleted via a cascade', async () => {
 			const { images } = await createRelease(ctx.app1.id, ctx.service1.id);
 			const expectedImages = images.map((image) => [
-				image.is_stored_at__image_location,
+				stripRegistryHost(image.is_stored_at__image_location),
 				image.content_hash!,
 			]);
 
@@ -221,7 +242,7 @@ export default () => {
 					expectedImages.every(
 						([location, hash]) =>
 							registryMock.getImage({
-								is_stored_at__image_location: location,
+								is_stored_at__image_location: stripRegistryHost(location),
 								content_hash: hash,
 							})?.delete === true,
 					),

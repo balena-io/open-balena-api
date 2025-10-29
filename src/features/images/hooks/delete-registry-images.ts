@@ -5,7 +5,7 @@ import {
 	ASYNC_TASK_ATTEMPT_LIMIT,
 	ASYNC_TASK_DELETE_REGISTRY_IMAGES_BATCH_SIZE,
 	ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED,
-	ASYNC_TASK_DELETE_REGISTRY_IMAGES_OFFSET_SECONDS,
+	ASYNC_TASK_DELETE_REGISTRY_IMAGES_OFFSET_MS,
 	ASYNC_TASKS_ENABLED,
 } from '../../../lib/config.js';
 
@@ -38,7 +38,7 @@ if (ASYNC_TASKS_ENABLED && ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED) {
 			if (images.length > 0) {
 				(request.custom as DeleteRequestCustomObject).imagesToCleanup =
 					images.map((image) => [
-						image.is_stored_at__image_location,
+						image.is_stored_at__image_location.replace(/^[^/]+\//, ''),
 						image.content_hash!,
 					]);
 			}
@@ -64,8 +64,7 @@ if (ASYNC_TASKS_ENABLED && ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED) {
 								images: chunk,
 							} satisfies DeleteRegistryImagesTaskParams,
 							is_scheduled_to_execute_on__time: new Date(
-								Date.now() +
-									ASYNC_TASK_DELETE_REGISTRY_IMAGES_OFFSET_SECONDS * 1000,
+								Date.now() + ASYNC_TASK_DELETE_REGISTRY_IMAGES_OFFSET_MS,
 							),
 							attempt_limit: ASYNC_TASK_ATTEMPT_LIMIT,
 						},

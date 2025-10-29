@@ -24,10 +24,7 @@ function toRegistryImage(
 		throw new Error('content_hash not defined');
 	}
 	return {
-		repo: image.is_stored_at__image_location.replace(
-			`${REGISTRY2_HOST}/v2/`,
-			'',
-		),
+		repo: image.is_stored_at__image_location.replace(`${REGISTRY2_HOST}/`, ''),
 		manifest: image.content_hash,
 		delete: false,
 	};
@@ -66,7 +63,7 @@ export function setNextDeleteResponseCode(code: number | null) {
 }
 
 function nockDeleteManifest(): nock.Scope {
-	const pathRegex = /\/v2\/([a-zA-Z0-9-_]+)\/manifests\/(sha256:[a-zA-Z0-9]+)/;
+	const pathRegex = /\/v2\/([a-zA-Z0-9-_%]+)\/manifests\/(sha256[a-zA-Z0-9%]+)/;
 	return nock(REGISTRY_ENDPOINT)
 		.delete(pathRegex)
 		.reply((uri) => {
@@ -82,7 +79,10 @@ function nockDeleteManifest(): nock.Scope {
 			const repo = matches?.[1];
 			const manifest = matches?.[2];
 			strict(repo && manifest);
-			const image = getImage({ repo, manifest });
+			const image = getImage({
+				repo: decodeURIComponent(repo),
+				manifest: decodeURIComponent(manifest),
+			});
 
 			if (image == null) {
 				return [404];
