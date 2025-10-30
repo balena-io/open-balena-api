@@ -175,6 +175,11 @@ export default () => {
 					this.user = fx.users.admin;
 					this.releaseasset1 = fx.release_asset.releaseasset1;
 					this.release1 = fx.releases.release1;
+					this.publicApp_releaseasset = fx.release_asset.publicApp_releaseasset;
+					this.privateApp_releaseasset =
+						fx.release_asset.privateApp_releaseasset;
+					this.publicApp_release = fx.releases.publicApp_release;
+					this.privateApp_release = fx.releases.privateApp_release;
 				});
 
 				after(async function () {
@@ -191,7 +196,7 @@ export default () => {
 					expect(res.body)
 						.to.have.property('d')
 						.that.is.an('array')
-						.and.has.length(3);
+						.and.has.length(5);
 					expect(res.body)
 						.to.have.nested.property('d[0].id')
 						.that.is.a('number');
@@ -285,6 +290,59 @@ export default () => {
 					expect(res.body)
 						.to.have.nested.property('d[0].release[0].id')
 						.that.equals(this.releaseasset1.release.__id);
+				});
+
+				it('should allow guest users to read release_assets associated with public applications', async function () {
+					const res = await supertest()
+						.get(
+							`/${version}/release_asset(${this.publicApp_releaseasset.id})?$select=id,asset_key`,
+						)
+						.expect(200);
+
+					expect(res.body).to.have.property('d').that.is.an('array');
+					expect(res.body).to.have.nested.property('d.length', 1);
+					expect(res.body)
+						.to.have.nested.property('d[0].id')
+						.that.equals(this.publicApp_releaseasset.id);
+					expect(res.body)
+						.to.have.nested.property('d[0].asset_key')
+						.that.equals('public-app-asset.key');
+				});
+
+				it('should allow guest users to expand release_assets from a public application release', async function () {
+					const res = await supertest()
+						.get(
+							`/${version}/release(${this.publicApp_release.id})?$select=id&$expand=release_asset($select=id,asset_key)`,
+						)
+						.expect(200);
+
+					expect(res.body).to.have.property('d').that.is.an('array');
+					expect(res.body).to.have.nested.property('d.length', 1);
+					expect(res.body)
+						.to.have.nested.property('d[0].id')
+						.that.equals(this.publicApp_release.id);
+					expect(res.body).to.have.nested.property('d[0].release_asset');
+					expect(res.body.d[0].release_asset).to.be.an('array');
+
+					const publicAsset = res.body.d[0].release_asset.find(
+						(asset: { id: number }) =>
+							asset.id === this.publicApp_releaseasset.id,
+					);
+					expect(publicAsset).to.exist;
+					expect(publicAsset)
+						.to.have.property('asset_key')
+						.that.equals('public-app-asset.key');
+				});
+
+				it('should not allow guest users to read release_assets from non-public applications', async function () {
+					const res = await supertest()
+						.get(
+							`/${version}/release_asset(${this.privateApp_releaseasset.id})?$select=id`,
+						)
+						.expect(200);
+
+					expect(res.body).to.have.property('d').that.is.an('array');
+					expect(res.body).to.have.nested.property('d.length', 0);
 				});
 			});
 

@@ -8,5 +8,17 @@
 		"user": "admin",
 		"app_name": "test_retrieve_release_asset_other",
 		"device_type": "raspberry-pi"
+	},
+	"publicApp": {
+		"user": "admin",
+		"app_name": "test_retrieve_release_asset_public",
+		"device_type": "raspberry-pi",
+		"is_public": true
+	},
+	"privateApp": {
+		"user": "admin",
+		"app_name": "test_retrieve_release_asset_private",
+		"device_type": "raspberry-pi",
+		"is_public": false
 	}
 }
