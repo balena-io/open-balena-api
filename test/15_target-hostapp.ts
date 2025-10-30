@@ -38,8 +38,8 @@ export default () => {
 			let esrTagOnlyNonSemverHostAppReleaseId: number;
 			let esrUnifiedHostAppReleaseId: number;
 			let esrSemverOnlyHostAppReleaseId: number;
-			let invalidatedTagOnlyReleaseId: number;
-			let invalidatedSemverOnlyReleaseId: number;
+			let invalidatedNucTagOnlyReleaseId: number;
+			let invalidatedNucSemverOnlyReleaseId: number;
 			let unifiedHostAppReleaseId: number;
 			let unifiedSemverOnlyHostAppReleaseId: number;
 			let unifiedSemverRevHostAppReleaseId: number;
@@ -68,9 +68,9 @@ export default () => {
 					fx.releases.releaseNucEsrTagOnly.id;
 				esrUnifiedHostAppReleaseId = fx.releases.releaseNucEsrUnified.id;
 				esrSemverOnlyHostAppReleaseId = fx.releases.releaseNucEsrSemverOnly.id;
-				invalidatedTagOnlyReleaseId =
+				invalidatedNucTagOnlyReleaseId =
 					fx.releases.releaseNucInvalidated2_52_0_rev1TagOnly.id;
-				invalidatedSemverOnlyReleaseId =
+				invalidatedNucSemverOnlyReleaseId =
 					fx.releases.releaseNucInvalidated2_52_1rev1SemverOnly.id;
 				unifiedHostAppReleaseId = fx.releases.unified2_88_4Release.id;
 				unifiedSemverOnlyHostAppReleaseId =
@@ -768,72 +768,204 @@ export default () => {
 					[
 						'release_tag only',
 						'balenaOS 2.52.0+rev1',
-						() => invalidatedTagOnlyReleaseId,
+						() => invalidatedNucTagOnlyReleaseId,
 					],
 					[
 						'semver only',
 						'balenaOS 2.52.1+rev1',
-						() => invalidatedSemverOnlyReleaseId,
+						() => invalidatedNucSemverOnlyReleaseId,
 					],
 				] as const
-			).forEach(([osTypeTitlePart, initialOsVersion, getHostAppReleaseId]) => {
-				let invalidatedReleaseDevice: fakeDevice.Device;
+			).forEach(
+				([osTypeTitlePart, invalidatedOsVersion, getHostAppReleaseId]) => {
+					let invalidatedReleaseDevice: fakeDevice.Device;
 
-				it(`should provision with an invalidated ${osTypeTitlePart} hostapp release`, async () => {
-					invalidatedReleaseDevice = await fakeDevice.provisionDevice(
-						admin,
-						applicationId,
-					);
-					const initialInvalidatedReleaseId = getHostAppReleaseId();
-					await invalidatedReleaseDevice.patchStateV2({
-						local: {
-							os_version: initialOsVersion,
-							os_variant: 'prod',
-						},
-					});
-					await expectResourceToMatch(
-						pineUser,
-						'device',
-						invalidatedReleaseDevice.id,
-						{
-							os_version: initialOsVersion,
-							os_variant: 'prod',
-							should_be_operated_by__release: {
-								__id: initialInvalidatedReleaseId,
+					it(`should provision with an invalidated ${osTypeTitlePart} hostapp release`, async () => {
+						invalidatedReleaseDevice = await fakeDevice.provisionDevice(
+							admin,
+							applicationId,
+						);
+						const initialInvalidatedReleaseId = getHostAppReleaseId();
+						await invalidatedReleaseDevice.patchStateV2({
+							local: {
+								os_version: invalidatedOsVersion,
+								os_variant: 'prod',
 							},
-						},
-					);
-				});
+						});
+						await expectResourceToMatch(
+							pineUser,
+							'device',
+							invalidatedReleaseDevice.id,
+							{
+								os_version: invalidatedOsVersion,
+								os_variant: 'prod',
+								should_be_operated_by__release: {
+									__id: initialInvalidatedReleaseId,
+								},
+							},
+						);
+					});
 
-				it(`...should be able to update from an invalidated ${osTypeTitlePart} to a newer release`, async () => {
-					const supervisorVersion = 'v12.3.5';
-					const newOsVersion = 'balenaOS 2.88.5+rev1';
-					await invalidatedReleaseDevice.patchStateV2({
-						local: {
-							supervisor_version: supervisorVersion,
-							os_version: newOsVersion,
-							os_variant: 'prod',
-						},
-					});
-					// after provisioning to our invalidated release, let's make sure we're not blocked
-					// in further PATCHing (ie there is no rule/hook blocking the device from working)
-					await expectResourceToMatch(
-						pineUser,
-						'device',
-						invalidatedReleaseDevice.id,
-						{
-							supervisor_version: supervisorVersion,
-							os_version: newOsVersion,
-							os_variant: 'prod',
-							// Atm the should_be_operated_by__release is only updated when the device provisions.
-							// We might change this during the scheduled or tri-app HUP.
-							should_be_operated_by__release: {
-								__id: unifiedSemverRevHostAppReleaseId,
+					it(`...should be able to do subsequent state PATCHes with an invalidated ${osTypeTitlePart} hostapp release when should_be_operated_by__release is already set`, async () => {
+						const initialInvalidatedReleaseId = getHostAppReleaseId();
+						await invalidatedReleaseDevice.patchStateV2({
+							local: {
+								os_version: invalidatedOsVersion,
+								os_variant: 'prod',
+								// adding an extra changed field to make sure that update runs
+								memory_usage: 1,
 							},
-						},
-					);
-				});
-			});
+						});
+						await expectResourceToMatch(
+							pineUser,
+							'device',
+							invalidatedReleaseDevice.id,
+							{
+								os_version: invalidatedOsVersion,
+								os_variant: 'prod',
+								should_be_operated_by__release: {
+									__id: initialInvalidatedReleaseId,
+								},
+							},
+						);
+					});
+
+					it(`...should be able to update from an invalidated ${osTypeTitlePart} to a newer release`, async () => {
+						const supervisorVersion = 'v12.3.5';
+						const newOsVersion = 'balenaOS 2.88.5+rev1';
+						await invalidatedReleaseDevice.patchStateV2({
+							local: {
+								supervisor_version: supervisorVersion,
+								os_version: newOsVersion,
+								os_variant: 'prod',
+							},
+						});
+						// after provisioning to our invalidated release, let's make sure we're not blocked
+						// in further PATCHing (ie there is no rule/hook blocking the device from working)
+						await expectResourceToMatch(
+							pineUser,
+							'device',
+							invalidatedReleaseDevice.id,
+							{
+								supervisor_version: supervisorVersion,
+								os_version: newOsVersion,
+								os_variant: 'prod',
+								// Atm the should_be_operated_by__release is only updated when the device provisions.
+								// We might change this during the scheduled or tri-app HUP.
+								should_be_operated_by__release: {
+									__id: unifiedSemverRevHostAppReleaseId,
+								},
+							},
+						);
+					});
+
+					it(`should be able to do subsequent state PATCHes with an invalidated ${osTypeTitlePart} hostapp release when should_be_operated_by__release is not set`, async () => {
+						// Emutalate a device that has the os_version set but should_be_operated_by__release is not set,
+						// or unset by a user, to confirm that subsequent state PATCHes still work.
+						const invalidatedReleaseLaterPatchDevice =
+							await fakeDevice.provisionDevice(admin, applicationId);
+						const initialInvalidatedReleaseId = getHostAppReleaseId();
+						await invalidatedReleaseLaterPatchDevice.patchStateV2({
+							local: {
+								os_version: invalidatedOsVersion,
+								os_variant: 'prod',
+							},
+						});
+						await expectResourceToMatch(
+							pineUser,
+							'device',
+							invalidatedReleaseLaterPatchDevice.id,
+							{
+								os_version: invalidatedOsVersion,
+								os_variant: 'prod',
+								should_be_operated_by__release: {
+									__id: initialInvalidatedReleaseId,
+								},
+							},
+						);
+						await pineUser.patch({
+							resource: 'device',
+							id: invalidatedReleaseLaterPatchDevice.id,
+							body: {
+								should_be_operated_by__release: null,
+							},
+						});
+						await expectResourceToMatch(
+							pineUser,
+							'device',
+							invalidatedReleaseLaterPatchDevice.id,
+							{
+								os_version: invalidatedOsVersion,
+								os_variant: 'prod',
+								should_be_operated_by__release: null,
+							},
+						);
+
+						await invalidatedReleaseLaterPatchDevice.patchStateV2({
+							local: {
+								os_version: invalidatedOsVersion,
+								os_variant: 'prod',
+								// adding an extra changed field to make sure that update runs
+								memory_usage: 2,
+							},
+						});
+						await expectResourceToMatch(
+							pineUser,
+							'device',
+							invalidatedReleaseLaterPatchDevice.id,
+							{
+								os_version: invalidatedOsVersion,
+								os_variant: 'prod',
+								should_be_operated_by__release: {
+									__id: initialInvalidatedReleaseId,
+								},
+							},
+						);
+					});
+
+					it(`should update the should_be_operated_by__release to an invalidated ${osTypeTitlePart} hostapp release when the device reports so`, async () => {
+						const invalidatedReleaseLaterPatchDevice =
+							await fakeDevice.provisionDevice(admin, applicationId);
+						await invalidatedReleaseLaterPatchDevice.patchStateV2({
+							local: {
+								os_version: 'balenaOS 2.50.0+rev1',
+								os_variant: 'prod',
+							},
+						});
+						await expectResourceToMatch(
+							pineUser,
+							'device',
+							invalidatedReleaseLaterPatchDevice.id,
+							{
+								os_version: 'balenaOS 2.50.0+rev1',
+								os_variant: 'prod',
+								should_be_operated_by__release: {
+									__id: nuc2_50_0_rev1prodTagOnlyId,
+								},
+							},
+						);
+						const laterInvalidatedReleaseId = getHostAppReleaseId();
+						await invalidatedReleaseLaterPatchDevice.patchStateV2({
+							local: {
+								os_version: invalidatedOsVersion,
+								os_variant: 'prod',
+							},
+						});
+						await expectResourceToMatch(
+							pineUser,
+							'device',
+							invalidatedReleaseLaterPatchDevice.id,
+							{
+								os_version: invalidatedOsVersion,
+								os_variant: 'prod',
+								should_be_operated_by__release: {
+									__id: laterInvalidatedReleaseId,
+								},
+							},
+						);
+					});
+				},
+			);
 
 			it('should be able to invalidate a release with devices attached', async () => {
 				await device2.patchStateV2({
@@ -860,11 +992,11 @@ export default () => {
 				await supertest(admin)
 					.patch(`/${version}/device(${device2.id})`)
 					.send({
-						should_be_operated_by__release: invalidatedSemverOnlyReleaseId,
+						should_be_operated_by__release: invalidatedNucSemverOnlyReleaseId,
 					})
 					.expect(
 						400,
-						`"Could not find a hostapp release with this ID ${invalidatedSemverOnlyReleaseId}"`,
+						`"Could not find a hostapp release with this ID ${invalidatedNucSemverOnlyReleaseId}"`,
 					);
 			});
 
