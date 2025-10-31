@@ -29,6 +29,11 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			if (!Number.isInteger(args.request.custom.hostappRelease)) {
 				throw new BadRequestError('Expected an ID for the hostapp release');
 			}
+			// Users shouldn't be able to upgrade to an invalid release, but the platform
+			// should be able to preserve the should_be_operated_by__release > os_version invariant
+			// even if the device reports an os_version that's of an invalidated release.
+			const allowInvalidated =
+				args.api.passthrough.req?.user === permissions.root.user;
 
 			// Ensure that we don't ever downgrade the hostapp
 			// from it's current version
@@ -37,6 +42,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 				args.api,
 				ids,
 				args.request.custom.hostappRelease,
+				allowInvalidated,
 			);
 		}
 	},
@@ -408,6 +414,7 @@ async function checkHostappReleaseUpgrades(
 	api: typeof sbvrUtils.api.resin,
 	deviceIds: number[],
 	newHostappReleaseId: number,
+	allowInvalidated: boolean,
 ) {
 	if (deviceIds.length === 0) {
 		return;
@@ -441,9 +448,11 @@ async function checkHostappReleaseUpgrades(
 				},
 			},
 			$filter: {
-				// we shouldn't be able to upgrade to an invalid release, but we can provision to one (so this isn't an
-				// SBVR rule)
-				is_invalidated: false,
+				...(!allowInvalidated && {
+					// Users shouldn't be able to upgrade to an invalid release, but we can provision to an invalidated one
+					// which the device might report on a subsequent PATCH, so this isn't an SBVR rule.
+					is_invalidated: false,
+				}),
 				status: 'success',
 			},
 		},
