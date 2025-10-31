@@ -3,11 +3,12 @@ import * as fixtures from './test-lib/fixtures.js';
 import * as fakeDevice from './test-lib/fake-device.js';
 
 import type { UserObjectParam } from './test-lib/supertest.js';
-import type { Application, Release } from '../src/balena-model.js';
+import type { Application, Image, Release } from '../src/balena-model.js';
 import { expectResourceToMatch } from './test-lib/api-helpers.js';
 import type { PineTest } from 'pinejs-client-supertest';
 import * as versions from './test-lib/versions.js';
 import { assertExists } from './test-lib/common.js';
+import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -124,8 +125,11 @@ export default () => {
 				let userApp: Application['Read'];
 				let intelNucHostApp: Application['Read'];
 				let intelNucHostAppRelease1: Release['Read'];
+				let intelNucHostAppImage1: PickDeferred<Image['Read']>;
 				let deviceWithHostApp: fakeDevice.Device;
 				let deviceWithoutHostApp: fakeDevice.Device;
+				let balenaHupBlockAmd64: Application['Read'];
+				let balenaHupBlockAmd64Image1: PickDeferred<Image['Read']>;
 
 				before(async () => {
 					fx = await fixtures.load('19-apps');
@@ -139,6 +143,9 @@ export default () => {
 					userApp = fx.applications.app1;
 					intelNucHostApp = fx.applications['intel-nuc'];
 					intelNucHostAppRelease1 = fx.releases.intelNucHostAppRelease1;
+					intelNucHostAppImage1 = fx.images.intelNucHostAppImage1;
+					balenaHupBlockAmd64 = fx.applications.balenaHupBlockAmd64;
+					balenaHupBlockAmd64Image1 = fx.images.balenaHupBlockAmd64Image1;
 
 					deviceWithHostApp = await fakeDevice.provisionDevice(
 						admin,
@@ -171,39 +178,18 @@ export default () => {
 				});
 
 				after(async () => {
+					if (version === 'resin') {
+						// didn't add a cascade nullify, so that it's harder to delete the balena-hup block accidentally.
+						await pineAdmin.patch({
+							resource: 'application',
+							id: intelNucHostApp.id,
+							body: {
+								is_updated_by__application: null,
+							},
+						});
+					}
 					await fixtures.clean({ devices: [deviceWithHostApp] });
 					await fixtures.clean(fx);
-				});
-
-				it('should have a host app if operated by a release', async () => {
-					const state = await deviceWithHostApp.getStateV3();
-					expect(
-						Object.keys(state[deviceWithHostApp.uuid].apps).sort(),
-						'wrong number of apps',
-					).to.deep.equal([intelNucHostApp.uuid, userApp.uuid].sort());
-
-					expect(state[deviceWithHostApp.uuid].apps)
-						.to.have.property(intelNucHostApp.uuid)
-						.that.is.an('object');
-					const stateGetHostApp =
-						state[deviceWithHostApp.uuid].apps?.[intelNucHostApp.uuid];
-					assertExists(stateGetHostApp);
-					expect(stateGetHostApp).to.have.property(
-						'name',
-						intelNucHostApp.app_name,
-					);
-					expect(stateGetHostApp).to.have.property('is_host', true);
-					expect(stateGetHostApp).to.have.property('class', 'app');
-					expect(stateGetHostApp)
-						.to.have.nested.property('releases')
-						.that.has.property(intelNucHostAppRelease1.commit)
-						.that.is.an('object');
-					expect(stateGetHostApp.releases?.[intelNucHostAppRelease1.commit])
-						.to.have.property('services')
-						.that.has.property('main')
-						.that.is.an('object')
-						.and.has.property('labels')
-						.that.has.property('io.balena.image.store', 'root');
 				});
 
 				it('should not have a host app if not operated by a release', async () => {
@@ -218,6 +204,88 @@ export default () => {
 						'host app should not be included',
 					).to.not.have.property(intelNucHostApp.uuid);
 				});
+
+				it('should have a host app if operated by a release', async () => {
+					const state = await deviceWithHostApp.getStateV3();
+					expect(
+						Object.keys(state[deviceWithHostApp.uuid].apps).sort(),
+						'wrong number of apps',
+					).to.deep.equal([intelNucHostApp.uuid, userApp.uuid].sort());
+
+					expect(state[deviceWithHostApp.uuid].apps)
+						.to.have.property(intelNucHostApp.uuid)
+						.that.is.an('object');
+					const stateGetHostApp =
+						state[deviceWithHostApp.uuid].apps?.[intelNucHostApp.uuid];
+					expect(stateGetHostApp).to.deep.equal({
+						id: intelNucHostApp.id,
+						name: intelNucHostApp.app_name,
+						is_host: true,
+						class: 'app',
+						releases: {
+							[intelNucHostAppRelease1.commit]: {
+								id: intelNucHostAppRelease1.id,
+								services: {
+									main: {
+										id: intelNucHostAppImage1.is_a_build_of__service.__id,
+										image_id: intelNucHostAppImage1.id,
+										image: intelNucHostAppImage1.is_stored_at__image_location,
+										environment: {},
+										labels: {
+											'io.balena.image.store': 'root',
+										},
+									},
+								},
+							},
+						},
+					});
+				});
+
+				if (version === 'resin') {
+					it('should include the updater block label in the host app once set', async () => {
+						await pineAdmin.patch({
+							resource: 'application',
+							id: intelNucHostApp.id,
+							body: {
+								is_updated_by__application: balenaHupBlockAmd64.id,
+							},
+						});
+						const state = await deviceWithHostApp.getStateV3();
+						expect(
+							Object.keys(state[deviceWithHostApp.uuid].apps).sort(),
+							'wrong number of apps',
+						).to.deep.equal([intelNucHostApp.uuid, userApp.uuid].sort());
+
+						expect(state[deviceWithHostApp.uuid].apps)
+							.to.have.property(intelNucHostApp.uuid)
+							.that.is.an('object');
+						const stateGetHostApp =
+							state[deviceWithHostApp.uuid].apps?.[intelNucHostApp.uuid];
+						expect(stateGetHostApp).to.deep.equal({
+							id: intelNucHostApp.id,
+							name: intelNucHostApp.app_name,
+							is_host: true,
+							class: 'app',
+							releases: {
+								[intelNucHostAppRelease1.commit]: {
+									id: intelNucHostAppRelease1.id,
+									services: {
+										main: {
+											id: intelNucHostAppImage1.is_a_build_of__service.__id,
+											image_id: intelNucHostAppImage1.id,
+											image: intelNucHostAppImage1.is_stored_at__image_location,
+											environment: {},
+											labels: {
+												'io.balena.image.store': 'root',
+												'io.balena.private.updater': `${balenaHupBlockAmd64Image1.is_stored_at__image_location}@${balenaHupBlockAmd64Image1.content_hash}`,
+											},
+										},
+									},
+								},
+							},
+						});
+					});
+				}
 			});
 		});
 	});
