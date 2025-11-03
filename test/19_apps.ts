@@ -7,7 +7,6 @@ import type { Application, Image, Release } from '../src/balena-model.js';
 import { expectResourceToMatch } from './test-lib/api-helpers.js';
 import type { PineTest } from 'pinejs-client-supertest';
 import * as versions from './test-lib/versions.js';
-import { assertExists } from './test-lib/common.js';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 
 export default () => {
@@ -24,6 +23,7 @@ export default () => {
 				let userApp: Application['Read'];
 				let supervisorApp: Application['Read'];
 				let supervisorRelease2: Release['Read'];
+				let supervisorImage2: PickDeferred<Image['Read']>;
 				let deviceWithSupervisor: fakeDevice.Device;
 				let deviceWithoutSupervisor: fakeDevice.Device;
 
@@ -39,6 +39,7 @@ export default () => {
 					userApp = fx.applications.app1;
 					supervisorApp = fx.applications.supervisorApp;
 					supervisorRelease2 = fx.releases.supervisorRelease2;
+					supervisorImage2 = fx.images.supervisorImage2;
 
 					deviceWithSupervisor = await fakeDevice.provisionDevice(
 						admin,
@@ -75,6 +76,19 @@ export default () => {
 					await fixtures.clean(fx);
 				});
 
+				it('should not have a supervisor app if not managed by release', async () => {
+					const state = await deviceWithoutSupervisor.getStateV3();
+					expect(
+						Object.keys(state[deviceWithoutSupervisor.uuid].apps),
+						'wrong number of apps',
+					).to.deep.equal([userApp.uuid]);
+
+					expect(
+						state[deviceWithoutSupervisor.uuid].apps,
+						'supervisor app should not be included',
+					).to.not.have.property(supervisorApp.uuid);
+				});
+
 				it('should have a supervisor app if managed by release', async () => {
 					const state = await deviceWithSupervisor.getStateV3();
 					expect(
@@ -87,34 +101,26 @@ export default () => {
 						.that.is.an('object');
 					const supervisorApp1 =
 						state[deviceWithSupervisor.uuid].apps?.[supervisorApp.uuid];
-					assertExists(supervisorApp1);
-					expect(supervisorApp1).to.have.property(
-						'name',
-						supervisorApp.app_name,
-					);
-					expect(supervisorApp1).to.have.property('is_host', false);
-					expect(supervisorApp1).to.have.property('class', 'app');
-					expect(supervisorApp1)
-						.to.have.nested.property('releases')
-						.that.has.property(supervisorRelease2.commit)
-						.that.is.an('object');
-					expect(supervisorApp1.releases?.[supervisorRelease2.commit])
-						.to.have.property('services')
-						.that.has.property('resin-supervisor')
-						.that.is.an('object');
-				});
-
-				it('should not have a supervisor app if not managed by release', async () => {
-					const state = await deviceWithoutSupervisor.getStateV3();
-					expect(
-						Object.keys(state[deviceWithoutSupervisor.uuid].apps),
-						'wrong number of apps',
-					).to.deep.equal([userApp.uuid]);
-
-					expect(
-						state[deviceWithoutSupervisor.uuid].apps,
-						'supervisor app should not be included',
-					).to.not.have.property(supervisorApp.uuid);
+					expect(supervisorApp1).to.deep.equal({
+						id: supervisorApp.id,
+						name: supervisorApp.app_name,
+						is_host: false,
+						class: 'app',
+						releases: {
+							[supervisorRelease2.commit]: {
+								id: supervisorRelease2.id,
+								services: {
+									'resin-supervisor': {
+										id: supervisorImage2.is_a_build_of__service.__id,
+										image_id: supervisorImage2.id,
+										image: supervisorImage2.is_stored_at__image_location,
+										environment: {},
+										labels: {},
+									},
+								},
+							},
+						},
+					});
 				});
 			});
 
