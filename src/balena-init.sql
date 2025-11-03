@@ -44,6 +44,8 @@ CREATE INDEX IF NOT EXISTS "application_organization_idx"
 ON "application" ("organization");
 CREATE INDEX IF NOT EXISTS "application_release_idx"
 ON "application" ("should be running-release");
+CREATE INDEX IF NOT EXISTS "application_is_updated_by_application_idx"
+ON "application" ("is updated by-application");
 CREATE INDEX IF NOT EXISTS "application_application_type_idx"
 ON "application" ("application type");
 
