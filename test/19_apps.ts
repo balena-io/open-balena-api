@@ -134,6 +134,8 @@ export default () => {
 				let intelNucHostAppImage1: PickDeferred<Image['Read']>;
 				let deviceWithHostApp: fakeDevice.Device;
 				let deviceWithoutHostApp: fakeDevice.Device;
+				let balenaHupBlockAmd64: Application['Read'];
+				let balenaHupBlockAmd64Image1: PickDeferred<Image['Read']>;
 
 				before(async () => {
 					fx = await fixtures.load('19-apps');
@@ -148,6 +150,8 @@ export default () => {
 					intelNucHostApp = fx.applications['intel-nuc'];
 					intelNucHostAppRelease1 = fx.releases.intelNucHostAppRelease1;
 					intelNucHostAppImage1 = fx.images.intelNucHostAppImage1;
+					balenaHupBlockAmd64 = fx.applications.balenaHupBlockAmd64;
+					balenaHupBlockAmd64Image1 = fx.images.balenaHupBlockAmd64Image1;
 
 					deviceWithHostApp = await fakeDevice.provisionDevice(
 						admin,
@@ -180,6 +184,16 @@ export default () => {
 				});
 
 				after(async () => {
+					if (version === 'resin') {
+						// didn't add a cascade nullify, so that it's harder to delete the balena-hup block accidentally.
+						await pineAdmin.patch({
+							resource: 'application',
+							id: intelNucHostApp.id,
+							body: {
+								is_updated_by__application: null,
+							},
+						});
+					}
 					await fixtures.clean({ devices: [deviceWithHostApp] });
 					await fixtures.clean(fx);
 				});
@@ -232,6 +246,52 @@ export default () => {
 						},
 					});
 				});
+
+				if (version === 'resin') {
+					it('should include the updater block label in the host app once set', async () => {
+						await pineAdmin.patch({
+							resource: 'application',
+							id: intelNucHostApp.id,
+							body: {
+								is_updated_by__application: balenaHupBlockAmd64.id,
+							},
+						});
+						const state = await deviceWithHostApp.getStateV3();
+						expect(
+							Object.keys(state[deviceWithHostApp.uuid].apps).sort(),
+							'wrong number of apps',
+						).to.deep.equal([intelNucHostApp.uuid, userApp.uuid].sort());
+
+						expect(state[deviceWithHostApp.uuid].apps)
+							.to.have.property(intelNucHostApp.uuid)
+							.that.is.an('object');
+						const stateGetHostApp =
+							state[deviceWithHostApp.uuid].apps?.[intelNucHostApp.uuid];
+						expect(stateGetHostApp).to.deep.equal({
+							id: intelNucHostApp.id,
+							name: intelNucHostApp.app_name,
+							is_host: true,
+							class: 'app',
+							releases: {
+								[intelNucHostAppRelease1.commit]: {
+									id: intelNucHostAppRelease1.id,
+									services: {
+										main: {
+											id: intelNucHostAppImage1.is_a_build_of__service.__id,
+											image_id: intelNucHostAppImage1.id,
+											image: intelNucHostAppImage1.is_stored_at__image_location,
+											environment: {},
+											labels: {
+												'io.balena.image.store': 'root',
+												'io.balena.private.updater': `${balenaHupBlockAmd64Image1.is_stored_at__image_location}@${balenaHupBlockAmd64Image1.content_hash}`,
+											},
+										},
+									},
+								},
+							},
+						});
+					});
+				}
 			});
 		});
 	});

@@ -18,5 +18,10 @@
 		"user": "admin",
 		"service_name": "main",
 		"application": "intel-nuc"
+	},
+	"balenaHupBlockAmd64Service": {
+		"user": "admin",
+		"service_name": "main",
+		"application": "balenaHupBlockAmd64"
 	}
 }

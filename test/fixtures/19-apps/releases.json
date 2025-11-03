@@ -103,5 +103,20 @@
 		"source": "cloud",
 		"status": "success",
 		"user": "admin"
+	},
+	"balenaHupBlockAmd64Release1": {
+		"user": "admin",
+		"application": "balenaHupBlockAmd64",
+		"commit": "34353697555b42f18b835bc8c2856576",
+		"status": "success",
+		"semver": "1.0.0",
+		"composition": {
+			"services": {
+				"main": {
+					"build": "./"
+				}
+			}
+		},
+		"source": "cloud"
 	}
 }

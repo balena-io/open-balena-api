@@ -18,8 +18,6 @@ import { sbvrUtils } from '@balena/pinejs';
 import { events } from '../index.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 import { getIP } from '../../../lib/utils.js';
-import type { OptionsToResponse } from 'pinejs-client-core';
-import type { Application } from '../../../balena-model.js';
 import type { ExpandedApplicationWithService } from './fleet-state-get-v3.js';
 
 const { api } = sbvrUtils;
@@ -27,16 +25,11 @@ const { api } = sbvrUtils;
 type LocalStateApp = StateV3[string]['apps'][string];
 type ServiceComposition = AnyObject;
 type ExpandedDevice = Awaited<ReturnType<typeof getDevice>>;
-type ExpandedApplication = NonNullable<
-	OptionsToResponse<
-		Application['Read'],
-		{
-			$select: typeof appSelect;
-			$expand: typeof appExpand;
-		},
-		number
-	>
->;
+type ExpandedApplication =
+	| ExpandedDevice['belongs_to__application'][number]
+	| ExpandedDevice[
+			| 'should_be_managed_by__release'
+			| 'should_be_operated_by__release'][number]['belongs_to__application'][number];
 
 type TargetReleaseField =
 	| 'should_be_running__release'
@@ -144,6 +137,22 @@ export function buildAppFromRelease(
 				)
 			: {};
 
+	const updaterImage =
+		'is_updated_by__application' in application &&
+		application.is_updated_by__application != null &&
+		Array.isArray(application.is_updated_by__application)
+			? application.is_updated_by__application[0]?.should_be_running__release[0]
+					?.release_image[0]?.image[0]
+			: undefined;
+	const updaterImageRegistryUrl =
+		updaterImage == null
+			? null
+			: `${updaterImage.is_stored_at__image_location}${
+					updaterImage.content_hash != null
+						? `@${updaterImage.content_hash}`
+						: ''
+				}`;
+
 	for (const ipr of release.release_image) {
 		const image = ipr.image[0];
 		const svc = image.is_a_build_of__service[0];
@@ -184,6 +193,10 @@ export function buildAppFromRelease(
 				labels[labelName] = config[confName];
 			}
 		});
+
+		if (updaterImageRegistryUrl != null) {
+			labels['io.balena.private.updater'] = updaterImageRegistryUrl;
+		}
 
 		const imgRegistry =
 			image.is_stored_at__image_location +
@@ -272,6 +285,26 @@ const appExpand = {
 		$select: ['name', 'value'],
 	},
 } as const;
+const updaterBlockExpand = {
+	is_updated_by__application: {
+		$select: 'id',
+		$expand: {
+			should_be_running__release: {
+				$select: 'id',
+				$expand: {
+					release_image: {
+						$select: 'id',
+						$expand: {
+							image: {
+								$select: ['is_stored_at__image_location', 'content_hash'],
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+} as const;
 const deviceExpand = {
 	device_config_variable: {
 		$select: ['name', 'value'],
@@ -309,7 +342,10 @@ const deviceExpand = {
 			...releaseExpand.$expand,
 			belongs_to__application: {
 				$select: appSelect,
-				$expand: appExpand,
+				$expand: {
+					...appExpand,
+					...updaterBlockExpand,
+				},
 			},
 		},
 	},
