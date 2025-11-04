@@ -106,16 +106,14 @@ const createServiceInstalls = async ({
 			}),
 		);
 
-		const serviceIds = [
-			...new Set([...targetServicesByDevice.values()].flat()),
-		];
+		const serviceIds = new Set([...targetServicesByDevice.values()].flat());
 
-		if (serviceIds.length === 0) {
+		if (serviceIds.size === 0) {
 			console.info('[service-install-task] No service installs to create');
 			return 0;
 		}
 
-		const missingServiceFilters = serviceIds.map((serviceId) => ({
+		const missingServiceFilters = Array.from(serviceIds, (serviceId) => ({
 			$not: {
 				service_install: {
 					$any: {
@@ -140,7 +138,7 @@ const createServiceInstalls = async ({
 						service_install: {
 							$select: 'installs__service',
 							$filter: {
-								installs__service: { $in: serviceIds },
+								installs__service: { $in: [...serviceIds] },
 							},
 						},
 					},

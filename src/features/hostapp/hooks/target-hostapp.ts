@@ -187,7 +187,8 @@ async function setOSReleaseIfNewer(
 	});
 
 	return Promise.all(
-		Array.from(devicesByDeviceTypeId.entries()).map(
+		Array.from(
+			devicesByDeviceTypeId.entries(),
 			async ([deviceTypeId, affectedDevices]) => {
 				const newOsRelease = await getOSReleaseResource(
 					api,
