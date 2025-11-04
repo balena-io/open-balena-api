@@ -348,7 +348,8 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 						: groupByMap(releasesOfApp, (r) => r.variant);
 
 				await Promise.all(
-					Array.from(releasesByVariant.entries()).map(
+					Array.from(
+						releasesByVariant.entries(),
 						async ([variant, releases]) => {
 							if (semverObject != null) {
 								const nextRevision = await getNextRevision(
