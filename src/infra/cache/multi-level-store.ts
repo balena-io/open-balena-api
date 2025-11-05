@@ -4,7 +4,7 @@ import { version } from '../../lib/config.js';
 import type { Defined } from './index.js';
 import { getRedisOptions } from '../redis/config.js';
 
-const usedCacheKeys: Dictionary<true> = {};
+const usedCacheKeys = new Set<string>();
 
 export type MultiStoreOpt = Pick<cacheManager.StoreConfig, 'ttl' | 'max'> & {
 	refreshThreshold?: number;
@@ -32,10 +32,10 @@ export function createMultiLevelStore<T extends Defined>(
 	delete: (key: string) => Promise<void>;
 	wrap: (key: string, fn: () => T | Promise<T>) => Promise<T>;
 } {
-	if (usedCacheKeys[cacheKey] === true) {
+	if (usedCacheKeys.has(cacheKey)) {
 		throw new Error(`Cache key '${cacheKey}' has already been taken`);
 	}
-	usedCacheKeys[cacheKey] = true;
+	usedCacheKeys.add(cacheKey);
 
 	const { default: baseOpts, local, global, useVersion } = opts;
 	const { isCacheableValue } = baseOpts;

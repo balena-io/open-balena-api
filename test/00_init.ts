@@ -20,7 +20,7 @@ const testFiles = _(process.env.TEST_FILES)
 		}
 	});
 
-const prefixes: Dictionary<true> = {};
+const prefixes = new Set<string>();
 
 try {
 	for (let fileName of (
@@ -38,10 +38,10 @@ try {
 			continue;
 		}
 		const prefix = fileName.split('_', 1)[0];
-		if (prefixes[prefix]) {
+		if (prefixes.has(prefix)) {
 			throw new Error(`Prefix ${prefix} has already been used`);
 		}
-		prefixes[prefix] = true;
+		prefixes.add(prefix);
 		if (prefix === '00') {
 			// Don't double load this file
 			continue;
