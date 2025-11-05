@@ -18,19 +18,19 @@ import { redis } from '../redis/index.js';
 
 const { TooManyRequestsError } = errors;
 
-const usedKeyScopes: Dictionary<true> = {};
+const usedKeyScopes = new Set<string>();
 
 // Use redis as a store.
 export const createRateLimiter = (
 	keyScope: string,
 	opts: IRateLimiterOptions,
 ) => {
-	if (usedKeyScopes[keyScope] === true) {
+	if (usedKeyScopes.has(keyScope)) {
 		throw new Error(
 			`RateLimiter scope key '${keyScope}' has already been taken`,
 		);
 	}
-	usedKeyScopes[keyScope] = true;
+	usedKeyScopes.add(keyScope);
 
 	if (opts.points != null) {
 		opts.points *= RATE_LIMIT_FACTOR;
