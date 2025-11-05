@@ -117,7 +117,9 @@ function validateFieldProp<U>(
 	fn: (field: unknown) => field is U,
 ): field is U | null {
 	if (mandatory) {
-		return field != null && fn(field);
+		// it is mandatory for users to provide the property in the request
+		// but null is a valid value.
+		return field === null || fn(field);
 	}
 	return field == null || fn(field);
 }
