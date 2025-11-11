@@ -1016,19 +1016,6 @@ export default () => {
 									})
 									.expect(200);
 							});
-
-							it('should be able to create an api key with a null expiry date', async function () {
-								await supertest(this.user)
-									.post(`/api-key/${apiKeyVersion}/`)
-									.send({
-										actorType: 'user',
-										actorTypeId: this.user.id,
-										roles: ['named-user-api-key'],
-										name: 'Named Key',
-										expiryDate: null,
-									})
-									.expect(200);
-							});
 						} else {
 							it('should fail to create an api key without an expiry date', async function () {
 								await supertest(this.user)
@@ -1041,20 +1028,20 @@ export default () => {
 									})
 									.expect(400, '"Key expiry date should be a valid date"');
 							});
-
-							it('should fail to create an api key with a null expiry date', async function () {
-								await supertest(this.user)
-									.post(`/api-key/${apiKeyVersion}/`)
-									.send({
-										actorType: 'user',
-										actorTypeId: this.user.id,
-										roles: ['named-user-api-key'],
-										name: 'Named Key',
-										expiryDate: null,
-									})
-									.expect(400, '"Key expiry date should be a valid date"');
-							});
 						}
+
+						it('should be able to create an api key with a null expiry date', async function () {
+							await supertest(this.user)
+								.post(`/api-key/${apiKeyVersion}/`)
+								.send({
+									actorType: 'user',
+									actorTypeId: this.user.id,
+									roles: ['named-user-api-key'],
+									name: 'Named Key',
+									expiryDate: null,
+								})
+								.expect(200);
+						});
 					});
 				});
 			}
