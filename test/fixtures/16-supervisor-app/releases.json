@@ -76,6 +76,68 @@
 			}
 		}
 	},
+	"8.0.4-draft": {
+		"user": "admin",
+		"application": "amd64_supervisor_app",
+		"semver": "8.0.4",
+		"is_final": false,
+		"status": "success",
+		"source": "cloud",
+		"composition": {
+			"services": {
+				"image7": {
+					"build": "./image7/"
+				}
+			}
+		}
+	},
+	"8.0.4": {
+		"user": "admin",
+		"application": "amd64_supervisor_app",
+		"semver": "8.0.4",
+		"revision": 0,
+		"status": "success",
+		"source": "cloud",
+		"composition": {
+			"services": {
+				"image7": {
+					"build": "./image7/"
+				}
+			}
+		}
+	},
+	"8.0.4+rev1": {
+		"user": "admin",
+		"application": "amd64_supervisor_app",
+		"semver": "8.0.4",
+		"revision": 1,
+		"createAfterRelease": "8.0.4",
+		"status": "success",
+		"source": "cloud",
+		"composition": {
+			"services": {
+				"image7": {
+					"build": "./image7/"
+				}
+			}
+		}
+	},
+	"8.0.4+rev2-failed": {
+		"user": "admin",
+		"application": "amd64_supervisor_app",
+		"semver": "8.0.4",
+		"revision": 2,
+		"createAfterRelease": "8.0.4+rev1",
+		"status": "failed",
+		"source": "cloud",
+		"composition": {
+			"services": {
+				"image7": {
+					"build": "./image7/"
+				}
+			}
+		}
+	},
 	"8.1.1": {
 		"user": "admin",
 		"application": "amd64_supervisor_app",
