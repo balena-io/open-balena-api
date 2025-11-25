@@ -1,4 +1,223 @@
 - commits:
+    - subject: Update dependencies
+      hash: 08fa41fd7e7f012babe2e7b61c933ee97a93dc02
+      body: |
+        Update @balena/pinejs from 23.2.0 to 23.2.12
+        Update pinejs-client-core from 8.4.0 to 8.5.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Pre-allocate a buffer to improve performance for hashing sql
+              hash: d50220d1083d63be27acd2fc6dbfbd492f7ef361
+              body: >
+                This avoids constantly creating new buffers for each call and
+                the
+
+                associated GC work
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-23.2.12
+          title: ""
+          date: 2025-11-13T22:43:28.960Z
+        - commits:
+            - subject: Update pinejs-client-core to 8.4.1
+              hash: fb35a0707998cbbdf4d61dfbcd622f817996e6de
+              body: |
+                Update pinejs-client-core from 8.4.0 to 8.4.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Thodoris Greasidis
+              nested:
+                - commits:
+                    - subject: Stop adding white space after comma in $in expressions
+                      hash: a0530b427983bab8b826a0e3d313531fa15aa377
+                      body: >
+                        inExpr = RWS "in" RWS ( listExpr / commonExpr )
+
+                        listExpr  = OPEN BWS primitiveLiteral BWS *( COMMA BWS
+                        primitiveLiteral BWS ) CLOSE
+
+                        COMMA  = "," / "%2C"
+
+                        BWS =  f( SP / HTAB / "%20" / "%09" )  ; "bad"
+                        whitespace
+                      footer:
+                        Change-type: patch
+                        change-type: patch
+                        See: https://docs.oasis-open.org/odata/odata/v4.01/os/abnf/odata-abnf-construction-rules.txt
+                        see: https://docs.oasis-open.org/odata/odata/v4.01/os/abnf/odata-abnf-construction-rules.txt
+                      author: Thodoris Greasidis
+                      nested: []
+                  version: pinejs-client-js-8.4.1
+                  title: ""
+                  date: 2025-11-10T17:12:36.457Z
+          version: pinejs-23.2.11
+          title: ""
+          date: 2025-11-10T21:48:31.823Z
+        - commits:
+            - subject: Avoid deep cloning relationships when hitting additional permissions
+                for constrained models
+              hash: 87f3eab16ce45346d89731020adbcf7334792d14
+              body: |
+                This reduces the memory usage for each constrained model
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-23.2.10
+          title: ""
+          date: 2025-11-07T15:10:34.414Z
+        - commits:
+            - subject: "db-layer: switch `maybePrepareCache` to using a `Map`"
+              hash: 4ad09860d7370eb267c8597fba253d1f0d272f42
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: "db-layer: switch `transactionLockNamespaceMap` to using a `Map`"
+              hash: 46f213c6657b98b70ea28fdf13763de850a02651
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-23.2.9
+          title: ""
+          date: 2025-11-05T16:39:05.353Z
+        - commits:
+            - subject: "Tasks: switch to using a `Map` for storing task handlers"
+              hash: f8e3bc91c79b9644ec81f640e89cda9699ff7925
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-23.2.8
+          title: ""
+          date: 2025-11-05T14:56:32.740Z
+        - commits:
+            - subject: Avoid deep cloning tables when creating translated models
+              hash: 22caee0573cf4d1c0fe65ac827d22ef68fee2a49
+              body: |
+                This reduces the memory usage for each translated model
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-23.2.7
+          title: ""
+          date: 2025-11-05T13:49:53.164Z
+        - commits:
+            - subject: "Tests: use `Array.from`'s `mapFn` argument to avoid intermediate
+                arrays"
+              hash: ff7f89973b8055031bf2395c72dd2cb294e5beb6
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-23.2.6
+          title: ""
+          date: 2025-11-04T21:20:32.506Z
+        - commits:
+            - subject: Avoid deep cloning relationships when creating constrained models
+              hash: b3a7649dde0956aadfbc7248d36245fcf7d7eaf1
+              body: |
+                This reduces the memory usage for each constrained model
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-23.2.5
+          title: ""
+          date: 2025-11-03T17:28:11.891Z
+        - commits:
+            - subject: "odata-response: avoid iterating the field names when there are no
+                webresource fields"
+              hash: 37ad9263d98e1f823538c52c5d87ab4ed9cde91d
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: "odata-response: use native functions for creating
+                `fetchProcessingFields`"
+              hash: 1e283f7e4913b9d185d1c4f43437bf682f571521
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+            - subject: "odata-response: use `Set`s for `localFields`/`webresourceFields`
+                lookups"
+              hash: 24f0a65e6cf629578d245584833c7673ef1e7e15
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-23.2.4
+          title: ""
+          date: 2025-10-30T13:22:59.929Z
+        - commits:
+            - subject: "Translations: remove dead code when namespacing relationships"
+              hash: a00806079ad2bd2edad1d0ffd3cf5b178fa67c6e
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-23.2.3
+          title: ""
+          date: 2025-10-29T16:06:48.566Z
+        - commits:
+            - subject: Reduce unnecessary assignments
+              hash: 0604941acdc48f459ccfdc0d548ce93b4bf57f83
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-23.2.2
+          title: ""
+          date: 2025-10-29T15:08:13.960Z
+        - commits:
+            - subject: Avoid deep cloning tables when creating constrained models
+              hash: 172b1fb7781af36e172e88ca603b7d602e8b5653
+              body: |
+                This reduces the memory usage for each constrained model
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: pinejs-23.2.1
+          title: ""
+          date: 2025-10-29T14:04:01.119Z
+  version: 43.3.3
+  title: ""
+  date: 2025-11-25T16:04:07.859Z
+- commits:
     - subject: Update dependency @types/sinon to v21
       hash: 52a48ab7aca371126f223325835dc1575c1b677c
       body: |
@@ -6854,6 +7073,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -6886,6 +7106,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -8148,6 +8369,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -8195,6 +8417,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -8545,6 +8768,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -8582,6 +8806,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -9010,6 +9235,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -9038,6 +9264,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -9231,6 +9458,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -9593,6 +9821,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -9738,6 +9967,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -10267,6 +10497,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -10289,6 +10520,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -10489,6 +10721,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -10912,6 +11145,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -10934,6 +11168,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -11134,6 +11369,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -15527,6 +15763,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -15559,6 +15796,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -17135,6 +17373,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -17182,6 +17421,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -17796,6 +18036,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -17833,6 +18074,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -18625,6 +18867,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -18653,6 +18896,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -18978,6 +19222,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -19604,6 +19849,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -19749,6 +19995,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -20542,6 +20789,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -20564,6 +20812,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -20896,6 +21145,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -21583,6 +21833,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -21605,6 +21856,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -21937,6 +22189,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -24637,6 +24890,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -24659,6 +24913,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -24991,6 +25246,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -25681,6 +25937,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -25709,6 +25966,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -26033,6 +26291,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -26657,6 +26916,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/sbvr-types
                                                                 from 3.4.18 to 3.5.0
@@ -26802,6 +27062,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
