@@ -529,6 +529,12 @@ function setupMiddleware(app: Application) {
 
 	app.use(bodyParser.json({ type: isJson, limit: '512kb' }));
 	app.use(bodyParser.urlencoded({ extended: true }));
+	app.use((req, _res, next) => {
+		// Ensure req.body is always defined to match body-parser v1 / express v4 behavior
+		// TODO: Remove the reliance on req.body always being defined
+		req.body ??= {};
+		next();
+	});
 	app.use(passport.initialize());
 	app.use(AUTH_PATH, cookieSession({ secret: COOKIE_SESSION_SECRET }));
 
