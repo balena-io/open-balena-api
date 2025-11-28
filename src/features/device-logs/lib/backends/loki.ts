@@ -274,10 +274,13 @@ export class LokiBackend implements DeviceLogsBackend {
 		} catch (err) {
 			incrementPublishCallFailedTotal();
 			incrementPublishLogMessagesDropped(countLogs);
-			captureException(
-				err,
-				`Failed to publish logs for device ${lokiCtx.uuid}`,
-			);
+			if (err.code !== 429) {
+				// Don't capture 429 errors as they are expected during rate limiting
+				captureException(
+					err,
+					`Failed to publish logs for device ${lokiCtx.uuid}`,
+				);
+			}
 			throw new BadRequestError(
 				`Failed to publish logs for device ${lokiCtx.uuid}`,
 			);
