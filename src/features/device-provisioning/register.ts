@@ -21,14 +21,31 @@ import { normalizeDeviceWriteBody } from '../device-state/state-patch-utils.js';
 const { BadRequestError, ConflictError } = errors;
 const { api } = sbvrUtils;
 
+type RegisterRequest = {
+	uuid: string;
+	device_type: string;
+	supervisor_version?: string;
+	os_version?: string;
+	os_variant?: string;
+	mac_address?: string;
+
+	// optional Map<AppUuid, ReleaseId> to pin the device to
+	releases?: Record<string, string>;
+
+	// optional Map<ConfigVarKey, Value> to insert
+	config?: Record<string, string>;
+};
+
 export const register: RequestHandler = async (req, res) => {
 	try {
-		const deviceTypeSlug = req.body.device_type;
+		const body = req.body as RegisterRequest;
+
+		const deviceTypeSlug = body.device_type;
 		if (deviceTypeSlug == null) {
 			throw new BadRequestError('Device type must be specified');
 		}
 
-		const uuid = req.body.uuid;
+		const uuid = body.uuid;
 		if (uuid == null) {
 			throw new BadRequestError('UUID must be specified');
 		}
@@ -38,9 +55,9 @@ export const register: RequestHandler = async (req, res) => {
 			os_version: osVersion,
 			os_variant: osVariant,
 			mac_address: macAddress,
-			releases: _releases, // optional Map<AppUuid, ReleaseId> to pin the device to
-			config: deviceConfig, // optional Map<ConfigVarKey, Value> to insert
-		} = req.body;
+			releases: _releases = {},
+			config: deviceConfig = {},
+		} = body;
 
 		// validate device config vars
 		for (const key of deviceConfig) {
@@ -118,7 +135,6 @@ export const register: RequestHandler = async (req, res) => {
 				expiryDate: null,
 			});
 			return {
-				id: device.id,
 				uuid: device.uuid,
 				api_key: apiKey,
 			};
