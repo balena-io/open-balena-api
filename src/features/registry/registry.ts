@@ -558,10 +558,21 @@ const generateToken = (
 	audience: string,
 	access: Access[],
 ): string => {
+	const payloadAccess =
+		subject === 'admin'
+			? [
+					{
+						type: 'registry',
+						class: '',
+						name: 'catalog',
+						actions: ['*'],
+					},
+				]
+			: access;
 	const payload = {
 		jti: randomUUID(),
 		nbf: Math.floor(Date.now() / 1000) - 10,
-		access,
+		access: payloadAccess,
 	};
 	const options = {
 		algorithm: CERT.algo,
@@ -571,6 +582,8 @@ const generateToken = (
 		expiresIn: REGISTRY_TOKEN_EXPIRY_SECONDS,
 		keyid: CERT.kid,
 	};
+	console.error('=== payload:', JSON.stringify(payload, null, 2));
+	console.error('=== options:', JSON.stringify(options, null, 2));
 	return jsonwebtoken.sign(payload, CERT.key, options);
 };
 
