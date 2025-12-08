@@ -121,11 +121,19 @@ export const storeStream =
 	};
 
 function handleStoreErrors(req: Request, res: Response, err: Error) {
-	if (handleHttpErrors(req, res, err)) {
-		return;
+	if (!(err instanceof errors.HttpError)) {
+		// Log non `HttpError`s regardless of headers state
+		captureException(err, 'Failed to store device logs');
 	}
-	captureException(err, 'Failed to store device logs');
-	res.status(500).end();
+	if (res.headersSent) {
+		// If headers are already sent, we can't change the response code so we just end the response
+		res.end();
+	} else {
+		if (handleHttpErrors(req, res, err)) {
+			return;
+		}
+		res.status(500).end();
+	}
 }
 
 const primaryBackend = await getPrimaryBackend();
