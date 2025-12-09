@@ -93,9 +93,12 @@ export async function getFile(s3Path: string) {
 		if (isUnauthenticatedError(s3Client, err)) {
 			// catch errors for private device types when running unauthenticated
 			logUnauthenticated(s3Path, err);
-		} else {
-			throw err;
+			return;
 		}
+		if (err.statusCode === 404) {
+			return;
+		}
+		throw err;
 	}
 }
 
