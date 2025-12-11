@@ -544,6 +544,11 @@ export interface Application {
 		is_archived: Types['Boolean']['Read'];
 		uuid: Types['Text']['Read'];
 		is_public: Types['Boolean']['Read'];
+		is_updated_by__application:
+			| { __id: Application['Read']['id'] }
+			| [Application['Read']]
+			| []
+			| null;
 		application__has__env_var_name?: Array<
 			ApplicationEnvironmentVariable['Read']
 		>;
@@ -558,6 +563,7 @@ export interface Application {
 		service?: Array<Service['Read']>;
 		application__has__tag_key?: Array<ApplicationTag['Read']>;
 		application_tag?: Array<ApplicationTag['Read']>;
+		updates__application?: Array<Application['Read']>;
 		owns__device?: Array<Device['Read']>;
 		owns__release?: Array<Release['Read']>;
 		is_directly_accessible_by__user?: Array<
@@ -581,6 +587,7 @@ export interface Application {
 		is_archived: Types['Boolean']['Write'];
 		uuid: Types['Text']['Write'];
 		is_public: Types['Boolean']['Write'];
+		is_updated_by__application: Application['Write']['id'] | null;
 	};
 }
 
