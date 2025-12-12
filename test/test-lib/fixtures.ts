@@ -33,6 +33,7 @@ export type Fixtures = types.Dictionary<types.Dictionary<any>>;
 type LoaderFunc = (
 	jsonData: types.AnyObject,
 	fixtures: PartiallyAppliedFixtures,
+	jsonFixtures: Dictionary<any>,
 ) => PromiseLike<any>;
 
 const logErrorAndThrow = (message: string, ...args: any[]) => {
@@ -158,7 +159,7 @@ const loaders: types.Dictionary<LoaderFunc> = {
 			body: jsonData,
 		});
 	},
-	releases: async (jsonData, fixtures) => {
+	releases: async (jsonData, fixtures, releasesJson) => {
 		const user = await fixtures.users[jsonData.user];
 		if (user == null) {
 			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
@@ -167,6 +168,19 @@ const loaders: types.Dictionary<LoaderFunc> = {
 		const application = await fixtures.applications[jsonData.application];
 		if (application == null) {
 			logErrorAndThrow(`Could not find application: ${jsonData.application}`);
+		}
+		// create the releases of each application in the order they are defined in the fixtures
+		// so that the release.revision & the application target release is predictable
+		// and so that deadlocks from updating the same application.should_be_running__release can be avoided.
+		for (const [otherJsonKey, otherJsonData] of Object.entries(releasesJson)) {
+			// each release waits all other releases defined before itself
+			// and stops waiting once it has found itself.
+			if (jsonData === otherJsonData) {
+				break;
+			}
+			if (jsonData.application === otherJsonData.application) {
+				await fixtures.releases[otherJsonKey];
+			}
 		}
 
 		if (jsonData.revision > 1) {
@@ -182,11 +196,6 @@ const loaders: types.Dictionary<LoaderFunc> = {
 					} to wait for.`,
 				);
 			}
-		}
-
-		// helper to define a release create order - for application track latest feature.
-		if (jsonData.createAfterRelease) {
-			await fixtures.releases[jsonData.createAfterRelease];
 		}
 
 		const release = await createResource({
@@ -673,7 +682,9 @@ const loadFixtureModel = (
 	fixtures: PendingFixtures,
 	data: types.AnyObject,
 ) => {
-	return _.mapValues(data, async (d) => loader(d, await pProps(fixtures)));
+	return _.mapValues(data, async (d) =>
+		loader(d, await pProps(fixtures), data),
+	);
 };
 
 const defaultFixtures: PendingFixtures = {};
