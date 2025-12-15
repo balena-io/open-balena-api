@@ -79,5 +79,16 @@
 		"project_type": "Dockerfile.template",
 		"build_log": "This is also the build log",
 		"status": "success"
+	},
+	"balenaHupBlockAmd64Image1": {
+		"user": "admin",
+		"service": "balenaHupBlockAmd64Service",
+		"releases": [ "balenaHupBlockAmd64Release1" ],
+		"is_stored_at__image_location": "registry2.balena-dev.com/v2/6f10a347bcbd4c52b75c62da3d3c3ba9",
+		"content_hash": "sha256:6f10a347bcbd4c52b75c62da3d3c3ba9",
+		"image_size": 2048,
+		"project_type": "Dockerfile.template",
+		"build_log": "This is also the build log",
+		"status": "success"
 	}
 }

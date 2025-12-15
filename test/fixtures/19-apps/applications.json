@@ -49,5 +49,14 @@
 		"is_of__class": "app",
 		"app_name": "armv7hf-supervisor",
 		"organization": "balena_os"
+	},
+	"balenaHupBlockAmd64": {
+		"uuid": "4206f82822ed43068c7ee38421b1ba83",
+		"user": "admin",
+		"device_type": "raspberrypi3",
+		"is_public": true,
+		"is_of__class": "block",
+		"app_name": "balena-hup",
+		"organization": "balena_os"
 	}
 }
