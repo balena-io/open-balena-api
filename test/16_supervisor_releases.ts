@@ -4,6 +4,8 @@ import * as fakeDevice from './test-lib/fake-device.js';
 import { supertest } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import { assertExists, expectToEventually } from './test-lib/common.js';
+import type { Device } from '../src/balena-model.js';
+import { expectResourceToMatch } from './test-lib/api-helpers.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -72,6 +74,105 @@ export default () => {
 						})
 						.expect(200);
 					expect(serviceInstalls).to.have.lengthOf(0);
+				});
+
+				(
+					[
+						[
+							'POST device resource',
+							async ({ device_type, ...devicePostBody }: AnyObject) => {
+								return await supertest(ctx.admin)
+									.post(`/${version}/device`)
+									.send({
+										...devicePostBody,
+										is_of__device_type: (
+											await pineTest
+												.get({
+													resource: 'device_type',
+													passthrough: { user: ctx.admin },
+													id: { slug: device_type },
+													options: {
+														$select: 'id',
+													},
+												})
+												.expect(200)
+										).body?.id,
+									})
+									.expect(201);
+							},
+						],
+						[
+							'POST /device/register',
+							async ({
+								belongs_to__application,
+								...restDevicePostBody
+							}: AnyObject) => {
+								const { body: provisioningKey } = await supertest(ctx.admin)
+									.post(`/api-key/application/${ctx.deviceApp.id}/provisioning`)
+									.expect(200);
+								const uuid = fakeDevice.generateDeviceUuid();
+								return await supertest()
+									.post(`/device/register?apikey=${provisioningKey}`)
+									.send({
+										user: ctx.admin.id,
+										application: belongs_to__application,
+										uuid,
+										...restDevicePostBody,
+									})
+									.expect(201);
+							},
+						],
+					] as const
+				).forEach(([provisioningFnTitlePart, provisionFn]) => {
+					let registeredDevice: Device['Read'];
+
+					after(async function () {
+						await fixtures.clean({
+							devices: [registeredDevice],
+						});
+					});
+
+					it(`should provision WITHOUT a linked supervisor release when not providing a version (using ${provisioningFnTitlePart})`, async () => {
+						const res = await provisionFn({
+							belongs_to__application: ctx.deviceApp.id,
+							device_type: 'intel-nuc',
+						});
+						await expectResourceToMatch(pineUser, 'device', res.body.id, {
+							should_be_managed_by__release: null,
+						});
+					});
+
+					it(`should provision WITHOUT a linked supervisor release when the version is not found (using ${provisioningFnTitlePart})`, async () => {
+						const res = await provisionFn({
+							belongs_to__application: ctx.deviceApp.id,
+							device_type: 'intel-nuc',
+							os_version: '2.38.0+rev1',
+							os_variant: 'prod',
+						});
+						await expectResourceToMatch(pineUser, 'device', res.body.id, {
+							should_be_managed_by__release: null,
+						});
+					});
+
+					it(`should provision with a linked supervisor release (using ${provisioningFnTitlePart})`, async () => {
+						({ body: registeredDevice } = await provisionFn({
+							belongs_to__application: ctx.deviceApp.id,
+							device_type: 'intel-nuc',
+							os_version: '2.38.0+rev1',
+							os_variant: 'prod',
+							supervisor_version: '5.0.1',
+						}));
+						await expectResourceToMatch(
+							pineUser,
+							'device',
+							registeredDevice.id,
+							{
+								should_be_managed_by__release: {
+									__id: ctx.supervisorReleases['5.0.1'].id,
+								},
+							},
+						);
+					});
 				});
 
 				(

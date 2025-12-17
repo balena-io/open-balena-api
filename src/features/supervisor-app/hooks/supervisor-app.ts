@@ -5,8 +5,47 @@ import {
 	permissions,
 	errors as pinejsErrors,
 } from '@balena/pinejs';
+import type { FilterObj } from 'pinejs-client-core';
+import type { CpuArchitecture } from '../../../balena-model.js';
 
 const { BadRequestError } = pinejsErrors;
+
+hooks.addPureHook('POST', 'resin', 'device', {
+	/**
+	 * When the device's initial supervisor version is provided during registration, set the corresponding should_be_managed_by__release resource.
+	 */
+	async POSTPARSE({ request, api }) {
+		if (
+			typeof request.values.supervisor_version === 'string' &&
+			typeof request.values.is_of__device_type === 'number'
+		) {
+			const [supervisorRelease] = await getSupervisorReleaseResource(
+				api,
+				request.values.supervisor_version,
+				{
+					is_supported_by__device_type: {
+						$any: {
+							$alias: 'dt',
+							$expr: {
+								dt: {
+									id: request.values.is_of__device_type,
+								},
+							},
+						},
+					},
+				},
+			);
+
+			if (supervisorRelease == null) {
+				return;
+			}
+			// We are not using setSupervisorReleaseResource in a POSTRUN, since that only sets
+			// the supervisor release FK to device that have no supervisor_release set, and by the
+			// that POSTRUN for a POST, the device would already have a supervisor_release set.
+			request.values.should_be_managed_by__release = supervisorRelease.id;
+		}
+	},
+});
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	/**
@@ -127,7 +166,7 @@ async function checkSupervisorReleaseUpgrades(
 async function getSupervisorReleaseResource(
 	api: typeof sbvrUtils.api.resin,
 	supervisorVersion: string,
-	cpuArchId: number,
+	cpuArchFilter: number | FilterObj<CpuArchitecture['Read']>,
 ) {
 	return await api.get({
 		resource: 'release',
@@ -153,7 +192,17 @@ async function getSupervisorReleaseResource(
 										$alias: 'dt',
 										$expr: {
 											dt: {
-												is_of__cpu_architecture: cpuArchId,
+												is_of__cpu_architecture:
+													typeof cpuArchFilter === 'number'
+														? cpuArchFilter
+														: {
+																$any: {
+																	$alias: 'c',
+																	$expr: {
+																		c: cpuArchFilter,
+																	},
+																},
+															},
 											},
 										},
 									},
