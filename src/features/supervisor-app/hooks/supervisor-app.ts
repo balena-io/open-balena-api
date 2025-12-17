@@ -1,5 +1,4 @@
 import * as semver from 'balena-semver';
-import _ from 'lodash';
 import {
 	sbvrUtils,
 	hooks,
@@ -128,7 +127,7 @@ async function checkSupervisorReleaseUpgrades(
 async function getSupervisorReleaseResource(
 	api: typeof sbvrUtils.api.resin,
 	supervisorVersion: string,
-	archId: string,
+	cpuArchId: number,
 ) {
 	return await api.get({
 		resource: 'release',
@@ -154,16 +153,7 @@ async function getSupervisorReleaseResource(
 										$alias: 'dt',
 										$expr: {
 											dt: {
-												is_of__cpu_architecture: {
-													$any: {
-														$alias: 'c',
-														$expr: {
-															c: {
-																id: archId,
-															},
-														},
-													},
-												},
+												is_of__cpu_architecture: cpuArchId,
 											},
 										},
 									},
@@ -189,14 +179,14 @@ async function setSupervisorReleaseResource(
 	const devices = await api.get({
 		resource: 'device',
 		options: {
+			$select: ['id'],
+			$expand: {
+				is_of__device_type: { $select: ['is_of__cpu_architecture'] },
+			},
 			// if the device already has a supervisor_version, just bail.
 			$filter: {
 				id: { $in: deviceIds },
 				supervisor_version: null,
-			},
-			$select: ['id'],
-			$expand: {
-				is_of__device_type: { $select: ['is_of__cpu_architecture'] },
 			},
 		},
 	} as const);
@@ -205,11 +195,11 @@ async function setSupervisorReleaseResource(
 		return;
 	}
 
-	const devicesByDeviceTypeArch = _.groupBy(devices, (d) => {
+	const devicesByCpuArchId = Map.groupBy(devices, (d) => {
 		return d.is_of__device_type[0].is_of__cpu_architecture.__id;
 	});
 
-	if (Object.keys(devicesByDeviceTypeArch).length === 0) {
+	if (devicesByCpuArchId.size === 0) {
 		return;
 	}
 
@@ -221,13 +211,13 @@ async function setSupervisorReleaseResource(
 	});
 
 	return Promise.all(
-		_.map(devicesByDeviceTypeArch, async (affectedDevices, deviceTypeArch) => {
+		Array.from(devicesByCpuArchId, async ([cpuArchId, affectedDevices]) => {
 			const affectedDeviceIds = affectedDevices.map((d) => d.id);
 
 			const [supervisorRelease] = await getSupervisorReleaseResource(
 				api,
 				supervisorVersion,
-				deviceTypeArch,
+				cpuArchId,
 			);
 
 			if (supervisorRelease == null) {
