@@ -8,6 +8,7 @@ import {
 	multiCacheMemoizee,
 	reqPermissionNormalizer,
 } from '../../infra/cache/index.js';
+import { requestAsync } from '../../infra/request-promise/index.js';
 import { randomUUID } from 'node:crypto';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
@@ -20,7 +21,11 @@ import {
 import { registryAuth as CERT } from './certs.js';
 import {
 	AUTH_RESINOS_REGISTRY_CODE,
+	ENABLE_HARBOR,
 	GET_SUBJECT_CACHE_TIMEOUT,
+	HARBOR_HOST,
+	HARBOR_ROBOT_USERNAME,
+	HARBOR_ROBOT_TOKEN,
 	REGISTRY2_HOST,
 	REGISTRY_TOKEN_EXPIRY_SECONDS,
 	RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
@@ -595,8 +600,13 @@ export const token: RequestHandler = async (req, res) => {
 					authorizeRequest(req, scopes, tx),
 				]),
 		);
+		const oldToken = generateToken(sub, REGISTRY2_HOST, access);
+		console.warn('=== token.oldToken:', oldToken);
+
+		const harborToken = await getHarborToken(access);
+		console.warn('=== token.harborToken:', harborToken);
 		res.json({
-			token: generateToken(sub, REGISTRY2_HOST, access),
+			token: ENABLE_HARBOR ? harborToken : oldToken,
 		});
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
@@ -711,3 +721,29 @@ const getSubject = async (
 		return user?.username;
 	}
 };
+
+async function getHarborToken(access: Access[]): Promise<string> {
+	const scopes = access.map((acc) => {
+		return `${acc.type}:${acc.name}:${acc.actions.join(',')}`;
+	});
+	const url = `https://${HARBOR_HOST}/service/token`;
+	const auth = Buffer.from(
+		`${HARBOR_ROBOT_USERNAME}:${HARBOR_ROBOT_TOKEN}`,
+	).toString('base64');
+
+	const [, body] = await requestAsync({
+		method: 'GET',
+		url,
+		headers: {
+			Authorization: `Basic ${auth}`,
+		},
+		qs: {
+			service: 'harbor-registry',
+			scope: scopes,
+		},
+		json: true,
+	});
+	console.warn('=== getHarborToken.body:', body);
+
+	return body.token;
+}
