@@ -1,13 +1,51 @@
 import * as semver from 'balena-semver';
-import _ from 'lodash';
 import {
 	sbvrUtils,
 	hooks,
 	permissions,
 	errors as pinejsErrors,
 } from '@balena/pinejs';
+import type { FilterObj } from 'pinejs-client-core';
+import type { CpuArchitecture } from '../../../balena-model.js';
 
 const { BadRequestError } = pinejsErrors;
+
+hooks.addPureHook('POST', 'resin', 'device', {
+	/**
+	 * When the device's initial supervisor version is provided during registration, set the corresponding should_be_managed_by__release resource.
+	 */
+	async POSTPARSE({ request, api }) {
+		if (
+			typeof request.values.supervisor_version === 'string' &&
+			typeof request.values.is_of__device_type === 'number'
+		) {
+			const [supervisorRelease] = await getSupervisorReleaseResource(
+				api,
+				request.values.supervisor_version,
+				{
+					is_supported_by__device_type: {
+						$any: {
+							$alias: 'dt',
+							$expr: {
+								dt: {
+									id: request.values.is_of__device_type,
+								},
+							},
+						},
+					},
+				},
+			);
+
+			if (supervisorRelease == null) {
+				return;
+			}
+			// We are not using setSupervisorReleaseResource in a POSTRUN, since that only sets
+			// the supervisor release FK to device that have no supervisor_release set, and by the
+			// that POSTRUN for a POST, the device would already have a supervisor_release set.
+			request.values.should_be_managed_by__release = supervisorRelease.id;
+		}
+	},
+});
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	/**
@@ -128,7 +166,7 @@ async function checkSupervisorReleaseUpgrades(
 async function getSupervisorReleaseResource(
 	api: typeof sbvrUtils.api.resin,
 	supervisorVersion: string,
-	archId: string,
+	cpuArchFilter: number | FilterObj<CpuArchitecture['Read']>,
 ) {
 	return await api.get({
 		resource: 'release',
@@ -154,16 +192,17 @@ async function getSupervisorReleaseResource(
 										$alias: 'dt',
 										$expr: {
 											dt: {
-												is_of__cpu_architecture: {
-													$any: {
-														$alias: 'c',
-														$expr: {
-															c: {
-																id: archId,
+												is_of__cpu_architecture:
+													typeof cpuArchFilter === 'number'
+														? cpuArchFilter
+														: {
+																$any: {
+																	$alias: 'c',
+																	$expr: {
+																		c: cpuArchFilter,
+																	},
+																},
 															},
-														},
-													},
-												},
 											},
 										},
 									},
@@ -189,14 +228,14 @@ async function setSupervisorReleaseResource(
 	const devices = await api.get({
 		resource: 'device',
 		options: {
+			$select: ['id'],
+			$expand: {
+				is_of__device_type: { $select: ['is_of__cpu_architecture'] },
+			},
 			// if the device already has a supervisor_version, just bail.
 			$filter: {
 				id: { $in: deviceIds },
 				supervisor_version: null,
-			},
-			$select: ['id'],
-			$expand: {
-				is_of__device_type: { $select: ['is_of__cpu_architecture'] },
 			},
 		},
 	} as const);
@@ -205,11 +244,11 @@ async function setSupervisorReleaseResource(
 		return;
 	}
 
-	const devicesByDeviceTypeArch = _.groupBy(devices, (d) => {
+	const devicesByCpuArchId = Map.groupBy(devices, (d) => {
 		return d.is_of__device_type[0].is_of__cpu_architecture.__id;
 	});
 
-	if (Object.keys(devicesByDeviceTypeArch).length === 0) {
+	if (devicesByCpuArchId.size === 0) {
 		return;
 	}
 
@@ -221,13 +260,13 @@ async function setSupervisorReleaseResource(
 	});
 
 	return Promise.all(
-		_.map(devicesByDeviceTypeArch, async (affectedDevices, deviceTypeArch) => {
+		Array.from(devicesByCpuArchId, async ([cpuArchId, affectedDevices]) => {
 			const affectedDeviceIds = affectedDevices.map((d) => d.id);
 
 			const [supervisorRelease] = await getSupervisorReleaseResource(
 				api,
 				supervisorVersion,
-				deviceTypeArch,
+				cpuArchId,
 			);
 
 			if (supervisorRelease == null) {
