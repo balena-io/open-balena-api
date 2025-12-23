@@ -1,5 +1,5 @@
 import type BalenaModel from '../../../balena-model.js';
-import { sbvrUtils, hooks } from '@balena/pinejs';
+import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import _ from 'lodash';
 import type { FilterObj } from 'pinejs-client-core';
 
@@ -105,7 +105,7 @@ const addEnvHooks = <T extends keyof BalenaModel>(
 				try {
 					await postDevices({
 						url: '/v1/update',
-						req,
+						req: permissions.root,
 						filter: { id: { $in: devices } },
 						wait: false,
 					});
