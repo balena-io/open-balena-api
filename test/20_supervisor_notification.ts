@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { expect } from 'chai';
 import { connectDeviceAndWaitForUpdate } from './test-lib/connect-device-and-wait.js';
 import * as fakeDevice from './test-lib/fake-device.js';
@@ -6,8 +5,10 @@ import type { UserObjectParam } from './test-lib/supertest.js';
 import * as versions from './test-lib/versions.js';
 import * as fixtures from './test-lib/fixtures.js';
 import type { Application } from '../src/balena-model.js';
-import { sbvrUtils } from '@balena/pinejs';
+import { permissions, sbvrUtils } from '@balena/pinejs';
 import type { PineTest } from 'pinejs-client-supertest';
+
+const { api } = sbvrUtils;
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -109,43 +110,55 @@ export default () => {
 			});
 
 			describe('given a big number of vars', function () {
+				// PG uses 16 bits to address binds and as a result queries using more than ~66k binds throw an `code: '42P01'` error.
 				// See: https://www.postgresql.org/docs/13/protocol-message-formats.html#:~:text=The%20number%20of%20parameter%20values%20that%20follow
 				const MAX_SAFE_SQL_BINDS = Math.pow(2, 16) - 1;
-				const testVarsCount = MAX_SAFE_SQL_BINDS + 1;
+				const testVarSetCount = MAX_SAFE_SQL_BINDS + 1;
 
-				before(async function () {
-					// Doing this with SQL, since otherwise simple pine requests would take very long.
-					await sbvrUtils.db.executeSql(`
-				INSERT INTO "device environment variable" ("device", "name", "value")
-				SELECT ${device.id}, 'testDeviceVar_' || i, 'testValue'
-				FROM GENERATE_SERIES(1,${testVarsCount}) i;
-			`);
-
+				const getDeviceEnvVarCount = async (deviceId: number) => {
 					const { body: varsCount } = await pineUser
 						.get({
 							resource: 'device_environment_variable',
 							options: {
 								$count: {
 									$filter: {
-										device: device.id,
+										device: deviceId,
 									},
 								},
 							},
 						})
 						.expect(200);
-					expect(varsCount).to.equal(testVarsCount);
+					return varsCount;
+				};
+
+				before(async function () {
+					// Doing this with SQL, since otherwise simple pine requests would take very long.
+					await sbvrUtils.db.executeSql(`
+						INSERT INTO "device environment variable" ("device", "name", "value")
+						SELECT ${device.id}, 'testDeviceVar_intenalApiDelete_' || i, 'testValue'
+						FROM GENERATE_SERIES(1,${testVarSetCount}) i;
+					`);
+					await sbvrUtils.db.executeSql(`
+						INSERT INTO "device environment variable" ("device", "name", "value")
+						SELECT ${device.id}, 'testDeviceVar_cascadeDelete_' || i, 'testValue'
+						FROM GENERATE_SERIES(1,${testVarSetCount}) i;
+					`);
+
+					expect(await getDeviceEnvVarCount(device.id)).to.equal(
+						testVarSetCount * 2,
+					);
 				});
 
 				after(async function () {
 					// Manually deleted b/c the fixtures.clean() atm fails to delete them w/ a `code: '08P01'`.
 					await sbvrUtils.db.executeSql(`
-				DELETE FROM "device environment variable"
-				WHERE "device" = ${device.id} AND "name" LIKE 'testDeviceVar_%'
-			`);
+						DELETE FROM "device environment variable"
+						WHERE "device" = ${device.id} AND "name" LIKE 'testDeviceVar_%'
+					`);
 				});
 
-				// Just to confirm that the MAX_SAFE_SQL_BINDS limitation is still valid
-				it('should fail when providing more parameters to $in than PG support', async function () {
+				// Just to confirm that such an external request still fails with a 431 Request Header Fields Too Large error
+				it('should fail when an external request uses a $in with more parameters than the number of binds that PG supports', async function () {
 					await pineUser
 						.delete({
 							resource: 'device_environment_variable',
@@ -153,8 +166,9 @@ export default () => {
 								$filter: {
 									device: device.id,
 									name: {
-										$in: _.times(testVarsCount).map(
-											(i) => `testDeviceVar_${i}`,
+										$in: Array.from(
+											{ length: testVarSetCount },
+											(_, i) => `testDeviceVar_intenalApiDelete_${i + 1}`,
 										),
 									},
 								},
@@ -163,9 +177,43 @@ export default () => {
 						.expect(431);
 				});
 
-				it(`should notify the supervisor after deleting ${testVarsCount} device_environment_variables`, async function () {
+				// Confirm that internal requests are not affected by the PG limitation of using 16 bits to address binds,
+				// since it should be emitting an `= ANY($something)` expression.
+				it('should work when an internal request uses a $in with more parameters than the number of binds that PG supports', async function () {
+					// Use a bigger timeout since this is going to delete MAX_SAFE_SQL_BINDS+1 rows
+					this.timeout(59000);
+					expect(await getDeviceEnvVarCount(device.id)).to.equal(
+						testVarSetCount * 2,
+					);
+					await api.resin.delete({
+						resource: 'device_environment_variable',
+						passthrough: {
+							req: permissions.root,
+						},
+						options: {
+							$filter: {
+								device: device.id,
+								name: {
+									$in: Array.from(
+										{ length: testVarSetCount },
+										(_, i) => `testDeviceVar_intenalApiDelete_${i + 1}`,
+									),
+								},
+							},
+						},
+					});
+					expect(await getDeviceEnvVarCount(device.id)).to.equal(
+						testVarSetCount,
+					);
+				});
+
+				it(`should notify the supervisor after deleting ${testVarSetCount} device_environment_variables`, async function () {
 					// Use the request timeout, since this is going to delete MAX_SAFE_SQL_BINDS+1 rows
 					this.timeout(59000);
+					expect(
+						await getDeviceEnvVarCount(device.id),
+					).to.be.greaterThanOrEqual(testVarSetCount);
+
 					await connectDeviceAndWaitForUpdate(
 						device.uuid,
 						version,
@@ -182,19 +230,7 @@ export default () => {
 								.expect(200);
 						},
 					);
-					const { body: varsCount } = await pineUser
-						.get({
-							resource: 'device_environment_variable',
-							options: {
-								$count: {
-									$filter: {
-										device: device.id,
-									},
-								},
-							},
-						})
-						.expect(200);
-					expect(varsCount).to.equal(0);
+					expect(await getDeviceEnvVarCount(device.id)).to.equal(0);
 				});
 			});
 		});
