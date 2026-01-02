@@ -93,8 +93,13 @@ export const getDeviceTypeJson = multiCacheMemoizee(
 
 export const getCompressedSize = multiCacheMemoizee(
 	async (normalizedSlug: string, buildId: string): Promise<number> => {
+		// Ideally we should have been reading the exact filenames from image.json
+		// but summing based on the name saves an extra S3 request.
+		// TODO: Change the implementation to read from the image.json once
+		// we switch this to use release_assets.
 		return await getFolderSize(
 			getImageKey(normalizedSlug, buildId, 'compressed'),
+			/.*\.deflate$/,
 		);
 	},
 	{

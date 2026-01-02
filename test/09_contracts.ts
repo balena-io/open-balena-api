@@ -81,7 +81,7 @@ export default () => {
 					await fetchContractsLocally([contractRepository]);
 					const contracts = await getContracts('hw.device-type');
 
-					expect(contracts).to.have.length(16);
+					expect(contracts).to.have.length(17);
 					assertExists(
 						contracts.find((contract) => contract.slug === 'raspberrypi3'),
 					);
@@ -100,7 +100,7 @@ export default () => {
 					]);
 					const contracts = await getContracts('hw.device-type');
 
-					expect(contracts).to.have.length(17);
+					expect(contracts).to.have.length(18);
 					assertExists(
 						contracts.find((contract) => contract.slug === 'other-contract-dt'),
 					);
@@ -167,7 +167,7 @@ export default () => {
 						(dbDeviceType) => dbDeviceType.slug === 'fincm3',
 					);
 
-					expect(contracts).to.have.length(17);
+					expect(contracts).to.have.length(18);
 					assertExists(newDt);
 					expect(finDt).to.have.property('name', 'Fin');
 				});
@@ -236,7 +236,7 @@ export default () => {
 						(dbDeviceType) => dbDeviceType.slug === 'raspberry-pi',
 					);
 
-					expect(dbDeviceTypes).to.have.length(17);
+					expect(dbDeviceTypes).to.have.length(18);
 					assertExists(newDt);
 					expect(finDt).to.have.property('name', 'Fin');
 					expect(finDt).to.have.deep.property(
