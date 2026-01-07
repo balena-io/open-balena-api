@@ -1,6 +1,5 @@
 import type BalenaModel from '../../../balena-model.js';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
-import _ from 'lodash';
 import type { FilterObj } from 'pinejs-client-core';
 
 import { captureException } from '../../../infra/error-handling/index.js';
@@ -13,12 +12,6 @@ interface CustomObject {
 	affectedDevices?: number[];
 }
 
-// Postgresql uses 16 bits to address the binds of sql commands. We use a number a bit below
-// that limit to chunk the binds, in order to have some extra room for other things like
-// computed terms/permissions.
-// See: https://www.postgresql.org/docs/13/protocol-message-formats.html#:~:text=The%20number%20of%20parameter%20values%20that%20follow
-const MAX_SAFE_SQL_BINDS = 2 ** 16 - 1 - 100;
-
 // Env vars hooks
 const addEnvHooks = <T extends keyof BalenaModel>(
 	resource: T,
@@ -26,14 +19,7 @@ const addEnvHooks = <T extends keyof BalenaModel>(
 		args: hooks.HookArgs<'resin'> & {
 			tx: Tx;
 		},
-	) => Promise<
-		| FilterObj<Device['Read']>
-		| [
-				affectedIds: number[],
-				filterBuilder: (ids: number[]) => FilterObj<Device['Read']>,
-		  ]
-		| undefined
-	>,
+	) => Promise<FilterObj<Device['Read']> | undefined>,
 ): void => {
 	const getAffectedDeviceIds = async (
 		args: hooks.HookArgs<'resin'> & {
@@ -45,31 +31,15 @@ const addEnvHooks = <T extends keyof BalenaModel>(
 			if (filter == null) {
 				return;
 			}
-			const filters = Array.isArray(filter)
-				? (() => {
-						const [affectedIds, filterBuilder] = filter;
-						// Chunk the affected device retrieval, since a using $in errors with `code: '42P01'` for more than 66k IDs.
-						return _.chunk(affectedIds, MAX_SAFE_SQL_BINDS).map((ids) =>
-							filterBuilder(ids),
-						);
-					})()
-				: [filter];
-			const deviceIds = (
-				await Promise.all(
-					filters.map(async ($filter) =>
-						(
-							await args.api.get({
-								resource: 'device',
-								options: {
-									$select: 'id',
-									$filter,
-								},
-							})
-						).map(({ id }) => id),
-					),
-				)
-			).flat();
-			return deviceIds;
+			return (
+				await args.api.get({
+					resource: 'device',
+					options: {
+						$select: 'id',
+						$filter: filter,
+					},
+				})
+			).map(({ id }) => id);
 		} catch (err) {
 			captureException(err, `Error building the ${resource} filter`);
 			throw err;
@@ -141,26 +111,23 @@ const addAppEnvHooks = (resource: keyof BalenaModel) => {
 			return;
 		}
 
-		return [
-			envVarIds,
-			(envVarIdsChunk) => ({
-				belongs_to__application: {
-					$any: {
-						$alias: 'a',
-						$expr: {
-							a: {
-								[resource]: {
-									$any: {
-										$alias: 'e',
-										$expr: { e: { id: { $in: envVarIdsChunk } } },
-									},
+		return {
+			belongs_to__application: {
+				$any: {
+					$alias: 'a',
+					$expr: {
+						a: {
+							[resource]: {
+								$any: {
+									$alias: 'e',
+									$expr: { e: { id: { $in: envVarIds } } },
 								},
 							},
 						},
 					},
 				},
-			}),
-		];
+			},
+		};
 	});
 };
 
@@ -178,19 +145,16 @@ const addDeviceEnvHooks = (resource: keyof BalenaModel) => {
 		if (envVarIds.length === 0) {
 			return;
 		}
-		return [
-			envVarIds,
-			(envVarIdsChunk) => ({
-				[resource]: {
-					$any: {
-						$alias: 'e',
-						$expr: {
-							e: { id: { $in: envVarIdsChunk } },
-						},
+		return {
+			[resource]: {
+				$any: {
+					$alias: 'e',
+					$expr: {
+						e: { id: { $in: envVarIds } },
 					},
 				},
-			}),
-		];
+			},
+		};
 	});
 };
 
@@ -241,35 +205,32 @@ addEnvHooks('service_environment_variable', async (args) => {
 	if (envVarIds.length === 0) {
 		return;
 	}
-	return [
-		envVarIds,
-		(envVarIdsChunk) => ({
-			should_be_running__release: {
-				$any: {
-					$alias: 'r',
-					$expr: {
-						r: {
-							contains__image: {
-								$any: {
-									$alias: 'ci',
-									$expr: {
-										ci: {
-											image: {
-												$any: {
-													$alias: 'i',
-													$expr: {
-														i: {
-															is_a_build_of__service: {
-																$any: {
-																	$alias: 's',
-																	$expr: {
-																		s: {
-																			service_environment_variable: {
-																				$any: {
-																					$alias: 'e',
-																					$expr: {
-																						e: { id: { $in: envVarIdsChunk } },
-																					},
+	return {
+		should_be_running__release: {
+			$any: {
+				$alias: 'r',
+				$expr: {
+					r: {
+						contains__image: {
+							$any: {
+								$alias: 'ci',
+								$expr: {
+									ci: {
+										image: {
+											$any: {
+												$alias: 'i',
+												$expr: {
+													i: {
+														is_a_build_of__service: {
+															$any: {
+																$alias: 's',
+																$expr: {
+																	s: {
+																		service_environment_variable: {
+																			$any: {
+																				$alias: 'e',
+																				$expr: {
+																					e: { id: { $in: envVarIds } },
 																				},
 																			},
 																		},
@@ -288,8 +249,8 @@ addEnvHooks('service_environment_variable', async (args) => {
 					},
 				},
 			},
-		}),
-	];
+		},
+	};
 });
 
 addEnvHooks('image_environment_variable', async (args) => {
@@ -324,28 +285,25 @@ addEnvHooks('image_environment_variable', async (args) => {
 	if (envVarIds.length === 0) {
 		return;
 	}
-	return [
-		envVarIds,
-		(envVarIdsChunk) => ({
-			image_install: {
-				$any: {
-					$alias: 'ii',
-					$expr: {
-						installs__image: {
-							$any: {
-								$alias: 'i',
-								$expr: {
-									i: {
-										release_image: {
-											$any: {
-												$alias: 'ri',
-												$expr: {
-													ri: {
-														image_environment_variable: {
-															$any: {
-																$alias: 'e',
-																$expr: { e: { id: { $in: envVarIdsChunk } } },
-															},
+	return {
+		image_install: {
+			$any: {
+				$alias: 'ii',
+				$expr: {
+					installs__image: {
+						$any: {
+							$alias: 'i',
+							$expr: {
+								i: {
+									release_image: {
+										$any: {
+											$alias: 'ri',
+											$expr: {
+												ri: {
+													image_environment_variable: {
+														$any: {
+															$alias: 'e',
+															$expr: { e: { id: { $in: envVarIds } } },
 														},
 													},
 												},
@@ -358,6 +316,6 @@ addEnvHooks('image_environment_variable', async (args) => {
 					},
 				},
 			},
-		}),
-	];
+		},
+	};
 });
