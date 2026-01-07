@@ -212,7 +212,16 @@ async function getSupervisorReleaseResource(
 					},
 				},
 			},
-			$orderby: { revision: 'desc' },
+			// Prefer the latest revision of finalized releases matching the semver
+			// otherwise (if there isn't such a version) pick the latest draft.
+			$orderby: [
+				// Even though OData v4 specifies that `revision: desc` should  be returning nulls
+				// after non-nulls w/o the need of sorting on is_final, atm pine relies on the
+				// default sorting of PG, which would put nulls first if we remove the sorting on is_final.
+				{ is_final: 'desc' },
+				{ revision: 'desc' },
+				{ created_at: 'desc' },
+			],
 		},
 	});
 }
