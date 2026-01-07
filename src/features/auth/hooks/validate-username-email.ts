@@ -38,8 +38,7 @@ for (const method of ['POST', 'PATCH'] as const) {
 					const existingUser = await findUser(request.values[field], tx, [
 						'id',
 					]);
-					const isSameUserPatch =
-						existingUser && patchedIds && existingUser.id === patchedIds[0];
+					const isSameUserPatch = existingUser?.id === patchedIds?.[0];
 					if (existingUser && !isSameUserPatch) {
 						throw new ConflictError(`This ${field} is already taken`);
 					}

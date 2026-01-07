@@ -38,8 +38,10 @@ export const tokenFields = ['id', 'jwt_secret'] satisfies Array<
 	keyof User['Read']
 >;
 // The content of the JWT that we give to users, other than the standard JWT props (eg iat,exp,...).
-export interface TokenUserPayload
-	extends Pick<User['Read'], (typeof tokenFields)[number]> {
+export interface TokenUserPayload extends Pick<
+	User['Read'],
+	(typeof tokenFields)[number]
+> {
 	twoFactorRequired?: boolean;
 	authTime?: number;
 }
