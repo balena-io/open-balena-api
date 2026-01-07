@@ -25,6 +25,7 @@
 			{ "Prefix": "images/edge/" },
 			{ "Prefix": "images/fincm3/" },
 			{ "Prefix": "images/generic-aarch64/" },
+			{ "Prefix": "images/generic-amd64/" },
 			{ "Prefix": "images/generic-armv7ahf/" },
 			{ "Prefix": "images/generic/" },
 			{ "Prefix": "images/hummingboard/" },
@@ -927,6 +928,391 @@
 			{ "Prefix": "images/generic-aarch64/2.12.4+rev1.prod/" }
 		],
 		"KeyCount": 3
+	},
+	"images/generic-amd64/": {
+		"IsTruncated": false,
+		"Contents": [
+			{
+				"Key": "images/generic-amd64/latest",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"4f90f8c57f36430fba116b4c9cec64ca\"",
+				"Size": 17,
+				"StorageClass": "STANDARD"
+			}
+		],
+		"Name": "resin-staging-img",
+		"Prefix": "images/generic-amd64/",
+		"Delimiter": "/",
+		"MaxKeys": 1000,
+		"CommonPrefixes": [
+			{ "Prefix": "images/generic-amd64/2.112.0/" },
+			{ "Prefix": "images/generic-amd64/6.8.1/" }
+		],
+		"KeyCount": 3
+	},
+	"images/generic-amd64/2.112.0/": {
+		"IsTruncated": false,
+		"Contents": [
+			{
+				"Key": "images/generic-amd64/2.112.0/VERSION",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"58a88ea676c5438ebedf3e8bae7c5335\"",
+				"Size": 8
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/VERSION_HOSTOS",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"0c73bd09591b4e6193d991dc9ee6508b\"",
+				"Size": 8
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/balena-image-flasher-generic-amd64.manifest",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"e5dfa67771c84436b6550da7ea20aa79\"",
+				"Size": 513559
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/balena-image.docker",
+				"LastModified": "2023-02-15T01:36:10.000Z",
+				"ETag": "\"e24a9fdc48b946af97d1637691c0b630\"",
+				"Size": 711400448
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/device-type.json",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"83ca361056ac4e4ba896259056b9f2a0\"",
+				"Size": 2969
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/image-flasher.json",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"4c980be820e1463fbeca8bcb368ea2d8\"",
+				"Size": 1467
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/image-raw.json",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"1141df0c397645beaabfed986ea9e984\"",
+				"Size": 1481
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/image.json",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"85d4acb365f2488a9ed994b2ce39edb4\"",
+				"Size": 1467
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/kernel_modules_headers.tar.gz",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"c192db2e7b474e3a9c7c4029d603792e\"",
+				"Size": 15740052
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/kernel_source.tar.gz",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"58f5560aa088420b82a7f3495945fab5\"",
+				"Size": 15176771
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/tests.tar.gz",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"0fb633df01394f85a526d1fded8fa53a\"",
+				"Size": 1034654
+			}
+		],
+		"Name": "resin-staging-img",
+		"Prefix": "images/generic-amd64/2.112.0/",
+		"Delimiter": "/",
+		"MaxKeys": 1000,
+		"CommonPrefixes": [
+			{ "Prefix": "images/generic-amd64/2.112.0/compressed-flasher/" },
+			{ "Prefix": "images/generic-amd64/2.112.0/compressed-raw/" },
+			{ "Prefix": "images/generic-amd64/2.112.0/compressed/" },
+			{ "Prefix": "images/generic-amd64/2.112.0/image/" }
+		],
+		"KeyCount": 15
+	},
+	"images/generic-amd64/2.112.0/compressed/": {
+		"IsTruncated": false,
+		"Contents": [
+			{
+				"Key": "images/generic-amd64/2.112.0/compressed/part-0.deflate",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"db5026986a284118a86d49ce02a217c9\"",
+				"Size": 4456
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/compressed/part-1.deflate",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"d1b9ed83729541e3a112451ff37a3170\"",
+				"Size": 358864
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/compressed/part-2.deflate",
+				"LastModified": "2023-02-15T01:36:10.000Z",
+				"ETag": "\"2da8ebdb55924d2e89023a84be687e04\"",
+				"Size": 864797399
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/compressed/part-3.deflate",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"5992413b787e4697a2bf88271ee52009\"",
+				"Size": 4830
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/compressed/part-4.deflate",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"39aefe06124446a1854d2bb8ca5ebe6d\"",
+				"Size": 4085
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/compressed/part-5.deflate",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"c250e20a874f415e8067d0dac1a74646\"",
+				"Size": 15300
+			},
+			{
+				"Key": "images/generic-amd64/2.112.0/compressed/part-6.deflate",
+				"LastModified": "2023-02-15T01:36:07.000Z",
+				"ETag": "\"23582e222e0647b38a558c00806ba57e\"",
+				"Size": 1377
+			}
+		],
+		"Name": "resin-staging-img",
+		"Prefix": "images/generic-amd64/2.112.0/compressed/",
+		"Delimiter": "/",
+		"MaxKeys": 1000,
+		"CommonPrefixes": [],
+		"KeyCount": 7
+	},
+	"images/generic-amd64/6.8.1/": {
+		"IsTruncated": false,
+		"Contents": [
+			{
+				"Key": "images/generic-amd64/6.8.1/CHANGELOG.md",
+				"LastModified": "2025-11-27T07:58:24.000Z",
+				"ETag": "\"518c1c4f835649458e11b82f484826a1\"",
+				"Size": 431006,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/VERSION",
+				"LastModified": "2025-11-27T07:58:24.000Z",
+				"ETag": "\"44c66f14dc6b4bd0af790e4a6d0002c0\"",
+				"Size": 8,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/VERSION_HOSTOS",
+				"LastModified": "2025-11-27T07:58:24.000Z",
+				"ETag": "\"f9b816e3c0984886aab5fdbecd1cc975\"",
+				"Size": 6,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/balena-image-flasher-generic-amd64.manifest",
+				"LastModified": "2025-11-27T07:58:24.000Z",
+				"ETag": "\"e301f0b139894218b9fa71dece011b33\"",
+				"Size": 384973,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/balena-image-flasher-generic-amd64.manifest.enc",
+				"LastModified": "2025-11-27T07:58:24.000Z",
+				"ETag": "\"b2a04bc9ce344af897a23c593104645d\"",
+				"Size": 384992,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/balena-image.docker",
+				"LastModified": "2025-11-27T07:58:24.000Z",
+				"ETag": "\"28a40304e7554b979e9ee942af64d3a4-80\"",
+				"Size": 670197248,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/balena-image.docker.enc",
+				"LastModified": "2025-11-27T07:58:24.000Z",
+				"ETag": "\"e124ce5f6037462fa8b6974e610d04c0-80\"",
+				"Size": 670197280,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/balena.yml",
+				"LastModified": "2025-11-27T07:58:24.000Z",
+				"ETag": "\"2f56070d3350497d8ebdc258c28bcf9b\"",
+				"Size": 253,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/device-type.json",
+				"LastModified": "2025-11-27T07:59:35.000Z",
+				"ETag": "\"ed20b2c444d34972849b18be782f6d13\"",
+				"Size": 2971,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/image-flasher.json",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"decb275ad71a40b9b551dda38d9c4350\"",
+				"Size": 1470,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/image-raw.json",
+				"LastModified": "2025-11-27T07:59:35.000Z",
+				"ETag": "\"3a34009b434543a88143f8a5e8f906d3\"",
+				"Size": 1483,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/image.json",
+				"LastModified": "2025-11-27T07:59:35.000Z",
+				"ETag": "\"d98324e882c942eda0fbbfb9ab25d93d\"",
+				"Size": 1470,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/kernel_modules_headers.tar.gz",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"b34324ced320467db2f8d20b956848c3-3\"",
+				"Size": 17394931,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/kernel_modules_headers.tar.gz.enc",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"67cfe3757b0b49bcacf9c0b6c14deae9-3\"",
+				"Size": 17394960,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/licenses.tar.gz",
+				"LastModified": "2025-11-27T07:59:35.000Z",
+				"ETag": "\"510781117e1445f2addd24ca13d64ccd\"",
+				"Size": 3831881,
+				"StorageClass": "STANDARD"
+			}
+		],
+		"Name": "resin-staging-img",
+		"Prefix": "images/generic-amd64/6.8.1/",
+		"Delimiter": "/",
+		"MaxKeys": 1000,
+		"CommonPrefixes": [
+			{ "Prefix": "images/generic-amd64/6.8.1/compressed-flasher/" },
+			{ "Prefix": "images/generic-amd64/6.8.1/compressed-raw/" },
+			{ "Prefix": "images/generic-amd64/6.8.1/compressed/" }
+		],
+		"KeyCount": 18
+	},
+	"images/generic-amd64/6.8.1/compressed/": {
+		"IsTruncated": false,
+		"Contents": [
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-0.deflate",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"ab9fcf784a574cbcab56587128163f44\"",
+				"Size": 4452,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-0.deflate.enc",
+				"LastModified": "2025-11-27T07:59:12.000Z",
+				"ETag": "\"6ab280841522444f9da179ad59273670\"",
+				"Size": 4480,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-1.deflate",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"479d8175e970413fa816f9d86c9c69ad\"",
+				"Size": 717979,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-1.deflate.enc",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"5e22b5d928fb45faad4613d744791ba7\"",
+				"Size": 718000,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-2.deflate",
+				"LastModified": "2025-11-27T07:59:23.000Z",
+				"ETag": "\"1e01ab7cada04c4f84b9c88620da99ce\"",
+				"Size": 1117172997,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-2.deflate.enc",
+				"LastModified": "2025-11-27T07:59:12.000Z",
+				"ETag": "\"e44aa9c266584c1dbaa4aa43fcf39640\"",
+				"Size": 1117173024,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-3.deflate",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"4db9b273c28645bba61336021cf3bd53\"",
+				"Size": 4824,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-3.deflate.enc",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"492045605b9345dc92a962b13c1b7125\"",
+				"Size": 4848,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-4.deflate",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"bf3713ed7bc24ded9cb31b2e28d01a17\"",
+				"Size": 4085,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-4.deflate.enc",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"aafcaf3e3e28402e8d4519f70f92f818\"",
+				"Size": 4112,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-5.deflate",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"e2157d47272240dfbc122b0a9492125c\"",
+				"Size": 15300,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-5.deflate.enc",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"e679fc437276429885199f4017221f45\"",
+				"Size": 15328,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-6.deflate",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"6b592c420a3a425a9453670f99c14e34\"",
+				"Size": 1377,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/6.8.1/compressed/part-6.deflate.enc",
+				"LastModified": "2025-11-27T07:59:34.000Z",
+				"ETag": "\"d7513c2e721c40c5be209a7ab3ae05fb\"",
+				"Size": 1408,
+				"StorageClass": "STANDARD"
+			}
+		],
+		"Name": "resin-staging-img",
+		"Prefix": "images/generic-amd64/6.8.1/compressed/",
+		"Delimiter": "/",
+		"MaxKeys": 1000,
+		"CommonPrefixes": [],
+		"KeyCount": 14
 	},
 	"images/generic-armv7ahf/": {
 		"IsTruncated": false,

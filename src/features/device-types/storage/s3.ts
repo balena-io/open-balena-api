@@ -104,6 +104,7 @@ export async function getFile(s3Path: string) {
 
 export async function getFolderSize(
 	folder: string,
+	keyPattern?: RegExp,
 	marker?: string,
 ): Promise<number> {
 	const req = s3Client.listObjectsV2({
@@ -113,10 +114,15 @@ export async function getFolderSize(
 	});
 	const res = await req.promise();
 
-	const size = _.sumBy(res.Contents, 'Size');
+	let contents = res.Contents;
+	if (contents != null && keyPattern != null) {
+		contents = contents.filter((c) => c.Key != null && keyPattern.test(c.Key));
+	}
+
+	const size = _.sumBy(contents, 'Size');
 	const nextMarker = res.NextContinuationToken;
 	if (nextMarker && res.IsTruncated) {
-		const newSize = await getFolderSize(folder, nextMarker);
+		const newSize = await getFolderSize(folder, keyPattern, nextMarker);
 		return size + newSize;
 	}
 	return size;

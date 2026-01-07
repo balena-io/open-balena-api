@@ -1,0 +1,40 @@
+{
+  "slug": "generic-amd64",
+  "version": "1",
+  "type": "hw.device-type",
+  "aliases": [],
+  "name": "Generic x86_64 (GPT)",
+  "assets": {
+    "logo": {
+      "url": "./generic-amd64.svg",
+      "name": "logo"
+    }
+  },
+  "data": {
+    "arch": "amd64",
+    "hdmi": true,
+    "led": false,
+    "connectivity": {
+      "bluetooth": false,
+      "wifi": false
+    },
+    "storage": {
+      "internal": true
+    },
+    "media": {
+      "defaultBoot": "internal",
+      "altBoot": ["usb_mass_storage"]
+    },
+    "is_private": false
+  },
+  "partials": {
+    "bootDeviceExternal": [
+      "Ensure there are no other USB keys are inserted.",
+      "Power on the {{name}} with a keyboard connected.",
+      "Press the F10 key while BIOS is loading to enter the boot menu.",
+      "Select the USB key from the boot menu."
+    ],
+    "flashIndicator": ["all LEDs are off"],
+    "bootDevice": ["Power up the {{name}}"]
+  }
+}

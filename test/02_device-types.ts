@@ -94,7 +94,7 @@ export default () => {
 					expect(deviceType).to.have.property('name').that.is.a('string');
 				});
 
-				expect(res.body.d).to.have.property('length', 16);
+				expect(res.body.d).to.have.property('length', 17);
 			});
 		});
 	});
@@ -222,7 +222,7 @@ export default () => {
 			it('should return a proper result', async () => {
 				const res = await supertest().get('/device-types/v1').expect(200);
 				expect(res.body).to.be.an('array');
-				expect(res.body).to.have.property('length', 17);
+				expect(res.body).to.have.property('length', 18);
 				const rpi3config = _.find(res.body, { slug: 'raspberrypi3' });
 				expect(rpi3config).to.be.an('object');
 				expect(rpi3config).to.have.property('buildId', '2.19.0+rev1.prod');
@@ -377,6 +377,22 @@ export default () => {
 					versions: ['2.0.1+rev1.prod', '2.0.0+rev1.prod'],
 					latest: '2.0.1+rev1.prod',
 				});
+			});
+		});
+
+		describe('/device-types/v1/:deviceType/images/:version/download-size', () => {
+			it('should return the file size estimate of an OS release by summing the .deflate files', async () => {
+				const res = await supertest()
+					.get('/device-types/v1/generic-amd64/images/2.112.0/download-size')
+					.expect(200);
+				expect(res.body).to.deep.equal({ size: 865186311 });
+			});
+
+			it('should return the file size estimate of an OS release that also includes .deflate.enc files', async () => {
+				const res = await supertest()
+					.get('/device-types/v1/generic-amd64/images/6.8.1/download-size')
+					.expect(200);
+				expect(res.body).to.deep.equal({ size: 1117921014 });
 			});
 		});
 	});
