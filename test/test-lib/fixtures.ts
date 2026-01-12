@@ -169,10 +169,6 @@ const loaders: types.Dictionary<LoaderFunc> = {
 			logErrorAndThrow(`Could not find application: ${jsonData.application}`);
 		}
 
-		if (jsonData.revision > 1) {
-			// TODO: Add support for any
-			throw new Error('Fixtures do not support using release revision > 1');
-		}
 		if (jsonData.revision > 0) {
 			const lowerRevRelease = await fixtures.releases[jsonData.semver];
 			if (lowerRevRelease == null) {
