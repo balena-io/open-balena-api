@@ -159,6 +159,7 @@ const upsertEntries = async (
 	existingData: Map<string | number | boolean, AnyObject>,
 	newData: Array<Promise<AnyObject>>,
 ) => {
+	const addedContractSlugs: unknown[] = [];
 	await pMap(
 		newData,
 		async (fullEntry) => {
@@ -197,6 +198,7 @@ const upsertEntries = async (
 						body: entryFieldData,
 						options: { returnResource: reversePropMapEntries.length > 0 },
 					});
+					addedContractSlugs.push(uniqueFieldValue);
 				}
 				// upsert reverse navigation resources defined inline in the contract
 				for (const [propKey, { isReferencedBy }] of reversePropMapEntries) {
@@ -262,6 +264,7 @@ const upsertEntries = async (
 		},
 		{ concurrency: 10 },
 	);
+	return addedContractSlugs;
 };
 
 const syncContractsToDb = async (
@@ -307,13 +310,32 @@ const syncContractsToDb = async (
 		]),
 	);
 
-	await upsertEntries(
+	return await upsertEntries(
 		rootApi,
 		typeMap,
 		reversePropMapEntries,
 		existingData,
 		mappedModel,
 	);
+};
+
+const contractTypes = [
+	'arch.sw',
+	'hw.device-manufacturer',
+	'hw.device-family',
+	'hw.device-type',
+] as const;
+
+let onContractsSynced:
+	| ((
+			stats: Partial<
+				Record<(typeof contractTypes)[number], { added: unknown[] }>
+			>,
+	  ) => void)
+	| undefined;
+
+export const setOnContractsSynced = (callback: typeof onContractsSynced) => {
+	onContractsSynced = callback;
 };
 
 export const synchronizeContracts = async (contractRepos: RepositoryInfo[]) => {
@@ -325,16 +347,19 @@ export const synchronizeContracts = async (contractRepos: RepositoryInfo[]) => {
 		console.error(`Failed to fetch contracts, skipping...`, err.message);
 	}
 
+	const stats = {} as Parameters<NonNullable<typeof onContractsSynced>>[0];
+
 	// We don't have automatic dependency resolution, so the order matters here.
-	for (const contractType of [
-		'arch.sw',
-		'hw.device-manufacturer',
-		'hw.device-family',
-		'hw.device-type',
-	]) {
+	for (const contractType of contractTypes) {
 		try {
 			const contracts = await getContracts(contractType);
-			await syncContractsToDb(contractType, contracts, globalSyncSettings);
+			stats[contractType] = {
+				added: await syncContractsToDb(
+					contractType,
+					contracts,
+					globalSyncSettings,
+				),
+			};
 		} catch (err) {
 			captureException(
 				err,
@@ -342,6 +367,7 @@ export const synchronizeContracts = async (contractRepos: RepositoryInfo[]) => {
 			);
 		}
 	}
+	onContractsSynced?.(stats);
 };
 
 export const startContractSynchronization = _.once(() => {
