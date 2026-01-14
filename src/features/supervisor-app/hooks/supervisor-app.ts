@@ -50,6 +50,21 @@ hooks.addPureHook('POST', 'resin', 'device', {
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	/**
+	 * If a device changes device types, we need to clear out the related target supervisor release
+	 *
+	 * TODO: changing device types presents us with a bit of a conundrum. since we cannot guarantee parity between
+	 * available supervisors for each cpu architecture, we cannot just switch the target to the new device type, so instead let's just
+	 * unset the value
+	 */
+	POSTPARSE({ request }) {
+		if (
+			request.values.is_of__device_type != null &&
+			request.values.should_be_managed_by__release === undefined
+		) {
+			request.values.should_be_managed_by__release = null;
+		}
+	},
+	/**
 	 * When a device updates its supervisor version, set the corresponding should_be_managed_by__release resource
 	 * using its current reported version.
 	 */
