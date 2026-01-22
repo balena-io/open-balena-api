@@ -92,7 +92,7 @@
     "avsc": "^5.7.9",
     "aws-sdk": "^2.1692.0",
     "balena-device-config": "^6.3.0",
-    "balena-semver": "^3.0.10",
+    "balena-semver": "^4.0.0",
     "basic-auth": "^2.0.1",
     "body-parser": "^2.2.1",
     "bufferutil": "^4.0.9",
