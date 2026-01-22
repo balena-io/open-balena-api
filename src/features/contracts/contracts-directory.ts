@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import request from 'request';
 import * as tar from 'tar';
 import glob from 'fast-glob';
 import fs from 'fs';
@@ -124,51 +123,55 @@ const prepareContractDirectory = async (repo: RepositoryInfo) => {
 	return archiveDir;
 };
 
-const getRequestOptions = (repo: RepositoryInfo) => {
-	const auth =
-		repo.token == null
-			? ''
-			: // legacy `username:token` Basic authentication.
-				// TODO: Consider dropping in the next major
-				/^([\w-])+:\w+$/.test(repo.token)
-				? `Basic ${Buffer.from(repo.token).toString('base64')}`
-				: // direct token consumption (eg: Personal Access Token authentication)
-					`Bearer ${repo.token}`;
-	return {
-		followRedirect: true,
-		headers: {
-			'User-Agent': 'balena',
-			Authorization: auth,
-		},
+const getRequestHeaders = (repo: RepositoryInfo): Record<string, string> => {
+	const headers: Record<string, string> = {
+		'User-Agent': 'balena',
 	};
+
+	if (repo.token != null) {
+		// legacy `username:token` Basic authentication.
+		// TODO: Consider dropping in the next major
+		if (/^([\w-])+:\w+$/.test(repo.token)) {
+			headers.Authorization = `Basic ${Buffer.from(repo.token).toString('base64')}`;
+		} else {
+			// direct token consumption (eg: Personal Access Token authentication)
+			headers.Authorization = `Bearer ${repo.token}`;
+		}
+	}
+
+	return headers;
 };
 
 // Keeps the contract repos locally and in sync with upstream, if accessible.
 export const fetchContractsLocally = async (repos: RepositoryInfo[]) => {
 	await Promise.all(
 		repos.map(async (repo) => {
+			const response = await fetch(getArchiveLinkForRepo(repo), {
+				headers: getRequestHeaders(repo),
+				redirect: 'follow',
+			});
+
+			if (!response.ok) {
+				throw new Error(
+					`Invalid response while fetching contracts: ${response.statusText}`,
+				);
+			}
+
+			if (!response.body) {
+				throw new Error('Response body is null');
+			}
+
 			const untar = tar.extract({
 				C: await prepareContractDirectory(repo),
 				strip: 1,
 			});
 
-			// We cast to ReadableStream explicitly because `request.get is of type `request.Request` and it controls whether it is a readable or writable stream internally so it is not typings-compatible with ReadableStream, even though it it functionally equivalent.
-			const get = request
-				.get(getArchiveLinkForRepo(repo), getRequestOptions(repo))
-				.on('response', function (this: request.Request, response) {
-					if (response.statusCode !== 200) {
-						// On any non-200 responses just error and abort the request
-						this.emit(
-							'error',
-							new Error(
-								`Invalid response while fetching contracts: ${response.statusMessage}`,
-							),
-						);
-						this.abort();
-					}
-				}) as unknown as NodeJS.ReadableStream;
+			// Convert web ReadableStream to Node.js stream
+			const nodeStream = stream.Readable.fromWeb(
+				response.body as import('node:stream/web').ReadableStream,
+			);
 
-			await stream.promises.pipeline(get, untar);
+			await stream.promises.pipeline(nodeStream, untar);
 		}),
 	);
 };
