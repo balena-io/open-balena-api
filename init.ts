@@ -11,12 +11,10 @@ import { TRUST_PROXY, PORT } from './src/lib/config.js';
 const getUrl = (req: express.Request) => req.url;
 
 async function onInitModel() {
-	const { updateOrInsertModel } = await import(
-		'./src/infra/pinejs-client-helpers/index.js'
-	);
-	const appTypes = await import(
-		'./src/features/application-types/application-types.js'
-	);
+	const { updateOrInsertModel } =
+		await import('./src/infra/pinejs-client-helpers/index.js');
+	const appTypes =
+		await import('./src/features/application-types/application-types.js');
 	const insert: types.OptionalField<ApplicationType, 'slug'> = _.cloneDeep(
 		appTypes.DefaultApplicationType,
 	);
@@ -34,18 +32,16 @@ async function onInitModel() {
 }
 
 async function onInitHooks() {
-	const { createAllPermissions: createAll } = await import(
-		'./src/infra/auth/permissions.js'
-	);
+	const { createAllPermissions: createAll } =
+		await import('./src/infra/auth/permissions.js');
 	const auth = await import('./src/lib/auth.js');
 	const permissionNames = _.union(
-		_.flatMap(auth.ROLES),
-		_.flatMap(auth.KEYS, 'permissions'),
+		Object.values(auth.ROLES).flat(),
+		Object.values(auth.KEYS).flatMap((key) => key.permissions),
 	);
 	const { setSyncSettings } = await import('./src/features/contracts/index.js');
-	const { getAccessibleDeviceTypeJsons } = await import(
-		'./src/features/device-types/device-types.js'
-	);
+	const { getAccessibleDeviceTypeJsons } =
+		await import('./src/features/device-types/device-types.js');
 
 	setSyncSettings({
 		'hw.device-type': {
@@ -139,9 +135,8 @@ async function onInitHooks() {
 }
 
 async function createSuperuser() {
-	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } = await import(
-		'./src/lib/config.js'
-	);
+	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } =
+		await import('./src/lib/config.js');
 
 	if (!SUPERUSER_EMAIL || !SUPERUSER_PASSWORD) {
 		return;
@@ -149,13 +144,11 @@ async function createSuperuser() {
 
 	console.log('Creating superuser account...');
 
-	const { getOrInsertModelId } = await import(
-		'./src/infra/pinejs-client-helpers/index.js'
-	);
+	const { getOrInsertModelId } =
+		await import('./src/infra/pinejs-client-helpers/index.js');
 
-	const { findUser, registerUser, updatePasswordIfNeeded } = await import(
-		'./src/infra/auth/auth.js'
-	);
+	const { findUser, registerUser, updatePasswordIfNeeded } =
+		await import('./src/infra/auth/auth.js');
 	const { ConflictError } = errors;
 
 	const data = {
