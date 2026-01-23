@@ -36,7 +36,7 @@ export const login =
 				}
 
 				if (onLogin) {
-					await onLogin(user, tx);
+					await onLogin(user, tx, req);
 				}
 				await req.resetRatelimit?.();
 				await loginUserXHR(res, user.id, { tx });
