@@ -1,8 +1,8 @@
 {
-	"release1": {
+	"release2": {
 		"user": "admin",
 		"application": "app1",
-		"commit": "deadc0de",
+		"commit": "aaaabbbb",
 		"status": "success",
 		"composition": {
 			"services": {
@@ -14,13 +14,12 @@
 				}
 			}
 		},
-		"source": "cloud",
-		"createAfterRelease":"release2"
+		"source": "cloud"
 	},
-	"release2": {
+	"release1": {
 		"user": "admin",
 		"application": "app1",
-		"commit": "aaaabbbb",
+		"commit": "deadc0de",
 		"status": "success",
 		"composition": {
 			"services": {
