@@ -28,6 +28,9 @@ export const v3ValidPatchFields = [
 	'cpu_id',
 	'is_undervolted',
 	'update_status',
+	'is_secureboot_enabled',
+	'is_storage_encrypted',
+	'secureboot_keys_metadata',
 ] satisfies Array<
 	Exclude<keyof StatePatchV3Body[string], 'apps'> | 'update_status'
 >;
