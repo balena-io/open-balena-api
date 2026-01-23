@@ -39,7 +39,7 @@ for (const method of ['POST', 'PATCH'] as const) {
 						'id',
 					]);
 					const isSameUserPatch =
-						existingUser && patchedIds && existingUser.id === patchedIds[0];
+						existingUser && existingUser.id === patchedIds?.[0];
 					if (existingUser && !isSameUserPatch) {
 						throw new ConflictError(`This ${field} is already taken`);
 					}

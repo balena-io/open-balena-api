@@ -474,8 +474,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		const previousDeviceOnlineState = await this.getDeviceOnlineState(deviceId);
 		// If redis still has a valid message about the device being online we can avoid reaching to the DB...
 		if (
-			previousDeviceOnlineState == null ||
-			previousDeviceOnlineState.currentState !== DeviceOnlineStates.Online ||
+			previousDeviceOnlineState?.currentState !== DeviceOnlineStates.Online ||
 			(API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT != null &&
 				(previousDeviceOnlineState.updatedAt == null ||
 					Date.now() >

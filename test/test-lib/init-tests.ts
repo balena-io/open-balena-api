@@ -24,17 +24,15 @@ export const preInit = async () => {
 	config.TEST_MOCK_ONLY.PINEJS_QUEUE_INTERVAL_MS = 100;
 
 	// override the interval used to emit the queue stats event...
-	const { DeviceOnlineStateManager } = await import(
-		'../../src/features/device-heartbeat/index.js'
-	);
+	const { DeviceOnlineStateManager } =
+		await import('../../src/features/device-heartbeat/index.js');
 	(DeviceOnlineStateManager as any)['QUEUE_STATS_INTERVAL_MSEC'] = 1000;
 };
 
 const loadAdminUserAndOrganization = async () => {
 	// any user we try to create will be the superuser...
-	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } = await import(
-		'../../src/lib/config.js'
-	);
+	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } =
+		await import('../../src/lib/config.js');
 
 	if (!SUPERUSER_EMAIL || !SUPERUSER_PASSWORD) {
 		console.error(
