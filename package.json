@@ -45,7 +45,8 @@
     "prepare": "node -e \"try { (await import('husky')).default() } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e }\" --input-type module"
   },
   "dependencies": {
-    "@balena/abstract-sql-compiler": "^11.3.0",
+    "@balena/abstract-sql-compiler": "^11.2.3",
+    "@balena/audit-log-client": "^0.6.1",
     "@balena/abstract-sql-to-typescript": "^6.1.2",
     "@balena/env-parsing": "^1.2.6",
     "@balena/es-version": "^1.0.3",

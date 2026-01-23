@@ -175,6 +175,7 @@ export type { DeviceTypeJson } from './features/device-types/device-type-json.js
 export type { DefaultApplicationType } from './features/application-types/application-types.js';
 export * as request from './infra/request-promise/index.js';
 export * as redis from './infra/redis/index.js';
+export * as auditLog from './infra/audit-log/index.js';
 export * as scheduler from './infra/scheduler/index.js';
 export * as cache from './infra/cache/index.js';
 export * as config from './lib/config.js';

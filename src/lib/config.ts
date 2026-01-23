@@ -688,6 +688,27 @@ function redisAuthVar(
 	);
 }
 
+export const AUDIT_LOGS_ENABLED = boolVar('AUDIT_LOGS_ENABLED', false);
+export const AUDIT_LOGS_LOKI_GATEWAY_HOST = optionalVar(
+	'AUDIT_LOGS_LOKI_GATEWAY_HOST',
+);
+export const AUDIT_LOGS_LOKI_GATEWAY_PORT = intVar(
+	'AUDIT_LOGS_LOKI_GATEWAY_PORT',
+	3100,
+);
+export const AUDIT_LOGS_LOKI_AUTH_USER = optionalVar(
+	'AUDIT_LOGS_LOKI_AUTH_USER',
+);
+export const AUDIT_LOGS_LOKI_AUTH_PASSWORD = optionalVar(
+	'AUDIT_LOGS_LOKI_AUTH_PASSWORD',
+);
+// On failing to push an audit log we can either throw or just log the failure
+// Initially, we will go with logging to see how things go in production but
+// should be migrated before this is customer facing
+export const AUDIT_LOGS_ON_ERROR = optionalVar('AUDIT_LOGS_ON_ERROR', 'log') as
+	| 'log'
+	| 'throw';
+
 export const guardTestMockOnly = () => {
 	if (process.env.DEPLOYMENT !== 'TEST') {
 		throw new Error('Attempting to use TEST_MOCK_ONLY outside of tests');
