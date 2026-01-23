@@ -10,10 +10,12 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		// * app changed
 		// * target release changed
 		// * device name changed - so a user can restart their service and it will pick up the change
+		// * target OS release changed, so that Supervisors that support this can trigger a HUP
 		if (
 			(request.values.is_pinned_on__release !== undefined ||
 				request.values.belongs_to__application != null ||
-				request.values.device_name != null) &&
+				request.values.device_name != null ||
+				request.values.should_be_operated_by__release != null) &&
 			affectedIds.length !== 0
 		) {
 			// Send the update requests only after the tx is committed
