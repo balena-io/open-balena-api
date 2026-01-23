@@ -208,7 +208,14 @@ const init = async () => {
 	try {
 		const generateConfig = (process.env.GENERATE_CONFIG ?? '').trim();
 		if (generateConfig.length > 0) {
-			await fs.writeFile(generateConfig, JSON.stringify(config, null, '\t'));
+			// Do not serialize webResourceHandler
+			// it is a runtime handler object and not config data
+			const { webResourceHandler: _webResourceHandler, ...serializableConfig } =
+				config;
+			await fs.writeFile(
+				generateConfig,
+				JSON.stringify(serializableConfig, null, '\t'),
+			);
 			process.exit();
 		}
 
