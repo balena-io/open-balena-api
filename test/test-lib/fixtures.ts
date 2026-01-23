@@ -504,8 +504,8 @@ const loaders: types.Dictionary<LoaderFunc> = {
 			logErrorAndThrow(`Could not find service: ${jsonData.service}`);
 		}
 
-		const si = await expectToEventually(async () => {
-			const $si = await api.resin.get({
+		await expectToEventually(async () => {
+			const si = await api.resin.get({
 				resource: 'service_install',
 				passthrough: { req: permissions.rootRead },
 				id: {
@@ -513,14 +513,14 @@ const loaders: types.Dictionary<LoaderFunc> = {
 					installs__service: service.id,
 				},
 			});
-			assertExists($si);
-			return $si;
+			assertExists(si);
 		});
 
 		return await createResource({
 			resource: 'device_service_environment_variable',
 			body: {
-				service_install: si.id,
+				device: device.id,
+				service: service.id,
 				name: jsonData.name,
 				value: jsonData.value,
 			},
