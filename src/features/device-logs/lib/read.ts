@@ -95,7 +95,7 @@ async function handleStreamingRead(
 	const buffer: OutputDeviceLog[] = [];
 
 	res.setHeader('Content-Type', NDJSON_CTYPE);
-	res.setHeader('Cache-Control', 'no-cache');
+	res.setHeader('Cache-Control', 'no-store, max-age=0');
 
 	const flush = _.throttle(
 		() => {
