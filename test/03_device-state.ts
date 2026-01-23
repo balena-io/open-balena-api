@@ -2077,6 +2077,108 @@ export default () => {
 						});
 					});
 				}
+
+				describe('Reporting no running release', () => {
+					beforeEach(async function () {
+						await fakeDevice.patchState(
+							device,
+							device.uuid,
+							{
+								[stateKey]:
+									stateVersion === 'v2'
+										? {
+												is_on__commit: release2.commit,
+											}
+										: {
+												apps: {
+													[applicationUuid]: {
+														release_uuid: release2.commit,
+													},
+												},
+											},
+							},
+							stateVersion,
+						);
+
+						await expectResourceToMatch(pineUser, 'device', device.id, {
+							is_running__release: { __id: release2.id },
+						});
+					});
+				});
+
+				it('should clear the current release when the device reports a null commit', async () => {
+					await fakeDevice.patchState(
+						device,
+						device.uuid,
+						{
+							[stateKey]:
+								stateVersion === 'v2'
+									? {
+											is_on__commit: null,
+										}
+									: {
+											apps: {
+												[applicationUuid]: {
+													release_uuid: null,
+												},
+											},
+										},
+						},
+						stateVersion,
+					);
+
+					await expectResourceToMatch(pineUser, 'device', device.id, {
+						is_running__release: null,
+					});
+				});
+
+				if (stateVersion === 'v3') {
+					it('should clear the current release when the device reports the currnet app w/o a release_uuid', async () => {
+						await fakeDevice.patchState(
+							device,
+							device.uuid,
+							{
+								[stateKey]: {
+									apps: {
+										[applicationUuid]: {
+											// This will be the case when first installing a release of an app until
+											// the release is fully installed. Eg device move or if the SV database is deleted
+											// *** release_uuid not included ***,
+											releases: {
+												[release2.commit]: {
+													update_status: 'downloading',
+												},
+											},
+										},
+									},
+								},
+							},
+							stateVersion,
+						);
+
+						await expectResourceToMatch(pineUser, 'device', device.id, {
+							is_running__release: null,
+						});
+					});
+
+					it('should clear the current release when the device reports an empty current apps state', async () => {
+						await fakeDevice.patchState(
+							device,
+							device.uuid,
+							// running no release
+							{
+								[stateKey]: {
+									apps: {},
+								},
+							},
+							stateVersion,
+						);
+
+						await expectResourceToMatch(pineUser, 'device', device.id, {
+							is_running__release: null,
+						});
+					});
+				}
 			});
 		});
 	});
