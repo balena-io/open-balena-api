@@ -16,9 +16,9 @@ export class TimedOutError extends TypedError {}
  * If we haven't seen a `TRUE` when the loop finishes, we throw a {@link TimedOutError}
  */
 export async function waitFor({
-	delayMs = 100,
+	delayMs = 50,
 	maxWait,
-	maxCount = 100,
+	maxCount = 200,
 	checkFn,
 }: {
 	delayMs?: number;
