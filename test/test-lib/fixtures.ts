@@ -610,25 +610,41 @@ const loaders: types.Dictionary<LoaderFunc> = {
 	},
 };
 
-const deleteResource =
-	(resource: keyof Model) => async (obj: { id: number }) => {
-		await api.resin.delete({
-			resource,
-			id: obj.id,
-			passthrough: { req: permissions.root },
-		});
+const deleteForResource =
+	(resource: keyof Model) => async (objs: Array<{ id: number }>) => {
+		if (objs.length === 0) {
+			return;
+		}
+		const ids = objs.map(({ id }) => id);
+		try {
+			await api.resin.delete({
+				resource,
+				options: {
+					$filter: { id: { $in: ids } },
+				},
+				passthrough: { req: permissions.root },
+			});
+		} catch (err) {
+			console.error(
+				`Error while deleting ${resource}:\n`,
+				JSON.stringify(objs, null, 2),
+			);
+			throw err;
+		}
 	};
 
 // Make sure this list only contains top-level resources, ie. those
 // that aren't expected to be cascade deleted by the api itself.
 // The order of the properties dictates the order the unloaders run.
-const unloaders: Dictionary<(obj: { id: number }) => PromiseLike<void>> = {
+const unloaders: Dictionary<
+	(objs: Array<{ id: number }>) => PromiseLike<void>
+> = {
 	// Devices need to be deleted before their linked hostApp & supervisor releases/apps
-	devices: async (device: Pick<Device['Read'], 'id'>) => {
+	devices: async (devices: Array<Pick<Device['Read'], 'id'>>) => {
 		// Make sure that all service installs are completed before deleting devices
 		await waitFor({
 			checkFn: async () => {
-				const queudSiCreations = await sbvrUtils.api.tasks.get({
+				const queuedSiCreations = await sbvrUtils.api.tasks.get({
 					resource: 'task',
 					passthrough: { req: permissions.rootRead },
 					options: {
@@ -640,13 +656,13 @@ const unloaders: Dictionary<(obj: { id: number }) => PromiseLike<void>> = {
 						},
 					},
 				});
-				return queudSiCreations === 0;
+				return queuedSiCreations === 0;
 			},
 		});
 
-		await deleteResource('device')(device);
+		await deleteForResource('device')(devices);
 	},
-	applications: deleteResource('application'),
+	applications: deleteForResource('application'),
 };
 
 export const clean = async (
@@ -660,7 +676,7 @@ export const clean = async (
 	for (const [model, unloader] of Object.entries(unloaders)) {
 		const objs = fixtures[model];
 		if (objs != null) {
-			await Promise.all(Object.values(objs).map(unloader));
+			await unloader(Object.values(objs));
 		}
 	}
 };
