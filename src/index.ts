@@ -321,6 +321,7 @@ export interface SetupOptions {
 	onLogin?: (
 		user: Pick<User['Read'], (typeof defaultFindUser$select)[number]>,
 		tx: Tx,
+		req: Request,
 	) => PromiseLike<void> | void;
 	onLogWriteStreamInitialized?: (req: Request) => void;
 	onLogReadStreamInitialized?: (req: Request) => void;
