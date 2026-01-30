@@ -455,6 +455,10 @@ export const ASYNC_TASK_CREATE_SERVICE_INSTALLS_MAX_TIME_MS = intVar(
 
 export const USERNAME_BLACKLIST = ['root'];
 
+export const ENABLE_HARBOR = boolVar('ENABLE_HARBOR', false);
+export const HARBOR_HOST = optionalVar('HARBOR_HOST');
+export const HARBOR_ROBOT_USERNAME = optionalVar('HARBOR_ROBOT_USERNAME');
+export const HARBOR_ROBOT_TOKEN = optionalVar('HARBOR_ROBOT_TOKEN');
 export const REGISTRY2_HOST = requiredVar('REGISTRY2_HOST');
 export const SENTRY_DSN = optionalVar('SENTRY_DSN');
 export const SUPERUSER_EMAIL = optionalVar('SUPERUSER_EMAIL', '');
