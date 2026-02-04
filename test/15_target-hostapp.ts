@@ -424,8 +424,10 @@ export default () => {
 				[
 					{
 						titlePart: 'release_tag only',
-						osVersion: 'balenaOS 2.50.0+rev1',
-						getReleaseId: () => nuc2_50_0_rev1prodTagOnlyId,
+						lower: {
+							osVersion: 'balenaOS 2.50.0+rev1',
+							getReleaseId: () => nuc2_50_0_rev1prodTagOnlyId,
+						},
 						higher: {
 							osVersion: 'balenaOS 2.88.4',
 							getReleaseId: () => unifiedHostAppReleaseId,
@@ -433,8 +435,10 @@ export default () => {
 					},
 					{
 						titlePart: 'semver & release_tag',
-						osVersion: 'balenaOS 2.51.0+rev1',
-						getReleaseId: () => nuc2_51_0_rev1prodTagAndSemverId,
+						lower: {
+							osVersion: 'balenaOS 2.51.0+rev1',
+							getReleaseId: () => nuc2_51_0_rev1prodTagAndSemverId,
+						},
 						higher: {
 							osVersion: 'balenaOS 2.88.4',
 							getReleaseId: () => unifiedHostAppReleaseId,
@@ -442,8 +446,10 @@ export default () => {
 					},
 					{
 						titlePart: 'semver only',
-						osVersion: 'balenaOS 2.51.0+rev2',
-						getReleaseId: () => nuc2_51_0_rev2prodSemverOnlyId,
+						lower: {
+							osVersion: 'balenaOS 2.51.0+rev2',
+							getReleaseId: () => nuc2_51_0_rev2prodSemverOnlyId,
+						},
 						higher: {
 							osVersion: 'balenaOS 2.88.4',
 							getReleaseId: () => unifiedHostAppReleaseId,
@@ -451,8 +457,10 @@ export default () => {
 					},
 					{
 						titlePart: 'ESR non-Semver release_tag only',
-						osVersion: 'balenaOS 2021.01.0',
-						getReleaseId: () => esrTagOnlyNonSemverHostAppReleaseId,
+						lower: {
+							osVersion: 'balenaOS 2021.01.0',
+							getReleaseId: () => esrTagOnlyNonSemverHostAppReleaseId,
+						},
 						higher: {
 							osVersion: 'balenaOS 2023.10.0',
 							getReleaseId: () => esrSemverOnlyHostAppReleaseId,
@@ -460,26 +468,28 @@ export default () => {
 					},
 					{
 						titlePart: 'unified ESR',
-						osVersion: 'balenaOS 2023.1.0',
-						getReleaseId: () => esrUnifiedHostAppReleaseId,
+						lower: {
+							osVersion: 'balenaOS 2023.1.0',
+							getReleaseId: () => esrUnifiedHostAppReleaseId,
+						},
 						higher: {
 							osVersion: 'balenaOS 2023.10.0',
 							getReleaseId: () => esrSemverOnlyHostAppReleaseId,
 						},
 					},
 				] as const
-			).forEach(({ titlePart, osVersion, getReleaseId, higher }) => {
+			).forEach(({ titlePart, lower, higher }) => {
 				it(`should succeed in PATCHing the device.should_be_operated_by__release to a greater version (with ${titlePart})`, async () => {
 					await supertest(admin)
 						.patch(`/${version}/device(${device1.id})`)
-						.send({ should_be_operated_by__release: getReleaseId() })
+						.send({ should_be_operated_by__release: lower.getReleaseId() })
 						.expect(200);
 					const initialOsVersion = 'balenaOS 2.49.0+rev1';
-					expect(semver.gt(osVersion, initialOsVersion)).to.be.true;
+					expect(semver.gt(lower.osVersion, initialOsVersion)).to.be.true;
 					await expectResourceToMatch(pineUser, 'device', device1.id, {
 						os_version: initialOsVersion,
 						os_variant: 'prod',
-						should_be_operated_by__release: { __id: getReleaseId() },
+						should_be_operated_by__release: { __id: lower.getReleaseId() },
 					});
 				});
 
@@ -501,7 +511,7 @@ export default () => {
 						applicationId,
 					);
 					const initialOsVersion = higher.osVersion;
-					expect(semver.gt(initialOsVersion, osVersion)).to.be.true;
+					expect(semver.gt(initialOsVersion, lower.osVersion)).to.be.true;
 					await downgradeTestDevice.patchStateV2({
 						local: {
 							os_version: initialOsVersion,
@@ -519,7 +529,7 @@ export default () => {
 					// run the actual test
 					await supertest(admin)
 						.patch(`/${version}/device(${downgradeTestDevice.id})`)
-						.send({ should_be_operated_by__release: getReleaseId() })
+						.send({ should_be_operated_by__release: lower.getReleaseId() })
 						.expect(
 							400,
 							'"Attempt to downgrade hostapp, which is not allowed"',
@@ -536,7 +546,7 @@ export default () => {
 					await expectResourceToMatch(pineUser, 'device', device1.id, {
 						os_version: 'balenaOS 2.49.0+rev1',
 						os_variant: 'prod',
-						should_be_operated_by__release: { __id: getReleaseId() },
+						should_be_operated_by__release: { __id: lower.getReleaseId() },
 					});
 				});
 
@@ -547,7 +557,7 @@ export default () => {
 					);
 					await downgradeTestDevice.patchStateV2({
 						local: {
-							os_version: osVersion,
+							os_version: lower.osVersion,
 							os_variant: 'prod',
 						},
 					});
@@ -556,12 +566,12 @@ export default () => {
 						'device',
 						downgradeTestDevice.id,
 						{
-							should_be_operated_by__release: { __id: getReleaseId() },
+							should_be_operated_by__release: { __id: lower.getReleaseId() },
 						},
 					);
 					// run the actual test
 					const oldUnkownOsVersion = 'balenaOS 2.9.9+rev99';
-					expect(semver.gt(osVersion, oldUnkownOsVersion)).to.be.true;
+					expect(semver.gt(lower.osVersion, oldUnkownOsVersion)).to.be.true;
 					await downgradeTestDevice.patchStateV2({
 						local: {
 							os_version: oldUnkownOsVersion,
@@ -575,7 +585,7 @@ export default () => {
 						{
 							os_version: oldUnkownOsVersion,
 							os_variant: 'prod',
-							should_be_operated_by__release: { __id: getReleaseId() },
+							should_be_operated_by__release: { __id: lower.getReleaseId() },
 						},
 					);
 				});
@@ -589,7 +599,7 @@ export default () => {
 						applicationId,
 					);
 					const oldOsVersion = 'balenaOS 2.49.0+rev1';
-					expect(semver.gt(osVersion, oldOsVersion)).to.be.true;
+					expect(semver.gt(lower.osVersion, oldOsVersion)).to.be.true;
 					await preprovisionedDevice.patchStateV2({
 						local: {
 							os_version: oldOsVersion,
@@ -609,7 +619,7 @@ export default () => {
 					// run the actual test
 					await preprovisionedDevice.patchStateV2({
 						local: {
-							os_version: osVersion,
+							os_version: lower.osVersion,
 							os_variant: 'prod',
 						},
 					});
@@ -618,9 +628,9 @@ export default () => {
 						'device',
 						preprovisionedDevice.id,
 						{
-							os_version: osVersion,
+							os_version: lower.osVersion,
 							os_variant: 'prod',
-							should_be_operated_by__release: { __id: getReleaseId() },
+							should_be_operated_by__release: { __id: lower.getReleaseId() },
 						},
 					);
 				});
@@ -635,7 +645,7 @@ export default () => {
 					);
 					await preprovisionedDevice.patchStateV2({
 						local: {
-							os_version: osVersion,
+							os_version: lower.osVersion,
 							os_variant: 'prod',
 						},
 					});
@@ -644,11 +654,11 @@ export default () => {
 						'device',
 						preprovisionedDevice.id,
 						{
-							should_be_operated_by__release: { __id: getReleaseId() },
+							should_be_operated_by__release: { __id: lower.getReleaseId() },
 						},
 					);
 					const newerVersion = higher.osVersion;
-					expect(semver.gt(newerVersion, osVersion)).to.be.true;
+					expect(semver.gt(newerVersion, lower.osVersion)).to.be.true;
 					// run the actual test
 					await preprovisionedDevice.patchStateV2({
 						local: {
@@ -678,7 +688,7 @@ export default () => {
 					);
 					await preprovisionedDevice.patchStateV2({
 						local: {
-							os_version: osVersion,
+							os_version: lower.osVersion,
 							os_variant: 'prod',
 						},
 					});
@@ -687,11 +697,11 @@ export default () => {
 						'device',
 						preprovisionedDevice.id,
 						{
-							should_be_operated_by__release: { __id: getReleaseId() },
+							should_be_operated_by__release: { __id: lower.getReleaseId() },
 						},
 					);
 					const newerUnknownVersion = 'balenaOS 2100.1.2';
-					expect(semver.gt(newerUnknownVersion, osVersion)).to.be.true;
+					expect(semver.gt(newerUnknownVersion, lower.osVersion)).to.be.true;
 					// run the actual test
 					await preprovisionedDevice.patchStateV2({
 						// this is a super new balenaOS version that is greater than the one provided by prodNucHostappReleaseId
