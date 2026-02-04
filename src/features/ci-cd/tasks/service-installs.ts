@@ -1,4 +1,5 @@
 import { tasks, sbvrUtils, permissions } from '@balena/pinejs';
+import type { FromSchema } from 'json-schema-to-ts';
 import _ from 'lodash';
 import {
 	ASYNC_TASK_ATTEMPT_LIMIT,
@@ -15,21 +16,18 @@ const schema = {
 		},
 	},
 	required: ['devices'],
-};
+	additionalProperties: false,
+} as const;
 
 const { api } = sbvrUtils;
 
-export type CreateServiceInstallsTaskParams = {
-	devices: number[];
-};
+export type CreateServiceInstallsTaskParams = FromSchema<typeof schema>;
 
 tasks.addTaskHandler(
 	'create_service_installs',
 	async (options) => {
 		try {
-			const totalSiCreated = await createServiceInstalls(
-				options.params as CreateServiceInstallsTaskParams,
-			);
+			const totalSiCreated = await createServiceInstalls(options.params);
 			console.info(
 				`[service-install-task] Created ${totalSiCreated} service installs`,
 			);
