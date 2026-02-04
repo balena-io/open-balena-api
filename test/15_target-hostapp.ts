@@ -505,6 +505,20 @@ export default () => {
 						);
 				});
 
+				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports an older os_version (when on a ${titlePart} release)`, async () => {
+					await device1.patchStateV2({
+						local: {
+							os_version: 'balenaOS 2.49.0+rev1',
+							os_variant: 'prod',
+						},
+					});
+					await expectResourceToMatch(pineUser, 'device', device1.id, {
+						os_version: 'balenaOS 2.49.0+rev1',
+						os_variant: 'prod',
+						should_be_operated_by__release: { __id: lower.getReleaseId() },
+					});
+				});
+
 				it(`should fail to downgrade the device.should_be_operated_by__release (when downgrading to a ${titlePart} release)`, async () => {
 					const downgradeTestDevice = await fakeDevice.provisionDevice(
 						admin,
@@ -534,20 +548,6 @@ export default () => {
 							400,
 							'"Attempt to downgrade hostapp, which is not allowed"',
 						);
-				});
-
-				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports an older os_version (when on a ${titlePart} release)`, async () => {
-					await device1.patchStateV2({
-						local: {
-							os_version: 'balenaOS 2.49.0+rev1',
-							os_variant: 'prod',
-						},
-					});
-					await expectResourceToMatch(pineUser, 'device', device1.id, {
-						os_version: 'balenaOS 2.49.0+rev1',
-						os_variant: 'prod',
-						should_be_operated_by__release: { __id: lower.getReleaseId() },
-					});
 				});
 
 				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports an older "unknown" os_version w/o a matching hostApp release (when on a ${titlePart} release)`, async () => {
