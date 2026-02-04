@@ -406,8 +406,10 @@ function getBaseVersionFromReleaseSemverOrTag(
 	if (release.semver.startsWith('0.0.0')) {
 		return release.release_tag[0]?.value;
 	}
-	// We do not use the raw_version since adds the timestamp as a prerelease part
-	// and that would block updates to draft OS releases of the same major.minor.patch.
+	// We do not use the raw_version since
+	// * it adds the variant, which would break comparisons w/ device.os_version (which doesn't include a variant)
+	// * it adds the timestamp as a prerelease part,
+	//   which would block updates to draft OS releases of the same major.minor.patch.
 	return release.semver;
 }
 
@@ -420,17 +422,32 @@ async function checkHostappReleaseUpgrades(
 	if (deviceIds.length === 0) {
 		return;
 	}
-	const nullHostappCount = await api.get({
+	const devices = await api.get({
 		resource: 'device',
 		options: {
-			$count: {
-				$filter: { id: { $in: deviceIds }, os_version: null },
+			$select: 'os_version',
+			$filter: {
+				id: { $in: deviceIds },
+				os_version: { $ne: null },
 			},
 		},
 	});
 
-	if (nullHostappCount === deviceIds.length) {
-		// all devices have yet to fully provision, so it's not an upgrade
+	let maxOldOsVersion: string | undefined;
+	for (const device of devices) {
+		if (
+			// to keep TS happy
+			device.os_version != null &&
+			semver.parse(device.os_version) != null &&
+			(maxOldOsVersion == null || semver.gt(device.os_version, maxOldOsVersion))
+		) {
+			maxOldOsVersion = device.os_version;
+		}
+	}
+
+	if (maxOldOsVersion == null) {
+		// all devices have yet to fully provision, or have unrecognizable versions,
+		// so it's not an upgrade that we can check
 		return;
 	}
 
@@ -474,42 +491,9 @@ async function checkHostappReleaseUpgrades(
 		);
 	}
 
-	const oldOsReleases = await api.get({
-		resource: 'release',
-		options: {
-			$select: 'semver',
-			$expand: {
-				release_tag: {
-					$select: 'value',
-					$filter: { tag_key: 'version' },
-				},
-			},
-			$filter: {
-				id: { $ne: newHostappReleaseId },
-				should_operate__device: {
-					$any: {
-						$alias: 'd',
-						$expr: {
-							d: {
-								id: {
-									$in: deviceIds,
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	} as const);
-
-	for (const oldOsRelease of oldOsReleases) {
-		const oldVersion = getBaseVersionFromReleaseSemverOrTag(oldOsRelease);
-		// Let the device upgrade if it is operated by a release w/ 0.0.0 semver,
-		// & no version release_tag, since it might be legacy.
-		if (oldVersion != null && semver.lt(newHostappVersion, oldVersion)) {
-			throw new BadRequestError(
-				`Attempt to downgrade hostapp, which is not allowed`,
-			);
-		}
+	if (semver.lt(newHostappVersion, maxOldOsVersion)) {
+		throw new BadRequestError(
+			`Attempt to downgrade hostapp, which is not allowed`,
+		);
 	}
 }

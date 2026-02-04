@@ -479,25 +479,109 @@ export default () => {
 					},
 				] as const
 			).forEach(({ titlePart, lower, higher }) => {
+				const device1InitialOsVersion = 'balenaOS 2.49.0+rev1';
+				const getDevice1InitialOsRelease = () => nuc2_49_0_rev1prodTagOnlyId;
 				it(`should succeed in PATCHing the device.should_be_operated_by__release to a greater version (with ${titlePart})`, async () => {
 					await supertest(admin)
 						.patch(`/${version}/device(${device1.id})`)
 						.send({ should_be_operated_by__release: lower.getReleaseId() })
 						.expect(200);
-					const initialOsVersion = 'balenaOS 2.49.0+rev1';
-					expect(semver.gt(lower.osVersion, initialOsVersion)).to.be.true;
+					expect(semver.gt(lower.osVersion, device1InitialOsVersion)).to.be
+						.true;
 					await expectResourceToMatch(pineUser, 'device', device1.id, {
-						os_version: initialOsVersion,
+						os_version: device1InitialOsVersion,
 						os_variant: 'prod',
 						should_be_operated_by__release: { __id: lower.getReleaseId() },
 					});
 				});
 
-				it(`should fail to downgrade the device.should_be_operated_by__release (when on a ${titlePart} release)`, async () => {
+				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports the current (older) os_version (when on a ${titlePart} release)`, async () => {
+					await device1.patchStateV2({
+						local: {
+							os_version: device1InitialOsVersion,
+							os_variant: 'prod',
+						},
+					});
+					await expectResourceToMatch(pineUser, 'device', device1.id, {
+						os_version: device1InitialOsVersion,
+						os_variant: 'prod',
+						should_be_operated_by__release: { __id: lower.getReleaseId() },
+					});
+				});
+
+				it(`should succeed in PATCHing the device.should_be_operated_by__release to the same version again (with ${titlePart})`, async () => {
+					await supertest(admin)
+						.patch(`/${version}/device(${device1.id})`)
+						.send({ should_be_operated_by__release: lower.getReleaseId() })
+						.expect(200);
+					expect(semver.gt(lower.osVersion, device1InitialOsVersion)).to.be
+						.true;
+					await expectResourceToMatch(pineUser, 'device', device1.id, {
+						os_version: device1InitialOsVersion,
+						os_variant: 'prod',
+						should_be_operated_by__release: { __id: lower.getReleaseId() },
+					});
+				});
+
+				it(`should succeed in PATCHing the device.should_be_operated_by__release to an even higher version again (with ${titlePart})`, async () => {
+					await supertest(admin)
+						.patch(`/${version}/device(${device1.id})`)
+						.send({ should_be_operated_by__release: higher.getReleaseId() })
+						.expect(200);
+					expect(semver.gt(lower.osVersion, device1InitialOsVersion)).to.be
+						.true;
+					await expectResourceToMatch(pineUser, 'device', device1.id, {
+						os_version: device1InitialOsVersion,
+						os_variant: 'prod',
+						should_be_operated_by__release: { __id: higher.getReleaseId() },
+					});
+				});
+
+				it(`should be able to PATCH the device.should_be_operated_by__release to a lower version that's greater that its current os_version if the device hasn't yet completed the update (when on a ${titlePart} release)`, async () => {
 					await supertest(admin)
 						.patch(`/${version}/device(${device1.id})`)
 						.send({
-							should_be_operated_by__release: nuc2_49_0_rev1prodTagOnlyId,
+							should_be_operated_by__release: lower.getReleaseId(),
+						})
+						.expect(200);
+					await expectResourceToMatch(pineUser, 'device', device1.id, {
+						os_version: device1InitialOsVersion,
+						os_variant: 'prod',
+						should_be_operated_by__release: { __id: lower.getReleaseId() },
+					});
+				});
+
+				it(`should be able to PATCH the device.should_be_operated_by__release to the original version if the device hasn't yet completed the update (when on a ${titlePart} release)`, async () => {
+					await supertest(admin)
+						.patch(`/${version}/device(${device1.id})`)
+						.send({
+							should_be_operated_by__release: getDevice1InitialOsRelease(),
+						})
+						.expect(200);
+					await expectResourceToMatch(pineUser, 'device', device1.id, {
+						os_version: device1InitialOsVersion,
+						os_variant: 'prod',
+						should_be_operated_by__release: {
+							__id: getDevice1InitialOsRelease(),
+						},
+					});
+				});
+
+				it(`should fail to downgrade the device.should_be_operated_by__release after the device has already reported reaching the new version (when on a ${titlePart} release)`, async () => {
+					await supertest(admin)
+						.patch(`/${version}/device(${device1.id})`)
+						.send({ should_be_operated_by__release: lower.getReleaseId() })
+						.expect(200);
+					await device1.patchStateV2({
+						local: {
+							os_version: lower.osVersion,
+							os_variant: 'prod',
+						},
+					});
+					await supertest(admin)
+						.patch(`/${version}/device(${device1.id})`)
+						.send({
+							should_be_operated_by__release: getDevice1InitialOsRelease(),
 						})
 						.expect(
 							400,
@@ -505,15 +589,15 @@ export default () => {
 						);
 				});
 
-				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports an older os_version (when on a ${titlePart} release)`, async () => {
+				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports a rollback to the older os_version (when on a ${titlePart} release)`, async () => {
 					await device1.patchStateV2({
 						local: {
-							os_version: 'balenaOS 2.49.0+rev1',
+							os_version: device1InitialOsVersion,
 							os_variant: 'prod',
 						},
 					});
 					await expectResourceToMatch(pineUser, 'device', device1.id, {
-						os_version: 'balenaOS 2.49.0+rev1',
+						os_version: device1InitialOsVersion,
 						os_variant: 'prod',
 						should_be_operated_by__release: { __id: lower.getReleaseId() },
 					});
