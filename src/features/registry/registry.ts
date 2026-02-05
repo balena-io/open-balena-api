@@ -21,7 +21,7 @@ import { registryAuth as CERT } from './certs.js';
 import {
 	AUTH_RESINOS_REGISTRY_CODE,
 	GET_SUBJECT_CACHE_TIMEOUT,
-	REGISTRY2_HOST,
+	REGISTRY_TOKEN_AUDIENCE,
 	REGISTRY_TOKEN_EXPIRY_SECONDS,
 	RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
 	RESOLVE_IMAGE_LOCATION_CACHE_TIMEOUT,
@@ -596,7 +596,7 @@ export const token: RequestHandler = async (req, res) => {
 				]),
 		);
 		res.json({
-			token: generateToken(sub, REGISTRY2_HOST, access),
+			token: generateToken(sub, REGISTRY_TOKEN_AUDIENCE, access),
 		});
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
