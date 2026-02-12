@@ -1,4 +1,4 @@
-FROM balena/open-balena-base:20.2.7-s6-overlay AS runtime
+FROM balena/open-balena-base:20.2.8-s6-overlay AS runtime
 
 EXPOSE 80
 
