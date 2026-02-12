@@ -20,7 +20,11 @@ import {
 import { registryAuth as CERT } from './certs.js';
 import {
 	AUTH_RESINOS_REGISTRY_CODE,
+	ENABLE_HARBOR,
 	GET_SUBJECT_CACHE_TIMEOUT,
+	HARBOR_HOST,
+	HARBOR_ROBOT_USERNAME,
+	HARBOR_ROBOT_TOKEN,
 	REGISTRY2_HOST,
 	REGISTRY_TOKEN_EXPIRY_SECONDS,
 	RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
@@ -595,8 +599,12 @@ export const token: RequestHandler = async (req, res) => {
 					authorizeRequest(req, scopes, tx),
 				]),
 		);
+		const registryToken = ENABLE_HARBOR
+			? await getHarborToken(access)
+			: generateToken(sub, REGISTRY2_HOST, access);
+		console.warn('Generated token:', registryToken);
 		res.json({
-			token: generateToken(sub, REGISTRY2_HOST, access),
+			token: registryToken,
 		});
 	} catch (err) {
 		if (handleHttpErrors(req, res, err)) {
@@ -711,3 +719,35 @@ const getSubject = async (
 		return user?.username;
 	}
 };
+
+async function getHarborToken(access: Access[]): Promise<string> {
+	const scopes = access.map((acc) => {
+		return `${acc.type}:${acc.name}:${acc.actions.join(',')}`;
+	});
+	const url = `https://${HARBOR_HOST}/service/token`;
+	const auth = Buffer.from(
+		`${HARBOR_ROBOT_USERNAME}:${HARBOR_ROBOT_TOKEN}`,
+	).toString('base64');
+
+	const params = new URLSearchParams();
+	params.append('service', 'harbor-registry');
+	for (const scope of scopes) {
+		params.append('scope', scope);
+	}
+
+	console.warn(
+		'Requesting Harbor token:',
+		JSON.stringify({ url: `${url}?${params}`, auth }),
+	);
+
+	const response = await fetch(`${url}?${params}`, {
+		method: 'GET',
+		headers: {
+			Authorization: `Basic ${auth}`,
+		},
+	});
+	const body = await response.json();
+	console.warn('Harbor response:', JSON.stringify(body));
+
+	return body.token;
+}
