@@ -16,7 +16,7 @@ services:
       - full_page_writes=off
 
   redis:
-    image: valkey/valkey:8-alpine
+    image: valkey/valkey:9-alpine
     ports:
       - "6378:6379"
     networks:
