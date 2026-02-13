@@ -8,7 +8,9 @@ import {
 	multiCacheMemoizee,
 	reqPermissionNormalizer,
 } from '../../infra/cache/index.js';
+import { requestAsync } from '../../infra/request-promise/index.js';
 import { randomUUID } from 'node:crypto';
+import { setTimeout } from 'node:timers/promises';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
@@ -21,6 +23,7 @@ import { registryAuth as CERT } from './certs.js';
 import {
 	AUTH_RESINOS_REGISTRY_CODE,
 	GET_SUBJECT_CACHE_TIMEOUT,
+	REGISTRY_REQUEST_DELAY,
 	REGISTRY2_HOST,
 	REGISTRY_TOKEN_EXPIRY_SECONDS,
 	RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
@@ -711,3 +714,69 @@ const getSubject = async (
 		return user?.username;
 	}
 };
+
+// Make an API call to the registry service to mark images for deletion on next garbage collection
+const RATE_LIMIT_DELAY_BASE = 1000;
+const RATE_LIMIT_RETRIES = 5;
+export async function deleteImage(subject: string, repo: string, hash: string) {
+	// Generate an admin-level token with delete permission
+	const registryToken = generateToken(subject, REGISTRY2_HOST, [
+		{
+			name: repo,
+			type: 'repository',
+			actions: ['delete'],
+		},
+	]);
+
+	// Need to make requests one image at a time, no batch endpoint available
+	for (let retries = 0; retries < RATE_LIMIT_RETRIES; retries++) {
+		const [{ statusCode, statusMessage, headers }] = await requestAsync({
+			url: `https://${REGISTRY2_HOST}/v2/${encodeURIComponent(repo)}/manifests/${encodeURIComponent(hash)}`,
+			headers: { Authorization: `Bearer ${registryToken}` },
+			method: 'DELETE',
+		});
+
+		// Return on success or not found
+		if (statusCode === 202 || statusCode === 404) {
+			await setTimeout(REGISTRY_REQUEST_DELAY);
+			return;
+		} else if (statusCode === 429) {
+			// Give up if we've hit the retry limit
+			if (retries === RATE_LIMIT_RETRIES - 1) {
+				throw new Error(
+					`Failed to mark ${repo}/${hash} for deletion: exceeded retry limit due to rate limiting`,
+				);
+			}
+
+			// Default delay value to exponential backoff
+			let delay = RATE_LIMIT_DELAY_BASE * Math.pow(2, retries);
+
+			// Use the retry-after header value if available
+			const retryAfterHeader = headers?.['retry-after'];
+			if (retryAfterHeader) {
+				const headerDelay = parseInt(retryAfterHeader, 10);
+				if (!isNaN(headerDelay)) {
+					delay = headerDelay * 1000;
+				} else {
+					const retryDate = Date.parse(retryAfterHeader);
+					const waitMillis = retryDate - Date.now();
+					if (waitMillis > 0) {
+						delay = waitMillis;
+					}
+				}
+			}
+
+			// Apply some jitter for good measure
+			delay += Math.random() * 1000;
+
+			console.warn(
+				`Received 429 for ${repo}/${hash}. Retrying in ${delay}ms...`,
+			);
+			await setTimeout(delay);
+		} else {
+			throw new Error(
+				`Failed to mark ${repo}/${hash} for deletion: [${statusCode}] ${statusMessage}`,
+			);
+		}
+	}
+}

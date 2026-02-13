@@ -1,0 +1,12 @@
+{
+	"intel-nuc-host-appService1": {
+		"service_name": "main",
+		"application": "intel-nuc-host-app",
+		"user": "admin"
+	},
+	"service1": {
+		"user": "admin",
+		"application": "app1",
+		"service_name": "service1"
+	}
+}

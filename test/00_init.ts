@@ -1,6 +1,7 @@
 /// <reference path="./typings/supertest-extension.ts" />
 
 import fs from 'fs';
+import * as mockRegistry from './test-lib/registry-mock.js';
 import _ from 'lodash';
 import path from 'path';
 
@@ -72,6 +73,14 @@ try {
 			initFn();
 		});
 	}
+
+	before(() => {
+		mockRegistry.start();
+	});
+
+	after(() => {
+		mockRegistry.stop();
+	});
 } finally {
 	run();
 }

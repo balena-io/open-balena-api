@@ -178,6 +178,7 @@ export * as redis from './infra/redis/index.js';
 export * as scheduler from './infra/scheduler/index.js';
 export * as cache from './infra/cache/index.js';
 export * as config from './lib/config.js';
+export * as registry from './features/registry/registry.js';
 export * as abstractSql from './abstract-sql-utils.js';
 export { getFileUploadHandler } from './fileupload-handler.js';
 
