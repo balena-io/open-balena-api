@@ -456,6 +456,10 @@ export const ASYNC_TASK_CREATE_SERVICE_INSTALLS_MAX_TIME_MS = intVar(
 export const USERNAME_BLACKLIST = ['root'];
 
 export const REGISTRY2_HOST = requiredVar('REGISTRY2_HOST');
+export const REGISTRY_TOKEN_AUDIENCE = optionalVar(
+	'REGISTRY_TOKEN_AUDIENCE',
+	REGISTRY2_HOST,
+);
 export const SENTRY_DSN = optionalVar('SENTRY_DSN');
 export const SUPERUSER_EMAIL = optionalVar('SUPERUSER_EMAIL', '');
 export const SUPERUSER_PASSWORD = optionalVar('SUPERUSER_PASSWORD', '');
