@@ -447,7 +447,7 @@ export async function setup(app: Application, options: SetupOptions) {
 		pine.env.tasks.queueIntervalMS = PINEJS_QUEUE_INTERVAL_MS;
 		await import('./tasks.js');
 		await options.onInitTasks?.(app);
-		await pine.tasks.worker?.start();
+		pine.tasks.worker?.start();
 	}
 
 	pine.env.webResource.multipartUploadEnabled =
