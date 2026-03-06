@@ -1,4 +1,9 @@
-import AWS from './aws-sdk-wrapper.js';
+import {
+	HeadObjectCommand,
+	GetObjectCommand,
+	ListObjectsV2Command,
+} from '@aws-sdk/client-s3';
+import { S3 } from './aws-sdk-wrapper.js';
 import _ from 'lodash';
 import path from 'path';
 
@@ -13,89 +18,69 @@ import {
 
 export const getKey = (...parts: string[]): string => parts.join('/');
 
-class UnauthenticatedS3Facade {
-	constructor(private s3: AWS.S3) {}
-
-	public headObject(
-		params: AWS.S3.Types.HeadObjectRequest,
-	): ReturnType<AWS.S3['headObject']> {
-		return this.s3.makeUnauthenticatedRequest('headObject', params);
-	}
-
-	public getObject(
-		params: AWS.S3.Types.GetObjectRequest,
-	): ReturnType<AWS.S3['getObject']> {
-		return this.s3.makeUnauthenticatedRequest('getObject', params);
-	}
-
-	public listObjectsV2(
-		params: AWS.S3.Types.ListObjectsV2Request,
-	): ReturnType<AWS.S3['listObjectsV2']> {
-		return this.s3.makeUnauthenticatedRequest('listObjectsV2', params);
-	}
-}
-
 function createS3Client() {
 	if (!IMAGE_STORAGE_ACCESS_KEY || !IMAGE_STORAGE_SECRET_KEY) {
-		return new UnauthenticatedS3Facade(
-			new AWS.S3({
-				endpoint: IMAGE_STORAGE_ENDPOINT,
-				s3ForcePathStyle: IMAGE_STORAGE_FORCE_PATH_STYLE,
-				signatureVersion: 'v4',
-			}),
-		);
+		return new S3({
+			endpoint: IMAGE_STORAGE_ENDPOINT,
+			forcePathStyle: IMAGE_STORAGE_FORCE_PATH_STYLE,
+			// No-op signer to send requests unsigned; without this the SDK
+			// would try to resolve credentials and throw CredentialsProviderError.
+			signer: { sign: (req) => Promise.resolve(req) },
+		});
 	}
-	return new AWS.S3({
+	return new S3({
 		endpoint: IMAGE_STORAGE_ENDPOINT,
-		s3ForcePathStyle: IMAGE_STORAGE_FORCE_PATH_STYLE,
-		signatureVersion: 'v4',
-		accessKeyId: IMAGE_STORAGE_ACCESS_KEY,
-		secretAccessKey: IMAGE_STORAGE_SECRET_KEY,
+		forcePathStyle: IMAGE_STORAGE_FORCE_PATH_STYLE,
+		credentials: {
+			accessKeyId: IMAGE_STORAGE_ACCESS_KEY,
+			secretAccessKey: IMAGE_STORAGE_SECRET_KEY,
+		},
 	});
 }
 
 const s3Client = createS3Client();
 
-function isUnauthenticatedError(
-	clientS3: UnauthenticatedS3Facade | AWS.S3,
-	err: any,
-): boolean {
+function isUnauthenticatedError(err: any): boolean {
 	return (
-		clientS3 instanceof UnauthenticatedS3Facade &&
-		[401, 403].includes(err.statusCode)
+		(!IMAGE_STORAGE_ACCESS_KEY || !IMAGE_STORAGE_SECRET_KEY) &&
+		[401, 403].includes(err.$metadata?.httpStatusCode)
 	);
 }
 
 function logUnauthenticated(pathS3: string, err: any): void {
 	if (IMAGE_STORAGE_DEBUG_REQUEST_ERRORS) {
 		console.warn(
-			`${err.code} (${err.statusCode}): ${pathS3} belongs to a private device type or has incorrect permissions`,
+			`${err.name} (${err.$metadata?.httpStatusCode}): ${pathS3} belongs to a private device type or has incorrect permissions`,
 		);
 	}
 }
 
 async function getFileInfo(s3Path: string) {
-	const req = s3Client.headObject({
-		Bucket: S3_BUCKET,
-		Key: s3Path,
-	});
-	return await req.promise();
+	return await s3Client.send(
+		new HeadObjectCommand({
+			Bucket: S3_BUCKET,
+			Key: s3Path,
+		}),
+	);
 }
 
 export async function getFile(s3Path: string) {
 	try {
-		const req = s3Client.getObject({
-			Bucket: S3_BUCKET,
-			Key: s3Path,
-		});
-		return await req.promise();
+		const response = await s3Client.send(
+			new GetObjectCommand({
+				Bucket: S3_BUCKET,
+				Key: s3Path,
+			}),
+		);
+		const bodyString = await response.Body?.transformToString();
+		return { ...response, Body: bodyString };
 	} catch (err) {
-		if (isUnauthenticatedError(s3Client, err)) {
+		if (isUnauthenticatedError(err)) {
 			// catch errors for private device types when running unauthenticated
 			logUnauthenticated(s3Path, err);
 			return;
 		}
-		if (err.statusCode === 404) {
+		if (err.$metadata?.httpStatusCode === 404) {
 			return;
 		}
 		throw err;
@@ -107,12 +92,13 @@ export async function getFolderSize(
 	keyPattern?: RegExp,
 	marker?: string,
 ): Promise<number> {
-	const req = s3Client.listObjectsV2({
-		Bucket: S3_BUCKET,
-		Prefix: `${folder}/`,
-		ContinuationToken: marker,
-	});
-	const res = await req.promise();
+	const res = await s3Client.send(
+		new ListObjectsV2Command({
+			Bucket: S3_BUCKET,
+			Prefix: `${folder}/`,
+			ContinuationToken: marker,
+		}),
+	);
 
 	let contents = res.Contents;
 	if (contents != null && keyPattern != null) {
@@ -132,14 +118,14 @@ export async function listFolders(
 	folder: string,
 	marker?: string,
 ): Promise<string[]> {
-	const req = s3Client.listObjectsV2({
-		Bucket: S3_BUCKET,
-		Prefix: `${folder}/`,
-		Delimiter: '/',
-		ContinuationToken: marker,
-	});
-
-	const res = await req.promise();
+	const res = await s3Client.send(
+		new ListObjectsV2Command({
+			Bucket: S3_BUCKET,
+			Prefix: `${folder}/`,
+			Delimiter: '/',
+			ContinuationToken: marker,
+		}),
+	);
 
 	const objects = _(res.CommonPrefixes)
 		.map(({ Prefix }) => Prefix)
@@ -163,10 +149,10 @@ export async function fileExists(s3Path: string): Promise<boolean> {
 		await getFileInfo(s3Path);
 		return true;
 	} catch (err) {
-		if (isUnauthenticatedError(s3Client, err)) {
+		if (isUnauthenticatedError(err)) {
 			// catch errors for private device types when running unauthenticated
 			logUnauthenticated(s3Path, err);
-		} else if (err.statusCode === 404) {
+		} else if (err.$metadata?.httpStatusCode === 404) {
 			return false;
 		}
 		throw err;
