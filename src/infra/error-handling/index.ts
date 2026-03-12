@@ -61,6 +61,9 @@ export function captureException(
 			// We throw some errors where the constructor receives no message
 			// But also sometimes `err` is not really an Error, f.e a number
 			if (err instanceof Error && !err.message) {
+				// Clone the original Error before modifying its message
+				// since the caller might be re-throwing/using it.
+				err = structuredClone(err);
 				err.message = message;
 			}
 		}
