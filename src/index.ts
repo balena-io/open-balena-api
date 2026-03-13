@@ -140,6 +140,7 @@ import {
 	getInstance as getDeviceOnlineStateManager,
 } from './features/device-heartbeat/index.js';
 import { registryAuth } from './features/registry/certs.js';
+import { generateToken } from './features/registry/registry.js';
 import {
 	ALLOWED_NAMES,
 	BLOCKED_NAMES,
@@ -226,6 +227,9 @@ export const auth = {
 	publicKeys,
 	/** @deprecated Will be removed in a future version */
 	refreshToken,
+};
+export const registry = {
+	generateToken,
 };
 export const rateLimiting = {
 	createRateLimitMiddleware,
