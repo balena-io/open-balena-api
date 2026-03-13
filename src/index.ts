@@ -356,6 +356,7 @@ export async function setup(app: Application, options: SetupOptions) {
 			dsn: SENTRY_DSN,
 			release: options.version,
 			environment: NODE_ENV,
+			skipOpenTelemetrySetup: true,
 			integrations: [
 				Sentry.httpIntegration({
 					ignoreIncomingRequests(url) {
