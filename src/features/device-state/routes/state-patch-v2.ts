@@ -151,8 +151,11 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 				Partial<
 					Pick<Device['Write'], 'is_running__release' | 'is_pinned_on__release'>
 				>;
-			let deviceBody = normalizeDeviceWriteBody<DeviceBodyBeforeNormalization>(
-				_.pick(local, v2ValidPatchFields),
+			let deviceBody = normalizeDeviceWriteBody(
+				_.pick(
+					local,
+					v2ValidPatchFields,
+				) satisfies DeviceBodyBeforeNormalization as DeviceBodyBeforeNormalization,
 				uuid,
 			);
 			let metricsBody: Pick<LocalBody, (typeof metricsPatchFields)[number]> =

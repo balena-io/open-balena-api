@@ -104,27 +104,32 @@ const createServiceInstalls = async ({
 			}),
 		);
 
-		const serviceIds = new Set([...targetServicesByDevice.values()].flat());
+		const serviceIds = new Set(
+			targetServicesByDevice.values().toArray().flat(),
+		);
 
 		if (serviceIds.size === 0) {
 			console.info('[service-install-task] No service installs to create');
 			return 0;
 		}
 
-		const missingServiceFilters = Array.from(serviceIds, (serviceId) => ({
-			$not: {
-				service_install: {
-					$any: {
-						$alias: 'si',
-						$expr: {
-							si: {
-								installs__service: serviceId,
+		const missingServiceFilters = serviceIds
+			.values()
+			.map((serviceId) => ({
+				$not: {
+					service_install: {
+						$any: {
+							$alias: 'si',
+							$expr: {
+								si: {
+									installs__service: serviceId,
+								},
 							},
 						},
 					},
 				},
-			},
-		}));
+			}))
+			.toArray();
 
 		const devicesToAddServiceInstalls = (
 			await api.resin.get({

@@ -187,9 +187,9 @@ async function setOSReleaseIfNewer(
 	});
 
 	return Promise.all(
-		Array.from(
-			devicesByDeviceTypeId.entries(),
-			async ([deviceTypeId, affectedDevices]) => {
+		devicesByDeviceTypeId
+			.entries()
+			.map(async ([deviceTypeId, affectedDevices]) => {
 				const newOsRelease = await getOSReleaseResource(
 					api,
 					newOsVersion,
@@ -222,8 +222,7 @@ async function setOSReleaseIfNewer(
 						should_be_operated_by__release: newOsRelease?.id ?? null,
 					},
 				});
-			},
-		),
+			}),
 	);
 }
 

@@ -333,7 +333,7 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 						(r) => r.belongs_to__application.__id,
 					);
 
-		const releasesByAppEntries = Array.from(releasesByApp.entries());
+		const releasesByAppEntries = releasesByApp.entries().toArray();
 
 		// lift all locks upfront
 		for (const [appId] of releasesByAppEntries) {
@@ -348,62 +348,20 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 						: groupByMap(releasesOfApp, (r) => r.variant);
 
 				await Promise.all(
-					Array.from(
-						releasesByVariant.entries(),
-						async ([variant, releases]) => {
-							if (semverObject != null) {
-								const nextRevision = await getNextRevision(
-									api,
-									appId,
-									semverObject,
-									variant,
-								);
-								for (let index = 0; index < releases.length; index++) {
-									checkNotDifferentRevision(semverObject, nextRevision + index);
-								}
+					releasesByVariant.entries().map(async ([variant, releases]) => {
+						if (semverObject != null) {
+							const nextRevision = await getNextRevision(
+								api,
+								appId,
+								semverObject,
+								variant,
+							);
+							for (let index = 0; index < releases.length; index++) {
+								checkNotDifferentRevision(semverObject, nextRevision + index);
+							}
 
-								await Promise.all(
-									releases.map(async (release, index) => {
-										await api.patch({
-											resource: 'release',
-											// Needs root because revision is not settable.
-											passthrough: { req: permissions.root },
-											id: release.id,
-											body: {
-												...(is_final &&
-													release.is_finalized_at__date == null && {
-														is_finalized_at__date: new Date(),
-													}),
-												revision: nextRevision + index,
-											},
-										});
-									}),
-								);
-							} else {
-								// needs to be done one by one, since otherwise more than one releases might already
-								// be in the same semver and they could end up with the same revision as well.
-								for (const release of releases) {
-									const releaseSemverObject = semverLib.parse(release.semver);
-									if (releaseSemverObject == null) {
-										const sentryError = new BadRequestError(
-											'Could not parse the semver a pre-existing release',
-										);
-										captureException(
-											sentryError,
-											`Could not parse the semver of ${release.id} while updating release revision.`,
-										);
-										throw new BadRequestError(
-											'Could not parse the semver a pre-existing release',
-										);
-									}
-									const nextRevision = await getNextRevision(
-										api,
-										appId,
-										releaseSemverObject,
-										variant,
-									);
-									checkNotDifferentRevision(releaseSemverObject, nextRevision);
-
+							await Promise.all(
+								releases.map(async (release, index) => {
 									await api.patch({
 										resource: 'release',
 										// Needs root because revision is not settable.
@@ -414,13 +372,52 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 												release.is_finalized_at__date == null && {
 													is_finalized_at__date: new Date(),
 												}),
-											revision: nextRevision,
+											revision: nextRevision + index,
 										},
 									});
+								}),
+							);
+						} else {
+							// needs to be done one by one, since otherwise more than one releases might already
+							// be in the same semver and they could end up with the same revision as well.
+							for (const release of releases) {
+								const releaseSemverObject = semverLib.parse(release.semver);
+								if (releaseSemverObject == null) {
+									const sentryError = new BadRequestError(
+										'Could not parse the semver a pre-existing release',
+									);
+									captureException(
+										sentryError,
+										`Could not parse the semver of ${release.id} while updating release revision.`,
+									);
+									throw new BadRequestError(
+										'Could not parse the semver a pre-existing release',
+									);
 								}
+								const nextRevision = await getNextRevision(
+									api,
+									appId,
+									releaseSemverObject,
+									variant,
+								);
+								checkNotDifferentRevision(releaseSemverObject, nextRevision);
+
+								await api.patch({
+									resource: 'release',
+									// Needs root because revision is not settable.
+									passthrough: { req: permissions.root },
+									id: release.id,
+									body: {
+										...(is_final &&
+											release.is_finalized_at__date == null && {
+												is_finalized_at__date: new Date(),
+											}),
+										revision: nextRevision,
+									},
+								});
 							}
-						},
-					),
+						}
+					}),
 				);
 			}),
 		);

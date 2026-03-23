@@ -3,7 +3,8 @@
 	"compilerOptions": {
 		"rootDir": "./",
 		"allowJs": true,
-		"checkJs": true
+		"checkJs": true,
+		"types": ["mocha"]
 	},
 	"include": [
 		"src/**/*.ts",
