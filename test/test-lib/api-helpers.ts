@@ -1,6 +1,13 @@
 import _ from 'lodash';
 import jsonwebtoken from 'jsonwebtoken';
 import type { PineTest } from 'pinejs-client-supertest';
+import type {
+	OptionsToResponse,
+	ExpandableStringKeyOf,
+	ResourceId,
+	ODataOptions,
+} from 'pinejs-client-core';
+import type BalenaModel from '../../src/balena-model.js';
 import type { Release } from '../../src/balena-model.js';
 import { expect } from 'chai';
 import type { UserObjectParam } from '../test-lib/supertest.js';
@@ -91,22 +98,51 @@ export const addImageToRelease = async (
 		.expect(201);
 };
 
-export const expectResourceToMatch = async <T = AnyObject>(
+type Equals<X, Y> =
+	(<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+		? true
+		: false;
+export const expectResourceToMatch = async <
+	R extends keyof BalenaModel,
+	T extends BalenaModel[R]['Read'],
+	S extends ODataOptions<T>['$select'] & string,
+>(
 	pineUser: PineTest,
-	resource: string,
-	id: number | AnyObject,
-	selectExpectations: Dictionary<
-		| null
-		| string
-		| number
-		| boolean
-		| object
-		| ((chaiPropertyAssertion: Chai.Assertion, value: unknown) => void)
+	resource: R,
+	id: ResourceId<T>,
+	selectExpectations: Partial<
+		Record<
+			S,
+			| null
+			| string
+			| number
+			| boolean
+			| Dictionary<any>
+			| ((chaiPropertyAssertion: Chai.Assertion, value: unknown) => void)
+		>
 	>,
-	expandExpectations?: Dictionary<
-		Array<Dictionary<null | string | number | boolean>>
+	expandExpectations?: Partial<
+		Record<
+			ExpandableStringKeyOf<T>,
+			Array<Dictionary<null | string | number | boolean>>
+		>
 	>,
-): Promise<T> => {
+): Promise<
+	NonNullable<
+		OptionsToResponse<
+			T,
+			{
+				$select: Equals<S, never> extends true ? 'id' : S;
+				$expand: {
+					[key in keyof typeof expandExpectations]: {
+						$select: Array<keyof (typeof expandExpectations)[key]>;
+					};
+				};
+			},
+			number
+		>
+	>
+> => {
 	if (_.isEqual(expandExpectations, {})) {
 		throw new Error(
 			'expectResourceToMatch was called with empty expandExpectations',
@@ -115,8 +151,10 @@ export const expectResourceToMatch = async <T = AnyObject>(
 	let expands: AnyObject | null = null;
 	if (expandExpectations != null) {
 		expands = {};
-		for (const [key, expand] of Object.entries(expandExpectations)) {
-			let selectedFields = _.uniq(expand.flatMap((prop) => Object.keys(prop)));
+		for (const [key, expand] of Object.entries<
+			(typeof expandExpectations)[ExpandableStringKeyOf<T>]
+		>(expandExpectations)) {
+			let selectedFields = _.uniq(expand!.flatMap((prop) => Object.keys(prop)));
 			if (selectedFields.length === 0) {
 				selectedFields = ['id'];
 			}
@@ -136,7 +174,8 @@ export const expectResourceToMatch = async <T = AnyObject>(
 				'expectResourceToMatch was called with empty selectExpectations & null expandExpectations',
 			);
 		}
-		selectExpectations = { id };
+		// Cast this as any to bypass the typings since the passed in object had no keys.. but we need to enforce selecting at least the id field
+		selectExpectations = { id } as any;
 	}
 
 	const requestPromise = pineUser.get({
@@ -154,15 +193,28 @@ export const expectResourceToMatch = async <T = AnyObject>(
 		(
 			'expect' in requestPromise
 				? (await requestPromise.expect(200)).body
-				: await (requestPromise as Promise<T>)
-		) as T | undefined;
+				: await (requestPromise as Promise<unknown>)
+		) as
+			| OptionsToResponse<
+					T,
+					{
+						$select: Equals<S, never> extends true ? 'id' : S;
+						$expand: {
+							[key in keyof typeof expandExpectations]: {
+								$select: Array<keyof (typeof expandExpectations)[key]>;
+							};
+						};
+					},
+					number
+			  >
+			| undefined;
 	assertExists(result);
 	expect(result).to.be.an('object');
 	for (const [key, valueOrAssertion] of Object.entries(selectExpectations)) {
 		if (typeof valueOrAssertion === 'function') {
 			valueOrAssertion(
 				expect(result).to.have.property(key),
-				result[key as keyof typeof result],
+				(result as Record<string, any>)[key],
 			);
 		} else if (
 			typeof valueOrAssertion === 'object' &&
