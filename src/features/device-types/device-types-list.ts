@@ -99,9 +99,11 @@ export const getDeviceTypes = multiCacheMemoizee(
 						latest: latestDeviceType,
 					};
 
-					_.forEach(latestDeviceType.aliases, (alias) => {
-						result[alias] = result[slug];
-					});
+					if (latestDeviceType.aliases != null) {
+						for (const alias of latestDeviceType.aliases) {
+							result[alias] = result[slug];
+						}
+					}
 				} catch (err) {
 					captureException(
 						err,

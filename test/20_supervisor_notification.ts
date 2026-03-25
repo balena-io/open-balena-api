@@ -41,7 +41,7 @@ export default () => {
 				await fixtures.clean(fx);
 			});
 
-			[
+			for (const { resource, getNaturalKey } of [
 				{
 					resource: 'application_environment_variable',
 					getNaturalKey: () => ({
@@ -56,7 +56,7 @@ export default () => {
 						name: 'testDeviceVar',
 					}),
 				},
-			].forEach(({ resource, getNaturalKey }) => {
+			]) {
 				it(`should notify the supervisor after adding a ${resource}`, async function () {
 					await connectDeviceAndWaitForUpdate(
 						device.uuid,
@@ -107,7 +107,7 @@ export default () => {
 						},
 					);
 				});
-			});
+			}
 
 			describe('given a big number of vars', function () {
 				// PG uses 16 bits to address binds and as a result queries using more than ~66k binds throw an `code: '42P01'` error.

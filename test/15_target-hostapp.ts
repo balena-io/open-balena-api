@@ -215,79 +215,77 @@ export default () => {
 				],
 			] as const;
 
-			(
+			for (const [provisioningFnTitlePart, provisionFn] of [
 				[
-					[
-						'POST device resource',
-						async ({ device_type, ...devicePostBody }: AnyObject) => {
-							return await supertest(admin)
-								.post(`/${version}/device`)
-								.send({
-									...devicePostBody,
-									is_of__device_type: (
-										await pineTest
-											.get({
-												resource: 'device_type',
-												passthrough: { user: admin },
-												id: { slug: device_type },
-												options: {
-													$select: 'id',
-												},
-											})
-											.expect(200)
-									).body?.id,
-								})
-								.expect(201);
-						},
-					],
-					[
-						'POST /device/register',
-						async ({
-							belongs_to__application,
-							...restDevicePostBody
-						}: AnyObject) => {
-							const { body: provisioningKey } = await supertest(admin)
-								.post(`/api-key/application/${applicationId}/provisioning`)
-								.expect(200);
-							const uuid = fakeDevice.generateDeviceUuid();
-							return await supertest()
-								.post(`/device/register?apikey=${provisioningKey}`)
-								.send({
-									user: admin.id,
-									application: belongs_to__application,
-									uuid,
-									...restDevicePostBody,
-								})
-								.expect(201);
-						},
-					],
-					[
-						'device POST & state PATCH',
-						async ({
-							belongs_to__application,
-							device_type,
-							...restDevicePostBody
-						}: AnyObject) => {
-							const testDevice = await fakeDevice.provisionDevice(
-								admin,
-								applicationId,
-							);
-							await testDevice.patchStateV2({
-								local: restDevicePostBody,
-							});
-							return await pineUser
-								.get({
-									resource: 'device',
-									id: testDevice.id,
-									options: {
-										$select: 'id',
-									},
-								})
-								.expect(200);
-						},
-					],
-				] as const
-			).forEach(([provisioningFnTitlePart, provisionFn]) => {
+					'POST device resource',
+					async ({ device_type, ...devicePostBody }: AnyObject) => {
+						return await supertest(admin)
+							.post(`/${version}/device`)
+							.send({
+								...devicePostBody,
+								is_of__device_type: (
+									await pineTest
+										.get({
+											resource: 'device_type',
+											passthrough: { user: admin },
+											id: { slug: device_type },
+											options: {
+												$select: 'id',
+											},
+										})
+										.expect(200)
+								).body?.id,
+							})
+							.expect(201);
+					},
+				],
+				[
+					'POST /device/register',
+					async ({
+						belongs_to__application,
+						...restDevicePostBody
+					}: AnyObject) => {
+						const { body: provisioningKey } = await supertest(admin)
+							.post(`/api-key/application/${applicationId}/provisioning`)
+							.expect(200);
+						const uuid = fakeDevice.generateDeviceUuid();
+						return await supertest()
+							.post(`/device/register?apikey=${provisioningKey}`)
+							.send({
+								user: admin.id,
+								application: belongs_to__application,
+								uuid,
+								...restDevicePostBody,
+							})
+							.expect(201);
+					},
+				],
+				[
+					'device POST & state PATCH',
+					async ({
+						belongs_to__application,
+						device_type,
+						...restDevicePostBody
+					}: AnyObject) => {
+						const testDevice = await fakeDevice.provisionDevice(
+							admin,
+							applicationId,
+						);
+						await testDevice.patchStateV2({
+							local: restDevicePostBody,
+						});
+						return await pineUser
+							.get({
+								resource: 'device',
+								id: testDevice.id,
+								options: {
+									$select: 'id',
+								},
+							})
+							.expect(200);
+					},
+				],
+			] as const) {
 				it(`should provision WITHOUT a linked hostapp when not providing a version (using ${provisioningFnTitlePart})`, async () => {
 					const res = await provisionFn({
 						belongs_to__application: applicationId,
@@ -310,81 +308,83 @@ export default () => {
 					});
 				});
 
-				versionsToTest.forEach(
-					([osTypeTitlePart, osVersionVariantParams, getHostAppReleaseId]) => {
-						const isEsr =
-							osVersionVariantParams.os_version.startsWith('balenaOS 20');
+				for (const [
+					osTypeTitlePart,
+					osVersionVariantParams,
+					getHostAppReleaseId,
+				] of versionsToTest) {
+					const isEsr =
+						osVersionVariantParams.os_version.startsWith('balenaOS 20');
 
-						describe(`provisioning with a ${osTypeTitlePart} OS (using ${provisioningFnTitlePart})`, function () {
-							let registeredDevice: Device['Read'];
+					describe(`provisioning with a ${osTypeTitlePart} OS (using ${provisioningFnTitlePart})`, function () {
+						let registeredDevice: Device['Read'];
 
-							after(async function () {
-								await fixtures.clean({
-									devices: [registeredDevice],
-								});
+						after(async function () {
+							await fixtures.clean({
+								devices: [registeredDevice],
 							});
+						});
 
-							it(`should provision with a linked hostapp`, async () => {
-								({ body: registeredDevice } = await provisionFn({
-									belongs_to__application: applicationId,
-									device_type: 'intel-nuc',
-									...osVersionVariantParams,
-								}));
-								await expectResourceToMatch(
-									pineUser,
-									'device',
-									registeredDevice.id,
-									{
-										should_be_operated_by__release: {
-											__id: getHostAppReleaseId(),
-										},
+						it(`should provision with a linked hostapp`, async () => {
+							({ body: registeredDevice } = await provisionFn({
+								belongs_to__application: applicationId,
+								device_type: 'intel-nuc',
+								...osVersionVariantParams,
+							}));
+							await expectResourceToMatch(
+								pineUser,
+								'device',
+								registeredDevice.id,
+								{
+									should_be_operated_by__release: {
+										__id: getHostAppReleaseId(),
 									},
-								);
-							});
+								},
+							);
+						});
 
-							it(`should create a service install for the linked hostapp`, async () => {
-								const targetHostApp = isEsr ? nucEsrHostApp : nucHostApp;
-								const targetService =
-									fx.services[
-										isEsr ? 'intel-nuc-esr_service1' : 'intel-nuc_service1'
-									];
+						it(`should create a service install for the linked hostapp`, async () => {
+							const targetHostApp = isEsr ? nucEsrHostApp : nucHostApp;
+							const targetService =
+								fx.services[
+									isEsr ? 'intel-nuc-esr_service1' : 'intel-nuc_service1'
+								];
 
-								await expectToEventually(async () => {
-									const { body: serviceInstalls } = await pineUser
-										.get({
-											resource: 'service_install',
-											options: {
-												$expand: {
-													installs__service: {
-														$select: ['id', 'service_name'],
-													},
+							await expectToEventually(async () => {
+								const { body: serviceInstalls } = await pineUser
+									.get({
+										resource: 'service_install',
+										options: {
+											$expand: {
+												installs__service: {
+													$select: ['id', 'service_name'],
 												},
-												$filter: {
-													device: registeredDevice.id,
-													installs__service: {
-														$any: {
-															$alias: 'is',
-															$expr: {
-																is: {
-																	application: targetHostApp.id,
-																},
+											},
+											$filter: {
+												device: registeredDevice.id,
+												installs__service: {
+													$any: {
+														$alias: 'is',
+														$expr: {
+															is: {
+																application: targetHostApp.id,
 															},
 														},
 													},
 												},
 											},
-										} as const)
-										.expect(200);
-									expect(serviceInstalls).to.have.lengthOf(1);
-									const [service] = serviceInstalls[0].installs__service;
-									expect(service).to.have.property('id', targetService.id);
-									expect(service).to.have.property('service_name', 'main');
-								});
+										},
+									} as const)
+									.expect(200);
+								expect(serviceInstalls).to.have.lengthOf(1);
+								const [service] = serviceInstalls[0].installs__service;
+								expect(service).to.have.property('id', targetService.id);
+								expect(service).to.have.property('service_name', 'main');
 							});
 						});
-					},
-				);
-			});
+					});
+				}
+			}
 
 			it('should fail to PATCH intel-nuc device to raspberrypi3 hostapp', async () => {
 				// given a device w/ a linked hostApp
@@ -420,65 +420,63 @@ export default () => {
 					);
 			});
 
-			(
-				[
-					{
-						titlePart: 'release_tag only',
-						lower: {
-							osVersion: 'balenaOS 2.50.0+rev1',
-							getReleaseId: () => nuc2_50_0_rev1prodTagOnlyId,
-						},
-						higher: {
-							osVersion: 'balenaOS 2.88.4',
-							getReleaseId: () => unifiedHostAppReleaseId,
-						},
+			for (const { titlePart, lower, higher } of [
+				{
+					titlePart: 'release_tag only',
+					lower: {
+						osVersion: 'balenaOS 2.50.0+rev1',
+						getReleaseId: () => nuc2_50_0_rev1prodTagOnlyId,
 					},
-					{
-						titlePart: 'semver & release_tag',
-						lower: {
-							osVersion: 'balenaOS 2.51.0+rev1',
-							getReleaseId: () => nuc2_51_0_rev1prodTagAndSemverId,
-						},
-						higher: {
-							osVersion: 'balenaOS 2.88.4',
-							getReleaseId: () => unifiedHostAppReleaseId,
-						},
+					higher: {
+						osVersion: 'balenaOS 2.88.4',
+						getReleaseId: () => unifiedHostAppReleaseId,
 					},
-					{
-						titlePart: 'semver only',
-						lower: {
-							osVersion: 'balenaOS 2.51.0+rev2',
-							getReleaseId: () => nuc2_51_0_rev2prodSemverOnlyId,
-						},
-						higher: {
-							osVersion: 'balenaOS 2.88.4',
-							getReleaseId: () => unifiedHostAppReleaseId,
-						},
+				},
+				{
+					titlePart: 'semver & release_tag',
+					lower: {
+						osVersion: 'balenaOS 2.51.0+rev1',
+						getReleaseId: () => nuc2_51_0_rev1prodTagAndSemverId,
 					},
-					{
-						titlePart: 'ESR non-Semver release_tag only',
-						lower: {
-							osVersion: 'balenaOS 2021.01.0',
-							getReleaseId: () => esrTagOnlyNonSemverHostAppReleaseId,
-						},
-						higher: {
-							osVersion: 'balenaOS 2023.10.0',
-							getReleaseId: () => esrSemverOnlyHostAppReleaseId,
-						},
+					higher: {
+						osVersion: 'balenaOS 2.88.4',
+						getReleaseId: () => unifiedHostAppReleaseId,
 					},
-					{
-						titlePart: 'unified ESR',
-						lower: {
-							osVersion: 'balenaOS 2023.1.0',
-							getReleaseId: () => esrUnifiedHostAppReleaseId,
-						},
-						higher: {
-							osVersion: 'balenaOS 2023.10.0',
-							getReleaseId: () => esrSemverOnlyHostAppReleaseId,
-						},
+				},
+				{
+					titlePart: 'semver only',
+					lower: {
+						osVersion: 'balenaOS 2.51.0+rev2',
+						getReleaseId: () => nuc2_51_0_rev2prodSemverOnlyId,
 					},
-				] as const
-			).forEach(({ titlePart, lower, higher }) => {
+					higher: {
+						osVersion: 'balenaOS 2.88.4',
+						getReleaseId: () => unifiedHostAppReleaseId,
+					},
+				},
+				{
+					titlePart: 'ESR non-Semver release_tag only',
+					lower: {
+						osVersion: 'balenaOS 2021.01.0',
+						getReleaseId: () => esrTagOnlyNonSemverHostAppReleaseId,
+					},
+					higher: {
+						osVersion: 'balenaOS 2023.10.0',
+						getReleaseId: () => esrSemverOnlyHostAppReleaseId,
+					},
+				},
+				{
+					titlePart: 'unified ESR',
+					lower: {
+						osVersion: 'balenaOS 2023.1.0',
+						getReleaseId: () => esrUnifiedHostAppReleaseId,
+					},
+					higher: {
+						osVersion: 'balenaOS 2023.10.0',
+						getReleaseId: () => esrSemverOnlyHostAppReleaseId,
+					},
+				},
+			] as const) {
 				const device1InitialOsVersion = 'balenaOS 2.49.0+rev1';
 				const getDevice1InitialOsRelease = () => nuc2_49_0_rev1prodTagOnlyId;
 				it(`should succeed in PATCHing the device.should_be_operated_by__release to a greater version (with ${titlePart})`, async () => {
@@ -805,7 +803,7 @@ export default () => {
 						},
 					);
 				});
-			});
+			}
 
 			it('should succeed in PATCHing device to ESR release', async () => {
 				const testDevice = await fakeDevice.provisionDevice(
@@ -857,209 +855,209 @@ export default () => {
 				expect(body.d[0]).to.not.have.property('os_variant');
 			});
 
-			(
+			for (const [
+				osTypeTitlePart,
+				invalidatedOsVersion,
+				getHostAppReleaseId,
+			] of [
 				[
-					[
-						'release_tag only',
-						'balenaOS 2.52.0+rev1',
-						() => invalidatedNucTagOnlyReleaseId,
-					],
-					[
-						'semver only',
-						'balenaOS 2.52.1+rev1',
-						() => invalidatedNucSemverOnlyReleaseId,
-					],
-				] as const
-			).forEach(
-				([osTypeTitlePart, invalidatedOsVersion, getHostAppReleaseId]) => {
-					let invalidatedReleaseDevice: fakeDevice.Device;
+					'release_tag only',
+					'balenaOS 2.52.0+rev1',
+					() => invalidatedNucTagOnlyReleaseId,
+				],
+				[
+					'semver only',
+					'balenaOS 2.52.1+rev1',
+					() => invalidatedNucSemverOnlyReleaseId,
+				],
+			] as const) {
+				let invalidatedReleaseDevice: fakeDevice.Device;
 
-					it(`should provision with an invalidated ${osTypeTitlePart} hostapp release`, async () => {
-						invalidatedReleaseDevice = await fakeDevice.provisionDevice(
-							admin,
-							applicationId,
-						);
-						const initialInvalidatedReleaseId = getHostAppReleaseId();
-						await invalidatedReleaseDevice.patchStateV2({
-							local: {
-								os_version: invalidatedOsVersion,
-								os_variant: 'prod',
-							},
-						});
-						await expectResourceToMatch(
-							pineUser,
-							'device',
-							invalidatedReleaseDevice.id,
-							{
-								os_version: invalidatedOsVersion,
-								os_variant: 'prod',
-								should_be_operated_by__release: {
-									__id: initialInvalidatedReleaseId,
-								},
-							},
-						);
+				it(`should provision with an invalidated ${osTypeTitlePart} hostapp release`, async () => {
+					invalidatedReleaseDevice = await fakeDevice.provisionDevice(
+						admin,
+						applicationId,
+					);
+					const initialInvalidatedReleaseId = getHostAppReleaseId();
+					await invalidatedReleaseDevice.patchStateV2({
+						local: {
+							os_version: invalidatedOsVersion,
+							os_variant: 'prod',
+						},
 					});
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						invalidatedReleaseDevice.id,
+						{
+							os_version: invalidatedOsVersion,
+							os_variant: 'prod',
+							should_be_operated_by__release: {
+								__id: initialInvalidatedReleaseId,
+							},
+						},
+					);
+				});
 
-					it(`...should be able to do subsequent state PATCHes with an invalidated ${osTypeTitlePart} hostapp release when should_be_operated_by__release is already set`, async () => {
-						const initialInvalidatedReleaseId = getHostAppReleaseId();
-						await invalidatedReleaseDevice.patchStateV2({
-							local: {
-								os_version: invalidatedOsVersion,
-								os_variant: 'prod',
-								// adding an extra changed field to make sure that update runs
-								memory_usage: 1,
-							},
-						});
-						await expectResourceToMatch(
-							pineUser,
-							'device',
-							invalidatedReleaseDevice.id,
-							{
-								os_version: invalidatedOsVersion,
-								os_variant: 'prod',
-								should_be_operated_by__release: {
-									__id: initialInvalidatedReleaseId,
-								},
-							},
-						);
+				it(`...should be able to do subsequent state PATCHes with an invalidated ${osTypeTitlePart} hostapp release when should_be_operated_by__release is already set`, async () => {
+					const initialInvalidatedReleaseId = getHostAppReleaseId();
+					await invalidatedReleaseDevice.patchStateV2({
+						local: {
+							os_version: invalidatedOsVersion,
+							os_variant: 'prod',
+							// adding an extra changed field to make sure that update runs
+							memory_usage: 1,
+						},
 					});
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						invalidatedReleaseDevice.id,
+						{
+							os_version: invalidatedOsVersion,
+							os_variant: 'prod',
+							should_be_operated_by__release: {
+								__id: initialInvalidatedReleaseId,
+							},
+						},
+					);
+				});
 
-					it(`...should be able to update from an invalidated ${osTypeTitlePart} to a newer release`, async () => {
-						const supervisorVersion = 'v12.3.5';
-						const newOsVersion = 'balenaOS 2.88.5+rev1';
-						await invalidatedReleaseDevice.patchStateV2({
-							local: {
-								supervisor_version: supervisorVersion,
-								os_version: newOsVersion,
-								os_variant: 'prod',
-							},
-						});
-						// after provisioning to our invalidated release, let's make sure we're not blocked
-						// in further PATCHing (ie there is no rule/hook blocking the device from working)
-						await expectResourceToMatch(
-							pineUser,
-							'device',
-							invalidatedReleaseDevice.id,
-							{
-								supervisor_version: supervisorVersion,
-								os_version: newOsVersion,
-								os_variant: 'prod',
-								// Atm the should_be_operated_by__release is only updated when the device provisions.
-								// We might change this during the scheduled or tri-app HUP.
-								should_be_operated_by__release: {
-									__id: unifiedSemverRevHostAppReleaseId,
-								},
-							},
-						);
+				it(`...should be able to update from an invalidated ${osTypeTitlePart} to a newer release`, async () => {
+					const supervisorVersion = 'v12.3.5';
+					const newOsVersion = 'balenaOS 2.88.5+rev1';
+					await invalidatedReleaseDevice.patchStateV2({
+						local: {
+							supervisor_version: supervisorVersion,
+							os_version: newOsVersion,
+							os_variant: 'prod',
+						},
 					});
+					// after provisioning to our invalidated release, let's make sure we're not blocked
+					// in further PATCHing (ie there is no rule/hook blocking the device from working)
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						invalidatedReleaseDevice.id,
+						{
+							supervisor_version: supervisorVersion,
+							os_version: newOsVersion,
+							os_variant: 'prod',
+							// Atm the should_be_operated_by__release is only updated when the device provisions.
+							// We might change this during the scheduled or tri-app HUP.
+							should_be_operated_by__release: {
+								__id: unifiedSemverRevHostAppReleaseId,
+							},
+						},
+					);
+				});
 
-					it(`should be able to do subsequent state PATCHes with an invalidated ${osTypeTitlePart} hostapp release when should_be_operated_by__release is not set`, async () => {
-						// Emutalate a device that has the os_version set but should_be_operated_by__release is not set,
-						// or unset by a user, to confirm that subsequent state PATCHes still work.
-						const invalidatedReleaseLaterPatchDevice =
-							await fakeDevice.provisionDevice(admin, applicationId);
-						const initialInvalidatedReleaseId = getHostAppReleaseId();
-						await invalidatedReleaseLaterPatchDevice.patchStateV2({
-							local: {
-								os_version: invalidatedOsVersion,
-								os_variant: 'prod',
-							},
-						});
-						await expectResourceToMatch(
-							pineUser,
-							'device',
-							invalidatedReleaseLaterPatchDevice.id,
-							{
-								os_version: invalidatedOsVersion,
-								os_variant: 'prod',
-								should_be_operated_by__release: {
-									__id: initialInvalidatedReleaseId,
-								},
-							},
-						);
-						await pineUser.patch({
-							resource: 'device',
-							id: invalidatedReleaseLaterPatchDevice.id,
-							body: {
-								should_be_operated_by__release: null,
-							},
-						});
-						await expectResourceToMatch(
-							pineUser,
-							'device',
-							invalidatedReleaseLaterPatchDevice.id,
-							{
-								os_version: invalidatedOsVersion,
-								os_variant: 'prod',
-								should_be_operated_by__release: null,
-							},
-						);
-
-						await invalidatedReleaseLaterPatchDevice.patchStateV2({
-							local: {
-								os_version: invalidatedOsVersion,
-								os_variant: 'prod',
-								// adding an extra changed field to make sure that update runs
-								memory_usage: 2,
-							},
-						});
-						await expectResourceToMatch(
-							pineUser,
-							'device',
-							invalidatedReleaseLaterPatchDevice.id,
-							{
-								os_version: invalidatedOsVersion,
-								os_variant: 'prod',
-								should_be_operated_by__release: {
-									__id: initialInvalidatedReleaseId,
-								},
-							},
-						);
+				it(`should be able to do subsequent state PATCHes with an invalidated ${osTypeTitlePart} hostapp release when should_be_operated_by__release is not set`, async () => {
+					// Emutalate a device that has the os_version set but should_be_operated_by__release is not set,
+					// or unset by a user, to confirm that subsequent state PATCHes still work.
+					const invalidatedReleaseLaterPatchDevice =
+						await fakeDevice.provisionDevice(admin, applicationId);
+					const initialInvalidatedReleaseId = getHostAppReleaseId();
+					await invalidatedReleaseLaterPatchDevice.patchStateV2({
+						local: {
+							os_version: invalidatedOsVersion,
+							os_variant: 'prod',
+						},
 					});
-
-					it(`should update the should_be_operated_by__release to an invalidated ${osTypeTitlePart} hostapp release when the device reports so`, async () => {
-						const invalidatedReleaseLaterPatchDevice =
-							await fakeDevice.provisionDevice(admin, applicationId);
-						await invalidatedReleaseLaterPatchDevice.patchStateV2({
-							local: {
-								os_version: 'balenaOS 2.50.0+rev1',
-								os_variant: 'prod',
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						invalidatedReleaseLaterPatchDevice.id,
+						{
+							os_version: invalidatedOsVersion,
+							os_variant: 'prod',
+							should_be_operated_by__release: {
+								__id: initialInvalidatedReleaseId,
 							},
-						});
-						await expectResourceToMatch(
-							pineUser,
-							'device',
-							invalidatedReleaseLaterPatchDevice.id,
-							{
-								os_version: 'balenaOS 2.50.0+rev1',
-								os_variant: 'prod',
-								should_be_operated_by__release: {
-									__id: nuc2_50_0_rev1prodTagOnlyId,
-								},
-							},
-						);
-						const laterInvalidatedReleaseId = getHostAppReleaseId();
-						await invalidatedReleaseLaterPatchDevice.patchStateV2({
-							local: {
-								os_version: invalidatedOsVersion,
-								os_variant: 'prod',
-							},
-						});
-						await expectResourceToMatch(
-							pineUser,
-							'device',
-							invalidatedReleaseLaterPatchDevice.id,
-							{
-								os_version: invalidatedOsVersion,
-								os_variant: 'prod',
-								should_be_operated_by__release: {
-									__id: laterInvalidatedReleaseId,
-								},
-							},
-						);
+						},
+					);
+					await pineUser.patch({
+						resource: 'device',
+						id: invalidatedReleaseLaterPatchDevice.id,
+						body: {
+							should_be_operated_by__release: null,
+						},
 					});
-				},
-			);
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						invalidatedReleaseLaterPatchDevice.id,
+						{
+							os_version: invalidatedOsVersion,
+							os_variant: 'prod',
+							should_be_operated_by__release: null,
+						},
+					);
+
+					await invalidatedReleaseLaterPatchDevice.patchStateV2({
+						local: {
+							os_version: invalidatedOsVersion,
+							os_variant: 'prod',
+							// adding an extra changed field to make sure that update runs
+							memory_usage: 2,
+						},
+					});
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						invalidatedReleaseLaterPatchDevice.id,
+						{
+							os_version: invalidatedOsVersion,
+							os_variant: 'prod',
+							should_be_operated_by__release: {
+								__id: initialInvalidatedReleaseId,
+							},
+						},
+					);
+				});
+
+				it(`should update the should_be_operated_by__release to an invalidated ${osTypeTitlePart} hostapp release when the device reports so`, async () => {
+					const invalidatedReleaseLaterPatchDevice =
+						await fakeDevice.provisionDevice(admin, applicationId);
+					await invalidatedReleaseLaterPatchDevice.patchStateV2({
+						local: {
+							os_version: 'balenaOS 2.50.0+rev1',
+							os_variant: 'prod',
+						},
+					});
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						invalidatedReleaseLaterPatchDevice.id,
+						{
+							os_version: 'balenaOS 2.50.0+rev1',
+							os_variant: 'prod',
+							should_be_operated_by__release: {
+								__id: nuc2_50_0_rev1prodTagOnlyId,
+							},
+						},
+					);
+					const laterInvalidatedReleaseId = getHostAppReleaseId();
+					await invalidatedReleaseLaterPatchDevice.patchStateV2({
+						local: {
+							os_version: invalidatedOsVersion,
+							os_variant: 'prod',
+						},
+					});
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						invalidatedReleaseLaterPatchDevice.id,
+						{
+							os_version: invalidatedOsVersion,
+							os_variant: 'prod',
+							should_be_operated_by__release: {
+								__id: laterInvalidatedReleaseId,
+							},
+						},
+					);
+				});
+			}
 
 			it('should be able to invalidate a release with devices attached', async () => {
 				await device2.patchStateV2({

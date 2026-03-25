@@ -696,11 +696,11 @@ export default () => {
 					.get(`/${version}/release?$filter=release_version ne null`)
 					.expect(200);
 				expect(res.body.d).to.have.lengthOf(2);
-				(res.body.d as AnyObject[]).forEach((release) => {
+				for (const release of res.body.d as AnyObject[]) {
 					expect(release)
 						.to.have.property('release_version')
 						.that.is.a('string');
-				});
+				}
 			});
 
 			it('should succeed to return unversioned releases', async () => {
@@ -708,9 +708,9 @@ export default () => {
 					.get(`/${version}/release?$filter=release_version eq null`)
 					.expect(200);
 				expect(res.body.d).to.have.lengthOf(2);
-				(res.body.d as AnyObject[]).forEach((release) => {
+				for (const release of res.body.d as AnyObject[]) {
 					expect(release).to.have.property('release_version').that.is.null;
-				});
+				}
 			});
 
 			it('should succeed in PATCHing a release_version', async () => {
@@ -855,12 +855,10 @@ export default () => {
 					);
 				}
 
-				newReleases.forEach((r) =>
-					expect(r).to.have.property('semver', '0.2.0'),
-				);
-				newReleases.forEach((r) =>
-					expect(r).to.have.property('is_final', true),
-				);
+				for (const r of newReleases) {
+					expect(r).to.have.property('semver', '0.2.0');
+					expect(r).to.have.property('is_final', true);
+				}
 				const newRevisions = newReleases.map((r) => r.revision);
 				expect(newRevisions).to.deep.equal(_.range(0, newRevisions.length));
 			});
@@ -891,10 +889,10 @@ export default () => {
 					}),
 				);
 
-				newReleases.forEach((r) => {
+				for (const r of newReleases) {
 					expect(r).to.have.property('semver', '0.0.0');
 					expect(r).to.have.property('is_final', true);
-				});
+				}
 				const newRevisions = _.sortBy(
 					newReleases.map((r) => r.revision),
 					(rev) => rev,
@@ -931,9 +929,9 @@ export default () => {
 							).body as Release['Read'];
 						}),
 					);
-					newDraftReleases.forEach((r) =>
-						expect(r).to.have.property('revision', null),
-					);
+					for (const r of newDraftReleases) {
+						expect(r).to.have.property('revision', null);
+					}
 
 					await updateFn(newDraftReleases);
 
@@ -1019,7 +1017,9 @@ export default () => {
 								);
 							}
 
-							newReleases.forEach(expectCorrectReleaseComputedTerms);
+							for (const r of newReleases) {
+								expectCorrectReleaseComputedTerms(r);
+							}
 
 							const revisions = _.sortBy(
 								newReleases.map((r) => r.revision),
@@ -1128,11 +1128,11 @@ export default () => {
 				},
 			);
 
-			[
+			for (const [semver, prerelease] of [
 				['1.2.3-beta1', 'beta1'],
 				['1.2.3-beta.2', 'beta.2'],
 				['1.2.3-beta2.fixed', 'beta2.fixed'],
-			].forEach(([semver, prerelease]) => {
+			]) {
 				it(`should support final releases with semvers including pre-release parts: ${semver}`, async () => {
 					const { body: release } = await pineUser
 						.post({
@@ -1151,12 +1151,11 @@ export default () => {
 					expect(release).to.have.property('raw_version', semver);
 					expectCorrectReleaseComputedTerms(release);
 				});
-			});
-
-			[
+			}
+			for (const [semver, prerelease] of [
 				['1.2.3-beta3', 'beta3'],
 				['1.2.3-beta3.fixed', 'beta3.fixed'],
-			].forEach(([semver, prerelease]) => {
+			]) {
 				it(`should not increase the revision when the POSTed semver pre-release parts are different: ${semver}`, async () => {
 					const { body: release } = await pineUser
 						.post({
@@ -1175,12 +1174,12 @@ export default () => {
 					expect(release).to.have.property('raw_version', semver);
 					expectCorrectReleaseComputedTerms(release);
 				});
-			});
+			}
 
-			[
+			for (const [semver, prerelease] of [
 				['1.2.3-beta4', 'beta4'],
 				['1.2.3-beta4.fixed', 'beta4.fixed'],
-			].forEach(([semver, prerelease]) => {
+			]) {
 				it(`should not increase the revision when the PACTHed semver pre-release parts are different: ${semver}`, async () => {
 					const release = await testReleaseSemverPatch({
 						semver,
@@ -1192,7 +1191,7 @@ export default () => {
 					expect(release).to.have.property('raw_version', semver);
 					expectCorrectReleaseComputedTerms(release);
 				});
-			});
+			}
 
 			it(`should increase the revision when the POSTed semver & pre-release match`, async () => {
 				const { body: release } = await pineUser
@@ -1221,11 +1220,11 @@ export default () => {
 				expectCorrectReleaseComputedTerms(release);
 			});
 
-			[
+			for (const [semver, build] of [
 				['1.3.0+build1', 'build1'],
 				['1.3.1+build.2', 'build.2'],
 				['1.3.2+build2.fixed', 'build2.fixed'],
-			].forEach(([semver, build]) => {
+			]) {
 				it(`should support semvers with build metadata parts: ${semver}`, async () => {
 					const { body: release } = await pineUser
 						.post({
@@ -1242,13 +1241,13 @@ export default () => {
 					expect(release).to.have.property('revision', 0);
 					expectCorrectReleaseComputedTerms(release);
 				});
-			});
+			}
 
-			[
+			for (const [semver, prerelease, build] of [
 				['1.2.3-beta1+build.otherpost', 'beta1', 'build.otherpost'],
 				['1.3.0+build1', '', 'build1'], // same as above
 				['1.3.1+build.2.otherpost', '', 'build.2.otherpost'],
-			].forEach(([semver, prerelease, build]) => {
+			]) {
 				it(`should increase the revision when the POSTed semver & pre-release match, regardless of the build ${semver}`, async () => {
 					const { body: release } = await pineUser
 						.post({
@@ -1267,13 +1266,13 @@ export default () => {
 					expect(release).to.have.property('raw_version', `${semver}.rev1`);
 					expectCorrectReleaseComputedTerms(release);
 				});
-			});
+			}
 
-			[
+			for (const [semver, prerelease, build] of [
 				['1.2.3-beta1+build.otherpatch', 'beta1', 'build.otherpatch'],
 				['1.3.0+build1', '', 'build1'], // same as above
 				['1.3.1+build.2.otherpatch', '', 'build.2.otherpatch'],
-			].forEach(([semver, prerelease, build]) => {
+			]) {
 				it(`should increase the revision when the PATCHed semver & pre-release match, regardless of the build ${semver}`, async () => {
 					const release = await testReleaseSemverPatch({
 						semver,
@@ -1284,7 +1283,7 @@ export default () => {
 					expect(release).to.have.property('revision', 2);
 					expect(release).to.have.property('raw_version', `${semver}.rev2`);
 				});
-			});
+			}
 
 			it(`should be able to create a new release with a variant`, async function () {
 				const { body: release } = await pineUser
@@ -1370,53 +1369,59 @@ export default () => {
 					] as const;
 
 				describe('POST', function () {
-					getTestVersions('1.4.0').forEach(
-						([semver, build, resultingRevision, success]) => {
-							it(`should ${success ? '' : 'not '}succeed when ${
-								success ? '' : 'not '
-							}matching the generated revision: ${semver}`, async () => {
-								const { body: release } = await pineUser
-									.post({
-										resource: 'release',
-										body: {
-											...newReleaseBody,
-											commit: randomUUID(),
-											semver,
-										},
-									})
-									.expect(success ? 201 : 400);
+					for (const [
+						semver,
+						build,
+						resultingRevision,
+						success,
+					] of getTestVersions('1.4.0')) {
+						it(`should ${success ? '' : 'not '}succeed when ${
+							success ? '' : 'not '
+						}matching the generated revision: ${semver}`, async () => {
+							const { body: release } = await pineUser
+								.post({
+									resource: 'release',
+									body: {
+										...newReleaseBody,
+										commit: randomUUID(),
+										semver,
+									},
+								})
+								.expect(success ? 201 : 400);
 
-								if (!success) {
-									return;
-								}
-								expect(release).to.have.property('semver', semver);
-								expect(release).to.have.property('semver_build', build);
-								expect(release).to.have.property('revision', resultingRevision);
-								expectCorrectReleaseComputedTerms(release);
-							});
-						},
-					);
+							if (!success) {
+								return;
+							}
+							expect(release).to.have.property('semver', semver);
+							expect(release).to.have.property('semver_build', build);
+							expect(release).to.have.property('revision', resultingRevision);
+							expectCorrectReleaseComputedTerms(release);
+						});
+					}
 				});
 
 				describe('PATCH', function () {
-					getTestVersions('1.5.0').forEach(
-						([semver, build, resultingRevision, success]) => {
-							it(`should ${success ? '' : 'not '}succeed when ${
-								success ? '' : 'not '
-							}matching the generated revision: ${semver}`, async () => {
-								const release = await testReleaseSemverPatch({
-									initialSemver: '0.0.1-beta1+prod',
-									semver,
-									shouldError: !success,
-								});
-								if (!success) {
-									return;
-								}
-								expect(release).to.have.property('semver_build', build);
-								expect(release).to.have.property('revision', resultingRevision);
+					for (const [
+						semver,
+						build,
+						resultingRevision,
+						success,
+					] of getTestVersions('1.5.0')) {
+						it(`should ${success ? '' : 'not '}succeed when ${
+							success ? '' : 'not '
+						}matching the generated revision: ${semver}`, async () => {
+							const release = await testReleaseSemverPatch({
+								initialSemver: '0.0.1-beta1+prod',
+								semver,
+								shouldError: !success,
 							});
-						},
-					);
+							if (!success) {
+								return;
+							}
+							expect(release).to.have.property('semver_build', build);
+							expect(release).to.have.property('revision', resultingRevision);
+						});
+					}
 
 					it(`should not succeed PATCHing more than one release to the same revN semver`, async () => {
 						const releases = await Promise.all(
@@ -1559,79 +1564,75 @@ export default () => {
 							.expect(200);
 					});
 
-					testVersions.forEach(
-						([
-							semver,
-							variant,
-							build,
-							resultingRevision,
-							successOrRawVersion,
-						]) => {
-							const success = !!successOrRawVersion;
-							it(`should ${
-								success ? '' : 'not '
-							}succeed: ${semver} ${variant}`, async () => {
-								const { body: release } = await pineUser
-									.post({
-										resource: 'release',
-										body: {
-											...newReleaseBody,
-											commit: randomUUID(),
-											semver,
-											...(variant != null && { variant }),
-										},
-									})
-									.expect(success ? 201 : 400);
+					for (const [
+						semver,
+						variant,
+						build,
+						resultingRevision,
+						successOrRawVersion,
+					] of testVersions) {
+						const success = !!successOrRawVersion;
+						it(`should ${
+							success ? '' : 'not '
+						}succeed: ${semver} ${variant}`, async () => {
+							const { body: release } = await pineUser
+								.post({
+									resource: 'release',
+									body: {
+										...newReleaseBody,
+										commit: randomUUID(),
+										semver,
+										...(variant != null && { variant }),
+									},
+								})
+								.expect(success ? 201 : 400);
 
-								if (!success) {
-									return;
-								}
-								releaseIds.push(release.id);
-								expect(release).to.have.property('semver_build', build);
-								expect(release).to.have.property('revision', resultingRevision);
-								expect(release).to.have.property('variant', variant ?? '');
-								expect(release).to.have.property(
-									'raw_version',
-									successOrRawVersion === true ? semver : successOrRawVersion,
-								);
-								expectCorrectReleaseComputedTerms(release);
-							});
-						},
-					);
+							if (!success) {
+								return;
+							}
+							releaseIds.push(release.id);
+							expect(release).to.have.property('semver_build', build);
+							expect(release).to.have.property('revision', resultingRevision);
+							expect(release).to.have.property('variant', variant ?? '');
+							expect(release).to.have.property(
+								'raw_version',
+								successOrRawVersion === true ? semver : successOrRawVersion,
+							);
+							expectCorrectReleaseComputedTerms(release);
+						});
+					}
 				});
 
 				describe('PATCH', function () {
-					testVersions.forEach(
-						([
-							semver,
-							variant,
-							build,
-							resultingRevision,
-							successOrRawVersion,
-						]) => {
-							const success = !!successOrRawVersion;
-							it(`should ${
-								success ? '' : 'not '
-							}succeed: ${semver} ${variant}`, async () => {
-								const release = await testReleaseSemverPatch({
-									initialSemver: '0.0.1-beta1+prod',
-									semver,
-									variant,
-									shouldError: !success,
-								});
-								if (!success) {
-									return;
-								}
-								expect(release).to.have.property('semver_build', build);
-								expect(release).to.have.property('revision', resultingRevision);
-								expect(release).to.have.property('variant', variant ?? '');
-								expect(release).to.have.property(
-									'raw_version',
-									successOrRawVersion === true ? semver : successOrRawVersion,
-								);
+					for (const [
+						semver,
+						variant,
+						build,
+						resultingRevision,
+						successOrRawVersion,
+					] of testVersions) {
+						const success = !!successOrRawVersion;
+						it(`should ${
+							success ? '' : 'not '
+						}succeed: ${semver} ${variant}`, async () => {
+							const release = await testReleaseSemverPatch({
+								initialSemver: '0.0.1-beta1+prod',
+								semver,
+								variant,
+								shouldError: !success,
 							});
-						},
-					);
+							if (!success) {
+								return;
+							}
+							expect(release).to.have.property('semver_build', build);
+							expect(release).to.have.property('revision', resultingRevision);
+							expect(release).to.have.property('variant', variant ?? '');
+							expect(release).to.have.property(
+								'raw_version',
+								successOrRawVersion === true ? semver : successOrRawVersion,
+							);
+						});
+					}
 				});
 			});
 		});
@@ -1762,12 +1763,10 @@ export default () => {
 					.expect(400, '"Finalized releases cannot be converted to draft."');
 			});
 
-			(
-				[
-					['1.2.3-beta1', 'beta1'],
-					['1.2.3-beta1', 'beta1', 'dev'],
-				] as const
-			).forEach(([semver, prerelease, variant]) => {
+			for (const [semver, prerelease, variant] of [
+				['1.2.3-beta1', 'beta1'],
+				['1.2.3-beta1', 'beta1', 'dev'],
+			] as const) {
 				let release: AnyObject;
 				it(`should support draft releases with semver pre-release parts: ${semver} ${
 					variant ?? ''
@@ -1837,13 +1836,13 @@ export default () => {
 					);
 					expectCorrectReleaseComputedTerms(updatedRelease);
 				});
-			});
+			}
 
-			[
+			for (const [semver, prerelease, build, resultingRevision] of [
 				['1.2.3+build1', '', 'build1', 0],
 				['1.2.3+build2', '', 'build2', 1],
 				['1.2.4-beta1+build1', 'beta1', 'build1', 0],
-			].forEach(([semver, prerelease, build, resultingRevision]) => {
+			] as const) {
 				let release: AnyObject;
 				it(`should support draft releases with semver build metadata parts: ${semver}`, async () => {
 					release = (
@@ -1897,9 +1896,9 @@ export default () => {
 					expect(updatedRelease).to.have.property('is_final', true);
 					expectCorrectReleaseComputedTerms(updatedRelease);
 				});
-			});
+			}
 
-			[
+			for (const [semver, build, resultingRevision, canFinalize] of [
 				['1.2.3+rev1', 'rev1', 1, false], // fails b/c the auto-generated revision will be 2
 				['1.2.3+build1.rev1', 'build1.rev1', 1, false], // fails b/c the auto-generated revision will be 2
 				['1.2.3+rev1.build1', 'rev1.build1', 1, false], // fails b/c the auto-generated revision will be 2
@@ -1908,7 +1907,7 @@ export default () => {
 				['1.2.3+build3.rev3', 'build3.rev3', 3, true],
 				['1.2.3+rev4.build4', 'rev4.build4', 4, true],
 				['1.2.4+rev0', 'rev0', 0, true],
-			].forEach(([semver, build, resultingRevision, canFinalize]) => {
+			] as const) {
 				let release: AnyObject;
 				it(`should support draft releases with user provided revN semver build metadata parts: ${semver}`, async () => {
 					release = (
@@ -1979,7 +1978,7 @@ export default () => {
 						expectCorrectReleaseComputedTerms(updatedRelease);
 					});
 				}
-			});
+			}
 		});
 	});
 };

@@ -1,3 +1,5 @@
 import { registerTagHooks } from './validation.js';
 
-['application_tag', 'device_tag', 'release_tag'].forEach(registerTagHooks);
+for (const tagType of ['application_tag', 'device_tag', 'release_tag']) {
+	registerTagHooks(tagType);
+}

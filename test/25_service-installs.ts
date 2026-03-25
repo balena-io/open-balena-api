@@ -19,7 +19,7 @@ export default () => {
 			? 'is_pinned_on__release'
 			: 'should_be_running__release';
 
-		[true, false].forEach((isServiceInstallEnabled) => {
+		for (const isServiceInstallEnabled of [true, false]) {
 			describe(`should create service installs ${isServiceInstallEnabled ? 'asynchronously' : 'synchronously'}`, () => {
 				const ctx: AnyObject = {};
 				let pineUser: typeof pineTest;
@@ -404,6 +404,6 @@ export default () => {
 					);
 				});
 			});
-		});
+		}
 	});
 };

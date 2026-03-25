@@ -208,7 +208,9 @@ async function handleStreamingRead(
 
 		// Ensure we don't drop the history logs "burst"
 		state = StreamState.Flushing;
-		logs.forEach(onLog);
+		for (const log of logs) {
+			onLog(log);
+		}
 		state = StreamState.Writable;
 	} catch (e) {
 		close();
