@@ -284,6 +284,7 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 				(typeof v3ValidPatchFields)[number]
 			> &
 				Partial<Pick<Device['Write'], 'is_running__release'>>;
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-arguments
 			let deviceBody = normalizeDeviceWriteBody<DeviceBodyBeforeNormalization>(
 				_.pick(state, v3ValidPatchFields),
 				uuid,
