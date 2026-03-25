@@ -151,6 +151,7 @@ export const statePatchV2: RequestHandler = async (req, res) => {
 				Partial<
 					Pick<Device['Write'], 'is_running__release' | 'is_pinned_on__release'>
 				>;
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-arguments
 			let deviceBody = normalizeDeviceWriteBody<DeviceBodyBeforeNormalization>(
 				_.pick(local, v2ValidPatchFields),
 				uuid,
