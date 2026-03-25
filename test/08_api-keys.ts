@@ -29,7 +29,7 @@ export default () => {
 				await fixtures.clean(this.loadedFixtures);
 			});
 
-			[
+			for (const { title, fn } of [
 				{
 					title: `using /api-key/application/:appId/provisioning endpoint`,
 					fn(
@@ -69,7 +69,7 @@ export default () => {
 							});
 					},
 				},
-			].forEach(({ title, fn }) => {
+			]) {
 				describe(title, function () {
 					const uuid =
 						'f716a3e020bd444b885cb394453917520c3cf82e69654f84be0d33e31a0e15';
@@ -269,7 +269,7 @@ export default () => {
 							.expect(201);
 					});
 				});
-			});
+			}
 		});
 
 		describe('create device apikey', function () {
@@ -444,7 +444,7 @@ export default () => {
 				await fixtures.clean(this.loadedFixtures);
 			});
 
-			[
+			for (const { title, fn, missingNameErrorMessage } of [
 				{
 					title: 'using the /api-key/user/full endpoint',
 					missingNameErrorMessage: '"API keys require a name"',
@@ -466,7 +466,7 @@ export default () => {
 							});
 					},
 				},
-			].forEach(({ title, fn, missingNameErrorMessage }) => {
+			]) {
 				describe(title, function () {
 					it('should not allow unauthorized requests', async () => {
 						await fn(undefined, undefined).expect(401);
@@ -540,7 +540,7 @@ export default () => {
 						expect(apiKey).to.not.be.empty;
 					});
 				});
-			});
+			}
 
 			describe('update named user apikey', function () {
 				let testApiKey: Pick<ApiKey['Read'], 'id'>;
@@ -658,7 +658,7 @@ export default () => {
 				{ method: 'post', path: '/api-key/user/full', body: { name: 'aname' } },
 			];
 
-			[
+			for (const { title, beforeFn } of [
 				{
 					title: 'when generated using the /api-key/user/full endpoint',
 					async beforeFn() {
@@ -687,7 +687,7 @@ export default () => {
 						this.namedApiKey = namedApiKey;
 					},
 				},
-			].forEach(({ title, beforeFn }) => {
+			]) {
 				describe(title, function () {
 					before(beforeFn);
 
@@ -715,7 +715,7 @@ export default () => {
 					});
 
 					describe('should correctly control access to named user-level api keys', function () {
-						RESTRICTED_ENDPOINTS.forEach(({ method, path, body }) => {
+						for (const { method, path, body } of RESTRICTED_ENDPOINTS) {
 							it(`${method} ${path}`, async function () {
 								await supertest()
 									[method](path)
@@ -723,17 +723,22 @@ export default () => {
 									.send(body)
 									.expect(401);
 							});
-						});
+						}
 					});
 				});
-			});
+			}
 
 			describe('should correctly control access to JWTs', function () {
-				RESTRICTED_ENDPOINTS.forEach(({ method, path, body, status = 200 }) => {
+				for (const {
+					method,
+					path,
+					body,
+					status = 200,
+				} of RESTRICTED_ENDPOINTS) {
 					it(`${method} ${path}`, async function () {
 						await supertest(this.user)[method](path).send(body).expect(status);
 					});
-				});
+				}
 			});
 		});
 

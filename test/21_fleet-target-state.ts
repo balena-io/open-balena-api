@@ -44,7 +44,7 @@ const checkServiceProperties = (
 };
 
 export default () => {
-	(['v3'] as const).forEach((stateVersion) =>
+	for (const stateVersion of ['v3'] as const) {
 		describe(`Fleet State ${stateVersion}`, function () {
 			let fx: fixtures.Fixtures;
 			let application: Application['Read'];
@@ -81,13 +81,11 @@ export default () => {
 						.expect(401);
 				});
 
-				(
-					[
-						'default', // fleet default
-						'release1',
-						'release2',
-					] as const
-				).forEach((testReleaseKey) => {
+				for (const testReleaseKey of [
+					'default', // fleet default
+					'release1',
+					'release2',
+				] as const) {
 					it(`with releaseUuid parameter for ${testReleaseKey}`, async () => {
 						const releaseUuidQueryParam = releases[testReleaseKey]?.commit
 							? `?releaseUuid=${releases[testReleaseKey]?.commit}`
@@ -178,7 +176,7 @@ export default () => {
 							});
 						}
 					});
-				});
+				}
 			});
 
 			describe('Fleet Default State - Poll Interval Acquisition', function () {
@@ -241,6 +239,6 @@ export default () => {
 						.expect(200);
 				});
 			});
-		}),
-	);
+		});
+	}
 };

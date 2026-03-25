@@ -126,7 +126,7 @@ export default () => {
 				checkBaseVarsResult(vars);
 			});
 
-			[
+			for (const { deviceType, extraConfigVarSchemaProperties } of [
 				{ deviceType: 'beaglebone-black' },
 				{
 					deviceType: 'fincm3',
@@ -163,7 +163,7 @@ export default () => {
 					deviceType: 'up-board',
 					extraConfigVarSchemaProperties: ['RESIN_HOST_CONFIGFS_ssdt'],
 				},
-			].forEach(({ deviceType, extraConfigVarSchemaProperties }) => {
+			]) {
 				it(`should be correct when device type ${deviceType} is specified`, async () => {
 					const { body: vars } = await supertest()
 						.get(`/config/vars?deviceType=${deviceType}`)
@@ -171,7 +171,7 @@ export default () => {
 
 					checkBaseVarsResult(vars, extraConfigVarSchemaProperties);
 				});
-			});
+			}
 		});
 	});
 };

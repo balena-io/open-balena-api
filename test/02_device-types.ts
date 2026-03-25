@@ -88,11 +88,11 @@ export default () => {
 					.get(`/${version}/device_type`)
 					.expect(200);
 				expect(res.body.d).to.be.an('array');
-				res.body.d.forEach((deviceType: any) => {
+				for (const deviceType of res.body.d) {
 					expect(deviceType).to.be.an('object');
 					expect(deviceType).to.have.property('slug').that.is.a('string');
 					expect(deviceType).to.have.property('name').that.is.a('string');
-				});
+				}
 
 				expect(res.body.d).to.have.property('length', 17);
 			});
@@ -106,7 +106,7 @@ export default () => {
 			it('should succeed to return a result', async () => {
 				const res = await supertest().get('/device-types/v1').expect(200);
 				expect(res.body).to.be.an('array');
-				res.body.forEach((deviceType: any) => {
+				for (const deviceType of res.body) {
 					expect(deviceType).to.be.an('object');
 					expect(deviceType).to.have.property('slug').that.is.a('string');
 					if (deviceType.slug !== 'edge') {
@@ -119,7 +119,7 @@ export default () => {
 					expect(deviceType).to.have.property('arch').that.is.a('string');
 					expect(deviceType).to.have.property('state').that.is.a('string');
 					expect(deviceType).to.have.property('buildId').that.is.a('string');
-				});
+				}
 			});
 
 			it('should omit releases that have an IGNORE file', async () => {

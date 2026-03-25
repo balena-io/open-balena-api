@@ -76,54 +76,52 @@ export default () => {
 					expect(serviceInstalls).to.have.lengthOf(0);
 				});
 
-				(
+				for (const [provisioningFnTitlePart, provisionFn] of [
 					[
-						[
-							'POST device resource',
-							async ({ device_type, ...devicePostBody }: AnyObject) => {
-								return await supertest(ctx.admin)
-									.post(`/${version}/device`)
-									.send({
-										...devicePostBody,
-										is_of__device_type: (
-											await pineTest
-												.get({
-													resource: 'device_type',
-													passthrough: { user: ctx.admin },
-													id: { slug: device_type },
-													options: {
-														$select: 'id',
-													},
-												})
-												.expect(200)
-										).body?.id,
-									})
-									.expect(201);
-							},
-						],
-						[
-							'POST /device/register',
-							async ({
-								belongs_to__application,
-								...restDevicePostBody
-							}: AnyObject) => {
-								const { body: provisioningKey } = await supertest(ctx.admin)
-									.post(`/api-key/application/${ctx.deviceApp.id}/provisioning`)
-									.expect(200);
-								const uuid = fakeDevice.generateDeviceUuid();
-								return await supertest()
-									.post(`/device/register?apikey=${provisioningKey}`)
-									.send({
-										user: ctx.admin.id,
-										application: belongs_to__application,
-										uuid,
-										...restDevicePostBody,
-									})
-									.expect(201);
-							},
-						],
-					] as const
-				).forEach(([provisioningFnTitlePart, provisionFn]) => {
+						'POST device resource',
+						async ({ device_type, ...devicePostBody }: AnyObject) => {
+							return await supertest(ctx.admin)
+								.post(`/${version}/device`)
+								.send({
+									...devicePostBody,
+									is_of__device_type: (
+										await pineTest
+											.get({
+												resource: 'device_type',
+												passthrough: { user: ctx.admin },
+												id: { slug: device_type },
+												options: {
+													$select: 'id',
+												},
+											})
+											.expect(200)
+									).body?.id,
+								})
+								.expect(201);
+						},
+					],
+					[
+						'POST /device/register',
+						async ({
+							belongs_to__application,
+							...restDevicePostBody
+						}: AnyObject) => {
+							const { body: provisioningKey } = await supertest(ctx.admin)
+								.post(`/api-key/application/${ctx.deviceApp.id}/provisioning`)
+								.expect(200);
+							const uuid = fakeDevice.generateDeviceUuid();
+							return await supertest()
+								.post(`/device/register?apikey=${provisioningKey}`)
+								.send({
+									user: ctx.admin.id,
+									application: belongs_to__application,
+									uuid,
+									...restDevicePostBody,
+								})
+								.expect(201);
+						},
+					],
+				] as const) {
 					let registeredDevice: Device['Read'];
 
 					after(async function () {
@@ -173,46 +171,44 @@ export default () => {
 							},
 						);
 					});
-				});
+				}
 
-				(
+				for (const [titlePart, getDevice, updateDevice] of [
 					[
-						[
-							'device PATCH',
-							() => device,
-							() =>
-								supertest(ctx.admin)
-									.patch(`/${version}/device(${device.id})`)
-									.send({
-										os_version: '2.38.0+rev1',
-										supervisor_version: '5.0.1',
-									})
-									.expect(200),
-						],
-						[
-							'state endpoint PATCH',
-							() => device2,
-							() =>
-								device2.patchStateV2({
-									local: {
-										api_port: 48484,
-										api_secret: 'somesecret',
-										os_version: '2.38.0+rev1',
-										os_variant: 'dev',
-										supervisor_version: '5.0.1',
-										provisioning_progress: null,
-										provisioning_state: '',
-										status: 'Idle',
-										// @ts-expect-error the supervisor can send these but we don't expect them so they should be ignored
-										logs_channel: null,
-										update_failed: false,
-										update_pending: false,
-										update_downloaded: false,
-									},
-								}),
-						],
-					] as const
-				).forEach(([titlePart, getDevice, updateDevice]) => {
+						'device PATCH',
+						() => device,
+						() =>
+							supertest(ctx.admin)
+								.patch(`/${version}/device(${device.id})`)
+								.send({
+									os_version: '2.38.0+rev1',
+									supervisor_version: '5.0.1',
+								})
+								.expect(200),
+					],
+					[
+						'state endpoint PATCH',
+						() => device2,
+						() =>
+							device2.patchStateV2({
+								local: {
+									api_port: 48484,
+									api_secret: 'somesecret',
+									os_version: '2.38.0+rev1',
+									os_variant: 'dev',
+									supervisor_version: '5.0.1',
+									provisioning_progress: null,
+									provisioning_state: '',
+									status: 'Idle',
+									// @ts-expect-error the supervisor can send these but we don't expect them so they should be ignored
+									logs_channel: null,
+									update_failed: false,
+									update_pending: false,
+									update_downloaded: false,
+								},
+							}),
+					],
+				] as const) {
 					it(`should set the device to a non-null supervisor release after ${titlePart}`, async () => {
 						await updateDevice();
 
@@ -284,7 +280,7 @@ export default () => {
 							expect(service).to.have.property('service_name', 'main');
 						});
 					});
-				});
+				}
 
 				it('should allow upgrading to a logstream version', async () => {
 					const patch = {
@@ -591,12 +587,10 @@ export default () => {
 						});
 					});
 
-					(
-						[
-							['device', () => pineDevice, () => device],
-							['user', () => pineUser, () => device2],
-						] as const
-					).forEach(([titlePart, getPineTestInstance, getDevice]) => {
+					for (const [titlePart, getPineTestInstance, getDevice] of [
+						['device', () => pineDevice, () => device],
+						['user', () => pineUser, () => device2],
+					] as const) {
 						it(`should create an extra supervisor service install after updating the target supervisor release using a ${titlePart} api key`, async () => {
 							// Similarly to how the HUP script does it
 							// See: https://github.com/balena-os/balenahup/blob/d38eba01aebf4c4eb8425cb50a4dc9b948decc46/upgrade-2.x.sh#L229
@@ -657,7 +651,7 @@ export default () => {
 								);
 							});
 						});
-					});
+					}
 				});
 			});
 		});

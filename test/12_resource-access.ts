@@ -19,7 +19,7 @@ export default () => {
 				await fixtures.clean(this.loadedFixtures);
 			});
 
-			[
+			for (const { title, odataPart, appIdField = 'id', errorCode } of [
 				{
 					title: 'application',
 					odataPart: `application?$select=id&$filter=not is_host&$orderby=app_name asc`,
@@ -39,7 +39,7 @@ export default () => {
 						'application when filtering by is_directly_accessible_by__user',
 					odataPart: `application?$select=id&$filter=is_directly_accessible_by__user/any(dau:true)&$orderby=app_name asc`,
 				},
-			].forEach(({ title, odataPart, appIdField = 'id', errorCode }) => {
+			]) {
 				describe(`${title} access`, function () {
 					if (errorCode != null) {
 						it(`should not be able to get applications via /${version}/${title}`, async function () {
@@ -74,7 +74,7 @@ export default () => {
 						});
 					}
 				});
-			});
+			}
 
 			describe(`user__has_direct_access_to__application`, function () {
 				it('should have the correct format', async function () {
@@ -85,7 +85,7 @@ export default () => {
 						.expect(200);
 
 					expect(d).to.be.an('array').that.has.length(2);
-					d.forEach((userAccessibleApp: AnyObject) => {
+					for (const userAccessibleApp of d) {
 						expect(userAccessibleApp).to.have.property('id').that.is.null;
 						expect(userAccessibleApp)
 							.to.have.nested.property('user.__id')
@@ -93,7 +93,7 @@ export default () => {
 						expect(userAccessibleApp)
 							.to.have.nested.property('has_direct_access_to__application.__id')
 							.that.is.a('number');
-					});
+					}
 				});
 			});
 		});

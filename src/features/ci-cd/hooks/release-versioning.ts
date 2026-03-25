@@ -358,9 +358,9 @@ hooks.addPureHook('PATCH', 'resin', 'release', {
 									semverObject,
 									variant,
 								);
-								releases.forEach((_release, index) => {
+								for (let index = 0; index < releases.length; index++) {
 									checkNotDifferentRevision(semverObject, nextRevision + index);
-								});
+								}
 
 								await Promise.all(
 									releases.map(async (release, index) => {

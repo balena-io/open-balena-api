@@ -69,7 +69,7 @@ const maxGetStateEventConsumptionTimeout = 100;
 
 export default () => {
 	versions.test((version, pineTest) => {
-		(['v2', 'v3'] as const).forEach((stateVersion) =>
+		for (const stateVersion of ['v2', 'v3'] as const) {
 			describe(`Device State ${stateVersion}`, () => {
 				let fx: fixtures.Fixtures;
 				let pineUser: typeof pineTest;
@@ -257,7 +257,13 @@ export default () => {
 							getDeviceOnlineStateManager().off('stats', statsEventSpy);
 						});
 
-						[
+						for (const {
+							tokenType,
+							getPineActor,
+							heartbeatAfterGet,
+							getDevice,
+							getState,
+						} of [
 							{
 								tokenType: 'device API Key',
 								getPineActor: () =>
@@ -284,194 +290,186 @@ export default () => {
 										stateVersion,
 									),
 							},
-						].forEach(
-							({
-								tokenType,
-								getPineActor,
-								heartbeatAfterGet,
-								getDevice,
-								getState,
-							}) => {
-								describe(`Given a ${tokenType}`, function () {
-									it('Should see state initially as "unknown"', async () => {
-										await expectResourceToMatch(
-											getPineActor(),
-											'device',
-											getDevice().id,
-											{
-												api_heartbeat_state: DeviceOnlineStates.Unknown,
-												...(versions.gte(version, 'v7') && {
-													changed_api_heartbeat_state_on__date: null,
-												}),
-											},
+						]) {
+							describe(`Given a ${tokenType}`, function () {
+								it('Should see state initially as "unknown"', async () => {
+									await expectResourceToMatch(
+										getPineActor(),
+										'device',
+										getDevice().id,
+										{
+											api_heartbeat_state: DeviceOnlineStates.Unknown,
+											...(versions.gte(version, 'v7') && {
+												changed_api_heartbeat_state_on__date: null,
+											}),
+										},
+									);
+								});
+
+								if (versions.lte(version, 'v6')) {
+									it('Should not be able to retrieve the changed_api_heartbeat_state_on__date property', async () => {
+										const { body } = await pineUser
+											.get({
+												resource: 'device',
+												id: getDevice().id,
+											})
+											.expect(200);
+										expect(body).to.have.property('api_heartbeat_state');
+										expect(body).to.not.have.property(
+											'changed_api_heartbeat_state_on__date',
 										);
 									});
+								}
 
-									if (versions.lte(version, 'v6')) {
-										it('Should not be able to retrieve the changed_api_heartbeat_state_on__date property', async () => {
-											const { body } = await pineUser
-												.get({
-													resource: 'device',
-													id: getDevice().id,
-												})
-												.expect(200);
-											expect(body).to.have.property('api_heartbeat_state');
-											expect(body).to.not.have.property(
-												'changed_api_heartbeat_state_on__date',
-											);
-										});
-									}
+								it(`Should have the "${heartbeatAfterGet}" heartbeat state after a state poll`, async () => {
+									stateChangeEventSpy.resetHistory();
+									const stateUpdatedAfter = Date.now();
+									await getState();
 
-									it(`Should have the "${heartbeatAfterGet}" heartbeat state after a state poll`, async () => {
-										stateChangeEventSpy.resetHistory();
-										const stateUpdatedAfter = Date.now();
-										await getState();
-
-										if (heartbeatAfterGet !== DeviceOnlineStates.Unknown) {
-											await waitFor({
-												checkFn: () => stateChangeEventSpy.called,
-											});
-										} else {
-											await setTimeout(1000);
-											expect(stateChangeEventSpy.called).to.be.false;
-										}
-
-										expect(tracker.states[getDevice().id]).to.equal(
-											heartbeatAfterGet !== DeviceOnlineStates.Unknown
-												? heartbeatAfterGet
-												: undefined,
-										);
-
-										await expectResourceToMatch(
-											getPineActor(),
-											'device',
-											getDevice().id,
-											{
-												api_heartbeat_state: heartbeatAfterGet,
-												...(versions.gte(version, 'v7') && {
-													changed_api_heartbeat_state_on__date:
-														heartbeatAfterGet === DeviceOnlineStates.Unknown
-															? null
-															: thatIsDateStringAfter(stateUpdatedAfter),
-												}),
-											},
-										);
-									});
-
-									if (heartbeatAfterGet === DeviceOnlineStates.Unknown) {
-										return;
-									}
-
-									it(`Should see state become "timeout" following a delay of ${
-										devicePollInterval / 1000
-									} seconds`, async () => {
-										stateChangeEventSpy.resetHistory();
-										let stateUpdatedAfter = Date.now();
-										await setTimeout(devicePollInterval);
-
-										await waitFor({
-											checkFn: () => {
-												if (stateChangeEventSpy.called) {
-													return true;
-												}
-												stateUpdatedAfter = Math.max(
-													// The 10ms are there to account for concurrency between
-													// the spy check and the DB commiting the TX.
-													Date.now() - 10,
-													stateUpdatedAfter,
-												);
-												return false;
-											},
-										});
-
-										expect(tracker.states[getDevice().id]).to.equal(
-											DeviceOnlineStates.Timeout,
-										);
-
-										await expectResourceToMatch(
-											getPineActor(),
-											'device',
-											getDevice().id,
-											{
-												api_heartbeat_state: DeviceOnlineStates.Timeout,
-												...(versions.gte(version, 'v7') && {
-													changed_api_heartbeat_state_on__date:
-														thatIsDateStringAfter(stateUpdatedAfter),
-												}),
-											},
-										);
-									});
-
-									it(`Should see state become "online" again, following a state poll`, async () => {
-										stateChangeEventSpy.resetHistory();
-										const stateUpdatedAfter = Date.now();
-										await getState();
-
+									if (heartbeatAfterGet !== DeviceOnlineStates.Unknown) {
 										await waitFor({
 											checkFn: () => stateChangeEventSpy.called,
 										});
+									} else {
+										await setTimeout(1000);
+										expect(stateChangeEventSpy.called).to.be.false;
+									}
 
-										expect(tracker.states[getDevice().id]).to.equal(
-											DeviceOnlineStates.Online,
-										);
+									expect(tracker.states[getDevice().id]).to.equal(
+										heartbeatAfterGet !== DeviceOnlineStates.Unknown
+											? heartbeatAfterGet
+											: undefined,
+									);
 
-										await expectResourceToMatch(
-											getPineActor(),
-											'device',
-											getDevice().id,
-											{
-												api_heartbeat_state: DeviceOnlineStates.Online,
-												...(versions.gte(version, 'v7') && {
-													changed_api_heartbeat_state_on__date:
-														thatIsDateStringAfter(stateUpdatedAfter),
-												}),
-											},
-										);
-									});
-
-									it(`Should see state become "offline" following a delay of ${
-										TIMEOUT_SEC + devicePollInterval / 1000
-									} seconds`, async () => {
-										stateChangeEventSpy.resetHistory();
-										let stateUpdatedAfter = Date.now();
-										await setTimeout(devicePollInterval + TIMEOUT_SEC * 1000);
-
-										// it will be called for TIMEOUT and OFFLINE...
-										await waitFor({
-											checkFn: () => {
-												if (stateChangeEventSpy.calledTwice) {
-													return true;
-												}
-												stateUpdatedAfter = Math.max(
-													// The 10ms are there to account for concurrency between
-													// the spy check and the DB commiting the TX.
-													Date.now() - 10,
-													stateUpdatedAfter,
-												);
-												return false;
-											},
-										});
-
-										expect(tracker.states[getDevice().id]).to.equal(
-											DeviceOnlineStates.Offline,
-										);
-
-										await expectResourceToMatch(
-											getPineActor(),
-											'device',
-											getDevice().id,
-											{
-												api_heartbeat_state: DeviceOnlineStates.Offline,
-												...(versions.gte(version, 'v7') && {
-													changed_api_heartbeat_state_on__date:
-														thatIsDateStringAfter(stateUpdatedAfter),
-												}),
-											},
-										);
-									});
+									await expectResourceToMatch(
+										getPineActor(),
+										'device',
+										getDevice().id,
+										{
+											api_heartbeat_state: heartbeatAfterGet,
+											...(versions.gte(version, 'v7') && {
+												changed_api_heartbeat_state_on__date:
+													heartbeatAfterGet === DeviceOnlineStates.Unknown
+														? null
+														: thatIsDateStringAfter(stateUpdatedAfter),
+											}),
+										},
+									);
 								});
-							},
-						);
+
+								if (heartbeatAfterGet === DeviceOnlineStates.Unknown) {
+									return;
+								}
+
+								it(`Should see state become "timeout" following a delay of ${
+									devicePollInterval / 1000
+								} seconds`, async () => {
+									stateChangeEventSpy.resetHistory();
+									let stateUpdatedAfter = Date.now();
+									await setTimeout(devicePollInterval);
+
+									await waitFor({
+										checkFn: () => {
+											if (stateChangeEventSpy.called) {
+												return true;
+											}
+											stateUpdatedAfter = Math.max(
+												// The 10ms are there to account for concurrency between
+												// the spy check and the DB commiting the TX.
+												Date.now() - 10,
+												stateUpdatedAfter,
+											);
+											return false;
+										},
+									});
+
+									expect(tracker.states[getDevice().id]).to.equal(
+										DeviceOnlineStates.Timeout,
+									);
+
+									await expectResourceToMatch(
+										getPineActor(),
+										'device',
+										getDevice().id,
+										{
+											api_heartbeat_state: DeviceOnlineStates.Timeout,
+											...(versions.gte(version, 'v7') && {
+												changed_api_heartbeat_state_on__date:
+													thatIsDateStringAfter(stateUpdatedAfter),
+											}),
+										},
+									);
+								});
+
+								it(`Should see state become "online" again, following a state poll`, async () => {
+									stateChangeEventSpy.resetHistory();
+									const stateUpdatedAfter = Date.now();
+									await getState();
+
+									await waitFor({
+										checkFn: () => stateChangeEventSpy.called,
+									});
+
+									expect(tracker.states[getDevice().id]).to.equal(
+										DeviceOnlineStates.Online,
+									);
+
+									await expectResourceToMatch(
+										getPineActor(),
+										'device',
+										getDevice().id,
+										{
+											api_heartbeat_state: DeviceOnlineStates.Online,
+											...(versions.gte(version, 'v7') && {
+												changed_api_heartbeat_state_on__date:
+													thatIsDateStringAfter(stateUpdatedAfter),
+											}),
+										},
+									);
+								});
+
+								it(`Should see state become "offline" following a delay of ${
+									TIMEOUT_SEC + devicePollInterval / 1000
+								} seconds`, async () => {
+									stateChangeEventSpy.resetHistory();
+									let stateUpdatedAfter = Date.now();
+									await setTimeout(devicePollInterval + TIMEOUT_SEC * 1000);
+
+									// it will be called for TIMEOUT and OFFLINE...
+									await waitFor({
+										checkFn: () => {
+											if (stateChangeEventSpy.calledTwice) {
+												return true;
+											}
+											stateUpdatedAfter = Math.max(
+												// The 10ms are there to account for concurrency between
+												// the spy check and the DB commiting the TX.
+												Date.now() - 10,
+												stateUpdatedAfter,
+											);
+											return false;
+										},
+									});
+
+									expect(tracker.states[getDevice().id]).to.equal(
+										DeviceOnlineStates.Offline,
+									);
+
+									await expectResourceToMatch(
+										getPineActor(),
+										'device',
+										getDevice().id,
+										{
+											api_heartbeat_state: DeviceOnlineStates.Offline,
+											...(versions.gte(version, 'v7') && {
+												changed_api_heartbeat_state_on__date:
+													thatIsDateStringAfter(stateUpdatedAfter),
+											}),
+										},
+									);
+								});
+							});
+						}
 
 						describe('given an expired device api key', function () {
 							before(async function () {
@@ -1276,10 +1274,10 @@ export default () => {
 						});
 					}
 				});
-			}),
-		);
+			});
+		}
 
-		(['v2', 'v3'] as const).forEach((stateVersion) => {
+		for (const stateVersion of ['v2', 'v3'] as const) {
 			describe(`Device State ${stateVersion} patch`, function () {
 				let fx: fixtures.Fixtures;
 				let admin: UserObjectParam;
@@ -2078,6 +2076,6 @@ export default () => {
 					});
 				}
 			});
-		});
+		}
 	});
 };
