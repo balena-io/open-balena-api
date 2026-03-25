@@ -2,7 +2,7 @@ import { errors, hooks } from '@balena/pinejs';
 
 const RESERVED_NAMESPACES = ['io.resin.', 'io.balena.'];
 
-const checkTagKeyValidity = (key: string) => {
+export const checkTagKeyValidity = (key: string) => {
 	if (/\s/.test(key)) {
 		throw new errors.BadRequestError('Tag keys cannot contain whitespace.');
 	}
