@@ -284,8 +284,11 @@ export const statePatchV3: RequestHandler = async (req, res) => {
 				(typeof v3ValidPatchFields)[number]
 			> &
 				Partial<Pick<Device['Write'], 'is_running__release'>>;
-			let deviceBody = normalizeDeviceWriteBody<DeviceBodyBeforeNormalization>(
-				_.pick(state, v3ValidPatchFields),
+			let deviceBody = normalizeDeviceWriteBody(
+				_.pick(
+					state,
+					v3ValidPatchFields,
+				) satisfies DeviceBodyBeforeNormalization as DeviceBodyBeforeNormalization,
 				uuid,
 			);
 			let metricsBody: Pick<

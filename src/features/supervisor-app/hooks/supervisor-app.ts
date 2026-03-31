@@ -269,7 +269,7 @@ async function setSupervisorReleaseResource(
 	});
 
 	return Promise.all(
-		Array.from(devicesByCpuArchId, async ([cpuArchId, affectedDevices]) => {
+		devicesByCpuArchId.entries().map(async ([cpuArchId, affectedDevices]) => {
 			const affectedDeviceIds = affectedDevices.map((d) => d.id);
 
 			const [supervisorRelease] = await getSupervisorReleaseResource(

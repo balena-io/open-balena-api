@@ -193,7 +193,7 @@ export const getContracts = async (type: string): Promise<Contract[]> => {
 	// If there are explicit includes, then everything else is excluded so we need to
 	// filter the contractFiles list to include only contracts that are in the CONTRACT_ALLOWLIST map
 	if (CONTRACT_ALLOWLIST.size > 0) {
-		const slugRegex = new RegExp(`/contracts/(${_.escapeRegExp(type)}/[^/]+)/`);
+		const slugRegex = new RegExp(`/contracts/(${RegExp.escape(type)}/[^/]+)/`);
 		const before = contractFiles.length;
 		contractFiles = contractFiles.filter((file) => {
 			// Get the contract slug from the file path
