@@ -55,13 +55,7 @@ interface LokiDeviceLog extends Omit<InternalDeviceLog, 'nanoTimestamp'> {
 }
 
 // invert status object for quick lookup of status identifier using status code
-const statusKeys = _.transform(
-	loki.status,
-	function (result: Dictionary<string>, value, key) {
-		result[value] = key;
-	},
-	{},
-);
+const statusKeys = _.invert(loki.status);
 
 const lokiQueryAddress = `${LOKI_QUERY_HOST}:${LOKI_QUERY_HTTP_PORT}`;
 const lokiIngesterAddress = `${LOKI_INGESTER_HOST}:${LOKI_INGESTER_GRPC_PORT}`;
