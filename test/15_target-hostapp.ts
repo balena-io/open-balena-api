@@ -420,58 +420,87 @@ export default () => {
 					);
 			});
 
-			for (const { titlePart, lower, higher } of [
+			for (const { lower, higher } of [
 				{
-					titlePart: 'release_tag only',
 					lower: {
+						title: 'release_tag only',
 						osVersion: 'balenaOS 2.50.0+rev1',
 						getReleaseId: () => nuc2_50_0_rev1prodTagOnlyId,
 					},
 					higher: {
+						title: 'unified',
 						osVersion: 'balenaOS 2.88.4',
 						getReleaseId: () => unifiedHostAppReleaseId,
 					},
 				},
 				{
-					titlePart: 'semver & release_tag',
 					lower: {
+						title: 'semver & release_tag',
 						osVersion: 'balenaOS 2.51.0+rev1',
 						getReleaseId: () => nuc2_51_0_rev1prodTagAndSemverId,
 					},
 					higher: {
+						title: 'unified',
 						osVersion: 'balenaOS 2.88.4',
 						getReleaseId: () => unifiedHostAppReleaseId,
 					},
 				},
 				{
-					titlePart: 'semver only',
 					lower: {
+						title: 'semver only',
 						osVersion: 'balenaOS 2.51.0+rev2',
 						getReleaseId: () => nuc2_51_0_rev2prodSemverOnlyId,
 					},
 					higher: {
+						title: 'unified',
 						osVersion: 'balenaOS 2.88.4',
 						getReleaseId: () => unifiedHostAppReleaseId,
 					},
 				},
 				{
-					titlePart: 'ESR non-Semver release_tag only',
 					lower: {
+						title: 'draft',
+						osVersion: 'balenaOS 2.90.1',
+						getReleaseId: () => nucDraft2_90_1SemverOnlyId,
+					},
+					higher: {
+						title: 'release_tag only',
+						osVersion: 'balenaOS 2.90.2',
+						getReleaseId: () => nuc2_90_2SemverOnlyFinalizedId,
+					},
+				},
+				{
+					lower: {
+						title: 'unified',
+						osVersion: 'balenaOS 2.88.4',
+						getReleaseId: () => unifiedHostAppReleaseId,
+					},
+					higher: {
+						title: 'draft',
+						osVersion: 'balenaOS 2.90.1',
+						getReleaseId: () => nucDraft2_90_1SemverOnlyId,
+					},
+				},
+				{
+					lower: {
+						title: 'ESR non-Semver release_tag only',
 						osVersion: 'balenaOS 2021.01.0',
 						getReleaseId: () => esrTagOnlyNonSemverHostAppReleaseId,
 					},
 					higher: {
+						title: 'unified ESR semver-only',
 						osVersion: 'balenaOS 2023.10.0',
 						getReleaseId: () => esrSemverOnlyHostAppReleaseId,
 					},
 				},
 				{
-					titlePart: 'unified ESR',
 					lower: {
+						title: 'unified ESR',
 						osVersion: 'balenaOS 2023.1.0',
 						getReleaseId: () => esrUnifiedHostAppReleaseId,
 					},
 					higher: {
+						title: 'unified ESR semver-only',
 						osVersion: 'balenaOS 2023.10.0',
 						getReleaseId: () => esrSemverOnlyHostAppReleaseId,
 					},
@@ -479,13 +508,54 @@ export default () => {
 			] as const) {
 				const device1InitialOsVersion = 'balenaOS 2.49.0+rev1';
 				const getDevice1InitialOsRelease = () => nuc2_49_0_rev1prodTagOnlyId;
-				it(`should succeed in PATCHing the device.should_be_operated_by__release to a greater version (with ${titlePart})`, async () => {
+				expect(
+					semver.gt(lower.osVersion, device1InitialOsVersion),
+					`expected ${lower.osVersion} to be > ${device1InitialOsVersion}`,
+				).to.be.true;
+				expect(
+					semver.gt(higher.osVersion, lower.osVersion),
+					`expected ${lower.osVersion} to be > ${higher.osVersion}`,
+				).to.be.true;
+
+				const lowerTitle = `${lower.title} ${lower.osVersion.replace('balenaOS ', '')}`;
+				const higherTitle = `${higher.title} ${higher.osVersion.replace('balenaOS ', '')}`;
+
+				for (const item of [lower, higher]) {
+					if (item.title === 'draft') {
+						it(`confirming that release ${item.osVersion} is indeed draft`, async () => {
+							const { body: release } = await pineUser
+								.get({
+									resource: 'release',
+									id: item.getReleaseId(),
+									options: {
+										$select: [
+											'semver',
+											'raw_version',
+											'is_final',
+											'created_at',
+										],
+									},
+								})
+								.expect(200);
+							assertExists(release);
+							expect(release).to.deep.equal({
+								semver: item.osVersion.replace('balenaOS ', ''),
+								raw_version: `${item.osVersion.replace('balenaOS ', '')}-${new Date(release.created_at).getTime()}`,
+								is_final: false,
+								// wiring the source prop, just to keep deep.equal happy.
+								created_at: release.created_at,
+							});
+						});
+					}
+				}
+
+				// PATCH device.should_be_operated_by__release upgrade w/o downgrade tests
+
+				it(`should succeed in PATCHing the device.should_be_operated_by__release to a greater version (with ${lowerTitle})`, async () => {
 					await supertest(admin)
 						.patch(`/${version}/device(${device1.id})`)
 						.send({ should_be_operated_by__release: lower.getReleaseId() })
 						.expect(200);
-					expect(semver.gt(lower.osVersion, device1InitialOsVersion)).to.be
-						.true;
 					await expectResourceToMatch(pineUser, 'device', device1.id, {
 						os_version: device1InitialOsVersion,
 						os_variant: 'prod',
@@ -493,7 +563,7 @@ export default () => {
 					});
 				});
 
-				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports the current (older) os_version (when on a ${titlePart} release)`, async () => {
+				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports the current (older) os_version (when on a ${lowerTitle} release)`, async () => {
 					await device1.patchStateV2({
 						local: {
 							os_version: device1InitialOsVersion,
@@ -507,13 +577,11 @@ export default () => {
 					});
 				});
 
-				it(`should succeed in PATCHing the device.should_be_operated_by__release to the same version again (with ${titlePart})`, async () => {
+				it(`should succeed in PATCHing the device.should_be_operated_by__release to the same version again (with ${lowerTitle})`, async () => {
 					await supertest(admin)
 						.patch(`/${version}/device(${device1.id})`)
 						.send({ should_be_operated_by__release: lower.getReleaseId() })
 						.expect(200);
-					expect(semver.gt(lower.osVersion, device1InitialOsVersion)).to.be
-						.true;
 					await expectResourceToMatch(pineUser, 'device', device1.id, {
 						os_version: device1InitialOsVersion,
 						os_variant: 'prod',
@@ -521,13 +589,11 @@ export default () => {
 					});
 				});
 
-				it(`should succeed in PATCHing the device.should_be_operated_by__release to an even higher version again (with ${titlePart})`, async () => {
+				it(`should succeed in PATCHing the device.should_be_operated_by__release to an even higher version again (with ${lowerTitle})`, async () => {
 					await supertest(admin)
 						.patch(`/${version}/device(${device1.id})`)
 						.send({ should_be_operated_by__release: higher.getReleaseId() })
 						.expect(200);
-					expect(semver.gt(lower.osVersion, device1InitialOsVersion)).to.be
-						.true;
 					await expectResourceToMatch(pineUser, 'device', device1.id, {
 						os_version: device1InitialOsVersion,
 						os_variant: 'prod',
@@ -535,7 +601,7 @@ export default () => {
 					});
 				});
 
-				it(`should be able to PATCH the device.should_be_operated_by__release to a lower version that's greater that its current os_version if the device hasn't yet completed the update (when on a ${titlePart} release)`, async () => {
+				it(`should be able to PATCH the device.should_be_operated_by__release to a lower version that's greater that its current os_version if the device hasn't yet completed the update (when on a ${lowerTitle} release)`, async () => {
 					await supertest(admin)
 						.patch(`/${version}/device(${device1.id})`)
 						.send({
@@ -549,7 +615,7 @@ export default () => {
 					});
 				});
 
-				it(`should be able to PATCH the device.should_be_operated_by__release to the original version if the device hasn't yet completed the update (when on a ${titlePart} release)`, async () => {
+				it(`should be able to PATCH the device.should_be_operated_by__release to the original version if the device hasn't yet completed the update (when on a ${lowerTitle} release)`, async () => {
 					await supertest(admin)
 						.patch(`/${version}/device(${device1.id})`)
 						.send({
@@ -565,21 +631,22 @@ export default () => {
 					});
 				});
 
-				it(`should fail to downgrade the device.should_be_operated_by__release after the device has already reported reaching the new version (when on a ${titlePart} release)`, async () => {
+				it(`should fail to downgrade the device.should_be_operated_by__release after the device has already reported reaching the new version (when downgrading ${higherTitle} -> ${lowerTitle})`, async () => {
 					await supertest(admin)
 						.patch(`/${version}/device(${device1.id})`)
-						.send({ should_be_operated_by__release: lower.getReleaseId() })
+						.send({ should_be_operated_by__release: higher.getReleaseId() })
 						.expect(200);
 					await device1.patchStateV2({
 						local: {
-							os_version: lower.osVersion,
+							os_version: higher.osVersion,
 							os_variant: 'prod',
 						},
 					});
+					// run the actual test
 					await supertest(admin)
 						.patch(`/${version}/device(${device1.id})`)
 						.send({
-							should_be_operated_by__release: getDevice1InitialOsRelease(),
+							should_be_operated_by__release: lower.getReleaseId(),
 						})
 						.expect(
 							400,
@@ -587,7 +654,9 @@ export default () => {
 						);
 				});
 
-				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports a rollback to the older os_version (when on a ${titlePart} release)`, async () => {
+				// state PATCH device.should_be_operated_by__release >= device.os_version invariant tests
+
+				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports a rollback to the older os_version (when on a ${higherTitle} release)`, async () => {
 					await device1.patchStateV2({
 						local: {
 							os_version: device1InitialOsVersion,
@@ -597,42 +666,11 @@ export default () => {
 					await expectResourceToMatch(pineUser, 'device', device1.id, {
 						os_version: device1InitialOsVersion,
 						os_variant: 'prod',
-						should_be_operated_by__release: { __id: lower.getReleaseId() },
+						should_be_operated_by__release: { __id: higher.getReleaseId() },
 					});
 				});
 
-				it(`should fail to downgrade the device.should_be_operated_by__release (when downgrading to a ${titlePart} release)`, async () => {
-					const downgradeTestDevice = await fakeDevice.provisionDevice(
-						admin,
-						applicationId,
-					);
-					const initialOsVersion = higher.osVersion;
-					expect(semver.gt(initialOsVersion, lower.osVersion)).to.be.true;
-					await downgradeTestDevice.patchStateV2({
-						local: {
-							os_version: initialOsVersion,
-							os_variant: 'prod',
-						},
-					});
-					await expectResourceToMatch(
-						pineUser,
-						'device',
-						downgradeTestDevice.id,
-						{
-							should_be_operated_by__release: { __id: higher.getReleaseId() },
-						},
-					);
-					// run the actual test
-					await supertest(admin)
-						.patch(`/${version}/device(${downgradeTestDevice.id})`)
-						.send({ should_be_operated_by__release: lower.getReleaseId() })
-						.expect(
-							400,
-							'"Attempt to downgrade hostapp, which is not allowed"',
-						);
-				});
-
-				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports an older "unknown" os_version w/o a matching hostApp release (when on a ${titlePart} release)`, async () => {
+				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports an older "unknown" os_version w/o a matching hostApp release (when on a ${lowerTitle} release)`, async () => {
 					const downgradeTestDevice = await fakeDevice.provisionDevice(
 						admin,
 						applicationId,
@@ -672,52 +710,7 @@ export default () => {
 					);
 				});
 
-				it(`should update the device.should_be_operated_by__release when the state PATCH reports a newer os_version (using a release with ${titlePart})`, async () => {
-					// if a device is preprovisioned and pinned to a release with a semver
-					// less than the version it initially checks in with, we need to clear
-					// the old hostApp release, otherwise the model would imply a scheduled OS downgrade.
-					const preprovisionedDevice = await fakeDevice.provisionDevice(
-						admin,
-						applicationId,
-					);
-					const oldOsVersion = 'balenaOS 2.49.0+rev1';
-					expect(semver.gt(lower.osVersion, oldOsVersion)).to.be.true;
-					await preprovisionedDevice.patchStateV2({
-						local: {
-							os_version: oldOsVersion,
-							os_variant: 'prod',
-						},
-					});
-					await expectResourceToMatch(
-						pineUser,
-						'device',
-						preprovisionedDevice.id,
-						{
-							should_be_operated_by__release: {
-								__id: nuc2_49_0_rev1prodTagOnlyId,
-							},
-						},
-					);
-					// run the actual test
-					await preprovisionedDevice.patchStateV2({
-						local: {
-							os_version: lower.osVersion,
-							os_variant: 'prod',
-						},
-					});
-					await expectResourceToMatch(
-						pineUser,
-						'device',
-						preprovisionedDevice.id,
-						{
-							os_version: lower.osVersion,
-							os_variant: 'prod',
-							should_be_operated_by__release: { __id: lower.getReleaseId() },
-						},
-					);
-				});
-
-				it(`should update the device.should_be_operated_by__release when the state PATCH reports a newer os_version (when on a release ${titlePart} release)`, async () => {
+				it(`should update the device.should_be_operated_by__release when the state PATCH reports a newer os_version (${lowerTitle} -> ${higherTitle})`, async () => {
 					// if a device is preprovisioned and pinned to a release with a semver
 					// less than the version it initially checks in with, we need to update
 					// the old hostApp release, otherwise the model would imply a scheduled OS downgrade.
@@ -739,12 +732,10 @@ export default () => {
 							should_be_operated_by__release: { __id: lower.getReleaseId() },
 						},
 					);
-					const newerVersion = higher.osVersion;
-					expect(semver.gt(newerVersion, lower.osVersion)).to.be.true;
 					// run the actual test
 					await preprovisionedDevice.patchStateV2({
 						local: {
-							os_version: newerVersion,
+							os_version: higher.osVersion,
 							os_variant: 'prod',
 						},
 					});
@@ -753,14 +744,14 @@ export default () => {
 						'device',
 						preprovisionedDevice.id,
 						{
-							os_version: newerVersion,
+							os_version: higher.osVersion,
 							os_variant: 'prod',
 							should_be_operated_by__release: { __id: higher.getReleaseId() },
 						},
 					);
 				});
 
-				it(`should null the device.should_be_operated_by__release when the state PATCH reports a newer "unknown" os_version (when on a release ${titlePart} release)`, async () => {
+				it(`should null the device.should_be_operated_by__release when the state PATCH reports a newer "unknown" os_version (when on a release ${lowerTitle} release)`, async () => {
 					// if a device is preprovisioned and pinned to a release with a semver
 					// less than the version it initially checks in with, we need to clear
 					// the old hostApp release, otherwise the model would imply a scheduled OS downgrade.
@@ -805,7 +796,7 @@ export default () => {
 				});
 			}
 
-			it('should succeed in PATCHing device to ESR release', async () => {
+			it('should succeed PATCHing device.should_be_operated_by__release to an ESR release', async () => {
 				const testDevice = await fakeDevice.provisionDevice(
 					admin,
 					applicationId,
