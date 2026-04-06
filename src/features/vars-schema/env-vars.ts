@@ -296,6 +296,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			'14.2.16': ['jetson-agx-orin-devkit', 'jetson-agx-orin-devkit-64gb'],
 			'14.10.2': ['jetson-orin-nx-xavier-nx-devkit'],
 			'14.11.11': ['jetson-orin-nano-devkit-nvme'],
+			'17.6.28': ['iot-gate-imx8plus', 'iot-gate-imx8plus-d1d8'],
 		},
 		{
 			RESIN_HOST_EXTLINUX_fdt: {
