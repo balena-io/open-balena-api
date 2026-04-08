@@ -5,6 +5,7 @@ test_versions=''
 test_files=''
 extra_env=''
 extra_args=''
+preserve_volumes=''
 
 while [[ $# -gt 0 ]]; do
 	key=$1
@@ -25,6 +26,14 @@ while [[ $# -gt 0 ]]; do
 			extra_env="${extra_env} --env GENERATE_CONFIG=$1"
 			shift
 		;;
+		--preserve-volumes)
+			# Offers an easy way to test DB migrations with:
+			# git switch master
+			# npm run fasttest 00
+			# git switch my_branch_with_migration
+			# npm run fasttest 00
+			preserve_volumes="1"
+		;;
 		-v | --version)
 			test_versions="$test_versions $1"
 			shift
@@ -42,7 +51,12 @@ if [[ ! -f ".materialized-config.json" ]]; then
 	touch .materialized-config.json
 fi
 
-docker compose -f docker-compose.test-custom.yml up --renew-anon-volumes --force-recreate --detach redis db minio-server minio-client loki
+if [[ "$preserve_volumes" == "1" ]]; then
+	echo "Preserving volumes from previous run"
+else
+	echo "Recreating volumes"
+	docker compose -f docker-compose.test-custom.yml up --renew-anon-volumes --force-recreate --detach redis db minio-server minio-client loki
+fi
 if [[ -z "$test_files" ]]; then
 	echo "Running all tests"
 else
