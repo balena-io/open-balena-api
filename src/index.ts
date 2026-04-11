@@ -268,9 +268,6 @@ export const release = {
 };
 export const deviceTypes = {
 	getAccessibleDeviceTypeJsons,
-	// TODO: Drop me in the next major
-	/** @deprecated Use getDeviceTypeJsonBySlug */
-	findBySlug: getDeviceTypeJsonBySlug,
 	getDeviceTypeJsonBySlug,
 	getDeviceTypeBySlug,
 };
