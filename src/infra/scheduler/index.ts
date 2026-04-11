@@ -102,11 +102,7 @@ export const scheduleJob = (
 	lockOptions?: LockSettings,
 ): schedule.Job => {
 	jobIds.push(jobId);
-	// TODO: Change this to `lockOptions?.ttl ?? JOB_DEFAULT_TTL` in the next major.
-	const ttl =
-		lockOptions?.ttl != null && lockOptions.ttl !== 0
-			? lockOptions.ttl
-			: JOB_DEFAULT_TTL;
+	const ttl = lockOptions?.ttl ?? JOB_DEFAULT_TTL;
 	const jobLockKey = JOB_LOCK_PREFIX + jobId;
 	const jobInfoKey = JOB_INFO_PREFIX + jobId;
 	const job: schedule.Job = schedule.scheduleJob(
