@@ -31,7 +31,7 @@ const getAPIKey = async (
 	if (token && !isJWT(token)) {
 		try {
 			// Add support for API keys on Authorization header if a JWT wasn't provided
-			return await permissions.resolveAuthHeader(req, 'Bearer', tx);
+			return await permissions.resolveAuthHeader(req, tx, 'Bearer');
 		} catch {
 			// ignore
 		}
