@@ -152,6 +152,15 @@ const loaders: types.Dictionary<LoaderFunc> = {
 		});
 	},
 	organizations: async (jsonData: Organization['Write']) => {
+		if (jsonData.handle === 'balena_os') {
+			// Check whether the 00 orgs are already there, since this might be a 'fasttest -- --preserve-volumes' run.
+			return (await api.resin.getOrCreate({
+				resource: 'organization',
+				passthrough: { req: permissions.root },
+				id: { handle: jsonData.handle },
+				body: jsonData,
+			}))!;
+		}
 		return await api.resin.post({
 			resource: 'organization',
 			passthrough: { req: permissions.root },
