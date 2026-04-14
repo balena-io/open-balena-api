@@ -55,7 +55,9 @@ export const comparePassword = (password: string, hash: string | null) =>
 		? runInvalidPasswordComparison()
 		: sbvrUtils.sbvrTypes.Hashed.compare(password, hash);
 
-export const validatePassword = (password?: string) => {
+export const validatePassword = (
+	password: string | undefined,
+): asserts password is string => {
 	if (!password) {
 		throw new BadRequestError('Password required.');
 	}
