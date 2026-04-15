@@ -12,6 +12,28 @@ import { groupByMap } from '../../../lib/utils.js';
 import { ThisShouldNeverHappenError } from '../../../infra/error-handling/index.js';
 const { BadRequestError } = pinejsErrors;
 
+/**
+ * We need a fallback to the deprecated release_tags for the version
+ * since the versioning format of balenaOS [2019.10.0.dev, 2022.01.0] was non-semver compliant
+ * and they were not migrated to the release semver fields.
+ */
+function getBaseVersionFromReleaseSemverOrTag(
+	release: Pick<Release['Read'], 'semver'> & {
+		release_tag: Array<Pick<ReleaseTag['Read'], 'value'>>;
+	},
+) {
+	// For OS releases w/ versions that we could not migrate to the semver fields
+	// we fallback to the version release_tag.
+	if (release.semver.startsWith('0.0.0')) {
+		return release.release_tag[0]?.value;
+	}
+	// We do not use the raw_version since
+	// * it adds the variant, which would break comparisons w/ device.os_version (which doesn't include a variant)
+	// * it adds the timestamp as a prerelease part,
+	//   which would block updates to draft OS releases of the same major.minor.patch.
+	return release.semver;
+}
+
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	/**
 	 * Disallow hostapp downgrades, using the related release resource
@@ -47,6 +69,91 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 		}
 	},
 });
+
+async function checkHostappReleaseUpgrades(
+	api: typeof sbvrUtils.api.resin,
+	deviceIds: number[],
+	newHostappReleaseId: number,
+	allowInvalidated: boolean,
+) {
+	if (deviceIds.length === 0) {
+		return;
+	}
+	const devices = await api.get({
+		resource: 'device',
+		options: {
+			$select: 'os_version',
+			$filter: {
+				id: { $in: deviceIds },
+				os_version: { $ne: null },
+			},
+		},
+	});
+
+	let maxOldOsVersion: string | undefined;
+	for (const device of devices) {
+		if (
+			// to keep TS happy
+			device.os_version != null &&
+			semver.parse(device.os_version) != null &&
+			(maxOldOsVersion == null || semver.gt(device.os_version, maxOldOsVersion))
+		) {
+			maxOldOsVersion = device.os_version;
+		}
+	}
+
+	if (maxOldOsVersion == null) {
+		// all devices have yet to fully provision, or have unrecognizable versions,
+		// so it's not an upgrade that we can check
+		return;
+	}
+
+	// In order to prevent blocking devices from provisioning, we allow devices to come online, report any version and
+	// we tag it accordingly. However we do not allow devices to _upgrade_ to invalidated releases, so we filter those
+	// out here.
+	const newHostappRelease = await api.get({
+		resource: 'release',
+		id: newHostappReleaseId,
+		options: {
+			$select: 'semver',
+			$expand: {
+				release_tag: {
+					$select: 'value',
+					$filter: { tag_key: 'version' },
+				},
+			},
+			$filter: {
+				...(!allowInvalidated && {
+					// Users shouldn't be able to upgrade to an invalid release, but we can provision to an invalidated one
+					// which the device might report on a subsequent PATCH, so this isn't an SBVR rule.
+					is_invalidated: false,
+				}),
+				status: 'success',
+			},
+		},
+	} as const);
+
+	if (newHostappRelease == null) {
+		throw new BadRequestError(
+			`Could not find a hostapp release with this ID ${newHostappReleaseId}`,
+		);
+	}
+
+	const newHostappVersion =
+		getBaseVersionFromReleaseSemverOrTag(newHostappRelease);
+
+	if (newHostappVersion == null) {
+		throw new BadRequestError(
+			`Could not find the version for the hostapp release with ID: ${newHostappReleaseId}`,
+		);
+	}
+
+	if (semver.lt(newHostappVersion, maxOldOsVersion)) {
+		throw new BadRequestError(
+			`Attempt to downgrade hostapp, which is not allowed`,
+		);
+	}
+}
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	/**
@@ -388,111 +495,4 @@ function normalizeOsVersion(osVersion: string) {
 			// Remove "v" prefix
 			.replace(/^v/, '')
 	);
-}
-
-/**
- * We need a fallback to the deprecated release_tags for the version
- * since the versioning format of balenaOS [2019.10.0.dev, 2022.01.0] was non-semver compliant
- * and they were not migrated to the release semver fields.
- */
-function getBaseVersionFromReleaseSemverOrTag(
-	release: Pick<Release['Read'], 'semver'> & {
-		release_tag: Array<Pick<ReleaseTag['Read'], 'value'>>;
-	},
-) {
-	// For OS releases w/ versions that we could not migrate to the semver fields
-	// we fallback to the version release_tag.
-	if (release.semver.startsWith('0.0.0')) {
-		return release.release_tag[0]?.value;
-	}
-	// We do not use the raw_version since
-	// * it adds the variant, which would break comparisons w/ device.os_version (which doesn't include a variant)
-	// * it adds the timestamp as a prerelease part,
-	//   which would block updates to draft OS releases of the same major.minor.patch.
-	return release.semver;
-}
-
-async function checkHostappReleaseUpgrades(
-	api: typeof sbvrUtils.api.resin,
-	deviceIds: number[],
-	newHostappReleaseId: number,
-	allowInvalidated: boolean,
-) {
-	if (deviceIds.length === 0) {
-		return;
-	}
-	const devices = await api.get({
-		resource: 'device',
-		options: {
-			$select: 'os_version',
-			$filter: {
-				id: { $in: deviceIds },
-				os_version: { $ne: null },
-			},
-		},
-	});
-
-	let maxOldOsVersion: string | undefined;
-	for (const device of devices) {
-		if (
-			// to keep TS happy
-			device.os_version != null &&
-			semver.parse(device.os_version) != null &&
-			(maxOldOsVersion == null || semver.gt(device.os_version, maxOldOsVersion))
-		) {
-			maxOldOsVersion = device.os_version;
-		}
-	}
-
-	if (maxOldOsVersion == null) {
-		// all devices have yet to fully provision, or have unrecognizable versions,
-		// so it's not an upgrade that we can check
-		return;
-	}
-
-	// In order to prevent blocking devices from provisioning, we allow devices to come online, report any version and
-	// we tag it accordingly. However we do not allow devices to _upgrade_ to invalidated releases, so we filter those
-	// out here.
-	const newHostappRelease = await api.get({
-		resource: 'release',
-		id: newHostappReleaseId,
-		options: {
-			$select: 'semver',
-			$expand: {
-				release_tag: {
-					$select: 'value',
-					$filter: { tag_key: 'version' },
-				},
-			},
-			$filter: {
-				...(!allowInvalidated && {
-					// Users shouldn't be able to upgrade to an invalid release, but we can provision to an invalidated one
-					// which the device might report on a subsequent PATCH, so this isn't an SBVR rule.
-					is_invalidated: false,
-				}),
-				status: 'success',
-			},
-		},
-	} as const);
-
-	if (newHostappRelease == null) {
-		throw new BadRequestError(
-			`Could not find a hostapp release with this ID ${newHostappReleaseId}`,
-		);
-	}
-
-	const newHostappVersion =
-		getBaseVersionFromReleaseSemverOrTag(newHostappRelease);
-
-	if (newHostappVersion == null) {
-		throw new BadRequestError(
-			`Could not find the version for the hostapp release with ID: ${newHostappReleaseId}`,
-		);
-	}
-
-	if (semver.lt(newHostappVersion, maxOldOsVersion)) {
-		throw new BadRequestError(
-			`Attempt to downgrade hostapp, which is not allowed`,
-		);
-	}
 }
