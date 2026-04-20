@@ -318,11 +318,79 @@ export default () => {
 
 					describe(`provisioning with a ${osTypeTitlePart} OS (using ${provisioningFnTitlePart})`, function () {
 						let registeredDevice: Device['Read'];
+						let gradualOsFieldReportDevice: Device['Read'];
 
 						after(async function () {
 							await fixtures.clean({
 								devices: [registeredDevice],
 							});
+						});
+
+						it(`should provision WITHOUT a linked hostapp when providing an os_variant but no os_version (using ${provisioningFnTitlePart})`, async () => {
+							const { body: testDevice } = await provisionFn({
+								belongs_to__application: applicationId,
+								device_type: 'intel-nuc',
+								os_variant: osVersionVariantParams.os_variant,
+							});
+							await expectResourceToMatch(pineUser, 'device', testDevice.id, {
+								os_version: null,
+								os_variant: osVersionVariantParams.os_variant,
+								should_be_operated_by__release: null,
+							});
+						});
+
+						it(`should provision WITHOUT a linked hostapp when providing an os_version and a null os_variant (using ${provisioningFnTitlePart})`, async () => {
+							const { body: testDevice } = await provisionFn({
+								belongs_to__application: applicationId,
+								device_type: 'intel-nuc',
+								os_version: osVersionVariantParams.os_version,
+								os_variant: null,
+							});
+							await expectResourceToMatch(pineUser, 'device', testDevice.id, {
+								os_version: osVersionVariantParams.os_version,
+								os_variant: null,
+								should_be_operated_by__release: null,
+							});
+						});
+
+						it(`should provision WITHOUT a linked hostapp when providing an os_version but no os_variant (using ${provisioningFnTitlePart})`, async () => {
+							({ body: gradualOsFieldReportDevice } = await provisionFn({
+								belongs_to__application: applicationId,
+								device_type: 'intel-nuc',
+								os_version: osVersionVariantParams.os_version,
+							}));
+							await expectResourceToMatch(
+								pineUser,
+								'device',
+								gradualOsFieldReportDevice.id,
+								{
+									os_version: osVersionVariantParams.os_version,
+									os_variant: null,
+									should_be_operated_by__release: null,
+								},
+							);
+						});
+
+						it(`...should link the hostapp once the os_variant is also set (using ${provisioningFnTitlePart})`, async () => {
+							await pineUser.patch({
+								resource: 'device',
+								id: gradualOsFieldReportDevice.id,
+								body: {
+									os_variant: osVersionVariantParams.os_variant,
+								},
+							});
+							await expectResourceToMatch(
+								pineUser,
+								'device',
+								gradualOsFieldReportDevice.id,
+								{
+									os_version: osVersionVariantParams.os_version,
+									os_variant: osVersionVariantParams.os_variant,
+									should_be_operated_by__release: {
+										__id: getHostAppReleaseId(),
+									},
+								},
+							);
 						});
 
 						it(`should provision with a linked hostapp`, async () => {
@@ -654,7 +722,7 @@ export default () => {
 						);
 				});
 
-				// state PATCH device.should_be_operated_by__release >= device.os_version invariant tests
+				// state PATCH device.os_version <= device.should_be_operated_by__release invariant tests
 
 				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports a rollback to the older os_version (when on a ${higherTitle} release)`, async () => {
 					await device1.patchStateV2({
@@ -668,6 +736,53 @@ export default () => {
 						os_variant: 'prod',
 						should_be_operated_by__release: { __id: higher.getReleaseId() },
 					});
+				});
+
+				it(`should work when a device with an empty should_be_operated_by__release reports a rollback to the older os_version (when on a ${higherTitle} release)`, async () => {
+					const downgradeTestDevice = await fakeDevice.provisionDevice(
+						admin,
+						applicationId,
+					);
+					await downgradeTestDevice.patchStateV2({
+						local: {
+							os_version: higher.osVersion,
+							os_variant: 'prod',
+						},
+					});
+					await pineUser.patch({
+						resource: 'device',
+						id: downgradeTestDevice.id,
+						body: {
+							should_be_operated_by__release: null,
+						},
+					});
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						downgradeTestDevice.id,
+						{
+							os_version: higher.osVersion,
+							os_variant: 'prod',
+							should_be_operated_by__release: null,
+						},
+					);
+					// run the actual test
+					await downgradeTestDevice.patchStateV2({
+						local: {
+							os_version: lower.osVersion,
+							os_variant: 'prod',
+						},
+					});
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						downgradeTestDevice.id,
+						{
+							os_version: lower.osVersion,
+							os_variant: 'prod',
+							should_be_operated_by__release: { __id: lower.getReleaseId() },
+						},
+					);
 				});
 
 				it(`should leave the device.should_be_operated_by__release unchanged when the state PATCH reports an older "unknown" os_version w/o a matching hostApp release (when on a ${lowerTitle} release)`, async () => {
@@ -710,7 +825,7 @@ export default () => {
 					);
 				});
 
-				it(`should update the device.should_be_operated_by__release when the state PATCH reports a newer os_version (${lowerTitle} -> ${higherTitle})`, async () => {
+				it(`should update the device.should_be_operated_by__release when the state PATCH reports a newer os_version & os_variant (${lowerTitle} -> ${higherTitle})`, async () => {
 					// if a device is preprovisioned and pinned to a release with a semver
 					// less than the version it initially checks in with, we need to update
 					// the old hostApp release, otherwise the model would imply a scheduled OS downgrade.
@@ -737,6 +852,45 @@ export default () => {
 						local: {
 							os_version: higher.osVersion,
 							os_variant: 'prod',
+						},
+					});
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						preprovisionedDevice.id,
+						{
+							os_version: higher.osVersion,
+							os_variant: 'prod',
+							should_be_operated_by__release: { __id: higher.getReleaseId() },
+						},
+					);
+				});
+
+				it(`should update the device.should_be_operated_by__release when the state PATCH reports a newer os_version but no os_variant (${lowerTitle} -> ${higherTitle})`, async () => {
+					const preprovisionedDevice = await fakeDevice.provisionDevice(
+						admin,
+						applicationId,
+					);
+					await preprovisionedDevice.patchStateV2({
+						local: {
+							os_version: lower.osVersion,
+							os_variant: 'prod',
+						},
+					});
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						preprovisionedDevice.id,
+						{
+							os_version: lower.osVersion,
+							os_variant: 'prod',
+							should_be_operated_by__release: { __id: lower.getReleaseId() },
+						},
+					);
+					// run the actual test
+					await preprovisionedDevice.patchStateV2({
+						local: {
+							os_version: higher.osVersion,
 						},
 					});
 					await expectResourceToMatch(

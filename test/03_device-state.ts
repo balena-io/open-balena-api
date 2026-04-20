@@ -1652,6 +1652,7 @@ export default () => {
 				const deviceFieldMaxSizes = {
 					status: 50,
 					os_version: 70,
+					os_variant: 4,
 					supervisor_version: 20,
 					api_secret: 64,
 					note: 1_000_000,
@@ -1660,7 +1661,11 @@ export default () => {
 				it('should accept excessively long device fields and truncate them to the max allowed size', async () => {
 					const devicePatchBody = {
 						status: 'Running OS update',
-						os_version: 'balenaOS 2.50.1+rev1',
+						// The dot here is so that the added text is addes as a separate semver build part and not considered
+						// part of there revision, since otherwise the API would fail with a malforned url error while trying find
+						// the hostApp release that matches that out of range int revision (eg: revision eq 1.1234567890123457e+50).
+						os_version: `balenaOS 2.50.1+rev${2 ** 31 - 1}.`,
+						os_variant: `prod`,
 						supervisor_version: '11.4.10',
 						api_secret: 'super-secret-thing',
 					};
