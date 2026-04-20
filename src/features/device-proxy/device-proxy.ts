@@ -15,7 +15,7 @@ import {
 	VPN_CONNECT_PROXY_PORT,
 } from '../../lib/config.js';
 import type { RequestResponse } from '../../infra/request-promise/index.js';
-import { requestAsync } from '../../infra/request-promise/index.js';
+import { requestAsync, withRetry } from '../../infra/request-promise/index.js';
 import { checkInt, throttledForEach } from '../../lib/utils.js';
 import type { Device } from '../../balena-model.js';
 
@@ -293,14 +293,18 @@ async function requestDevices({
 				device.api_port ?? 80
 			}${url}?apikey=${device.api_secret}`;
 			try {
-				return await requestAsync({
-					uri: deviceUrl,
-					json: data,
-					proxy: `http://resin_api:${API_VPN_SERVICE_API_KEY}@${vpnIp}:${VPN_CONNECT_PROXY_PORT}`,
-					tunnel: true,
-					method,
-					timeout: DEVICE_REQUEST_TIMEOUT,
-				});
+				return await withRetry(
+					() =>
+						requestAsync({
+							uri: deviceUrl,
+							json: data,
+							proxy: `http://resin_api:${API_VPN_SERVICE_API_KEY}@${vpnIp}:${VPN_CONNECT_PROXY_PORT}`,
+							tunnel: true,
+							method,
+							timeout: DEVICE_REQUEST_TIMEOUT,
+						}),
+					1, // retry just once
+				);
 			} catch (err) {
 				if (!wait) {
 					// If we don't care about waiting for the request then we just ignore the error and continue
