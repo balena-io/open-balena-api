@@ -62,6 +62,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			);
 		}
 		// Parse and set `os_variant` from `os_version` if not explicitly given
+		// Early v2.0.0 OS releases eg 'Resin OS 2.0.0+rev5 (prod)' included the variant as part of the os_version
 		if (
 			request.values.os_version != null &&
 			request.values.os_variant == null
@@ -69,8 +70,6 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			const match = /^.*\((.+)\)$/.exec(request.values.os_version);
 			if (match != null) {
 				request.values.os_variant = match[1];
-			} else {
-				request.values.os_variant = null;
 			}
 		}
 
