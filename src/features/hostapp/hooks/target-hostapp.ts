@@ -37,19 +37,23 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	/**
 	 * Disallow hostapp downgrades, using the related release resource
 	 */
-	async PRERUN(args) {
+	PRERUN(args) {
 		if (args.request.values.should_be_operated_by__release != null) {
 			// First try to coerce the value to an integer for
 			// moving forward
-			args.request.custom.hostappRelease = parseInt(
+			args.request.custom.hostappReleaseId = parseInt(
 				args.request.values.should_be_operated_by__release,
 				10,
 			);
 			// But let's check we actually got a value
 			// representing an integer
-			if (!Number.isInteger(args.request.custom.hostappRelease)) {
+			if (!Number.isInteger(args.request.custom.hostappReleaseId)) {
 				throw new BadRequestError('Expected an ID for the hostapp release');
 			}
+		}
+	},
+	async POSTRUN(args) {
+		if (typeof args.request.custom.hostappReleaseId === 'number') {
 			// Users shouldn't be able to upgrade to an invalid release, but the platform
 			// should be able to preserve the should_be_operated_by__release > os_version invariant
 			// even if the device reports an os_version that's of an invalidated release.
@@ -62,7 +66,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			await checkHostappReleaseUpgrades(
 				args.api,
 				ids,
-				args.request.custom.hostappRelease,
+				args.request.custom.hostappReleaseId,
 				allowInvalidated,
 			);
 		}

@@ -483,8 +483,7 @@ export default () => {
 					})
 					.expect(
 						400,
-						// TODO: This should ideally be: '"It is necessary that each release that should operate a device, has a status that is equal to \\"success\\"."'
-						`"Could not find a hostapp release with this ID ${failedIntelNucHostAppReleaseId}"`,
+						'"It is necessary that each release that should operate a device, has a status that is equal to \\"success\\"."',
 					);
 			});
 
@@ -720,6 +719,41 @@ export default () => {
 							400,
 							'"Attempt to downgrade hostapp, which is not allowed"',
 						);
+				});
+
+				it(`should block queuing a downgrade when the device.should_be_operated_by__release is updated along with os_version & os_variant (when downgrading ${higherTitle} -> ${lowerTitle})`, async () => {
+					const downgradeTestDevice = await fakeDevice.provisionDevice(
+						admin,
+						applicationId,
+					);
+					await downgradeTestDevice.patchStateV2({
+						local: {
+							os_version: lower.osVersion,
+							os_variant: 'prod',
+						},
+					});
+					// run the actual test
+					await supertest(admin)
+						.patch(`/${version}/device(${downgradeTestDevice.id})`)
+						.send({
+							os_version: higher.osVersion,
+							os_variant: 'prod',
+							should_be_operated_by__release: lower.getReleaseId(),
+						})
+						.expect(
+							400,
+							'"Attempt to downgrade hostapp, which is not allowed"',
+						);
+					await expectResourceToMatch(
+						pineUser,
+						'device',
+						downgradeTestDevice.id,
+						{
+							os_version: lower.osVersion,
+							os_variant: 'prod',
+							should_be_operated_by__release: { __id: lower.getReleaseId() },
+						},
+					);
 				});
 
 				// state PATCH device.os_version <= device.should_be_operated_by__release invariant tests
