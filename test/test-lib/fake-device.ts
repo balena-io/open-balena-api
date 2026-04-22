@@ -8,6 +8,7 @@ import type { StateV2 } from '../../src/features/device-state/routes/state-get-v
 import type { StateV3 } from '../../src/features/device-state/routes/state-get-v3.js';
 import type { StatePatchV2Body } from '../../src/features/device-state/routes/state-patch-v2.js';
 import type { StatePatchV3Body } from '../../src/features/device-state/routes/state-patch-v3.js';
+import type { TagsPatchV3Body } from '../../src/features/device-state/routes/tags-patch-v3.js';
 
 const version = 'resin';
 
@@ -72,6 +73,16 @@ export async function patchState(
 		stateVersion === 'v2'
 			? `/device/${stateVersion}/${deviceUuid}/state`
 			: `/device/${stateVersion}/state`;
+
+	await supertest(user).patch(uri).send(patchBody).expect(200);
+}
+
+export async function patchTags(
+	user: UserObjectParam,
+	patchBody: TagsPatchV3Body,
+	stateVersion: 'v3',
+): Promise<void> {
+	const uri = `/device/${stateVersion}/tags`;
 
 	await supertest(user).patch(uri).send(patchBody).expect(200);
 }

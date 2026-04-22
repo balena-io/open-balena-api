@@ -12,6 +12,7 @@ import type { StatePatchV3Body } from './routes/state-patch-v3.js';
 import { resolveDeviceUuids, statePatchV3 } from './routes/state-patch-v3.js';
 import { fleetStateV3 } from './routes/fleet-state-get-v3.js';
 import type { Device } from '../../balena-model.js';
+import { tagsPatchV3 } from './routes/tags-patch-v3.js';
 
 export {
 	getStateEventAdditionalFields,
@@ -63,6 +64,14 @@ export const setup = (app: Application) => {
 		'/device/v3/fleet/:fleetUuid/state',
 		middleware.authenticated,
 		fleetStateV3,
+	);
+	app.patch(
+		'/device/v3/tags',
+		resolveOrDenyDevicesWithStatus(401, (req) =>
+			resolveDeviceUuids(req.body as StatePatchV3Body),
+		),
+		middleware.authenticatedApiKey,
+		tagsPatchV3,
 	);
 };
 

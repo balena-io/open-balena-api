@@ -2082,5 +2082,126 @@ export default () => {
 				}
 			});
 		}
+
+		for (const stateVersion of ['v3'] as const) {
+			describe(`Device tags ${stateVersion} patch`, function () {
+				let fx: fixtures.Fixtures;
+				let pineUser: PineTest;
+				let device: fakeDevice.Device;
+				let stateKey: string;
+
+				before(async () => {
+					fx = await fixtures.load('03-device-state');
+
+					pineUser = pineTest.clone({
+						passthrough: { user: fx.users.admin },
+					});
+
+					// create a new device in this test application...
+					device = await fakeDevice.provisionDevice(
+						fx.users.admin,
+						fx.applications.app1.id,
+						'balenaOS 2.42.0+rev1',
+						'9.11.1',
+					);
+
+					stateKey = device.uuid;
+				});
+
+				after(async () => {
+					await fixtures.clean(fx);
+				});
+
+				it('should add a device tag', async () => {
+					const devicePatchBody = {
+						[stateKey]: {
+							tagKey1: 'tagValue1',
+						},
+					};
+
+					await fakeDevice.patchTags(device, devicePatchBody, stateVersion);
+
+					await expectResourceToMatch(
+						pineUser,
+						'device_tag',
+						{ device: device.id, tag_key: 'tagKey1' },
+						{
+							device: { __id: device.id },
+							tag_key: 'tagKey1',
+							value: 'tagValue1',
+						},
+					);
+				});
+
+				it('should add multiple device tags, leaving existing intact', async () => {
+					const devicePatchBody = {
+						[stateKey]: {
+							tagKey2: 'tagValue2',
+							tagKey3: 'tagValue3',
+						},
+					};
+
+					await fakeDevice.patchTags(device, devicePatchBody, stateVersion);
+
+					for (const i of [1, 2, 3]) {
+						await expectResourceToMatch(
+							pineUser,
+							'device_tag',
+							{ device: device.id, tag_key: `tagKey${i}` },
+							{
+								device: { __id: device.id },
+								tag_key: `tagKey${i}`,
+								value: `tagValue${i}`,
+							},
+						);
+					}
+				});
+
+				it('should update multiple device tags, leaving others intact', async () => {
+					const devicePatchBody = {
+						[stateKey]: {
+							tagKey2: 'updatedTagValue2',
+							tagKey3: 'updatedTagValue3',
+							tagKey4: 'newTagValue4',
+						},
+					};
+
+					await fakeDevice.patchTags(device, devicePatchBody, stateVersion);
+
+					await expectResourceToMatch(
+						pineUser,
+						'device_tag',
+						{ device: device.id, tag_key: 'tagKey1' },
+						{
+							device: { __id: device.id },
+							tag_key: 'tagKey1',
+							value: 'tagValue1',
+						},
+					);
+					for (const i of [2, 3]) {
+						await expectResourceToMatch(
+							pineUser,
+							'device_tag',
+							{ device: device.id, tag_key: `tagKey${i}` },
+							{
+								device: { __id: device.id },
+								tag_key: `tagKey${i}`,
+								value: `updatedTagValue${i}`,
+							},
+						);
+					}
+					await expectResourceToMatch(
+						pineUser,
+						'device_tag',
+						{ device: device.id, tag_key: 'tagKey4' },
+						{
+							device: { __id: device.id },
+							tag_key: 'tagKey4',
+							value: 'newTagValue4',
+						},
+					);
+				});
+			});
+		}
 	});
 };
