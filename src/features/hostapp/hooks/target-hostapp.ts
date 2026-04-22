@@ -34,26 +34,42 @@ function getBaseVersionFromReleaseSemverOrTag(
 }
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
-	/**
-	 * Disallow hostapp downgrades, using the related release resource
-	 */
-	PRERUN(args) {
-		if (args.request.values.should_be_operated_by__release != null) {
+	POSTPARSE({ request }) {
+		/**
+		 * If a device changes device types, we need to clear out the related target hostapp release
+		 *
+		 * TODO: changing device types presents us with a bit of a conundrum. since we cannot guarantee parity between
+		 * available OSes for each device type, we cannot just switch the target to the new device type, so instead let's just
+		 * unset the value
+		 */
+		if (
+			request.values.is_of__device_type != null &&
+			request.values.should_be_operated_by__release === undefined
+		) {
+			request.values.should_be_operated_by__release = null;
+		}
+
+		if (request.values.should_be_operated_by__release != null) {
 			// First try to coerce the value to an integer for
 			// moving forward
-			args.request.custom.hostappReleaseId = parseInt(
-				args.request.values.should_be_operated_by__release,
+			const hostappReleaseId = parseInt(
+				request.values.should_be_operated_by__release,
 				10,
 			);
 			// But let's check we actually got a value
 			// representing an integer
-			if (!Number.isInteger(args.request.custom.hostappReleaseId)) {
+			if (!Number.isInteger(hostappReleaseId)) {
 				throw new BadRequestError('Expected an ID for the hostapp release');
 			}
 		}
 	},
 	async POSTRUN(args) {
-		if (typeof args.request.custom.hostappReleaseId === 'number') {
+		/**
+		 * Disallow hostapp downgrades, using the related release resource
+		 */
+		if (
+			typeof args.request.values.should_be_operated_by__release === 'number'
+		) {
 			// Users shouldn't be able to upgrade to an invalid release, but the platform
 			// should be able to preserve the should_be_operated_by__release > os_version invariant
 			// even if the device reports an os_version that's of an invalidated release.
@@ -66,7 +82,7 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 			await checkHostappReleaseUpgrades(
 				args.api,
 				ids,
-				args.request.custom.hostappReleaseId,
+				args.request.values.should_be_operated_by__release,
 				allowInvalidated,
 			);
 		}
@@ -157,25 +173,6 @@ async function checkHostappReleaseUpgrades(
 		);
 	}
 }
-
-hooks.addPureHook('PATCH', 'resin', 'device', {
-	/**
-	 * If a device changes device types, we need to clear out the related target hostapp release
-	 *
-	 * TODO: changing device types presents us with a bit of a conundrum. since we cannot guarantee parity between
-	 * available OSes for each device type, we cannot just switch the target to the new device type, so instead let's just
-	 * unset the value
-	 */
-
-	POSTPARSE({ request }) {
-		if (
-			request.values.is_of__device_type != null &&
-			request.values.should_be_operated_by__release === undefined
-		) {
-			request.values.should_be_operated_by__release = null;
-		}
-	},
-});
 
 const parseOsVariant = (value: string | null | undefined) => {
 	if (value === 'dev' || value === 'prod') {
