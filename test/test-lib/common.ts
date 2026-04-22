@@ -3,6 +3,7 @@ import { stripIndent } from 'common-tags';
 import { setTimeout } from 'timers/promises';
 import { TypedError } from 'typed-error';
 import { ThisShouldNeverHappenError } from '../../src/infra/error-handling/index.js';
+import pTimeout from 'p-timeout';
 
 type PredicateFunction = () => Resolvable<boolean>;
 
@@ -34,31 +35,27 @@ export async function waitFor({
 		maxCount = Math.ceil(maxWait / delayMs);
 	}
 
-	const promises: Array<Promise<any>> = [
-		(async () => {
-			for (let i = 1; i <= maxCount; i++) {
-				console.log(`⌚  Waiting ${delayMs}ms (${i}/${maxCount})...`);
-				await setTimeout(delayMs);
+	let promise = (async () => {
+		for (let i = 1; i <= maxCount; i++) {
+			console.log(`⌚  Waiting ${delayMs}ms (${i}/${maxCount})...`);
+			await setTimeout(delayMs);
 
-				if (await checkFn()) {
-					return;
-				}
+			if (await checkFn()) {
+				return;
 			}
+		}
 
-			throw new TimedOutError();
-		})(),
-	];
+		throw new TimedOutError();
+	})();
 
 	if (maxWait != null) {
-		promises.push(
-			(async () => {
-				await setTimeout(maxWait);
-				throw new TimedOutError(`Exceeded maxWait ${maxWait}`);
-			})(),
-		);
+		promise = pTimeout(promise, {
+			milliseconds: maxWait,
+			message: `Exceeded maxWait ${maxWait}`,
+		});
 	}
 
-	await Promise.race(promises);
+	await promise;
 }
 
 export const itExpectsError = (
