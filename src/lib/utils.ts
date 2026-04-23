@@ -143,8 +143,20 @@ export const groupByMap = <K, V>(entries: V[], iteratee: (item: V) => K) => {
 	return result;
 };
 
-export const getBodyOrQueryParam = (
-	req: Request,
-	paramName: string,
-	defaultValue?: string,
-) => req.body[paramName] ?? req.query[paramName] ?? defaultValue;
+export const getBodyOrQueryParam = <
+	R extends Request,
+	P extends (keyof R['body'] | keyof R['query']) & string,
+	D = undefined,
+>(
+	req: R,
+	paramName: P,
+	// TODO-Major: remove the default value and let callers handle that via `??`, it simplifies this code and the typings,
+	// especially as the default value doesn't seem to be used in practice
+	defaultValue?: D,
+):
+	| Exclude<
+			| (P extends keyof R['body'] ? R['body'][P] : never)
+			| (P extends keyof R['query'] ? R['query'][P] : never),
+			null
+	  >
+	| D => req.body[paramName] ?? req.query[paramName] ?? defaultValue;
