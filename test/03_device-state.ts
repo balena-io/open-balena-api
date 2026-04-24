@@ -1846,6 +1846,8 @@ export default () => {
 				});
 
 				it('should save the update progress of the device state', async () => {
+					// mark the device as connected to vpn since otherwise the overall_progress will be returned as null
+					await device.setIsConnectedToVpn(true);
 					for (const progress of [20, 50]) {
 						await fakeDevice.patchState(
 							device,

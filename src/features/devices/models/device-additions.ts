@@ -29,7 +29,7 @@ export const isInactiveFn = (isActiveNotExist: boolean): BooleanTypeNodes =>
 
 export const isOverallOffline: AndNode = [
 	'And',
-	['Not', ['ReferencedField', 'device', 'is online']],
+	['Not', ['ReferencedField', 'device', 'is connected to vpn']],
 	[
 		'In',
 		['ReferencedField', 'device', 'api heartbeat state'],
@@ -42,7 +42,7 @@ export const isOverallOffline: AndNode = [
 // so it's still provisioning.
 export const isPreProvisioning: AndNode = [
 	'And',
-	['Not', ['ReferencedField', 'device', 'is online']],
+	['Not', ['ReferencedField', 'device', 'is connected to vpn']],
 	['NotExists', ['ReferencedField', 'device', 'last connectivity event']],
 	[
 		'Equals',
@@ -126,7 +126,7 @@ const hasPartialConnectivity: OrNode = [
 	],
 	[
 		'And',
-		['ReferencedField', 'device', 'is online'],
+		['ReferencedField', 'device', 'is connected to vpn'],
 		[
 			'NotEquals',
 			['ReferencedField', 'device', 'api heartbeat state'],
@@ -135,7 +135,7 @@ const hasPartialConnectivity: OrNode = [
 	],
 	[
 		'And',
-		['Not', ['ReferencedField', 'device', 'is online']],
+		['Not', ['ReferencedField', 'device', 'is connected to vpn']],
 		[
 			'Equals',
 			['ReferencedField', 'device', 'api heartbeat state'],
