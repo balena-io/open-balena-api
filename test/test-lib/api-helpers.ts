@@ -18,6 +18,7 @@ import { assertExists, expectToEventually } from './common.js';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import type { tasks } from '@balena/pinejs';
 import type { CreateServiceInstallsTaskParams } from '../../src/features/ci-cd/tasks/service-installs.js';
+import type { DeleteRegistryImagesTaskParams } from '../../src/features/images/tasks/delete-registry-images.js';
 
 const version = 'resin';
 
@@ -301,6 +302,14 @@ const isCreateServiceInstallsTaskParam = (
 	'devices' in taskParams &&
 	Array.isArray(taskParams.devices);
 
+const isDeleteRegistryImageTaskParam = (
+	taskParams: tasks.Task['Read']['is_executed_with__parameter_set'],
+): taskParams is DeleteRegistryImagesTaskParams =>
+	taskParams != null &&
+	!Array.isArray(taskParams) &&
+	'images' in taskParams &&
+	Array.isArray(taskParams.images);
+
 const expectTasks = async (
 	handler: string,
 	expectedTasks: TaskExpectation[],
@@ -336,6 +345,23 @@ const expectTasks = async (
 				isCreateServiceInstallsTaskParam(task.is_executed_with__parameter_set)
 			) {
 				task.is_executed_with__parameter_set.devices.sort((a, b) => a - b);
+			}
+		}
+	} else if (handler === 'delete_registry_images') {
+		const sortImages = (images: DeleteRegistryImagesTaskParams['images']) =>
+			images.sort((a, b) => a.location.localeCompare(b.location));
+		for (const task of actual) {
+			if (
+				isDeleteRegistryImageTaskParam(task.is_executed_with__parameter_set)
+			) {
+				sortImages(task.is_executed_with__parameter_set.images);
+			}
+		}
+		for (const task of expectedTasks) {
+			if (
+				isDeleteRegistryImageTaskParam(task.is_executed_with__parameter_set)
+			) {
+				sortImages(task.is_executed_with__parameter_set.images);
 			}
 		}
 	}

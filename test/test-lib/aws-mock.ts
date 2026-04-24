@@ -4,6 +4,8 @@ import _ from 'lodash';
 import {
 	IMAGE_STORAGE_ACCESS_KEY,
 	IMAGE_STORAGE_SECRET_KEY,
+	REGISTRY_STORAGE_ACCESS_KEY,
+	REGISTRY_STORAGE_SECRET_KEY,
 } from '../../src/lib/config.js';
 import { TEST_MOCK_ONLY } from '../../src/features/device-types/storage/aws-sdk-wrapper.js';
 
@@ -12,6 +14,24 @@ type MockedError = {
 		statusCode: number;
 	};
 };
+
+type ListObjectsV2Resolver = (
+	params: AWS.S3.Types.ListObjectsV2Request,
+) => AWS.S3.Types.ListObjectsV2Output | undefined;
+
+const listObjectsV2Resolvers: ListObjectsV2Resolver[] = [];
+
+// Allow test libraries to add specific resolvers.
+// Return a disposer function to keep things clean.
+export function addListObjectsV2Resolver(resolver: ListObjectsV2Resolver) {
+	listObjectsV2Resolvers.push(resolver);
+	return () => {
+		const idx = listObjectsV2Resolvers.indexOf(resolver);
+		if (idx !== -1) {
+			listObjectsV2Resolvers.splice(idx, 1);
+		}
+	};
+}
 
 export default (
 	$getObjectMocks: Dictionary<
@@ -119,14 +139,19 @@ export default (
 
 	class S3Mock {
 		constructor(params: AWS.S3.Types.ClientConfiguration) {
-			assert(
-				params.accessKeyId === IMAGE_STORAGE_ACCESS_KEY,
-				'S3 access key not matching',
-			);
-			assert(
-				params.secretAccessKey === IMAGE_STORAGE_SECRET_KEY,
-				'S3 secret key not matching',
-			);
+			if (params.credentials?.accessKeyId === REGISTRY_STORAGE_ACCESS_KEY) {
+				assert(
+					params.credentials?.secretAccessKey === REGISTRY_STORAGE_SECRET_KEY,
+					'Mismatching registry S3 credentials',
+				);
+			} else if (params.accessKeyId === IMAGE_STORAGE_ACCESS_KEY) {
+				assert(
+					params.secretAccessKey === IMAGE_STORAGE_SECRET_KEY,
+					'Mismatching image S3 credentials',
+				);
+			} else {
+				throw new Error('Unexpected S3 client credentials');
+			}
 		}
 
 		public makeUnauthenticatedRequest(
@@ -179,6 +204,12 @@ export default (
 		public listObjectsV2(
 			params: AWS.S3.Types.ListObjectsV2Request,
 		): ReturnType<AWS.S3['listObjectsV2']> {
+			for (const resolver of listObjectsV2Resolvers) {
+				const result = resolver(params);
+				if (result != null) {
+					return toReturnType<AWS.S3['listObjectsV2']>(result);
+				}
+			}
 			const mock =
 				listObjectsV2Mocks[params.Prefix as keyof typeof listObjectsV2Mocks];
 			if (!mock) {

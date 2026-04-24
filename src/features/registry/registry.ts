@@ -4,10 +4,12 @@
 import type { Request, RequestHandler } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import _ from 'lodash';
+import AWS from '../device-types/storage/aws-sdk-wrapper.js';
 import {
 	multiCacheMemoizee,
 	reqPermissionNormalizer,
 } from '../../infra/cache/index.js';
+import { requestAsync } from '../../infra/request-promise/index.js';
 import { randomUUID } from 'node:crypto';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
@@ -22,7 +24,14 @@ import {
 	AUTH_RESINOS_REGISTRY_CODE,
 	GET_SUBJECT_CACHE_TIMEOUT,
 	REGISTRY_TOKEN_AUDIENCE,
+	REGISTRY2_HOST,
 	REGISTRY_TOKEN_EXPIRY_SECONDS,
+	REGISTRY_STORAGE_ACCESS_KEY,
+	REGISTRY_STORAGE_BUCKET,
+	REGISTRY_STORAGE_ENDPOINT,
+	REGISTRY_STORAGE_FORCE_PATH_STYLE,
+	REGISTRY_STORAGE_ROOT_PATH,
+	REGISTRY_STORAGE_SECRET_KEY,
 	RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
 	RESOLVE_IMAGE_LOCATION_CACHE_TIMEOUT,
 	RESOLVE_IMAGE_READ_ACCESS_CACHE_TIMEOUT,
@@ -711,3 +720,126 @@ const getSubject = async (
 		return user?.username;
 	}
 };
+
+// S3 client primarily for finding multi-stage build cache image
+// repositories and all digests for a given repository. The
+// Docker Distribution API doesn't support such queries.
+class S3Client {
+	private s3: AWS.S3;
+	private bucket: string;
+	private rootPath: string;
+
+	constructor(config: {
+		endpoint: string;
+		accessKey: string;
+		secretKey: string;
+		bucket: string;
+		rootPath: string;
+	}) {
+		this.s3 = new AWS.S3({
+			credentials: {
+				accessKeyId: config.accessKey,
+				secretAccessKey: config.secretKey,
+			},
+			endpoint: config.endpoint,
+			s3ForcePathStyle: REGISTRY_STORAGE_FORCE_PATH_STYLE,
+			signatureVersion: 'v4',
+		});
+		this.bucket = config.bucket;
+		this.rootPath = config.rootPath;
+	}
+
+	// Returns the immediate subdirectories of a given prefix.
+	private async listChildPrefixes(prefix: string) {
+		const children: string[] = [];
+		let continuationToken: string | undefined;
+		do {
+			const res = await this.s3
+				.listObjectsV2({
+					Bucket: this.bucket,
+					Prefix: prefix,
+					Delimiter: '/',
+					ContinuationToken: continuationToken,
+				})
+				.promise();
+
+			for (const { Prefix } of res.CommonPrefixes ?? []) {
+				if (Prefix != null) {
+					children.push(Prefix);
+				}
+			}
+
+			continuationToken = res.IsTruncated
+				? res.NextContinuationToken
+				: undefined;
+		} while (continuationToken);
+		return children;
+	}
+
+	// List all existing manifest digests (tagged and untagged) for a given
+	// repository by listing objects in the registry's S3 bucket directly.
+	async listRepoDigests(repo: string) {
+		const digests: string[] = [];
+		const prefix = `${this.rootPath}/repositories/${repo}/_manifests/revisions/sha256/`;
+		for (const child of await this.listChildPrefixes(prefix)) {
+			const hash = child.replace(prefix, '').replace(/\/$/, '');
+			if (/^[a-f0-9]+$/.test(hash)) {
+				digests.push(`sha256:${hash}`);
+			}
+		}
+		return digests;
+	}
+
+	// List all multi-stage build cache image repositories for a given repository.
+	async listCacheRepos(repo: string) {
+		const reposPath = `${this.rootPath}/repositories/`;
+		return (await this.listChildPrefixes(`${reposPath}${repo}-`)).map((child) =>
+			child.replace(reposPath, '').replace(/\/$/, ''),
+		);
+	}
+}
+
+export const s3Client: S3Client | undefined =
+	REGISTRY_STORAGE_BUCKET != null &&
+	REGISTRY_STORAGE_ROOT_PATH != null &&
+	REGISTRY_STORAGE_ENDPOINT != null &&
+	REGISTRY_STORAGE_ACCESS_KEY != null &&
+	REGISTRY_STORAGE_SECRET_KEY != null
+		? new S3Client({
+				endpoint: REGISTRY_STORAGE_ENDPOINT,
+				accessKey: REGISTRY_STORAGE_ACCESS_KEY,
+				secretKey: REGISTRY_STORAGE_SECRET_KEY,
+				bucket: REGISTRY_STORAGE_BUCKET,
+				rootPath: REGISTRY_STORAGE_ROOT_PATH,
+			})
+		: undefined;
+
+// Generate a token for deleting images for a given repository.
+export function generateDeleteToken(subject: string, repo: string) {
+	return generateToken(subject, REGISTRY2_HOST, [
+		{
+			name: repo,
+			type: 'repository',
+			actions: ['delete'],
+		},
+	]);
+}
+
+// Make an API call to the registry service to mark images for deletion on next garbage collection
+export async function deleteImage(
+	registryToken: string,
+	repo: string,
+	digest: string,
+) {
+	const [{ statusCode, statusMessage }, body] = await requestAsync({
+		url: `https://${REGISTRY2_HOST}/v2/${repo}/manifests/${digest}`,
+		headers: { Authorization: `Bearer ${registryToken}` },
+		method: 'DELETE',
+	});
+
+	if (statusCode !== 202 && statusCode !== 404) {
+		throw new Error(
+			`Failed to mark ${repo}/${digest} for deletion: [${statusCode}] ${statusMessage} ${body}`,
+		);
+	}
+}
