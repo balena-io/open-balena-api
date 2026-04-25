@@ -49,6 +49,9 @@ export type StatePatchV3Body = {
 		api_secret?: string;
 		memory_usage?: number;
 		memory_total?: number;
+		is_secureboot_enabled?: boolean;
+		is_storage_encrypted?: boolean;
+		secureboot_keys_metadata?: string | null;
 		storage_block_device?: string;
 		storage_usage?: number;
 		storage_total?: number;
