@@ -31,7 +31,6 @@
 		"source": "cloud"
 	},
 	"release2app3": {
-		"createAfterRelease": "release1app3",
 		"user": "admin",
 		"application": "app3",
 		"commit": "deadc0de2",
