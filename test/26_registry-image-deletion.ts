@@ -3,6 +3,8 @@ import * as registryMock from './test-lib/registry-mock.js';
 import { waitFor } from './test-lib/common.js';
 import * as versions from './test-lib/versions.js';
 import * as config from '../src/lib/config.js';
+import { s3Client } from '../src/features/registry/registry.js';
+import { strict as assert } from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { permissions, sbvrUtils } from '@balena/pinejs';
 import {
@@ -360,6 +362,22 @@ export default () => {
 
 			it('should not mark unrelated images for deletion', () => {
 				expect(ctx.notDeletedImage.registryImage.isDeleted).to.be.false;
+			});
+
+			it('should list all digests for a given repo and tag', async () => {
+				assert(s3Client, 's3Client not defined');
+
+				// Add multiple images with the 'latest' tag.
+				const repo = `v2/${randomUUID()}`;
+				const digestA = registryMock.genDigest();
+				const digestB = registryMock.genDigest();
+				registryMock.addImage(repo, digestA, ['latest']);
+				registryMock.addImage(repo, digestB, ['latest']);
+
+				// Confirm that all digests are found.
+				const digests = await s3Client.listTagDigests(repo, 'latest');
+				expect(digests).to.have.lengthOf(2);
+				expect(digests).to.have.members([digestA, digestB]);
 			});
 		});
 	});

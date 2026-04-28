@@ -13,6 +13,7 @@ interface RegistryImage {
 	repository: string;
 	digest: string;
 	isDeleted: boolean;
+	tags?: string[];
 }
 
 const store: {
@@ -29,11 +30,12 @@ export function genDigest() {
 	return `sha256:${randomUUID().replace(/-/g, '').toLowerCase()}`;
 }
 
-export function addImage(repository: string, digest: string) {
+export function addImage(repository: string, digest: string, tags?: string[]) {
 	const registryImage: RegistryImage = {
 		repository,
 		digest,
 		isDeleted: false,
+		...(tags != null && { tags }),
 	};
 	store.images.push(registryImage);
 	return registryImage;
@@ -100,6 +102,9 @@ function registerS3Resolver() {
 	const digestsPrefixRegex = new RegExp(
 		`^${reposPath}(.+?)/_manifests/revisions/sha256/$`,
 	);
+	const tagDigestsPrefixRegex = new RegExp(
+		`^${reposPath}(.+?)/_manifests/tags/(.+?)/index/sha256/$`,
+	);
 	return addListObjectsV2Resolver((params) => {
 		const prefix = params.Prefix ?? '';
 		const digestsMatch = prefix.match(digestsPrefixRegex);
@@ -107,6 +112,17 @@ function registerS3Resolver() {
 			const repo = digestsMatch[1];
 			const commonPrefixes = store.images
 				.filter((i) => i.repository === repo)
+				.map((i) => ({
+					Prefix: `${prefix}${i.digest.replace(/^sha256:/, '')}/`,
+				}));
+			return { IsTruncated: false, CommonPrefixes: commonPrefixes };
+		}
+		const tagDigestsMatch = prefix.match(tagDigestsPrefixRegex);
+		if (tagDigestsMatch) {
+			const repo = tagDigestsMatch[1];
+			const tag = tagDigestsMatch[2];
+			const commonPrefixes = store.images
+				.filter((i) => i.repository === repo && i.tags?.includes(tag))
 				.map((i) => ({
 					Prefix: `${prefix}${i.digest.replace(/^sha256:/, '')}/`,
 				}));

@@ -776,11 +776,8 @@ class S3Client {
 		return children;
 	}
 
-	// List all existing manifest digests (tagged and untagged) for a given
-	// repository by listing objects in the registry's S3 bucket directly.
-	async listRepoDigests(repo: string) {
+	private async listDigestsAt(prefix: string) {
 		const digests: string[] = [];
-		const prefix = `${this.rootPath}/repositories/${repo}/_manifests/revisions/sha256/`;
 		for (const child of await this.listChildPrefixes(prefix)) {
 			const hash = child.replace(prefix, '').replace(/\/$/, '');
 			if (/^[a-f0-9]+$/.test(hash)) {
@@ -788,6 +785,23 @@ class S3Client {
 			}
 		}
 		return digests;
+	}
+
+	// List all existing manifest digests (tagged and untagged) for a given
+	// repository by listing objects in the registry's S3 bucket directly.
+	async listRepoDigests(repo: string) {
+		return await this.listDigestsAt(
+			`${this.rootPath}/repositories/${repo}/_manifests/revisions/sha256/`,
+		);
+	}
+
+	// List all manifest digests ever associated with a given tag of a
+	// repository (current and historical) by listing objects in the
+	// registry's S3 bucket directly.
+	async listTagDigests(repo: string, tag: string) {
+		return await this.listDigestsAt(
+			`${this.rootPath}/repositories/${repo}/_manifests/tags/${tag}/index/sha256/`,
+		);
 	}
 
 	// List all multi-stage build cache image repositories for a given repository.
