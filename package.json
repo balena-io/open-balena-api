@@ -123,6 +123,7 @@
     "on-finished": "^2.4.1",
     "p-map": "^7.0.4",
     "p-props": "^6.1.0",
+    "p-queue": "^9.2.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pinejs-client-core": "^8.5.2",

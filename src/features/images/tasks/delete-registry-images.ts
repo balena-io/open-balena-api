@@ -1,5 +1,6 @@
 import { permissions, sbvrUtils, tasks } from '@balena/pinejs';
 import type { FromSchema } from 'json-schema-to-ts';
+import PQueue from 'p-queue';
 import {
 	deleteImage,
 	generateDeleteToken,
@@ -7,9 +8,14 @@ import {
 } from '../../../features/registry/registry.js';
 import {
 	ASYNC_TASK_ATTEMPT_LIMIT,
+	ASYNC_TASK_DELETE_REGISTRY_IMAGES_CONCURRENCY,
 	ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED,
 	ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS,
 } from '../../../lib/config.js';
+
+const queue = new PQueue({
+	concurrency: ASYNC_TASK_DELETE_REGISTRY_IMAGES_CONCURRENCY,
+});
 
 const schema = {
 	type: 'object',
@@ -43,9 +49,11 @@ if (ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED) {
 		handlerName,
 		async (options) => {
 			try {
-				const totalImagesDeleted = await deleteRegistryImages(options.params);
+				const totalManifestsDeleted = await deleteRegistryImages(
+					options.params,
+				);
 				console.info(
-					`[${logHeader}] Deleted ${totalImagesDeleted} registry images`,
+					`[${logHeader}] Deleted ${totalManifestsDeleted} registry manifests`,
 				);
 				return {
 					status: 'succeeded',
@@ -62,14 +70,37 @@ if (ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED) {
 	);
 }
 
+// Delete all manifests within a given registry repository.
 const subject = `task:${handlerName}`;
+async function deleteRepo(
+	s3: NonNullable<typeof s3Client>,
+	repo: string,
+	signal: AbortSignal,
+): Promise<number> {
+	let manifestsDeleted = 0;
+	const cacheRepos = await s3.listCacheRepos(repo);
+	for (const target of [...cacheRepos, repo]) {
+		signal.throwIfAborted();
+		const digests = await s3.listRepoDigests(target);
+		if (digests.length === 0) {
+			continue;
+		}
+		const token = generateDeleteToken(subject, target);
+		for (const digest of digests) {
+			signal.throwIfAborted();
+			await deleteImage(token, target, digest);
+			manifestsDeleted++;
+		}
+	}
+	return manifestsDeleted;
+}
+
 const deleteRegistryImages = async ({
 	images,
 }: DeleteRegistryImagesTaskParams) => {
 	if (s3Client == null) {
 		throw new Error('Registry S3 client not initialized.');
 	}
-	const startTime = Date.now();
 
 	// Avoid deleting any blobs that are still referenced by other images
 	// This shouldn't normally be necessary as is_stored_at__image_location
@@ -91,72 +122,70 @@ const deleteRegistryImages = async ({
 	const stillReferencedLocations = new Set(
 		stillReferenced.map((ref) => ref.is_stored_at__image_location),
 	);
-	const safeToDelete = images.filter(
-		(image) => !stillReferencedLocations.has(image.location),
+	const remaining = new Set(
+		images
+			.map((image) => image.location)
+			.filter((location) => !stillReferencedLocations.has(location)),
 	);
 
 	// Mark images and any of their multi-stage cache images for deletion
 	// Don't let the task run for too long, and create a new task with
 	// the remaining image data if it does
-	let totalImagesDeleted = 0;
-	for (let i = 0; i < safeToDelete.length; i++) {
-		const { location } = safeToDelete[i];
-		if (
-			Date.now() - startTime >
-			ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS
-		) {
-			await api.tasks.post({
-				resource: 'task',
-				passthrough: { req: permissions.root },
-				body: {
-					is_executed_by__handler: 'delete_registry_images',
-					is_executed_with__parameter_set: {
-						images: safeToDelete.slice(i),
-					} satisfies DeleteRegistryImagesTaskParams,
-					attempt_limit: ASYNC_TASK_ATTEMPT_LIMIT,
+	const errorController = new AbortController();
+	const signal = AbortSignal.any([
+		AbortSignal.timeout(ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS),
+		errorController.signal,
+	]);
+	let totalManifestsDeleted = 0;
+	await Promise.allSettled(
+		remaining.values().map((location) =>
+			queue.add(
+				async () => {
+					const repo = location.replace(/^[^/]+\//, '');
+					if (repo === '') {
+						console.warn(
+							`[${logHeader}] Skipping deletion of image with empty repo: ${location}`,
+						);
+						return;
+					}
+					try {
+						const manifestsDeleted = await deleteRepo(s3Client!, repo, signal);
+						totalManifestsDeleted += manifestsDeleted;
+						remaining.delete(location);
+					} catch (e) {
+						errorController.abort(e);
+						throw e;
+					}
 				},
-			});
+				{ signal },
+			),
+		),
+	);
 
-			console.info(
-				`[${logHeader}] Task took too long. Created a new task for the remaining images`,
-			);
-			return totalImagesDeleted;
-		}
-
-		// Remove leading domain from location
-		const repo = location.replace(/^[^/]+\//, '');
-		if (repo === '') {
-			console.warn(
-				`[${logHeader}] Skipping deletion of image with empty repo: ${location}`,
-			);
-			continue;
-		}
-
-		// Delete cache images first so they aren't orphaned if the task
-		// fails after deleting the main image.
-		const cacheRepos = await s3Client.listCacheRepos(repo);
-		for (const cacheRepo of cacheRepos) {
-			const cacheDigests = await s3Client.listRepoDigests(cacheRepo);
-			if (cacheDigests.length === 0) {
-				continue;
-			}
-			const cacheToken = generateDeleteToken(subject, cacheRepo);
-			// Delete sequentially to avoid overloading the registry/s3
-			for (const digest of cacheDigests) {
-				await deleteImage(cacheToken, cacheRepo, digest);
-			}
-		}
-
-		// Delete main image last
-		const digests = await s3Client.listRepoDigests(repo);
-		if (digests.length > 0) {
-			const token = generateDeleteToken(subject, repo);
-			// Delete sequentially to avoid overloading the registry/s3
-			for (const digest of digests) {
-				await deleteImage(token, repo, digest);
-			}
-		}
-		totalImagesDeleted++;
+	// Fail the task if any deletion attempts failed. We don't expect any to fail,
+	// so if any of them do, it is likely that the rest attempts will also fail -
+	// most likely due to the registry or network having issues.
+	if (errorController.signal.aborted) {
+		throw errorController.signal.reason;
 	}
-	return totalImagesDeleted;
+
+	// Re-enqueue any remaining images
+	if (remaining.size > 0) {
+		await api.tasks.post({
+			resource: 'task',
+			passthrough: { req: permissions.root },
+			body: {
+				is_executed_by__handler: handlerName,
+				is_executed_with__parameter_set: {
+					images: Array.from(remaining, (location) => ({ location })),
+				} satisfies DeleteRegistryImagesTaskParams,
+				attempt_limit: ASYNC_TASK_ATTEMPT_LIMIT,
+			},
+		});
+		console.info(
+			`[${logHeader}] Task took too long. Created a new task for the remaining images`,
+		);
+	}
+
+	return totalManifestsDeleted;
 };
