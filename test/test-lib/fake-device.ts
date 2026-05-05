@@ -9,6 +9,7 @@ import type { StateV3 } from '../../src/features/device-state/routes/state-get-v
 import type { StatePatchV2Body } from '../../src/features/device-state/routes/state-patch-v2.js';
 import type { StatePatchV3Body } from '../../src/features/device-state/routes/state-patch-v3.js';
 import type { TagsPatchV3Body } from '../../src/features/device-state/routes/tags-patch-v3.js';
+import { config } from '../../src/index.js';
 
 const version = 'resin';
 
@@ -77,6 +78,13 @@ export async function patchState(
 	await supertest(user).patch(uri).send(patchBody).expect(200);
 }
 
+async function setIsConnectedToVpn(deviceUuid: string, value: boolean) {
+	await supertest(config.VPN_SERVICE_API_KEY)
+		.patch(`/${version}/device(uuid='${deviceUuid}')`)
+		.send({ is_connected_to_vpn: value })
+		.expect(200);
+}
+
 export async function patchTags(
 	user: UserObjectParam,
 	patchBody: TagsPatchV3Body,
@@ -142,6 +150,9 @@ export async function provisionDevice(
 		},
 		patchStateV3: async (devicePatchBody: StatePatchV3Body) => {
 			await patchState(device, device.uuid, devicePatchBody, 'v3');
+		},
+		setIsConnectedToVpn: async (value: boolean) => {
+			await setIsConnectedToVpn(device.uuid, value);
 		},
 	};
 

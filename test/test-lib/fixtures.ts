@@ -579,6 +579,7 @@ const loaders: types.Dictionary<LoaderFunc> = {
 					'custom_latitude',
 					'custom_longitude',
 					'is_online',
+					'is_connected_to_vpn',
 					'api_heartbeat_state',
 					'latitude',
 					'longitude',
