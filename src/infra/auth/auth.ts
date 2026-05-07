@@ -13,6 +13,7 @@ import type {
 	PickDeferred,
 	Deferred,
 } from '@balena/abstract-sql-to-typescript';
+export { isJWT, verifyAndResolveJwt } from './jwt-passport.js';
 
 const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
