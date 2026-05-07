@@ -247,7 +247,7 @@ export default () => {
 					expect(image.registryImage.isDeleted).to.be.false;
 					sinon.assert.calledWithMatch(
 						consoleSpy,
-						'[delete_registry_images_task] Deleted 0 registry images',
+						'[delete_registry_images_task] Deleted 0 registry manifests',
 					);
 				} finally {
 					consoleSpy.restore();
@@ -275,12 +275,12 @@ export default () => {
 					config.ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS;
 				config.TEST_MOCK_ONLY.ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS = 50;
 
-				try {
-					const images = await Promise.all(
-						Array.from({ length: 25 }, () => createImage(ctx.service1.id)),
-					);
+				const consoleSpy = sinon.spy(console, 'info');
+				const images = await Promise.all(
+					Array.from({ length: 50 }, () => createImage(ctx.service1.id)),
+				);
 
-					const consoleSpy = sinon.spy(console, 'info');
+				try {
 					await pineUser.delete({
 						resource: 'image',
 						options: {
@@ -300,9 +300,8 @@ export default () => {
 							'[delete_registry_images_task] Task took too long. Created a new task for the remaining images',
 						),
 					);
-
-					consoleSpy.restore();
 				} finally {
+					consoleSpy.restore();
 					config.TEST_MOCK_ONLY.ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS =
 						originalMaxTime;
 					await resetLatestTaskIds('delete_registry_images');
