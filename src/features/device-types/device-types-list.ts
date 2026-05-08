@@ -37,6 +37,16 @@ function sortBuildIds(ids: string[]): string[] {
 	});
 }
 
+const getDeviceTypeJsonFromAsset = async (
+	href: string,
+): Promise<DeviceTypeJson | undefined> => {
+	const response = await fetch(href);
+	if (!response.ok) {
+		return undefined;
+	}
+	return (await response.json()) as DeviceTypeJson;
+};
+
 const getFirstValidBuild = async (
 	slug: string,
 	versions: string[],
@@ -76,11 +86,56 @@ for (const contractPath of CONTRACT_ALLOWLIST) {
 export const getDeviceTypes = multiCacheMemoizee(
 	async (): Promise<Dictionary<DeviceTypeInfo>> => {
 		const result: Dictionary<DeviceTypeInfo> = {};
-		let deviceTypes = await api.resin.get({
+		const deviceTypes = await api.resin.get({
 			resource: 'device_type',
 			passthrough: { req: permissions.rootRead },
 			options: {
 				$select: 'slug',
+				$expand: {
+					is_default_for__application: {
+						$top: 2,
+						$select: ['id'],
+						$expand: {
+							owns__release: {
+								$top: 1,
+								$select: ['id', 'raw_version'],
+								$expand: {
+									release_asset: {
+										$select: ['asset_key', 'asset'],
+										$filter: {
+											asset_key: 'device-type.json',
+										},
+									},
+								},
+								$filter: {
+									status: 'success',
+									is_final: true,
+									is_invalidated: false,
+									semver_major: { $gt: 0 },
+								},
+								$orderby: [
+									{ semver_major: 'desc' },
+									{ semver_minor: 'desc' },
+									{ semver_patch: 'desc' },
+									{ revision: 'desc' },
+								],
+							},
+						},
+						$filter: {
+							is_host: true,
+							$not: {
+								application_tag: {
+									$any: {
+										$alias: 'at',
+										$expr: {
+											at: { tag_key: 'release-policy' },
+										},
+									},
+								},
+							},
+						},
+					},
+				},
 				...(ALLOWLISTED_DT_SLUGS.length > 0 && {
 					$filter: {
 						slug: { $in: ALLOWLISTED_DT_SLUGS },
@@ -89,37 +144,64 @@ export const getDeviceTypes = multiCacheMemoizee(
 			},
 		});
 
-		if (deviceTypes.length > 0) {
+		const dtsWithReleaseAssets: Array<{
+			slug: string;
+			appWithAsset: (typeof deviceTypes)[number]['is_default_for__application'][number];
+		}> = [];
+		let dtsWithoutReleaseAssets: Array<{ slug: string }> = [];
+
+		for (const { slug, is_default_for__application: hostApps } of deviceTypes) {
+			if (hostApps.length > 1) {
+				const message = `Found ${hostApps.length} host applications for device type ${slug}, expected at most 1`;
+				console.warn(message);
+				captureException(new Error(message), message, {
+					tags: { slug },
+					extra: { hostAppIds: hostApps.map((app) => app.id) },
+				});
+			}
+
+			const appWithAsset = hostApps.find(
+				(app) => app.owns__release[0]?.release_asset[0]?.asset != null,
+			);
+			if (appWithAsset != null) {
+				dtsWithReleaseAssets.push({ slug, appWithAsset });
+			} else {
+				dtsWithoutReleaseAssets.push({ slug });
+			}
+		}
+
+		if (dtsWithoutReleaseAssets.length > 0) {
 			// This is an optimization to avoid multiple 404 queries for DTs that
 			// have a DB record but do not have an OS release published yet.
 			const s3DtSlugs = new Set(await listFolders(IMAGE_STORAGE_PREFIX));
-			deviceTypes = deviceTypes.filter(({ slug }) => s3DtSlugs.has(slug));
+			dtsWithoutReleaseAssets = dtsWithoutReleaseAssets.filter(({ slug }) =>
+				s3DtSlugs.has(slug),
+			);
 		}
 
-		await Promise.all(
-			deviceTypes.map(async ({ slug }) => {
+		const setResult = (slug: string, info: DeviceTypeInfo) => {
+			result[slug] = info;
+			if (info.latest.aliases != null) {
+				for (const alias of info.latest.aliases) {
+					result[alias] = info;
+				}
+			}
+		};
+
+		await Promise.all([
+			...dtsWithReleaseAssets.map(async ({ slug, appWithAsset }) => {
 				try {
-					const builds = await listFolders(getImageKey(slug));
-					if (builds.length === 0) {
+					const release = appWithAsset.owns__release[0];
+					const asset = release.release_asset[0].asset!;
+					const deviceTypeJson = await getDeviceTypeJsonFromAsset(asset.href);
+					if (deviceTypeJson == null) {
 						return;
 					}
-
-					const sortedBuilds = sortBuildIds(builds);
-					const latestDeviceType = await getFirstValidBuild(slug, sortedBuilds);
-					if (!latestDeviceType) {
-						return;
-					}
-
-					result[slug] = {
-						versions: builds,
-						latest: latestDeviceType,
-					};
-
-					if (latestDeviceType.aliases != null) {
-						for (const alias of latestDeviceType.aliases) {
-							result[alias] = result[slug];
-						}
-					}
+					deviceTypeJson.buildId = release.raw_version;
+					setResult(slug, {
+						versions: [release.raw_version],
+						latest: deviceTypeJson,
+					});
 				} catch (err) {
 					captureException(
 						err,
@@ -127,9 +209,34 @@ export const getDeviceTypes = multiCacheMemoizee(
 					);
 				}
 			}),
-		);
+			...dtsWithoutReleaseAssets.map(async ({ slug }) => {
+				try {
+					const builds = await listFolders(getImageKey(slug));
+					if (builds.length === 0) {
+						return;
+					}
+					const sortedBuilds = sortBuildIds(builds);
+					const latestDeviceType = await getFirstValidBuild(slug, sortedBuilds);
+					if (!latestDeviceType) {
+						return;
+					}
+					setResult(slug, {
+						versions: builds,
+						latest: latestDeviceType,
+					});
+				} catch (err) {
+					captureException(
+						err,
+						`Failed to find a valid build for device type ${slug}`,
+					);
+				}
+			}),
+		]);
 
-		if (deviceTypes.length > 0 && Object.keys(result).length === 0) {
+		if (
+			dtsWithReleaseAssets.length + dtsWithoutReleaseAssets.length > 0 &&
+			Object.keys(result).length === 0
+		) {
 			throw new InternalRequestError('Could not retrieve any device type');
 		}
 		return result;
