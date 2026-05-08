@@ -1,5 +1,4 @@
 import type { RequestHandler } from 'express';
-import _ from 'lodash';
 
 import { sbvrUtils } from '@balena/pinejs';
 
@@ -61,7 +60,7 @@ export const listAvailableImageVersions: RequestHandler = async (req, res) => {
 const DOWNLOAD_TIMEOUT = 30000; // we must respond within this time
 
 export const downloadImageSize: RequestHandler = async (req, res) => {
-	req.setTimeout(DOWNLOAD_TIMEOUT, _.noop);
+	req.setTimeout(DOWNLOAD_TIMEOUT);
 	try {
 		const resinApi = api.resin.clone({ passthrough: { req } });
 		const slug = deviceTypesLib.validateSlug(req.params.deviceType);
