@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import type { DeviceTypeJson } from './device-type-json.js';
 import { errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
@@ -84,7 +82,7 @@ export const getDeviceTypes = multiCacheMemoizee(
 			slugs.map(async (slug) => {
 				try {
 					const builds = await listFolders(getImageKey(slug));
-					if (_.isEmpty(builds)) {
+					if (builds.length === 0) {
 						return;
 					}
 
@@ -113,7 +111,7 @@ export const getDeviceTypes = multiCacheMemoizee(
 			}),
 		);
 
-		if (_.isEmpty(result) && !_.isEmpty(slugs)) {
+		if (slugs.length > 0 && Object.keys(result).length === 0) {
 			throw new InternalRequestError('Could not retrieve any device type');
 		}
 		return result;

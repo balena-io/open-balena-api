@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import type { DeviceTypeJson } from './device-type-json.js';
 import type { sbvrUtils } from '@balena/pinejs';
 import { errors } from '@balena/pinejs';
@@ -167,7 +165,7 @@ export const getImageVersions = async (
 			}),
 		)
 	).filter((buildId) => buildId != null);
-	if (_.isEmpty(buildIds) && !_.isEmpty(deviceTypeInfo.versions)) {
+	if (buildIds.length === 0 && deviceTypeInfo.versions.length > 0) {
 		throw new InternalRequestError(
 			`Could not retrieve any image version for device type ${slug}`,
 		);

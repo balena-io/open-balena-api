@@ -1,5 +1,4 @@
 import AWS from './aws-sdk-wrapper.js';
-import _ from 'lodash';
 import path from 'path';
 
 import {
@@ -119,7 +118,8 @@ export async function getFolderSize(
 		contents = contents.filter((c) => c.Key != null && keyPattern.test(c.Key));
 	}
 
-	const size = _.sumBy(contents, 'Size');
+	const size =
+		contents?.reduce((sum, content) => sum + (content.Size ?? 0), 0) ?? 0;
 	const nextMarker = res.NextContinuationToken;
 	if (nextMarker && res.IsTruncated) {
 		const newSize = await getFolderSize(folder, keyPattern, nextMarker);
@@ -141,15 +141,11 @@ export async function listFolders(
 
 	const res = await req.promise();
 
-	const objects = _(res.CommonPrefixes)
-		.map(({ Prefix }) => Prefix)
+	const objects = (res.CommonPrefixes ?? [])
+		// get the name of the immediately contained folder
+		.map(({ Prefix }) => (Prefix?.endsWith('/') ? path.basename(Prefix) : null))
 		// only keep the folder paths (which are ending with `/`)
-		.filter((p): p is NonNullable<typeof p> => p?.endsWith('/') === true)
-		.map((p) =>
-			// get the name of the immediately contained folder
-			path.basename(p),
-		)
-		.value();
+		.filter((p) => p != null);
 	const nextMarker = res.NextContinuationToken;
 	if (nextMarker && res.IsTruncated) {
 		const newObjects = await listFolders(folder, nextMarker);
