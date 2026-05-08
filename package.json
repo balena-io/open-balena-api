@@ -144,7 +144,8 @@
     "typescript": "^6.0.2",
     "uuid": "^14.0.0",
     "validator": "^13.15.26",
-    "ws": "^8.19.0"
+    "ws": "^8.19.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@balena/lint": "^9.4.0",

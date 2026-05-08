@@ -176,6 +176,7 @@ export type { DefaultApplicationType } from './features/application-types/applic
 export * as request from './infra/request-promise/index.js';
 export * as redis from './infra/redis/index.js';
 export * as scheduler from './infra/scheduler/index.js';
+export * as validation from './infra/validation/index.js';
 export * as cache from './infra/cache/index.js';
 export * as config from './lib/config.js';
 export * as registry from './features/registry/registry.js';
