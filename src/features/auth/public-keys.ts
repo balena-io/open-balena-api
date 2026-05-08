@@ -1,4 +1,3 @@
-import type { RequestHandler } from 'express';
 import { type permissions, sbvrUtils } from '@balena/pinejs';
 
 import {
@@ -6,6 +5,7 @@ import {
 	handleHttpErrors,
 } from '../../infra/error-handling/index.js';
 import { augmentReqApiKeyPermissions } from '../api-keys/lib.js';
+import { createValidatedRequestHandler } from '../../infra/validation/index.js';
 
 export const defaultGetAuthorizedKeysFn = async (
 	req: permissions.PermissionReq,
@@ -46,20 +46,22 @@ export const setGetAuthorizedKeysFn = (
 	getAuthorizedKeys = $getAuthorizedKeys;
 };
 
-export const getUserPublicKeys: RequestHandler = async (req, res) => {
-	const { username } = req.params;
+export const getUserPublicKeys = createValidatedRequestHandler(
+	async (req, res) => {
+		const { username } = req.params;
 
-	if (username == null) {
-		return res.status(400).end();
-	}
-	try {
-		const authorizedKeys = await getAuthorizedKeys(req, username);
-		res.status(200).send(authorizedKeys);
-	} catch (err) {
-		if (handleHttpErrors(req, res, err)) {
-			return;
+		if (username == null) {
+			return res.status(400).end();
 		}
-		captureException(err, 'Error getting public keys');
-		res.status(500).end();
-	}
-};
+		try {
+			const authorizedKeys = await getAuthorizedKeys(req, username);
+			res.status(200).send(authorizedKeys);
+		} catch (err) {
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
+			captureException(err, 'Error getting public keys');
+			res.status(500).end();
+		}
+	},
+);
