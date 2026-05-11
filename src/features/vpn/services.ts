@@ -1,5 +1,3 @@
-import type { Request, RequestHandler, Response } from 'express';
-
 import type { permissions } from '@balena/pinejs';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import {
@@ -13,6 +11,11 @@ import {
 } from '../../infra/cache/index.js';
 import { VPN_AUTH_CACHE_TIMEOUT } from '../../lib/config.js';
 import { checkDeviceExistsIsFrozen } from '../device-state/middleware.js';
+import {
+	createUnvalidatedRequestHandler,
+	createValidatedRequestHandler,
+	z,
+} from '../../infra/validation/index.js';
 
 const { api } = sbvrUtils;
 
@@ -56,20 +59,19 @@ const checkAuth = (() => {
  * A middleware to return 401 for deleted devices and avoid doing any additional work.
  * This shares the deleted device cache with device-state
  */
-export const denyDeletedDevices: RequestHandler = async (req, res, next) => {
-	const device = await checkDeviceExistsIsFrozen(req.params.uuid);
-	if (device == null) {
-		// Deny deleted devices
-		res.status(401).end();
-		return;
-	}
-	next();
-};
+export const denyDeletedDevices = createUnvalidatedRequestHandler(
+	async (req, res, next) => {
+		const device = await checkDeviceExistsIsFrozen(req.params.uuid);
+		if (device == null) {
+			// Deny deleted devices
+			res.status(401).end();
+			return;
+		}
+		next();
+	},
+);
 
-export const authDevice = async (
-	req: Request,
-	res: Response,
-): Promise<void> => {
+export const authDevice = createValidatedRequestHandler(async (req, res) => {
 	try {
 		const statusCode = await checkAuth(req.params.uuid, req);
 		res.status(statusCode).end();
@@ -80,75 +82,77 @@ export const authDevice = async (
 		captureException(err, 'Error authenticating device for VPN');
 		res.status(500).send(translateError(err));
 	}
-};
-export const clientConnect = async (
-	req: Request,
-	res: Response,
-): Promise<void> => {
-	const { uuids, serviceId } = req.body ?? {};
-	if (!uuids || uuids.length === 0 || !serviceId) {
-		res.status(400).end();
-		return;
-	}
+});
+export const clientConnect = createValidatedRequestHandler(
+	{
+		body: z.object({
+			uuids: z.array(z.string()).min(1),
+			serviceId: z.number(),
+		}),
+	},
+	async (req, res) => {
+		const { uuids, serviceId } = req.body;
 
-	try {
-		await api.resin.patch({
-			resource: 'device',
-			passthrough: {
-				req,
-			},
-			options: {
-				$filter: {
-					uuid: { $in: uuids },
+		try {
+			await api.resin.patch({
+				resource: 'device',
+				passthrough: {
+					req,
 				},
-			},
-			body: {
-				is_connected_to_vpn: true,
-				is_managed_by__service_instance: serviceId,
-			},
-		});
-		res.status(200).end();
-	} catch (err) {
-		captureException(err, 'Error with vpn client connect');
-		if (handleHttpErrors(req, res, err)) {
-			return;
-		}
-		res.status(500).send(translateError(err));
-	}
-};
-
-export const clientDisconnect = async (
-	req: Request,
-	res: Response,
-): Promise<void> => {
-	const { uuids, serviceId } = req.body ?? {};
-	if (!uuids || uuids.length === 0 || !serviceId) {
-		res.status(400).end();
-		return;
-	}
-
-	try {
-		await api.resin.patch({
-			resource: 'device',
-			passthrough: { req },
-			options: {
-				$filter: {
-					uuid: { $in: uuids },
-					// Only disconnect if still managed by this vpn
+				options: {
+					$filter: {
+						uuid: { $in: uuids },
+					},
+				},
+				body: {
+					is_connected_to_vpn: true,
 					is_managed_by__service_instance: serviceId,
 				},
-			},
-			body: {
-				is_connected_to_vpn: false,
-				is_managed_by__service_instance: null,
-			},
-		});
-		res.status(200).end();
-	} catch (err) {
-		captureException(err, 'Error with vpn client disconnect');
-		if (handleHttpErrors(req, res, err)) {
-			return;
+			});
+			res.status(200).end();
+		} catch (err) {
+			captureException(err, 'Error with vpn client connect');
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
+			res.status(500).send(translateError(err));
 		}
-		res.status(500).send(translateError(err));
-	}
-};
+	},
+);
+
+export const clientDisconnect = createValidatedRequestHandler(
+	{
+		body: z.object({
+			uuids: z.array(z.string()).min(1),
+			serviceId: z.number(),
+		}),
+	},
+	async (req, res) => {
+		const { uuids, serviceId } = req.body;
+
+		try {
+			await api.resin.patch({
+				resource: 'device',
+				passthrough: { req },
+				options: {
+					$filter: {
+						uuid: { $in: uuids },
+						// Only disconnect if still managed by this vpn
+						is_managed_by__service_instance: serviceId,
+					},
+				},
+				body: {
+					is_connected_to_vpn: false,
+					is_managed_by__service_instance: null,
+				},
+			});
+			res.status(200).end();
+		} catch (err) {
+			captureException(err, 'Error with vpn client disconnect');
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
+			res.status(500).send(translateError(err));
+		}
+	},
+);

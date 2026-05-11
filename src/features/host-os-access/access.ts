@@ -1,17 +1,16 @@
-import type { Request, Response } from 'express';
-
 import { sbvrUtils, errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 
 import { reqHasPermission } from '../../infra/auth/auth.js';
 import { captureException } from '../../infra/error-handling/index.js';
+import { createValidatedRequestHandler } from '../../infra/validation/index.js';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
 
 const HOSTOS_ACCESS_MIN_OS_VER = '2.0.0';
 
-export async function hostOSAccess(req: Request, res: Response): Promise<void> {
+export const hostOSAccess = createValidatedRequestHandler(async (req, res) => {
 	const device = await api.resin.get({
 		resource: 'device',
 		id: {
@@ -84,4 +83,4 @@ export async function hostOSAccess(req: Request, res: Response): Promise<void> {
 		captureException(err, 'Error checking hostOS access');
 		res.status(401).end();
 	}
-}
+});

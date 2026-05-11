@@ -1,15 +1,18 @@
-import type { Application, Request, RequestHandler } from 'express';
+import type { Application, Request } from 'express';
 import morgan from 'morgan';
 import { getServiceFromRequest } from '../../lib/auth.js';
 import { getIP } from '../../lib/utils.js';
 import { trace } from '@opentelemetry/api';
+import { createUnvalidatedRequestHandler } from '../../infra/validation/index.js';
 
 export type GetUrlFunction = (req: Request) => string;
 
-export const skipLogging: RequestHandler = (req, _res, next) => {
-	req.skipLogging = true;
-	next();
-};
+export const skipLogging = createUnvalidatedRequestHandler(
+	(req, _res, next) => {
+		req.skipLogging = true;
+		next();
+	},
+);
 
 // Retrieve information on who is calling the API endpoint.
 // Returns a string in a form of 'a/{id}' or 'u/{id}' depending on what
