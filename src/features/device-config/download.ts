@@ -1,6 +1,6 @@
-import type { Request, RequestHandler } from 'express';
+import type { RequestHandler } from 'express';
 
-import { sbvrUtils, errors } from '@balena/pinejs';
+import { sbvrUtils, errors, type permissions } from '@balena/pinejs';
 
 import {
 	captureException,
@@ -16,7 +16,7 @@ import { getApiKeyOptsFromRequest } from '../api-keys/lib.js';
 const { UnauthorizedError, NotFoundError, BadRequestError } = errors;
 const { api } = sbvrUtils;
 
-const getApp = async (appId: number, req: Request) => {
+const getApp = async (appId: number, req: permissions.PermissionReq) => {
 	const app = await api.resin.get({
 		resource: 'application',
 		id: appId,

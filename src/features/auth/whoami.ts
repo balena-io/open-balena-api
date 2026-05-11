@@ -1,5 +1,3 @@
-import type { RequestHandler } from 'express';
-
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
 import { getUser } from '../../infra/auth/auth.js';
@@ -10,6 +8,7 @@ import {
 } from '../../infra/error-handling/index.js';
 
 import type { User, Application, Device, Actor } from '../../balena-model.js';
+import { createValidatedRequestHandler } from '../../infra/validation/index.js';
 
 const { api } = sbvrUtils;
 
@@ -54,7 +53,7 @@ type ActorResponse =
 			uuid: string;
 	  };
 
-export const whoami: RequestHandler = async (req, res) => {
+export const whoami = createValidatedRequestHandler(async (req, res) => {
 	try {
 		const userInfo = await sbvrUtils.db.readTransaction(
 			async (
@@ -107,9 +106,9 @@ export const whoami: RequestHandler = async (req, res) => {
 		captureException(err, 'Error while getting user info');
 		res.status(500).end();
 	}
-};
+});
 
-export const actorWhoami: RequestHandler = async (req, res) => {
+export const actorWhoami = createValidatedRequestHandler(async (req, res) => {
 	try {
 		const actorInfo = await sbvrUtils.db.readTransaction(async (tx) => {
 			// If this is a user key/token we must validate this is a key that
@@ -169,7 +168,7 @@ export const actorWhoami: RequestHandler = async (req, res) => {
 		captureException(err, 'Error while getting actor info');
 		res.status(500).end();
 	}
-};
+});
 
 const formatActorInfo = (rawActorInfo: ExpandedActor): ActorResponse => {
 	if (rawActorInfo.is_of__user.length === 1) {

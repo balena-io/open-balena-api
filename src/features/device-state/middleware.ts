@@ -1,4 +1,4 @@
-import type { RequestHandler, Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import _ from 'lodash';
 import { multiCacheMemoizee } from '../../infra/cache/index.js';
 import type { Device } from '../../balena-model.js';
@@ -6,6 +6,7 @@ import type { Device } from '../../balena-model.js';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import { DEVICE_EXISTS_CACHE_TIMEOUT } from '../../lib/config.js';
 import { setTimeout } from 'timers/promises';
+import { createUnvalidatedRequestHandler } from '../../infra/validation/index.js';
 
 const { api } = sbvrUtils;
 
@@ -73,13 +74,13 @@ export const resolveOrDenyDevicesWithStatus = (
 	statusCode: number | { deleted: number; frozen: number },
 	uuidResolver: (req: Request) => string[] = requestParamsUuidResolver,
 	delayMs = 0,
-): RequestHandler => {
+) => {
 	const deletedStatusCode =
 		typeof statusCode === 'number' ? statusCode : statusCode.deleted;
 	const frozenStatusCode =
 		typeof statusCode === 'number' ? statusCode : statusCode.frozen;
 
-	return async (req, res, next) => {
+	return createUnvalidatedRequestHandler(async (req, res, next) => {
 		const uuids = uuidResolver(req);
 		if (!uuids.length) {
 			await respondFn(req, res, delayMs, deletedStatusCode);
@@ -107,5 +108,5 @@ export const resolveOrDenyDevicesWithStatus = (
 		req.custom ??= {};
 		(req.custom as ResolveDeviceInfoCustomObject).resolvedDeviceIds = deviceIds;
 		next();
-	};
+	});
 };
