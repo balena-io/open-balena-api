@@ -366,7 +366,7 @@ export class LokiBackend implements DeviceLogsBackend {
 							delete log.version;
 							const nanoTimestamp = BigInt(timestamp);
 							log.createdAt = Math.floor(Number(nanoTimestamp / 1000000n));
-							this.subscriptions.emit(key, log as OutputDeviceLog);
+							this.subscriptions.emit(key, log);
 						}
 					}
 				} catch (err) {

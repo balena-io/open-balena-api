@@ -194,7 +194,8 @@ export const expectResourceToMatch = async <
 		(
 			'expect' in requestPromise
 				? (await requestPromise.expect(200)).body
-				: await (requestPromise as Promise<unknown>)
+				: // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+					await (requestPromise as Promise<unknown>)
 		) as
 			| OptionsToResponse<
 					T,
