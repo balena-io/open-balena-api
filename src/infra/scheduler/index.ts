@@ -130,14 +130,14 @@ export const scheduleJob = (
 
 					if (shouldRun) {
 						console.log(`[Scheduler] Running job: ${jobId}`);
-						scheduledJobRun = (await rootApi.post({
+						scheduledJobRun = await rootApi.post({
 							resource: 'scheduled_job_run',
 							body: {
 								name: jobId,
 								start_timestamp: Date.now(),
 								status: 'running',
 							},
-						})) as ScheduledJobRun['Read'];
+						});
 
 						await jobFunction(fireDate, lock, scheduledJobRun);
 

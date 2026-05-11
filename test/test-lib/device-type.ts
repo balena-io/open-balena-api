@@ -7,10 +7,12 @@ const { api } = sbvrUtils;
 export const loadDefaultFixtures = () => {
 	setDefaultFixtures(
 		'deviceTypes',
-		new Proxy(
-			{} as Dictionary<
+		new Proxy<
+			Dictionary<
 				Promise<Pick<DeviceType['Read'], 'id' | 'slug' | 'name'> | undefined>
-			>,
+			>
+		>(
+			{},
 			{
 				get: (obj, slug) => {
 					if (typeof slug === 'string' && !Object.hasOwn(obj, slug)) {
