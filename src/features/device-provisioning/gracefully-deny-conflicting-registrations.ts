@@ -54,7 +54,7 @@ const checkApiKeyExists = async (key: string) => {
  */
 export async function gracefullyDenyConflictingRegistrations(
 	uuid: string,
-	apiKey: string | undefined,
+	apiKey: string | null | undefined,
 ) {
 	// Even though requests with conflicting device UUIDs are cheap (since they throw before the rules run),
 	// we do have to check for the UUID so that a registration with conflicting UUID & Api key still throws

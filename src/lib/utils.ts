@@ -20,9 +20,17 @@ export const isValidInteger = (num: any): num is number => {
 	return n !== false && n > 0;
 };
 
-export const checkInt = (num?: string): number | false => {
+export const checkInt = (
+	num: string | number | null | undefined,
+): number | false => {
 	if (num == null) {
 		return false;
+	}
+	if (typeof num === 'number') {
+		if (Number.isNaN(num)) {
+			return false;
+		}
+		return num;
 	}
 	// If the string contains non-integer characters then it's not a valid integer, even if `parseInt` might turn it into one
 	if (!/^-?[0-9]+$/.test(num)) {

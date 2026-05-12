@@ -114,10 +114,9 @@ export const truncateConstrainedDeviceFields = truncateConstrainedFieldsFactory<
 	[ValidPatchField, maxLength: number, delimiter: string | null]
 >);
 
-export function normalizeDeviceWriteBody<T extends { os_variant?: string }>(
-	deviceBody: T,
-	uuid: string,
-) {
+export function normalizeDeviceWriteBody<
+	T extends { os_variant?: string | null },
+>(deviceBody: T, uuid: string) {
 	if (
 		deviceBody.os_variant != null &&
 		deviceBody.os_variant !== 'dev' &&
