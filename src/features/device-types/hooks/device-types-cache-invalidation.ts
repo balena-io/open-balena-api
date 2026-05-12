@@ -1,5 +1,5 @@
 import { hooks } from '@balena/pinejs';
-import { getDeviceTypes } from '../device-types-list.js';
+import { getDeviceTypeJsons } from '../device-types-list.js';
 
 hooks.addPureHook('POST', 'resin', 'device_type', {
 	POSTRUN: ({ request, result }) => {
@@ -10,7 +10,7 @@ hooks.addPureHook('POST', 'resin', 'device_type', {
 			`[device-types]: New device_type ${request.values.slug} was created, invalidating device-types cache.`,
 		);
 		// no need to wait for the cache invalidation
-		void getDeviceTypes.delete();
+		void getDeviceTypeJsons.delete();
 	},
 });
 
@@ -21,7 +21,7 @@ hooks.addPureHook('POST', 'resin', 'application', {
 				`[device-types]: New hostApp ${request.values.slug} was created, invalidating device-types cache.`,
 			);
 			// no need to wait for the cache invalidation
-			void getDeviceTypes.delete();
+			void getDeviceTypeJsons.delete();
 		}
 	},
 });
@@ -34,7 +34,7 @@ hooks.addPureHook('PATCH', 'resin', 'application', {
 				`[device-types]: Application(s) ${affectedIds.join(',')} were marked as host, invalidating device-types cache.`,
 			);
 			// no need to wait for the cache invalidation
-			void getDeviceTypes.delete();
+			void getDeviceTypeJsons.delete();
 		}
 	},
 });
