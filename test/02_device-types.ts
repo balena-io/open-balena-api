@@ -1,9 +1,11 @@
 import { sbvrUtils, permissions } from '@balena/pinejs';
+import * as fixtures from './test-lib/fixtures.js';
 import _ from 'lodash';
 import { expect } from 'chai';
 import * as versions from './test-lib/versions.js';
 
 import { supertest } from './test-lib/supertest.js';
+import { itExpectsError } from './test-lib/common.js';
 // All of these test device types are not part of the contracts, so we have to include them manually until we stop syncing with S3.
 const addFakeDeviceTypes = () => {
 	let fakeDeviceTypeIds: number[];
@@ -101,6 +103,14 @@ export default () => {
 
 	describe('device type endpoints', () => {
 		addFakeDeviceTypes();
+
+		let fx: fixtures.Fixtures;
+		before(async () => {
+			fx = await fixtures.load('02-device-types');
+		});
+		after(async () => {
+			await fixtures.clean(fx);
+		});
 
 		describe('/device-types/v1', () => {
 			it('should succeed to return a result', async () => {
@@ -286,11 +296,72 @@ export default () => {
 				expect(res.body).to.deep.equal({ size: 865186311 });
 			});
 
+			it('should return the file size estimate of an OS release with a revision and variant by summing the .deflate files', async () => {
+				const res = await supertest()
+					.get(
+						'/device-types/v1/raspberrypi3/images/2.19.0%2Brev1.prod/download-size',
+					)
+					.expect(200);
+				expect(res.body).to.deep.equal({ size: 148267593 });
+			});
+
+			it('should return the file size estimate of a draft OS release w/o a rev part using the "eventually final" semver', async () => {
+				expect(fx.releases.releaseAmd64_2_112_12).to.have.property(
+					'is_final',
+					false,
+				);
+				const res = await supertest()
+					.get('/device-types/v1/generic-amd64/images/2.112.12/download-size')
+					.expect(200);
+				expect(res.body).to.deep.equal({ size: 865209802 });
+			});
+
+			it('should return the file size estimate of a draft OS release with a rev part using the "eventually final" semver', async () => {
+				expect(fx.releases.releaseAmd64_2_112_12_rev1).to.have.property(
+					'is_final',
+					false,
+				);
+				const res = await supertest()
+					.get(
+						'/device-types/v1/generic-amd64/images/2.112.12%2Brev1/download-size',
+					)
+					.expect(200);
+				expect(res.body).to.deep.equal({ size: 865221509 });
+			});
+
+			// TODO: We should add support for this
+			itExpectsError(
+				'should return the file size estimate of a draft OS release using the raw_version',
+				async () => {
+					const res = await supertest()
+						.get(
+							`/device-types/v1/generic-amd64/images/${fx.releases.releaseAmd64_2_112_12.raw_version}/download-size`,
+						)
+						.expect(200);
+					expect(res.body).to.deep.equal({ size: 865209802 });
+				},
+				(err) =>
+					err.message.includes(
+						`Device generic-amd64 not found for ${fx.releases.releaseAmd64_2_112_12.raw_version} version`,
+					),
+			);
+
 			it('should return the file size estimate of an OS release that also includes .deflate.enc files', async () => {
 				const res = await supertest()
 					.get('/device-types/v1/generic-amd64/images/6.8.1/download-size')
 					.expect(200);
 				expect(res.body).to.deep.equal({ size: 1117921014 });
+			});
+
+			it('should return the file size estimate of the latest OS release', async () => {
+				const resLatest = await supertest()
+					.get('/device-types/v1/generic-amd64/images/latest/download-size')
+					.expect(200);
+				const resSpecificVersion = await supertest()
+					.get('/device-types/v1/generic-amd64/images/6.8.1/download-size')
+					.expect(200);
+				expect(resLatest.body).to.deep.equal(resSpecificVersion.body);
+				expect(resLatest.body).to.deep.equal({ size: 1117921014 });
 			});
 		});
 	});

@@ -946,9 +946,11 @@
 		"MaxKeys": 1000,
 		"CommonPrefixes": [
 			{ "Prefix": "images/generic-amd64/2.112.0/" },
+			{ "Prefix": "images/generic-amd64/2.112.12/" },
+			{ "Prefix": "images/generic-amd64/2.112.12+rev1/" },
 			{ "Prefix": "images/generic-amd64/6.8.1/" }
 		],
-		"KeyCount": 3
+		"KeyCount": 5
 	},
 	"images/generic-amd64/2.112.0/": {
 		"IsTruncated": false,
@@ -1080,6 +1082,364 @@
 		],
 		"Name": "resin-staging-img",
 		"Prefix": "images/generic-amd64/2.112.0/compressed/",
+		"Delimiter": "/",
+		"MaxKeys": 1000,
+		"CommonPrefixes": [],
+		"KeyCount": 7
+	},
+	"images/generic-amd64/2.112.12/": {
+		"IsTruncated": false,
+		"Contents": [
+			{
+				"Key": "images/generic-amd64/2.112.12/VERSION",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"0504a32f59303631f7262f9648f71094\"",
+				"ChecksumAlgorithm": [],
+				"Size": 8,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/VERSION_HOSTOS",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"bb4e67af4ec5f37c4498f692f8a6e6b0\"",
+				"ChecksumAlgorithm": [],
+				"Size": 9,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/balena-image-flasher-generic-amd64.manifest",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"f2bd86e2305577dd0936db6966562eda\"",
+				"ChecksumAlgorithm": [],
+				"Size": 513559,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/balena-image.docker",
+				"LastModified": "2023-02-21T06:17:19.000Z",
+				"ETag": "\"22acc379fdee7bf2dd678637085a6424\"",
+				"ChecksumAlgorithm": [],
+				"Size": 711431168,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/device-type.json",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"6798f1c8630c0f5f6a4e17588a55dc48\"",
+				"ChecksumAlgorithm": [],
+				"Size": 2969,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/image-flasher.json",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"25aec76cf9c32245bfd092d4d06d0b44\"",
+				"ChecksumAlgorithm": [],
+				"Size": 1470,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/image-raw.json",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"ccc747f66ebc9ce432782766ed765eeb\"",
+				"ChecksumAlgorithm": [],
+				"Size": 1481,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/image.json",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"25aec76cf9c32245bfd092d4d06d0b44\"",
+				"ChecksumAlgorithm": [],
+				"Size": 1470,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/kernel_modules_headers.tar.gz",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"b42f020487797866dd67f249c483268e\"",
+				"ChecksumAlgorithm": [],
+				"Size": 15740076,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/kernel_source.tar.gz",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"08fceea0e6919c933f15607b3f2e5c26\"",
+				"ChecksumAlgorithm": [],
+				"Size": 15178530,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/tests.tar.gz",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"125d0a34890df0f20610fa21b34a8d4c\"",
+				"ChecksumAlgorithm": [],
+				"Size": 920234,
+				"StorageClass": "INTELLIGENT_TIERING"
+			}
+		],
+		"Name": "resin-production-img-cloudformation",
+		"Prefix": "images/generic-amd64/2.112.12/",
+		"Delimiter": "/",
+		"MaxKeys": 1000,
+		"CommonPrefixes": [
+			{
+				"Prefix": "images/generic-amd64/2.112.12/compressed-flasher/"
+			},
+			{
+				"Prefix": "images/generic-amd64/2.112.12/compressed-raw/"
+			},
+			{
+				"Prefix": "images/generic-amd64/2.112.12/compressed/"
+			},
+			{
+				"Prefix": "images/generic-amd64/2.112.12/image/"
+			}
+		],
+		"KeyCount": 15
+	},
+	"images/generic-amd64/2.112.12/compressed/": {
+		"IsTruncated": false,
+		"Contents": [
+			{
+				"Key": "images/generic-amd64/2.112.12/compressed/part-0.deflate",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"5168ad4446fc5e3c2de869a2bc75c262\"",
+				"ChecksumAlgorithm": [],
+				"Size": 4458,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/compressed/part-1.deflate",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"f57f17e7b17ca1e46e4340bb3ae5b9ff\"",
+				"ChecksumAlgorithm": [],
+				"Size": 363981,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/compressed/part-2.deflate",
+				"LastModified": "2023-02-21T06:17:19.000Z",
+				"ETag": "\"414946fde239c50aa831cdf179b98e8a\"",
+				"ChecksumAlgorithm": [],
+				"Size": 864815766,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/compressed/part-3.deflate",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"c5476b8d1693e73b14b3c7e854a67c51\"",
+				"ChecksumAlgorithm": [],
+				"Size": 4832,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/compressed/part-4.deflate",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"f9555364b803d4361e6a8d82b7c9b5b0\"",
+				"ChecksumAlgorithm": [],
+				"Size": 4085,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/compressed/part-5.deflate",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"f6ae5a94c289f965f49cb265497be089\"",
+				"ChecksumAlgorithm": [],
+				"Size": 15300,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12/compressed/part-6.deflate",
+				"LastModified": "2023-02-21T06:17:16.000Z",
+				"ETag": "\"d37f805167843aefc3b1f59fb455f619\"",
+				"ChecksumAlgorithm": [],
+				"Size": 1380,
+				"StorageClass": "STANDARD"
+			}
+		],
+		"Name": "resin-production-img-cloudformation",
+		"Prefix": "images/generic-amd64/2.112.12/compressed/",
+		"Delimiter": "/",
+		"MaxKeys": 1000,
+		"CommonPrefixes": [],
+		"KeyCount": 7
+	},
+	"images/generic-amd64/2.112.12+rev1/": {
+		"IsTruncated": false,
+		"Contents": [
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/VERSION",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"0504a32f59303631f7262f9648f71094\"",
+				"ChecksumAlgorithm": [],
+				"Size": 8,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/VERSION_HOSTOS",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"ddee2df7d2c893696d221c240248b2c5\"",
+				"ChecksumAlgorithm": [],
+				"Size": 14,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/balena-image-flasher-generic-amd64.manifest",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"f2bd86e2305577dd0936db6966562eda\"",
+				"ChecksumAlgorithm": [],
+				"Size": 513559,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/balena-image.docker",
+				"LastModified": "2023-02-21T10:16:56.000Z",
+				"ETag": "\"4c5312f27110da8815ea93c1dec1e352\"",
+				"ChecksumAlgorithm": [],
+				"Size": 711431168,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/device-type.json",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"6798f1c8630c0f5f6a4e17588a55dc48\"",
+				"ChecksumAlgorithm": [],
+				"Size": 2969,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/image-flasher.json",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"5f3dd43f5114a0a75b50f233690c0cde\"",
+				"ChecksumAlgorithm": [],
+				"Size": 1469,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/image-raw.json",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"a89fc2efbeaa7334ade35aae2ddbe06d\"",
+				"ChecksumAlgorithm": [],
+				"Size": 1481,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/image.json",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"5f3dd43f5114a0a75b50f233690c0cde\"",
+				"ChecksumAlgorithm": [],
+				"Size": 1469,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/kernel_modules_headers.tar.gz",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"9a2ee1b01e3c471ef2513de2d125e9a1\"",
+				"ChecksumAlgorithm": [],
+				"Size": 15739704,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/kernel_source.tar.gz",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"fe1272229afef67c46cdbc421ad70019\"",
+				"ChecksumAlgorithm": [],
+				"Size": 15179422,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/tests.tar.gz",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"526f97e40ebe603d1f42cdfc0c503fae\"",
+				"ChecksumAlgorithm": [],
+				"Size": 920226,
+				"StorageClass": "INTELLIGENT_TIERING"
+			}
+		],
+		"Name": "resin-production-img-cloudformation",
+		"Prefix": "images/generic-amd64/2.112.12+rev1/",
+		"Delimiter": "/",
+		"MaxKeys": 1000,
+		"CommonPrefixes": [
+			{
+				"Prefix": "images/generic-amd64/2.112.12+rev1/compressed-flasher/"
+			},
+			{
+				"Prefix": "images/generic-amd64/2.112.12+rev1/compressed-raw/"
+			},
+			{
+				"Prefix": "images/generic-amd64/2.112.12+rev1/compressed/"
+			},
+			{
+				"Prefix": "images/generic-amd64/2.112.12+rev1/image/"
+			}
+		],
+		"KeyCount": 15
+	},
+	"images/generic-amd64/2.112.12+rev1/compressed/": {
+		"IsTruncated": false,
+		"Contents": [
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/compressed/part-0.deflate",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"a43f6999822f12917ef93ae547d1f31a\"",
+				"ChecksumAlgorithm": [],
+				"Size": 4454,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/compressed/part-1.deflate",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"2ee4c40ee26fe3e3b4437a80513a36cf\"",
+				"ChecksumAlgorithm": [],
+				"Size": 363982,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/compressed/part-2.deflate",
+				"LastModified": "2023-02-21T10:16:56.000Z",
+				"ETag": "\"5a7dd267d54f3c00afe9a213ceb8f0cc\"",
+				"ChecksumAlgorithm": [],
+				"Size": 864827477,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/compressed/part-3.deflate",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"677af6de9711b1b062e9065b5b6983ef\"",
+				"ChecksumAlgorithm": [],
+				"Size": 4832,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/compressed/part-4.deflate",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"f9555364b803d4361e6a8d82b7c9b5b0\"",
+				"ChecksumAlgorithm": [],
+				"Size": 4085,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/compressed/part-5.deflate",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"f6ae5a94c289f965f49cb265497be089\"",
+				"ChecksumAlgorithm": [],
+				"Size": 15300,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/generic-amd64/2.112.12+rev1/compressed/part-6.deflate",
+				"LastModified": "2023-02-21T10:16:53.000Z",
+				"ETag": "\"592726fa64c5ee22a3e4d6109fd6a270\"",
+				"ChecksumAlgorithm": [],
+				"Size": 1379,
+				"StorageClass": "STANDARD"
+			}
+		],
+		"Name": "resin-production-img-cloudformation",
+		"Prefix": "images/generic-amd64/2.112.12+rev1/compressed/",
 		"Delimiter": "/",
 		"MaxKeys": 1000,
 		"CommonPrefixes": [],
@@ -2851,6 +3211,179 @@
 			{ "Prefix": "images/raspberrypi3/2.9.7+rev2.prod/" }
 		],
 		"KeyCount": 140
+	},
+	"images/raspberrypi3/2.19.0+rev1.prod/": {
+		"IsTruncated": false,
+		"Contents": [
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/VERSION",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"ed6169ad491e12fe7c288c3029306936\"",
+				"ChecksumAlgorithm": [],
+				"Size": 8,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/VERSION_HOSTOS",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"41a26e7ebc4a0353f2d553da52146f6d\"",
+				"ChecksumAlgorithm": [],
+				"Size": 12,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/balena-image-raspberrypi3.manifest",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"31a9f4f4932c279e9107c6a474417722\"",
+				"ChecksumAlgorithm": [],
+				"Size": 158330,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/balena-image.docker",
+				"LastModified": "2021-03-15T15:28:35.000Z",
+				"ETag": "\"b4d3718d008a27c0cd321ac73f47125a\"",
+				"ChecksumAlgorithm": [],
+				"Size": 225563648,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/device-type.json",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"cb832abb9da32b9003cfc3230d981507\"",
+				"ChecksumAlgorithm": [],
+				"Size": 2384,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/image.json",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"fb995f417e7784d82d1173d0bd7c7e0c\"",
+				"ChecksumAlgorithm": [],
+				"Size": 1650,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/kernel_modules_headers.tar.gz",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"f75ded54ccfa1361b9060a1aa62e244b\"",
+				"ChecksumAlgorithm": [],
+				"Size": 12979767,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/kernel_source.tar.gz",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"8e1f13250721a02947519365132a9e46\"",
+				"ChecksumAlgorithm": [],
+				"Size": 12200505,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/logo.svg",
+				"LastModified": "2021-03-15T15:29:25.000Z",
+				"ETag": "\"ec418722af80f38c2526054bb566cc77\"",
+				"ChecksumAlgorithm": [],
+				"Size": 122860,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/tests.tar.gz",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"c359248c99c09d2a78bfc28fd43f7d1b\"",
+				"ChecksumAlgorithm": [],
+				"Size": 31425,
+				"StorageClass": "STANDARD"
+			}
+		],
+		"Name": "resin-production-img-cloudformation",
+		"Prefix": "images/raspberrypi3/2.19.0+rev1.prod/",
+		"Delimiter": "/",
+		"MaxKeys": 1000,
+		"CommonPrefixes": [
+			{
+				"Prefix": "images/raspberrypi3/2.19.0+rev1.prod/compressed/"
+			},
+			{
+				"Prefix": "images/raspberrypi3/2.19.0+rev1.prod/image/"
+			}
+		],
+		"KeyCount": 12
+	},
+	"images/raspberrypi3/2.19.0+rev1.prod/compressed/": {
+		"IsTruncated": false,
+		"Contents": [
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/compressed/part-0.deflate",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"0dc8226dae54b951da8d25a36434e5d1\"",
+				"ChecksumAlgorithm": [],
+				"Size": 4245,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/compressed/part-1.deflate",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"127ece57efb86b48a6cd3713f94cfba0\"",
+				"ChecksumAlgorithm": [],
+				"Size": 4862947,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/compressed/part-2.deflate",
+				"LastModified": "2021-03-15T15:28:35.000Z",
+				"ETag": "\"89a82156f7092a58a091c758d4083e12\"",
+				"ChecksumAlgorithm": [],
+				"Size": 119194312,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/compressed/part-3.deflate",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"e08b1777f164c0f9a6a5d0c1a57b696a\"",
+				"ChecksumAlgorithm": [],
+				"Size": 328595,
+				"StorageClass": "INTELLIGENT_TIERING"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/compressed/part-4.deflate",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"21b2dee3e8ede56693c44a241cdf15a0\"",
+				"ChecksumAlgorithm": [],
+				"Size": 4127,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/compressed/part-5.deflate",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"72a35bac0059c09c1dc18cd7c9e2d673\"",
+				"ChecksumAlgorithm": [],
+				"Size": 22440,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/compressed/part-6.deflate",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"298a362ca68bf4e4e6c5c60ffe551e45\"",
+				"ChecksumAlgorithm": [],
+				"Size": 4115,
+				"StorageClass": "STANDARD"
+			},
+			{
+				"Key": "images/raspberrypi3/2.19.0+rev1.prod/compressed/part-7.deflate",
+				"LastModified": "2021-03-15T15:28:34.000Z",
+				"ETag": "\"632dc7653615e66eb9850c02bc07bafe\"",
+				"ChecksumAlgorithm": [],
+				"Size": 23846812,
+				"StorageClass": "INTELLIGENT_TIERING"
+			}
+		],
+		"Name": "resin-production-img-cloudformation",
+		"Prefix": "images/raspberrypi3/2.19.0+rev1.prod/compressed/",
+		"Delimiter": "/",
+		"MaxKeys": 1000,
+		"CommonPrefixes": [],
+		"KeyCount": 8
 	},
 	"images/revpi-core-3/": {
 		"IsTruncated": false,

@@ -1,0 +1,8 @@
+{
+	"generic-amd64-esr-release-policy": {
+		"user": "admin",
+		"application": "generic-amd64-esr",
+		"tag_key": "release-policy",
+		"value": "esr"
+	}
+}

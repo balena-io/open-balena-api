@@ -1,12 +1,18 @@
+import * as semver from 'balena-semver';
 import type { DeviceTypeJson } from './device-type-json.js';
 import type { sbvrUtils } from '@balena/pinejs';
 import { errors } from '@balena/pinejs';
 
-import { captureException } from '../../infra/error-handling/index.js';
+import {
+	captureException,
+	ThisShouldNeverHappenError,
+} from '../../infra/error-handling/index.js';
 
 import { getCompressedSize, getDeviceTypeJson } from './build-info-facade.js';
-import type { DeviceTypeInfo } from './device-types-list.js';
 import { getDeviceTypes } from './device-types-list.js';
+import type { DeviceTypeInfo } from './device-types-list.js';
+import type { Release } from '../../balena-model.js';
+import type { Filter } from 'pinejs-client-core';
 const { BadRequestError, NotFoundError } = errors;
 export type { NotFoundError };
 
@@ -104,6 +110,10 @@ export const getDeviceTypeJsonBySlug = async (
 ): Promise<DeviceTypeJson> =>
 	(await findDeviceTypeInfoBySlug(resinApi, slug)).latest;
 
+// Quick way to infer whether a release version looks like an ESR (eg :2020.1.0)
+// TODO: Drop this once we add support for ESR releases to the download size estimate endpoint.
+const ESR_MIN_MAJOR = 2000;
+
 export const getImageSize = async (
 	resinApi: typeof sbvrUtils.api.resin,
 	slug: string,
@@ -113,16 +123,122 @@ export const getImageSize = async (
 	const deviceTypeJson = deviceTypeInfo.latest;
 	const normalizedSlug = deviceTypeJson.slug;
 
-	if (buildId === 'latest') {
-		buildId = deviceTypeJson.buildId;
+	const parsedOsVersion =
+		buildId === 'latest' ? 'latest' : semver.parse(buildId);
+	if (parsedOsVersion == null) {
+		throw new UnknownVersionError(slug, buildId);
 	}
-
-	if (!deviceTypeInfo.versions.includes(buildId)) {
+	if (parsedOsVersion !== 'latest' && parsedOsVersion.major >= ESR_MIN_MAJOR) {
+		// We atm do not support ESR releases.
 		throw new UnknownVersionError(slug, buildId);
 	}
 
-	const hasDeviceTypeJson = await getDeviceTypeJson(normalizedSlug, buildId);
+	let releaseFilters: Filter<Release['Read']>;
+	if (parsedOsVersion === 'latest') {
+		releaseFilters = {
+			is_invalidated: false,
+			// Avoid any ESR-looking release that might have been accidentally
+			// published under the wrong hostApp.
+			semver_major: { $lt: ESR_MIN_MAJOR },
+		};
+	} else {
+		const revision = semver.getRevision(parsedOsVersion) ?? 0;
+		const variant =
+			parsedOsVersion.build.find((b) => b === 'dev' || b === 'prod') ?? '';
+		releaseFilters = {
+			// We do not filter on the raw_version (computed term) directly
+			// but prefer filtering on the individual fields, so that the DB indexes are used,
+			// and since it works for both draft & finalized releases.
+			semver_major: parsedOsVersion.major,
+			semver_minor: parsedOsVersion.minor,
+			semver_patch: parsedOsVersion.patch,
+			semver_prerelease: parsedOsVersion.prerelease.join('.'),
+			semver_build: parsedOsVersion.build
+				.filter((b) => b !== variant)
+				.join('.'),
+			variant,
+			$or: [{ revision: null }, { revision }],
+		};
+	}
 
+	const releases = await resinApi.get({
+		resource: 'release',
+		options: {
+			$top: parsedOsVersion === 'latest' ? 1 : 2,
+			$select: ['semver', 'variant'],
+			$filter: {
+				belongs_to__application: {
+					$any: {
+						$alias: 'a',
+						$expr: {
+							a: {
+								is_host: true,
+								is_for__device_type: {
+									$any: {
+										$alias: 'dt',
+										$expr: {
+											dt: {
+												slug,
+											},
+										},
+									},
+								},
+							},
+							// We atm do not support ESR releases.
+							// We can evaluate doing so via an endpoint that also accepts the hostApp as a param
+							// so that the result is unique.
+							$not: {
+								a: {
+									application_tag: {
+										$any: {
+											$alias: 'at',
+											$expr: {
+												at: { tag_key: 'release-policy' },
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				status: 'success',
+				...releaseFilters,
+			},
+			$orderby: [
+				// prefer finalized releases over draft
+				{ is_final: 'desc' },
+				// prefer the highest semver wise release
+				{ semver_major: 'desc' },
+				{ semver_minor: 'desc' },
+				{ semver_patch: 'desc' },
+				{ revision: 'desc' },
+				{ semver_prerelease: 'desc' },
+				// prefer prod over dev
+				{ variant: 'desc' },
+				{ created_at: 'desc' },
+			],
+		},
+	});
+
+	if (releases.length > 1) {
+		throw ThisShouldNeverHappenError(
+			`Found more than one OS releases for device-type ${slug} and version ${buildId}`,
+		);
+	}
+
+	const [release] = releases;
+	if (release == null) {
+		throw new UnknownVersionError(slug, buildId);
+	}
+
+	// The key prefix on S3 matches the semver (w/o draft parts) that the OS team used.
+	buildId =
+		release.variant !== ''
+			? `${release.semver}.${release.variant}`
+			: release.semver;
+
+	const hasDeviceTypeJson = await getDeviceTypeJson(normalizedSlug, buildId);
 	if (!hasDeviceTypeJson) {
 		throw new UnknownVersionError(slug, buildId);
 	}
