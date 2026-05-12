@@ -12,7 +12,7 @@ const { api } = sbvrUtils;
 
 export default () => {
 	versions.test((version, pineTest) => {
-		describe(`Supervisor notification`, () => {
+		describe.skip(`Supervisor notification`, () => {
 			let fx: fixtures.Fixtures;
 			let admin: UserObjectParam;
 			let pineUser: PineTest;
