@@ -161,13 +161,6 @@ const deleteRegistryImages = async ({
 		}
 	}
 
-	// Fail the task if any deletion attempts failed. We don't expect any to fail,
-	// so if any of them do, it is likely that the rest attempts will also fail -
-	// most likely due to the registry or network having issues.
-	if (errorController.signal.aborted) {
-		throw errorController.signal.reason;
-	}
-
 	// Re-enqueue any remaining images
 	if (remaining.size > 0) {
 		await api.tasks.post({
