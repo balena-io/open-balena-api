@@ -1,7 +1,7 @@
 import type { RequestHandler } from 'express';
 import type { ParamsDictionary } from 'express-serve-static-core';
-import type { z } from 'zod';
-export { z } from 'zod';
+import { z } from 'zod';
+export { z };
 
 export function createValidatedRequestHandler(
 	handler: RequestHandler<
