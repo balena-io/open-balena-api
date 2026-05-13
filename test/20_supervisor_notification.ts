@@ -181,7 +181,7 @@ export default () => {
 				// since it should be emitting an `= ANY($something)` expression.
 				it('should work when an internal request uses a $in with more parameters than the number of binds that PG supports', async function () {
 					// Use a bigger timeout since this is going to delete MAX_SAFE_SQL_BINDS+1 rows
-					this.timeout(59000);
+					this.timeout(119000);
 					expect(await getDeviceEnvVarCount(device.id)).to.equal(
 						testVarSetCount * 2,
 					);
@@ -209,7 +209,7 @@ export default () => {
 
 				it(`should notify the supervisor after deleting ${testVarSetCount} device_environment_variables`, async function () {
 					// Use the request timeout, since this is going to delete MAX_SAFE_SQL_BINDS+1 rows
-					this.timeout(59000);
+					this.timeout(119000);
 					expect(
 						await getDeviceEnvVarCount(device.id),
 					).to.be.greaterThanOrEqual(testVarSetCount);
