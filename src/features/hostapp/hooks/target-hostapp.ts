@@ -395,7 +395,7 @@ async function getOSReleaseResource(
 						semver_prerelease: parsedOsVersion.prerelease.join('.'),
 						semver_build: parsedOsVersion.build.join('.'),
 						$or: [
-							{ revision: getRevisionFromSemver(parsedOsVersion) ?? 0 },
+							{ revision: semver.getRevision(parsedOsVersion) ?? 0 },
 							// Matching with NULL as well, allows provisioning devices to draft OS releases
 							{ revision: null },
 						],
@@ -488,17 +488,6 @@ async function getOSReleaseResource(
 	}
 
 	return release;
-}
-
-function getRevisionFromSemver(parsedOsVersion: SemVer): number | undefined {
-	const revisionRegex = /^rev(\d+)$/;
-	for (const buildPart of parsedOsVersion.build) {
-		const match = buildPart.match(revisionRegex)?.[1];
-		if (match != null) {
-			return parseInt(match, 10);
-		}
-	}
-	return;
 }
 
 function normalizeVariantToLongForm(variant: string) {
