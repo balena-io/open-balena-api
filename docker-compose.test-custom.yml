@@ -80,6 +80,8 @@ services:
       BLUEBIRD_LONG_STACK_TRACES: 0
       COOKIE_SESSION_SECRET: fuschia
       DATABASE_URL: postgres://docker:docker@db:5432/postgres
+      DB_STATEMENT_TIMEOUT: 0
+      DB_QUERY_TIMEOUT: 300000
       DEBUG:
       DELTA_HOST: delta_host.com
       DEPLOYMENT: TEST
