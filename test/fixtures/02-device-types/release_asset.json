@@ -1,0 +1,162 @@
+{
+	"releaseAmd64_6_8_0/device-type.json": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "device-type.json",
+		"asset": {
+			"filename": "device-type.json",
+			"content_type": "application/json",
+			"size": 2971
+		}
+	},
+	"releaseAmd64_6_8_0/image.json": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "image.json",
+		"asset": {
+			"filename": "image.json",
+			"content_type": "application/json",
+			"size": 1469
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-0.deflate": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-0.deflate",
+		"asset": {
+			"filename": "part-0.deflate",
+			"content_type": "application/octet-stream",
+			"size": 4452
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-1.deflate": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-1.deflate",
+		"asset": {
+			"filename": "part-1.deflate",
+			"content_type": "application/octet-stream",
+			"size": 717889
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-2.deflate": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-2.deflate",
+		"asset": {
+			"filename": "part-2.deflate",
+			"content_type": "application/octet-stream",
+			"size": 1105466701
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-3.deflate": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-3.deflate",
+		"asset": {
+			"filename": "part-3.deflate",
+			"content_type": "application/octet-stream",
+			"size": 4828
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-4.deflate": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-4.deflate",
+		"asset": {
+			"filename": "part-4.deflate",
+			"content_type": "application/octet-stream",
+			"size": 4085
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-5.deflate": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-5.deflate",
+		"asset": {
+			"filename": "part-5.deflate",
+			"content_type": "application/octet-stream",
+			"size": 15300
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-6.deflate": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-6.deflate",
+		"asset": {
+			"filename": "part-6.deflate",
+			"content_type": "application/octet-stream",
+			"size": 1374
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-0.deflate.enc": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-0.deflate.enc",
+		"asset": {
+			"filename": "part-0.deflate.enc",
+			"content_type": "application/octet-stream",
+			"size": 4480
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-1.deflate.enc": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-1.deflate.enc",
+		"asset": {
+			"filename": "part-1.deflate.enc",
+			"content_type": "application/octet-stream",
+			"size": 717920
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-2.deflate.enc": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-2.deflate.enc",
+		"asset": {
+			"filename": "part-2.deflate.enc",
+			"content_type": "application/octet-stream",
+			"size": 1105466720
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-3.deflate.enc": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-3.deflate.enc",
+		"asset": {
+			"filename": "part-3.deflate.enc",
+			"content_type": "application/octet-stream",
+			"size": 4848
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-4.deflate.enc": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-4.deflate.enc",
+		"asset": {
+			"filename": "part-4.deflate.enc",
+			"content_type": "application/octet-stream",
+			"size": 4112
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-5.deflate.enc": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-5.deflate.enc",
+		"asset": {
+			"filename": "part-5.deflate.enc",
+			"content_type": "application/octet-stream",
+			"size": 15328
+		}
+	},
+	"releaseAmd64_6_8_0/compressed/part-6.deflate.enc": {
+		"user": "admin",
+		"release": "releaseAmd64_6_8_0release_assets_only",
+		"asset_key": "compressed/part-6.deflate.enc",
+		"asset": {
+			"filename": "part-6.deflate.enc",
+			"content_type": "application/octet-stream",
+			"size": 1392
+		}
+	}
+}

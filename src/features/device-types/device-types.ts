@@ -158,6 +158,17 @@ export const getImageSize = async (
 		options: {
 			$top: parsedOsVersion === 'latest' ? 1 : 2,
 			$select: ['semver', 'variant'],
+			$expand: {
+				release_asset: {
+					$select: ['asset_key', 'asset'],
+					$filter: {
+						$and: [
+							{ asset_key: { $startswith: 'compressed/' } },
+							{ asset_key: { $endswith: '.deflate' } },
+						],
+					},
+				},
+			},
 			$filter: {
 				belongs_to__application: {
 					$any: {
@@ -215,24 +226,31 @@ export const getImageSize = async (
 		throw new UnknownVersionError(slug, buildId);
 	}
 
-	// The key prefix on S3 matches the semver (w/o draft parts) that the OS team used.
-	buildId =
-		release.variant !== ''
-			? `${release.semver}.${release.variant}`
-			: release.semver;
+	if (release.release_asset.length === 0) {
+		// The key prefix on S3 matches the semver (w/o draft parts) that the OS team used.
+		buildId =
+			release.variant !== ''
+				? `${release.semver}.${release.variant}`
+				: release.semver;
 
-	const hasDeviceTypeJson = await getDeviceTypeJson(normalizedSlug, buildId);
-	if (!hasDeviceTypeJson) {
-		throw new UnknownVersionError(slug, buildId);
+		const hasDeviceTypeJson = await getDeviceTypeJson(normalizedSlug, buildId);
+		if (!hasDeviceTypeJson) {
+			throw new UnknownVersionError(slug, buildId);
+		}
+
+		try {
+			return await getCompressedSize(normalizedSlug, buildId);
+		} catch (err) {
+			captureException(
+				err,
+				`Failed to get device type ${slug} compressed size for version ${buildId}`,
+			);
+			throw err;
+		}
 	}
 
-	try {
-		return await getCompressedSize(normalizedSlug, buildId);
-	} catch (err) {
-		captureException(
-			err,
-			`Failed to get device type ${slug} compressed size for version ${buildId}`,
-		);
-		throw err;
-	}
+	return release.release_asset.reduce(
+		(sum, ra) => sum + (ra.asset?.size ?? 0),
+		0,
+	);
 };

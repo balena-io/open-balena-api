@@ -353,6 +353,13 @@ export default () => {
 				expect(res.body).to.deep.equal({ size: 1117921014 });
 			});
 
+			it('should return the file size estimate of an OS release that has release_assets and no S3 artifacts, counting only the .deflate files', async () => {
+				const res = await supertest()
+					.get('/device-types/v1/generic-amd64/images/6.8.0/download-size')
+					.expect(200);
+				expect(res.body).to.deep.equal({ size: 1106214629 });
+			});
+
 			it('should return the file size estimate of the latest OS release', async () => {
 				const resLatest = await supertest()
 					.get('/device-types/v1/generic-amd64/images/latest/download-size')
