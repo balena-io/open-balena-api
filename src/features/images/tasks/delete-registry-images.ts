@@ -76,8 +76,8 @@ async function deleteRepo(
 	s3: NonNullable<typeof s3Client>,
 	repo: string,
 	signal: AbortSignal,
-): Promise<number> {
-	let manifestsDeleted = 0;
+	onDeleted: () => void,
+): Promise<void> {
 	const cacheRepos = await s3.listCacheRepos(repo);
 	for (const target of [...cacheRepos, repo]) {
 		signal.throwIfAborted();
@@ -89,10 +89,9 @@ async function deleteRepo(
 		for (const digest of digests) {
 			signal.throwIfAborted();
 			await deleteImage(token, target, digest);
-			manifestsDeleted++;
+			onDeleted();
 		}
 	}
-	return manifestsDeleted;
 }
 
 const deleteRegistryImages = async ({
@@ -146,8 +145,9 @@ const deleteRegistryImages = async ({
 						`[${logHeader}] Skipping deletion of image with empty repo: ${location}`,
 					);
 				} else {
-					const manifestsDeleted = await deleteRepo(s3Client!, repo, signal);
-					totalManifestsDeleted += manifestsDeleted;
+					await deleteRepo(s3Client!, repo, signal, () => {
+						totalManifestsDeleted++;
+					});
 				}
 				remaining.delete(location);
 			}),

@@ -111,7 +111,7 @@ function registerS3Resolver() {
 		if (digestsMatch) {
 			const repo = digestsMatch[1];
 			const commonPrefixes = store.images
-				.filter((i) => i.repository === repo)
+				.filter((i) => i.repository === repo && !i.isDeleted)
 				.map((i) => ({
 					Prefix: `${prefix}${i.digest.replace(/^sha256:/, '')}/`,
 				}));
@@ -122,7 +122,9 @@ function registerS3Resolver() {
 			const repo = tagDigestsMatch[1];
 			const tag = tagDigestsMatch[2];
 			const commonPrefixes = store.images
-				.filter((i) => i.repository === repo && i.tags?.includes(tag))
+				.filter(
+					(i) => i.repository === repo && !i.isDeleted && i.tags?.includes(tag),
+				)
 				.map((i) => ({
 					Prefix: `${prefix}${i.digest.replace(/^sha256:/, '')}/`,
 				}));
@@ -131,7 +133,7 @@ function registerS3Resolver() {
 		if (prefix.startsWith(reposPath) && prefix !== reposPath) {
 			const repoPrefix = prefix.replace(reposPath, '');
 			const commonPrefixes = store.images
-				.filter((i) => i.repository.startsWith(repoPrefix))
+				.filter((i) => i.repository.startsWith(repoPrefix) && !i.isDeleted)
 				.map((i) => ({
 					Prefix: `${reposPath}${i.repository}/`,
 				}));

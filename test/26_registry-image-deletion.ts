@@ -300,6 +300,22 @@ export default () => {
 							'[delete_registry_images_task] Task took too long. Created a new task for the remaining images',
 						),
 					);
+
+					// Each image contributes 1 main manifest + 1 cache manifest.
+					let totalDeleted = 0;
+					for (const callArgs of consoleSpy.args) {
+						const msg = callArgs[0];
+						if (typeof msg !== 'string') {
+							continue;
+						}
+						const match = msg.match(
+							/\[delete_registry_images_task\] Deleted (\d+) registry manifests/,
+						);
+						if (match) {
+							totalDeleted += parseInt(match[1], 10);
+						}
+					}
+					expect(totalDeleted).to.equal(images.length * 2);
 				} finally {
 					consoleSpy.restore();
 					config.TEST_MOCK_ONLY.ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS =
