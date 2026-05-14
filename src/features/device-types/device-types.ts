@@ -105,7 +105,7 @@ export const getDeviceTypeJsonBySlug = async (
 
 // Quick way to infer whether a release version looks like an ESR (eg :2020.1.0)
 // TODO: Drop this once we add support for ESR releases to the download size estimate endpoint.
-const ESR_MIN_MAJOR = 2000;
+export const ESR_MIN_MAJOR = 2000;
 
 export const getImageSize = async (
 	resinApi: typeof sbvrUtils.api.resin,

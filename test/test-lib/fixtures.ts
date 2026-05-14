@@ -241,7 +241,11 @@ const loaders: types.Dictionary<LoaderFunc> = {
 
 		req = req.field('release', release.id);
 		req = req.field('asset_key', jsonData.asset_key);
-		req = req.attach('asset', Buffer.from([1, 2, 3]), {
+		const assetContent =
+			typeof jsonData.content === 'string'
+				? Buffer.from(jsonData.content)
+				: Buffer.from([1, 2, 3]);
+		req = req.attach('asset', assetContent, {
 			contentType: 'image/png',
 			...(typeof jsonData.asset === 'string'
 				? { filename: jsonData.asset }

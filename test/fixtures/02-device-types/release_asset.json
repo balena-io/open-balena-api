@@ -158,5 +158,15 @@
 			"content_type": "application/octet-stream",
 			"size": 1392
 		}
+	},
+	"releaseDtWithReleaseAsset_7_0_0/device-type.json": {
+		"user": "admin",
+		"release": "releaseDtWithReleaseAsset_7_0_0",
+		"asset_key": "device-type.json",
+		"content": "{\n\t\"slug\": \"dt-with-release-asset\",\n\t\"version\": 1,\n\t\"aliases\": [\n\t\t\"dt-with-release-asset\",\n\t\t\"dt-with-release-asset-alias\"\n\t],\n\t\"name\": \"DT With Release Asset\",\n\t\"arch\": \"amd64\",\n\t\"state\": \"RELEASED\",\n\t\"stateInstructions\": {\n\t\t\"postProvisioning\": [\n\t\t\t\"The device is performing a shutdown. Please wait until all LEDs are off.\",\n\t\t\t\"Remove the balenaOS installation media.\",\n\t\t\t\"Power on your device.\"\n\t\t]\n\t},\n\t\"instructions\": [\n\t\t\"Write the OS file you downloaded to your USB key.\",\n\t\t\"Insert the freshly burnt USB key into the device.\",\n\t\t\"Power on your device.\"\n\t],\n\t\"gettingStartedLink\": {\n\t\t\"windows\": \"https://www.balena.io/docs/learn/getting-started/\",\n\t\t\"osx\": \"https://www.balena.io/docs/learn/getting-started/\",\n\t\t\"linux\": \"https://www.balena.io/docs/learn/getting-started/\"\n\t},\n\t\"yocto\": {\n\t\t\"machine\": \"dt-with-release-asset\",\n\t\t\"image\": \"balena-image-flasher\",\n\t\t\"fstype\": \"balenaos-img\",\n\t\t\"version\": \"yocto-dunfell\",\n\t\t\"deployArtifact\": \"balena-image-flasher-dt-with-release-asset.balenaos-img\",\n\t\t\"deployFlasherArtifact\": \"balena-image-flasher-dt-with-release-asset.balenaos-img\",\n\t\t\"deployRawArtifact\": \"balena-image-dt-with-release-asset.balenaos-img\",\n\t\t\"compressed\": true\n\t},\n\t\"configuration\": {\n\t\t\"config\": {\n\t\t\t\"partition\": {\n\t\t\t\t\"primary\": 1\n\t\t\t},\n\t\t\t\"path\": \"/config.json\"\n\t\t}\n\t},\n\t\"initialization\": {\n\t\t\"options\": [\n\t\t\t{\n\t\t\t\t\"message\": \"Select a drive\",\n\t\t\t\t\"type\": \"drive\",\n\t\t\t\t\"name\": \"drive\"\n\t\t\t}\n\t\t],\n\t\t\"operations\": [\n\t\t\t{\n\t\t\t\t\"command\": \"burn\"\n\t\t\t}\n\t\t]\n\t}\n}\n",
+		"asset": {
+			"filename": "device-type.json",
+			"content_type": "application/json"
+		}
 	}
 }
