@@ -4,7 +4,7 @@ import type { InternalDeviceLog, LogContext, SupervisorLog } from './struct.js';
 import onFinished from 'on-finished';
 import type { permissions } from '@balena/pinejs';
 import { sbvrUtils, errors } from '@balena/pinejs';
-import { Supervisor } from './supervisor.js';
+import * as supervisor from './supervisor.js';
 import { createGunzip } from 'zlib';
 import ndjson from 'ndjson';
 import {
@@ -43,8 +43,6 @@ const {
 	UnsupportedMediaTypeError,
 } = errors;
 const { api } = sbvrUtils;
-
-const supervisor = new Supervisor();
 
 const getWriteContext = (() => {
 	const $getWriteContext = multiCacheMemoizee(
