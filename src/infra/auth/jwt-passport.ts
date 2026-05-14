@@ -1,4 +1,3 @@
-import type { RequestHandler } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
@@ -18,6 +17,7 @@ import type {
 import type { User } from '../../balena-model.js';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import { getGuestActorId } from './permissions.js';
+import { createUnvalidatedRequestHandler } from '../validation/index.js';
 
 export type { SignOptions } from 'jsonwebtoken';
 
@@ -107,7 +107,7 @@ export const createStrategy = (
 		},
 	);
 
-export const middleware: RequestHandler = (req, res, next) => {
+export const middleware = createUnvalidatedRequestHandler((req, res, next) => {
 	const jwtString = jwtFromRequest(req);
 	if (!jwtString || typeof jwtString !== 'string' || !jwtString.includes('.')) {
 		// If we don't have any possibility of a valid jwt string then we avoid
@@ -124,10 +124,12 @@ export const middleware: RequestHandler = (req, res, next) => {
 			// possible leaking
 			// store the potential body token in the authorziation header
 			// so that it can be used later on as well
-			const possibleToken = req.body[TOKEN_BODY_FIELD];
-			delete req.body[TOKEN_BODY_FIELD];
-			if (possibleToken && !req.headers.authorization) {
-				req.headers.authorization = `Bearer ${possibleToken}`;
+			if (req.body != null && typeof req.body === 'object') {
+				const possibleToken = req.body[TOKEN_BODY_FIELD];
+				delete req.body[TOKEN_BODY_FIELD];
+				if (possibleToken && !req.headers.authorization) {
+					req.headers.authorization = `Bearer ${possibleToken}`;
+				}
 			}
 
 			if (err instanceof InvalidJwtSecretError) {
@@ -166,6 +168,6 @@ export const middleware: RequestHandler = (req, res, next) => {
 		},
 	);
 	authenticate(req, res, next);
-};
+});
 
 export const isJWT = (token: string): boolean => !!jsonwebtoken.decode(token);
