@@ -1,7 +1,7 @@
 // Implements the server part of: https://docs.docker.com/registry/spec/auth/token/
 // Reference: https://docs.docker.com/registry/spec/auth/jwt/
 
-import type { Request, RequestHandler } from 'express';
+import type { Request } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import _ from 'lodash';
 import AWS from '../device-types/storage/aws-sdk-wrapper.js';
@@ -37,6 +37,10 @@ import {
 	RESOLVE_IMAGE_READ_ACCESS_CACHE_TIMEOUT,
 	TOKEN_AUTH_BUILDER_TOKEN,
 } from '../../lib/config.js';
+import {
+	createValidatedRequestHandler,
+	z,
+} from '../../infra/validation/index.js';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -173,7 +177,7 @@ const resolveReadAccess = (() => {
 		{ useVersion: false },
 	);
 	return async (
-		req: Request,
+		req: permissions.PermissionReq,
 		imageId: number | undefined,
 		tx: Tx,
 	): Promise<boolean> => {
@@ -185,7 +189,7 @@ const resolveReadAccess = (() => {
 })();
 
 const resolveWriteAccess = async (
-	req: Request,
+	req: permissions.PermissionReq,
 	imageId: number | undefined,
 	tx: Tx,
 ): Promise<boolean> => {
@@ -361,7 +365,7 @@ const resolveImageLocation = multiCacheMemoizee(
 );
 
 const resolveAccess = async (
-	req: Request,
+	req: permissions.PermissionReq,
 	type: string,
 	name: string,
 	effectiveName: string,
@@ -583,37 +587,50 @@ const generateToken = (
 	return jsonwebtoken.sign(payload, CERT.key, options);
 };
 
-export const token: RequestHandler = async (req, res) => {
-	try {
-		const { scope } = req.query;
-		let scopes: string[];
-		if (typeof scope === 'string') {
-			scopes = [scope];
-		} else if (Array.isArray(scope)) {
-			scopes = scope as string[];
-		} else if (_.isObject(scope)) {
-			scopes = Object.values(scope) as string[];
-		} else {
-			scopes = [];
-		}
+export const token = createValidatedRequestHandler(
+	{
+		query: z.object({
+			scope: z
+				.union([
+					z.string(),
+					z.array(z.string()),
+					z.record(z.string(), z.string()),
+				])
+				.optional(),
+		}),
+	},
+	async (req, res) => {
+		try {
+			const { scope } = req.query;
+			let scopes: string[];
+			if (typeof scope === 'string') {
+				scopes = [scope];
+			} else if (Array.isArray(scope)) {
+				scopes = scope;
+			} else if (_.isObject(scope)) {
+				scopes = Object.values(scope);
+			} else {
+				scopes = [];
+			}
 
-		const [sub, access] = await sbvrUtils.db.readTransaction(
-			async (tx) =>
-				await Promise.all([
-					getSubject(req, tx),
-					authorizeRequest(req, scopes, tx),
-				]),
-		);
-		res.json({
-			token: generateToken(sub, REGISTRY_TOKEN_AUDIENCE, access),
-		});
-	} catch (err) {
-		if (handleHttpErrors(req, res, err)) {
-			return;
+			const [sub, access] = await sbvrUtils.db.readTransaction(
+				async (tx) =>
+					await Promise.all([
+						getSubject(req, tx),
+						authorizeRequest(req, scopes, tx),
+					]),
+			);
+			res.json({
+				token: generateToken(sub, REGISTRY_TOKEN_AUDIENCE, access),
+			});
+		} catch (err) {
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
+			res.status(400).end(); // bad request
 		}
-		res.status(400).end(); // bad request
-	}
-};
+	},
+);
 
 const $getSubject = multiCacheMemoizee(
 	async (
