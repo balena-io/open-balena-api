@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import { errors } from '@balena/pinejs';
 
 import type {
@@ -17,12 +15,11 @@ export function convertLogs(logs: SupervisorLog[]): InternalDeviceLog[] {
 			`Batches cannot include more than ${MAX_LOGS_PER_BATCH} logs`,
 		);
 	}
-	return _(logs)
-		.map((log) => {
-			return convertAnyLog(log);
-		})
-		.compact()
-		.value();
+	return logs
+		.values()
+		.map(convertAnyLog)
+		.filter((log) => log != null)
+		.toArray();
 }
 
 function convertAnyLog(log: SupervisorLog): InternalDeviceLog | undefined {
