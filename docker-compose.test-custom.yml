@@ -54,12 +54,15 @@ services:
     networks:
       - local-test
 
-  sut:
+  sut: &sut
     build:
       context: ./
       target: test
     entrypoint: []
-    command: ["npx", "mocha"]
+    command:
+      - bash
+      - -c
+      - "set -x ; npm run check-model-types-generated && npx mocha"
     depends_on:
       - "db"
       - "redis"
@@ -70,7 +73,7 @@ services:
     networks:
       - local-test
     volumes:
-      - ./automation/check-model-types-generated.sh:/usr/src/app/automation/check-model-types-generated.sh
+      - ./automation/check-model-types-generated.sh:/usr/src/app/automation/check-model-types-generated.sh:ro
     environment: &env
       API_HOST: 127.0.0.1
       API_VPN_SERVICE_API_KEY: api_vpn_service_api_key
@@ -120,6 +123,8 @@ services:
       RUN_TESTS: 1
       SUPERUSER_EMAIL: test@balena.io
       SUPERUSER_PASSWORD: Password01
+      TEST_VERSIONS: "${TEST_VERSIONS:-resin}"
+      TEST_FILES: "${TEST_FILES:-}"
       TOKEN_AUTH_BUILDER_TOKEN: token_auth_builder_token
       TOKEN_AUTH_CERT_ISSUER: "api.balenadev.io"
       TOKEN_AUTH_CERT_KEY: "LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUs0VWtLQ1RFamlJamtNVnNtaG96emhScmxrZ2REOU1RN01jdWd2MFZTbHhvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFYVZQN21pUGdTU0JTWjBLYnp4L2pvZnVlWE1KVHpITkpuYno2enlTWHBJS1I3RzFXQkROYwpRRXZpWFZqUk45MWVybHdSMDNITWpjUm81Ymt4b2gzREdnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo="
@@ -140,19 +145,9 @@ services:
       S6_KEEP_ENV: 1
 
   sut-fast:
-    build:
-      context: ./
-      target: test
-    depends_on:
-      - "db"
-      - "redis"
-      - "loki"
-      - "minio-client"
-    ports:
-      - "9228:9229"
-    networks:
-      - local-test
+    <<: *sut
     volumes:
+      - ./automation/check-model-types-generated.sh:/usr/src/app/automation/check-model-types-generated.sh:ro
       - ./node_modules:/usr/src/app/node_modules
       # Exclude syncing node_modules that have a native build step
       # to avoid hostOS/container incompatibility issues.
@@ -178,9 +173,16 @@ services:
       - ./tsconfig.json:/usr/src/app/tsconfig.json
       - ./tsconfig.build.json:/usr/src/app/tsconfig.build.json
       - ./.materialized-config.json:/usr/src/app/.materialized-config.json
+      - ./.materialized-schema.sql:/usr/src/app/.materialized-schema.sql
       - ./.pinejs-cache.json:/usr/src/app/.pinejs-cache.json
     environment:
       <<: *env
+      NODE_ENV: "${NODE_ENV:-FASTTEST}"
+      TEST_VERSIONS: "${TEST_VERSIONS:-}"
+      TEST_FILES: "${TEST_FILES:-}"
+    command: npx mocha --bail
+    ports:
+      - "9228:9229"
 
 networks:
   local-test:

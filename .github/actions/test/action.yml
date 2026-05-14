@@ -1,5 +1,5 @@
 # https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
-name: "Docker tests"
+name: "Docker tests version scoped"
 description: "Custom test action to test each individual API version isolated in docker"
 # these inputs are always provided by flowzone, so they must always be defined on the composite action
 inputs:
@@ -13,9 +13,11 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Run tests
+    - name: Run isolated tests for version ${{ env.matrix_value }}
       shell: bash
+      if: ${{ env.matrix_value != '' }}
+      env:
+        TEST_VERSIONS: ${{ env.matrix_value }}
       run: |
-        # TODO: Drop the custom test action once we have a better way to
-        # generate the materialized config, other than passing an env var.
         npm run test:compose
+        npm run test:compose-cleanup
