@@ -1,0 +1,23 @@
+{
+	"raspberrypi3": {
+		"user": "admin",
+		"is_host": true,
+		"is_public": true,
+		"device_type": "raspberrypi3",
+		"app_name": "raspberrypi3"
+	},
+	"generic-amd64": {
+		"user": "admin",
+		"is_host": true,
+		"is_public": true,
+		"device_type": "generic-amd64",
+		"app_name": "generic-amd64"
+	},
+	"generic-amd64-esr": {
+		"user": "admin",
+		"is_host": true,
+		"is_public": true,
+		"device_type": "generic-amd64",
+		"app_name": "generic-amd64-esr"
+	}
+}

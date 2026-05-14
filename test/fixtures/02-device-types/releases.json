@@ -1,0 +1,100 @@
+{
+	"releaseRpi3_2_19_0_prod": {
+		"note": "Such old releases started with rev1, so we are creating a failed rev0 to make the fixtures easier",
+		"application": "raspberrypi3",
+		"composition": {},
+		"source": "cloud",
+		"status": "failed",
+		"semver": "2.19.0",
+		"variant": "prod",
+		"user": "admin"
+	},
+	"releaseRpi3_2_19_0_rev1_prod": {
+		"createAfterRelease":"releaseRpi3_2_19_0_prod",
+		"application": "raspberrypi3",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "2.19.0+rev1",
+		"variant": "prod",
+		"user": "admin"
+	},
+	"releaseAmd64_2_51_0": {
+		"application": "generic-amd64",
+		"composition": {},
+		"source": "cloud",
+		"status": "failed",
+		"semver": "2.51.0",
+		"variant": "prod",
+		"user": "admin"
+	},
+	"releaseAmd64_2_112_0": {
+		"application": "generic-amd64",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "2.112.0",
+		"user": "admin"
+	},
+	"releaseAmd64_2_112_12": {
+		"application": "generic-amd64",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "2.112.12",
+		"is_final": false,
+		"user": "admin"
+	},
+	"releaseAmd64_2_112_12_rev1": {
+		"createAfterRelease":"releaseAmd64_2_112_12",
+		"application": "generic-amd64",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "2.112.12+rev1",
+		"is_final": false,
+		"user": "admin"
+	},
+	"releaseAmd64_6_8_1": {
+		"application": "generic-amd64",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "6.8.1",
+		"user": "admin"
+	},
+	"releaseAmd64_6_8_10": {
+		"application": "generic-amd64",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "6.8.10",
+		"is_invalidated": true,
+		"user": "admin"
+	},
+	"releaseAmd64_6_8_11": {
+		"application": "generic-amd64",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "6.8.11",
+		"is_final": false,
+		"user": "admin"
+	},
+	"releaseAmd64_6_8_12": {
+		"application": "generic-amd64",
+		"composition": {},
+		"source": "cloud",
+		"status": "failed",
+		"semver": "6.8.12",
+		"user": "admin"
+	},
+	"releaseAmd64_2024_7_1": {
+		"application": "generic-amd64-esr",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "2024.7.1",
+		"user": "admin"
+	}
+}
