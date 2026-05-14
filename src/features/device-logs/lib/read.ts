@@ -1,4 +1,4 @@
-import type { Request, RequestHandler, Response } from 'express';
+import type { Request, Response } from 'express';
 import onFinished from 'on-finished';
 import _ from 'lodash';
 import { sbvrUtils, errors } from '@balena/pinejs';
@@ -34,6 +34,10 @@ import {
 } from '../../../lib/config.js';
 import { DAYS } from '@balena/env-parsing';
 import { checkInt } from '../../../lib/utils.js';
+import {
+	createValidatedRequestHandler,
+	z,
+} from '../../../infra/validation/index.js';
 
 const { NotFoundError } = errors;
 const { api } = sbvrUtils;
@@ -43,45 +47,53 @@ const getReadBackend = async () =>
 		? await getSecondaryBackend()
 		: await getPrimaryBackend();
 
-export const read =
-	(
-		onLogReadStreamInitialized: SetupOptions['onLogReadStreamInitialized'],
-	): RequestHandler =>
-	async (req: Request, res: Response) => {
-		try {
-			const ctx = await getReadContext(req);
-			const isStreamingRead = req.query.stream === '1';
-			const count = getCount(
-				req.query.count as string | undefined,
-				isStreamingRead
-					? LOGS_DEFAULT_SUBSCRIPTION_COUNT
-					: LOGS_DEFAULT_HISTORY_COUNT,
-			);
-			const start = getStart(
-				req.query.start as string | undefined,
-				isStreamingRead
-					? LOGS_DEFAULT_HISTORY_STREAMING_LOOKBACK
-					: LOGS_DEFAULT_HISTORY_LOOKBACK,
-			);
-			if (isStreamingRead) {
-				await handleStreamingRead(ctx, req, res, { count, start });
-				onLogReadStreamInitialized?.(req);
-			} else {
-				const logs = await getHistory(await getReadBackend(), ctx, {
-					count,
-					start,
-				});
+export const read = (
+	onLogReadStreamInitialized: SetupOptions['onLogReadStreamInitialized'],
+) =>
+	createValidatedRequestHandler(
+		{
+			query: z.object({
+				stream: z.string().optional(),
+				count: z.string().optional(),
+				start: z.string().optional(),
+			}),
+		},
+		async (req, res) => {
+			try {
+				const ctx = await getReadContext(req);
+				const isStreamingRead = req.query.stream === '1';
+				const count = getCount(
+					req.query.count,
+					isStreamingRead
+						? LOGS_DEFAULT_SUBSCRIPTION_COUNT
+						: LOGS_DEFAULT_HISTORY_COUNT,
+				);
+				const start = getStart(
+					req.query.start,
+					isStreamingRead
+						? LOGS_DEFAULT_HISTORY_STREAMING_LOOKBACK
+						: LOGS_DEFAULT_HISTORY_LOOKBACK,
+				);
+				if (isStreamingRead) {
+					await handleStreamingRead(ctx, req, res, { count, start });
+					onLogReadStreamInitialized?.(req);
+				} else {
+					const logs = await getHistory(await getReadBackend(), ctx, {
+						count,
+						start,
+					});
 
-				res.json(logs);
+					res.json(logs);
+				}
+			} catch (err) {
+				if (handleHttpErrors(req, res, err)) {
+					return;
+				}
+				captureException(err, 'Failed to read device logs');
+				res.status(500).end();
 			}
-		} catch (err) {
-			if (handleHttpErrors(req, res, err)) {
-				return;
-			}
-			captureException(err, 'Failed to read device logs');
-			res.status(500).end();
-		}
-	};
+		},
+	);
 
 async function handleStreamingRead(
 	ctx: LogContext,

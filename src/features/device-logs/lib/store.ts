@@ -1,4 +1,4 @@
-import type { Request, RequestHandler, Response } from 'express';
+import type { Request, Response } from 'express';
 import type { InternalDeviceLog, LogContext, SupervisorLog } from './struct.js';
 
 import onFinished from 'on-finished';
@@ -32,6 +32,10 @@ import {
 	multiCacheMemoizee,
 	reqPermissionNormalizer,
 } from '../../../infra/cache/index.js';
+import {
+	createValidatedRequestHandler,
+	z,
+} from '../../../infra/validation/index.js';
 
 const {
 	UnauthorizedError,
@@ -91,26 +95,40 @@ const getWriteContext = (() => {
 	};
 })();
 
-export const store: RequestHandler = async (req: Request, res: Response) => {
-	try {
-		const body: SupervisorLog[] = req.body;
-		const logs = supervisor.convertLogs(body);
-		if (logs.length) {
-			const ctx = await getWriteContext(req);
-			// start publishing to both backends
-			await publishBackend(ctx, logs);
+export const store = createValidatedRequestHandler(
+	{
+		body: z.array(
+			z.object({
+				timestamp: z.number(),
+				message: z.string(),
+				isStdErr: z.boolean().optional(),
+				isSystem: z.boolean().optional(),
+				serviceId: z.number().optional(),
+				// This should never actually be sent, but if it is we just ignore the log line instead of throwing an error
+				uuid: z.string().optional(),
+			}),
+		),
+	},
+	async (req, res) => {
+		try {
+			const body = req.body satisfies SupervisorLog[];
+			const logs = supervisor.convertLogs(body);
+			if (logs.length) {
+				const ctx = await getWriteContext(req);
+				// start publishing to both backends
+				await publishBackend(ctx, logs);
+			}
+			res.status(201).end();
+		} catch (err) {
+			handleStoreErrors(req, res, err);
 		}
-		res.status(201).end();
-	} catch (err) {
-		handleStoreErrors(req, res, err);
-	}
-};
+	},
+);
 
-export const storeStream =
-	(
-		onLogWriteStreamInitialized: SetupOptions['onLogWriteStreamInitialized'],
-	): RequestHandler =>
-	async (req: Request, res: Response) => {
+export const storeStream = (
+	onLogWriteStreamInitialized: SetupOptions['onLogWriteStreamInitialized'],
+) =>
+	createValidatedRequestHandler(async (req: Request, res: Response) => {
 		try {
 			const ctx = await getWriteContext(req);
 			handleStreamingWrite(ctx, req, res);
@@ -118,7 +136,7 @@ export const storeStream =
 		} catch (err) {
 			handleStoreErrors(req, res, err);
 		}
-	};
+	});
 
 function handleStoreErrors(req: Request, res: Response, err: Error) {
 	if (!(err instanceof errors.HttpError)) {
