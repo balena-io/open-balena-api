@@ -1,5 +1,3 @@
-import type { RequestHandler } from 'express';
-
 import _ from 'lodash';
 import {
 	captureException,
@@ -19,6 +17,10 @@ import {
 	normalizeDeviceWriteBody,
 } from '../state-patch-utils.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
+import {
+	createValidatedRequestHandler,
+	z,
+} from '../../../infra/validation/index.js';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -38,8 +40,8 @@ export type StatePatchV2Body = {
 		status?: string;
 		is_online?: boolean;
 		note?: string;
-		os_version?: string;
-		os_variant?: string;
+		os_version?: string | null;
+		os_variant?: string | null;
 		supervisor_version?: string;
 		provisioning_progress?: number | null;
 		provisioning_state?: string | null;
@@ -47,7 +49,7 @@ export type StatePatchV2Body = {
 		mac_address?: string;
 		download_progress?: number | null;
 		api_port?: number;
-		api_secret?: string;
+		api_secret?: string | null;
 		memory_usage?: number;
 		memory_total?: number;
 		storage_block_device?: string;
@@ -115,206 +117,267 @@ const resolveReleaseId = async (
 	return app?.owns__release[0]?.id;
 };
 
-export const statePatchV2: RequestHandler = async (req, res) => {
-	try {
-		const { uuid } = req.params;
-		if (!uuid) {
-			throw new BadRequestError();
-		}
-		const {
-			resolvedDeviceIds: [deviceId],
-		} = req.custom as ResolveDeviceInfoCustomObject;
-		if (deviceId == null) {
-			// We are supposed to have already checked this.
-			throw new UnauthorizedError();
-		}
-
-		const values = req.body;
-		// firstly we need to extract all fields which should be sent to the device
-		// resource which is everything but the service entries
-
-		// Every field that is passed to the endpoint is the same, except
-		// device name
-		const { local } = values as StatePatchV2Body;
-
-		const updateFns: Array<
-			(resinApiTx: typeof sbvrUtils.api.resin) => Promise<void>
-		> = [];
-
-		if (local != null) {
-			const { apps } = local;
-
-			type DeviceBodyBeforeNormalization = Pick<
-				LocalBody,
-				(typeof v2ValidPatchFields)[number]
-			> &
-				Partial<
-					Pick<Device['Write'], 'is_running__release' | 'is_pinned_on__release'>
-				>;
-			let deviceBody = normalizeDeviceWriteBody(
-				_.pick(
-					local,
-					v2ValidPatchFields,
-				) satisfies DeviceBodyBeforeNormalization as DeviceBodyBeforeNormalization,
-				uuid,
-			);
-			let metricsBody: Pick<LocalBody, (typeof metricsPatchFields)[number]> =
-				_.pick(local, metricsPatchFields);
-			limitMetricNumbers(metricsBody);
-			if (
-				Object.keys(metricsBody).length > 0 &&
-				(await shouldUpdateMetrics(uuid))
-			) {
-				// If we should force a metrics update then merge the two together and clear `metricsBody` so
-				// that we don't try to merge it again later
-				deviceBody = { ...deviceBody, ...metricsBody };
-				metricsBody = {};
+export const statePatchV2 = createValidatedRequestHandler(
+	{
+		body: z.object({
+			local: z
+				.object({
+					should_be_running__release: z.number(),
+					name: z.string(),
+					/**
+					 * @deprecated in favor of name, to match the GET endpoint
+					 */
+					device_name: z.string(),
+					status: z.string(),
+					is_online: z.boolean(),
+					note: z.string(),
+					os_version: z.string().nullable(),
+					os_variant: z.string().nullable(),
+					supervisor_version: z.string(),
+					provisioning_progress: z.number().nullable(),
+					provisioning_state: z.string().nullable(),
+					ip_address: z.string(),
+					mac_address: z.string(),
+					download_progress: z.number().nullable(),
+					api_port: z.number(),
+					api_secret: z.string().nullable(),
+					memory_usage: z.number(),
+					memory_total: z.number(),
+					storage_block_device: z.string(),
+					storage_usage: z.number(),
+					storage_total: z.number(),
+					cpu_temp: z.number(),
+					cpu_usage: z.number(),
+					cpu_id: z.string(),
+					is_undervolted: z.boolean(),
+					is_on__commit: z.string().nullable(),
+					apps: z.array(
+						z.object({
+							services: z
+								.record(
+									// image id
+									z.string(),
+									z.object({
+										releaseId: z.number(),
+										status: z.string().optional(),
+										download_progress: z.number().nullable().optional(),
+									}),
+								)
+								.optional(),
+						}),
+					),
+				})
+				.partial(),
+		}),
+	},
+	async (req, res) => {
+		try {
+			const { uuid } = req.params;
+			if (!uuid) {
+				throw new BadRequestError();
+			}
+			const {
+				resolvedDeviceIds: [deviceId],
+			} = req.custom as ResolveDeviceInfoCustomObject;
+			if (deviceId == null) {
+				// We are supposed to have already checked this.
+				throw new UnauthorizedError();
 			}
 
-			if (local.should_be_running__release !== undefined) {
-				deviceBody.is_pinned_on__release = local.should_be_running__release;
-			}
-			if (local.name != null) {
-				deviceBody.device_name = local.name;
-			}
-			if (deviceBody.cpu_id != null) {
-				if (/[^\x20-\x7E]/.test(deviceBody.cpu_id)) {
-					// if the CPU id is not in the character range of 0x20 (SPACE) to 0x7e (~) we drop the CPU ID
-					// this cpu id wouldn't be rendered anyway
-					delete deviceBody.cpu_id;
-				} else {
-					deviceBody.cpu_id = deviceBody.cpu_id.toLowerCase();
-				}
-			}
+			// firstly we need to extract all fields which should be sent to the device
+			// resource which is everything but the service entries
 
-			if (
-				local.is_on__commit !== undefined ||
-				Object.keys(deviceBody).length > 0
-			) {
-				if (local != null) {
-					if (local.is_on__commit === null) {
-						deviceBody.is_running__release = null;
-					} else if (local.is_on__commit !== undefined) {
-						// Run this in a separate read-only transaction in advance, this allows it to be redirected
-						// to a read replica as necessary and avoids holding the write transaction open unnecessarily
-						const releaseId = await resolveReleaseId(
-							{
-								commit: local.is_on__commit,
-								deviceId,
-							},
-							undefined,
-							{ req },
-						);
-						if (releaseId != null) {
-							// Only set the running release if it's valid, otherwise just silently ignore it
-							deviceBody.is_running__release = releaseId;
-						}
-					}
-				}
+			// Every field that is passed to the endpoint is the same, except
+			// device name
+			const { local } = req.body satisfies StatePatchV2Body;
 
-				updateFns.push(async (resinApiTx) => {
-					if (Object.keys(deviceBody).length > 0) {
-						// truncate for resilient legacy compatible device state patch so that supervisors don't fail
-						// to update b/c of length violation of 255 (SBVR SHORT TEXT type) for ip and mac address.
-						// sbvr-types does not export SHORT TEXT VARCHAR length 255 to import.
-						deviceBody = truncateConstrainedDeviceFields(deviceBody, deviceId);
-						await resinApiTx.patch({
-							resource: 'device',
-							id: deviceId,
-							options: {
-								$filter: { $not: deviceBody },
-							},
-							// If we're updating anyway then ensure the metrics data is included
-							// but don't use it as a factor as to whether we should actually write or not
-							body: { ...deviceBody, ...metricsBody },
-						});
-					}
-				});
-			}
+			const updateFns: Array<
+				(resinApiTx: typeof sbvrUtils.api.resin) => Promise<void>
+			> = [];
 
-			if (apps != null) {
-				const imgInstalls = _.flatMap(apps, (app) =>
-					_.map(app.services, (svc, imageIdStr) => {
-						const imageId = parseInt(imageIdStr, 10);
-						if (!Number.isFinite(imageId)) {
-							throw new BadRequestError('Invalid image ID value in request');
-						}
+			if (local != null) {
+				const { apps } = local;
 
-						const releaseId =
-							typeof svc.releaseId === 'number'
-								? svc.releaseId
-								: parseInt(svc.releaseId, 10);
-						if (!Number.isFinite(releaseId)) {
-							throw new BadRequestError('Invalid release ID value in request');
-						}
-
-						return {
-							imageId,
-							releaseId,
-							status: svc.status,
-							downloadProgress: svc.download_progress,
-						};
-					}),
+				type DeviceBodyBeforeNormalization = Pick<
+					LocalBody,
+					(typeof v2ValidPatchFields)[number]
+				> &
+					Partial<
+						Pick<
+							Device['Write'],
+							'is_running__release' | 'is_pinned_on__release'
+						>
+					>;
+				let deviceBody = normalizeDeviceWriteBody(
+					_.pick(
+						local,
+						v2ValidPatchFields,
+					) satisfies DeviceBodyBeforeNormalization as DeviceBodyBeforeNormalization,
+					uuid,
 				);
-				const imageIds = imgInstalls.map(({ imageId }) => imageId);
+				let metricsBody: Pick<LocalBody, (typeof metricsPatchFields)[number]> =
+					_.pick(local, metricsPatchFields);
+				limitMetricNumbers(metricsBody);
+				if (
+					Object.keys(metricsBody).length > 0 &&
+					(await shouldUpdateMetrics(uuid))
+				) {
+					// If we should force a metrics update then merge the two together and clear `metricsBody` so
+					// that we don't try to merge it again later
+					deviceBody = { ...deviceBody, ...metricsBody };
+					metricsBody = {};
+				}
 
-				updateFns.push(async (resinApiTx) => {
-					if (imageIds.length > 0) {
-						const existingImgInstalls = await resinApiTx.get({
-							resource: 'image_install',
-							options: {
-								$select: ['id', 'installs__image'],
-								$filter: {
-									device: deviceId,
-									installs__image: { $in: imageIds },
-								},
-							},
-						});
-						const existingImgInstallsByImage = _.keyBy(
-							existingImgInstalls,
-							({ installs__image }) => installs__image.__id,
-						);
+				if (local.should_be_running__release !== undefined) {
+					deviceBody.is_pinned_on__release = local.should_be_running__release;
+				}
+				if (local.name != null) {
+					deviceBody.device_name = local.name;
+				}
+				if (deviceBody.cpu_id != null) {
+					if (/[^\x20-\x7E]/.test(deviceBody.cpu_id)) {
+						// if the CPU id is not in the character range of 0x20 (SPACE) to 0x7e (~) we drop the CPU ID
+						// this cpu id wouldn't be rendered anyway
+						delete deviceBody.cpu_id;
+					} else {
+						deviceBody.cpu_id = deviceBody.cpu_id.toLowerCase();
+					}
+				}
 
-						await Promise.all(
-							imgInstalls.map(async (imgInstall) => {
-								await upsertImageInstall(
-									resinApiTx,
-									existingImgInstallsByImage[imgInstall.imageId],
-									imgInstall,
+				if (
+					local.is_on__commit !== undefined ||
+					Object.keys(deviceBody).length > 0
+				) {
+					if (local != null) {
+						if (local.is_on__commit === null) {
+							deviceBody.is_running__release = null;
+						} else if (local.is_on__commit !== undefined) {
+							// Run this in a separate read-only transaction in advance, this allows it to be redirected
+							// to a read replica as necessary and avoids holding the write transaction open unnecessarily
+							const releaseId = await resolveReleaseId(
+								{
+									commit: local.is_on__commit,
 									deviceId,
-								);
-							}),
-						);
+								},
+								undefined,
+								{ req },
+							);
+							if (releaseId != null) {
+								// Only set the running release if it's valid, otherwise just silently ignore it
+								deviceBody.is_running__release = releaseId;
+							}
+						}
 					}
 
-					await deleteOldImageInstalls(resinApiTx, deviceId, imageIds);
+					updateFns.push(async (resinApiTx) => {
+						if (Object.keys(deviceBody).length > 0) {
+							// truncate for resilient legacy compatible device state patch so that supervisors don't fail
+							// to update b/c of length violation of 255 (SBVR SHORT TEXT type) for ip and mac address.
+							// sbvr-types does not export SHORT TEXT VARCHAR length 255 to import.
+							deviceBody = truncateConstrainedDeviceFields(
+								deviceBody,
+								deviceId,
+							);
+							await resinApiTx.patch({
+								resource: 'device',
+								id: deviceId,
+								options: {
+									$filter: { $not: deviceBody },
+								},
+								// If we're updating anyway then ensure the metrics data is included
+								// but don't use it as a factor as to whether we should actually write or not
+								body: { ...deviceBody, ...metricsBody },
+							});
+						}
+					});
+				}
+
+				if (apps != null) {
+					const imgInstalls = _.flatMap(apps, (app) =>
+						_.map(app.services, (svc, imageIdStr) => {
+							const imageId = parseInt(imageIdStr, 10);
+							if (!Number.isFinite(imageId)) {
+								throw new BadRequestError('Invalid image ID value in request');
+							}
+
+							const releaseId =
+								typeof svc.releaseId === 'number'
+									? svc.releaseId
+									: parseInt(svc.releaseId, 10);
+							if (!Number.isFinite(releaseId)) {
+								throw new BadRequestError(
+									'Invalid release ID value in request',
+								);
+							}
+
+							return {
+								imageId,
+								releaseId,
+								status: svc.status,
+								downloadProgress: svc.download_progress,
+							};
+						}),
+					);
+					const imageIds = imgInstalls.map(({ imageId }) => imageId);
+
+					updateFns.push(async (resinApiTx) => {
+						if (imageIds.length > 0) {
+							const existingImgInstalls = await resinApiTx.get({
+								resource: 'image_install',
+								options: {
+									$select: ['id', 'installs__image'],
+									$filter: {
+										device: deviceId,
+										installs__image: { $in: imageIds },
+									},
+								},
+							});
+							const existingImgInstallsByImage = _.keyBy(
+								existingImgInstalls,
+								({ installs__image }) => installs__image.__id,
+							);
+
+							await Promise.all(
+								imgInstalls.map(async (imgInstall) => {
+									await upsertImageInstall(
+										resinApiTx,
+										existingImgInstallsByImage[imgInstall.imageId],
+										imgInstall,
+										deviceId,
+									);
+								}),
+							);
+						}
+
+						await deleteOldImageInstalls(resinApiTx, deviceId, imageIds);
+					});
+				}
+			}
+
+			if (updateFns.length > 0) {
+				// Only enter the transaction/do work if there's any updating to be done
+
+				const custom: AnyObject = {}; // shove custom values here to make them available to the hooks
+				// forward the public ip address if the request is from the supervisor.
+				if (req.apiKey != null) {
+					custom.ipAddress = getIP(req);
+				}
+				await sbvrUtils.db.transaction(async (tx) => {
+					const resinApiTx = api.resin.clone({
+						passthrough: { req, custom, tx },
+					});
+
+					await Promise.all(updateFns.map((updateFn) => updateFn(resinApiTx)));
 				});
 			}
-		}
 
-		if (updateFns.length > 0) {
-			// Only enter the transaction/do work if there's any updating to be done
-
-			const custom: AnyObject = {}; // shove custom values here to make them available to the hooks
-			// forward the public ip address if the request is from the supervisor.
-			if (req.apiKey != null) {
-				custom.ipAddress = getIP(req);
+			res.status(200).end();
+		} catch (err) {
+			if (handleHttpErrors(req, res, err)) {
+				return;
 			}
-			await sbvrUtils.db.transaction(async (tx) => {
-				const resinApiTx = api.resin.clone({
-					passthrough: { req, custom, tx },
-				});
-
-				await Promise.all(updateFns.map((updateFn) => updateFn(resinApiTx)));
-			});
+			captureException(err, 'Error setting device state');
+			res.status(500).end();
 		}
-
-		res.status(200).end();
-	} catch (err) {
-		if (handleHttpErrors(req, res, err)) {
-			return;
-		}
-		captureException(err, 'Error setting device state');
-		res.status(500).end();
-	}
-};
+	},
+);
