@@ -1,4 +1,3 @@
-import type { RequestHandler } from 'express';
 import type { Request } from 'express';
 
 import _ from 'lodash';
@@ -13,6 +12,10 @@ import type { ExpandedRelease, StateV3 } from './state-get-v3.js';
 import { buildAppFromRelease, releaseExpand } from './state-get-v3.js';
 import type { OptionsToResponse } from 'pinejs-client-core';
 import type { Application } from '../../../balena-model.js';
+import {
+	createValidatedRequestHandler,
+	z,
+} from '../../../infra/validation/index.js';
 const { api } = sbvrUtils;
 const { UnauthorizedError } = errors;
 
@@ -161,26 +164,29 @@ const getFleetStateV3 = async (
 	};
 };
 
-export const fleetStateV3: RequestHandler = async (req, res) => {
-	const { fleetUuid } = req.params;
-	const { releaseUuid } = req.query;
+export const fleetStateV3 = createValidatedRequestHandler(
+	{
+		query: z.object({
+			releaseUuid: z.string().optional(),
+		}),
+	},
+	async (req, res) => {
+		const { fleetUuid } = req.params;
+		const { releaseUuid } = req.query;
 
-	if (!fleetUuid) {
-		return res.status(400).end();
-	}
-
-	if (releaseUuid && typeof releaseUuid !== 'string') {
-		return res.status(400).end();
-	}
-
-	try {
-		const state = await getFleetStateV3(req, fleetUuid, releaseUuid);
-		res.json(state);
-	} catch (err) {
-		if (handleHttpErrors(req, res, err)) {
-			return;
+		if (!fleetUuid) {
+			return res.status(400).end();
 		}
-		captureException(err, 'Error getting default flee state');
-		res.status(500).end();
-	}
-};
+
+		try {
+			const state = await getFleetStateV3(req, fleetUuid, releaseUuid);
+			res.json(state);
+		} catch (err) {
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
+			captureException(err, 'Error getting default flee state');
+			res.status(500).end();
+		}
+	},
+);
