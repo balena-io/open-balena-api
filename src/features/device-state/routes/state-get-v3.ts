@@ -1,4 +1,4 @@
-import type { RequestHandler, Request } from 'express';
+import type { Request } from 'express';
 
 import _ from 'lodash';
 import {
@@ -19,6 +19,7 @@ import { events } from '../index.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 import { getIP } from '../../../lib/utils.js';
 import type { ExpandedApplicationWithService } from './fleet-state-get-v3.js';
+import { createValidatedRequestHandler } from '../../../infra/validation/index.js';
 
 const { api } = sbvrUtils;
 
@@ -410,7 +411,7 @@ const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
 	return state;
 };
 
-export const stateV3: RequestHandler = async (req, res) => {
+export const stateV3 = createValidatedRequestHandler(async (req, res) => {
 	const { uuid } = req.params;
 	if (!uuid) {
 		return res.status(400).end();
@@ -429,7 +430,7 @@ export const stateV3: RequestHandler = async (req, res) => {
 		captureException(err, 'Error getting device state');
 		res.status(500).end();
 	}
-};
+});
 
 const getDevice = getStateDelayingEmpty(
 	async (req, uuid) =>

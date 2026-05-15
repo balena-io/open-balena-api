@@ -1,4 +1,4 @@
-import type { RequestHandler, Request } from 'express';
+import type { Request } from 'express';
 
 import _ from 'lodash';
 import {
@@ -18,6 +18,7 @@ import { sbvrUtils } from '@balena/pinejs';
 import { events } from '../index.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 import { getIP } from '../../../lib/utils.js';
+import { createValidatedRequestHandler } from '../../../infra/validation/index.js';
 
 const { api } = sbvrUtils;
 
@@ -265,7 +266,7 @@ const getStateV2 = async (req: Request, uuid: string): Promise<StateV2> => {
 	};
 };
 
-export const stateV2: RequestHandler = async (req, res) => {
+export const stateV2 = createValidatedRequestHandler(async (req, res) => {
 	const { uuid } = req.params;
 	if (!uuid) {
 		return res.status(400).end();
@@ -280,7 +281,7 @@ export const stateV2: RequestHandler = async (req, res) => {
 		captureException(err, 'Error getting device state');
 		res.status(500).end();
 	}
-};
+});
 
 const getDevice = getStateDelayingEmpty(
 	async (req, uuid) =>
