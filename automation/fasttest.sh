@@ -50,6 +50,9 @@ fi
 if [[ ! -f ".materialized-config.json" ]]; then
 	touch .materialized-config.json
 fi
+if [[ ! -f ".materialized-schema.sql" ]]; then
+	touch .materialized-schema.sql
+fi
 
 if [[ "$preserve_volumes" == "1" ]]; then
 	echo "Preserving volumes from previous run"
