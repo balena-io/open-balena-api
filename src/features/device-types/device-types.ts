@@ -119,9 +119,8 @@ export const getImageSize = async (
 	slug: string,
 	buildId: string,
 ): Promise<number> => {
-	const deviceTypeInfo = await findDeviceTypeInfoBySlug(resinApi, slug);
-	const deviceTypeJson = deviceTypeInfo.latest;
-	const normalizedSlug = deviceTypeJson.slug;
+	const deviceType = await getDeviceTypeBySlug(resinApi, slug);
+	const normalizedSlug = deviceType.slug;
 
 	const parsedOsVersion =
 		buildId === 'latest' ? 'latest' : semver.parse(buildId);
@@ -173,16 +172,7 @@ export const getImageSize = async (
 						$expr: {
 							a: {
 								is_host: true,
-								is_for__device_type: {
-									$any: {
-										$alias: 'dt',
-										$expr: {
-											dt: {
-												slug,
-											},
-										},
-									},
-								},
+								is_for__device_type: deviceType.id,
 							},
 							// We atm do not support ESR releases.
 							// We can evaluate doing so via an endpoint that also accepts the hostApp as a param
