@@ -1,19 +1,18 @@
 import type { Request } from 'express';
 
-import type { hooks, sbvrUtils } from '@balena/pinejs';
+import type { hooks, sbvrUtils, types } from '@balena/pinejs';
 import { permissions } from '@balena/pinejs';
 
 import { isJWT } from './jwt-passport.js';
 
-const isRequest = (req: hooks.HookReq | Request): req is Request =>
-	'get' in req;
-
 const getAPIKey = async (
-	req: hooks.HookReq | Request,
+	req:
+		| types.OptionalField<hooks.HookReq, 'body' | 'query'>
+		| types.OptionalField<Request, 'body' | 'query'>,
 	tx: Tx | undefined,
 ): Promise<sbvrUtils.ApiKey | undefined> => {
 	try {
-		const apiKey = req.params.apikey ?? req.query.apikey;
+		const apiKey = req.params.apikey ?? req.query?.apikey;
 		if (apiKey != null) {
 			return await permissions.checkApiKey(apiKey, tx);
 		}
@@ -22,7 +21,7 @@ const getAPIKey = async (
 	}
 
 	// Skip for Pine's request objects that don't support headers
-	if (!isRequest(req)) {
+	if (!('get' in req)) {
 		return;
 	}
 
@@ -42,7 +41,9 @@ const getAPIKey = async (
  * Trigger a prefetch of the api key which is not awaited, stored in `req.prefetchApiKey`, which can be later consumed by `retrieveAPIKey`
  */
 export const prefetchAPIKey = (
-	req: (hooks.HookReq & Pick<Request, 'prefetchApiKey'>) | Request,
+	req:
+		| (Omit<hooks.HookReq, 'body' | 'query'> & Pick<Request, 'prefetchApiKey'>)
+		| Request,
 	tx: Tx | undefined,
 ): void => {
 	if (req.apiKey) {
@@ -58,7 +59,9 @@ export const prefetchAPIKey = (
  * Ensure `req.apiKey` is set if it should be, using the prefetched apiKey if it exists
  */
 export const retrieveAPIKey = async (
-	req: (hooks.HookReq & Pick<Request, 'prefetchApiKey'>) | Request,
+	req:
+		| (Omit<hooks.HookReq, 'body' | 'query'> & Pick<Request, 'prefetchApiKey'>)
+		| Request,
 	tx: Tx | undefined,
 ): Promise<void> => {
 	prefetchAPIKey(req, tx);
