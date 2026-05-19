@@ -247,7 +247,7 @@ export default () => {
 					expect(image.registryImage.isDeleted).to.be.false;
 					sinon.assert.calledWithMatch(
 						consoleSpy,
-						'[delete_registry_images_task] Deleted 0 registry manifests',
+						'[delete_registry_images_task] Processed 0/0 images',
 					);
 				} finally {
 					consoleSpy.restore();
@@ -301,21 +301,22 @@ export default () => {
 						),
 					);
 
-					// Each image contributes 1 main manifest + 1 cache manifest.
-					let totalDeleted = 0;
+					// The original task plus follow-up task(s) should together
+					// process every image exactly once.
+					let totalProcessed = 0;
 					for (const callArgs of consoleSpy.args) {
 						const msg = callArgs[0];
 						if (typeof msg !== 'string') {
 							continue;
 						}
 						const match = msg.match(
-							/\[delete_registry_images_task\] Deleted (\d+) registry manifests/,
+							/\[delete_registry_images_task\] Processed (\d+)\/\d+ images/,
 						);
 						if (match) {
-							totalDeleted += parseInt(match[1], 10);
+							totalProcessed += parseInt(match[1], 10);
 						}
 					}
-					expect(totalDeleted).to.equal(images.length * 2);
+					expect(totalProcessed).to.equal(images.length);
 				} finally {
 					consoleSpy.restore();
 					config.TEST_MOCK_ONLY.ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS =

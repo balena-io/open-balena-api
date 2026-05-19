@@ -49,12 +49,7 @@ if (ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED) {
 		handlerName,
 		async (options) => {
 			try {
-				const totalManifestsDeleted = await deleteRegistryImages(
-					options.params,
-				);
-				console.info(
-					`[${logHeader}] Deleted ${totalManifestsDeleted} registry manifests`,
-				);
+				await deleteRegistryImages(options.params);
 				return {
 					status: 'succeeded',
 				};
@@ -76,7 +71,6 @@ async function deleteRepo(
 	s3: NonNullable<typeof s3Client>,
 	repo: string,
 	signal: AbortSignal,
-	onDeleted: () => void,
 ): Promise<void> {
 	const cacheRepos = await s3.listCacheRepos(repo);
 	for (const target of [...cacheRepos, repo]) {
@@ -89,7 +83,6 @@ async function deleteRepo(
 		for (const digest of digests) {
 			signal.throwIfAborted();
 			await deleteImage(token, target, digest);
-			onDeleted();
 		}
 	}
 }
@@ -135,7 +128,7 @@ const deleteRegistryImages = async ({
 		ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS,
 	);
 	const signal = AbortSignal.any([timeoutAbortSignal, errorController.signal]);
-	let totalManifestsDeleted = 0;
+	const initialCount = remaining.size;
 	try {
 		await queue.addAll(
 			Array.from(remaining, (location) => async () => {
@@ -145,9 +138,7 @@ const deleteRegistryImages = async ({
 						`[${logHeader}] Skipping deletion of image with empty repo: ${location}`,
 					);
 				} else {
-					await deleteRepo(s3Client!, repo, signal, () => {
-						totalManifestsDeleted++;
-					});
+					await deleteRepo(s3Client!, repo, signal);
 				}
 				remaining.delete(location);
 			}),
@@ -160,6 +151,10 @@ const deleteRegistryImages = async ({
 			throw err;
 		}
 	}
+
+	console.info(
+		`[${logHeader}] Processed ${initialCount - remaining.size}/${initialCount} images`,
+	);
 
 	// Re-enqueue any remaining images
 	if (remaining.size > 0) {
@@ -178,6 +173,4 @@ const deleteRegistryImages = async ({
 			`[${logHeader}] Task took too long. Created a new task for the remaining images`,
 		);
 	}
-
-	return totalManifestsDeleted;
 };
