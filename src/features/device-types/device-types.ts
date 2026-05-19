@@ -9,8 +9,7 @@ import {
 } from '../../infra/error-handling/index.js';
 
 import { getCompressedSize, getDeviceTypeJson } from './build-info-facade.js';
-import { getDeviceTypes } from './device-types-list.js';
-import type { DeviceTypeInfo } from './device-types-list.js';
+import { getDeviceTypeJsons } from './device-types-list.js';
 import type { Release } from '../../balena-model.js';
 import type { Filter } from 'pinejs-client-core';
 const { BadRequestError, NotFoundError } = errors;
@@ -64,19 +63,6 @@ export const getDeviceTypeBySlug = async (
 	return dt;
 };
 
-const findDeviceTypeInfoBySlug = async (
-	resinApi: typeof sbvrUtils.api.resin,
-	slug: string,
-): Promise<DeviceTypeInfo> => {
-	const deviceTypeResource = await getDeviceTypeBySlug(resinApi, slug);
-	const deviceTypeInfos = await getDeviceTypes();
-	const deviceTypeInfo = deviceTypeInfos[deviceTypeResource.slug];
-	if (deviceTypeInfo?.latest == null) {
-		throw new UnknownDeviceTypeError(slug);
-	}
-	return deviceTypeInfo;
-};
-
 export const validateSlug = (slug?: string) => {
 	if (slug == null || !/^[\w-]+$/.test(slug)) {
 		throw new BadRequestError('Invalid device type');
@@ -89,7 +75,7 @@ export const getAccessibleDeviceTypeJsons = async (
 	resinApi: typeof sbvrUtils.api.resin,
 ): Promise<DeviceTypeJson[]> => {
 	const [deviceTypeInfosBySlug, accessibleDeviceTypes] = await Promise.all([
-		getDeviceTypes(),
+		getDeviceTypeJsons(),
 		resinApi.get({
 			resource: 'device_type',
 			options: {
@@ -99,7 +85,7 @@ export const getAccessibleDeviceTypeJsons = async (
 	]);
 
 	return accessibleDeviceTypes
-		.map((dt) => deviceTypeInfosBySlug[dt.slug]?.latest)
+		.map((dt) => deviceTypeInfosBySlug[dt.slug])
 		.filter((dtJson) => dtJson != null);
 };
 
@@ -107,8 +93,15 @@ export const getAccessibleDeviceTypeJsons = async (
 export const getDeviceTypeJsonBySlug = async (
 	resinApi: typeof sbvrUtils.api.resin,
 	slug: string,
-): Promise<DeviceTypeJson> =>
-	(await findDeviceTypeInfoBySlug(resinApi, slug)).latest;
+): Promise<DeviceTypeJson> => {
+	const deviceTypeResource = await getDeviceTypeBySlug(resinApi, slug);
+	const deviceTypeJsons = await getDeviceTypeJsons();
+	const deviceTypeJson = deviceTypeJsons[deviceTypeResource.slug];
+	if (deviceTypeJson == null) {
+		throw new UnknownDeviceTypeError(slug);
+	}
+	return deviceTypeJson;
+};
 
 // Quick way to infer whether a release version looks like an ESR (eg :2020.1.0)
 // TODO: Drop this once we add support for ESR releases to the download size estimate endpoint.

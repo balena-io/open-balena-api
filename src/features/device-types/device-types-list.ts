@@ -21,11 +21,6 @@ import {
 
 const { api } = sbvrUtils;
 
-export interface DeviceTypeInfo {
-	latest: DeviceTypeJson;
-	versions: string[];
-}
-
 function sortBuildIds(ids: string[]): string[] {
 	return ids.sort((a, b) => {
 		return (
@@ -73,9 +68,9 @@ for (const contractPath of CONTRACT_ALLOWLIST) {
 	}
 }
 
-export const getDeviceTypes = multiCacheMemoizee(
-	async (): Promise<Dictionary<DeviceTypeInfo>> => {
-		const result: Dictionary<DeviceTypeInfo> = {};
+export const getDeviceTypeJsons = multiCacheMemoizee(
+	async (): Promise<Dictionary<DeviceTypeJson>> => {
+		const result: Dictionary<DeviceTypeJson> = {};
 		let deviceTypes = await api.resin.get({
 			resource: 'device_type',
 			passthrough: { req: permissions.rootRead },
@@ -105,18 +100,18 @@ export const getDeviceTypes = multiCacheMemoizee(
 					}
 
 					const sortedBuilds = sortBuildIds(builds);
-					const latestDeviceType = await getFirstValidBuild(slug, sortedBuilds);
-					if (!latestDeviceType) {
+					const latestDeviceTypeJson = await getFirstValidBuild(
+						slug,
+						sortedBuilds,
+					);
+					if (!latestDeviceTypeJson) {
 						return;
 					}
 
-					result[slug] = {
-						versions: builds,
-						latest: latestDeviceType,
-					};
+					result[slug] = latestDeviceTypeJson;
 
-					if (latestDeviceType.aliases != null) {
-						for (const alias of latestDeviceType.aliases) {
+					if (latestDeviceTypeJson.aliases != null) {
+						for (const alias of latestDeviceTypeJson.aliases) {
 							result[alias] = result[slug];
 						}
 					}
@@ -135,7 +130,7 @@ export const getDeviceTypes = multiCacheMemoizee(
 		return result;
 	},
 	{
-		cacheKey: 'fetchDeviceTypes',
+		cacheKey: 'getDeviceTypeJsons',
 		promise: true,
 		primitive: true,
 		maxAge: DEVICE_TYPES_CACHE_LOCAL_TIMEOUT,
