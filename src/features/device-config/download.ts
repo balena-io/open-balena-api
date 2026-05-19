@@ -10,7 +10,7 @@ import {
 
 import { generateConfig } from './device-config.js';
 import { getDeviceTypeJsonBySlug } from '../device-types/device-types.js';
-import { checkInt, getBodyOrQueryParam } from '../../lib/utils.js';
+import { checkInt } from '../../lib/utils.js';
 import { getApiKeyOptsFromRequest } from '../api-keys/lib.js';
 
 const { UnauthorizedError, NotFoundError, BadRequestError } = errors;
@@ -42,13 +42,21 @@ const getApp = async (appId: number, req: permissions.PermissionReq) => {
 
 export const downloadImageConfig: RequestHandler = async (req, res) => {
 	try {
-		const appId = checkInt(getBodyOrQueryParam(req, 'appId'));
+		// Combining both req.body and req.query given both GET and POST support
+		// Ref: https://github.com/balena-io/balena-api/blob/master/src/routes/applications.ts#L95
+		req.body = {
+			...req.query,
+			...req.body,
+		};
+		req.query = {};
+
+		const appId = checkInt(req.body.appId);
 		if (!appId) {
 			throw new BadRequestError('An appId is required.');
 		}
 
-		const deviceTypeSlug = getBodyOrQueryParam(req, 'deviceType');
-		const osVersion = getBodyOrQueryParam(req, 'version');
+		const deviceTypeSlug = req.body.deviceType;
+		const osVersion = req.body.version;
 
 		if (!osVersion) {
 			throw new BadRequestError('A version is required.');
@@ -58,25 +66,14 @@ export const downloadImageConfig: RequestHandler = async (req, res) => {
 			throw new BadRequestError('Device type must be a string if provided');
 		}
 
-		// Checking both req.body and req.query given both GET and POST support
-		// Ref: https://github.com/balena-io/balena-api/blob/master/src/routes/applications.ts#L95
 		const provisioningKeyOptions = getApiKeyOptsFromRequest(
 			req.body,
 			'provisioningKey',
 		);
-		const provisioningKeyQueryOptions = getApiKeyOptsFromRequest(
-			req.query,
-			'provisioningKey',
-		);
 
-		provisioningKeyOptions.name ??=
-			provisioningKeyQueryOptions.name ??
-			'Automatically generated provisioning key';
+		provisioningKeyOptions.name ??= 'Automatically generated provisioning key';
 		provisioningKeyOptions.description ??=
-			provisioningKeyQueryOptions.description ??
 			'Automatically generated for a config file generation';
-		provisioningKeyOptions.expiryDate ??=
-			provisioningKeyQueryOptions.expiryDate;
 
 		const resinApi = api.resin.clone({ passthrough: { req } });
 
