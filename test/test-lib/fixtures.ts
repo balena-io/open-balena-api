@@ -242,11 +242,32 @@ const loaders: types.Dictionary<LoaderFunc> = {
 		req = req.field('release', release.id);
 		req = req.field('asset_key', jsonData.asset_key);
 		req = req.attach('asset', Buffer.from([1, 2, 3]), {
-			filename: jsonData.asset,
 			contentType: 'image/png',
+			...(typeof jsonData.asset === 'string'
+				? { filename: jsonData.asset }
+				: jsonData.asset),
 		});
-
 		const res = await req.expect(201);
+
+		if (
+			typeof jsonData.asset === 'object' &&
+			typeof jsonData.asset.size === 'number'
+		) {
+			// Manually set the mocked size, so that we can still send slim payloads to s3minio during tests
+			await api.resin.patch({
+				resource: 'release_asset',
+				passthrough: { req: permissions.root },
+				id: res.body.id,
+				body: {
+					asset: {
+						...res.body.asset,
+						size: jsonData.asset.size,
+					},
+				},
+			});
+			res.body.asset.size = jsonData.asset.size;
+		}
+
 		return res.body;
 	},
 	release_tags: async (jsonData, fixtures) => {
