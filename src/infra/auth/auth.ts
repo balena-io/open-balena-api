@@ -188,17 +188,17 @@ const getUserQuery = _.once(() =>
 );
 
 export function getUser(
-	req: Request | hooks.HookReq,
+	req: Omit<Request | hooks.HookReq, 'body' | 'query'>,
 	txParam: Tx | undefined,
 	required?: true,
 ): Promise<ResolvedUserPayload>;
 export function getUser(
-	req: Request | hooks.HookReq,
+	req: Omit<Request | hooks.HookReq, 'body' | 'query'>,
 	txParam: Tx | undefined,
 	required: false,
 ): Promise<ResolvedUserPayload | undefined>;
 export async function getUser(
-	req: hooks.HookReq & Pick<Request, 'user' | 'creds'>,
+	req: Omit<hooks.HookReq & Request, 'body' | 'query'>,
 	/** You should always be passing a Tx, unless you are using this in a middleware. */
 	txParam: Tx | undefined,
 	required = true,
