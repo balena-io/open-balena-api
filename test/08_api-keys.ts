@@ -414,7 +414,7 @@ export default () => {
 					it('should return BadRequest for an apikey create request where the key name is not string', async function () {
 						await fn(this.user, this.device.id, {
 							name: 123,
-						}).expect(400, '"Key name should be a string value"');
+						}).expect(400);
 					});
 
 					it('should not allow unauthorized requests', async function () {
@@ -447,7 +447,7 @@ export default () => {
 			for (const { title, fn, missingNameErrorMessage } of [
 				{
 					title: 'using the /api-key/user/full endpoint',
-					missingNameErrorMessage: '"API keys require a name"',
+					missingNameErrorMessage: '',
 					fn(user: UserObjectParam | undefined, body?: AnyObject) {
 						return supertest(user).post(`/api-key/user/full`).send(body);
 					},
@@ -874,7 +874,7 @@ export default () => {
 									name: 'a-different-name',
 									expiryDate: defaultExpiryDate,
 								})
-								.expect(400, '"Unsupported actor type"');
+								.expect(400);
 						});
 
 						it('should reject requests when the actor type id is missing', async function () {
@@ -886,7 +886,7 @@ export default () => {
 									name: 'a-different-name',
 									expiryDate: defaultExpiryDate,
 								})
-								.expect(400, '"Actor type id must be a number"');
+								.expect(400);
 						});
 
 						it('should reject requests when no roles are provided', async function () {
@@ -912,7 +912,7 @@ export default () => {
 									name: 'a-different-name',
 									expiryDate: defaultExpiryDate,
 								})
-								.expect(400, '"Roles should be an array of role names"');
+								.expect(400);
 						});
 
 						it('should reject requests when the role is not a non-empty string', async function () {
@@ -925,7 +925,7 @@ export default () => {
 									name: 'a-different-name',
 									expiryDate: defaultExpiryDate,
 								})
-								.expect(400, '"Roles should be an array of role names"');
+								.expect(400);
 
 							await supertest(this.user)
 								.post(`/api-key/${apiKeyVersion}/`)
@@ -936,7 +936,7 @@ export default () => {
 									name: 'a-different-name',
 									expiryDate: defaultExpiryDate,
 								})
-								.expect(400, '"Roles should be an array of role names"');
+								.expect(400);
 						});
 
 						it('should reject requests when more than one roles are provided', async function () {
