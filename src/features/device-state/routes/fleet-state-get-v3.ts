@@ -1,12 +1,10 @@
-import type { Request } from 'express';
-
 import _ from 'lodash';
 import {
 	captureException,
 	handleHttpErrors,
 } from '../../../infra/error-handling/index.js';
 
-import { sbvrUtils, errors } from '@balena/pinejs';
+import { sbvrUtils, errors, type permissions } from '@balena/pinejs';
 import { getConfig, readTransaction } from '../state-get-utils.js';
 import type { ExpandedRelease, StateV3 } from './state-get-v3.js';
 import { buildAppFromRelease, releaseExpand } from './state-get-v3.js';
@@ -91,7 +89,7 @@ const releaseQuery = _.once(() =>
 	),
 );
 
-const getFleet = async (req: Request, uuid: string) => {
+const getFleet = async (req: permissions.PermissionReq, uuid: string) => {
 	const fleet = await readTransaction((tx) =>
 		stateQuery()({ uuid }, undefined, { req, tx }),
 	);
@@ -103,7 +101,7 @@ const getFleet = async (req: Request, uuid: string) => {
 };
 
 const getSuccessfulReleaseForFleetAndCommit = async (
-	req: Request,
+	req: permissions.PermissionReq,
 	commit: string,
 	fleetId: number,
 ) => {
@@ -137,7 +135,7 @@ const getFleetAppsForState = (
 };
 
 const getFleetStateV3 = async (
-	req: Request,
+	req: permissions.PermissionReq,
 	uuid: string,
 	releaseUuid: string | undefined = undefined,
 ): Promise<FleetStateV3> => {

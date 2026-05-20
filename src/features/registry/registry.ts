@@ -415,7 +415,7 @@ const resolveAccess = async (
 };
 
 const authorizeRequest = async (
-	req: Request,
+	req: permissions.PermissionReq & Pick<Request, 'params'>,
 	scopes: string[],
 	tx: Tx,
 ): Promise<Access[]> => {
@@ -719,7 +719,7 @@ const $getSubject = multiCacheMemoizee(
 	{ useVersion: false },
 );
 const getSubject = async (
-	req: Request,
+	req: permissions.PermissionReq & Pick<Request, 'params'>,
 	tx: Tx,
 ): Promise<undefined | string> => {
 	if (req.apiKey != null && !_.isEmpty(req.apiKey.permissions)) {

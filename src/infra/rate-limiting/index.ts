@@ -89,7 +89,7 @@ export const createRateLimiter = (
 	};
 };
 
-export const getUserIDFromCreds = (req: Request): string => {
+export const getUserIDFromCreds = (req: Pick<Request, 'creds'>): string => {
 	if (req.creds != null && 'id' in req.creds) {
 		return `userID:${req.creds.id}`;
 	}
@@ -150,7 +150,7 @@ const $createRateLimitMiddleware = (
 	}
 	const addReset = !allowReset
 		? _.noop
-		: (req: Request, key: string) => {
+		: (req: Pick<Request, 'resetRatelimit'>, key: string) => {
 				const resetRatelimit = req.resetRatelimit;
 				req.resetRatelimit = async () => {
 					try {

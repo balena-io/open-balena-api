@@ -21,7 +21,7 @@ export const skipLogging = createUnvalidatedRequestHandler(
 // - a/ - actor ID; usually set when an API key associated with a device is used for authentication;
 // - u/ - user ID; used whenever we can extract a user info about the calls (both for API key and JWT auth);
 // - s/ - service name; used when an internal balena service is making an API request.
-const getCallerId = (req: Request) => {
+const getCallerId = (req: Pick<Request, 'creds' | 'apiKey'>) => {
 	if (req.creds != null) {
 		const service = getServiceFromRequest(req);
 		if (service != null) {

@@ -14,7 +14,7 @@ import {
 	readTransaction,
 	varListInsert,
 } from '../state-get-utils.js';
-import { sbvrUtils } from '@balena/pinejs';
+import { type permissions, sbvrUtils } from '@balena/pinejs';
 import { events } from '../index.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
 import { getIP } from '../../../lib/utils.js';
@@ -366,7 +366,11 @@ const stateQuery = _.once(() =>
 	),
 );
 
-const getStateV3 = async (req: Request, uuid: string): Promise<StateV3> => {
+const getStateV3 = async (
+	req: permissions.PermissionReq &
+		Pick<Request, 'custom' | 'ip' | 'connection'>,
+	uuid: string,
+): Promise<StateV3> => {
 	const [deviceId] = (req.custom as ResolveDeviceInfoCustomObject)
 		.resolvedDeviceIds;
 

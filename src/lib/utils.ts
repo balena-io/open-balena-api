@@ -43,7 +43,9 @@ export const checkInt = (
 	return n;
 };
 
-export const getIP = (req: Request): string | undefined =>
+export const getIP = (
+	req: Pick<Request, 'ip' | 'connection'>,
+): string | undefined =>
 	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 	req.ip ||
 	// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
@@ -53,7 +55,9 @@ export const getIP = (req: Request): string | undefined =>
 	undefined;
 
 // Returns the IPv4 formatted address if possible, or undefined if not
-export const getIPv4 = (req: Request): string | undefined => {
+export const getIPv4 = (
+	req: Pick<Request, 'ip' | 'connection'>,
+): string | undefined => {
 	try {
 		const rawIp = getIP(req);
 		if (rawIp == null) {
