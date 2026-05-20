@@ -26,6 +26,7 @@ const addFakeDeviceTypes = () => {
 				'dt-with-500-ignore-file-release',
 				'dt-with-500-device-type-json-release',
 				'dt-with-no-valid-releases',
+				'dt-with-release-asset',
 			].map(async (slug, i) => {
 				const deviceType = await rootApi.post({
 					resource: 'device_type',
@@ -59,6 +60,17 @@ const addFakeDeviceTypes = () => {
 		const rootApi = sbvrUtils.api.resin.clone({
 			passthrough: {
 				req: permissions.root,
+			},
+		});
+
+		// Applications referencing these fake DTs must be deleted before the DTs
+		// themselves, otherwise the FK constraint blocks the device_type delete.
+		await rootApi.delete({
+			resource: 'application',
+			options: {
+				$filter: {
+					is_for__device_type: { $in: fakeDeviceTypeIds },
+				},
 			},
 		});
 
@@ -232,10 +244,30 @@ export default () => {
 			it('should return a proper result', async () => {
 				const res = await supertest().get('/device-types/v1').expect(200);
 				expect(res.body).to.be.an('array');
-				expect(res.body).to.have.property('length', 18);
+				expect(res.body).to.have.property('length', 19);
 				const rpi3config = _.find(res.body, { slug: 'raspberrypi3' });
 				expect(rpi3config).to.be.an('object');
 				expect(rpi3config).to.have.property('buildId', '2.19.0+rev1.prod');
+			});
+
+			it('should serve a device type whose device-type.json comes from a release asset', async () => {
+				const res = await supertest().get('/device-types/v1').expect(200);
+				expect(res.body).to.be.an('array');
+				const deviceType = _.find(
+					res.body,
+					({ slug }) => slug === 'dt-with-release-asset',
+				);
+				expect(deviceType).to.be.an('object');
+				expect(deviceType).to.have.property('name', 'DT With Release Asset');
+				expect(deviceType).to.have.property('arch', 'amd64');
+				expect(deviceType).to.have.property('state', 'RELEASED');
+				expect(deviceType).to.have.property('buildId').that.is.a('string');
+				expect(deviceType)
+					.to.have.property('aliases')
+					.that.deep.equals([
+						'dt-with-release-asset',
+						'dt-with-release-asset-alias',
+					]);
 			});
 		});
 
@@ -270,6 +302,35 @@ export default () => {
 				expect(res.body).to.have.property('arch', 'rpi');
 				expect(res.body).to.have.property('state', 'RELEASED');
 				expect(res.body).to.have.property('buildId', '2.19.0+rev1.prod');
+			});
+
+			it('should return the device-type.json sourced from the release asset', async () => {
+				const res = await supertest()
+					.get('/device-types/v1/dt-with-release-asset')
+					.expect(200);
+				expect(res.body).to.be.an('object');
+				expect(res.body).to.have.property('slug', 'dt-with-release-asset');
+				expect(res.body).to.have.property('version', 1);
+				expect(res.body).to.have.property('name', 'DT With Release Asset');
+				expect(res.body).to.have.property('arch', 'amd64');
+				expect(res.body).to.have.property('state', 'RELEASED');
+				expect(res.body)
+					.to.have.property('aliases')
+					.that.deep.equals([
+						'dt-with-release-asset',
+						'dt-with-release-asset-alias',
+					]);
+				expect(res.body).to.have.nested.property('yocto.machine');
+			});
+
+			it('should resolve an alias to the device-type.json from the release asset', async () => {
+				const res = await supertest()
+					.get('/device-types/v1/dt-with-release-asset-alias')
+					.expect(200);
+				expect(res.body).to.be.an('object');
+				expect(res.body).to.have.property('slug', 'dt-with-release-asset');
+				expect(res.body).to.have.property('name', 'DT With Release Asset');
+				expect(res.body).to.have.property('arch', 'amd64');
 			});
 
 			it('should include the logoUrl only when an icon is available', async () => {

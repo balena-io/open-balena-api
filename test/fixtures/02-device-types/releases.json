@@ -104,5 +104,13 @@
 		"status": "success",
 		"semver": "2024.7.1",
 		"user": "admin"
+	},
+	"releaseDtWithReleaseAsset_7_0_0": {
+		"application": "dt-with-release-asset",
+		"composition": {},
+		"source": "cloud",
+		"status": "success",
+		"semver": "7.0.0",
+		"user": "admin"
 	}
 }

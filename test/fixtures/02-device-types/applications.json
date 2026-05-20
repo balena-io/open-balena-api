@@ -19,5 +19,12 @@
 		"is_public": true,
 		"device_type": "generic-amd64",
 		"app_name": "generic-amd64-esr"
+	},
+	"dt-with-release-asset": {
+		"user": "admin",
+		"is_host": true,
+		"is_public": true,
+		"device_type": "dt-with-release-asset",
+		"app_name": "dt-with-release-asset"
 	}
 }
