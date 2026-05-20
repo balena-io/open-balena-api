@@ -314,7 +314,7 @@ export const registerUser = async (
 		password?: string;
 	},
 	tx: Tx,
-	req?: Request,
+	req?: Parameters<typeof getIP>[0],
 	// This should be able to be `PickDeferred<User['Read']>` but it needs to be inlined
 	// to avoid issues around typescript's maximum serialization length.
 ): Promise<{ [P in keyof User['Read']]: Deferred<User['Read'][P]> }> => {

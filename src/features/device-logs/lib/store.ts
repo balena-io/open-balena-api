@@ -83,7 +83,9 @@ const getWriteContext = (() => {
 		},
 		{ useVersion: false },
 	);
-	return async (req: Request): Promise<LogContext> => {
+	return async (
+		req: permissions.PermissionReq & Pick<Request, 'params'>,
+	): Promise<LogContext> => {
 		const { uuid } = req.params;
 		const maybeLogContext = await $getWriteContext(uuid, req);
 		if (maybeLogContext === false) {
@@ -126,7 +128,7 @@ export const store = createValidatedRequestHandler(
 export const storeStream = (
 	onLogWriteStreamInitialized: SetupOptions['onLogWriteStreamInitialized'],
 ) =>
-	createValidatedRequestHandler(async (req: Request, res: Response) => {
+	createValidatedRequestHandler(async (req, res) => {
 		try {
 			const ctx = await getWriteContext(req);
 			handleStreamingWrite(ctx, req, res);

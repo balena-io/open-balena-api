@@ -2,14 +2,13 @@
 // Declares permissions assigned to default roles and API keys
 //
 
-import type { sbvrUtils } from '@balena/pinejs';
-
 import {
 	API_VPN_SERVICE_API_KEY,
 	IGNORE_FROZEN_DEVICE_PERMISSIONS,
 	VPN_GUEST_API_KEY,
 	VPN_SERVICE_API_KEY,
 } from './config.js';
+import type { Request } from 'express';
 
 const defaultWritePerms = ['create', 'update', 'delete'] as const;
 
@@ -206,9 +205,9 @@ if (VPN_GUEST_API_KEY != null) {
 
 const SERVICE_PREFIX = 'service.';
 
-export const getServiceFromRequest = (req: {
-	apiKey?: sbvrUtils.ApiKey;
-}): string | undefined => {
+export const getServiceFromRequest = (
+	req: Pick<Request, 'apiKey'>,
+): string | undefined => {
 	if (req.apiKey?.permissions == null) {
 		return;
 	}

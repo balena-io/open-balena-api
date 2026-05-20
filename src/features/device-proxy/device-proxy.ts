@@ -29,7 +29,7 @@ const { BadRequestError, NotFoundError } = errors;
 const { api } = sbvrUtils;
 
 const badSupervisorResponse = (
-	req: Request,
+	req: Pick<Request, 'originalUrl'>,
 	res: Response,
 	filter: Filter<Device['Read']>,
 	reason: string,
@@ -44,7 +44,7 @@ const badSupervisorResponse = (
 
 const validateSupervisorResponse = (
 	response: RequestResponse,
-	req: Request,
+	req: Pick<Request, 'originalUrl'>,
 	res: Response,
 	filter: Filter<Device['Read']>,
 ) => {
