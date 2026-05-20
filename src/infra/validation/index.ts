@@ -1,7 +1,15 @@
-import type { RequestHandler } from 'express';
+import type { Request, RequestHandler } from 'express';
 import type { ParamsDictionary } from 'express-serve-static-core';
 import type { z } from 'zod';
 export { z } from 'zod';
+
+export type RequestExcludingInput = Omit<
+	Request<ParamsDictionary, any, unknown, unknown> & Express.Request,
+	'body' | 'query'
+> & {
+	body?: unknown;
+	query?: unknown;
+};
 
 export function createValidatedRequestHandler(
 	handler: RequestHandler<
