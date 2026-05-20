@@ -13,6 +13,7 @@ import type {
 	PickDeferred,
 	Deferred,
 } from '@balena/abstract-sql-to-typescript';
+import type { RequestExcludingInput } from '../validation/index.js';
 
 const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
@@ -188,17 +189,17 @@ const getUserQuery = _.once(() =>
 );
 
 export function getUser(
-	req: Omit<Request | hooks.HookReq, 'body' | 'query'>,
+	req: RequestExcludingInput | hooks.HookReq,
 	txParam: Tx | undefined,
 	required?: true,
 ): Promise<ResolvedUserPayload>;
 export function getUser(
-	req: Omit<Request | hooks.HookReq, 'body' | 'query'>,
+	req: RequestExcludingInput | hooks.HookReq,
 	txParam: Tx | undefined,
 	required: false,
 ): Promise<ResolvedUserPayload | undefined>;
 export async function getUser(
-	req: Omit<hooks.HookReq & Request, 'body' | 'query'>,
+	req: RequestExcludingInput & hooks.HookReq,
 	/** You should always be passing a Tx, unless you are using this in a middleware. */
 	txParam: Tx | undefined,
 	required = true,
