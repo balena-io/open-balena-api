@@ -18,6 +18,10 @@ import type { RequestResponse } from '../../infra/request-promise/index.js';
 import { requestAsync } from '../../infra/request-promise/index.js';
 import { checkInt, throttledForEach } from '../../lib/utils.js';
 import type { Device } from '../../balena-model.js';
+import {
+	createValidatedRequestHandler,
+	z,
+} from '../../infra/validation/index.js';
 
 // Degraded network, slow devices, compressed docker binaries and any combination of these factors
 // can cause proxied device requests to surpass the default timeout.
@@ -86,68 +90,86 @@ const validateSupervisorResponse = (
 const multiResponse = (responses: RequestResponse[]) =>
 	responses.map(([response]) => _.pick(response, 'statusCode', 'body'));
 
-export const proxy = async (req: Request, res: Response) => {
-	const filter: Filter<Device['Read']> = {};
-	try {
-		const url = req.params[0];
-		if (url == null) {
-			throw new BadRequestError('Supervisor API url must be specified');
-		}
-
-		const { appId, deviceId, uuid, data, method } = req.body;
-
-		// Only check the validity of ids if they exist.
-		if (appId != null) {
-			filter.belongs_to__application = checkInt(appId);
-			if (filter.belongs_to__application === false) {
-				throw new BadRequestError(
-					'App ID must be a valid integer if specified',
-				);
+export const proxy = createValidatedRequestHandler(
+	{
+		body: z.object({
+			appId: z.string().or(z.number()).nullish(),
+			deviceId: z.string().or(z.number()).nullish(),
+			uuid: z.string().min(1).nullish(),
+			data: z.record(z.string(), z.unknown()).optional(),
+			method: z.preprocess(
+				(v) => {
+					if (typeof v === 'string') {
+						return v.toUpperCase();
+					}
+					return v;
+				},
+				z.enum(['PUT', 'PATCH', 'POST', 'HEAD', 'DELETE', 'GET']).optional(),
+			),
+		}),
+	},
+	async (req, res) => {
+		const filter: Filter<Device['Read']> = {};
+		try {
+			const url = req.params[0];
+			if (url == null) {
+				throw new BadRequestError('Supervisor API url must be specified');
 			}
-		}
-		if (deviceId != null) {
-			filter.id = checkInt(deviceId);
-			if (filter.id === false) {
-				throw new BadRequestError(
-					'Device ID must be a valid integer if specified',
-				);
-			}
-		}
-		if (uuid != null) {
-			if (typeof uuid !== 'string') {
-				throw new BadRequestError('UUID must be a valid string if specified');
-			}
-			filter.uuid = uuid;
-		}
 
-		// Make sure at least one id has been set (filter isn't empty), and that the values for it are valid
-		if (_.isEmpty(filter)) {
-			throw new BadRequestError('At least one filter must be specified');
-		}
+			let { appId } = req.body;
+			const { deviceId, uuid, data, method = 'POST' } = req.body;
 
-		const responses = await requestDevices({
-			url,
-			req,
-			filter,
-			data,
-			method,
-			// Only pass appId if we're not filtering by deviceId or uuid
-			// This means we can check permissions on the application level only
-			...(deviceId == null && uuid == null && { appId }),
-		});
-		if (responses.length === 1) {
-			validateSupervisorResponse(responses[0], req, res, filter);
-			return;
+			// Only check the validity of ids if they exist.
+			if (appId != null) {
+				const maybeAppId = checkInt(appId);
+				if (maybeAppId === false) {
+					throw new BadRequestError(
+						'App ID must be a valid integer if specified',
+					);
+				}
+				filter.belongs_to__application = appId = maybeAppId;
+			}
+			if (deviceId != null) {
+				filter.id = checkInt(deviceId);
+				if (filter.id === false) {
+					throw new BadRequestError(
+						'Device ID must be a valid integer if specified',
+					);
+				}
+			}
+			if (uuid != null) {
+				filter.uuid = uuid;
+			}
+
+			// Make sure at least one id has been set (filter isn't empty), and that the values for it are valid
+			if (_.isEmpty(filter)) {
+				throw new BadRequestError('At least one filter must be specified');
+			}
+
+			const responses = await requestDevices({
+				url,
+				req,
+				filter,
+				data,
+				method,
+				// Only pass appId if we're not filtering by deviceId or uuid
+				// This means we can check permissions on the application level only
+				...(deviceId == null && uuid == null && { appId }),
+			});
+			if (responses.length === 1) {
+				validateSupervisorResponse(responses[0], req, res, filter);
+				return;
+			}
+			res.status(207).json(multiResponse(responses));
+		} catch (err) {
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
+			const errorToReturn = err?.body ?? err;
+			res.status(502).send(translateError(errorToReturn));
 		}
-		res.status(207).json(multiResponse(responses));
-	} catch (err) {
-		if (handleHttpErrors(req, res, err)) {
-			return;
-		}
-		const errorToReturn = err?.body ?? err;
-		res.status(502).send(translateError(errorToReturn));
-	}
-};
+	},
+);
 
 interface FixedMethodRequestDevicesOpts {
 	url: string;
@@ -155,11 +177,11 @@ interface FixedMethodRequestDevicesOpts {
 	data?: AnyObject;
 	req?: sbvrUtils.Passthrough['req'];
 	wait?: boolean;
-	appId?: number;
+	appId?: number | null;
 }
 
 interface RequestDevicesOpts extends FixedMethodRequestDevicesOpts {
-	method: string;
+	method: 'PUT' | 'PATCH' | 'POST' | 'HEAD' | 'DELETE' | 'GET';
 }
 
 // Check user resource access via /canAccess
@@ -204,15 +226,11 @@ async function requestDevices({
 	data,
 	req,
 	wait = true,
-	method = 'POST',
+	method,
 	appId,
 }: RequestDevicesOpts): Promise<undefined | RequestResponse[]> {
 	if (url == null) {
 		throw new BadRequestError('You must specify a url to request!');
-	}
-	method = method.toUpperCase();
-	if (!['PUT', 'PATCH', 'POST', 'HEAD', 'DELETE', 'GET'].includes(method)) {
-		throw new BadRequestError(`Invalid method '${method}'`);
 	}
 	const devices = await sbvrUtils.db.readTransaction(async (tx) => {
 		const resinApi = api.resin.clone({
