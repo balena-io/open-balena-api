@@ -139,8 +139,8 @@ export const downloadImageConfig = createValidatedRequestHandler(
 				deviceTypeSlug ?? app.is_for__device_type[0].slug,
 			);
 			const config = await generateConfig(
-				// TODO: This can be removed when `generateConfig` no longer checks both body/query on the req
-				req as unknown as Request,
+				req,
+				req.body,
 				app,
 				provisioningKeyOptions,
 				deviceTypeJson,
