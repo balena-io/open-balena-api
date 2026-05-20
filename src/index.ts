@@ -122,7 +122,6 @@ import {
 	getIPv4,
 	isValidInteger,
 	throttledForEach,
-	getBodyOrQueryParam,
 } from './lib/utils.js';
 import {
 	createRateLimitMiddleware,
@@ -250,7 +249,6 @@ export const utils = {
 	isValidInteger,
 	varListInsert,
 	throttledForEach,
-	getBodyOrQueryParam,
 };
 export const apiKeys = {
 	augmentReqApiKeyPermissions,
