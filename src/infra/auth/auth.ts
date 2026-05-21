@@ -14,6 +14,7 @@ import type {
 	Deferred,
 } from '@balena/abstract-sql-to-typescript';
 import type { RequestExcludingInput } from '../validation/index.js';
+export { isJWT, verifyAndResolveJwt } from './jwt-passport.js';
 
 const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;

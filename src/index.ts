@@ -78,6 +78,8 @@ import {
 	setRegistrationRoleFunc,
 	validatePassword,
 	checkUserPassword,
+	isJWT,
+	verifyAndResolveJwt,
 } from './infra/auth/auth.js';
 import {
 	setUserTokenDataCallback,
@@ -226,6 +228,8 @@ export const auth = {
 	registryAuth,
 	normalizeHandle,
 	publicKeys,
+	isJWT,
+	verifyAndResolveJwt,
 	/** @deprecated Will be removed in a future version */
 	refreshToken,
 };
