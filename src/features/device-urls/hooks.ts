@@ -6,12 +6,12 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	PRERUN: async (args) => {
 		const { api, request } = args;
 		if (request.values.is_web_accessible) {
+			const deviceIds = await sbvrUtils.getAffectedIds(args);
 			const rootApi = api.clone({
 				passthrough: {
-					req: permissions.root,
+					req: permissions.rootRead,
 				},
 			});
-			const deviceIds = await sbvrUtils.getAffectedIds(args);
 			await checkDevicesCanHaveDeviceURL(rootApi, deviceIds);
 		}
 	},

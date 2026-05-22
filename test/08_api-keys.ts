@@ -100,7 +100,7 @@ export default () => {
 						const apiKeyResp = await api.resin.get({
 							resource: 'api_key',
 							passthrough: {
-								req: permissions.root,
+								req: permissions.rootRead,
 							},
 							id: {
 								key: provisioningKey,
@@ -153,7 +153,7 @@ export default () => {
 						const apiKeyResp = await api.resin.get({
 							resource: 'api_key',
 							passthrough: {
-								req: permissions.root,
+								req: permissions.rootRead,
 							},
 							id: {
 								key: provisioningKey,
@@ -368,7 +368,7 @@ export default () => {
 						const apiKeyResp = await api.resin.get({
 							resource: 'api_key',
 							passthrough: {
-								req: permissions.root,
+								req: permissions.rootRead,
 							},
 							id: {
 								key: deviceApiKey,
@@ -394,7 +394,7 @@ export default () => {
 						const apiKeyResp = await api.resin.get({
 							resource: 'api_key',
 							passthrough: {
-								req: permissions.root,
+								req: permissions.rootRead,
 							},
 							id: {
 								key: deviceApiKey,

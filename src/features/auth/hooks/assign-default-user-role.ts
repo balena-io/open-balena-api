@@ -15,7 +15,7 @@ hooks.addPureHook('POST', 'resin', 'user', {
 			resource: 'role',
 			passthrough: {
 				tx,
-				req: permissions.root,
+				req: permissions.rootRead,
 			},
 			id: {
 				name: getRegistrationRole(request.values),

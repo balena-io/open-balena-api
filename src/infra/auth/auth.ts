@@ -128,7 +128,7 @@ export const checkUserPassword = async (
 		resource: 'user',
 		id: userId,
 		passthrough: {
-			req: permissions.root,
+			req: permissions.rootRead,
 			tx,
 		},
 		options: {
@@ -160,7 +160,7 @@ const getUserQuery = _.once(() =>
 	api.resin.prepare(
 		{
 			resource: 'user',
-			passthrough: { req: permissions.root },
+			passthrough: { req: permissions.rootRead },
 			options: {
 				$select: userFields,
 				$filter: {
@@ -289,7 +289,7 @@ export async function findUser<TProps extends Array<keyof User['Read']>>(
 	const [user] = await api.resin.get({
 		resource: 'user',
 		passthrough: {
-			req: permissions.root,
+			req: permissions.rootRead,
 			tx,
 		},
 		options: {

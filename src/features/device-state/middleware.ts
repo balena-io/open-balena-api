@@ -14,7 +14,7 @@ const checkDeviceExistsIsFrozenQuery = _.once(() =>
 	api.resin.prepare(
 		{
 			resource: 'device',
-			passthrough: { req: permissions.root },
+			passthrough: { req: permissions.rootRead },
 			id: {
 				uuid: { '@': 'uuid' },
 			},

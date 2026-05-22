@@ -31,7 +31,7 @@ passport.use(
 			await api.resin.get({
 				resource: 'user',
 				id,
-				passthrough: { req: pine.permissions.root },
+				passthrough: { req: pine.permissions.rootRead },
 				options: {
 					$select: ['actor', 'jwt_secret'],
 				},

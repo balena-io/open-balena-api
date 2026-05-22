@@ -37,7 +37,7 @@ export default () => {
 					const apiKeyResp = await api.resin.get({
 						resource: 'api_key',
 						passthrough: {
-							req: permissions.root,
+							req: permissions.rootRead,
 						},
 						id: {
 							key: body.apiKey,
@@ -77,7 +77,7 @@ export default () => {
 					const apiKeyResp = await api.resin.get({
 						resource: 'api_key',
 						passthrough: {
-							req: permissions.root,
+							req: permissions.rootRead,
 						},
 						id: {
 							key: body.apiKey,

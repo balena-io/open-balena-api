@@ -25,7 +25,7 @@ const getPollIntervalForDevice = _.once(() =>
 	api.resin.prepare(
 		{
 			resource: 'device_config_variable',
-			passthrough: { req: permissions.root },
+			passthrough: { req: permissions.rootRead },
 			options: {
 				$select: ['value'],
 				$top: 1,
@@ -53,7 +53,7 @@ const getPollIntervalForParentApplication = _.once(() =>
 	api.resin.prepare(
 		{
 			resource: 'application_config_variable',
-			passthrough: { req: permissions.root },
+			passthrough: { req: permissions.rootRead },
 			options: {
 				$select: ['value'],
 				$top: 1,

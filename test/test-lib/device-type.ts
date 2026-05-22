@@ -23,7 +23,7 @@ export const loadDefaultFixtures = () => {
 						const deviceType = api.resin.get({
 							resource: 'device_type',
 							passthrough: {
-								req: permissions.root,
+								req: permissions.rootRead,
 							},
 							id: {
 								slug,

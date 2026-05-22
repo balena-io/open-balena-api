@@ -18,7 +18,7 @@ hooks.addPureHook('POST', 'resin', 'image', {
 				resource: 'image',
 				passthrough: {
 					tx,
-					req: permissions.root,
+					req: permissions.rootRead,
 				},
 				options: {
 					$count: {

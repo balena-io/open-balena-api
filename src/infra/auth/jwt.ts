@@ -78,7 +78,7 @@ let $getUserTokenDataCallback: GetUserTokenDataFn = async (
 	const userData = await api.resin.get({
 		resource: 'user',
 		id: userId,
-		passthrough: { req: permissions.root, tx },
+		passthrough: { req: permissions.rootRead, tx },
 		options: {
 			$select: tokenFields,
 		},
