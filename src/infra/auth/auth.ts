@@ -57,21 +57,6 @@ export const comparePassword = (password: string, hash: string | null) =>
 		? runInvalidPasswordComparison()
 		: sbvrUtils.sbvrTypes.Hashed.compare(password, hash);
 
-export const validatePassword = (
-	password: string | undefined,
-): asserts password is string => {
-	if (!password) {
-		throw new BadRequestError('Password required.');
-	}
-	if (password.length < 8) {
-		throw new BadRequestError('Password must be at least 8 characters.');
-	}
-	if (64 < password.length) {
-		// OWASP: Avoid long password DoS attacks
-		throw new BadRequestError('Password must be at most 64 characters.');
-	}
-};
-
 // Think twice before using this function as it *unconditionally* sets the
 // password for the given user to the given string. Changing a user password
 // will also generate a new token secret, effectively invalidating all current
