@@ -40,7 +40,7 @@ export const whoami = createValidatedRequestHandler(async (req, res) => {
 
 				const userWithEmail = await api.resin.get({
 					resource: 'user',
-					passthrough: { req: permissions.root, tx },
+					passthrough: { req: permissions.rootRead, tx },
 					id: userWithUsername.id,
 					options: {
 						$select: 'email',
@@ -100,7 +100,7 @@ export const actorWhoami = createValidatedRequestHandler(async (req, res) => {
 
 			return await api.resin.get({
 				resource: 'actor',
-				passthrough: { req: permissions.root, tx },
+				passthrough: { req: permissions.rootRead, tx },
 				id: actorId,
 				options: {
 					$select: ['id'],

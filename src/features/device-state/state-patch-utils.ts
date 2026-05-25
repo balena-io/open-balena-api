@@ -343,12 +343,6 @@ export const deleteOldImageInstalls = async (
 	deviceId: number,
 	imageIds: number[],
 ): Promise<void> => {
-	// Get access to a root api, as images shouldn't be allowed to change
-	// the service_install values
-	const rootApi = resinApi.clone({
-		passthrough: { req: permissions.root },
-	});
-
 	const body = { status: 'deleted' as const, download_progress: null };
 	const filter: Filter<ImageInstall['Read']> = {
 		device: deviceId,
@@ -359,8 +353,11 @@ export const deleteOldImageInstalls = async (
 		filter.$not = body;
 	}
 
-	await rootApi.patch({
+	// Get access to a root api, as images shouldn't be allowed to change
+	// the service_install values
+	await resinApi.patch({
 		resource: 'image_install',
+		passthrough: { req: permissions.root },
 		body,
 		options: {
 			$filter: filter,

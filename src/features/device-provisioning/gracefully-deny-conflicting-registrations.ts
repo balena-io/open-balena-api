@@ -12,7 +12,7 @@ const checkApiKeyExistsQuery = _.once(() =>
 	api.resin.prepare(
 		{
 			resource: 'api_key',
-			passthrough: { req: permissions.root },
+			passthrough: { req: permissions.rootRead },
 			id: {
 				key: { '@': 'key' },
 			},

@@ -99,7 +99,7 @@ const getAppType = async (api: typeof sbvrUtils.api.resin, appId: number) => {
 	const [appType] = await api.get({
 		resource: 'application_type',
 		passthrough: {
-			req: permissions.root,
+			req: permissions.rootRead,
 		},
 		options: {
 			$select: ['needs__os_version_range'],

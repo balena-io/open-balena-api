@@ -18,7 +18,7 @@ const setupCacheInvalidation = <K extends string>(
 			}
 			const affectedItems = await api.get({
 				resource,
-				passthrough: { req: permissions.root, tx },
+				passthrough: { req: permissions.rootRead, tx },
 				options: {
 					$select: [keyProperty],
 					$filter: {

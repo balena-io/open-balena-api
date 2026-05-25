@@ -216,7 +216,7 @@ const resolveImageId = multiCacheMemoizee(
 	async (effectiveName: string, tx: Tx): Promise<number | undefined> => {
 		const [image] = await api.resin.get({
 			resource: 'image',
-			passthrough: { req: permissions.root, tx },
+			passthrough: { req: permissions.rootRead, tx },
 			options: {
 				$select: ['id'],
 				$filter: {
@@ -643,7 +643,7 @@ const $getSubject = multiCacheMemoizee(
 				// Try to resolve as a device api key first, using the passed in subject
 				const device = await api.resin.get({
 					resource: 'device',
-					passthrough: { req: permissions.root, tx },
+					passthrough: { req: permissions.rootRead, tx },
 					id: {
 						// uuids are passed as `d_${uuid}`
 						uuid: subject.replace(/^d_/, ''),
@@ -679,7 +679,7 @@ const $getSubject = multiCacheMemoizee(
 		// If resolving as a device api key fails then instead try to resolve to the user api key username
 		const [user] = await api.resin.get({
 			resource: 'user',
-			passthrough: { req: permissions.root },
+			passthrough: { req: permissions.rootRead },
 			options: {
 				$select: 'username',
 				$filter: {
