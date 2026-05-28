@@ -1,4 +1,3 @@
-import type { Request } from 'express';
 import randomstring from 'randomstring';
 import _ from 'lodash';
 
@@ -236,7 +235,7 @@ export type ApiKeyParameters = {
 export const supportedActorTypes = ['application', 'user', 'device'] as const;
 
 export const createGenericApiKey = async (
-	req: Request,
+	req: RequestExcludingInput,
 	{
 		actorType,
 		actorTypeId,
@@ -273,7 +272,8 @@ export const createGenericApiKey = async (
 		actorType,
 		roleName,
 		req,
-		req.body,
+		// We pass in the api key options directly so we don't actually want `createApiKey` to look for them in the request again, hence the empty object here
+		{},
 		actorTypeId,
 		// pass only the properties that the endpoint supports
 		{
