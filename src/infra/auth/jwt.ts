@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
 
 import _ from 'lodash';
 import base32 from 'thirty-two';
@@ -16,6 +16,7 @@ import {
 	JSON_WEB_TOKEN_SECRET,
 	JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH,
 } from '../../lib/config.js';
+import type { RequestExcludingInput } from '../validation/index.js';
 
 const { InternalRequestError } = errors;
 const { api } = sbvrUtils;
@@ -140,7 +141,7 @@ export const loginUserXHR = async (
 
 export const updateUserXHR = async (
 	res: Response,
-	req: Request,
+	req: RequestExcludingInput,
 	{ tx }: { tx: Tx },
 ): Promise<void> => {
 	await getUser(req, tx, false);

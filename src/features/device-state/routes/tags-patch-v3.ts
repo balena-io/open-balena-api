@@ -10,6 +10,7 @@ import { checkTagKeyValidity } from '../../tags/validation.js';
 import { resolveDeviceUuids } from './state-patch-v3.js';
 import {
 	createValidatedRequestHandler,
+	type RequestExcludingInput,
 	z,
 } from '../../../infra/validation/index.js';
 
@@ -17,7 +18,7 @@ const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;
 
 const fetchData = async (
-	req: Express.Request,
+	req: RequestExcludingInput,
 	custom: AnyObject,
 	deviceIds: number[],
 	deviceTagKeys: {

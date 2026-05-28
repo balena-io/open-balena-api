@@ -1,5 +1,5 @@
 import cluster from 'cluster';
-import type { Request, Response, RequestHandler } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import _ from 'lodash';
 import type { IRateLimiterOptions } from 'rate-limiter-flexible';
 import {
@@ -15,6 +15,7 @@ import {
 } from '../../lib/config.js';
 import { errors } from '@balena/pinejs';
 import { redis } from '../redis/index.js';
+import type { RequestExcludingInput } from '../validation/index.js';
 
 const { TooManyRequestsError } = errors;
 
@@ -97,13 +98,15 @@ export const getUserIDFromCreds = (req: Pick<Request, 'creds'>): string => {
 };
 
 export type RateLimitKeyFn = (
-	req: Request,
+	req: RequestExcludingInput,
 	res: Response,
 ) => Resolvable<string>;
 export type RateLimitKey = string | RateLimitKeyFn;
 
 export type RateLimitMiddleware = (
-	...args: Parameters<RequestHandler>
+	req: RequestExcludingInput,
+	res: Response,
+	next: NextFunction,
 ) => Promise<string | undefined>;
 
 export type PartialRateLimitMiddleware = (
@@ -168,7 +171,8 @@ const $createRateLimitMiddleware = (
 			next();
 			return key;
 		} catch (err) {
-			if (handleHttpErrors(req, res, err)) {
+			// We need to cast here because the `req.query` typing has `unknown` as keys which is incompatible
+			if (handleHttpErrors(req as Request, res, err)) {
 				return;
 			}
 			captureException(err, 'Error during rate limiting');

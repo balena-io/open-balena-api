@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
 import _ from 'lodash';
 import { multiCacheMemoizee } from '../../infra/cache/index.js';
 import type { Device } from '../../balena-model.js';
@@ -6,7 +6,10 @@ import type { Device } from '../../balena-model.js';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import { DEVICE_EXISTS_CACHE_TIMEOUT } from '../../lib/config.js';
 import { setTimeout } from 'timers/promises';
-import { createUnvalidatedRequestHandler } from '../../infra/validation/index.js';
+import {
+	createUnvalidatedRequestHandler,
+	type RequestExcludingInput,
+} from '../../infra/validation/index.js';
 
 const { api } = sbvrUtils;
 
@@ -45,10 +48,12 @@ export interface ResolveDeviceInfoCustomObject {
 	resolvedDeviceIds: Array<Device['Read']['id']>;
 }
 
-const requestParamsUuidResolver = (req: Request) => [req.params.uuid];
+const requestParamsUuidResolver = (req: RequestExcludingInput) => [
+	req.params.uuid,
+];
 
 export const defaultRespondFn = async (
-	_req: Request,
+	_req: RequestExcludingInput,
 	res: Response,
 	delayMs: number,
 	status: number,
@@ -72,7 +77,9 @@ export const setRespondFn = ($respondFn: typeof respondFn) => {
  */
 export const resolveOrDenyDevicesWithStatus = (
 	statusCode: number | { deleted: number; frozen: number },
-	uuidResolver: (req: Request) => string[] = requestParamsUuidResolver,
+	uuidResolver: (
+		req: RequestExcludingInput,
+	) => string[] = requestParamsUuidResolver,
 	delayMs = 0,
 ) => {
 	const deletedStatusCode =
