@@ -5,7 +5,7 @@ import compression from 'compression';
 import compressible from 'compressible';
 import cookieParser from 'cookie-parser';
 import cookieSession from 'cookie-session';
-import type { Application, Handler, Request } from 'express';
+import type { Application, Handler } from 'express';
 import type { Server } from 'http';
 import _ from 'lodash';
 import passport from 'passport';
@@ -156,6 +156,7 @@ import {
 	defaultRespondFn,
 	setRespondFn,
 } from './features/device-state/middleware.js';
+import type { RequestExcludingInput } from './infra/validation/index.js';
 
 import { addToModel as addUserHasDirectAccessToApplicationToModel } from './features/applications/models/user__has_direct_access_to__application.js';
 import { getApplicationSlug } from './features/applications/index.js';
@@ -317,10 +318,10 @@ export interface SetupOptions {
 	onLogin?: (
 		user: Pick<User['Read'], (typeof defaultFindUser$select)[number]>,
 		tx: Tx,
-		req: Request,
+		req: RequestExcludingInput,
 	) => PromiseLike<void> | void;
-	onLogWriteStreamInitialized?: (req: Request) => void;
-	onLogReadStreamInitialized?: (req: Request) => void;
+	onLogWriteStreamInitialized?: (req: RequestExcludingInput) => void;
+	onLogReadStreamInitialized?: (req: RequestExcludingInput) => void;
 
 	getNewUserRole?: GetNewUserRoleFunction;
 }

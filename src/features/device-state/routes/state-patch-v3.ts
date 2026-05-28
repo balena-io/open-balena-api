@@ -19,6 +19,7 @@ import {
 	normalizeDeviceWriteBody,
 } from '../state-patch-utils.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
+import type { RequestExcludingInput } from '../../../infra/validation/index.js';
 
 const { BadRequestError, UnauthorizedError, InternalRequestError } = errors;
 const { api } = sbvrUtils;
@@ -84,7 +85,7 @@ export type StatePatchV3Body = {
 };
 
 const fetchData = async (
-	req: Express.Request,
+	req: RequestExcludingInput,
 	custom: AnyObject,
 	deviceIds: number[],
 	appReleaseUuids: {

@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
 import onFinished from 'on-finished';
 import _ from 'lodash';
 import { sbvrUtils, errors } from '@balena/pinejs';
@@ -36,6 +36,7 @@ import { DAYS } from '@balena/env-parsing';
 import { checkInt } from '../../../lib/utils.js';
 import {
 	createValidatedRequestHandler,
+	type RequestExcludingInput,
 	z,
 } from '../../../infra/validation/index.js';
 
@@ -97,7 +98,7 @@ export const read = (
 
 async function handleStreamingRead(
 	ctx: LogContext,
-	req: Request,
+	req: RequestExcludingInput,
 	res: Response,
 	{ count, start }: HistoryOpts,
 ): Promise<void> {
@@ -283,7 +284,7 @@ function getHistory(
 	return backend.history(ctx, opts);
 }
 
-async function getReadContext(req: Request): Promise<LogContext> {
+async function getReadContext(req: RequestExcludingInput): Promise<LogContext> {
 	const { uuid } = req.params;
 	const device = await api.resin.get({
 		resource: 'device',
