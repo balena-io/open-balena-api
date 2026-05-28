@@ -68,10 +68,16 @@ export const generateConfig = async (
 				// Devices running ResinOS >= 2.7.8 can use provisioning keys
 				if (osVersion != null && semver.satisfies(osVersion, '<2.7.8')) {
 					// Older ones have to use the old "user api keys"
+					const resolvedUser = await userPromise;
+					if (resolvedUser.id == null) {
+						throw new errors.UnauthorizedError(
+							'Cannot create api keys for scoped JWTs',
+						);
+					}
 					return await createUserApiKey(
 						req,
 						params,
-						(await userPromise).id,
+						resolvedUser.id,
 						apiKeyOptions,
 					);
 				}

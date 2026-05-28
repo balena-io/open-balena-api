@@ -5,13 +5,16 @@ declare global {
 	namespace Express {
 		type Creds = import('../infra/auth/jwt-passport.js').Creds;
 		// For some reason TS doesn't like v so we had to use `import()`
-		type ApiUser = import('../infra/auth/jwt-passport.js').ResolvedUserPayload;
+		type ResolvedUserPayload =
+			import('../infra/auth/jwt-passport.js').ResolvedUserPayload;
+		type ScopedToken = import('../infra/auth/jwt.js').ScopedToken;
 		type ApiKey = import('@balena/pinejs').sbvrUtils.ApiKey;
 
-		// Augment Express.User to include the props of our ApiUser.
-
-		interface User extends ApiUser {
-			twoFactorRequired: false | undefined;
+		// `req.user` can be either a full user payload or a scoped token —
+		// both share the `ScopedToken` shape (actor + permissions); user-specific
+		// fields like `id` only exist on the full user variant.
+		interface User extends ScopedToken, Partial<ResolvedUserPayload> {
+			twoFactorRequired?: false | undefined;
 		}
 
 		interface Request {
@@ -19,7 +22,7 @@ declare global {
 
 			creds?: Creds;
 
-			partialUser: ApiUser & {
+			partialUser: ResolvedUserPayload & {
 				twoFactorRequired: true;
 			};
 

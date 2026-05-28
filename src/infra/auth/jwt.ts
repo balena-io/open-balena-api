@@ -23,7 +23,9 @@ const { api } = sbvrUtils;
 
 const SUDO_TOKEN_VALIDITY = 20 * 60 * 1000;
 
-export const checkSudoValidity = (user: TokenUserPayload): boolean => {
+export const checkSudoValidity = (
+	user: Pick<TokenUserPayload, 'authTime'>,
+): boolean => {
 	const notAuthBefore = Date.now() - SUDO_TOKEN_VALIDITY;
 	return user.authTime != null && user.authTime > notAuthBefore;
 };

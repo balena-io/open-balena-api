@@ -153,6 +153,11 @@ export const createUserApiKey = createValidatedRequestHandler(
 
 			const apiKey = await sbvrUtils.db.transaction(async (tx) => {
 				const user = await getUser(req, tx);
+				if (user.id == null) {
+					throw new errors.UnauthorizedError(
+						'Cannot create api keys for scoped JWTs',
+					);
+				}
 				return await $createUserApiKey(req, req.body, user.id, {
 					tx,
 					...keyMetadata,
@@ -180,7 +185,7 @@ export const createNamedUserApiKey = createValidatedRequestHandler(
 	},
 	async (req, res) => {
 		try {
-			if (req.user == null) {
+			if (req.user?.id == null) {
 				throw new errors.BadRequestError('Must use user auth');
 			}
 

@@ -5,7 +5,6 @@ import type { hooks } from '@balena/pinejs';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
 import { retrieveAPIKey } from './api-keys.js';
-import type { ResolvedUserPayload } from './jwt-passport.js';
 
 import { getIP } from '../../lib/utils.js';
 import type { User } from '../../balena-model.js';
@@ -178,22 +177,26 @@ export function getUser(
 	req: RequestExcludingInput | hooks.HookReq,
 	txParam: Tx | undefined,
 	required?: true,
-): Promise<ResolvedUserPayload>;
+): Promise<Express.User>;
 export function getUser(
 	req: RequestExcludingInput | hooks.HookReq,
 	txParam: Tx | undefined,
 	required: false,
-): Promise<ResolvedUserPayload | undefined>;
+): Promise<Express.User | undefined>;
 export async function getUser(
 	req: RequestExcludingInput & hooks.HookReq,
 	/** You should always be passing a Tx, unless you are using this in a middleware. */
 	txParam: Tx | undefined,
 	required = true,
-): Promise<ResolvedUserPayload | undefined> {
+): Promise<Express.User | undefined> {
 	const $getUser = async (tx: Tx) => {
 		// This shouldn't happen but it does for some internal PineJS requests
 		if (req.user && !req.creds) {
-			req.creds = req.user;
+			// `req.user` is structurally a valid `Creds` (a `ScopedToken`, or a
+			// `ResolvedUserPayload` when `id` is set), but TS picks `ResolvedUserPayload`
+			// as the best-match union member and rejects it because `Express.User.id`
+			// is optional while `ResolvedUserPayload.id` is required.
+			req.creds = req.user as Express.Creds;
 		}
 
 		// JWT or API key already loaded
