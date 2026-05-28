@@ -17,10 +17,7 @@ export const whoami = createValidatedRequestHandler(async (req, res) => {
 		const userInfo = await sbvrUtils.db.readTransaction(
 			async (
 				tx,
-			): Promise<
-				Pick<User['Read'], 'id'> &
-					Partial<Pick<User['Read'], 'username' | 'email'>>
-			> => {
+			): Promise<Partial<Pick<User['Read'], 'id' | 'username' | 'email'>>> => {
 				const user = await getUser(req, tx, true);
 				const [userWithUsername] = await api.resin.get({
 					resource: 'user',
