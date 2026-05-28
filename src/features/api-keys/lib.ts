@@ -7,6 +7,7 @@ import { multiCacheMemoizee } from '../../infra/cache/index.js';
 import { API_KEY_ROLE_CACHE_TIMEOUT } from '../../lib/config.js';
 import { checkSudoValidity } from '../../infra/auth/jwt.js';
 import { getUser } from '../../infra/auth/auth.js';
+import type { RequestExcludingInput } from '../../infra/validation/index.js';
 
 const { api } = sbvrUtils;
 const { BadRequestError } = errors;
@@ -29,7 +30,7 @@ type ApiKeyActor = 'application' | 'device' | 'user';
 const $createApiKey = async (
 	actorType: ApiKeyActor,
 	roleName: string,
-	req: Request,
+	req: RequestExcludingInput,
 	actorTypeID: number,
 	{ apiKey, tx, name, description, expiryDate }: InternalApiKeyOptions,
 ): Promise<string> => {
@@ -124,12 +125,12 @@ function validateFieldProp<U>(
 	return field == null || fn(field);
 }
 export function getApiKeyOptsFromRequest(
-	params: Dictionary<unknown>,
+	params: Record<string, unknown>,
 	prefix?: string,
 	mandatoryExpiryDate?: false,
 ): Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate'>;
 export function getApiKeyOptsFromRequest(
-	params: Dictionary<unknown>,
+	params: Record<string, unknown>,
 	prefix: string | undefined,
 	mandatoryExpiryDate: true,
 ): NonNullableField<
@@ -137,12 +138,12 @@ export function getApiKeyOptsFromRequest(
 	'expiryDate'
 >;
 export function getApiKeyOptsFromRequest(
-	params: Dictionary<unknown>,
+	params: Record<string, unknown>,
 	prefix?: string,
 	mandatoryExpiryDate?: boolean,
 ): Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate'>;
 export function getApiKeyOptsFromRequest(
-	params: Dictionary<unknown>,
+	params: Record<string, unknown>,
 	prefix?: string,
 	mandatoryExpiryDate = false,
 ): Pick<ApiKeyOptions, 'name' | 'description' | 'expiryDate'> {
@@ -181,11 +182,12 @@ export function getApiKeyOptsFromRequest(
 export const createApiKey = async (
 	actorType: ApiKeyActor,
 	roleName: string,
-	req: Request,
+	req: RequestExcludingInput,
+	params: Record<string, unknown>,
 	actorTypeID: number,
 	options: ApiKeyOptions,
 ): Promise<string> => {
-	const { name, description, expiryDate } = getApiKeyOptsFromRequest(req.body);
+	const { name, description, expiryDate } = getApiKeyOptsFromRequest(params);
 	const create = async (tx: Tx) => {
 		return await $createApiKey(actorType, roleName, req, actorTypeID, {
 			...options,
@@ -271,6 +273,7 @@ export const createGenericApiKey = async (
 		actorType,
 		roleName,
 		req,
+		req.body,
 		actorTypeId,
 		// pass only the properties that the endpoint supports
 		{

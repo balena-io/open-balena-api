@@ -1,4 +1,3 @@
-import type { Request } from 'express';
 import fs from 'fs';
 import _ from 'lodash';
 
@@ -26,11 +25,23 @@ import {
 	VPN_PORT,
 	LOGS_HOST,
 } from '../../lib/config.js';
-import { getBodyOrQueryParam } from '../../lib/utils.js';
+import type { RequestExcludingInput } from '../../infra/validation/index.js';
 
 // `osVersion == null` means assume "latest"
 export const generateConfig = async (
-	req: Request,
+	req: RequestExcludingInput,
+	params: {
+		appUpdatePollInterval?: string | number;
+		network?: string;
+		wifiSsid?: string;
+		wifiKey?: string;
+		ip?: string;
+		gateway?: string;
+		netmask?: string;
+		developmentMode?: string | boolean;
+		secureboot?: string | boolean;
+		[key: string]: unknown;
+	},
 	app: deviceConfig.GenerateOptions['application'],
 	provisioningKeyOptions: ApiKeyOptions,
 	deviceType: DeviceTypeJson,
@@ -59,12 +70,18 @@ export const generateConfig = async (
 					// Older ones have to use the old "user api keys"
 					return await createUserApiKey(
 						req,
+						params,
 						(await userPromise).id,
 						apiKeyOptions,
 					);
 				}
 
-				return await createProvisioningApiKey(req, app.id, apiKeyOptions);
+				return await createProvisioningApiKey(
+					req,
+					params,
+					app.id,
+					apiKeyOptions,
+				);
 			})(),
 		]);
 	});
@@ -111,15 +128,19 @@ export const generateConfig = async (
 		},
 		{
 			appUpdatePollInterval:
-				parseInt(getBodyOrQueryParam(req, 'appUpdatePollInterval'), 10) *
-				60 *
-				1000,
-			network: getBodyOrQueryParam(req, 'network'),
-			wifiSsid: getBodyOrQueryParam(req, 'wifiSsid'),
-			wifiKey: getBodyOrQueryParam(req, 'wifiKey'),
-			ip: getBodyOrQueryParam(req, 'ip'),
-			gateway: getBodyOrQueryParam(req, 'gateway'),
-			netmask: getBodyOrQueryParam(req, 'netmask'),
+				params.appUpdatePollInterval == null
+					? undefined
+					: (typeof params.appUpdatePollInterval === 'string'
+							? parseInt(params.appUpdatePollInterval, 10)
+							: params.appUpdatePollInterval) *
+						60 *
+						1000,
+			network: params.network,
+			wifiSsid: params.wifiSsid,
+			wifiKey: params.wifiKey,
+			ip: params.ip,
+			gateway: params.gateway,
+			netmask: params.netmask,
 		},
 	);
 
@@ -137,24 +158,27 @@ export const generateConfig = async (
 			}
 		})
 		.each(({ name: optionName }) => {
-			config[optionName] = req.param(optionName);
+			config[optionName] = params[optionName];
 		});
 	if (rootCA != null) {
 		config.balenaRootCA = rootCA;
 	}
 
 	const developmentMode = (
-		getBodyOrQueryParam(req, 'developmentMode') ?? osVersion?.endsWith('.dev')
+		params.developmentMode ?? osVersion?.endsWith('.dev')
 	)?.toString();
-	if (['true', 'on', '1'].includes(developmentMode)) {
+	if (
+		developmentMode != null &&
+		['true', 'on', '1'].includes(developmentMode)
+	) {
 		config.developmentMode = true;
 	}
 
-	const securebootInstaller = getBodyOrQueryParam(
-		req,
-		'secureboot',
-	)?.toString();
-	if (['true', 'on', '1'].includes(securebootInstaller)) {
+	const securebootInstaller = params.secureboot?.toString();
+	if (
+		securebootInstaller != null &&
+		['true', 'on', '1'].includes(securebootInstaller)
+	) {
 		config.installer = { secureboot: true };
 	}
 

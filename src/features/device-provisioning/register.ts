@@ -116,7 +116,7 @@ export const register = createValidatedRequestHandler(
 				if (device == null) {
 					throw new Error('Failed to create device');
 				}
-				const apiKey = await createDeviceApiKey(req, device.id, {
+				const apiKey = await createDeviceApiKey(req, req.body, device.id, {
 					tx,
 					apiKey: deviceApiKey,
 					name: null,

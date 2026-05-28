@@ -86,7 +86,7 @@ export const createDeviceApiKey = createValidatedRequestHandler(
 		}
 
 		try {
-			const apiKey = await $createDeviceApiKey(req, deviceId, {
+			const apiKey = await $createDeviceApiKey(req, req.body, deviceId, {
 				apiKey: req.body.apiKey ?? undefined,
 				...getApiKeyOptsFromRequest(req.body),
 			});
@@ -120,6 +120,7 @@ export const createProvisioningApiKey = createValidatedRequestHandler(
 		try {
 			const apiKey = await $createProvisioningApiKey(
 				req,
+				req.body,
 				appId,
 				getApiKeyOptsFromRequest(req.body),
 			);
@@ -152,7 +153,10 @@ export const createUserApiKey = createValidatedRequestHandler(
 
 			const apiKey = await sbvrUtils.db.transaction(async (tx) => {
 				const user = await getUser(req, tx);
-				return await $createUserApiKey(req, user.id, { tx, ...keyMetadata });
+				return await $createUserApiKey(req, req.body, user.id, {
+					tx,
+					...keyMetadata,
+				});
 			});
 			res.json(apiKey);
 		} catch (err) {
@@ -182,6 +186,7 @@ export const createNamedUserApiKey = createValidatedRequestHandler(
 
 			const apiKey = await $createNamedUserApiKey(
 				req,
+				req.body,
 				req.user.id,
 				getApiKeyOptsFromRequest(req.body),
 			);

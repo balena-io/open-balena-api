@@ -76,7 +76,6 @@ import {
 	registerUser,
 	setPassword,
 	setRegistrationRoleFunc,
-	validatePassword,
 	checkUserPassword,
 	isJWT,
 	verifyAndResolveJwt,
@@ -122,7 +121,6 @@ import {
 	getIPv4,
 	isValidInteger,
 	throttledForEach,
-	getBodyOrQueryParam,
 } from './lib/utils.js';
 import {
 	createRateLimitMiddleware,
@@ -211,7 +209,6 @@ export const auth = {
 	registerUser,
 	setPassword,
 	updateUserXHR,
-	validatePassword,
 	checkUserPassword,
 	createSessionToken,
 	createScopedAccessToken,
@@ -250,7 +247,6 @@ export const utils = {
 	isValidInteger,
 	varListInsert,
 	throttledForEach,
-	getBodyOrQueryParam,
 };
 export const apiKeys = {
 	augmentReqApiKeyPermissions,
