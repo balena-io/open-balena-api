@@ -7,6 +7,7 @@ import {
 	LOGS_HOST,
 } from '../../lib/config.js';
 import { b64decode } from '../../lib/utils.js';
+import { createValidatedRequestHandler } from '../../infra/validation/index.js';
 
 // OS service configurations
 const services = {
@@ -32,23 +33,26 @@ const config = {
 };
 
 export const setup = (app: Application) => {
-	app.get('/os/v1/config/', (req, res) => {
-		// Clear SSH authorized keys if authorization header is present
-		// This mechanism is an heuristic to determine balenaOS version >= 6.1.0
-		// If it is, it can use a temporary JIT SSH key and don't require this one to to be set
-		// We can't completely remove `ssh` from the services otherwise it won't pass schema verification done by `os-config`
-		// Note balenaOS >= v6.6 will completely ignore the content of the ssh entry
-		const servicesOverride = req.headers.authorization
-			? { ...services, ssh: { authorized_keys: '' } }
-			: services;
+	app.get(
+		'/os/v1/config/',
+		createValidatedRequestHandler((req, res) => {
+			// Clear SSH authorized keys if authorization header is present
+			// This mechanism is an heuristic to determine balenaOS version >= 6.1.0
+			// If it is, it can use a temporary JIT SSH key and don't require this one to to be set
+			// We can't completely remove `ssh` from the services otherwise it won't pass schema verification done by `os-config`
+			// Note balenaOS >= v6.6 will completely ignore the content of the ssh entry
+			const servicesOverride = req.headers.authorization
+				? { ...services, ssh: { authorized_keys: '' } }
+				: services;
 
-		res.json({
-			services: servicesOverride,
-			// Older os-configs don't know how to handle the config field, but
-			// luckily serde-rs ignores unknown fields by default.
-			config,
-			/** @deprecated schema_version is an outdated field kept for compatibility with legacy os-configs */
-			schema_version: '1.0.0',
-		});
-	});
+			res.json({
+				services: servicesOverride,
+				// Older os-configs don't know how to handle the config field, but
+				// luckily serde-rs ignores unknown fields by default.
+				config,
+				/** @deprecated schema_version is an outdated field kept for compatibility with legacy os-configs */
+				schema_version: '1.0.0',
+			});
+		}),
+	);
 };
