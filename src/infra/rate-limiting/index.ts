@@ -15,7 +15,10 @@ import {
 } from '../../lib/config.js';
 import { errors } from '@balena/pinejs';
 import { redis } from '../redis/index.js';
-import type { RequestExcludingInput } from '../validation/index.js';
+import {
+	createUnvalidatedRequestHandler,
+	type RequestExcludingInput,
+} from '../validation/index.js';
 
 const { TooManyRequestsError } = errors;
 
@@ -107,7 +110,7 @@ export type RateLimitMiddleware = (
 	req: RequestExcludingInput,
 	res: Response,
 	next: NextFunction,
-) => Promise<string | undefined>;
+) => void;
 
 export type PartialRateLimitMiddleware = (
 	field?: RateLimitKey,
@@ -163,13 +166,12 @@ const $createRateLimitMiddleware = (
 					}
 				};
 			};
-	return async (req, res, next) => {
+	return createUnvalidatedRequestHandler(async (req, res, next) => {
 		try {
 			const key = await keyFn(req, res);
 			await rateLimiter.consume(key);
 			addReset(req, key);
 			next();
-			return key;
 		} catch (err) {
 			// We need to cast here because the `req.query` typing has `unknown` as keys which is incompatible
 			if (handleHttpErrors(req as Request, res, err)) {
@@ -178,5 +180,5 @@ const $createRateLimitMiddleware = (
 			captureException(err, 'Error during rate limiting');
 			res.status(500).end();
 		}
-	};
+	});
 };
