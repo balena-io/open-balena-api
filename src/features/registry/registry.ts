@@ -566,7 +566,7 @@ const authorizeRequest = async (
 	);
 };
 
-const generateToken = (
+export const generateToken = (
 	subject = '',
 	audience: string,
 	access: Access[],
