@@ -8,7 +8,6 @@ import { resolveOrDenyDevicesWithStatus } from './middleware.js';
 import { stateV2 } from './routes/state-get-v2.js';
 import { stateV3 } from './routes/state-get-v3.js';
 import { statePatchV2 } from './routes/state-patch-v2.js';
-import type { StatePatchV3Body } from './routes/state-patch-v3.js';
 import { resolveDeviceUuids, statePatchV3 } from './routes/state-patch-v3.js';
 import { fleetStateV3 } from './routes/fleet-state-get-v3.js';
 import type { Device } from '../../balena-model.js';
@@ -54,9 +53,7 @@ export const setup = (app: Application) => {
 	);
 	app.patch(
 		'/device/v3/state',
-		resolveOrDenyDevicesWithStatus(401, (req) =>
-			resolveDeviceUuids(req.body as StatePatchV3Body),
-		),
+		resolveOrDenyDevicesWithStatus(401, (req) => resolveDeviceUuids(req.body)),
 		middleware.authenticatedApiKey,
 		statePatchV3,
 	);
@@ -67,9 +64,7 @@ export const setup = (app: Application) => {
 	);
 	app.patch(
 		'/device/v3/tags',
-		resolveOrDenyDevicesWithStatus(401, (req) =>
-			resolveDeviceUuids(req.body as StatePatchV3Body),
-		),
+		resolveOrDenyDevicesWithStatus(401, (req) => resolveDeviceUuids(req.body)),
 		middleware.authenticatedApiKey,
 		tagsPatchV3,
 	);

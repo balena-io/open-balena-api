@@ -216,8 +216,14 @@ const fetchData = async (
 		return { devicesByUuid, images, releasesByAppUuid };
 	});
 
-export const resolveDeviceUuids = (body: StatePatchV3Body) =>
-	Object.keys(body).filter((uuid) => body[uuid] != null);
+export const resolveDeviceUuids = (body: unknown): string[] =>
+	typeof body === 'object' && body !== null
+		? Object.keys(body).filter(
+				(uuid) =>
+					typeof body[uuid as keyof typeof body] === 'object' &&
+					body[uuid as keyof typeof body] !== null,
+			)
+		: [];
 
 export const statePatchV3: RequestHandler = async (req, res) => {
 	try {
