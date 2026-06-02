@@ -1,5 +1,3 @@
-import type { RequestHandler } from 'express';
-
 import _ from 'lodash';
 import {
 	captureException,
@@ -19,7 +17,11 @@ import {
 	normalizeDeviceWriteBody,
 } from '../state-patch-utils.js';
 import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
-import type { RequestExcludingInput } from '../../../infra/validation/index.js';
+import {
+	type RequestExcludingInput,
+	createValidatedRequestHandler,
+	z,
+} from '../../../infra/validation/index.js';
 
 const { BadRequestError, UnauthorizedError, InternalRequestError } = errors;
 const { api } = sbvrUtils;
@@ -39,15 +41,15 @@ enum updateStatusPrecedence {
 export type StatePatchV3Body = {
 	[uuid: string]: {
 		status?: string;
-		os_version?: string;
-		os_variant?: string;
+		os_version?: string | null;
+		os_variant?: string | null;
 		supervisor_version?: string;
 		provisioning_progress?: number | null;
 		provisioning_state?: string | null;
 		ip_address?: string;
 		mac_address?: string;
 		api_port?: number;
-		api_secret?: string;
+		api_secret?: string | null;
 		memory_usage?: number;
 		memory_total?: number;
 		storage_block_device?: string;
@@ -58,7 +60,7 @@ export type StatePatchV3Body = {
 		cpu_id?: string;
 		is_undervolted?: boolean;
 		/**
-		 * Used for setting dependent devices as online
+		 * Used for setting dependent devices as online, so shouldn't be used in practice
 		 */
 		is_online?: boolean;
 		apps?: {
@@ -74,7 +76,7 @@ export type StatePatchV3Body = {
 							[name: string]: {
 								image: string;
 								status: string;
-								download_progress?: number;
+								download_progress?: number | null;
 							};
 						};
 					};
@@ -225,265 +227,334 @@ export const resolveDeviceUuids = (body: unknown): string[] =>
 			)
 		: [];
 
-export const statePatchV3: RequestHandler = async (req, res) => {
-	try {
-		const body = req.body as StatePatchV3Body;
-		const custom: AnyObject = {}; // shove custom values here to make them available to the hooks
+export const statePatchV3 = createValidatedRequestHandler(
+	{
+		body: z.record(
+			// uuid
+			z.string(),
+			z
+				.object({
+					status: z.string(),
+					os_version: z.string().nullable(),
+					os_variant: z.string().nullable(),
+					supervisor_version: z.string(),
+					provisioning_progress: z.number().nullable(),
+					provisioning_state: z.string().nullable(),
+					ip_address: z.string(),
+					mac_address: z.string(),
+					api_port: z.number(),
+					api_secret: z.string().nullable(),
+					memory_usage: z.number(),
+					memory_total: z.number(),
+					storage_block_device: z.string(),
+					storage_usage: z.number(),
+					storage_total: z.number(),
+					cpu_temp: z.number(),
+					cpu_usage: z.number(),
+					cpu_id: z.string(),
+					is_undervolted: z.boolean(),
+					/**
+					 * Used for setting dependent devices as online, so shouldn't be used in practice
+					 */
+					is_online: z.boolean(),
+					apps: z.record(
+						// app uuid
+						z.string(),
+						z
+							.object({
+								release_uuid: z.string(),
+								releases: z.record(
+									// release uuid
+									z.string(),
+									z
+										.object({
+											update_status: z.enum([
+												'aborted',
+												'applying changes',
+												'done',
+												'downloaded',
+												'downloading',
+												'rejected',
+											]),
+											services: z.record(
+												// service name
+												z.string(),
+												z.object({
+													image: z.string(),
+													status: z.string(),
+													download_progress: z.number().nullable().optional(),
+												}),
+											),
+										})
+										.partial(),
+								),
+							})
+							.partial(),
+					),
+				})
+				.partial(),
+		),
+	},
+	async (req, res) => {
+		try {
+			const body = req.body satisfies StatePatchV3Body;
+			const custom: AnyObject = {}; // shove custom values here to make them available to the hooks
 
-		// forward the public ip address if the request is from the supervisor.
-		if (req.apiKey != null) {
-			custom.ipAddress = getIP(req);
-		}
-
-		const uuids = resolveDeviceUuids(body);
-		if (uuids.length === 0) {
-			throw new BadRequestError();
-		}
-
-		const appReleasesCriteria: {
-			[appUuid: string]: {
-				releaseUuids: Set<string>;
-				imageLocations: string[];
-			};
-		} = {};
-		for (const uuid of uuids) {
-			const { apps } = body[uuid];
-			if (apps != null) {
-				for (const [
-					appUuid,
-					{ release_uuid: isRunningReleaseUuid, releases },
-				] of Object.entries(apps)) {
-					const appReleaseCriteria = (appReleasesCriteria[appUuid] ??= {
-						releaseUuids: new Set<string>(),
-						imageLocations: [],
-					});
-					if (isRunningReleaseUuid) {
-						appReleaseCriteria.releaseUuids.add(isRunningReleaseUuid);
-					}
-					if (releases != null) {
-						for (const [releaseUuid, { services }] of Object.entries(
-							releases,
-						)) {
-							appReleaseCriteria.releaseUuids.add(releaseUuid);
-							if (services != null) {
-								appReleaseCriteria.imageLocations.push(
-									...Object.values(services).map((s) => s.image),
-								);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		const updateFns: Array<
-			(resinApiTx: typeof sbvrUtils.api.resin) => Promise<void>
-		> = [];
-
-		let data;
-		for (const uuid of uuids) {
-			const state = body[uuid];
-
-			const { apps } = state;
-			type DeviceBodyBeforeNormalization = Pick<
-				StatePatchV3Body[string] &
-					Partial<Pick<Device['Write'], 'update_status'>>,
-				(typeof v3ValidPatchFields)[number]
-			> &
-				Partial<Pick<Device['Write'], 'is_running__release'>>;
-			let deviceBody = normalizeDeviceWriteBody(
-				_.pick(
-					state,
-					v3ValidPatchFields,
-				) satisfies DeviceBodyBeforeNormalization as DeviceBodyBeforeNormalization,
-				uuid,
-			);
-			let metricsBody: Pick<
-				StatePatchV3Body[string],
-				(typeof metricsPatchFields)[number]
-			> = _.pick(state, metricsPatchFields);
-			limitMetricNumbers(metricsBody);
-			if (
-				Object.keys(metricsBody).length > 0 &&
-				(await shouldUpdateMetrics(uuid))
-			) {
-				// If we should force a metrics update then merge the two together and clear `metricsBody` so
-				// that we don't try to merge it again later
-				deviceBody = { ...deviceBody, ...metricsBody };
-				metricsBody = {};
+			// forward the public ip address if the request is from the supervisor.
+			if (req.apiKey != null) {
+				custom.ipAddress = getIP(req);
 			}
 
-			if (deviceBody.cpu_id != null) {
-				if (/[^\x20-\x7E]/.test(deviceBody.cpu_id)) {
-					// if the CPU id is not in the character range of 0x20 (SPACE) to 0x7e (~) we drop the CPU ID
-					// this cpu id wouldn't be rendered anyway
-					delete deviceBody.cpu_id;
-				} else {
-					deviceBody.cpu_id = deviceBody.cpu_id.toLowerCase();
-				}
+			const uuids = resolveDeviceUuids(body);
+			if (uuids.length === 0) {
+				throw new BadRequestError();
 			}
 
-			if (apps != null || Object.keys(deviceBody).length > 0) {
-				const { resolvedDeviceIds } =
-					req.custom as ResolveDeviceInfoCustomObject;
-				// We lazily fetch the necessary data only if we absolutely must to avoid unnecessary work if it turns out we don't need it
-				data ??= await fetchData(
-					req,
-					custom,
-					resolvedDeviceIds,
-					appReleasesCriteria,
-				);
-				const { images, releasesByAppUuid } = data;
-				const device = data.devicesByUuid[uuid];
-
+			const appReleasesCriteria: {
+				[appUuid: string]: {
+					releaseUuids: Set<string>;
+					imageLocations: string[];
+				};
+			} = {};
+			for (const uuid of uuids) {
+				const { apps } = body[uuid];
 				if (apps != null) {
-					const userAppUuid = device.belongs_to__application[0].uuid;
-					if (releasesByAppUuid[userAppUuid] != null) {
-						const release = releasesByAppUuid[userAppUuid].find(
-							(r) => r.commit === apps[userAppUuid].release_uuid,
-						);
-						if (release) {
-							deviceBody.is_running__release = release.id;
-						}
-					}
-					const { releases } = apps[userAppUuid] ?? {};
-					if (releases != null) {
-						for (const { update_status: updateStatus } of Object.values(
-							releases,
-						)) {
-							if (updateStatus != null) {
-								if (
-									deviceBody.update_status == null ||
-									updateStatusPrecedence[updateStatus] <
-										updateStatusPrecedence[deviceBody.update_status]
-								) {
-									deviceBody.update_status = updateStatus;
-								}
-							}
-						}
-					}
-				}
-
-				if (Object.keys(deviceBody).length > 0) {
-					// truncate for resilient legacy compatible device state patch so that supervisors don't fail
-					// to update b/c of length violation of 255 (SBVR SHORT TEXT type) for ip and mac address.
-					// sbvr-types does not export SHORT TEXT VARCHAR length 255 to import.
-					deviceBody = truncateConstrainedDeviceFields(deviceBody, device.id);
-					updateFns.push(async (resinApiTx) => {
-						await resinApiTx.patch({
-							resource: 'device',
-							id: device.id,
-							options: {
-								$filter: { $not: deviceBody },
-							},
-							// If we're updating anyway then ensure the metrics data is included
-							// but don't use it as a factor as to whether we should actually write or not
-							body: { ...deviceBody, ...metricsBody },
-						});
-					});
-				}
-
-				if (apps != null) {
-					const imgInstalls: Array<{
-						imageId: number;
-						releaseId: number;
-						status: string;
-						downloadProgress?: number;
-					}> = [];
 					for (const [
 						appUuid,
-						{
-							// release_uuid: isRunningReleaseUuid,
-							releases = {},
-						},
+						{ release_uuid: isRunningReleaseUuid, releases },
 					] of Object.entries(apps)) {
-						// // TODO: This gets the release we are running for the given app but currently we handle the user app out of band above, and ignore supervisor/os
-						// const release = releases[appUuid].find(
-						// 	(r) => r.commit === isRunningReleaseUuid,
-						// );
-						// if (release == null) {
-						// 	throw new InternalRequestError();
-						// }
-						for (const [releaseUuid, { services = {} }] of Object.entries(
-							releases,
-						)) {
-							const release = releasesByAppUuid[appUuid].find(
-								(r) => r.commit === releaseUuid,
-							);
-							if (release == null) {
-								throw new InternalRequestError();
-							}
-							for (const service of Object.values(services)) {
-								const serviceLocation = service.image.split('@', 1)[0];
-								const image = images.find(
-									(i) => i.is_stored_at__image_location === serviceLocation,
-								);
-								if (image == null) {
-									throw new InternalRequestError();
+						const appReleaseCriteria = (appReleasesCriteria[appUuid] ??= {
+							releaseUuids: new Set<string>(),
+							imageLocations: [],
+						});
+						if (isRunningReleaseUuid) {
+							appReleaseCriteria.releaseUuids.add(isRunningReleaseUuid);
+						}
+						if (releases != null) {
+							for (const [releaseUuid, { services }] of Object.entries(
+								releases,
+							)) {
+								appReleaseCriteria.releaseUuids.add(releaseUuid);
+								if (services != null) {
+									appReleaseCriteria.imageLocations.push(
+										...Object.values(services).map((s) => s.image),
+									);
 								}
-								imgInstalls.push({
-									imageId: image.id,
-									releaseId: release.id,
-									status: service.status,
-									downloadProgress: service.download_progress,
-								});
+							}
+						}
+					}
+				}
+			}
+
+			const updateFns: Array<
+				(resinApiTx: typeof sbvrUtils.api.resin) => Promise<void>
+			> = [];
+
+			let data;
+			for (const uuid of uuids) {
+				const state = body[uuid];
+
+				const { apps } = state;
+				type DeviceBodyBeforeNormalization = Pick<
+					StatePatchV3Body[string] &
+						Partial<Pick<Device['Write'], 'update_status'>>,
+					(typeof v3ValidPatchFields)[number]
+				> &
+					Partial<Pick<Device['Write'], 'is_running__release'>>;
+				let deviceBody = normalizeDeviceWriteBody(
+					_.pick(
+						state,
+						v3ValidPatchFields,
+					) satisfies DeviceBodyBeforeNormalization as DeviceBodyBeforeNormalization,
+					uuid,
+				);
+				let metricsBody: Pick<
+					StatePatchV3Body[string],
+					(typeof metricsPatchFields)[number]
+				> = _.pick(state, metricsPatchFields);
+				limitMetricNumbers(metricsBody);
+				if (
+					Object.keys(metricsBody).length > 0 &&
+					(await shouldUpdateMetrics(uuid))
+				) {
+					// If we should force a metrics update then merge the two together and clear `metricsBody` so
+					// that we don't try to merge it again later
+					deviceBody = { ...deviceBody, ...metricsBody };
+					metricsBody = {};
+				}
+
+				if (deviceBody.cpu_id != null) {
+					if (/[^\x20-\x7E]/.test(deviceBody.cpu_id)) {
+						// if the CPU id is not in the character range of 0x20 (SPACE) to 0x7e (~) we drop the CPU ID
+						// this cpu id wouldn't be rendered anyway
+						delete deviceBody.cpu_id;
+					} else {
+						deviceBody.cpu_id = deviceBody.cpu_id.toLowerCase();
+					}
+				}
+
+				if (apps != null || Object.keys(deviceBody).length > 0) {
+					const { resolvedDeviceIds } =
+						req.custom as ResolveDeviceInfoCustomObject;
+					// We lazily fetch the necessary data only if we absolutely must to avoid unnecessary work if it turns out we don't need it
+					data ??= await fetchData(
+						req,
+						custom,
+						resolvedDeviceIds,
+						appReleasesCriteria,
+					);
+					const { images, releasesByAppUuid } = data;
+					const device = data.devicesByUuid[uuid];
+
+					if (apps != null) {
+						const userAppUuid = device.belongs_to__application[0].uuid;
+						if (releasesByAppUuid[userAppUuid] != null) {
+							const release = releasesByAppUuid[userAppUuid].find(
+								(r) => r.commit === apps[userAppUuid].release_uuid,
+							);
+							if (release) {
+								deviceBody.is_running__release = release.id;
+							}
+						}
+						const { releases } = apps[userAppUuid] ?? {};
+						if (releases != null) {
+							for (const { update_status: updateStatus } of Object.values(
+								releases,
+							)) {
+								if (updateStatus != null) {
+									if (
+										deviceBody.update_status == null ||
+										updateStatusPrecedence[updateStatus] <
+											updateStatusPrecedence[deviceBody.update_status]
+									) {
+										deviceBody.update_status = updateStatus;
+									}
+								}
 							}
 						}
 					}
 
-					const imageIds = imgInstalls.map(({ imageId }) => imageId);
-
-					updateFns.push(async (resinApiTx) => {
-						if (imageIds.length > 0) {
-							const existingImgInstalls = await resinApiTx.get({
-								resource: 'image_install',
+					if (Object.keys(deviceBody).length > 0) {
+						// truncate for resilient legacy compatible device state patch so that supervisors don't fail
+						// to update b/c of length violation of 255 (SBVR SHORT TEXT type) for ip and mac address.
+						// sbvr-types does not export SHORT TEXT VARCHAR length 255 to import.
+						deviceBody = truncateConstrainedDeviceFields(deviceBody, device.id);
+						updateFns.push(async (resinApiTx) => {
+							await resinApiTx.patch({
+								resource: 'device',
+								id: device.id,
 								options: {
-									$select: ['id', 'installs__image'],
-									$filter: {
-										device: device.id,
-										installs__image: { $in: imageIds },
-									},
+									$filter: { $not: deviceBody },
 								},
+								// If we're updating anyway then ensure the metrics data is included
+								// but don't use it as a factor as to whether we should actually write or not
+								body: { ...deviceBody, ...metricsBody },
 							});
-							const existingImgInstallsByImage = _.keyBy(
-								existingImgInstalls,
-								({ installs__image }) => installs__image.__id,
-							);
+						});
+					}
 
-							await Promise.all(
-								imgInstalls.map(async (imgInstall) => {
-									await upsertImageInstall(
-										resinApiTx,
-										existingImgInstallsByImage[imgInstall.imageId],
-										imgInstall,
-										device.id,
+					if (apps != null) {
+						const imgInstalls: Array<{
+							imageId: number;
+							releaseId: number;
+							status: string;
+							downloadProgress?: number | null;
+						}> = [];
+						for (const [
+							appUuid,
+							{
+								// release_uuid: isRunningReleaseUuid,
+								releases = {},
+							},
+						] of Object.entries(apps)) {
+							// // TODO: This gets the release we are running for the given app but currently we handle the user app out of band above, and ignore supervisor/os
+							// const release = releases[appUuid].find(
+							// 	(r) => r.commit === isRunningReleaseUuid,
+							// );
+							// if (release == null) {
+							// 	throw new InternalRequestError();
+							// }
+							for (const [releaseUuid, { services = {} }] of Object.entries(
+								releases,
+							)) {
+								const release = releasesByAppUuid[appUuid].find(
+									(r) => r.commit === releaseUuid,
+								);
+								if (release == null) {
+									throw new InternalRequestError();
+								}
+								for (const service of Object.values(services)) {
+									const serviceLocation = service.image.split('@', 1)[0];
+									const image = images.find(
+										(i) => i.is_stored_at__image_location === serviceLocation,
 									);
-								}),
-							);
+									if (image == null) {
+										throw new InternalRequestError();
+									}
+									imgInstalls.push({
+										imageId: image.id,
+										releaseId: release.id,
+										status: service.status,
+										downloadProgress: service.download_progress,
+									});
+								}
+							}
 						}
 
-						await deleteOldImageInstalls(resinApiTx, device.id, imageIds);
-					});
+						const imageIds = imgInstalls.map(({ imageId }) => imageId);
+
+						updateFns.push(async (resinApiTx) => {
+							if (imageIds.length > 0) {
+								const existingImgInstalls = await resinApiTx.get({
+									resource: 'image_install',
+									options: {
+										$select: ['id', 'installs__image'],
+										$filter: {
+											device: device.id,
+											installs__image: { $in: imageIds },
+										},
+									},
+								});
+								const existingImgInstallsByImage = _.keyBy(
+									existingImgInstalls,
+									({ installs__image }) => installs__image.__id,
+								);
+
+								await Promise.all(
+									imgInstalls.map(async (imgInstall) => {
+										await upsertImageInstall(
+											resinApiTx,
+											existingImgInstallsByImage[imgInstall.imageId],
+											imgInstall,
+											device.id,
+										);
+									}),
+								);
+							}
+
+							await deleteOldImageInstalls(resinApiTx, device.id, imageIds);
+						});
+					}
 				}
 			}
-		}
 
-		if (updateFns.length > 0) {
-			await sbvrUtils.db.transaction(async (tx) => {
-				const resinApiTx = api.resin.clone({
-					passthrough: { req, custom, tx },
+			if (updateFns.length > 0) {
+				await sbvrUtils.db.transaction(async (tx) => {
+					const resinApiTx = api.resin.clone({
+						passthrough: { req, custom, tx },
+					});
+
+					await Promise.all(updateFns.map((updateFn) => updateFn(resinApiTx)));
 				});
+			}
 
-				await Promise.all(updateFns.map((updateFn) => updateFn(resinApiTx)));
-			});
+			res.status(200).end();
+		} catch (err) {
+			if (handleHttpErrors(req, res, err)) {
+				return;
+			}
+			captureException(err, 'Error setting device state');
+			res.sendStatus(500);
 		}
-
-		res.status(200).end();
-	} catch (err) {
-		if (handleHttpErrors(req, res, err)) {
-			return;
-		}
-		captureException(err, 'Error setting device state');
-		res.sendStatus(500);
-	}
-};
+	},
+);
