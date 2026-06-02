@@ -10,6 +10,7 @@ import $getObjectMocks from '../fixtures/s3/getObject.json' with { type: 'json' 
 import listObjectsV2Mocks from '../fixtures/s3/listObjectsV2.json' with { type: 'json' };
 import awsMockSetup from './aws-mock.js';
 import * as mockHttpServer from './mockttp-server.js';
+import * as mockRegistry from './registry-mock.js';
 
 const version = 'resin';
 
@@ -18,11 +19,12 @@ export const preInit = async () => {
 
 	awsMockSetup($getObjectMocks, listObjectsV2Mocks);
 
-	// Start the shared mock HTTP(S) proxy as part of bootstrapping the test app,
-	// so it is up before the app issues any outbound request. It stays inert until
-	// individual endpoints are migrated onto it in later commits.
+	// Bootstrap the shared mock proxy and register the mock endpoints it serves
+	// before the app starts issuing outbound requests.
 	await mockHttpServer.start();
+	await mockRegistry.start();
 	after(async () => {
+		mockRegistry.stop();
 		await mockHttpServer.stop();
 	});
 

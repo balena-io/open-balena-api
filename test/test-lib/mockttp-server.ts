@@ -25,9 +25,34 @@ export async function start() {
 		https: { keyPath: caKeyPath, certPath: caCertPath },
 	});
 	await mockServer.start();
+
+	// Route the app's outbound HTTP(S) through the mock proxy. Only hosts that are
+	// NOT in NO_PROXY reach mockttp; everything still served by nock (or by in-suite
+	// infrastructure) is listed here and bypasses the proxy entirely. As each
+	// endpoint is migrated to mockttp, drop its host from NO_PROXY so it starts
+	// flowing through the proxy — until then nock keeps intercepting it directly.
+	const proxyUrl = `http://localhost:${mockServer.port}`;
+	process.env.HTTP_PROXY = proxyUrl;
+	process.env.HTTPS_PROXY = proxyUrl;
+	process.env.NO_PROXY = [
+		// in-suite infrastructure (never proxied)
+		'localhost',
+		'127.0.0.1',
+		'db',
+		'redis',
+		'loki',
+		'minio-server',
+		// still served by nock — remove each host as it migrates to mockttp
+		'api.github.com',
+		'codeload.github.com',
+		'.balena',
+	].join(',');
 }
 
 export async function stop() {
+	delete process.env.HTTP_PROXY;
+	delete process.env.HTTPS_PROXY;
+	delete process.env.NO_PROXY;
 	await mockServer?.stop();
 	mockServer = undefined;
 }
