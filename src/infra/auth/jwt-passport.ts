@@ -10,12 +10,13 @@ import { JSON_WEB_TOKEN_SECRET } from '../../lib/config.js';
 import { captureException } from '../error-handling/index.js';
 import type {
 	ScopedAccessToken,
+	ScopedRolesToken,
 	ScopedToken,
 	TokenUserPayload,
 } from './jwt.js';
 import type { User } from '../../balena-model.js';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
-import { getGuestActorId } from './permissions.js';
+import { getGuestActorId, getRolePermissions } from './permissions.js';
 import { createUnvalidatedRequestHandler } from '../validation/index.js';
 
 export type { SignOptions } from 'jsonwebtoken';
@@ -38,7 +39,11 @@ export interface ApiKey extends sbvrUtils.ApiKey {
 export type ResolvedUserPayload = TokenUserPayload & sbvrUtils.User;
 
 // What decoded content of Passport finds on the Authorization header
-type UnparsedCreds = ServiceToken | TokenUserPayload | ScopedAccessToken;
+type UnparsedCreds =
+	| ServiceToken
+	| TokenUserPayload
+	| ScopedAccessToken
+	| ScopedRolesToken;
 // The result after JwtStrategy runs
 export type Creds = ServiceToken | ResolvedUserPayload | ScopedToken;
 const TOKEN_BODY_FIELD = '_token';
@@ -48,15 +53,15 @@ const jwtFromRequest = ExtractJwt.versionOneCompatibility({
 	authScheme: 'Bearer',
 });
 
-function fetchUser(
+function verifyJwtAndFetchUser(
 	id: Pick<User['Read'], 'id'>,
 	jwtSecret: string | null,
 ): Promise<PickDeferred<User['Read'], 'actor'>>;
-function fetchUser(
+function verifyJwtAndFetchUser(
 	id: Pick<User['Write'], 'actor'>,
 	jwtSecret: string | null,
 ): Promise<PickDeferred<User['Read'], 'id'>>;
-async function fetchUser(
+async function verifyJwtAndFetchUser(
 	id: Pick<User['Read'], 'id'> | Pick<User['Write'], 'actor'>,
 	jwtSecret: string | null,
 ) {
@@ -85,6 +90,17 @@ const processVerifiedJwtPayload = async (
 		const { service, apikey } = jwtUser;
 		const apiKeyPermissions = await permissions.getApiKeyPermissions(apikey);
 		return { service, apikey, permissions: apiKeyPermissions };
+	} else if ('roles' in jwtUser && jwtUser.roles != null) {
+		const { actor } = jwtUser;
+		if ('jwt_secret' in jwtUser && jwtUser.jwt_secret != null) {
+			await verifyJwtAndFetchUser({ actor: jwtUser.actor }, jwtUser.jwt_secret);
+		}
+
+		return {
+			actor,
+			permissions: await getRolePermissions(jwtUser.roles),
+			extraBinds: jwtUser.bindings,
+		};
 	} else if (
 		'access' in jwtUser &&
 		jwtUser.access?.actor &&
@@ -92,7 +108,7 @@ const processVerifiedJwtPayload = async (
 	) {
 		return jwtUser.access;
 	} else if ('id' in jwtUser) {
-		const user = await fetchUser(
+		const user = await verifyJwtAndFetchUser(
 			{ id: jwtUser.id },
 			jwtUser.jwt_secret ?? null,
 		);

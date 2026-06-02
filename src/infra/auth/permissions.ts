@@ -8,6 +8,8 @@ import { sbvrUtils, permissions } from '@balena/pinejs';
 import { findUser } from './auth.js';
 import { captureException } from '../error-handling/index.js';
 import { getOrInsertId } from '../pinejs-client-helpers/index.js';
+import { multiCacheMemoizee } from '../cache/multi-level-memoizee.js';
+import { ROLE_PERMISSIONS_CACHE_TIMEOUT } from '../../lib/config.js';
 
 const { api } = sbvrUtils;
 
@@ -75,6 +77,48 @@ export const revokeUserRole = async (user: number, role: number, tx: Tx) => {
 		},
 	});
 };
+
+export const getRolePermissions = multiCacheMemoizee(
+	async (roleNames: string[]): Promise<string[]> => {
+		if (roleNames.length === 0) {
+			return [];
+		}
+		const perms = await api.Auth.get({
+			resource: 'permission',
+			passthrough: { req: permissions.rootRead },
+			options: {
+				$select: 'name',
+				$filter: {
+					is_of__role: {
+						$any: {
+							$alias: 'rhp',
+							$expr: {
+								rhp: {
+									role: {
+										$any: {
+											$alias: 'r',
+											$expr: { r: { name: { $in: roleNames } } },
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				$orderby: { name: 'asc' },
+			},
+		});
+		return perms.map(({ name }) => name);
+	},
+	{
+		cacheKey: 'getRolePermissions',
+		promise: true,
+		primitive: true,
+		maxAge: ROLE_PERMISSIONS_CACHE_TIMEOUT,
+		normalizer: ([roleNames]) => JSON.stringify(roleNames.toSorted()),
+	},
+	{ useVersion: false },
+);
 
 // api key helpers
 
