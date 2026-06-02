@@ -50,14 +50,14 @@ export type StatePatchV2Body = {
 		download_progress?: number | null;
 		api_port?: number;
 		api_secret?: string | null;
-		memory_usage?: number;
-		memory_total?: number;
-		storage_block_device?: string;
-		storage_usage?: number;
-		storage_total?: number;
-		cpu_temp?: number;
-		cpu_usage?: number;
-		cpu_id?: string;
+		memory_usage?: number | null;
+		memory_total?: number | null;
+		storage_block_device?: string | null;
+		storage_usage?: number | null;
+		storage_total?: number | null;
+		cpu_temp?: number | null;
+		cpu_usage?: number | null;
+		cpu_id?: string | null;
 		is_undervolted?: boolean;
 		is_on__commit?: string | null;
 		apps?: Record<
@@ -142,16 +142,16 @@ export const statePatchV2 = createValidatedRequestHandler(
 					ip_address: z.string(),
 					mac_address: z.string(),
 					download_progress: z.number().nullable(),
-					api_port: z.number(),
+					api_port: z.number().or(z.string().transform((v) => parseInt(v, 10))),
 					api_secret: z.string().nullable(),
-					memory_usage: z.number(),
-					memory_total: z.number(),
-					storage_block_device: z.string(),
-					storage_usage: z.number(),
-					storage_total: z.number(),
-					cpu_temp: z.number(),
-					cpu_usage: z.number(),
-					cpu_id: z.string(),
+					memory_usage: z.number().nullable(),
+					memory_total: z.number().nullable(),
+					storage_block_device: z.string().nullable(),
+					storage_usage: z.number().nullable(),
+					storage_total: z.number().nullable(),
+					cpu_temp: z.number().nullable(),
+					cpu_usage: z.number().nullable(),
+					cpu_id: z.string().nullable(),
 					is_undervolted: z.boolean(),
 					is_on__commit: z.string().nullable(),
 					apps: z.record(
