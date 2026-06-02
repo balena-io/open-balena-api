@@ -146,7 +146,7 @@ export const metricsPatchFields = [
 
 // Limit the values of the metrics to safe values
 export function limitMetricNumbers(
-	body: Partial<Record<(typeof metricsPatchNumbers)[number], number>>,
+	body: Partial<Record<(typeof metricsPatchNumbers)[number], number | null>>,
 ): void {
 	for (const key of metricsPatchNumbers) {
 		const value = body[key];

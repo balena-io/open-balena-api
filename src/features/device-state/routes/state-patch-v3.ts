@@ -50,14 +50,14 @@ export type StatePatchV3Body = {
 		mac_address?: string;
 		api_port?: number;
 		api_secret?: string | null;
-		memory_usage?: number;
-		memory_total?: number;
-		storage_block_device?: string;
-		storage_usage?: number;
-		storage_total?: number;
-		cpu_temp?: number;
-		cpu_usage?: number;
-		cpu_id?: string;
+		memory_usage?: number | null;
+		memory_total?: number | null;
+		storage_block_device?: string | null;
+		storage_usage?: number | null;
+		storage_total?: number | null;
+		cpu_temp?: number | null;
+		cpu_usage?: number | null;
+		cpu_id?: string | null;
 		is_undervolted?: boolean;
 		/**
 		 * Used for setting dependent devices as online, so shouldn't be used in practice
@@ -244,14 +244,14 @@ export const statePatchV3 = createValidatedRequestHandler(
 					mac_address: z.string(),
 					api_port: z.number(),
 					api_secret: z.string().nullable(),
-					memory_usage: z.number(),
-					memory_total: z.number(),
-					storage_block_device: z.string(),
-					storage_usage: z.number(),
-					storage_total: z.number(),
-					cpu_temp: z.number(),
-					cpu_usage: z.number(),
-					cpu_id: z.string(),
+					memory_usage: z.number().nullable(),
+					memory_total: z.number().nullable(),
+					storage_block_device: z.string().nullable(),
+					storage_usage: z.number().nullable(),
+					storage_total: z.number().nullable(),
+					cpu_temp: z.number().nullable(),
+					cpu_usage: z.number().nullable(),
+					cpu_id: z.string().nullable(),
 					is_undervolted: z.boolean(),
 					/**
 					 * Used for setting dependent devices as online, so shouldn't be used in practice
