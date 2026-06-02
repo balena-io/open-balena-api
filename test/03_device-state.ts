@@ -1338,15 +1338,20 @@ export default () => {
 						[stateKey]:
 							stateVersion === 'v2'
 								? {
-										apps: images.map((image) => ({
-											services: {
-												[image.id]: {
-													releaseId: release1.id,
-													status,
-													download_progress,
-												},
+										apps: {
+											[applicationId]: {
+												services: Object.fromEntries(
+													images.map((image) => [
+														image.id,
+														{
+															releaseId: release1.id,
+															status,
+															download_progress,
+														},
+													]),
+												),
 											},
-										})),
+										},
 									}
 								: {
 										apps: {

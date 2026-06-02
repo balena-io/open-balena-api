@@ -75,7 +75,7 @@ export type StatePatchV3Body = {
 						services?: {
 							[name: string]: {
 								image: string;
-								status: string;
+								status?: string;
 								download_progress?: number | null;
 							};
 						};
@@ -281,7 +281,7 @@ export const statePatchV3 = createValidatedRequestHandler(
 												z.string(),
 												z.object({
 													image: z.string(),
-													status: z.string(),
+													status: z.string().optional(),
 													download_progress: z.number().nullable().optional(),
 												}),
 											),
@@ -457,7 +457,7 @@ export const statePatchV3 = createValidatedRequestHandler(
 						const imgInstalls: Array<{
 							imageId: number;
 							releaseId: number;
-							status: string;
+							status?: string;
 							downloadProgress?: number | null;
 						}> = [];
 						for (const [

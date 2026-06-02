@@ -60,15 +60,18 @@ export type StatePatchV2Body = {
 		cpu_id?: string;
 		is_undervolted?: boolean;
 		is_on__commit?: string | null;
-		apps?: Array<{
-			services?: {
-				[imageId: string]: {
-					releaseId: number;
-					status?: string;
-					download_progress?: number | null;
+		apps?: Record<
+			string,
+			{
+				services?: {
+					[imageId: string]: {
+						releaseId: number | string;
+						status?: string;
+						download_progress?: number | null;
+					};
 				};
-			};
-		}>;
+			}
+		>;
 	};
 };
 
@@ -151,14 +154,16 @@ export const statePatchV2 = createValidatedRequestHandler(
 					cpu_id: z.string(),
 					is_undervolted: z.boolean(),
 					is_on__commit: z.string().nullable(),
-					apps: z.array(
+					apps: z.record(
+						// app uuid
+						z.string(),
 						z.object({
 							services: z
 								.record(
 									// image id
 									z.string(),
 									z.object({
-										releaseId: z.number(),
+										releaseId: z.number().or(z.string()),
 										status: z.string().optional(),
 										download_progress: z.number().nullable().optional(),
 									}),
