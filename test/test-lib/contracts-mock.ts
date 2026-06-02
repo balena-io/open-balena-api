@@ -17,7 +17,7 @@ const contractsFixtureDir = fileURLToPath(
 );
 
 // mockttp response bodies must be a string/Buffer, so collect the gzipped tar
-// stream (which nock consumed lazily) into a Buffer up front, per request.
+// stream into a Buffer up front, per request.
 const tarballBuffer = (filename: string) =>
 	buffer(tar.create({ gzip: true, cwd: contractsFixtureDir }, [filename]));
 
@@ -43,8 +43,8 @@ const registerRepoRules = async (
 		file = file.matching(enabled);
 	}
 
-	// nock's `.persist(false)` matches once then is consumed; `.persist(true)`
-	// matches forever. mockttp's `.once()` / `.always()` are the equivalents.
+	// A persistent rule (`.always()`) matches for the whole suite; a one-shot rule
+	// (`.once()`) matches a single request and is then consumed.
 	redirect = persist ? redirect.always() : redirect.once();
 	file = persist ? file.always() : file.once();
 
