@@ -43,8 +43,6 @@ export async function start() {
 		'loki',
 		'minio-server',
 		// still served by nock — remove each host as it migrates to mockttp
-		'api.github.com',
-		'codeload.github.com',
 		'.balena',
 	].join(',');
 }

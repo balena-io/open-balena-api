@@ -77,7 +77,7 @@ export default () => {
 
 			describe('contract fetching', () => {
 				it('should fetch the specified contracts repo locally', async () => {
-					mockRepo(contractRepository, 'base-contracts');
+					await mockRepo(contractRepository, 'base-contracts');
 					await fetchContractsLocally([contractRepository]);
 					const contracts = await getContracts('hw.device-type');
 
@@ -92,8 +92,8 @@ export default () => {
 						...contractRepository,
 						name: 'other-contracts',
 					};
-					mockRepo(contractRepository, 'base-contracts');
-					mockRepo(otherContractRepository);
+					await mockRepo(contractRepository, 'base-contracts');
+					await mockRepo(otherContractRepository);
 					await fetchContractsLocally([
 						contractRepository,
 						otherContractRepository,
@@ -111,8 +111,8 @@ export default () => {
 						...contractRepository,
 						name: 'other-contracts',
 					};
-					mockRepo(contractRepository, 'base-contracts');
-					mockRepo(otherContractRepository);
+					await mockRepo(contractRepository, 'base-contracts');
+					await mockRepo(otherContractRepository);
 					await fetchContractsLocally([
 						contractRepository,
 						otherContractRepository,
@@ -151,11 +151,11 @@ export default () => {
 				});
 
 				it('should update data as the contracts change', async () => {
-					mockRepo(contractRepository, 'base-contracts');
+					await mockRepo(contractRepository, 'base-contracts');
 					await fetchContractsLocally([contractRepository]);
 
 					// A new device type was added, and the fin contract was modified in the updated contracts tarball.
-					mockRepo(contractRepository, 'updated-base-contracts');
+					await mockRepo(contractRepository, 'updated-base-contracts');
 					await fetchContractsLocally([contractRepository]);
 
 					const contracts = await getContracts('hw.device-type');
@@ -179,7 +179,7 @@ export default () => {
 				});
 
 				it('should write the set contract data to the DB', async () => {
-					mockRepo(contractRepository, 'base-contracts');
+					await mockRepo(contractRepository, 'base-contracts');
 					await synchronizeContracts([contractRepository]);
 					await Promise.all(
 						[
@@ -192,10 +192,10 @@ export default () => {
 				});
 
 				it('should update the DB data once a contract changes', async () => {
-					mockRepo(contractRepository, 'base-contracts');
+					await mockRepo(contractRepository, 'base-contracts');
 					await synchronizeContracts([contractRepository]);
 
-					mockRepo(contractRepository, 'updated-base-contracts');
+					await mockRepo(contractRepository, 'updated-base-contracts');
 					await synchronizeContracts([contractRepository]);
 
 					const contracts = await getContracts('hw.device-type');

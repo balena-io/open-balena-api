@@ -20,7 +20,8 @@ export const preInit = async () => {
 	awsMockSetup($getObjectMocks, listObjectsV2Mocks);
 
 	// Bootstrap the shared mock proxy and register the mock endpoints it serves
-	// before the app starts issuing outbound requests.
+	// before the app starts issuing outbound requests (the first is postInit's
+	// synchronizeContracts, which runs before mocha's hooks).
 	await mockHttpServer.start();
 	await mockRegistry.start();
 	after(async () => {
@@ -28,7 +29,8 @@ export const preInit = async () => {
 		await mockHttpServer.stop();
 	});
 
-	await import('./contracts-mock.js');
+	const { installContractMocks } = await import('./contracts-mock.js');
+	await installContractMocks();
 
 	config.TEST_MOCK_ONLY.ASYNC_TASKS_ENABLED = true;
 	config.TEST_MOCK_ONLY.ASYNC_TASK_CREATE_SERVICE_INSTALLS_ENABLED = true;
