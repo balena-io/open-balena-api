@@ -9,6 +9,7 @@ import * as config from '../../src/lib/config.js';
 import $getObjectMocks from '../fixtures/s3/getObject.json' with { type: 'json' };
 import listObjectsV2Mocks from '../fixtures/s3/listObjectsV2.json' with { type: 'json' };
 import awsMockSetup from './aws-mock.js';
+import * as mockHttpServer from './mockttp-server.js';
 
 const version = 'resin';
 
@@ -16,6 +17,14 @@ export const preInit = async () => {
 	augmentStatusAssertionError();
 
 	awsMockSetup($getObjectMocks, listObjectsV2Mocks);
+
+	// Start the shared mock HTTP(S) proxy as part of bootstrapping the test app,
+	// so it is up before the app issues any outbound request. It stays inert until
+	// individual endpoints are migrated onto it in later commits.
+	await mockHttpServer.start();
+	after(async () => {
+		await mockHttpServer.stop();
+	});
 
 	await import('./contracts-mock.js');
 
