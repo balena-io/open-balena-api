@@ -298,30 +298,34 @@ export const statePatchV2 = createValidatedRequestHandler(
 				}
 
 				if (apps != null) {
-					const imgInstalls = _.flatMap(apps, (app) =>
-						_.map(app.services, (svc, imageIdStr) => {
-							const imageId = parseInt(imageIdStr, 10);
-							if (!Number.isFinite(imageId)) {
-								throw new BadRequestError('Invalid image ID value in request');
-							}
+					const imgInstalls = Object.values(apps).flatMap(({ services }) =>
+						services == null
+							? []
+							: Object.entries(services).map(([imageIdStr, svc]) => {
+									const imageId = parseInt(imageIdStr, 10);
+									if (!Number.isFinite(imageId)) {
+										throw new BadRequestError(
+											'Invalid image ID value in request',
+										);
+									}
 
-							const releaseId =
-								typeof svc.releaseId === 'number'
-									? svc.releaseId
-									: parseInt(svc.releaseId, 10);
-							if (!Number.isFinite(releaseId)) {
-								throw new BadRequestError(
-									'Invalid release ID value in request',
-								);
-							}
+									const releaseId =
+										typeof svc.releaseId === 'number'
+											? svc.releaseId
+											: parseInt(svc.releaseId, 10);
+									if (!Number.isFinite(releaseId)) {
+										throw new BadRequestError(
+											'Invalid release ID value in request',
+										);
+									}
 
-							return {
-								imageId,
-								releaseId,
-								status: svc.status,
-								downloadProgress: svc.download_progress,
-							};
-						}),
+									return {
+										imageId,
+										releaseId,
+										status: svc.status,
+										downloadProgress: svc.download_progress,
+									};
+								}),
 					);
 					const imageIds = imgInstalls.map(({ imageId }) => imageId);
 
