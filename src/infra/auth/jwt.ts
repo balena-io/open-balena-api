@@ -40,14 +40,17 @@ export const generateNewJwtSecret = async (): Promise<string> => {
 export const tokenFields = ['id', 'jwt_secret'] satisfies Array<
 	keyof User['Read']
 >;
-// The content of the JWT that we give to users, other than the standard JWT props (eg iat,exp,...).
-export interface TokenUserPayload extends Pick<
-	User['Read'],
-	(typeof tokenFields)[number]
-> {
-	twoFactorRequired?: boolean;
-	authTime?: number;
+export interface StandardJwtClaims {
+	exp?: number;
+	iat?: number;
 }
+
+// The content of the JWT that we give to users, other than the standard JWT props (eg iat,exp,...).
+export type TokenUserPayload = StandardJwtClaims &
+	Pick<User['Read'], (typeof tokenFields)[number]> & {
+		twoFactorRequired?: boolean;
+		authTime?: number;
+	};
 
 const jwtValidFields = [
 	...tokenFields,
@@ -55,7 +58,7 @@ const jwtValidFields = [
 	'twoFactorRequired',
 	'iat',
 	'exp',
-] satisfies Array<keyof TokenUserPayload | 'iat' | 'exp'>;
+] satisfies Array<keyof TokenUserPayload>;
 
 export interface ExtraParams {
 	existingToken?: Partial<TokenUserPayload>;
