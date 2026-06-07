@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import nock from 'nock';
+import { getMockServer } from './mockttp-server.js';
 import { supertest } from './supertest.js';
 
 import { VPN_SERVICE_API_KEY } from '../../src/lib/config.js';
@@ -34,17 +34,20 @@ export const connectDeviceAndWaitForUpdate = async (
 		})
 		.expect(200);
 
-	nock(`http://${uuid}.balena`)
-		.post(/\/v1\/update/)
-		.reply(() => {
+	// The device-proxy tunnels to `${uuid}.balena` through the VPN connect-proxy,
+	// which the mock server listens on (see mockttp-server), so the request lands
+	// here even though it uses an explicit (non-env) proxy.
+	await getMockServer()
+		.forPost(/\/v1\/update/)
+		.forHostname(`${uuid}.balena`)
+		.once()
+		.thenCallback(() => {
 			updateRequested = true;
-			return [
-				{
-					statusCode: 200,
-					headers: { 'content-type': 'text/plain' },
-				},
-				'OK',
-			];
+			return {
+				statusCode: 200,
+				body: 'OK',
+				headers: { 'content-type': 'text/plain' },
+			};
 		});
 	await promiseFn();
 

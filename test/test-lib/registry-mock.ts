@@ -2,12 +2,10 @@ import {
 	REGISTRY2_HOST,
 	REGISTRY_STORAGE_ROOT_PATH,
 } from '../../src/lib/config.js';
-import nock from 'nock';
+import { getMockServer } from './mockttp-server.js';
 import { strict } from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { addListObjectsV2Resolver } from './aws-mock.js';
-
-const REGISTRY_ENDPOINT = `https://${REGISTRY2_HOST}`;
 
 interface RegistryImage {
 	repository: string;
@@ -73,28 +71,31 @@ export function setNextDeleteResponseCode(code: number | null) {
 	nextDeleteResponseCode = code;
 }
 
-function nockDeleteManifest(): nock.Scope {
-	const pathRegex = /\/v2\/([a-zA-Z0-9-/]+)\/manifests\/(sha256:[a-zA-Z0-9]+)/;
-	return nock(REGISTRY_ENDPOINT)
-		.delete(pathRegex)
-		.reply((uri) => {
+const manifestPathRegex =
+	/\/v2\/([a-zA-Z0-9-/]+)\/manifests\/(sha256:[a-zA-Z0-9]+)/;
+
+async function mockDeleteManifest() {
+	await getMockServer()
+		.forDelete(manifestPathRegex)
+		.forHostname(REGISTRY2_HOST)
+		.always()
+		.thenCallback((req) => {
 			if (nextDeleteResponseCode != null) {
 				const code = nextDeleteResponseCode;
 				nextDeleteResponseCode = null;
-				return [code, 'mock error'];
+				return { statusCode: code, body: 'mock error' };
 			}
-			const matches = uri.match(pathRegex);
+			const matches = req.url.match(manifestPathRegex);
 			const repository = matches?.[1];
 			const digest = matches?.[2];
 			strict(repository && digest);
 			const image = getImage(repository, digest);
 			if (image == null || image.isDeleted === true) {
-				return [404];
+				return { statusCode: 404 };
 			}
 			image.isDeleted = true;
-			return [202];
-		})
-		.persist();
+			return { statusCode: 202 };
+		});
 }
 
 function registerS3Resolver() {
@@ -148,14 +149,13 @@ function registerS3Resolver() {
 
 let disposeS3Resolver: (() => void) | undefined;
 
-export function start() {
-	nockDeleteManifest();
+export async function start() {
+	await mockDeleteManifest();
 	disposeS3Resolver = registerS3Resolver();
 }
 
 export function stop() {
 	reset();
-	nock.cleanAll();
 	disposeS3Resolver?.();
 	disposeS3Resolver = undefined;
 }

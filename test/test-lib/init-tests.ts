@@ -9,6 +9,8 @@ import * as config from '../../src/lib/config.js';
 import $getObjectMocks from '../fixtures/s3/getObject.json' with { type: 'json' };
 import listObjectsV2Mocks from '../fixtures/s3/listObjectsV2.json' with { type: 'json' };
 import awsMockSetup from './aws-mock.js';
+import * as mockHttpServer from './mockttp-server.js';
+import * as mockRegistry from './registry-mock.js';
 
 const version = 'resin';
 
@@ -17,7 +19,18 @@ export const preInit = async () => {
 
 	awsMockSetup($getObjectMocks, listObjectsV2Mocks);
 
-	await import('./contracts-mock.js');
+	// Bootstrap the shared mock proxy and register the mock endpoints it serves
+	// before the app starts issuing outbound requests (the first is postInit's
+	// synchronizeContracts, which runs before mocha's hooks).
+	await mockHttpServer.start();
+	await mockRegistry.start();
+	after(async () => {
+		mockRegistry.stop();
+		await mockHttpServer.stop();
+	});
+
+	const { installContractMocks } = await import('./contracts-mock.js');
+	await installContractMocks();
 
 	config.TEST_MOCK_ONLY.ASYNC_TASKS_ENABLED = true;
 	config.TEST_MOCK_ONLY.ASYNC_TASK_CREATE_SERVICE_INSTALLS_ENABLED = true;

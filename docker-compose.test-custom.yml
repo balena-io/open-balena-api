@@ -103,6 +103,7 @@ services:
       METRICS_MAX_REPORT_INTERVAL_SECONDS: 3
       DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS: 3
       MIXPANEL_TOKEN: mixpanel_token
+      NODE_EXTRA_CA_CERTS: /usr/src/app/test/fixtures/mockttp-ca/ca.pem
       NUM_WORKERS: 1
       PORT: 80
       TRUST_PROXY: "true"
