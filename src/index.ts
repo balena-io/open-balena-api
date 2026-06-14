@@ -98,7 +98,11 @@ import {
 	assignUserRole,
 	revokeUserRole,
 } from './infra/auth/permissions.js';
-import { createScopedAccessToken, createJwt } from './infra/auth/jwt.js';
+import {
+	createScopedAccessToken,
+	createScopedRolesToken,
+	createJwt,
+} from './infra/auth/jwt.js';
 import { middleware as authMiddleware } from './infra/auth/index.js';
 import {
 	augmentReqApiKeyPermissions,
@@ -213,6 +217,7 @@ export const auth = {
 	checkUserPassword,
 	createSessionToken,
 	createScopedAccessToken,
+	createScopedRolesToken,
 	createJwt,
 	createAllPermissions,
 	setApiKey,

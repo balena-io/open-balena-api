@@ -207,6 +207,10 @@ export const RATE_LIMIT_FACTOR = intVar('RATE_LIMIT_FACTOR', 1);
 export const RATE_LIMIT_MEMORY_BACKEND = optionalVar(
 	'RATE_LIMIT_MEMORY_BACKEND',
 );
+export const ROLE_PERMISSIONS_CACHE_TIMEOUT = intVar(
+	'ROLE_PERMISSIONS_CACHE_TIMEOUT',
+	15 * MINUTES,
+);
 
 type RedisAuth = {
 	username?: string;

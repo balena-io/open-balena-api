@@ -11,12 +11,13 @@ import { JSON_WEB_TOKEN_SECRET } from '../../lib/config.js';
 import { captureException } from '../error-handling/index.js';
 import type {
 	ScopedAccessToken,
+	ScopedRolesToken,
 	ScopedToken,
 	TokenUserPayload,
 } from './jwt.js';
 import type { User } from '../../balena-model.js';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
-import { getGuestActorId } from './permissions.js';
+import { getGuestActorId, getRolePermissions } from './permissions.js';
 import { createUnvalidatedRequestHandler } from '../validation/index.js';
 
 export type { SignOptions } from 'jsonwebtoken';
@@ -37,7 +38,11 @@ export interface ApiKey extends sbvrUtils.ApiKey {
 export type ResolvedUserPayload = TokenUserPayload & sbvrUtils.User;
 
 // What decoded content of Passport finds on the Authorization header
-type UnparsedCreds = ServiceToken | TokenUserPayload | ScopedAccessToken;
+type UnparsedCreds =
+	| ServiceToken
+	| TokenUserPayload
+	| ScopedAccessToken
+	| ScopedRolesToken;
 // The result after JwtStrategy runs
 export type Creds = ServiceToken | ResolvedUserPayload | ScopedToken;
 const TOKEN_BODY_FIELD = '_token';
@@ -62,6 +67,24 @@ const processVerifiedJwtPayload = async (
 		const { service, apikey } = jwtUser;
 		const apiKeyPermissions = await permissions.getApiKeyPermissions(apikey);
 		return { service, apikey, permissions: apiKeyPermissions };
+	} else if ('roles' in jwtUser && jwtUser.roles != null) {
+		const { actor } = jwtUser;
+		if (jwtUser.jwt_secret != null || jwtUser.userId != null) {
+			// `userId` and `jwt_secret` must always come together
+			if (jwtUser.jwt_secret == null || jwtUser.userId == null) {
+				throw new InvalidJwtSecretError();
+			}
+			const user = await fetchUser(jwtUser.userId);
+			if (user?.jwt_secret !== jwtUser.jwt_secret) {
+				throw new InvalidJwtSecretError();
+			}
+		}
+
+		return {
+			actor,
+			permissions: await getRolePermissions(jwtUser.roles),
+			extraBinds: jwtUser.bindings,
+		};
 	} else if (
 		'access' in jwtUser &&
 		jwtUser.access?.actor &&

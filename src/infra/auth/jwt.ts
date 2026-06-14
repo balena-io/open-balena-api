@@ -196,6 +196,48 @@ export function createScopedAccessToken(
 	return createJwt(payload, signOptions);
 }
 
+export type ScopedRolesToken = {
+	actor: number;
+	roles: string[];
+	bindings: sbvrUtils.ExtraBinds;
+} & (
+	| {
+			// Binds the token to the user's jwt_secret so that rotating the
+			// secret revokes it, with `userId` avoiding an actor lookup on
+			// verification
+			userId: number;
+			jwt_secret: string;
+	  }
+	| { userId?: undefined; jwt_secret?: undefined }
+);
+
+export type ScopedRolesTokenOptions = ScopedRolesToken & {
+	expiresIn: number;
+};
+
+export function createScopedRolesToken(
+	options: ScopedRolesTokenOptions,
+): string {
+	const { userId, jwt_secret: jwtSecret } = options;
+	if ((userId == null) !== (jwtSecret == null)) {
+		throw new Error(
+			'userId and jwt_secret must either both be provided or both be omitted',
+		);
+	}
+	const base = {
+		actor: options.actor,
+		roles: options.roles,
+		bindings: options.bindings,
+		...(userId != null && jwtSecret != null
+			? {
+					userId,
+					jwt_secret: jwtSecret,
+				}
+			: {}),
+	};
+	return createJwt(base, { expiresIn: options.expiresIn });
+}
+
 const EXPIRY_SECONDS = JSON_WEB_TOKEN_EXPIRY_MINUTES * 60;
 // if the new jwt should be created from an existing one,
 // the expiration date of the existing token is taken over
