@@ -13,7 +13,6 @@ import * as Sentry from '@sentry/node';
 import * as zlib from 'node:zlib';
 
 import * as pine from '@balena/pinejs';
-import { sbvrUtils } from '@balena/pinejs';
 
 import type { User } from './balena-model.js';
 import type {
@@ -22,22 +21,8 @@ import type {
 } from './infra/auth/auth.js';
 import * as jwt from './infra/auth/jwt-passport.js';
 
-const { api } = sbvrUtils;
-
 // TODO: Move this into a feature
-passport.use(
-	jwt.createStrategy(
-		async (id: number) =>
-			await api.resin.get({
-				resource: 'user',
-				id,
-				passthrough: { req: pine.permissions.rootRead },
-				options: {
-					$select: ['actor', 'jwt_secret'],
-				},
-			}),
-	),
-);
+passport.use(jwt.createStrategy());
 
 import {
 	API_HOST,
