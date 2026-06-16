@@ -68,7 +68,7 @@ function buildAppFromRelease(
 	device: ExpandedDevice,
 	application: ExpandedDevice['belongs_to__application'][number],
 	release: ExpandedDevice['should_be_running__release'][number],
-	config: Dictionary<string>,
+	config: Record<string, string>,
 ): LocalStateApp {
 	let composition: AnyObject = {};
 	const services: LocalStateApp['services'] = {};
@@ -93,7 +93,7 @@ function buildAppFromRelease(
 		const image = ipr.image[0];
 
 		const svc = image.is_a_build_of__service[0];
-		const environment: Dictionary<string> = {};
+		const environment: Record<string, string> = {};
 		varListInsert(ipr.image_environment_variable, environment);
 		varListInsert(application.application_environment_variable, environment);
 		varListInsert(svc.service_environment_variable, environment);
@@ -103,7 +103,7 @@ function buildAppFromRelease(
 			varListInsert(dsevs, environment);
 		}
 
-		const labels: Dictionary<string> = {};
+		const labels: Record<string, string> = {};
 		for (const { label_name, value } of [
 			...ipr.image_label,
 			...svc.service_label,
@@ -296,7 +296,7 @@ const getDevice = getStateDelayingEmpty(
 
 const getUserAppForState = (
 	device: ExpandedDevice,
-	config: Dictionary<string>,
+	config: Record<string, string>,
 ): LocalStateApp => {
 	const userAppFromApi = device.belongs_to__application[0];
 

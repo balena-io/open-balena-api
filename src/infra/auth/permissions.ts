@@ -205,7 +205,7 @@ export async function createAllPermissions(
 		})
 		.then(async (perms) => {
 			const permissionsMap = _(perms).keyBy('name').mapValues('id').value();
-			const result: Dictionary<number | Promise<number>> = {};
+			const result: Record<string, Resolvable<number>> = {};
 			for (const permissionName of permissionNames) {
 				if (permissionsMap[permissionName] != null) {
 					result[permissionName] = permissionsMap[permissionName];

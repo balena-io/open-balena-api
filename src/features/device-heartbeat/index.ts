@@ -99,7 +99,7 @@ const getPollIntervalForParentApplication = _.once(() =>
 
 export const getPollInterval = async (
 	deviceId: number,
-	config?: Dictionary<string>,
+	config?: Record<string, string>,
 ) => {
 	let pollIntervalString: string | undefined;
 	if (config != null) {

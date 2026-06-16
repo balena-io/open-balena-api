@@ -1,5 +1,3 @@
-import type _ from 'lodash';
-
 import { expect } from 'chai';
 import * as fakeDevice from '../test-lib/fake-device.js';
 import type { UserObjectParam } from '../test-lib/supertest.js';
@@ -30,8 +28,8 @@ export default () => {
 		let admin: UserObjectParam;
 		let applicationId: number;
 		let device: fakeDevice.Device;
-		const releases: _.Dictionary<number> = {};
-		const services: _.Dictionary<number> = {};
+		const releases: Record<string, number> = {};
+		const services: Record<string, number> = {};
 
 		before('Setup the application and initial release', async function () {
 			fx = await fixtures.load('unpin-device-after-release');

@@ -41,7 +41,7 @@ export interface Contract {
 	type: string;
 	aliases?: string[];
 	name: string;
-	assets?: Dictionary<ContractAsset>;
+	assets?: Record<string, ContractAsset>;
 	data: any;
 }
 

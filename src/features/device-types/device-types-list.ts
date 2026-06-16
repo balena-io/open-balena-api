@@ -82,8 +82,8 @@ for (const contractPath of CONTRACT_ALLOWLIST) {
 }
 
 export const getDeviceTypeJsons = multiCacheMemoizee(
-	async (): Promise<Dictionary<DeviceTypeJson>> => {
-		const result: Dictionary<DeviceTypeJson> = {};
+	async (): Promise<Record<string, DeviceTypeJson>> => {
+		const result: Record<string, DeviceTypeJson> = {};
 		const deviceTypes = await api.resin.get({
 			resource: 'device_type',
 			passthrough: { req: permissions.rootRead },

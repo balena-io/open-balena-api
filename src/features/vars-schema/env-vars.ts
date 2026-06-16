@@ -62,7 +62,7 @@ export const INVALID_NEWLINE_REGEX = /\r|\n/;
 
 const getDefinitionWithMinimumSupervisorVersion = (
 	dtsPerSupervisorVersion: { [supervisorVersion: string]: string[] },
-	definitions: Dictionary<ConfigVarDefinition>,
+	definitions: Record<string, ConfigVarDefinition>,
 ) => {
 	return Object.entries(dtsPerSupervisorVersion).map(([version, dts]) => {
 		return {
@@ -145,7 +145,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 
 export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 	capableDeviceTypes: string[];
-	properties: Dictionary<ConfigVarDefinition>;
+	properties: Record<string, ConfigVarDefinition>;
 }> = [
 	{
 		capableDeviceTypes: [

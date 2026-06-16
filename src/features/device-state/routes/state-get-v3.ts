@@ -98,22 +98,22 @@ export function buildAppFromRelease(
 	device: undefined,
 	application: ExpandedApplicationWithService,
 	release: ExpandedRelease,
-	config: Dictionary<string>,
-	defaultLabels?: Dictionary<string>,
+	config: Record<string, string>,
+	defaultLabels?: Record<string, string>,
 ): NonNullable<LocalStateApp['releases']>;
 export function buildAppFromRelease(
 	device: ExpandedDevice,
 	application: ExpandedApplication,
 	release: ExpandedRelease,
-	config: Dictionary<string>,
-	defaultLabels?: Dictionary<string>,
+	config: Record<string, string>,
+	defaultLabels?: Record<string, string>,
 ): NonNullable<LocalStateApp['releases']>;
 export function buildAppFromRelease(
 	device: ExpandedDevice | undefined,
 	application: ExpandedApplication | ExpandedApplicationWithService,
 	release: ExpandedRelease,
-	config: Dictionary<string>,
-	defaultLabels?: Dictionary<string>,
+	config: Record<string, string>,
+	defaultLabels?: Record<string, string>,
 ): NonNullable<LocalStateApp['releases']> {
 	let composition: AnyObject = {};
 	const services: NonNullable<LocalStateApp['releases']>[string]['services'] =
@@ -157,7 +157,7 @@ export function buildAppFromRelease(
 	for (const ipr of release.release_image) {
 		const image = ipr.image[0];
 		const svc = image.is_a_build_of__service[0];
-		const environment: Dictionary<string> = {};
+		const environment: Record<string, string> = {};
 
 		if ('service' in application) {
 			if (!application.service.some((s) => s.id === svc.id)) {
@@ -179,7 +179,7 @@ export function buildAppFromRelease(
 			}
 		}
 
-		const labels: Dictionary<string> = {
+		const labels: Record<string, string> = {
 			...defaultLabels,
 		};
 		for (const { label_name, value } of [
@@ -446,8 +446,8 @@ const getDevice = getStateDelayingEmpty(
 const getAppState = (
 	device: ExpandedDevice,
 	targetReleaseField: TargetReleaseField,
-	config: Dictionary<string>,
-	defaultLabels?: Dictionary<string>,
+	config: Record<string, string>,
+	defaultLabels?: Record<string, string>,
 ): StateV3[string]['apps'] | null => {
 	let application: ExpandedApplication;
 	let release: ExpandedRelease;

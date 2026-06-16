@@ -119,7 +119,7 @@ const getSuccessfulReleaseForFleetAndCommit = async (
 const getFleetAppsForState = (
 	fleet: ExpandedApplicationWithService,
 	release: ExpandedRelease,
-	config: Dictionary<string>,
+	config: Record<string, string>,
 ): FleetStateV3[string]['apps'] => {
 	return {
 		[fleet.uuid]: {
