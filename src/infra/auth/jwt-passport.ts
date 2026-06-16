@@ -3,8 +3,7 @@ import passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { TypedError } from 'typed-error';
 
-import type { sbvrUtils } from '@balena/pinejs';
-import { permissions } from '@balena/pinejs';
+import { permissions, sbvrUtils } from '@balena/pinejs';
 
 import { JSON_WEB_TOKEN_SECRET } from '../../lib/config.js';
 
@@ -20,6 +19,8 @@ import { getGuestActorId } from './permissions.js';
 import { createUnvalidatedRequestHandler } from '../validation/index.js';
 
 export type { SignOptions } from 'jsonwebtoken';
+
+const { api } = sbvrUtils;
 
 class InvalidJwtSecretError extends TypedError {}
 
@@ -47,13 +48,35 @@ const jwtFromRequest = ExtractJwt.versionOneCompatibility({
 	authScheme: 'Bearer',
 });
 
-type FetchUserFn = (
-	id: number,
-) => Promise<PickDeferred<User['Read'], 'jwt_secret' | 'actor'> | undefined>;
+function fetchUser(
+	id: Pick<User['Read'], 'id'>,
+	jwtSecret: string | null,
+): Promise<PickDeferred<User['Read'], 'actor'>>;
+function fetchUser(
+	id: Pick<User['Write'], 'actor'>,
+	jwtSecret: string | null,
+): Promise<PickDeferred<User['Read'], 'id'>>;
+async function fetchUser(
+	id: Pick<User['Read'], 'id'> | Pick<User['Write'], 'actor'>,
+	jwtSecret: string | null,
+) {
+	const user = await api.resin.get({
+		resource: 'user',
+		id,
+		passthrough: { req: permissions.rootRead },
+		options: {
+			$select: 'actor' in id ? 'id' : 'actor',
+			$filter: { jwt_secret: jwtSecret },
+		},
+	});
+	if (user == null) {
+		throw new InvalidJwtSecretError();
+	}
+	return user;
+}
 
 const processVerifiedJwtPayload = async (
 	jwtUser: UnparsedCreds,
-	fetchUser: FetchUserFn,
 ): Promise<Creds> => {
 	if (jwtUser == null) {
 		throw new InvalidJwtSecretError();
@@ -69,21 +92,11 @@ const processVerifiedJwtPayload = async (
 	) {
 		return jwtUser.access;
 	} else if ('id' in jwtUser) {
-		const user = await fetchUser(jwtUser.id);
-		if (user == null) {
-			throw new InvalidJwtSecretError();
-		}
-
-		// Default both to null so that we don't hit issues with null !== undefined
-		const userSecret = user.jwt_secret ?? null;
-		const jwtSecret = jwtUser.jwt_secret ?? null;
-
-		if (userSecret !== jwtSecret) {
-			throw new InvalidJwtSecretError();
-		}
-
+		const user = await fetchUser(
+			{ id: jwtUser.id },
+			jwtUser.jwt_secret ?? null,
+		);
 		const userPermissions = await permissions.getUserPermissions(jwtUser.id);
-
 		const processedJwtUser = jwtUser as ResolvedUserPayload;
 		processedJwtUser.actor = user.actor.__id;
 		processedJwtUser.permissions = userPermissions;
@@ -93,18 +106,15 @@ const processVerifiedJwtPayload = async (
 	}
 };
 
-export const verifyAndResolveJwt = async (
-	token: string,
-	fetchUser: FetchUserFn,
-): Promise<Creds> => {
+export const verifyAndResolveJwt = async (token: string): Promise<Creds> => {
 	const decoded = jsonwebtoken.verify(
 		token,
 		JSON_WEB_TOKEN_SECRET,
 	) as UnparsedCreds;
-	return await processVerifiedJwtPayload(decoded, fetchUser);
+	return await processVerifiedJwtPayload(decoded);
 };
 
-export const createStrategy = (fetchUser: FetchUserFn) =>
+export const createStrategy = () =>
 	new JwtStrategy(
 		{
 			secretOrKey: JSON_WEB_TOKEN_SECRET,
@@ -112,7 +122,7 @@ export const createStrategy = (fetchUser: FetchUserFn) =>
 		},
 		async (jwtUser: UnparsedCreds, done) => {
 			try {
-				const result = await processVerifiedJwtPayload(jwtUser, fetchUser);
+				const result = await processVerifiedJwtPayload(jwtUser);
 				done(null, result);
 			} catch (e) {
 				done(e);
