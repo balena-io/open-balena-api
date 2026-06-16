@@ -137,9 +137,6 @@ ON "role-has-permission" ("permission");
 CREATE INDEX IF NOT EXISTS "service_install_service_idx"
 ON "service install" ("installs-service");
 
-CREATE INDEX IF NOT EXISTS "user_actor_idx"
-ON "user" ("actor");
-
 CREATE INDEX IF NOT EXISTS "user_has_permission_permission_idx"
 ON "user-has-permission" ("permission");
 
