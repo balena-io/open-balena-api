@@ -246,7 +246,7 @@ export type AliasValidNodeType =
 export const aliasFields = (
 	abstractSqlModel: AbstractSqlModel,
 	resourceName: string,
-	aliases: Dictionary<string | AliasValidNodeType>,
+	aliases: Record<string, string | AliasValidNodeType>,
 ): SelectNode[1] => {
 	const fieldNames = abstractSqlModel.tables[resourceName].fields.map(
 		({ fieldName }) => fieldName,

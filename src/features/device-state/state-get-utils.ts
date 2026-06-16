@@ -15,7 +15,9 @@ export const getStateEventAdditionalFields: Array<
 	Exclude<keyof Device['Read'], ExpandableStringKeyOf<Device['Read']>>
 > = [];
 
-const defaultConfigVariableFns: Array<(config: Dictionary<string>) => void> = [
+const defaultConfigVariableFns: Array<
+	(config: Record<string, string>) => void
+> = [
 	function setMinPollInterval(config) {
 		const pollInterval =
 			config.RESIN_SUPERVISOR_POLL_INTERVAL == null
@@ -31,7 +33,9 @@ export const addDefaultConfigVariableFn = (
 ) => {
 	defaultConfigVariableFns.push(fn);
 };
-export const setDefaultConfigVariables = (config: Dictionary<string>): void => {
+export const setDefaultConfigVariables = (
+	config: Record<string, string>,
+): void => {
 	for (const fn of defaultConfigVariableFns) {
 		fn(config);
 	}
@@ -48,7 +52,7 @@ export const getConfig = (
 		| undefined,
 	application = device?.belongs_to__application[0],
 ) => {
-	const config: Dictionary<string> = {};
+	const config: Record<string, string> = {};
 
 	// add any app-specific config values...
 
@@ -104,7 +108,9 @@ export const formatImageLocation = (imageLocation: string) =>
 // be sent to the device.
 //
 // `configVars` should be in the form { [name: string]: string }
-export const filterDeviceConfig = (configVars: Dictionary<string>): void => {
+export const filterDeviceConfig = (
+	configVars: Record<string, string>,
+): void => {
 	// ResinOS >= 2.x has a read-only file system, and this var causes the
 	// supervisor to run `systemctl enable|disable [unit]`, which does not
 	// persist over reboots. This causes the supervisor to go into a reboot
@@ -130,7 +136,7 @@ export const rejectUiConfig = (name: string) =>
 export type EnvVarList = Array<{ name: string; value: string }>;
 export const varListInsert = (
 	varList: EnvVarList,
-	obj: Dictionary<string>,
+	obj: Record<string, string>,
 	filterFn: (name: string) => boolean = () => true,
 ) => {
 	for (const { name, value } of varList) {

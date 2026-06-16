@@ -74,7 +74,7 @@ export interface Events {
 	'get-state': (
 		deviceId: number,
 		info: Pick<Request, 'apiKey'> & {
-			config?: Dictionary<string>;
+			config?: Record<string, string>;
 			ipAddress: string | undefined;
 			storedDeviceFields: Partial<Device['Read']>;
 		},

@@ -1288,7 +1288,7 @@ export default () => {
 				let release2: AnyObject;
 				let release1Image1: AnyObject;
 				let release1Image2: AnyObject;
-				let servicesById: Dictionary<PickDeferred<Service['Read']>>;
+				let servicesById: Record<string, PickDeferred<Service['Read']>>;
 				let device: fakeDevice.Device;
 				let stateKey: string;
 				const getMetricsRecentlyUpdatedCacheKey = (uuid: string) =>

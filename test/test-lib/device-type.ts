@@ -8,7 +8,8 @@ export const loadDefaultFixtures = () => {
 	setDefaultFixtures(
 		'deviceTypes',
 		new Proxy<
-			Dictionary<
+			Record<
+				string,
 				Promise<Pick<DeviceType['Read'], 'id' | 'slug' | 'name'> | undefined>
 			>
 		>(

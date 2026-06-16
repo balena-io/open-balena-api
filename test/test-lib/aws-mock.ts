@@ -34,14 +34,16 @@ export function addListObjectsV2Resolver(resolver: ListObjectsV2Resolver) {
 }
 
 export default (
-	$getObjectMocks: Dictionary<
+	$getObjectMocks: Record<
+		string,
 		| (Omit<AWS.S3.Types.GetObjectOutput, 'LastModified' | 'Body'> & {
 				LastModified?: string;
 				Body?: string;
 		  })
 		| MockedError
 	>,
-	$listObjectsV2Mocks: Dictionary<
+	$listObjectsV2Mocks: Record<
+		string,
 		| (Omit<AWS.S3.Types.ListObjectsV2Output, 'Contents'> & {
 				Contents?: Array<
 					Omit<AWS.S3.Types.ListObjectsV2Output['Contents'], 'LastModified'> & {
@@ -55,27 +57,30 @@ export default (
 	// AWS S3 Client getObject results have a Buffer on their Body prop
 	// and a Date on their LastModified prop so we have to reconstruct
 	// them from the strings that the mock object holds
-	const getObjectMocks: Dictionary<AWS.S3.Types.GetObjectOutput | MockedError> =
-		_.mapValues(
-			$getObjectMocks,
-			(
-				getObjectMock: (typeof $getObjectMocks)[keyof typeof $getObjectMocks],
-			): AWS.S3.Types.GetObjectOutput | MockedError => {
-				return {
-					...getObjectMock,
+	const getObjectMocks: Record<
+		string,
+		AWS.S3.Types.GetObjectOutput | MockedError
+	> = _.mapValues(
+		$getObjectMocks,
+		(
+			getObjectMock: (typeof $getObjectMocks)[keyof typeof $getObjectMocks],
+		): AWS.S3.Types.GetObjectOutput | MockedError => {
+			return {
+				...getObjectMock,
 
-					Body:
-						'Body' in getObjectMock && getObjectMock.Body
-							? Buffer.from(getObjectMock.Body)
-							: undefined,
-					LastModified:
-						'LastModified' in getObjectMock && getObjectMock.LastModified
-							? new Date(getObjectMock.LastModified)
-							: undefined,
-				};
-			},
-		);
-	const listObjectsV2Mocks: Dictionary<
+				Body:
+					'Body' in getObjectMock && getObjectMock.Body
+						? Buffer.from(getObjectMock.Body)
+						: undefined,
+				LastModified:
+					'LastModified' in getObjectMock && getObjectMock.LastModified
+						? new Date(getObjectMock.LastModified)
+						: undefined,
+			};
+		},
+	);
+	const listObjectsV2Mocks: Record<
+		string,
 		AWS.S3.Types.ListObjectsV2Output | MockedError
 	> = _.mapValues(
 		$listObjectsV2Mocks,
@@ -173,7 +178,7 @@ export default (
 		public headObject(
 			params: AWS.S3.Types.HeadObjectRequest,
 		): ReturnType<AWS.S3['headObject']> {
-			const mock = getObjectMocks[params.Key as keyof typeof getObjectMocks];
+			const mock = getObjectMocks[params.Key];
 			if (mock) {
 				const trimmedMock = _.omit(mock, 'Body', 'ContentRange', 'TagCount');
 				return toReturnType<AWS.S3['headObject']>(trimmedMock);
@@ -192,7 +197,7 @@ export default (
 		public getObject(
 			params: AWS.S3.Types.GetObjectRequest,
 		): ReturnType<AWS.S3['getObject']> {
-			const mock = getObjectMocks[params.Key as keyof typeof getObjectMocks];
+			const mock = getObjectMocks[params.Key];
 			if (!mock) {
 				throw new Error(
 					`aws mock: getObject could not find a mock for ${params.Key}`,
@@ -210,8 +215,7 @@ export default (
 					return toReturnType<AWS.S3['listObjectsV2']>(result);
 				}
 			}
-			const mock =
-				listObjectsV2Mocks[params.Prefix as keyof typeof listObjectsV2Mocks];
+			const mock = listObjectsV2Mocks[params.Prefix!];
 			if (!mock) {
 				throw new Error(
 					`aws mock: listObjectsV2 could not find a mock for ${params.Prefix}`,

@@ -22,13 +22,15 @@ const version = 'resin';
 export const fakeTx = undefined as any as Tx;
 export const fakeSbvrUtils = undefined as any as typeof sbvrUtils;
 
-type PendingFixtures = types.Dictionary<
-	PromiseLike<types.Dictionary<PromiseLike<any>>>
+type PendingFixtures = Record<
+	string,
+	PromiseLike<Record<string, PromiseLike<any>>>
 >;
-type PartiallyAppliedFixtures = types.Dictionary<
-	types.Dictionary<PromiseLike<any>>
+type PartiallyAppliedFixtures = Record<
+	string,
+	Record<string, PromiseLike<any>>
 >;
-export type Fixtures = types.Dictionary<types.Dictionary<any>>;
+export type Fixtures = Record<string, Record<string, any>>;
 
 type LoaderFunc = (
 	jsonData: types.AnyObject,
@@ -72,7 +74,7 @@ const createResource = async (args: {
 	return await response.json();
 };
 
-const loaders: types.Dictionary<LoaderFunc> = {
+const loaders: Record<string, LoaderFunc> = {
 	applications: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.user];
 		if (user == null) {
@@ -671,7 +673,8 @@ const deleteForResource =
 // Make sure this list only contains top-level resources, ie. those
 // that aren't expected to be cascade deleted by the api itself.
 // The order of the properties dictates the order the unloaders run.
-const unloaders: Dictionary<
+const unloaders: Record<
+	string,
 	(objs: Array<{ id: number }>) => PromiseLike<void>
 > = {
 	// Devices need to be deleted before their linked hostApp & supervisor releases/apps
@@ -701,8 +704,9 @@ const unloaders: Dictionary<
 };
 
 export const clean = async (
-	fixtures: types.Dictionary<
-		types.Dictionary<{ id: number }> | Array<{ id: number }>
+	fixtures: Record<
+		string,
+		Record<string, { id: number }> | Array<{ id: number }>
 	>,
 ) => {
 	if (fixtures == null) {
@@ -728,7 +732,7 @@ const defaultFixtures: PendingFixtures = {};
 
 export const setDefaultFixtures = (
 	type: string,
-	value: types.Dictionary<PromiseLike<any>>,
+	value: Record<string, PromiseLike<any>>,
 ) => {
 	defaultFixtures[type] = Promise.resolve(value);
 };

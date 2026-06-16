@@ -118,14 +118,14 @@ export const expectResourceToMatch = async <
 			| string
 			| number
 			| boolean
-			| Dictionary<any>
+			| Record<string, any>
 			| ((chaiPropertyAssertion: Chai.Assertion, value: unknown) => void)
 		>
 	>,
 	expandExpectations?: Partial<
 		Record<
 			ExpandableStringKeyOf<T>,
-			Array<Dictionary<null | string | number | boolean>>
+			Array<Record<string, null | string | number | boolean>>
 		>
 	>,
 ): Promise<
@@ -371,7 +371,7 @@ const expectTasks = async (
 	return tasks;
 };
 
-const latestTaskIdByHandler: Dictionary<string | undefined> = {};
+const latestTaskIdByHandler: Record<string, string | undefined> = {};
 
 export const expectNewTasks = async (
 	handler: string,
