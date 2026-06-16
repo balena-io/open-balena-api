@@ -19,12 +19,12 @@ export const whoami = createValidatedRequestHandler(async (req, res) => {
 				tx,
 			): Promise<Partial<Pick<User['Read'], 'id' | 'username' | 'email'>>> => {
 				const user = await getUser(req, tx, true);
-				const [userWithUsername] = await api.resin.get({
+				const userWithUsername = await api.resin.get({
 					resource: 'user',
 					passthrough: { req, tx },
+					id: { actor: user.actor },
 					options: {
 						$select: ['id', 'username'],
-						$filter: { actor: user.actor },
 					},
 				});
 
@@ -69,17 +69,12 @@ export const actorWhoami = createValidatedRequestHandler(async (req, res) => {
 		const rawActorInfo = await sbvrUtils.db.readTransaction(async (tx) => {
 			// If this is a user key/token we must validate this is a key that
 			// has permissions for reading username/email
-			if (req.user?.actor) {
-				const [userWithId] = await api.resin.get({
+			if (req.user?.actor != null) {
+				const userWithId = await api.resin.get({
 					resource: 'user',
 					passthrough: { req, tx },
-					options: {
-						$top: 1,
-						$select: 'id',
-						$filter: {
-							actor: req.user?.actor,
-						},
-					},
+					id: { actor: req.user.actor },
+					options: { $select: 'id' },
 				});
 
 				if (userWithId == null) {
