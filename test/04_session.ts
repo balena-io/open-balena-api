@@ -1,10 +1,15 @@
 import { expect } from 'chai';
+import jsonwebtoken from 'jsonwebtoken';
 import {
 	JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH,
 	SUPERUSER_EMAIL,
 	SUPERUSER_PASSWORD,
 } from '../src/lib/config.js';
-import { createScopedAccessToken } from '../src/infra/auth/jwt.js';
+import {
+	createScopedAccessToken,
+	createScopedRolesToken,
+	generateNewJwtSecret,
+} from '../src/infra/auth/jwt.js';
 
 import * as fixtures from './test-lib/fixtures.js';
 import type { UserObjectParam } from './test-lib/supertest.js';
@@ -13,7 +18,11 @@ import * as versions from './test-lib/versions.js';
 import type { Device } from './test-lib/fake-device.js';
 import type { Application } from '../src/balena-model.js';
 import {
+	assignRolePermission,
 	assignUserRole,
+	getOrInsertPermissionId,
+	getOrInsertRoleId,
+	getRolePermissions,
 	revokeUserRole,
 } from '../src/infra/auth/permissions.js';
 import { permissions as pinePermissions, sbvrUtils } from '@balena/pinejs';
@@ -375,6 +384,230 @@ export default () => {
 					})
 					.expect(200);
 			});
+		});
+	});
+
+	describe('scoped roles token', function () {
+		const ROLE_NAME = 'test-scoped-role';
+		const ROLE_PERMISSION = 'resin.user.read?actor eq @__ACTOR_ID';
+		const BOUND_ROLE_NAME = 'test-scoped-role-bound';
+		const BOUND_ROLE_PERMISSION = 'resin.user.read?id eq @__TEST_USER_ID';
+		const COMMA_ROLE_NAME = 'test-scoped-comma-a,test-scoped-comma-b';
+		const EXPIRES_IN = 10 * 60;
+
+		let admin: UserObjectParam;
+		let userId: number;
+		let actor: number;
+		let jwtSecret: string;
+		const roleIds: number[] = [];
+
+		const setUserJwtSecret = async (newSecret: string) => {
+			await api.resin.patch({
+				resource: 'user',
+				id: userId,
+				passthrough: { req: pinePermissions.root },
+				body: { jwt_secret: newSecret },
+			});
+		};
+
+		before(async function () {
+			const fx = await fixtures.load();
+			admin = fx.users.admin;
+			assertExists(admin.id);
+			userId = admin.id;
+
+			const user = await api.resin.get({
+				resource: 'user',
+				id: userId,
+				passthrough: { req: pinePermissions.rootRead },
+				options: { $select: ['actor', 'jwt_secret'] },
+			});
+			assertExists(user);
+			actor = user.actor.__id;
+			assertExists(user.jwt_secret);
+			jwtSecret = user.jwt_secret;
+
+			await sbvrUtils.db.transaction(async (tx) => {
+				for (const [roleName, permissionName] of [
+					[ROLE_NAME, ROLE_PERMISSION],
+					[BOUND_ROLE_NAME, BOUND_ROLE_PERMISSION],
+					[COMMA_ROLE_NAME, ROLE_PERMISSION],
+				] as const) {
+					const role = await getOrInsertRoleId(roleName, tx);
+					const permission = await getOrInsertPermissionId(permissionName, tx);
+					await assignRolePermission(role.id, permission.id, tx);
+					roleIds.push(role.id);
+				}
+			});
+		});
+
+		after(async function () {
+			// Only remove the roles and their permission links, as the permissions
+			// themselves might pre-exist assigned to other roles
+			await api.Auth.delete({
+				resource: 'role__has__permission',
+				passthrough: { req: pinePermissions.root },
+				options: { $filter: { role: { $in: roleIds } } },
+			});
+			await api.Auth.delete({
+				resource: 'role',
+				passthrough: { req: pinePermissions.root },
+				options: { $filter: { id: { $in: roleIds } } },
+			});
+		});
+
+		it('should authorize a request allowed by the role permissions', async function () {
+			const token = createScopedRolesToken({
+				actor,
+				roles: [ROLE_NAME],
+				bindings: {},
+				expiresIn: EXPIRES_IN,
+			});
+			const user = (await supertest(token).get('/user/v1/whoami').expect(200))
+				.body;
+			expect(user.username).to.equal('admin');
+		});
+
+		it('should only include the expected claims in the token', function () {
+			const withoutRevocation = jsonwebtoken.decode(
+				createScopedRolesToken({
+					actor,
+					roles: [ROLE_NAME],
+					bindings: {},
+					expiresIn: EXPIRES_IN,
+				}),
+			);
+			expect(withoutRevocation).to.have.keys([
+				'actor',
+				'roles',
+				'bindings',
+				'iat',
+				'exp',
+			]);
+
+			const withRevocation = jsonwebtoken.decode(
+				createScopedRolesToken({
+					actor,
+					roles: [ROLE_NAME],
+					bindings: {},
+					expiresIn: EXPIRES_IN,
+					jwt_secret: jwtSecret,
+				}),
+			);
+			expect(withRevocation).to.have.keys([
+				'actor',
+				'roles',
+				'bindings',
+				'jwt_secret',
+				'iat',
+				'exp',
+			]);
+		});
+
+		it('should apply the bindings to the role permissions', async function () {
+			const allowed = createScopedRolesToken({
+				actor,
+				roles: [BOUND_ROLE_NAME],
+				bindings: { '@__TEST_USER_ID': `${userId}` },
+				expiresIn: EXPIRES_IN,
+			});
+			const allowedUsers = (
+				await supertest(allowed).get('/resin/user?$select=id').expect(200)
+			).body.d;
+			expect(allowedUsers).to.have.length(1);
+			expect(allowedUsers[0].id).to.equal(userId);
+
+			const denied = createScopedRolesToken({
+				actor,
+				roles: [BOUND_ROLE_NAME],
+				bindings: { '@__TEST_USER_ID': '0' },
+				expiresIn: EXPIRES_IN,
+			});
+			const deniedUsers = (
+				await supertest(denied).get('/resin/user?$select=id').expect(200)
+			).body.d;
+			expect(deniedUsers).to.have.length(0);
+		});
+
+		it('should return 401 for unknown or empty roles', async function () {
+			const unknownRole = createScopedRolesToken({
+				actor,
+				roles: ['test-scoped-nonexistent-role'],
+				bindings: {},
+				expiresIn: EXPIRES_IN,
+			});
+			await supertest(unknownRole).get('/user/v1/whoami').expect(401);
+
+			const noRoles = createScopedRolesToken({
+				actor,
+				roles: [],
+				bindings: {},
+				expiresIn: EXPIRES_IN,
+			});
+			await supertest(noRoles).get('/user/v1/whoami').expect(401);
+		});
+
+		it('should return 401 for an expired token', async function () {
+			const token = createScopedRolesToken({
+				actor,
+				roles: [ROLE_NAME],
+				bindings: {},
+				expiresIn: -EXPIRES_IN,
+			});
+			await supertest(token).get('/user/v1/whoami').expect(401);
+		});
+
+		it('should accept a token bound to the current user jwt_secret', async function () {
+			const token = createScopedRolesToken({
+				actor,
+				roles: [ROLE_NAME],
+				bindings: {},
+				expiresIn: EXPIRES_IN,
+				jwt_secret: jwtSecret,
+			});
+			await supertest(token).get('/user/v1/whoami').expect(200);
+		});
+
+		it('should reject a bound token after the user jwt_secret is rotated', async function () {
+			const token = createScopedRolesToken({
+				actor,
+				roles: [ROLE_NAME],
+				bindings: {},
+				expiresIn: EXPIRES_IN,
+				jwt_secret: jwtSecret,
+			});
+			await supertest(token).get('/user/v1/whoami').expect(200);
+			try {
+				await setUserJwtSecret(await generateNewJwtSecret());
+				await supertest(token).get('/user/v1/whoami').expect(401);
+			} finally {
+				// Restore the original secret so that other tests' tokens keep working
+				await setUserJwtSecret(jwtSecret);
+			}
+			await supertest(token).get('/user/v1/whoami').expect(200);
+		});
+
+		it('should return 401 when a jwt_secret-bound token resolves to no user', async function () {
+			// When a jwt_secret is present the token's actor must resolve to a user
+			// with that secret; actor 0 belongs to no user, so the actor-based lookup
+			// throws InvalidJwtSecretError.
+			const token = createScopedRolesToken({
+				actor: 0,
+				roles: [ROLE_NAME],
+				bindings: {},
+				expiresIn: EXPIRES_IN,
+				jwt_secret: jwtSecret,
+			});
+			await supertest(token).get('/user/v1/whoami').expect(401);
+		});
+
+		it('should not collide role permission cache keys on role names containing commas', async function () {
+			expect(await getRolePermissions([COMMA_ROLE_NAME])).to.deep.equal([
+				ROLE_PERMISSION,
+			]);
+			expect(
+				await getRolePermissions(COMMA_ROLE_NAME.split(',')),
+			).to.deep.equal([]);
 		});
 	});
 };

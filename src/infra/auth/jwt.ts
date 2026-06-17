@@ -196,6 +196,24 @@ export function createScopedAccessToken(
 	return createJwt(payload, signOptions);
 }
 
+export type ScopedRolesToken = {
+	actor: number;
+	roles: string[];
+	bindings: sbvrUtils.ExtraBinds;
+	jwt_secret?: string;
+};
+
+export type ScopedRolesTokenOptions = ScopedRolesToken & {
+	expiresIn: number;
+};
+
+export function createScopedRolesToken(
+	options: ScopedRolesTokenOptions,
+): string {
+	const { expiresIn, ...payload } = options;
+	return createJwt(payload, { expiresIn });
+}
+
 const EXPIRY_SECONDS = JSON_WEB_TOKEN_EXPIRY_MINUTES * 60;
 // if the new jwt should be created from an existing one,
 // the expiration date of the existing token is taken over
