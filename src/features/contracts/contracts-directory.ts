@@ -30,12 +30,8 @@ const handleLocalAssetUrl = async (assetUrl: string): Promise<string> => {
 
 const normalizeAssets = async (
 	contractFilepath: string,
-	assets: Contract['assets'],
+	assets: NonNullable<Contract['assets']>,
 ) => {
-	if (!assets || _.isEmpty(assets)) {
-		return assets;
-	}
-
 	const normalizedAssets: Contract['assets'] = {};
 
 	await Promise.all(
@@ -89,7 +85,12 @@ const normalizeContract = async (
 			contract.aliases.push(contract.slug);
 		}
 
-		contract.assets = await normalizeAssets(contractFilepath, contract.assets);
+		if (contract.assets != null) {
+			contract.assets = await normalizeAssets(
+				contractFilepath,
+				contract.assets,
+			);
+		}
 	} catch (err) {
 		captureException(
 			err,
