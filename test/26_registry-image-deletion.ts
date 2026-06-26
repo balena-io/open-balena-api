@@ -11,6 +11,7 @@ import {
 	expectNewSettledTasks,
 	resetLatestTaskIds,
 } from './test-lib/api-helpers.js';
+import type { Release } from '../src/balena-model.js';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -73,18 +74,71 @@ export default () => {
 				};
 			}
 
+			async function createRelease(
+				appId: number,
+				serviceId: number,
+				options?: {
+					status?: Release['Write']['status'];
+					directSuccess?: boolean;
+				},
+			) {
+				const status = options?.status ?? 'success';
+				const directSuccess = options?.directSuccess ?? false;
+				const now = new Date();
+				const { body: release } = await pineUser.post({
+					resource: 'release',
+					body: {
+						belongs_to__application: appId,
+						start_timestamp: now,
+						end_timestamp: now,
+						commit: randomUUID(),
+						status: directSuccess ? status : 'running',
+						composition: {},
+						source: 'local',
+					},
+				});
+
+				const [image1, image2] = await Promise.all([
+					createImage(serviceId, {
+						releaseId: release.id,
+					}),
+					createImage(serviceId, {
+						releaseId: release.id,
+					}),
+				]);
+
+				// Update release to final status.
+				if (!directSuccess) {
+					await pineUser.patch({
+						resource: 'release',
+						id: release.id,
+						body: {
+							status,
+						},
+					});
+				}
+
+				return {
+					id: release.id,
+					images: [image1, image2],
+				};
+			}
+
 			function checkIsDeleted(
 				images: Array<Awaited<ReturnType<typeof createImage>>>,
+				isParentDeleted: boolean,
+				isCacheDeleted: boolean,
 			) {
 				return images.every(
 					(i) =>
-						i.registryImage.isDeleted === true &&
-						i.cacheImages.every((ci) => ci.isDeleted === true),
+						i.registryImage.isDeleted === isParentDeleted &&
+						i.cacheImages.every((ci) => ci.isDeleted === isCacheDeleted),
 				);
 			}
 
 			async function expectSettledTasks(
 				images: Array<Awaited<ReturnType<typeof createImage>>>,
+				onlyDeleteCache: boolean,
 			) {
 				await expectNewSettledTasks('delete_registry_images', [
 					{
@@ -93,6 +147,7 @@ export default () => {
 							images: images.map((i) => ({
 								location: i.dbImage.is_stored_at__image_location,
 							})),
+							onlyDeleteCache,
 						},
 					},
 				]);
@@ -108,6 +163,7 @@ export default () => {
 					},
 				});
 				ctx.app1 = fx.applications.app1;
+				ctx.app2 = fx.applications.app2;
 				ctx.service1 = fx.services.service1;
 				ctx.service2 = fx.services.service2;
 				await resetLatestTaskIds('delete_registry_images');
@@ -134,9 +190,9 @@ export default () => {
 
 				await waitFor({
 					delayMs: 500,
-					checkFn: () => checkIsDeleted([image]),
+					checkFn: () => checkIsDeleted([image], true, true),
 				});
-				await expectSettledTasks([image]);
+				await expectSettledTasks([image], false);
 			});
 
 			it('should mark all images in repository for deletion', async () => {
@@ -157,9 +213,10 @@ export default () => {
 
 				await waitFor({
 					delayMs: 500,
-					checkFn: () => checkIsDeleted([imageA]) && imageB.isDeleted === true,
+					checkFn: () =>
+						checkIsDeleted([imageA], true, true) && imageB.isDeleted === true,
 				});
-				await expectSettledTasks([imageA]);
+				await expectSettledTasks([imageA], false);
 			});
 
 			it('should retry on registry API errors', async () => {
@@ -178,9 +235,9 @@ export default () => {
 
 					await waitFor({
 						delayMs: 500,
-						checkFn: () => checkIsDeleted([image]),
+						checkFn: () => checkIsDeleted([image], true, true),
 					});
-					await expectSettledTasks([image]);
+					await expectSettledTasks([image], false);
 					sinon.assert.calledWithMatch(
 						consoleSpy,
 						sinon.match(/Error deleting registry images/),
@@ -206,7 +263,7 @@ export default () => {
 					id: image.dbImage.id,
 				});
 
-				await expectSettledTasks([image]);
+				await expectSettledTasks([image], false);
 			});
 
 			it('should not delete from registry if image is still referenced in database', async () => {
@@ -265,9 +322,9 @@ export default () => {
 
 				await waitFor({
 					delayMs: 500,
-					checkFn: () => checkIsDeleted([image]),
+					checkFn: () => checkIsDeleted([image], true, true),
 				});
-				await expectSettledTasks([image]);
+				await expectSettledTasks([image], false);
 			});
 
 			it('should create a follow-up task when deletion takes too long', async () => {
@@ -291,7 +348,7 @@ export default () => {
 					});
 					await waitFor({
 						delayMs: 500,
-						checkFn: () => checkIsDeleted(images),
+						checkFn: () => checkIsDeleted(images, true, true),
 					});
 
 					sinon.assert.calledWithMatch(
@@ -326,40 +383,16 @@ export default () => {
 			});
 
 			it('should mark for deletion when images are deleted via a cascade', async () => {
-				const createRelease = async () => {
-					const now = new Date();
-					const { body: release } = await pineUser.post({
-						resource: 'release',
-						body: {
-							belongs_to__application: ctx.app1.id,
-							start_timestamp: now,
-							end_timestamp: now,
-							commit: randomUUID(),
-							status: 'success',
-							composition: {},
-							source: 'local',
-						},
-					});
-
-					const [image1, image2] = await Promise.all([
-						createImage(ctx.service1.id, {
-							releaseId: release.id,
-						}),
-						createImage(ctx.service1.id, {
-							releaseId: release.id,
-						}),
-					]);
-
-					return {
-						images: [image1, image2],
-					};
-				};
-
 				// Create multiple releases for the application.
-				const [release1, release2] = await Promise.all([
-					createRelease(),
-					createRelease(),
-				]);
+				const release1 = await createRelease(ctx.app1.id, ctx.service1.id);
+				const release2 = await createRelease(ctx.app1.id, ctx.service1.id);
+
+				// The second release triggers deleting cache of the first.
+				await waitFor({
+					delayMs: 500,
+					checkFn: () => checkIsDeleted(release1.images, false, true),
+				});
+				await expectSettledTasks(release1.images, true);
 
 				// Delete the application.
 				await pineUser.delete({
@@ -367,13 +400,13 @@ export default () => {
 					id: ctx.app1.id,
 				});
 
-				// Assert all images were marked for deletion.
+				// Assert all remaining images were marked for deletion.
 				const images = [...release1.images, ...release2.images];
 				await waitFor({
 					delayMs: 500,
-					checkFn: () => checkIsDeleted(images),
+					checkFn: () => checkIsDeleted(images, true, true),
 				});
-				await expectSettledTasks(images);
+				await expectSettledTasks(images, false);
 			});
 
 			it('should not mark unrelated images for deletion', () => {
@@ -394,6 +427,119 @@ export default () => {
 				const digests = await s3Client.listTagDigests(repo, 'latest');
 				expect(digests).to.have.lengthOf(2);
 				expect(digests).to.have.members([digestA, digestB]);
+			});
+
+			describe('cache cleanup on new successful release', () => {
+				before(function () {
+					ctx.app3 = ctx.fixtures.applications.app3;
+					ctx.app4 = ctx.fixtures.applications.app4;
+					ctx.app5 = ctx.fixtures.applications.app5;
+					ctx.app6 = ctx.fixtures.applications.app6;
+					ctx.app7 = ctx.fixtures.applications.app7;
+					ctx.app8 = ctx.fixtures.applications.app8;
+					ctx.service3 = ctx.fixtures.services.service3;
+					ctx.service4 = ctx.fixtures.services.service4;
+					ctx.service5 = ctx.fixtures.services.service5;
+					ctx.service6 = ctx.fixtures.services.service6;
+					ctx.service7 = ctx.fixtures.services.service7;
+					ctx.service8 = ctx.fixtures.services.service8;
+				});
+
+				it('should only delete previous cache of the application that owns the release', async () => {
+					// Create initial successful releases for each application.
+					const release1 = await createRelease(ctx.app3.id, ctx.service3.id);
+					const release2 = await createRelease(ctx.app4.id, ctx.service4.id);
+
+					// Create a new successful release for app3,
+					// which should trigger deletion of previous cache.
+					await resetLatestTaskIds('delete_registry_images');
+					await createRelease(ctx.app3.id, ctx.service3.id);
+
+					// Assert that app3 cache was deleted with app4 untouched.
+					await waitFor({
+						delayMs: 500,
+						checkFn: () => checkIsDeleted(release1.images, false, true),
+					});
+					await expectSettledTasks(release1.images, true);
+					expect(checkIsDeleted(release2.images, false, false)).to.be.true;
+				});
+
+				it('should not delete cache when a release status is non-success', async () => {
+					// Create initial successful release.
+					const release = await createRelease(ctx.app5.id, ctx.service5.id);
+
+					// A subsequent failed release shouldn't trigger cache deletion.
+					await createRelease(ctx.app5.id, ctx.service5.id, {
+						status: 'failed',
+					});
+
+					await expectNewSettledTasks('delete_registry_images', []);
+					expect(checkIsDeleted(release.images, false, false)).to.be.true;
+				});
+
+				it('should not delete cache for most recent successful release', async () => {
+					const release = await createRelease(ctx.app2.id, ctx.service2.id);
+					await expectNewSettledTasks('delete_registry_images', []);
+					expect(checkIsDeleted(release.images, false, false)).to.be.true;
+				});
+
+				it('should delete previous cache when a release is POSTed directly as success', async () => {
+					const release = await createRelease(ctx.app6.id, ctx.service6.id);
+					await createRelease(ctx.app6.id, ctx.service6.id, {
+						directSuccess: true,
+					});
+					await waitFor({
+						delayMs: 500,
+						checkFn: () => checkIsDeleted(release.images, false, true),
+					});
+					await expectSettledTasks(release.images, true);
+				});
+
+				it('should delete previous cache on a multi-application batch PATCH', async () => {
+					// Create initial successful releases.
+					const [app7Release1, app8Release1] = await Promise.all([
+						createRelease(ctx.app7.id, ctx.service7.id),
+						createRelease(ctx.app8.id, ctx.service8.id),
+					]);
+
+					// Create new running releases for each application, then
+					// update to 'success' in a single batch PATCH.
+					const [app7Release2, app8Release2] = await Promise.all([
+						createRelease(ctx.app7.id, ctx.service7.id, { status: 'running' }),
+						createRelease(ctx.app8.id, ctx.service8.id, { status: 'running' }),
+					]);
+					await resetLatestTaskIds('delete_registry_images');
+					await pineUser.patch({
+						resource: 'release',
+						options: {
+							$filter: { id: { $in: [app7Release2.id, app8Release2.id] } },
+						},
+						body: { status: 'success' },
+					});
+
+					// Each application's own previous cache is deleted while the
+					// latest releases still have their cache.
+					await waitFor({
+						delayMs: 500,
+						checkFn: () =>
+							checkIsDeleted(
+								[...app7Release1.images, ...app8Release1.images],
+								false,
+								true,
+							),
+					});
+					await expectSettledTasks(
+						[...app7Release1.images, ...app8Release1.images],
+						true,
+					);
+					expect(
+						checkIsDeleted(
+							[...app7Release2.images, ...app8Release2.images],
+							false,
+							false,
+						),
+					).to.be.true;
+				});
 			});
 		});
 	});

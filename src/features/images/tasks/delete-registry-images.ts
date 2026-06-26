@@ -33,6 +33,10 @@ const schema = {
 				additionalProperties: false,
 			},
 		},
+		onlyDeleteCache: {
+			type: 'boolean',
+			default: false,
+		},
 	},
 	required: ['images'],
 	additionalProperties: false,
@@ -71,9 +75,11 @@ async function deleteRepo(
 	s3: NonNullable<typeof s3Client>,
 	repo: string,
 	signal: AbortSignal,
+	onlyDeleteCache: boolean,
 ): Promise<void> {
 	const cacheRepos = await s3.listCacheRepos(repo);
-	for (const target of [...cacheRepos, repo]) {
+	const targets = onlyDeleteCache ? cacheRepos : [...cacheRepos, repo];
+	for (const target of targets) {
 		signal.throwIfAborted();
 		const digests = await s3.listRepoDigests(target);
 		if (digests.length === 0) {
@@ -89,6 +95,7 @@ async function deleteRepo(
 
 const deleteRegistryImages = async ({
 	images,
+	onlyDeleteCache = false,
 }: DeleteRegistryImagesTaskParams) => {
 	if (s3Client == null) {
 		throw new Error('Registry S3 client not initialized.');
@@ -97,18 +104,20 @@ const deleteRegistryImages = async ({
 	// Avoid deleting any blobs that are still referenced by other images
 	// This shouldn't normally be necessary as is_stored_at__image_location
 	// should be enforced as unique at the database level, but just in case
-	const stillReferenced = await api.resin.get({
-		resource: 'image',
-		passthrough: { req: permissions.rootRead },
-		options: {
-			$select: ['is_stored_at__image_location'],
-			$filter: {
-				is_stored_at__image_location: {
-					$in: images.map((image) => image.location),
+	const stillReferenced = onlyDeleteCache
+		? []
+		: await api.resin.get({
+				resource: 'image',
+				passthrough: { req: permissions.rootRead },
+				options: {
+					$select: ['is_stored_at__image_location'],
+					$filter: {
+						is_stored_at__image_location: {
+							$in: images.map((image) => image.location),
+						},
+					},
 				},
-			},
-		},
-	});
+			});
 
 	// Define what images are actually safe to delete
 	const stillReferencedLocations = new Set(
@@ -138,7 +147,7 @@ const deleteRegistryImages = async ({
 						`[${logHeader}] Skipping deletion of image with empty repo: ${location}`,
 					);
 				} else {
-					await deleteRepo(s3Client!, repo, signal);
+					await deleteRepo(s3Client!, repo, signal, onlyDeleteCache);
 				}
 				remaining.delete(location);
 			}),
@@ -165,6 +174,7 @@ const deleteRegistryImages = async ({
 				is_executed_by__handler: handlerName,
 				is_executed_with__parameter_set: {
 					images: Array.from(remaining, (location) => ({ location })),
+					onlyDeleteCache,
 				} satisfies DeleteRegistryImagesTaskParams,
 				attempt_limit: ASYNC_TASK_ATTEMPT_LIMIT,
 			},

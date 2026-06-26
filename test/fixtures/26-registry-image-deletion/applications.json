@@ -15,5 +15,35 @@
 		"user": "admin",
 		"device_type": "intel-nuc",
 		"app_name": "test-app-2"
+	},
+	"app3": {
+		"user": "admin",
+		"device_type": "intel-nuc",
+		"app_name": "app3"
+	},
+	"app4": {
+		"user": "admin",
+		"device_type": "intel-nuc",
+		"app_name": "app4"
+	},
+	"app5": {
+		"user": "admin",
+		"device_type": "intel-nuc",
+		"app_name": "app5"
+	},
+	"app6": {
+		"user": "admin",
+		"device_type": "intel-nuc",
+		"app_name": "app6"
+	},
+	"app7": {
+		"user": "admin",
+		"device_type": "intel-nuc",
+		"app_name": "app7"
+	},
+	"app8": {
+		"user": "admin",
+		"device_type": "intel-nuc",
+		"app_name": "app8"
 	}
 }
