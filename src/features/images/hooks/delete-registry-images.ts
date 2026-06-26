@@ -64,6 +64,7 @@ if (ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED) {
 							is_executed_by__handler: 'delete_registry_images',
 							is_executed_with__parameter_set: {
 								images,
+								onlyDeleteCache: false,
 							} satisfies DeleteRegistryImagesTaskParams,
 							is_scheduled_to_execute_on__time: new Date(
 								Date.now() + ASYNC_TASK_DELETE_REGISTRY_IMAGES_OFFSET_MS,

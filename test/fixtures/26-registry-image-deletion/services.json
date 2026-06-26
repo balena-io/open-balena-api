@@ -13,5 +13,35 @@
 		"user": "admin",
 		"application": "app2",
 		"service_name": "service2"
+	},
+	"service3": {
+		"user": "admin",
+		"application": "app3",
+		"service_name": "service3"
+	},
+	"service4": {
+		"user": "admin",
+		"application": "app4",
+		"service_name": "service4"
+	},
+	"service5": {
+		"user": "admin",
+		"application": "app5",
+		"service_name": "service5"
+	},
+	"service6": {
+		"user": "admin",
+		"application": "app6",
+		"service_name": "service6"
+	},
+	"service7": {
+		"user": "admin",
+		"application": "app7",
+		"service_name": "service7"
+	},
+	"service8": {
+		"user": "admin",
+		"application": "app8",
+		"service_name": "service8"
 	}
 }
