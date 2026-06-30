@@ -138,16 +138,15 @@ export default () => {
 
 			async function expectSettledTasks(
 				images: Array<Awaited<ReturnType<typeof createImage>>>,
-				onlyDeleteCache: boolean,
+				handler = 'delete_registry_images',
 			) {
-				await expectNewSettledTasks('delete_registry_images', [
+				await expectNewSettledTasks(handler, [
 					{
 						status: 'succeeded',
 						is_executed_with__parameter_set: {
 							images: images.map((i) => ({
 								location: i.dbImage.is_stored_at__image_location,
 							})),
-							onlyDeleteCache,
 						},
 					},
 				]);
@@ -167,6 +166,7 @@ export default () => {
 				ctx.service1 = fx.services.service1;
 				ctx.service2 = fx.services.service2;
 				await resetLatestTaskIds('delete_registry_images');
+				await resetLatestTaskIds('delete_registry_image_cache');
 
 				// Create an image that should not be deleted.
 				// If it was marked for deletion via a task, it would
@@ -192,7 +192,7 @@ export default () => {
 					delayMs: 500,
 					checkFn: () => checkIsDeleted([image], true, true),
 				});
-				await expectSettledTasks([image], false);
+				await expectSettledTasks([image]);
 			});
 
 			it('should mark all images in repository for deletion', async () => {
@@ -216,7 +216,7 @@ export default () => {
 					checkFn: () =>
 						checkIsDeleted([imageA], true, true) && imageB.isDeleted === true,
 				});
-				await expectSettledTasks([imageA], false);
+				await expectSettledTasks([imageA]);
 			});
 
 			it('should retry on registry API errors', async () => {
@@ -237,7 +237,7 @@ export default () => {
 						delayMs: 500,
 						checkFn: () => checkIsDeleted([image], true, true),
 					});
-					await expectSettledTasks([image], false);
+					await expectSettledTasks([image]);
 					sinon.assert.calledWithMatch(
 						consoleSpy,
 						sinon.match(/Error deleting registry images/),
@@ -263,7 +263,7 @@ export default () => {
 					id: image.dbImage.id,
 				});
 
-				await expectSettledTasks([image], false);
+				await expectSettledTasks([image]);
 			});
 
 			it('should not delete from registry if image is still referenced in database', async () => {
@@ -324,7 +324,7 @@ export default () => {
 					delayMs: 500,
 					checkFn: () => checkIsDeleted([image], true, true),
 				});
-				await expectSettledTasks([image], false);
+				await expectSettledTasks([image]);
 			});
 
 			it('should create a follow-up task when deletion takes too long', async () => {
@@ -392,7 +392,11 @@ export default () => {
 					delayMs: 500,
 					checkFn: () => checkIsDeleted(release1.images, false, true),
 				});
-				await expectSettledTasks(release1.images, true);
+				console.error('=== HERE-1:', JSON.stringify(release1.images, null, 2));
+				await expectSettledTasks(
+					release1.images,
+					'delete_registry_image_cache',
+				);
 
 				// Delete the application.
 				await pineUser.delete({
@@ -406,7 +410,8 @@ export default () => {
 					delayMs: 500,
 					checkFn: () => checkIsDeleted(images, true, true),
 				});
-				await expectSettledTasks(images, false);
+				console.error('=== HERE-2:', JSON.stringify(images, null, 2));
+				await expectSettledTasks(images);
 			});
 
 			it('should not mark unrelated images for deletion', () => {
@@ -452,7 +457,7 @@ export default () => {
 
 					// Create a new successful release for app3,
 					// which should trigger deletion of previous cache.
-					await resetLatestTaskIds('delete_registry_images');
+					await resetLatestTaskIds('delete_registry_image_cache');
 					await createRelease(ctx.app3.id, ctx.service3.id);
 
 					// Assert that app3 cache was deleted with app4 untouched.
@@ -460,7 +465,10 @@ export default () => {
 						delayMs: 500,
 						checkFn: () => checkIsDeleted(release1.images, false, true),
 					});
-					await expectSettledTasks(release1.images, true);
+					await expectSettledTasks(
+						release1.images,
+						'delete_registry_image_cache',
+					);
 					expect(checkIsDeleted(release2.images, false, false)).to.be.true;
 				});
 
@@ -473,13 +481,13 @@ export default () => {
 						status: 'failed',
 					});
 
-					await expectNewSettledTasks('delete_registry_images', []);
+					await expectNewSettledTasks('delete_registry_image_cache', []);
 					expect(checkIsDeleted(release.images, false, false)).to.be.true;
 				});
 
 				it('should not delete cache for most recent successful release', async () => {
 					const release = await createRelease(ctx.app2.id, ctx.service2.id);
-					await expectNewSettledTasks('delete_registry_images', []);
+					await expectNewSettledTasks('delete_registry_image_cache', []);
 					expect(checkIsDeleted(release.images, false, false)).to.be.true;
 				});
 
@@ -492,7 +500,10 @@ export default () => {
 						delayMs: 500,
 						checkFn: () => checkIsDeleted(release.images, false, true),
 					});
-					await expectSettledTasks(release.images, true);
+					await expectSettledTasks(
+						release.images,
+						'delete_registry_image_cache',
+					);
 				});
 
 				it('should delete previous cache on a multi-application batch PATCH', async () => {
@@ -508,7 +519,7 @@ export default () => {
 						createRelease(ctx.app7.id, ctx.service7.id, { status: 'running' }),
 						createRelease(ctx.app8.id, ctx.service8.id, { status: 'running' }),
 					]);
-					await resetLatestTaskIds('delete_registry_images');
+					await resetLatestTaskIds('delete_registry_image_cache');
 					await pineUser.patch({
 						resource: 'release',
 						options: {
@@ -530,7 +541,7 @@ export default () => {
 					});
 					await expectSettledTasks(
 						[...app7Release1.images, ...app8Release1.images],
-						true,
+						'delete_registry_image_cache',
 					);
 					expect(
 						checkIsDeleted(
