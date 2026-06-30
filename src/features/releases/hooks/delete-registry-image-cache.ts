@@ -90,12 +90,11 @@ if (ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED) {
 						resource: 'task',
 						passthrough: { req: permissions.root, tx: args.tx },
 						body: {
-							is_executed_by__handler: 'delete_registry_images',
+							is_executed_by__handler: 'delete_registry_image_cache',
 							is_executed_with__parameter_set: {
 								images: images.map((i) => ({
 									location: i,
 								})),
-								onlyDeleteCache: true,
 							} satisfies DeleteRegistryImagesTaskParams,
 							is_scheduled_to_execute_on__time: new Date(
 								Date.now() + ASYNC_TASK_DELETE_REGISTRY_IMAGES_OFFSET_MS,
