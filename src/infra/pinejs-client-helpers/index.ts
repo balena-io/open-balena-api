@@ -53,11 +53,11 @@ const $updateOrInsert = async (
 	if (results.length === 0) {
 		const body = _.cloneDeep(filter);
 		_.merge(body, updateFields);
-		return (await apiTx.post({
+		return await apiTx.post({
 			resource,
 			body,
 			options: { returnResource: false },
-		})) as { id: number };
+		});
 	} else if (results.length > 1) {
 		throw new Error(
 			`updateOrInsert filter not unique for '${resource}': '${JSON.stringify(
