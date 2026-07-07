@@ -33,6 +33,24 @@ export function addListObjectsV2Resolver(resolver: ListObjectsV2Resolver) {
 	};
 }
 
+type DeleteObjectsResolver = (
+	params: AWS.S3.Types.DeleteObjectsRequest,
+) => AWS.S3.Types.DeleteObjectsOutput | undefined;
+
+const deleteObjectsResolvers: DeleteObjectsResolver[] = [];
+
+// Allow test libraries to add specific resolvers.
+// Return a disposer function to keep things clean.
+export function addDeleteObjectsResolver(resolver: DeleteObjectsResolver) {
+	deleteObjectsResolvers.push(resolver);
+	return () => {
+		const idx = deleteObjectsResolvers.indexOf(resolver);
+		if (idx !== -1) {
+			deleteObjectsResolvers.splice(idx, 1);
+		}
+	};
+}
+
 export default (
 	$getObjectMocks: Record<
 		string,
@@ -222,6 +240,20 @@ export default (
 				);
 			}
 			return toReturnType<AWS.S3['listObjectsV2']>(mock);
+		}
+
+		public deleteObjects(
+			params: AWS.S3.Types.DeleteObjectsRequest,
+		): ReturnType<AWS.S3['deleteObjects']> {
+			for (const resolver of deleteObjectsResolvers) {
+				const result = resolver(params);
+				if (result != null) {
+					return toReturnType<AWS.S3['deleteObjects']>(result);
+				}
+			}
+			throw new Error(
+				`aws mock: deleteObjects could not find a resolver for ${params.Bucket}`,
+			);
 		}
 	}
 
