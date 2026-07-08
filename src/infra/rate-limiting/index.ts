@@ -14,11 +14,8 @@ import {
 	RATE_LIMIT_MEMORY_BACKEND,
 } from '../../lib/config.js';
 import { errors } from '@balena/pinejs';
-import { createIsolatedRedis } from '../redis/index.js';
+import { redis } from '../redis/index.js';
 import type { RequestExcludingInput } from '../validation/index.js';
-
-// Do not use auto pipelining for rate limiting, it should have minimal benefit and can cause issues
-const redis = createIsolatedRedis({ enableAutoPipelining: false });
 
 const { TooManyRequestsError } = errors;
 
