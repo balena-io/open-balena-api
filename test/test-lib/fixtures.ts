@@ -437,6 +437,114 @@ const loaders: Record<string, LoaderFunc> = {
 			...{ release_image: image.image__is_part_of__release },
 		};
 	},
+	image_profiles: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const image = await fixtures.images[jsonData.image];
+		if (image == null) {
+			logErrorAndThrow(`Could not find image: ${jsonData.image}`);
+		}
+
+		const imageProfile = await createResource({
+			resource: 'image_profile',
+			body: {
+				..._.pick(jsonData, 'profile_name'),
+				release_image: image.image__is_part_of__release.id,
+			},
+			user,
+		});
+
+		return {
+			...imageProfile,
+			...{ release_image: image.image__is_part_of__release },
+		};
+	},
+	application_profiles: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const application = await fixtures.applications[jsonData.application];
+		if (application == null) {
+			logErrorAndThrow(`Could not find application: ${jsonData.application}`);
+		}
+
+		const onApplication = await fixtures.applications[jsonData.on_application];
+		if (onApplication == null) {
+			logErrorAndThrow(
+				`Could not find application: ${jsonData.on_application}`,
+			);
+		}
+
+		return await createResource({
+			resource: 'application_profile',
+			body: {
+				..._.pick(jsonData, 'activates__profile_name'),
+				application: application.id,
+				on__application: onApplication.id,
+			},
+			user,
+		});
+	},
+	device_profiles: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const device = await fixtures.devices[jsonData.device];
+		if (device == null) {
+			logErrorAndThrow(`Could not find device: ${jsonData.device}`);
+		}
+
+		const onApplication = await fixtures.applications[jsonData.on_application];
+		if (onApplication == null) {
+			logErrorAndThrow(
+				`Could not find application: ${jsonData.on_application}`,
+			);
+		}
+
+		return await createResource({
+			resource: 'device_profile',
+			body: {
+				..._.pick(jsonData, 'activates__profile_name'),
+				device: device.id,
+				on__application: onApplication.id,
+			},
+			user,
+		});
+	},
+	device_profile_overrides: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const device = await fixtures.devices[jsonData.device];
+		if (device == null) {
+			logErrorAndThrow(`Could not find device: ${jsonData.device}`);
+		}
+
+		const onApplication = await fixtures.applications[jsonData.on_application];
+		if (onApplication == null) {
+			logErrorAndThrow(
+				`Could not find application: ${jsonData.on_application}`,
+			);
+		}
+
+		return await createResource({
+			resource: 'device_profile_override',
+			body: {
+				device: device.id,
+				overrides_profiles_on__application: onApplication.id,
+			},
+			user,
+		});
+	},
 	services: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.user];
 		if (user == null) {

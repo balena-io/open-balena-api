@@ -1,0 +1,14 @@
+{
+	"user-app": {
+		"user": "admin",
+		"device_type": "intel-nuc",
+		"app_name": "profiles-user-app"
+	},
+	"nuc-hostapp": {
+		"user": "admin",
+		"is_host": true,
+		"is_public": true,
+		"device_type": "intel-nuc",
+		"app_name": "profiles-nuc-hostapp"
+	}
+}

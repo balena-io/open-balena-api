@@ -94,11 +94,72 @@ export type StateV3 = {
 	};
 };
 
+const noActiveProfiles: ReadonlySet<string> = new Set();
+
+type ProfileActivation = {
+	activates__profile_name: string;
+	on__application: { __id: number };
+};
+
+/**
+ * Resolves the set of profiles active on `application`'s releases for the
+ * state payload, with the device taking priority over the fleet whenever it
+ * defines any activation targeting that application or explicitly overrides
+ * it (with no activations) via `device_profile_override`.
+ *
+ * Both the fleet-level (`application_profile`) and device-level activation
+ * rows (`device_profile`) carry an `on__application` recording which
+ * application's releases they apply to, so this works uniformly for every
+ * release rendered in the state payload (the userapp the device belongs to,
+ * the hostapp it is operated by, and the supervisor it is managed by): each
+ * one is resolved against rows targeting that specific application.
+ *
+ * Fleet-level rows are fetched already scoped to the target application (via
+ * the `on__application`-side navigation), while the device carries all of its
+ * activations/overrides, so those are filtered down to the target here.
+ *
+ * `device_profile_override` is scoped per (device, application) via
+ * `overrides_profiles_on__application`: a device can override one target
+ * application's fleet activations (e.g. the hostapp) while still falling
+ * back to the fleet set on another (e.g. its userapp).
+ */
+export const resolveActiveProfiles = (
+	device:
+		| Pick<ExpandedDevice, 'device_profile' | 'device_profile_override'>
+		| undefined,
+	application:
+		| {
+				id: number;
+				application_profile: ProfileActivation[];
+		  }
+		| undefined,
+): ReadonlySet<string> => {
+	if (application == null) {
+		return noActiveProfiles;
+	}
+	const deviceProfiles = device?.device_profile.filter(
+		(activation) => activation.on__application.__id === application.id,
+	);
+	const deviceOverridesThisApplication = device?.device_profile_override.some(
+		(override) =>
+			override.overrides_profiles_on__application.__id === application.id,
+	);
+	const profiles =
+		device != null &&
+		((deviceProfiles?.length ?? 0) > 0 || deviceOverridesThisApplication)
+			? (deviceProfiles ?? [])
+			: application.application_profile;
+	return new Set(
+		profiles.map(({ activates__profile_name }) => activates__profile_name),
+	);
+};
+
 export function buildAppFromRelease(
 	device: undefined,
 	application: ExpandedApplicationWithService,
 	release: ExpandedRelease,
 	config: Record<string, string>,
+	activeProfiles: ReadonlySet<string>,
 	defaultLabels?: Record<string, string>,
 ): NonNullable<LocalStateApp['releases']>;
 export function buildAppFromRelease(
@@ -106,6 +167,7 @@ export function buildAppFromRelease(
 	application: ExpandedApplication,
 	release: ExpandedRelease,
 	config: Record<string, string>,
+	activeProfiles: ReadonlySet<string>,
 	defaultLabels?: Record<string, string>,
 ): NonNullable<LocalStateApp['releases']>;
 export function buildAppFromRelease(
@@ -113,6 +175,7 @@ export function buildAppFromRelease(
 	application: ExpandedApplication | ExpandedApplicationWithService,
 	release: ExpandedRelease,
 	config: Record<string, string>,
+	activeProfiles: ReadonlySet<string>,
 	defaultLabels?: Record<string, string>,
 ): NonNullable<LocalStateApp['releases']> {
 	let composition: AnyObject = {};
@@ -155,6 +218,16 @@ export function buildAppFromRelease(
 				}`;
 
 	for (const ipr of release.release_image) {
+		// Services that declare profiles are only included when at least one of
+		// them is active, matching docker compose profile semantics.
+		if (
+			ipr.image_profile.length > 0 &&
+			!ipr.image_profile.some(({ profile_name }) =>
+				activeProfiles.has(profile_name),
+			)
+		) {
+			continue;
+		}
 		const image = ipr.image[0];
 		const svc = image.is_a_build_of__service[0];
 		const environment: Record<string, string> = {};
@@ -266,6 +339,9 @@ export const releaseExpand = {
 				image_label: {
 					$select: ['label_name', 'value'],
 				},
+				image_profile: {
+					$select: 'profile_name',
+				},
 				image_environment_variable: {
 					$select: ['name', 'value'],
 				},
@@ -284,6 +360,13 @@ const appSelect = [
 const appExpand = {
 	application_environment_variable: {
 		$select: ['name', 'value'],
+	},
+} as const;
+// Fleet-level profile activations targeting this application (i.e. rows whose
+// `on__application` is this app), used to gate its release's profiled services.
+const appProfileExpand = {
+	application_profile: {
+		$select: ['activates__profile_name', 'on__application'],
 	},
 } as const;
 const updaterBlockExpand = {
@@ -318,10 +401,17 @@ const deviceExpand = {
 	device_service_environment_variable: {
 		$select: ['name', 'value', 'service'],
 	},
+	device_profile: {
+		$select: ['activates__profile_name', 'on__application'],
+	},
+	device_profile_override: {
+		$select: ['overrides_profiles_on__application'],
+	},
 	belongs_to__application: {
 		$select: appSelect,
 		$expand: {
 			...appExpand,
+			...appProfileExpand,
 			application_config_variable: {
 				$select: ['name', 'value'],
 			},
@@ -333,7 +423,10 @@ const deviceExpand = {
 			...releaseExpand.$expand,
 			belongs_to__application: {
 				$select: appSelect,
-				$expand: appExpand,
+				$expand: {
+					...appExpand,
+					...appProfileExpand,
+				},
 			},
 		},
 	},
@@ -345,6 +438,7 @@ const deviceExpand = {
 				$select: appSelect,
 				$expand: {
 					...appExpand,
+					...appProfileExpand,
 					...updaterBlockExpand,
 				},
 			},
@@ -386,6 +480,9 @@ const getStateV3 = async (
 
 	// We use an empty config for the supervisor & hostApp as we don't want any labels applied to them due to user app config
 	const svAndHostAppConfig = {};
+	// Every rendered release (userapp, hostapp and supervisor) gates its
+	// profiled services on the profiles activated for its own application; the
+	// active set is resolved per-app inside `getAppState`.
 	const apps = {
 		...getAppState(device, 'should_be_managed_by__release', svAndHostAppConfig),
 		...getAppState(
@@ -466,6 +563,8 @@ const getAppState = (
 		).belongs_to__application[0];
 	}
 
+	const activeProfiles = resolveActiveProfiles(device, application);
+
 	return {
 		[application.uuid]: {
 			id: application.id,
@@ -478,6 +577,7 @@ const getAppState = (
 					application,
 					release,
 					config,
+					activeProfiles,
 					defaultLabels,
 				),
 			}),

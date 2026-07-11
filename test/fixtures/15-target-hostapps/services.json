@@ -1,16 +1,16 @@
 {
 	"intel-nuc_service1": {
-		"service_name": "main",
+		"service_name": "hostapp",
 		"application": "intel-nuc",
 		"user": "admin"
 	},
 	"intel-nuc-esr_service1": {
-		"service_name": "main",
+		"service_name": "hostapp",
 		"application": "intel-nuc-esr",
 		"user": "admin"
 	},
 	"raspberrypi3_service1": {
-		"service_name": "main",
+		"service_name": "hostapp",
 		"application": "raspberrypi3",
 		"user": "admin"
 	},

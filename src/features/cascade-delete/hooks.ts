@@ -11,6 +11,9 @@ setupDeleteCascade('application', {
 	application_config_variable: 'application',
 	application_environment_variable: 'application',
 	application_tag: 'application',
+	application_profile: ['application', 'on__application'],
+	device_profile: 'on__application',
+	device_profile_override: 'overrides_profiles_on__application',
 	release: 'belongs_to__application',
 	service: 'application',
 });
@@ -20,6 +23,8 @@ setupDeleteCascade('device', {
 	device_environment_variable: 'device',
 	device_service_environment_variable: 'device',
 	device_tag: 'device',
+	device_profile: 'device',
+	device_profile_override: 'device',
 	image_install: 'device',
 	service_install: 'device',
 });
@@ -31,6 +36,7 @@ setupDeleteCascade('image', {
 
 setupDeleteCascade('image__is_part_of__release', {
 	image_label: 'release_image',
+	image_profile: 'release_image',
 	image_environment_variable: 'release_image',
 });
 

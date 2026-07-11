@@ -447,7 +447,7 @@ export default () => {
 								expect(serviceInstalls).to.have.lengthOf(1);
 								const [service] = serviceInstalls[0].installs__service;
 								expect(service).to.have.property('id', targetService.id);
-								expect(service).to.have.property('service_name', 'main');
+								expect(service).to.have.property('service_name', 'hostapp');
 							});
 						});
 					});

@@ -7,7 +7,11 @@ import {
 import { sbvrUtils, errors, type permissions } from '@balena/pinejs';
 import { getConfig, readTransaction } from '../state-get-utils.js';
 import type { ExpandedRelease, StateV3 } from './state-get-v3.js';
-import { buildAppFromRelease, releaseExpand } from './state-get-v3.js';
+import {
+	buildAppFromRelease,
+	releaseExpand,
+	resolveActiveProfiles,
+} from './state-get-v3.js';
 import type { OptionsToResponse } from 'pinejs-client-core';
 import type { Application } from '../../../balena-model.js';
 import {
@@ -33,6 +37,9 @@ const fleetExpand = {
 		$select: ['name', 'value'],
 	},
 	should_be_running__release: releaseExpand,
+	application_profile: {
+		$select: ['activates__profile_name', 'on__application'],
+	},
 	service: {
 		$select: ['id', 'service_name'],
 		$expand: {
@@ -128,7 +135,15 @@ const getFleetAppsForState = (
 			is_host: fleet.is_host,
 			class: fleet.is_of__class,
 			...(release != null && {
-				releases: buildAppFromRelease(undefined, fleet, release, config),
+				releases: buildAppFromRelease(
+					undefined,
+					fleet,
+					release,
+					config,
+					// A fleet's own profile activations (rows targeting itself) gate
+					// its release's profiled services; there is no device to override.
+					resolveActiveProfiles(undefined, fleet),
+				),
 			}),
 		},
 	};

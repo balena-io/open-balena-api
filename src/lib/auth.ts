@@ -62,6 +62,10 @@ export const ROLES: {
 		'resin.image_environment_variable.all',
 		'resin.image_install.all',
 		'resin.image_label.all',
+		'resin.image_profile.all',
+		'resin.application_profile.all',
+		'resin.device_profile.all',
+		'resin.device_profile_override.all',
 		'resin.organization.read',
 		'resin.organization_membership.read',
 		'resin.release.all',
@@ -84,6 +88,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	`resin.device.update?${matchesNonFrozenDeviceActor()}`,
 	'resin.application.read?owns__device/canAccess() or (is_public and is_for__device_type/any(dt:dt/describes__device/canAccess()))',
 	'resin.application_tag.read?application/canAccess()',
+	'resin.application_profile.read?application/canAccess()',
 	'resin.device_config_variable.read?device/canAccess()',
 	`resin.device_config_variable.create?device/any(d:${matchesNonFrozenDeviceActor(
 		'd',
@@ -92,6 +97,8 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 		'd',
 	)})`,
 	`resin.device_tag.read?device/canAccess()`,
+	`resin.device_profile.read?device/canAccess()`,
+	`resin.device_profile_override.read?device/canAccess()`,
 	...writePerms(
 		'resin.device_tag',
 		`device/any(d:${matchesNonFrozenDeviceActor('d')})`,
@@ -144,6 +151,8 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	)})`,
 
 	'resin.image_label.read?release_image/canAccess()',
+
+	'resin.image_profile.read?release_image/canAccess()',
 
 	'resin.service_label.read?service/canAccess()',
 

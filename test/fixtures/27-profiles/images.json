@@ -1,0 +1,46 @@
+{
+	"userRelease_main": {
+		"user": "admin",
+		"service": "main",
+		"releases": [
+			"userRelease"
+		],
+		"image_size": 1024,
+		"project_type": "Dockerfile.template",
+		"build_log": "main build log",
+		"status": "success"
+	},
+	"userRelease_metrics": {
+		"user": "admin",
+		"service": "ext-metrics",
+		"releases": [
+			"userRelease"
+		],
+		"image_size": 1024,
+		"project_type": "Dockerfile.template",
+		"build_log": "ext-metrics build log",
+		"status": "success"
+	},
+	"hostappRelease_hostapp": {
+		"user": "admin",
+		"service": "hostapp",
+		"releases": [
+			"hostappRelease"
+		],
+		"image_size": 1024,
+		"project_type": "Dockerfile.template",
+		"build_log": "hostapp build log",
+		"status": "success"
+	},
+	"hostappRelease_bluetooth": {
+		"user": "admin",
+		"service": "ext-bluetooth",
+		"releases": [
+			"hostappRelease"
+		],
+		"image_size": 1024,
+		"project_type": "Dockerfile.template",
+		"build_log": "ext-bluetooth build log",
+		"status": "success"
+	}
+}

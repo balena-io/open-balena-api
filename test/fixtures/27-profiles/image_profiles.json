@@ -1,0 +1,12 @@
+{
+	"bluetooth_bluetooth": {
+		"user": "admin",
+		"image": "hostappRelease_bluetooth",
+		"profile_name": "bluetooth"
+	},
+	"metrics_metrics": {
+		"user": "admin",
+		"image": "userRelease_metrics",
+		"profile_name": "metrics"
+	}
+}

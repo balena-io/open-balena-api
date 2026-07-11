@@ -1,0 +1,28 @@
+{
+	"userRelease": {
+		"user": "admin",
+		"application": "user-app",
+		"commit": "userc0de",
+		"status": "success",
+		"composition": {
+			"services": {
+				"main": {},
+				"ext-metrics": {}
+			}
+		},
+		"source": "cloud"
+	},
+	"hostappRelease": {
+		"user": "admin",
+		"application": "nuc-hostapp",
+		"commit": "hostc0de",
+		"status": "success",
+		"composition": {
+			"services": {
+				"hostapp": {},
+				"ext-bluetooth": {}
+			}
+		},
+		"source": "cloud"
+	}
+}

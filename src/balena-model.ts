@@ -563,6 +563,13 @@ export interface Application {
 		service?: Array<Service['Read']>;
 		application__has__tag_key?: Array<ApplicationTag['Read']>;
 		application_tag?: Array<ApplicationTag['Read']>;
+		application__activates__profile_name__on__application?: Array<
+			ApplicationProfile['Read']
+		>;
+		application_profile?: Array<ApplicationProfile['Read']>;
+		activates__profile_name__on__application?: Array<
+			ApplicationProfile['Read']
+		>;
 		updates__application?: Array<Application['Read']>;
 		owns__device?: Array<Device['Read']>;
 		owns__release?: Array<Release['Read']>;
@@ -738,6 +745,27 @@ export interface ApplicationTag {
 	};
 }
 
+export interface ApplicationProfile {
+	Read: {
+		created_at: Types['Date Time']['Read'];
+		modified_at: Types['Date Time']['Read'];
+		application: { __id: Application['Read']['id'] } | [Application['Read']];
+		activates__profile_name: Types['Short Text']['Read'];
+		on__application:
+			| { __id: Application['Read']['id'] }
+			| [Application['Read']];
+		id: Types['Serial']['Read'];
+	};
+	Write: {
+		created_at: Types['Date Time']['Write'];
+		modified_at: Types['Date Time']['Write'];
+		application: Application['Write']['id'];
+		activates__profile_name: Types['Short Text']['Write'];
+		on__application: Application['Write']['id'];
+		id: Types['Serial']['Write'];
+	};
+}
+
 export interface Device {
 	Read: {
 		created_at: Types['Date Time']['Read'];
@@ -852,9 +880,19 @@ export interface Device {
 		>;
 		device__installs__service?: Array<ServiceInstall['Read']>;
 		service_install?: Array<ServiceInstall['Read']>;
+		device__activates__profile_name__on__application?: Array<
+			DeviceProfile['Read']
+		>;
+		device_profile?: Array<DeviceProfile['Read']>;
+		device__overrides_profiles_on__application?: Array<
+			DeviceProfileOverride['Read']
+		>;
+		device_profile_override?: Array<DeviceProfileOverride['Read']>;
 		installs__image?: Array<ImageInstall['Read']>;
 		installs__application__has__service_name?: Array<ServiceInstall['Read']>;
 		installs__service?: Array<ServiceInstall['Read']>;
+		activates__profile_name__on__application?: Array<DeviceProfile['Read']>;
+		overrides_profiles_on__application?: Array<DeviceProfileOverride['Read']>;
 	};
 	Write: {
 		created_at: Types['Date Time']['Write'];
@@ -1109,6 +1147,47 @@ export interface DeviceTag {
 	};
 }
 
+export interface DeviceProfile {
+	Read: {
+		created_at: Types['Date Time']['Read'];
+		modified_at: Types['Date Time']['Read'];
+		device: { __id: Device['Read']['id'] } | [Device['Read']];
+		activates__profile_name: Types['Short Text']['Read'];
+		on__application:
+			| { __id: Application['Read']['id'] }
+			| [Application['Read']];
+		id: Types['Serial']['Read'];
+	};
+	Write: {
+		created_at: Types['Date Time']['Write'];
+		modified_at: Types['Date Time']['Write'];
+		device: Device['Write']['id'];
+		activates__profile_name: Types['Short Text']['Write'];
+		on__application: Application['Write']['id'];
+		id: Types['Serial']['Write'];
+	};
+}
+
+export interface DeviceProfileOverride {
+	Read: {
+		created_at: Types['Date Time']['Read'];
+		modified_at: Types['Date Time']['Read'];
+		device: { __id: Device['Read']['id'] } | [Device['Read']];
+		overrides_profiles_on__application:
+			| { __id: Application['Read']['id'] }
+			| [Application['Read']];
+		id: Types['Serial']['Read'];
+		application: { __id: Application['Read']['id'] } | [Application['Read']];
+	};
+	Write: {
+		created_at: Types['Date Time']['Write'];
+		modified_at: Types['Date Time']['Write'];
+		device: Device['Write']['id'];
+		overrides_profiles_on__application: Application['Write']['id'];
+		id: Types['Serial']['Write'];
+	};
+}
+
 export interface Release {
 	Read: {
 		created_at: Types['Date Time']['Read'];
@@ -1234,6 +1313,9 @@ export interface ImageIsPartOfRelease {
 		image__is_part_of__release__has__label_name?: Array<ImageLabel['Read']>;
 		release_image__has__label_name?: Array<ImageLabel['Read']>;
 		image_label?: Array<ImageLabel['Read']>;
+		image__is_part_of__release__has__profile_name?: Array<ImageProfile['Read']>;
+		release_image__has__profile_name?: Array<ImageProfile['Read']>;
+		image_profile?: Array<ImageProfile['Read']>;
 		image__is_part_of__release__has__name?: Array<
 			ImageEnvironmentVariable['Read']
 		>;
@@ -1272,6 +1354,28 @@ export interface ImageLabel {
 		label_name: Types['Short Text']['Write'];
 		id: Types['Serial']['Write'];
 		value: Types['Text']['Write'];
+	};
+}
+
+export interface ImageProfile {
+	Read: {
+		created_at: Types['Date Time']['Read'];
+		modified_at: Types['Date Time']['Read'];
+		release_image:
+			| { __id: ImageIsPartOfRelease['Read']['id'] }
+			| [ImageIsPartOfRelease['Read']];
+		profile_name: Types['Short Text']['Read'];
+		id: Types['Serial']['Read'];
+		image__is_part_of__release:
+			| { __id: ImageIsPartOfRelease['Read']['id'] }
+			| [ImageIsPartOfRelease['Read']];
+	};
+	Write: {
+		created_at: Types['Date Time']['Write'];
+		modified_at: Types['Date Time']['Write'];
+		release_image: ImageIsPartOfRelease['Write']['id'];
+		profile_name: Types['Short Text']['Write'];
+		id: Types['Serial']['Write'];
 	};
 }
 
@@ -1418,6 +1522,7 @@ export default interface $Model {
 	application__has__service_name__has__label_name: ServiceLabel;
 	application__has__service_name__has__name: ServiceEnvironmentVariable;
 	application__has__tag_key: ApplicationTag;
+	application__activates__profile_name__on__application: ApplicationProfile;
 	device: Device;
 	device__has__env_var_name: DeviceEnvironmentVariable;
 	device__has__config_var_name: DeviceConfigVariable;
@@ -1425,10 +1530,13 @@ export default interface $Model {
 	device__installs__application__has__service_name: ServiceInstall;
 	device__has__application__has__service_name__has__name: DeviceServiceEnvironmentVariable;
 	device__has__tag_key: DeviceTag;
+	device__activates__profile_name__on__application: DeviceProfile;
+	device__overrides_profiles_on__application: DeviceProfileOverride;
 	release: Release;
 	release__has__tag_key: ReleaseTag;
 	image__is_part_of__release: ImageIsPartOfRelease;
 	image__is_part_of__release__has__label_name: ImageLabel;
+	image__is_part_of__release__has__profile_name: ImageProfile;
 	image__is_part_of__release__has__name: ImageEnvironmentVariable;
 	user__is_member_of__organization: OrganizationMembership;
 	user__has__public_key: UserHasPublicKey;
@@ -1444,15 +1552,19 @@ export default interface $Model {
 	service_label: ServiceLabel;
 	service_environment_variable: ServiceEnvironmentVariable;
 	application_tag: ApplicationTag;
+	application_profile: ApplicationProfile;
 	device_environment_variable: DeviceEnvironmentVariable;
 	device_config_variable: DeviceConfigVariable;
 	image_install: ImageInstall;
 	service_install: ServiceInstall;
 	device_service_environment_variable: DeviceServiceEnvironmentVariable;
 	device_tag: DeviceTag;
+	device_profile: DeviceProfile;
+	device_profile_override: DeviceProfileOverride;
 	release_tag: ReleaseTag;
 	release_image: ImageIsPartOfRelease;
 	image_label: ImageLabel;
+	image_profile: ImageProfile;
 	image_environment_variable: ImageEnvironmentVariable;
 	organization_membership: OrganizationMembership;
 	user_public_key: UserHasPublicKey;

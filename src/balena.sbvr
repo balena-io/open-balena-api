@@ -203,6 +203,9 @@ Term: memory usage
 Term: memory total
 	Concept Type: Integer (Type)
 
+Term: profile name
+	Concept Type: Short Text (Type)
+
 Term: storage block device
 	Concept Type: Short Text (Type)
 
@@ -378,6 +381,11 @@ Term: application
 		Database Table Name: application tag
 		Necessity: each application tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 100.
 
+	Fact type: application activates profile name on application1
+		Term Form: application profile
+		Database Table Name: application profile
+		Necessity: each application profile has a profile name that has a Length (Type) that is greater than 0 and is less than or equal to 100.
+
 Term: device
 	Concept Type: actor (Auth)
 
@@ -415,6 +423,15 @@ Term: device
 		Database Table Name: device tag
 		Necessity: each device tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 100.
 
+	Fact type: device activates profile name on application
+		Term Form: device profile
+		Database Table Name: device profile
+		Necessity: each device profile has a profile name that has a Length (Type) that is greater than 0 and is less than or equal to 100.
+
+	Fact type: device overrides profiles on application
+		Term Form: device profile override
+		Database Table Name: device profile override
+
 Term: release
 
 Fact type: release has tag key
@@ -430,6 +447,11 @@ Fact type: image is part of release
 	Fact type: release image has label name
 		Term Form: image label
 		Database Table Name: image label
+
+	Fact type: release image has profile name
+		Term Form: image profile
+		Database Table Name: image profile
+		Necessity: each image profile has a profile name that has a Length (Type) that is greater than 0 and is less than or equal to 100.
 
 	Fact type: release image has name (Auth)
 		Term Form: image environment variable

@@ -1,0 +1,22 @@
+{
+	"main": {
+		"user": "admin",
+		"application": "user-app",
+		"service_name": "main"
+	},
+	"ext-metrics": {
+		"user": "admin",
+		"application": "user-app",
+		"service_name": "ext-metrics"
+	},
+	"hostapp": {
+		"user": "admin",
+		"application": "nuc-hostapp",
+		"service_name": "hostapp"
+	},
+	"ext-bluetooth": {
+		"user": "admin",
+		"application": "nuc-hostapp",
+		"service_name": "ext-bluetooth"
+	}
+}
