@@ -423,14 +423,18 @@ Term: device
 		Database Table Name: device tag
 		Necessity: each device tag has a tag key that has a Length (Type) that is greater than 0 and is less than or equal to 100.
 
-	Fact type: device activates profile name on application
-		Term Form: device profile
-		Database Table Name: device profile
-		Necessity: each device profile has a profile name that has a Length (Type) that is greater than 0 and is less than or equal to 100.
+Term: device profile
 
-	Fact type: device overrides profiles on application
-		Term Form: device profile override
-		Database Table Name: device profile override
+Fact type: device profile has device
+	Synonymous Form: device owns device profile
+	Necessity: each device profile has exactly one device.
+
+Fact type: device profile has application
+	Necessity: each device profile has exactly one application.
+
+Fact type: device profile has profile name
+	Necessity: each device profile has at most one profile name.
+	Necessity: each device profile that has a profile name, has a profile name that has a Length (Type) that is greater than 0 and is less than or equal to 100.
 
 Term: release
 
@@ -1030,3 +1034,7 @@ Rule: It is necessary that each release that should manage a device, has a statu
 Rule: It is necessary that each release that should manage a device that is of a device type1, belongs to an application that is public and is not host and has a slug that is equal to "balena_os/aarch64-supervisor" or "balena_os/amd64-supervisor" or "balena_os/armv7hf-supervisor" or "balena_os/i386-supervisor" or "balena_os/i386-nlp-supervisor" or "balena_os/rpi-supervisor" and is for a device type2 that is of a cpu architecture that is supported by the device type1.
 Rule: It is necessary that each application that is not host, is updated by no application.
 Rule: It is necessary that each application that is of a class that is not equal to "block", updates no application.
+-- device profile: at most one activation of a given profile name per (device, application); at most
+-- one no-profile-name row per (device, application) -- that's the "override with no profiles" case.
+Rule: It is necessary that each device that owns a device profile1 that has an application and has a profile name, owns at most one device profile2 that has an application that is of the device profile1 and has a profile name that is of the device profile1.
+Rule: It is necessary that each device that owns a device profile1 that has an application and has no profile name, owns at most one device profile2 that has an application that is of the device profile1 and has no profile name.

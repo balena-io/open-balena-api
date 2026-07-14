@@ -30,32 +30,23 @@ AND LENGTH("activates-profile name") IS NOT NULL
 AND "activates-profile name" IS NOT NULL)
 );
 
+-- `device profile` is a bare Term (own serial id, no defining fact) with `device`/`application`
+-- mandatory and `profile name` nullable -- a NULL row means "device overrides `application`'s
+-- fleet default with nothing active". SBVR can't express nullability for a field that's part of
+-- the fact that *defines* a Term Form, so unlike `application profile` this can't be a plain
+-- Term Form; the length check and both uniqueness constraints (one active profile name per
+-- (device, application); at most one NULL-profile-name row per (device, application)) are
+-- enforced as SBVR Rules/necessities instead of table CHECK/UNIQUE constraints -- see
+-- src/balena.sbvr's "device profile" block and the two device-profile Rules near the end.
 CREATE TABLE IF NOT EXISTS "device profile" (
 	"created at" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 ,	"modified at" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
-,	"device" INTEGER NOT NULL
-,	"activates-profile name" VARCHAR(255) NOT NULL
-,	"on-application" INTEGER NOT NULL
 ,	"id" SERIAL NOT NULL PRIMARY KEY
-,	FOREIGN KEY ("device") REFERENCES "device" ("id")
-,	FOREIGN KEY ("on-application") REFERENCES "application" ("id")
-,	UNIQUE("device", "activates-profile name", "on-application")
-,	-- It is necessary that each device profile has a profile name that has a Length (Type) that is greater than 0 and is less than or equal to 100.
-CONSTRAINT "device profile$uIGbagOmDbbG9dHHnnp7eT5eWRMBPdJc4X+POtluXzw=" CHECK (0 < LENGTH("activates-profile name")
-AND LENGTH("activates-profile name") <= 100
-AND LENGTH("activates-profile name") IS NOT NULL
-AND "activates-profile name" IS NOT NULL)
-);
-
-CREATE TABLE IF NOT EXISTS "device profile override" (
-	"created at" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
-,	"modified at" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 ,	"device" INTEGER NOT NULL
-,	"overrides profiles on-application" INTEGER NOT NULL
-,	"id" SERIAL NOT NULL PRIMARY KEY
+,	"application" INTEGER NOT NULL
+,	"profile name" VARCHAR(255)
 ,	FOREIGN KEY ("device") REFERENCES "device" ("id")
-,	FOREIGN KEY ("overrides profiles on-application") REFERENCES "application" ("id")
-,	UNIQUE("device", "overrides profiles on-application")
+,	FOREIGN KEY ("application") REFERENCES "application" ("id")
 );
 
 DO
@@ -93,18 +84,6 @@ BEGIN
 	) THEN
 		CREATE TRIGGER "device profile_trigger_update_modified_at"
 		BEFORE UPDATE ON "device profile"
-		FOR EACH ROW
-		EXECUTE PROCEDURE "trigger_update_modified_at"();
-	END IF;
-
-	IF NOT EXISTS(
-		SELECT 1
-		FROM "information_schema"."triggers"
-		WHERE "event_object_table" = 'device profile override'
-		AND "trigger_name" = 'device profile override_trigger_update_modified_at'
-	) THEN
-		CREATE TRIGGER "device profile override_trigger_update_modified_at"
-		BEFORE UPDATE ON "device profile override"
 		FOR EACH ROW
 		EXECUTE PROCEDURE "trigger_update_modified_at"();
 	END IF;

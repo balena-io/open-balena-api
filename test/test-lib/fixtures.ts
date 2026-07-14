@@ -508,39 +508,14 @@ const loaders: Record<string, LoaderFunc> = {
 			);
 		}
 
+		// `profile_name` omitted/null means "override with no profiles" -- there's no
+		// separate override resource, see spec2.md's "overrides with empty profile problem".
 		return await createResource({
 			resource: 'device_profile',
 			body: {
-				..._.pick(jsonData, 'activates__profile_name'),
+				..._.pick(jsonData, 'profile_name'),
 				device: device.id,
-				on__application: onApplication.id,
-			},
-			user,
-		});
-	},
-	device_profile_overrides: async (jsonData, fixtures) => {
-		const user = await fixtures.users[jsonData.user];
-		if (user == null) {
-			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
-		}
-
-		const device = await fixtures.devices[jsonData.device];
-		if (device == null) {
-			logErrorAndThrow(`Could not find device: ${jsonData.device}`);
-		}
-
-		const onApplication = await fixtures.applications[jsonData.on_application];
-		if (onApplication == null) {
-			logErrorAndThrow(
-				`Could not find application: ${jsonData.on_application}`,
-			);
-		}
-
-		return await createResource({
-			resource: 'device_profile_override',
-			body: {
-				device: device.id,
-				overrides_profiles_on__application: onApplication.id,
+				application: onApplication.id,
 			},
 			user,
 		});

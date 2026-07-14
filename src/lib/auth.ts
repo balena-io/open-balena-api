@@ -65,7 +65,6 @@ export const ROLES: {
 		'resin.image_profile.all',
 		'resin.application_profile.all',
 		'resin.device_profile.all',
-		'resin.device_profile_override.all',
 		'resin.organization.read',
 		'resin.organization_membership.read',
 		'resin.release.all',
@@ -98,7 +97,6 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	)})`,
 	`resin.device_tag.read?device/canAccess()`,
 	`resin.device_profile.read?device/canAccess()`,
-	`resin.device_profile_override.read?device/canAccess()`,
 	...writePerms(
 		'resin.device_tag',
 		`device/any(d:${matchesNonFrozenDeviceActor('d')})`,

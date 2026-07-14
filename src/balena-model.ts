@@ -570,6 +570,7 @@ export interface Application {
 		activates__profile_name__on__application?: Array<
 			ApplicationProfile['Read']
 		>;
+		is_of__device_profile?: Array<DeviceProfile['Read']>;
 		updates__application?: Array<Application['Read']>;
 		owns__device?: Array<Device['Read']>;
 		owns__release?: Array<Release['Read']>;
@@ -880,19 +881,11 @@ export interface Device {
 		>;
 		device__installs__service?: Array<ServiceInstall['Read']>;
 		service_install?: Array<ServiceInstall['Read']>;
-		device__activates__profile_name__on__application?: Array<
-			DeviceProfile['Read']
-		>;
-		device_profile?: Array<DeviceProfile['Read']>;
-		device__overrides_profiles_on__application?: Array<
-			DeviceProfileOverride['Read']
-		>;
-		device_profile_override?: Array<DeviceProfileOverride['Read']>;
+		is_of__device_profile?: Array<DeviceProfile['Read']>;
+		owns__device_profile?: Array<DeviceProfile['Read']>;
 		installs__image?: Array<ImageInstall['Read']>;
 		installs__application__has__service_name?: Array<ServiceInstall['Read']>;
 		installs__service?: Array<ServiceInstall['Read']>;
-		activates__profile_name__on__application?: Array<DeviceProfile['Read']>;
-		overrides_profiles_on__application?: Array<DeviceProfileOverride['Read']>;
 	};
 	Write: {
 		created_at: Types['Date Time']['Write'];
@@ -1151,40 +1144,22 @@ export interface DeviceProfile {
 	Read: {
 		created_at: Types['Date Time']['Read'];
 		modified_at: Types['Date Time']['Read'];
-		device: { __id: Device['Read']['id'] } | [Device['Read']];
-		activates__profile_name: Types['Short Text']['Read'];
-		on__application:
-			| { __id: Application['Read']['id'] }
-			| [Application['Read']];
 		id: Types['Serial']['Read'];
-	};
-	Write: {
-		created_at: Types['Date Time']['Write'];
-		modified_at: Types['Date Time']['Write'];
-		device: Device['Write']['id'];
-		activates__profile_name: Types['Short Text']['Write'];
-		on__application: Application['Write']['id'];
-		id: Types['Serial']['Write'];
-	};
-}
-
-export interface DeviceProfileOverride {
-	Read: {
-		created_at: Types['Date Time']['Read'];
-		modified_at: Types['Date Time']['Read'];
 		device: { __id: Device['Read']['id'] } | [Device['Read']];
-		overrides_profiles_on__application:
-			| { __id: Application['Read']['id'] }
-			| [Application['Read']];
-		id: Types['Serial']['Read'];
 		application: { __id: Application['Read']['id'] } | [Application['Read']];
+		// NULL = device overrides `application`'s fleet default with no profiles active.
+		// See spec2.md's "overrides with empty profile problem" for why this can't be a
+		// component of the term-form-defining fact (SBVR compiler limitation) and is
+		// instead a bare Term with `profile name` attached as its own optional fact.
+		profile_name: Types['Short Text']['Read'] | null;
 	};
 	Write: {
 		created_at: Types['Date Time']['Write'];
 		modified_at: Types['Date Time']['Write'];
-		device: Device['Write']['id'];
-		overrides_profiles_on__application: Application['Write']['id'];
 		id: Types['Serial']['Write'];
+		device: Device['Write']['id'];
+		application: Application['Write']['id'];
+		profile_name: Types['Short Text']['Write'] | null;
 	};
 }
 
@@ -1530,8 +1505,7 @@ export default interface $Model {
 	device__installs__application__has__service_name: ServiceInstall;
 	device__has__application__has__service_name__has__name: DeviceServiceEnvironmentVariable;
 	device__has__tag_key: DeviceTag;
-	device__activates__profile_name__on__application: DeviceProfile;
-	device__overrides_profiles_on__application: DeviceProfileOverride;
+	device_profile: DeviceProfile;
 	release: Release;
 	release__has__tag_key: ReleaseTag;
 	image__is_part_of__release: ImageIsPartOfRelease;
@@ -1559,8 +1533,6 @@ export default interface $Model {
 	service_install: ServiceInstall;
 	device_service_environment_variable: DeviceServiceEnvironmentVariable;
 	device_tag: DeviceTag;
-	device_profile: DeviceProfile;
-	device_profile_override: DeviceProfileOverride;
 	release_tag: ReleaseTag;
 	release_image: ImageIsPartOfRelease;
 	image_label: ImageLabel;

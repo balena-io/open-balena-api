@@ -96,7 +96,7 @@ export type StateV3 = {
 
 const noActiveProfiles: ReadonlySet<string> = new Set();
 
-type ProfileActivation = {
+type ApplicationProfileActivation = {
 	activates__profile_name: string;
 	on__application: { __id: number };
 };
@@ -104,11 +104,12 @@ type ProfileActivation = {
 /**
  * Resolves the set of profiles active on `application`'s releases for the
  * state payload, with the device taking priority over the fleet whenever it
- * defines any activation targeting that application or explicitly overrides
- * it (with no activations) via `device_profile_override`.
+ * defines any `device_profile` row targeting that application — including a
+ * `profile_name: null` row, which means "override with nothing active".
  *
- * Both the fleet-level (`application_profile`) and device-level activation
- * rows (`device_profile`) carry an `on__application` recording which
+ * Both the fleet-level (`application_profile`, keyed by `on__application`)
+ * and device-level rows (`device_profile`, keyed by `application`, expanded
+ * on `device` via the `owns__device_profile` nav property) record which
  * application's releases they apply to, so this works uniformly for every
  * release rendered in the state payload (the userapp the device belongs to,
  * the hostapp it is operated by, and the supervisor it is managed by): each
@@ -117,40 +118,33 @@ type ProfileActivation = {
  * Fleet-level rows are fetched already scoped to the target application (via
  * the `on__application`-side navigation), while the device carries all of its
  * activations/overrides, so those are filtered down to the target here.
- *
- * `device_profile_override` is scoped per (device, application) via
- * `overrides_profiles_on__application`: a device can override one target
- * application's fleet activations (e.g. the hostapp) while still falling
- * back to the fleet set on another (e.g. its userapp).
  */
 export const resolveActiveProfiles = (
-	device:
-		| Pick<ExpandedDevice, 'device_profile' | 'device_profile_override'>
-		| undefined,
+	device: Pick<ExpandedDevice, 'owns__device_profile'> | undefined,
 	application:
 		| {
 				id: number;
-				application_profile: ProfileActivation[];
+				application_profile: ApplicationProfileActivation[];
 		  }
 		| undefined,
 ): ReadonlySet<string> => {
 	if (application == null) {
 		return noActiveProfiles;
 	}
-	const deviceProfiles = device?.device_profile.filter(
-		(activation) => activation.on__application.__id === application.id,
+	const deviceProfiles = device?.owns__device_profile.filter(
+		(activation) => activation.application.__id === application.id,
 	);
-	const deviceOverridesThisApplication = device?.device_profile_override.some(
-		(override) =>
-			override.overrides_profiles_on__application.__id === application.id,
-	);
-	const profiles =
-		device != null &&
-		((deviceProfiles?.length ?? 0) > 0 || deviceOverridesThisApplication)
-			? (deviceProfiles ?? [])
-			: application.application_profile;
+	if (device != null && (deviceProfiles?.length ?? 0) > 0) {
+		return new Set(
+			deviceProfiles!
+				.map(({ profile_name }) => profile_name)
+				.filter((profileName) => profileName != null),
+		);
+	}
 	return new Set(
-		profiles.map(({ activates__profile_name }) => activates__profile_name),
+		application.application_profile.map(
+			({ activates__profile_name }) => activates__profile_name,
+		),
 	);
 };
 
@@ -401,11 +395,8 @@ const deviceExpand = {
 	device_service_environment_variable: {
 		$select: ['name', 'value', 'service'],
 	},
-	device_profile: {
-		$select: ['activates__profile_name', 'on__application'],
-	},
-	device_profile_override: {
-		$select: ['overrides_profiles_on__application'],
+	owns__device_profile: {
+		$select: ['profile_name', 'application'],
 	},
 	belongs_to__application: {
 		$select: appSelect,

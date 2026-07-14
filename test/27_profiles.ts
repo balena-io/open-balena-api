@@ -97,8 +97,8 @@ export default () => {
 				resource: 'device_profile',
 				body: {
 					device: device.id,
-					activates__profile_name: 'other',
-					on__application: hostApp.id,
+					profile_name: 'other',
+					application: hostApp.id,
 				},
 			});
 			await expectStateServices({
@@ -114,11 +114,14 @@ export default () => {
 					$filter: { device: device.id },
 				},
 			});
+			// `profile_name: null` is the override row -- no separate resource, see
+			// spec2.md's "overrides with empty profile problem".
 			await pineUser.post({
-				resource: 'device_profile_override',
+				resource: 'device_profile',
 				body: {
 					device: device.id,
-					overrides_profiles_on__application: hostApp.id,
+					profile_name: null,
+					application: hostApp.id,
 				},
 			});
 			await expectStateServices({
@@ -129,11 +132,12 @@ export default () => {
 
 		it('should fall back to the fleet activated profiles once the device stops overriding them', async () => {
 			await pineUser.delete({
-				resource: 'device_profile_override',
+				resource: 'device_profile',
 				options: {
 					$filter: {
 						device: device.id,
-						overrides_profiles_on__application: hostApp.id,
+						application: hostApp.id,
+						profile_name: null,
 					},
 				},
 			});
@@ -159,8 +163,8 @@ export default () => {
 				.post('/resin/device_profile')
 				.send({
 					device: device.id,
-					activates__profile_name: 'sneaky',
-					on__application: hostApp.id,
+					profile_name: 'sneaky',
+					application: hostApp.id,
 				})
 				.expect(401);
 		});
@@ -170,16 +174,16 @@ export default () => {
 				resource: 'device_profile',
 				body: {
 					device: device.id,
-					activates__profile_name: 'bluetooth',
-					on__application: hostApp.id,
+					profile_name: 'bluetooth',
+					application: hostApp.id,
 				},
 			});
 			const { body } = await supertest(device)
 				.get(
-					`/resin/device_profile?$filter=device eq ${device.id}&$select=activates__profile_name`,
+					`/resin/device_profile?$filter=device eq ${device.id}&$select=profile_name`,
 				)
 				.expect(200);
-			expect(body.d).to.deep.equal([{ activates__profile_name: 'bluetooth' }]);
+			expect(body.d).to.deep.equal([{ profile_name: 'bluetooth' }]);
 		});
 
 		it('should gate a profiled user-app service on the user-app fleet activations, without affecting the hostapp', async () => {
@@ -207,8 +211,8 @@ export default () => {
 				resource: 'device_profile',
 				body: {
 					device: device.id,
-					activates__profile_name: 'none',
-					on__application: userApp.id,
+					profile_name: 'none',
+					application: userApp.id,
 				},
 			});
 			await expectStateServices({
@@ -219,19 +223,20 @@ export default () => {
 
 		it('should let a device override one application with no profiles while another application keeps resolving its own device set', async () => {
 			// Replace the user-app's `none` device activation with an explicit
-			// empty override, scoped only to the user app. The hostapp's own
-			// device activation (`bluetooth`) must be unaffected.
+			// empty override (`profile_name: null`), scoped only to the user app.
+			// The hostapp's own device activation (`bluetooth`) must be unaffected.
 			await pineUser.delete({
 				resource: 'device_profile',
 				options: {
-					$filter: { device: device.id, on__application: userApp.id },
+					$filter: { device: device.id, application: userApp.id },
 				},
 			});
 			await pineUser.post({
-				resource: 'device_profile_override',
+				resource: 'device_profile',
 				body: {
 					device: device.id,
-					overrides_profiles_on__application: userApp.id,
+					profile_name: null,
+					application: userApp.id,
 				},
 			});
 			await expectStateServices({
@@ -239,11 +244,12 @@ export default () => {
 				hostServices: ['hostapp', 'ext-bluetooth'],
 			});
 			await pineUser.delete({
-				resource: 'device_profile_override',
+				resource: 'device_profile',
 				options: {
 					$filter: {
 						device: device.id,
-						overrides_profiles_on__application: userApp.id,
+						application: userApp.id,
+						profile_name: null,
 					},
 				},
 			});
