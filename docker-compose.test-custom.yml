@@ -1,7 +1,7 @@
 version: "2.4"
 services:
   db:
-    image: balena/open-balena-db:8.0.4@sha256:22cee296cc5d9f3cc5f6cc5ab393def9d49e32710f4ffe872f2b26e38c5d2de5
+    image: balena/open-balena-db:8.0.10@sha256:10ad1fff4abd90076ac90bd0be51665ddf985601283777ff553a596d19187241
     ports:
       - "5432"
       - "5431:5432"
