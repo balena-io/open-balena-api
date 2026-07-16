@@ -158,23 +158,28 @@ export default () => {
 				});
 
 				// Just to confirm that such an external request still fails with a 431 Request Header Fields Too Large error
+				// Should either return a 431 or throw an ECONNRESET if the socket is destroyed first.
 				it('should fail when an external request uses a $in with more parameters than the number of binds that PG supports', async function () {
-					await pineUser
-						.delete({
-							resource: 'device_environment_variable',
-							options: {
-								$filter: {
-									device: device.id,
-									name: {
-										$in: Array.from(
-											{ length: testVarSetCount },
-											(_, i) => `testDeviceVar_intenalApiDelete_${i + 1}`,
-										),
+					try {
+						await pineUser
+							.delete({
+								resource: 'device_environment_variable',
+								options: {
+									$filter: {
+										device: device.id,
+										name: {
+											$in: Array.from(
+												{ length: testVarSetCount },
+												(_, i) => `testDeviceVar_intenalApiDelete_${i + 1}`,
+											),
+										},
 									},
 								},
-							},
-						})
-						.expect(431);
+							})
+							.expect(431);
+					} catch (err) {
+						expect((err as { code?: string }).code).to.equal('ECONNRESET');
+					}
 				});
 
 				// Confirm that internal requests are not affected by the PG limitation of using 16 bits to address binds,
