@@ -437,6 +437,31 @@ const loaders: Record<string, LoaderFunc> = {
 			...{ release_image: image.image__is_part_of__release },
 		};
 	},
+	image_profiles: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const image = await fixtures.images[jsonData.image];
+		if (image == null) {
+			logErrorAndThrow(`Could not find image: ${jsonData.image}`);
+		}
+
+		const imageProfile = await createResource({
+			resource: 'image_profile',
+			body: {
+				..._.pick(jsonData, 'profile_name'),
+				release_image: image.image__is_part_of__release.id,
+			},
+			user,
+		});
+
+		return {
+			...imageProfile,
+			...{ release_image: image.image__is_part_of__release },
+		};
+	},
 	services: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.user];
 		if (user == null) {

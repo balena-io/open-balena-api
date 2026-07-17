@@ -49,6 +49,7 @@ export default {
 				'resin.application_tag.read?application/any(a:a/is_public and is_for__device_type/canAccess())',
 				'resin.release_tag.read?release/any(r:r/belongs_to__application/any(a:a/is_public and is_for__device_type/canAccess()))',
 				'resin.image__is_part_of__release.read?is_part_of__release/any(r:r/belongs_to__application/any(a:a/is_public and is_for__device_type/canAccess()))',
+				'resin.image_profile.read?release_image/canAccess()',
 				'resin.release_asset.read?release/canAccess()',
 			],
 		},

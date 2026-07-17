@@ -1,0 +1,14 @@
+{
+	"app1": {
+		"user": "admin",
+		"app_name": "test_image_profile",
+		"device_type": "raspberry-pi"
+	},
+	"hostApp": {
+		"user": "admin",
+		"app_name": "test_image_profile_hostapp",
+		"device_type": "raspberry-pi",
+		"is_host": true,
+		"is_public": true
+	}
+}

@@ -1,0 +1,34 @@
+{
+	"release1_image1": {
+		"user": "admin",
+		"service": "app1_service1",
+		"releases": ["release1"],
+		"image_size": 1024,
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"release1_image2": {
+		"user": "admin",
+		"service": "app1_service2",
+		"releases": ["release1"],
+		"image_size": 1024,
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"hostApp_image1": {
+		"user": "admin",
+		"service": "hostApp_service1",
+		"releases": ["hostApp_release"],
+		"image_size": 1024,
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"hostApp_image2": {
+		"user": "admin",
+		"service": "hostApp_service2",
+		"releases": ["hostApp_release"],
+		"image_size": 1024,
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	}
+}

@@ -1,5 +1,7 @@
 import type { Request, RequestHandler } from 'express';
 import type { ParamsDictionary } from 'express-serve-static-core';
+import { errors } from '@balena/pinejs';
+import type { hooks } from '@balena/pinejs';
 import type { z } from 'zod';
 export { z } from 'zod';
 
@@ -106,3 +108,22 @@ export const createUnvalidatedRequestHandler = (
 		Record<string, never>
 	>,
 ) => handler;
+
+export type ValidatedHookArgs<Schema extends z.ZodType> = Omit<
+	hooks.HookArgs,
+	'request'
+> & {
+	request: Omit<hooks.HookArgs['request'], 'values'> & {
+		values: z.infer<Schema>;
+	};
+};
+
+export const withValidatedValues =
+	<Schema extends z.ZodType<AnyObject>>(schema: Schema) =>
+	(args: hooks.HookArgs): hooks.HookResponse => {
+		try {
+			args.request.values = schema.parse(args.request.values);
+		} catch {
+			throw new errors.BadRequestError();
+		}
+	};
