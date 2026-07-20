@@ -17,7 +17,7 @@ const queue = new PQueue({
 	concurrency: ASYNC_TASK_DELETE_REGISTRY_IMAGES_CONCURRENCY,
 });
 
-const schema = {
+export const schema = {
 	type: 'object',
 	properties: {
 		images: {
@@ -42,6 +42,14 @@ const { api } = sbvrUtils;
 
 export type DeleteRegistryImagesTaskParams = FromSchema<typeof schema>;
 
+// What to delete for each given image location:
+// - deleteImage: delete the image's own repository
+// - deleteCache: delete the image's multi-stage cache repositories
+interface DeleteRegistryImagesOptions {
+	deleteImage: boolean;
+	deleteCache: boolean;
+}
+
 const handlerName = 'delete_registry_images';
 const logHeader = 'delete_registry_images_task';
 if (ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED) {
@@ -49,7 +57,10 @@ if (ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED) {
 		handlerName,
 		async (options) => {
 			try {
-				await deleteRegistryImages(options.params);
+				await deleteRegistryImages(handlerName, options.params.images, {
+					deleteImage: true,
+					deleteCache: true,
+				});
 				return {
 					status: 'succeeded',
 				};
@@ -65,15 +76,17 @@ if (ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED) {
 	);
 }
 
-// Delete all manifests within a given registry repository.
-const subject = `task:${handlerName}`;
+// Delete the requested manifests within a given registry repository.
 async function deleteRepo(
 	s3: NonNullable<typeof s3Client>,
+	subject: string,
 	repo: string,
 	signal: AbortSignal,
+	{ deleteImage: shouldDeleteImage, deleteCache }: DeleteRegistryImagesOptions,
 ): Promise<void> {
-	const cacheRepos = await s3.listCacheRepos(repo);
-	for (const target of [...cacheRepos, repo]) {
+	const cacheRepos = deleteCache ? await s3.listCacheRepos(repo) : [];
+	const targets = [...cacheRepos, ...(shouldDeleteImage ? [repo] : [])];
+	for (const target of targets) {
 		signal.throwIfAborted();
 		const digests = await s3.listRepoDigests(target);
 		if (digests.length === 0) {
@@ -87,28 +100,34 @@ async function deleteRepo(
 	}
 }
 
-const deleteRegistryImages = async ({
-	images,
-}: DeleteRegistryImagesTaskParams) => {
+export const deleteRegistryImages = async (
+	handler: string,
+	images: DeleteRegistryImagesTaskParams['images'],
+	{ deleteImage: shouldDeleteImage, deleteCache }: DeleteRegistryImagesOptions,
+) => {
 	if (s3Client == null) {
 		throw new Error('Registry S3 client not initialized.');
 	}
 
 	// Avoid deleting any blobs that are still referenced by other images
 	// This shouldn't normally be necessary as is_stored_at__image_location
-	// should be enforced as unique at the database level, but just in case
-	const stillReferenced = await api.resin.get({
-		resource: 'image',
-		passthrough: { req: permissions.rootRead },
-		options: {
-			$select: ['is_stored_at__image_location'],
-			$filter: {
-				is_stored_at__image_location: {
-					$in: images.map((image) => image.location),
+	// should be enforced as unique at the database level, but just in case.
+	// Only relevant when deleting the image's own repository; cache repos
+	// are specific to a single image so cannot be referenced elsewhere.
+	const stillReferenced = shouldDeleteImage
+		? await api.resin.get({
+				resource: 'image',
+				passthrough: { req: permissions.rootRead },
+				options: {
+					$select: ['is_stored_at__image_location'],
+					$filter: {
+						is_stored_at__image_location: {
+							$in: images.map((image) => image.location),
+						},
+					},
 				},
-			},
-		},
-	});
+			})
+		: [];
 
 	// Define what images are actually safe to delete
 	const stillReferencedLocations = new Set(
@@ -123,6 +142,7 @@ const deleteRegistryImages = async ({
 	// Mark images and any of their multi-stage cache images for deletion
 	// Don't let the task run for too long, and create a new task with
 	// the remaining image data if it does
+	const subject = `task:${handler}`;
 	const errorController = new AbortController();
 	const timeoutAbortSignal = AbortSignal.timeout(
 		ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS,
@@ -138,7 +158,10 @@ const deleteRegistryImages = async ({
 						`[${logHeader}] Skipping deletion of image with empty repo: ${location}`,
 					);
 				} else {
-					await deleteRepo(s3Client!, repo, signal);
+					await deleteRepo(s3Client!, subject, repo, signal, {
+						deleteImage: shouldDeleteImage,
+						deleteCache,
+					});
 				}
 				remaining.delete(location);
 			}),
@@ -162,7 +185,7 @@ const deleteRegistryImages = async ({
 			resource: 'task',
 			passthrough: { req: permissions.root },
 			body: {
-				is_executed_by__handler: handlerName,
+				is_executed_by__handler: handler,
 				is_executed_with__parameter_set: {
 					images: Array.from(remaining, (location) => ({ location })),
 				} satisfies DeleteRegistryImagesTaskParams,

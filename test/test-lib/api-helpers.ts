@@ -348,7 +348,10 @@ const expectTasks = async (
 				task.is_executed_with__parameter_set.devices.sort((a, b) => a - b);
 			}
 		}
-	} else if (handler === 'delete_registry_images') {
+	} else if (
+		handler === 'delete_registry_images' ||
+		handler === 'delete_registry_image_cache'
+	) {
 		const sortImages = (images: DeleteRegistryImagesTaskParams['images']) =>
 			images.sort((a, b) => a.location.localeCompare(b.location));
 		for (const task of actual) {
