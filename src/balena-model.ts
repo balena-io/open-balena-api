@@ -1234,6 +1234,9 @@ export interface ImageIsPartOfRelease {
 		image__is_part_of__release__has__label_name?: Array<ImageLabel['Read']>;
 		release_image__has__label_name?: Array<ImageLabel['Read']>;
 		image_label?: Array<ImageLabel['Read']>;
+		image__is_part_of__release__has__profile_name?: Array<ImageProfile['Read']>;
+		release_image__has__profile_name?: Array<ImageProfile['Read']>;
+		image_profile?: Array<ImageProfile['Read']>;
 		image__is_part_of__release__has__name?: Array<
 			ImageEnvironmentVariable['Read']
 		>;
@@ -1272,6 +1275,28 @@ export interface ImageLabel {
 		label_name: Types['Short Text']['Write'];
 		id: Types['Serial']['Write'];
 		value: Types['Text']['Write'];
+	};
+}
+
+export interface ImageProfile {
+	Read: {
+		created_at: Types['Date Time']['Read'];
+		modified_at: Types['Date Time']['Read'];
+		release_image:
+			| { __id: ImageIsPartOfRelease['Read']['id'] }
+			| [ImageIsPartOfRelease['Read']];
+		profile_name: Types['Short Text']['Read'];
+		id: Types['Serial']['Read'];
+		image__is_part_of__release:
+			| { __id: ImageIsPartOfRelease['Read']['id'] }
+			| [ImageIsPartOfRelease['Read']];
+	};
+	Write: {
+		created_at: Types['Date Time']['Write'];
+		modified_at: Types['Date Time']['Write'];
+		release_image: ImageIsPartOfRelease['Write']['id'];
+		profile_name: Types['Short Text']['Write'];
+		id: Types['Serial']['Write'];
 	};
 }
 
@@ -1429,6 +1454,7 @@ export default interface $Model {
 	release__has__tag_key: ReleaseTag;
 	image__is_part_of__release: ImageIsPartOfRelease;
 	image__is_part_of__release__has__label_name: ImageLabel;
+	image__is_part_of__release__has__profile_name: ImageProfile;
 	image__is_part_of__release__has__name: ImageEnvironmentVariable;
 	user__is_member_of__organization: OrganizationMembership;
 	user__has__public_key: UserHasPublicKey;
@@ -1453,6 +1479,7 @@ export default interface $Model {
 	release_tag: ReleaseTag;
 	release_image: ImageIsPartOfRelease;
 	image_label: ImageLabel;
+	image_profile: ImageProfile;
 	image_environment_variable: ImageEnvironmentVariable;
 	organization_membership: OrganizationMembership;
 	user_public_key: UserHasPublicKey;

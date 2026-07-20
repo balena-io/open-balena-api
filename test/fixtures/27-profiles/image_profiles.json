@@ -1,0 +1,12 @@
+{
+	"metrics_profile": {
+		"user": "admin",
+		"image": "release1_image2",
+		"profile_name": "metrics"
+	},
+	"hostApp_profile": {
+		"user": "admin",
+		"image": "hostApp_image2",
+		"profile_name": "bluetooth"
+	}
+}

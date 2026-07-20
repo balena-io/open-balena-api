@@ -203,6 +203,9 @@ Term: memory usage
 Term: memory total
 	Concept Type: Integer (Type)
 
+Term: profile name
+	Concept Type: Short Text (Type)
+
 Term: storage block device
 	Concept Type: Short Text (Type)
 
@@ -430,6 +433,11 @@ Fact type: image is part of release
 	Fact type: release image has label name
 		Term Form: image label
 		Database Table Name: image label
+
+	Fact type: release image has profile name
+		Term Form: image profile
+		Database Table Name: image profile
+		Necessity: each image profile has a profile name that has a Length (Type) that is greater than 1 and is less than or equal to 100.
 
 	Fact type: release image has name (Auth)
 		Term Form: image environment variable

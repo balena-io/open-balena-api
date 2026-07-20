@@ -1,0 +1,22 @@
+{
+	"app1_service1": {
+		"user": "admin",
+		"application": "app1",
+		"service_name": "main"
+	},
+	"app1_service2": {
+		"user": "admin",
+		"application": "app1",
+		"service_name": "ext-metrics"
+	},
+	"hostApp_service1": {
+		"user": "admin",
+		"application": "hostApp",
+		"service_name": "hostapp"
+	},
+	"hostApp_service2": {
+		"user": "admin",
+		"application": "hostApp",
+		"service_name": "ext-bluetooth"
+	}
+}

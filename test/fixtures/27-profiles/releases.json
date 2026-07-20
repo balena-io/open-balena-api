@@ -1,0 +1,28 @@
+{
+	"release1": {
+		"user": "admin",
+		"application": "app1",
+		"commit": "00000001",
+		"status": "success",
+		"composition": {
+			"services": {
+				"main": {},
+				"ext-metrics": {}
+			}
+		},
+		"source": "cloud"
+	},
+	"hostApp_release": {
+		"user": "admin",
+		"application": "hostApp",
+		"commit": "00000002",
+		"status": "success",
+		"composition": {
+			"services": {
+				"hostapp": {},
+				"ext-bluetooth": {}
+			}
+		},
+		"source": "cloud"
+	}
+}

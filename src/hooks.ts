@@ -10,6 +10,7 @@ import './features/device-types/hooks/index.js';
 import './features/device-urls/hooks.js';
 import './features/field-size-limits/hooks.js';
 import './features/hostapp/hooks/index.js';
+import './features/profiles/hooks.js';
 import './features/organizations/hooks/index.js';
 import './features/releases/hooks/index.js';
 import './features/images/hooks/index.js';
