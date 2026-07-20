@@ -20,3 +20,4 @@ import './features/vars-schema/hooks/index.js';
 import './features/vpn/hooks.js';
 import './translations/v7/hooks.js';
 import './translations/v6/hooks.js';
+import './features/release-assets/hooks/index.js';
