@@ -162,15 +162,13 @@ export default () => {
 				await expectSettledTasks([imageA]);
 			});
 
-			it('should retry on registry API errors', async () => {
-				// We have the mock return 500 on the next delete request
-				// which will cause the first task attempt to fail, but
-				// the second attempt should succeed.
-				registryMock.setNextDeleteResponseCode(500);
+			it('should retry on registry storage errors', async () => {
+				// Make the first storage delete fail, which causes the first task
+				// attempt to fail, but the retry attempt should then succeed.
+				registryMock.setNextDeleteObjectsError('mock error');
 				const consoleSpy = sinon.spy(console, 'error');
 				try {
 					const image = await createImage(ctx.service1.id);
-					const [cache] = image.cacheImages;
 					await pineUser.delete({
 						resource: 'image',
 						id: image.dbImage.id,
@@ -187,9 +185,7 @@ export default () => {
 						sinon.match.has(
 							'message',
 							sinon.match(
-								new RegExp(
-									`Failed to mark ${cache.repository}/${cache.digest} for deletion: \\[500\\].*mock error`,
-								),
+								/Failed to delete \d+ object\(s\) under .*mock error/,
 							),
 						),
 					);
@@ -270,58 +266,29 @@ export default () => {
 				await expectSettledTasks([image]);
 			});
 
-			it('should create a follow-up task when deletion takes too long', async () => {
-				const originalMaxTime =
-					config.ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS;
-				config.TEST_MOCK_ONLY.ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS = 50;
+			it('should remove the _manifests directory', async () => {
+				const image = await createImage(ctx.service1.id, { stages: 2 });
+				expect(registryMock.getManifestObjectKeys(image.repository)).to.not.be
+					.empty;
 
-				const consoleSpy = sinon.spy(console, 'info');
-				const images = await Promise.all(
-					Array.from({ length: 50 }, () => createImage(ctx.service1.id)),
-				);
+				await pineUser.delete({
+					resource: 'image',
+					id: image.dbImage.id,
+				});
 
-				try {
-					await pineUser.delete({
-						resource: 'image',
-						options: {
-							$filter: {
-								id: { $in: images.map((i) => i.dbImage.id) },
-							},
-						},
-					});
-					await waitFor({
-						delayMs: 500,
-						checkFn: () => checkIsDeleted(images),
-					});
+				await waitFor({
+					delayMs: 500,
+					checkFn: () => checkIsDeleted([image]),
+				});
+				await expectSettledTasks([image]);
 
-					sinon.assert.calledWithMatch(
-						consoleSpy,
-						sinon.match(
-							'[delete_registry_images_task] Task took too long. Created a new task for the remaining images',
-						),
-					);
-
-					// The original task plus follow-up task(s) should together
-					// process every image exactly once.
-					let totalProcessed = 0;
-					for (const callArgs of consoleSpy.args) {
-						const msg = callArgs[0];
-						if (typeof msg !== 'string') {
-							continue;
-						}
-						const match = msg.match(
-							/\[delete_registry_images_task\] Processed (\d+)\/\d+ images/,
-						);
-						if (match) {
-							totalProcessed += parseInt(match[1], 10);
-						}
-					}
-					expect(totalProcessed).to.equal(images.length);
-				} finally {
-					consoleSpy.restore();
-					config.TEST_MOCK_ONLY.ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS =
-						originalMaxTime;
-					await resetLatestTaskIds('delete_registry_images');
+				// The entire _manifests directory should be gone for both the
+				// repo and its multi-stage cache repos.
+				expect(registryMock.getManifestObjectKeys(image.repository)).to.be
+					.empty;
+				for (const cache of image.cacheImages) {
+					expect(registryMock.getManifestObjectKeys(cache.repository)).to.be
+						.empty;
 				}
 			});
 

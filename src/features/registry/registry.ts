@@ -804,14 +804,6 @@ class S3Client {
 		return digests;
 	}
 
-	// List all existing manifest digests (tagged and untagged) for a given
-	// repository by listing objects in the registry's S3 bucket directly.
-	async listRepoDigests(repo: string) {
-		return await this.listDigestsAt(
-			`${this.rootPath}/repositories/${repo}/_manifests/revisions/sha256/`,
-		);
-	}
-
 	// List all manifest digests ever associated with a given tag of a
 	// repository (current and historical) by listing objects in the
 	// registry's S3 bucket directly.
@@ -827,6 +819,50 @@ class S3Client {
 		return (await this.listChildPrefixes(`${reposPath}${repo}-`)).map((child) =>
 			child.replace(reposPath, '').replace(/\/$/, ''),
 		);
+	}
+
+	// Delete a repository's entire `_manifests` directory (revisions, tags, legacy
+	// signature links, etc). Docker Distribution's API doesn't provide the tools
+	// to guarantee the removal of all manifest data.
+	async deleteRepoManifests(repo: string, signal?: AbortSignal) {
+		const prefix = `${this.rootPath}/repositories/${repo}/_manifests/`;
+		let continuationToken: string | undefined;
+		do {
+			// Stop cleanly between pages when an (optional) signal aborts.
+			signal?.throwIfAborted();
+			const res = await this.s3
+				.listObjectsV2({
+					Bucket: this.bucket,
+					Prefix: prefix,
+					ContinuationToken: continuationToken,
+				})
+				.promise();
+
+			const objects = (res.Contents ?? []).flatMap(({ Key }) =>
+				Key != null ? [{ Key }] : [],
+			);
+
+			if (objects.length > 0) {
+				// deleteObjects responds with a 200 even when individual keys
+				// fail, reporting them in the `Errors` array, so check it.
+				const deleteRes = await this.s3
+					.deleteObjects({
+						Bucket: this.bucket,
+						Delete: { Objects: objects },
+					})
+					.promise();
+				if (deleteRes.Errors != null && deleteRes.Errors.length > 0) {
+					const [err] = deleteRes.Errors;
+					throw new Error(
+						`Failed to delete ${deleteRes.Errors.length} object(s) under '${prefix}': [${err.Code}] ${err.Message}`,
+					);
+				}
+			}
+
+			continuationToken = res.IsTruncated
+				? res.NextContinuationToken
+				: undefined;
+		} while (continuationToken);
 	}
 }
 

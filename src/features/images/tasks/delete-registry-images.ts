@@ -1,11 +1,7 @@
 import { permissions, sbvrUtils, tasks } from '@balena/pinejs';
 import type { FromSchema } from 'json-schema-to-ts';
 import PQueue from 'p-queue';
-import {
-	deleteImage,
-	generateDeleteToken,
-	s3Client,
-} from '../../../features/registry/registry.js';
+import { s3Client } from '../../../features/registry/registry.js';
 import {
 	ASYNC_TASK_ATTEMPT_LIMIT,
 	ASYNC_TASK_DELETE_REGISTRY_IMAGES_CONCURRENCY,
@@ -13,6 +9,8 @@ import {
 	ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS,
 } from '../../../lib/config.js';
 
+// Shared across invocations as a global cap on concurrent registry deletions.
+// If a task times out waiting for a slot, it just re-enqueues the remaining work.
 const queue = new PQueue({
 	concurrency: ASYNC_TASK_DELETE_REGISTRY_IMAGES_CONCURRENCY,
 });
@@ -65,8 +63,12 @@ if (ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED) {
 	);
 }
 
-// Delete all manifests within a given registry repository.
-const subject = `task:${handlerName}`;
+// Delete all manifests within a given registry repository (and its multi-stage
+// build cache repositories) by removing the entire `_manifests` directory.
+// We delete the directory directly rather than marking each manifest for
+// deletion via the registry API, as the API leaves behind legacy signature
+// links that keep the `_manifests` directory (and thus the repository in the
+// catalog list) alive.
 async function deleteRepo(
 	s3: NonNullable<typeof s3Client>,
 	repo: string,
@@ -74,16 +76,7 @@ async function deleteRepo(
 ): Promise<void> {
 	const cacheRepos = await s3.listCacheRepos(repo);
 	for (const target of [...cacheRepos, repo]) {
-		signal.throwIfAborted();
-		const digests = await s3.listRepoDigests(target);
-		if (digests.length === 0) {
-			continue;
-		}
-		const token = generateDeleteToken(subject, target);
-		for (const digest of digests) {
-			signal.throwIfAborted();
-			await deleteImage(token, target, digest);
-		}
+		await s3.deleteRepoManifests(target, signal);
 	}
 }
 
