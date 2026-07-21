@@ -563,9 +563,16 @@ export interface Application {
 		service?: Array<Service['Read']>;
 		application__has__tag_key?: Array<ApplicationTag['Read']>;
 		application_tag?: Array<ApplicationTag['Read']>;
+		application__activates__profile_name__on__application?: Array<
+			ApplicationProfile['Read']
+		>;
+		application_profile?: Array<ApplicationProfile['Read']>;
 		updates__application?: Array<Application['Read']>;
 		owns__device?: Array<Device['Read']>;
 		owns__release?: Array<Release['Read']>;
+		activates__profile_name__on__application?: Array<
+			ApplicationProfile['Read']
+		>;
 		is_directly_accessible_by__user?: Array<
 			UserHasDirectAccessToApplication['Read']
 		>;
@@ -1400,6 +1407,27 @@ export interface ReleaseAsset {
 	};
 }
 
+export interface ApplicationProfile {
+	Read: {
+		created_at: Types['Date Time']['Read'];
+		modified_at: Types['Date Time']['Read'];
+		application: { __id: Application['Read']['id'] } | [Application['Read']];
+		activates__profile_name: Types['Short Text']['Read'];
+		on__application:
+			| { __id: Application['Read']['id'] }
+			| [Application['Read']];
+		id: Types['Serial']['Read'];
+	};
+	Write: {
+		created_at: Types['Date Time']['Write'];
+		modified_at: Types['Date Time']['Write'];
+		application: Application['Write']['id'];
+		activates__profile_name: Types['Short Text']['Write'];
+		on__application: Application['Write']['id'];
+		id: Types['Serial']['Write'];
+	};
+}
+
 export interface UserHasDirectAccessToApplication {
 	Read: {
 		id: Types['Big Integer']['Read'];
@@ -1460,6 +1488,7 @@ export default interface $Model {
 	user__has__public_key: UserHasPublicKey;
 	device_type__is_referenced_by__alias: DeviceTypeAlias;
 	release__has__asset_key: ReleaseAsset;
+	application__activates__profile_name__on__application: ApplicationProfile;
 	user__has_direct_access_to__application: UserHasDirectAccessToApplication;
 	// Synonyms
 	user_role: UserHasRole;
@@ -1485,4 +1514,5 @@ export default interface $Model {
 	user_public_key: UserHasPublicKey;
 	device_type_alias: DeviceTypeAlias;
 	release_asset: ReleaseAsset;
+	application_profile: ApplicationProfile;
 }
