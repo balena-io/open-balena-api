@@ -11,6 +11,7 @@ setupDeleteCascade('application', {
 	application_config_variable: 'application',
 	application_environment_variable: 'application',
 	application_tag: 'application',
+	application_profile: ['application', 'on__application'],
 	release: 'belongs_to__application',
 	service: 'application',
 });
