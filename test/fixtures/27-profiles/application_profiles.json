@@ -1,0 +1,8 @@
+{
+	"app1_metrics_activation": {
+		"user": "admin",
+		"application": "app1",
+		"activates__profile_name": "metrics",
+		"on__application": "hostApp"
+	}
+}
