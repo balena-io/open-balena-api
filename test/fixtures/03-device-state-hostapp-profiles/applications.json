@@ -1,0 +1,19 @@
+{
+	"app1": {
+		"user": "admin",
+		"app_name": "state_hostapp_profiles_fleet",
+		"device_type": "raspberry-pi"
+	},
+	"app2": {
+		"user": "admin",
+		"app_name": "state_hostapp_profiles_other_fleet",
+		"device_type": "raspberry-pi"
+	},
+	"hostApp": {
+		"user": "admin",
+		"app_name": "state_hostapp_profiles_hostapp",
+		"device_type": "raspberry-pi",
+		"is_host": true,
+		"is_public": true
+	}
+}

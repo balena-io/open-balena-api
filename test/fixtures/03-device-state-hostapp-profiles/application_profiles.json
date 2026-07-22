@@ -1,0 +1,8 @@
+{
+	"app1_alpha_activation": {
+		"user": "admin",
+		"application": "app1",
+		"activates__profile_name": "alpha",
+		"on__application": "hostApp"
+	}
+}

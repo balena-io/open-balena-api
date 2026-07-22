@@ -1,0 +1,42 @@
+{
+	"hostapp_image": {
+		"user": "admin",
+		"service": "hostapp_service",
+		"releases": ["hostAppRelease"],
+		"image_size": 1024,
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"alpha_image": {
+		"user": "admin",
+		"service": "alpha_service",
+		"releases": ["hostAppRelease"],
+		"image_size": 1024,
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"beta_image": {
+		"user": "admin",
+		"service": "beta_service",
+		"releases": ["hostAppRelease"],
+		"image_size": 1024,
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"alpha_beta_image": {
+		"user": "admin",
+		"service": "alpha_beta_service",
+		"releases": ["hostAppRelease"],
+		"image_size": 1024,
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	},
+	"beta_gamma_image": {
+		"user": "admin",
+		"service": "beta_gamma_service",
+		"releases": ["hostAppRelease"],
+		"image_size": 1024,
+		"project_type": "Dockerfile.template",
+		"status": "success"
+	}
+}
