@@ -1,0 +1,14 @@
+{
+	"device1": {
+		"belongs_to__application": "app1",
+		"belongs_to__user": "admin",
+		"device_type": "raspberry-pi",
+		"uuid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	},
+	"device2": {
+		"belongs_to__application": "app2",
+		"belongs_to__user": "admin",
+		"device_type": "raspberry-pi",
+		"uuid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+	}
+}

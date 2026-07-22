@@ -998,6 +998,20 @@ Fact Type: scheduled job run has status
 	Definition: "running" or "success" or "error"
 	Necessity: each scheduled job run that has a status that is equal to "success", has an end timestamp.
 
+Fact type: application1 activates profile name on application2
+	Term Form: application profile
+	Database Table Name: application profile
+	Necessity: each application profile has a profile name that has a Length (Type) that is greater than 1 and is less than or equal to 100.
+	-- Written against the reified "application profile" term rather than the full
+	-- "application1 that activates a profile name on an application2" form: with two same-term
+	-- roles, that full form makes SBVR bind the trailing predicate to a broken join (it forces
+	-- application1 and application2 to be equal instead of checking application2 alone). This form
+	-- compiles to a clean, correctly-scoped check against application2.
+	-- We could use "application" or "application1" or "application2" they all compile to the same thing
+	-- I explicitly used "application2" just so it is easier to read compared to the Fact Type
+	Necessity: each application profile has an application2 that is of a class that is not equal to "block".
+	Necessity: each application profile has an application2 that is host.
+
 
 -- Rules
 
@@ -1016,3 +1030,4 @@ Rule: It is necessary that each release that should manage a device, has a statu
 Rule: It is necessary that each release that should manage a device that is of a device type1, belongs to an application that is public and is not host and has a slug that is equal to "balena_os/aarch64-supervisor" or "balena_os/amd64-supervisor" or "balena_os/armv7hf-supervisor" or "balena_os/i386-supervisor" or "balena_os/i386-nlp-supervisor" or "balena_os/rpi-supervisor" and is for a device type2 that is of a cpu architecture that is supported by the device type1.
 Rule: It is necessary that each application that is not host, is updated by no application.
 Rule: It is necessary that each application that is of a class that is not equal to "block", updates no application.
+Rule: It is necessary that each application1 that activates a profile name on an application2, is of a class that is equal to "fleet".

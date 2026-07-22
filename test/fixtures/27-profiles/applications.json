@@ -10,5 +10,11 @@
 		"device_type": "raspberry-pi",
 		"is_host": true,
 		"is_public": true
+	},
+	"blockApp": {
+		"user": "admin",
+		"app_name": "test_profile_block",
+		"device_type": "raspberry-pi",
+		"is_of__class": "block"
 	}
 }

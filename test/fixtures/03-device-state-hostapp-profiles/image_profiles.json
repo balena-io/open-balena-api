@@ -1,0 +1,32 @@
+{
+	"alpha_profile": {
+		"user": "admin",
+		"image": "alpha_image",
+		"profile_name": "alpha"
+	},
+	"beta_profile": {
+		"user": "admin",
+		"image": "beta_image",
+		"profile_name": "beta"
+	},
+	"alpha_beta_profile_alpha": {
+		"user": "admin",
+		"image": "alpha_beta_image",
+		"profile_name": "alpha"
+	},
+	"alpha_beta_profile_beta": {
+		"user": "admin",
+		"image": "alpha_beta_image",
+		"profile_name": "beta"
+	},
+	"beta_gamma_profile_beta": {
+		"user": "admin",
+		"image": "beta_gamma_image",
+		"profile_name": "beta"
+	},
+	"beta_gamma_profile_gamma": {
+		"user": "admin",
+		"image": "beta_gamma_image",
+		"profile_name": "gamma"
+	}
+}
