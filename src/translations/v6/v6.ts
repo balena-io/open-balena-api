@@ -4,12 +4,15 @@ import type { ConfigLoader } from '@balena/pinejs';
 import {
 	aliasFields,
 	aliasTable,
+	extendValidator,
 	generateAbstractSqlModel,
 	overrideFieldType,
 	renameResourceField,
 } from '../../abstract-sql-utils.js';
 import * as userHasDirectAccessToApplication from '../../features/applications/models/user__has_direct_access_to__application.js';
 import * as DeviceAdditions from '../../features/devices/models/device-additions.js';
+import { sbvrUtils } from '@balena/pinejs';
+import { z } from '../../infra/validation/index.js';
 
 export const toVersion = 'v7';
 
@@ -238,4 +241,22 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) => {
 			],
 		},
 	} satisfies ConfigLoader.Model['translations'];
+};
+
+export const extendValidators = () => {
+	extendValidator('v6', 'release', {
+		// In v6 we also accept contract as a string that we automatically parse, this used to be via a hook but we can now do it directly in the validator
+		contract: z
+			.preprocess((value) => {
+				if (typeof value === 'string') {
+					try {
+						return JSON.parse(value);
+					} catch {
+						// ignore
+					}
+				}
+				return value;
+			}, sbvrUtils.sbvrTypes.JSON.schema)
+			.optional(),
+	});
 };
