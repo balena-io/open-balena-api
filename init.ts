@@ -7,10 +7,13 @@ import config from './config.js';
 import packageJson from './package.json' with { type: 'json' };
 import { promises as fs } from 'fs';
 import { TRUST_PROXY, PORT } from './src/lib/config.js';
+import * as v6 from './src/translations/v6/v6.js';
 
 const getUrl = (req: express.Request) => req.url;
 
 async function onInitModel() {
+	v6.extendValidators();
+
 	const { updateOrInsertModel } =
 		await import('./src/infra/pinejs-client-helpers/index.js');
 	const appTypes =

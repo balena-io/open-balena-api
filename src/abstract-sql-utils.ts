@@ -20,6 +20,7 @@ import type {
 
 import { sbvrUtils } from '@balena/pinejs';
 import * as AbstractSqlCompiler from '@balena/abstract-sql-compiler';
+import type { validation } from './index.js';
 
 export const { optimizeSchema } = AbstractSqlCompiler.postgres;
 
@@ -271,4 +272,26 @@ export const aliasFields = (
 			return ['ReferencedField', resourceName, fieldName];
 		},
 	);
+};
+
+/**
+ * This follows the behavior of zod.extend where the validator for the given properties will be replaced if it already exists.
+ */
+export const extendValidator = (
+	vocabulary: string,
+	resourceName: string,
+	extension: Record<string, validation.z.ZodType>,
+) => {
+	const request = {
+		vocabulary,
+		resourceName,
+	};
+	const abstractSqlModel = sbvrUtils.getAbstractSqlModel(request);
+	const synonym = sbvrUtils.resolveSynonym(request);
+
+	const { validator } = abstractSqlModel.tables[synonym];
+	for (const key of Object.keys(extension)) {
+		// We have to mutate the validator because tables are frozen and so trying to replace it (via `.extend`) will throw
+		validator!.shape[key] = extension[key];
+	}
 };

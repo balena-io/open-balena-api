@@ -105,24 +105,6 @@ addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'release', {
 	},
 });
 
-addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'release', {
-	POSTPARSE({ request }) {
-		if (!Object.hasOwn(request.values, 'contract')) {
-			return;
-		}
-		try {
-			request.values.contract =
-				typeof request.values.contract === 'object'
-					? request.values.contract
-					: JSON.parse(request.values.contract);
-		} catch {
-			throw new errors.BadRequestError(
-				'Failed to parse provided release.contract value',
-			);
-		}
-	},
-});
-
 addReadOnlyHook(['all'], 'all', {
 	PRERESPOND({ response }) {
 		// Use the default body message for the status code when the body is empty
