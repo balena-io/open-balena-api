@@ -1,6 +1,7 @@
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import _ from 'lodash';
 import sinon from 'sinon';
+import randomstring from 'randomstring';
 import { expect } from 'chai';
 import * as fakeDevice from './test-lib/fake-device.js';
 import type { UserObjectParam } from './test-lib/supertest.js';
@@ -2207,6 +2208,67 @@ export default () => {
 							value: 'newTagValue4',
 						},
 					);
+				});
+			});
+
+			describe('hostApp profile activation state gating', function () {
+				let fx: fixtures.Fixtures;
+				let hostApp: AnyObject;
+				let hostAppRelease: AnyObject;
+				let services: AnyObject;
+
+				const getDeviceState = async (device: AnyObject) => {
+					await supertest(fx.users.admin)
+						.patch(`/${version}/device(${device.id})`)
+						.send({ should_be_operated_by__release: hostAppRelease.id })
+						.expect(200);
+
+					const token = randomstring.generate(16);
+					await supertest(fx.users.admin)
+						.post(`/api-key/device/${device.id}/device-key`)
+						.send({ apiKey: token })
+						.expect(200);
+
+					const state = await fakeDevice.getState({ token }, device.uuid, 'v3');
+					return state[device.uuid].apps[hostApp.uuid].releases![
+						hostAppRelease.commit
+					].services!;
+				};
+
+				before(async () => {
+					fx = await fixtures.load('03-device-state-hostapp-profiles');
+
+					hostApp = fx.applications.hostApp;
+					hostAppRelease = fx.releases.hostAppRelease;
+
+					services = await getDeviceState(fx.devices.device1);
+				});
+
+				after(async () => {
+					await fixtures.clean(fx);
+				});
+
+				for (const [serviceName, shouldBeIncluded] of [
+					['hostapp', true], // no profile tags - always included
+					['alpha', true], // single profile, active
+					['beta', false], // single profile, inactive
+					['alpha-beta', true], // multiple profiles, one active
+					['beta-gamma', false], // multiple profiles, none active
+				] as const) {
+					it(`should ${shouldBeIncluded ? 'include' : 'exclude'} '${serviceName}'`, function () {
+						if (shouldBeIncluded) {
+							expect(services).to.have.property(serviceName);
+						} else {
+							expect(services).to.not.have.property(serviceName);
+						}
+					});
+				}
+
+				it('should not leak a fleet activation into another fleet sharing the same public hostApp', async () => {
+					const otherServices = await getDeviceState(fx.devices.device2);
+					expect(otherServices).to.have.property('hostapp');
+					expect(otherServices).to.not.have.property('alpha');
+					expect(otherServices).to.not.have.property('alpha-beta');
 				});
 			});
 		}

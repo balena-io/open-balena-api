@@ -1,0 +1,27 @@
+{
+	"hostapp_service": {
+		"user": "admin",
+		"application": "hostApp",
+		"service_name": "hostapp"
+	},
+	"alpha_service": {
+		"user": "admin",
+		"application": "hostApp",
+		"service_name": "alpha"
+	},
+	"beta_service": {
+		"user": "admin",
+		"application": "hostApp",
+		"service_name": "beta"
+	},
+	"alpha_beta_service": {
+		"user": "admin",
+		"application": "hostApp",
+		"service_name": "alpha-beta"
+	},
+	"beta_gamma_service": {
+		"user": "admin",
+		"application": "hostApp",
+		"service_name": "beta-gamma"
+	}
+}
