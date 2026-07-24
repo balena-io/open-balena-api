@@ -169,6 +169,9 @@
     "sinon": "22.0.0",
     "supertest": "7.2.2"
   },
+  "overrides": {
+    "@balena/lf-to-abstract-sql": "6.0.3-build-claude-proposed-fix-scoped-fa3fc3134f1f8bf9f6a6c1a158d810fdfc79b2ce-1"
+  },
   "engines": {
     "node": "^24.5.0",
     "npm": "^11.5.2"
