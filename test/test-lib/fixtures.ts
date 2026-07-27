@@ -462,6 +462,34 @@ const loaders: Record<string, LoaderFunc> = {
 			...{ release_image: image.image__is_part_of__release },
 		};
 	},
+	application_profiles: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const application = await fixtures.applications[jsonData.application];
+		if (application == null) {
+			logErrorAndThrow(`Could not find application: ${jsonData.application}`);
+		}
+
+		const onApplication = await fixtures.applications[jsonData.on__application];
+		if (onApplication == null) {
+			logErrorAndThrow(
+				`Could not find on__application: ${jsonData.on__application}`,
+			);
+		}
+
+		return await createResource({
+			resource: 'application_profile',
+			body: {
+				..._.pick(jsonData, 'activates__profile_name'),
+				application: application.id,
+				on__application: onApplication.id,
+			},
+			user,
+		});
+	},
 	services: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.user];
 		if (user == null) {

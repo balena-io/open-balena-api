@@ -171,6 +171,8 @@ export * as cache from './infra/cache/index.js';
 export * as config from './lib/config.js';
 export * as registry from './features/registry/registry.js';
 export * as abstractSql from './abstract-sql-utils.js';
+export * as profileModel from './features/profiles/models/profile-additions.js';
+export * as rulesReplacementHack from './balena-rules-replacement-hack.js';
 export { getFileUploadHandler } from './fileupload-handler.js';
 
 export * as deviceState from './features/device-state/index.js';
