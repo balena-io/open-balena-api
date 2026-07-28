@@ -13,7 +13,7 @@ import {
 	defaultGetAuthorizedKeysFn,
 	setGetAuthorizedKeysFn,
 } from './public-keys.js';
-import { refreshToken } from './refresh-token.js';
+import { refreshToken, setOnRefreshToken } from './refresh-token.js';
 import { whoami, actorWhoami } from './whoami.js';
 
 export * from './handles.js';
@@ -32,7 +32,13 @@ export const loginRateLimiter = createRateLimitMiddleware(
 	}),
 );
 
-export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
+export const setup = (
+	app: Application,
+	onLogin: SetupOptions['onLogin'],
+	onRefreshToken: SetupOptions['onRefreshToken'],
+) => {
+	setOnRefreshToken(onRefreshToken);
+
 	app.post('/login_', loginRateLimiter('body.username'), login(onLogin));
 
 	app.get('/user/v1/whoami', middleware.fullyAuthenticatedUser, whoami);

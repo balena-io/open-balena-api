@@ -5,15 +5,30 @@ import { captureException } from '../../infra/error-handling/index.js';
 import {
 	createValidatedRequestHandler,
 	z,
+	type RequestExcludingInput,
 } from '../../infra/validation/index.js';
 
 const { BadRequestError } = errors;
 
+const refreshTokenBody = z.object({
+	password: z.string().nullish(),
+});
+
+export type OnRefreshTokenFn = (options: {
+	req: RequestExcludingInput & { body: z.infer<typeof refreshTokenBody> };
+	tx: Tx;
+}) => PromiseLike<void> | void;
+
+let $onRefreshToken: OnRefreshTokenFn | undefined;
+export function setOnRefreshToken(
+	onRefreshToken: OnRefreshTokenFn | undefined,
+) {
+	$onRefreshToken = onRefreshToken;
+}
+
 export const refreshToken = createValidatedRequestHandler(
 	{
-		body: z.object({
-			password: z.string().nullish(),
-		}),
+		body: refreshTokenBody,
 	},
 	async (req, res) => {
 		try {
@@ -29,6 +44,7 @@ export const refreshToken = createValidatedRequestHandler(
 					await checkUserPassword(password, creds.id, tx);
 					creds.authTime = Date.now();
 				}
+				await $onRefreshToken?.({ req, tx });
 				await updateUserXHR(res, req, { tx });
 			});
 		} catch (err) {
