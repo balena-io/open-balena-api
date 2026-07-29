@@ -40,10 +40,7 @@ export type ResolvedUserPayload = TokenUserPayload & sbvrUtils.User;
 
 // What decoded content of Passport finds on the Authorization header
 type UnparsedCreds =
-	| ServiceToken
-	| TokenUserPayload
-	| ScopedAccessToken
-	| ScopedRolesToken;
+	ServiceToken | TokenUserPayload | ScopedAccessToken | ScopedRolesToken;
 // The result after JwtStrategy runs
 export type Creds = ServiceToken | ResolvedUserPayload | ScopedToken;
 const TOKEN_BODY_FIELD = '_token';

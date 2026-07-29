@@ -49,11 +49,10 @@ export function addRetentionLimit(
 	};
 }
 
-export const getPrimaryBackend = _.once(
-	async (): Promise<DeviceLogsBackend> =>
-		LOGS_PRIMARY_BACKEND === 'redis'
-			? await getRedisBackend()
-			: await getLokiBackend(),
+export const getPrimaryBackend = _.once(async (): Promise<DeviceLogsBackend> =>
+	LOGS_PRIMARY_BACKEND === 'redis'
+		? await getRedisBackend()
+		: await getLokiBackend(),
 );
 
 export const getSecondaryBackend = _.once(

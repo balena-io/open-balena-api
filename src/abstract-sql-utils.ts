@@ -170,13 +170,11 @@ export const joinTextParts = (
 	return [
 		'ConcatenateWithSeparator',
 		['EmbeddedText', separator],
-		...(parts.map(
-			([showPart, partValue]): CastNode => [
-				'Cast',
-				['Case', ['When', showPart, partValue]],
-				'Text',
-			],
-		) as [CastNode, ...CastNode[]]),
+		...(parts.map(([showPart, partValue]): CastNode => [
+			'Cast',
+			['Case', ['When', showPart, partValue]],
+			'Text',
+		]) as [CastNode, ...CastNode[]]),
 	];
 };
 

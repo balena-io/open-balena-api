@@ -27,12 +27,12 @@ const { BadRequestError, UnauthorizedError, InternalRequestError } = errors;
 const { api } = sbvrUtils;
 
 enum updateStatusPrecedence {
-	'rejected',
-	'aborted',
-	'downloading',
-	'downloaded',
+	rejected,
+	aborted,
+	downloading,
+	downloaded,
 	'applying changes',
-	'done',
+	done,
 }
 
 /**
