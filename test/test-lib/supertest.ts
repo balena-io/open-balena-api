@@ -13,7 +13,10 @@ export const augmentStatusAssertionError = () => {
 	 * This enhances `.expect(statusCode, ...)` to also log the response body when
 	 * the statusCode is different than expected, to make the original error more useful.
 	 */
-	$supertest.Test.prototype.expect = function (this: $supertest.Test, ...args) {
+	$supertest.Test.prototype.expect = function (
+		this: $supertest.Test,
+		...args: Parameters<typeof originalExpect>
+	) {
 		const [expectedStatus] = args;
 		let supertestFluentChain = this;
 		if (typeof expectedStatus === 'number') {
@@ -33,7 +36,7 @@ export const augmentStatusAssertionError = () => {
 			);
 		}
 		return originalExpect.apply(supertestFluentChain, args);
-	} satisfies typeof originalExpect;
+	} as typeof originalExpect;
 };
 
 export const supertest = function (user?: string | UserObjectParam) {
