@@ -97,8 +97,7 @@ export function truncateConstrainedFieldsFactory<T extends object>(
 }
 
 type ValidPatchField =
-	| (typeof v3ValidPatchFields)[number]
-	| (typeof v2ValidPatchFields)[number];
+	(typeof v3ValidPatchFields)[number] | (typeof v2ValidPatchFields)[number];
 
 export const truncateConstrainedDeviceFields = truncateConstrainedFieldsFactory<
 	Device['Write']

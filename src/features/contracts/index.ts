@@ -18,10 +18,7 @@ import { captureException } from '../../infra/error-handling/index.js';
 import { scheduleJob } from '../../infra/scheduler/index.js';
 
 type ValidContractResources =
-	| 'device_type'
-	| 'cpu_architecture'
-	| 'device_family'
-	| 'device_manufacturer';
+	'device_type' | 'cpu_architecture' | 'device_family' | 'device_manufacturer';
 
 export interface RepositoryInfo {
 	owner: string;
