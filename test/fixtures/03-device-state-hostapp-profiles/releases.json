@@ -1,0 +1,18 @@
+{
+	"hostAppRelease": {
+		"user": "admin",
+		"application": "hostApp",
+		"commit": "1111111111",
+		"status": "success",
+		"composition": {
+			"services": {
+				"hostapp": {},
+				"alpha": {},
+				"beta": {},
+				"alpha-beta": {},
+				"beta-gamma": {}
+			}
+		},
+		"source": "cloud"
+	}
+}

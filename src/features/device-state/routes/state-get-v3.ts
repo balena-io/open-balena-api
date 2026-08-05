@@ -93,6 +93,7 @@ export type StateV3 = {
 		};
 	};
 };
+export const noActiveProfiles: ReadonlySet<string> = new Set();
 
 export function buildAppFromRelease(
 	device: undefined,
@@ -100,6 +101,7 @@ export function buildAppFromRelease(
 	release: ExpandedRelease,
 	config: Record<string, string>,
 	defaultLabels?: Record<string, string>,
+	activeProfiles?: ReadonlySet<string>,
 ): NonNullable<LocalStateApp['releases']>;
 export function buildAppFromRelease(
 	device: ExpandedDevice,
@@ -107,6 +109,7 @@ export function buildAppFromRelease(
 	release: ExpandedRelease,
 	config: Record<string, string>,
 	defaultLabels?: Record<string, string>,
+	activeProfiles?: ReadonlySet<string>,
 ): NonNullable<LocalStateApp['releases']>;
 export function buildAppFromRelease(
 	device: ExpandedDevice | undefined,
@@ -114,6 +117,7 @@ export function buildAppFromRelease(
 	release: ExpandedRelease,
 	config: Record<string, string>,
 	defaultLabels?: Record<string, string>,
+	activeProfiles: ReadonlySet<string> = noActiveProfiles,
 ): NonNullable<LocalStateApp['releases']> {
 	let composition: AnyObject = {};
 	const services: NonNullable<LocalStateApp['releases']>[string]['services'] =
@@ -155,6 +159,15 @@ export function buildAppFromRelease(
 				}`;
 
 	for (const ipr of release.release_image) {
+		if (
+			ipr.image_profile.length > 0 &&
+			!ipr.image_profile.some(({ profile_name }) =>
+				activeProfiles.has(profile_name),
+			)
+		) {
+			continue;
+		}
+
 		const image = ipr.image[0];
 		const svc = image.is_a_build_of__service[0];
 		const environment: Record<string, string> = {};
@@ -269,6 +282,9 @@ export const releaseExpand = {
 				image_environment_variable: {
 					$select: ['name', 'value'],
 				},
+				image_profile: {
+					$select: ['profile_name'],
+				},
 			},
 		},
 	},
@@ -324,6 +340,11 @@ const deviceExpand = {
 			...appExpand,
 			application_config_variable: {
 				$select: ['name', 'value'],
+			},
+			// Must use the full verb-qualified form: the `application_profile` alias resolves to the
+			// `on-application` (target) role instead of `application` (activator), silently returning none.
+			activates__profile_name__on__application: {
+				$select: ['activates__profile_name', 'on__application'],
 			},
 		},
 	},
@@ -466,6 +487,22 @@ const getAppState = (
 		).belongs_to__application[0];
 	}
 
+	// TODO: userapps
+	// Fleet-activated OS profiles gate which hostApp extension services are sent to
+	// the device - only computed for the hostApp itself, not the fleet's own running
+	// release or the supervisor release.
+	let activeProfiles: ReadonlySet<string> = noActiveProfiles;
+	if (targetReleaseField === 'should_be_operated_by__release') {
+		const active = new Set<string>();
+		for (const ap of device.belongs_to__application[0]
+			.activates__profile_name__on__application) {
+			if (ap.on__application.__id === application.id) {
+				active.add(ap.activates__profile_name);
+			}
+		}
+		activeProfiles = active;
+	}
+
 	return {
 		[application.uuid]: {
 			id: application.id,
@@ -479,6 +516,7 @@ const getAppState = (
 					release,
 					config,
 					defaultLabels,
+					activeProfiles,
 				),
 			}),
 		},
