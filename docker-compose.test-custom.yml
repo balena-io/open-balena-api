@@ -152,13 +152,16 @@ services:
       - ./node_modules:/usr/src/app/node_modules
       # Exclude syncing node_modules that have a native build step
       # to avoid hostOS/container incompatibility issues.
-      # Search for '-gyp' in the `package.json`s in node_modules.
+      # Search for '-gyp' in the `package.json`s in node_modules, and for
+      # platform-specific prebuilt bindings with:
+      # `find node_modules -maxdepth 2 -type d -name '*darwin*' -o -maxdepth 2 -type d -name '*linux*'`
       - /usr/src/app/node_modules/@mapbox/node-pre-gyp
       - /usr/src/app/node_modules/bcrypt
       - /usr/src/app/node_modules/grpc
       - /usr/src/app/node_modules/nan
       - /usr/src/app/node_modules/node-addon-api
       - /usr/src/app/node_modules/@napi-rs
+      - /usr/src/app/node_modules/@node-rs
       - /usr/src/app/node_modules/@swc
       - /usr/src/app/node_modules/@oxc-resolver
       - /usr/src/app/node_modules/oxc-resolver
