@@ -161,7 +161,7 @@
     "copyfiles": "2.4.1",
     "husky": "9.1.7",
     "lint-staged": "17.3.0",
-    "mocha": "11.7.6",
+    "mocha": "11.8.0",
     "mockttp": "4.6.0",
     "p-timeout": "7.0.1",
     "pinejs-client-supertest": "3.2.0",
