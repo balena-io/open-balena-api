@@ -1004,6 +1004,13 @@ Fact type: application1 activates profile name on application2
 	Necessity: each application profile has a profile name that has a Length (Type) that is greater than 1 and is less than or equal to 100.
 	Necessity: each application profile has an application2 that is host and is of a class that is not equal to "block".
 
+Fact type: device overrides profile name on application
+	Term Form: device profile override
+	Database Table Name: device profile override
+	Necessity: each device profile override has a profile name that has a Length (Type) that is greater than 1 and is less than or equal to 100.
+	Necessity: each device profile override has an application that is host and is of a class that is not equal to "block".
+Fact type: device profile override is active
+
 
 -- Rules
 
@@ -1023,3 +1030,4 @@ Rule: It is necessary that each release that should manage a device that is of a
 Rule: It is necessary that each application that is not host, is updated by no application.
 Rule: It is necessary that each application that is of a class that is not equal to "block", updates no application.
 Rule: It is necessary that each application1 that activates a profile name on an application2, is of a class that is equal to "fleet".
+Rule: It is necessary that each device profile override that has a device and has an application, has a device that should be operated by a release that belongs to the application.

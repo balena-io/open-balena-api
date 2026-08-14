@@ -1,0 +1,19 @@
+{
+	"app1Device": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"should_be_operated_by__release": "hostApp3_release"
+	},
+	"hostAppOperatedDevice": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"should_be_operated_by__release": "hostApp_release"
+	},
+	"blockAppDevice": {
+		"belongs_to__application": "blockApp",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin"
+	}
+}

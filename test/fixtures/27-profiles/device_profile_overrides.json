@@ -1,0 +1,9 @@
+{
+	"hostAppOperatedDevice_metrics_override": {
+		"user": "admin",
+		"device": "hostAppOperatedDevice",
+		"overrides__profile_name": "metrics",
+		"on__application": "hostApp",
+		"is_active": true
+	}
+}

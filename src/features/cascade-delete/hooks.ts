@@ -19,6 +19,7 @@ setupDeleteCascade('application', {
 setupDeleteCascade('device', {
 	device_config_variable: 'device',
 	device_environment_variable: 'device',
+	device_profile_override: 'device',
 	device_service_environment_variable: 'device',
 	device_tag: 'device',
 	image_install: 'device',
