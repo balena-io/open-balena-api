@@ -490,6 +490,34 @@ const loaders: Record<string, LoaderFunc> = {
 			user,
 		});
 	},
+	device_profile_overrides: async (jsonData, fixtures) => {
+		const user = await fixtures.users[jsonData.user];
+		if (user == null) {
+			logErrorAndThrow(`Could not find user: ${jsonData.user}`);
+		}
+
+		const device = await fixtures.devices[jsonData.device];
+		if (device == null) {
+			logErrorAndThrow(`Could not find device: ${jsonData.device}`);
+		}
+
+		const onApplication = await fixtures.applications[jsonData.on__application];
+		if (onApplication == null) {
+			logErrorAndThrow(
+				`Could not find on__application: ${jsonData.on__application}`,
+			);
+		}
+
+		return await createResource({
+			resource: 'device_profile_override',
+			body: {
+				..._.pick(jsonData, 'overrides__profile_name', 'is_active'),
+				device: device.id,
+				on__application: onApplication.id,
+			},
+			user,
+		});
+	},
 	services: async (jsonData, fixtures) => {
 		const user = await fixtures.users[jsonData.user];
 		if (user == null) {
@@ -647,6 +675,17 @@ const loaders: Record<string, LoaderFunc> = {
 			}
 		}
 
+		let operatedByRelease: AnyObject | null = null;
+		if (jsonData.should_be_operated_by__release != null) {
+			operatedByRelease =
+				await fixtures.releases[jsonData.should_be_operated_by__release];
+			if (operatedByRelease == null) {
+				logErrorAndThrow(
+					`Could not find release: ${jsonData.should_be_operated_by__release}`,
+				);
+			}
+		}
+
 		return await createResource({
 			resource: 'device',
 			body: {
@@ -654,6 +693,7 @@ const loaders: Record<string, LoaderFunc> = {
 				belongs_to__user: user.id,
 				is_of__device_type: deviceType.id,
 				is_pinned_on__release: release?.id ?? null,
+				should_be_operated_by__release: operatedByRelease?.id ?? null,
 				..._.pick(
 					jsonData,
 					'custom_latitude',
