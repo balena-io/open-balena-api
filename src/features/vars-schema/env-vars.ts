@@ -119,7 +119,7 @@ export const SUPERVISOR_CONFIG_VAR_PROPERTIES: {
 			'Enable / Disable triggering updates instantly on startup or after pushing a release. Only supported by supervisor versions >= v9.13.0.',
 		default: 'true',
 	},
-	RESIN_OVERRIDE_LOCK: {
+	BALENA_SUPERVISOR_OVERRIDE_LOCK: {
 		type: 'integer',
 		enum: [0, 1],
 		description:
