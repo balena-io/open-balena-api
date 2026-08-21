@@ -14,6 +14,7 @@ import * as deviceState from './features/device-state/index.js';
 import * as deviceProvisioning from './features/device-provisioning/index.js';
 import * as deviceProxy from './features/device-proxy/index.js';
 import * as vpn from './features/vpn/index.js';
+import * as sbomManagement from './features/sbom-management/index.js';
 
 export const setup = (
 	app: Application,
@@ -40,4 +41,5 @@ export const setup = (
 	hostOSAccess.setup(app);
 	deviceTypes.setup(app);
 	osConfig.setup(app);
+	sbomManagement.setup(app);
 };
