@@ -548,6 +548,10 @@ export interface Application {
 		activates__profile_name__on__application?: Array<
 			ApplicationProfile['Read']
 		>;
+		device__overrides__profile_name__on__application?: Array<
+			DeviceProfileOverride['Read']
+		>;
+		device_profile_override?: Array<DeviceProfileOverride['Read']>;
 		is_directly_accessible_by__user?: Array<
 			UserHasDirectAccessToApplication['Read']
 		>;
@@ -813,9 +817,16 @@ export interface Device {
 		>;
 		device__installs__service?: Array<ServiceInstall['Read']>;
 		service_install?: Array<ServiceInstall['Read']>;
+		device__overrides__profile_name__on__application?: Array<
+			DeviceProfileOverride['Read']
+		>;
+		device_profile_override?: Array<DeviceProfileOverride['Read']>;
 		installs__image?: Array<ImageInstall['Read']>;
 		installs__application__has__service_name?: Array<ServiceInstall['Read']>;
 		installs__service?: Array<ServiceInstall['Read']>;
+		overrides__profile_name__on__application?: Array<
+			DeviceProfileOverride['Read']
+		>;
 	};
 	Write: {
 		created_at: Types['Date Time']['Write'];
@@ -1362,6 +1373,29 @@ export interface ApplicationProfile {
 	};
 }
 
+export interface DeviceProfileOverride {
+	Read: {
+		created_at: Types['Date Time']['Read'];
+		modified_at: Types['Date Time']['Read'];
+		device: { __id: Device['Read']['id'] } | [Device['Read']];
+		overrides__profile_name: Types['Short Text']['Read'];
+		on__application:
+			{ __id: Application['Read']['id'] } | [Application['Read']];
+		id: Types['Serial']['Read'];
+		is_active: Types['Boolean']['Read'];
+		application: { __id: Application['Read']['id'] } | [Application['Read']];
+	};
+	Write: {
+		created_at: Types['Date Time']['Write'];
+		modified_at: Types['Date Time']['Write'];
+		device: Device['Write']['id'];
+		overrides__profile_name: Types['Short Text']['Write'];
+		on__application: Application['Write']['id'];
+		id: Types['Serial']['Write'];
+		is_active: Types['Boolean']['Write'];
+	};
+}
+
 export interface UserHasDirectAccessToApplication {
 	Read: {
 		id: Types['Big Integer']['Read'];
@@ -1421,6 +1455,7 @@ export default interface $Model {
 	device_type__is_referenced_by__alias: DeviceTypeAlias;
 	release__has__asset_key: ReleaseAsset;
 	application__activates__profile_name__on__application: ApplicationProfile;
+	device__overrides__profile_name__on__application: DeviceProfileOverride;
 	user__has_direct_access_to__application: UserHasDirectAccessToApplication;
 	// Synonyms
 	user_role: UserHasRole;
@@ -1447,4 +1482,5 @@ export default interface $Model {
 	device_type_alias: DeviceTypeAlias;
 	release_asset: ReleaseAsset;
 	application_profile: ApplicationProfile;
+	device_profile_override: DeviceProfileOverride;
 }
