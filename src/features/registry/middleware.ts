@@ -1,4 +1,4 @@
-import BasicAuth from 'basic-auth';
+import { parse as basicAuthParse } from 'basic-auth';
 
 import { errors } from '@balena/pinejs';
 
@@ -17,7 +17,7 @@ export const basicApiKeyAuthenticate = createUnvalidatedRequestHandler(
 	async (req, res, next) => {
 		const authHeader = req.headers['authorization'];
 		if (authHeader != null) {
-			const creds = BasicAuth.parse(authHeader);
+			const creds = basicAuthParse(authHeader);
 			if (creds) {
 				req.params.subject = creds.name;
 				// This will later be parsed as an api key
