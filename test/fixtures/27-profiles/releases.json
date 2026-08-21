@@ -24,5 +24,17 @@
 			}
 		},
 		"source": "cloud"
+	},
+	"hostApp3_release": {
+		"user": "admin",
+		"application": "hostApp3",
+		"commit": "00000003",
+		"status": "success",
+		"composition": {
+			"services": {
+				"hostapp": {}
+			}
+		},
+		"source": "cloud"
 	}
 }
