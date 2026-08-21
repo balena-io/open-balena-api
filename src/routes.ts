@@ -19,12 +19,13 @@ export const setup = (
 	app: Application,
 	{
 		onLogin,
+		onRefreshToken,
 		onLogWriteStreamInitialized,
 		onLogReadStreamInitialized,
 	}: SetupOptions,
 ) => {
 	varsSchema.setup(app);
-	auth.setup(app, onLogin);
+	auth.setup(app, onLogin, onRefreshToken);
 	deviceProvisioning.setup(app);
 	deviceState.setup(app);
 	deviceLogs.setup(
