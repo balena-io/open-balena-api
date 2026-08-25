@@ -375,6 +375,27 @@ export default () => {
 					});
 				});
 
+				it('should not change the supervisor pin if already set', async () => {
+					await supertest(ctx.admin)
+						.patch(`/${version}/device(${device.id})`)
+						.send({
+							supervisor_version: null,
+							should_be_managed_by__release: ctx.supervisorReleases['8.0.4'].id,
+						})
+						.expect(200);
+					await supertest(ctx.admin)
+						.patch(`/${version}/device(${device.id})`)
+						.send({
+							supervisor_version: '8.0.4',
+						})
+						.expect(200);
+					await expectResourceToMatch(pineUser, 'device', device.id, {
+						should_be_managed_by__release: {
+							__id: ctx.supervisorReleases['8.0.4'].id,
+						},
+					});
+				});
+
 				it('should provision to an invalidated release', async () => {
 					await supertest(ctx.admin)
 						.patch(`/${version}/device(${device.id})`)

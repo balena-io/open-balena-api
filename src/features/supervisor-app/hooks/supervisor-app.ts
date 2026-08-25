@@ -36,7 +36,10 @@ hooks.addPureHook('POST', 'resin', 'device', {
 				},
 			);
 
-			if (supervisorRelease == null) {
+			if (
+				supervisorRelease == null &&
+				request.values.should_be_managed_by__release != null
+			) {
 				return;
 			}
 			// We are not using setSupervisorReleaseResource in a POSTRUN, since that only sets
