@@ -317,7 +317,9 @@ export default () => {
 						.post({
 							resource: 'device_service_environment_variable',
 							body: {
-								service_install: serviceInstall.id,
+								...(versions.lte(version, 'v7')
+									? { service_install: serviceInstall.id }
+									: { device: ctx.device.id, service: ctx.app2Service1.id }),
 								name: 'test',
 								value: '123',
 							},
@@ -331,13 +333,16 @@ export default () => {
 						},
 					} = await supertest(ctx.admin)
 						.get(
-							`/resin/device_service_environment_variable(${deviceServiceEnvVar.id})?$select=device,service`,
+							`/resin/device_service_environment_variable(${deviceServiceEnvVar.id})?$select=device,service,service_install`,
 						)
 						.expect(200);
 
 					expect(dbDeviceServiceEnvVar.device.__id).to.equal(ctx.device.id);
 					expect(dbDeviceServiceEnvVar.service.__id).to.equal(
 						ctx.app2Service1.id,
+					);
+					expect(dbDeviceServiceEnvVar.service_install.__id).to.equal(
+						serviceInstall.id,
 					);
 				});
 
@@ -382,9 +387,14 @@ export default () => {
 						.patch({
 							resource: 'device_service_environment_variable',
 							id: deviceServiceEnvVar.id,
-							body: {
-								service_install: serviceInstallService2.id,
-							},
+							body: versions.lte(version, 'v7')
+								? {
+										service_install: serviceInstallService2.id,
+									}
+								: {
+										device: ctx.device.id,
+										service: ctx.app2Service2.id,
+									},
 						})
 						.expect(200);
 
@@ -394,13 +404,16 @@ export default () => {
 						},
 					} = await supertest(ctx.admin)
 						.get(
-							`/resin/device_service_environment_variable(${deviceServiceEnvVar.id})?$select=device,service`,
+							`/resin/device_service_environment_variable(${deviceServiceEnvVar.id})?$select=device,service,service_install`,
 						)
 						.expect(200);
 
 					expect(dbDeviceServiceEnvVar.device.__id).to.equal(ctx.device.id);
 					expect(dbDeviceServiceEnvVar.service.__id).to.equal(
 						ctx.app2Service2.id,
+					);
+					expect(dbDeviceServiceEnvVar.service_install.__id).to.equal(
+						serviceInstallService2.id,
 					);
 				});
 			});
