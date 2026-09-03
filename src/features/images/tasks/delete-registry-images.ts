@@ -1,7 +1,14 @@
 import { permissions, sbvrUtils, tasks } from '@balena/pinejs';
 import type { FromSchema } from 'json-schema-to-ts';
 import PQueue from 'p-queue';
-import { s3Client } from '../../../features/registry/registry.js';
+import type { S3Client } from '../../../features/registry/registry.js';
+import {
+	deleteImage,
+	generateDeleteToken,
+	getManifestDigest,
+	listRepoTags,
+	s3Client,
+} from '../../../features/registry/registry.js';
 import {
 	ASYNC_TASK_ATTEMPT_LIMIT,
 	ASYNC_TASK_DELETE_REGISTRY_IMAGES_CONCURRENCY,
@@ -63,30 +70,74 @@ if (ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED) {
 	);
 }
 
+const subject = `task:${handlerName}`;
+
+// Fallback used when the registry's S3 client isn't available.
+async function deleteRepoViaApi(
+	repo: string,
+	signal: AbortSignal,
+): Promise<boolean> {
+	signal.throwIfAborted();
+	const token = generateDeleteToken(subject, repo);
+	const tags = await listRepoTags(token, repo);
+	if (tags == null) {
+		return false;
+	}
+
+	// Several tags can point at the same manifest, so resolve them all
+	// before deleting to avoid repeated deletes of the same digest.
+	const digests = new Set<string>();
+	for (const tag of tags) {
+		signal.throwIfAborted();
+		const digest = await getManifestDigest(token, repo, tag);
+		if (digest != null) {
+			digests.add(digest);
+		}
+	}
+
+	for (const digest of digests) {
+		signal.throwIfAborted();
+		await deleteImage(token, repo, digest);
+	}
+	return true;
+}
+
 // Delete all manifests within a given registry repository (and its multi-stage
 // build cache repositories) by removing the entire `_manifests` directory.
 // We delete the directory directly rather than marking each manifest for
 // deletion via the registry API, as the API leaves behind legacy signature
 // links that keep the `_manifests` directory (and thus the repository in the
-// catalog list) alive.
-async function deleteRepo(
-	s3: NonNullable<typeof s3Client>,
+// catalog list) alive. The registry API is only used as a fallback for when
+// registry's S3 client isn't available.
+export async function deleteRepo(
 	repo: string,
 	signal: AbortSignal,
+	s3: S3Client | undefined = s3Client,
 ): Promise<void> {
-	const cacheRepos = await s3.listCacheRepos(repo);
-	for (const target of [...cacheRepos, repo]) {
-		await s3.deleteRepoManifests(target, signal);
+	if (s3 != null) {
+		const cacheRepos = await s3.listCacheRepos(repo);
+		for (const target of [...cacheRepos, repo]) {
+			await s3.deleteRepoManifests(target, signal);
+		}
+		return;
 	}
+
+	// Without the S3 client we can't list the multi-stage build cache
+	// repositories, so try until one is missing.
+	let stage = 0;
+	while (true) {
+		const deleted = await deleteRepoViaApi(`${repo}-${stage}`, signal);
+		if (!deleted) {
+			break;
+		}
+		stage++;
+	}
+	await deleteRepoViaApi(repo, signal);
 }
 
 const deleteRegistryImages = async ({
 	images,
 }: DeleteRegistryImagesTaskParams) => {
-	if (s3Client == null) {
-		throw new Error('Registry S3 client not initialized.');
-	}
-
 	// Avoid deleting any blobs that are still referenced by other images
 	// This shouldn't normally be necessary as is_stored_at__image_location
 	// should be enforced as unique at the database level, but just in case
@@ -131,7 +182,7 @@ const deleteRegistryImages = async ({
 						`[${logHeader}] Skipping deletion of image with empty repo: ${location}`,
 					);
 				} else {
-					await deleteRepo(s3Client!, repo, signal);
+					await deleteRepo(repo, signal);
 				}
 				remaining.delete(location);
 			}),

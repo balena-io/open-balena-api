@@ -15,8 +15,8 @@ interface DeleteRequestCustomObject {
 
 if (ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED) {
 	if (s3Client == null) {
-		throw new Error(
-			'Cannot enable this hook when registry S3 client is not initialized',
+		console.warn(
+			'Registry S3 client not available, falling back to registry API client for image deletion',
 		);
 	}
 	hooks.addPureHook('DELETE', 'resin', 'image', {
