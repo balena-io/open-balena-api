@@ -163,6 +163,7 @@ services:
       - /usr/src/app/node_modules/@napi-rs
       - /usr/src/app/node_modules/@node-rs
       - /usr/src/app/node_modules/@swc
+      - /usr/src/app/node_modules/@swc-node
       - /usr/src/app/node_modules/@oxc-resolver
       - /usr/src/app/node_modules/oxc-resolver
       - ./package.json:/usr/src/app/package.json
