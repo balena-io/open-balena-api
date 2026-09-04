@@ -81,6 +81,10 @@ ON "device" ("should be managed by-release", "is of-device type");
 CREATE INDEX IF NOT EXISTS "device_family_manufacturer_idx"
 ON "device family" ("is manufactured by-device manufacturer");
 
+-- "device profile override"."device" is the first part of an automated unique index
+CREATE INDEX IF NOT EXISTS "device_profile_override_on_application_idx"
+ON "device profile override" ("on-application");
+
 -- "device tag"."device" is the first part of an automated unique index
 
 -- "device environment variable"."device" is created with the unique index created by the "device service environment variable_device_service_name_key" constraint

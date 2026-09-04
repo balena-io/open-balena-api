@@ -64,6 +64,7 @@ export const ROLES: {
 		'resin.image_label.all',
 		'resin.image_profile.all',
 		'resin.application_profile.all',
+		'resin.device_profile_override.all',
 		'resin.organization.read',
 		'resin.organization_membership.read',
 		'resin.release.all',
@@ -149,6 +150,7 @@ export const DEVICE_API_KEY_PERMISSIONS = [
 	'resin.image_profile.read?release_image/canAccess()',
 
 	'resin.application_profile.read?application/canAccess()',
+	'resin.device_profile_override.read?device/canAccess()',
 
 	'resin.service_label.read?service/canAccess()',
 

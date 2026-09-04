@@ -16,5 +16,11 @@
 		"app_name": "test_profile_block",
 		"device_type": "raspberry-pi",
 		"is_of__class": "block"
+	},
+	"hostApp3": {
+		"user": "admin",
+		"app_name": "test_profile_hostapp3",
+		"device_type": "raspberry-pi",
+		"is_host": true
 	}
 }
