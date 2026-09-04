@@ -1,7 +1,6 @@
 import { permissions, sbvrUtils, tasks } from '@balena/pinejs';
 import type { FromSchema } from 'json-schema-to-ts';
 import PQueue from 'p-queue';
-import type { S3Client } from '../../../features/registry/registry.js';
 import {
 	deleteImage,
 	generateDeleteToken,
@@ -109,15 +108,11 @@ async function deleteRepoViaApi(
 // links that keep the `_manifests` directory (and thus the repository in the
 // catalog list) alive. The registry API is only used as a fallback for when
 // registry's S3 client isn't available.
-export async function deleteRepo(
-	repo: string,
-	signal: AbortSignal,
-	s3: S3Client | undefined = s3Client,
-): Promise<void> {
-	if (s3 != null) {
-		const cacheRepos = await s3.listCacheRepos(repo);
+async function deleteRepo(repo: string, signal: AbortSignal): Promise<void> {
+	if (s3Client != null) {
+		const cacheRepos = await s3Client.listCacheRepos(repo);
 		for (const target of [...cacheRepos, repo]) {
-			await s3.deleteRepoManifests(target, signal);
+			await s3Client.deleteRepoManifests(target, signal);
 		}
 		return;
 	}

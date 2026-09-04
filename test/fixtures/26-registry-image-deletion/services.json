@@ -13,5 +13,10 @@
 		"user": "admin",
 		"application": "app2",
 		"service_name": "service2"
+	},
+	"service3": {
+		"user": "admin",
+		"application": "app3",
+		"service_name": "service3"
 	}
 }

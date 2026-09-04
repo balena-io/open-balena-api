@@ -36,6 +36,7 @@ import {
 	RESOLVE_IMAGE_LOCATION_CACHE_TIMEOUT,
 	RESOLVE_IMAGE_READ_ACCESS_CACHE_TIMEOUT,
 	TOKEN_AUTH_BUILDER_TOKEN,
+	guardTestMockOnly,
 } from '../../lib/config.js';
 import {
 	createValidatedRequestHandler,
@@ -866,7 +867,7 @@ export class S3Client {
 	}
 }
 
-export const s3Client: S3Client | undefined =
+export let s3Client: S3Client | undefined =
 	REGISTRY_STORAGE_BUCKET != null &&
 	REGISTRY_STORAGE_ROOT_PATH != null &&
 	REGISTRY_STORAGE_ENDPOINT != null &&
@@ -880,6 +881,13 @@ export const s3Client: S3Client | undefined =
 				rootPath: REGISTRY_STORAGE_ROOT_PATH,
 			})
 		: undefined;
+
+export const TEST_MOCK_ONLY = {
+	set s3Client(v: S3Client | undefined) {
+		guardTestMockOnly();
+		s3Client = v;
+	},
+};
 
 // Generate a token for deleting images for a given repository.
 // `pull` is included as listing a repository's tags and resolving them to
@@ -942,7 +950,10 @@ export async function listRepoTags(
 			`Failed to list tags of ${repo}: [${statusCode}] ${statusMessage} ${JSON.stringify(body)}`,
 		);
 	}
-	return body?.tags ?? [];
+	if (body?.name !== repo || !Array.isArray(body.tags)) {
+		return undefined;
+	}
+	return body.tags;
 }
 
 // Resolve a repository tag to its manifest digest via the Docker Distribution
