@@ -36,6 +36,7 @@ import {
 	RESOLVE_IMAGE_LOCATION_CACHE_TIMEOUT,
 	RESOLVE_IMAGE_READ_ACCESS_CACHE_TIMEOUT,
 	TOKEN_AUTH_BUILDER_TOKEN,
+	guardTestMockOnly,
 } from '../../lib/config.js';
 import {
 	createValidatedRequestHandler,
@@ -741,7 +742,7 @@ const getSubject = async (
 // S3 client primarily for finding multi-stage build cache image
 // repositories and all digests for a given repository. The
 // Docker Distribution API doesn't support such queries.
-class S3Client {
+export class S3Client {
 	private s3: AWS.S3;
 	private bucket: string;
 	private rootPath: string;
@@ -866,7 +867,7 @@ class S3Client {
 	}
 }
 
-export const s3Client: S3Client | undefined =
+export let s3Client: S3Client | undefined =
 	REGISTRY_STORAGE_BUCKET != null &&
 	REGISTRY_STORAGE_ROOT_PATH != null &&
 	REGISTRY_STORAGE_ENDPOINT != null &&
@@ -881,13 +882,22 @@ export const s3Client: S3Client | undefined =
 			})
 		: undefined;
 
+export const TEST_MOCK_ONLY = {
+	set s3Client(v: S3Client | undefined) {
+		guardTestMockOnly();
+		s3Client = v;
+	},
+};
+
 // Generate a token for deleting images for a given repository.
+// `pull` is included as listing a repository's tags and resolving them to
+// manifest digests (both needed to know what to delete) require read access.
 export function generateDeleteToken(subject: string, repo: string) {
 	return generateToken(subject, REGISTRY2_HOST, [
 		{
 			name: repo,
 			type: 'repository',
-			actions: ['delete'],
+			actions: ['pull', 'delete'],
 		},
 	]);
 }
@@ -909,4 +919,72 @@ export async function deleteImage(
 			`Failed to mark ${repo}/${digest} for deletion: [${statusCode}] ${statusMessage} ${body}`,
 		);
 	}
+}
+
+// The manifest media types we're prepared to handle.
+const MANIFEST_ACCEPT_HEADER = [
+	'application/vnd.docker.distribution.manifest.v2+json',
+	'application/vnd.docker.distribution.manifest.list.v2+json',
+	'application/vnd.oci.image.manifest.v1+json',
+	'application/vnd.oci.image.index.v1+json',
+].join(', ');
+
+// List the tags of a given repository via the Docker Distribution API.
+// Returns undefined when the repository doesn't exist.
+export async function listRepoTags(
+	registryToken: string,
+	repo: string,
+): Promise<string[] | undefined> {
+	const [{ statusCode, statusMessage }, body] = await requestAsync({
+		url: `https://${REGISTRY2_HOST}/v2/${repo}/tags/list`,
+		headers: { Authorization: `Bearer ${registryToken}` },
+		method: 'GET',
+		json: true,
+	});
+
+	if (statusCode === 404) {
+		return undefined;
+	}
+	if (statusCode !== 200) {
+		throw new Error(
+			`Failed to list tags of ${repo}: [${statusCode}] ${statusMessage} ${JSON.stringify(body)}`,
+		);
+	}
+	if (body?.name !== repo || !Array.isArray(body.tags)) {
+		return undefined;
+	}
+	return body.tags;
+}
+
+// Resolve a repository tag to its manifest digest via the Docker Distribution
+// API. Returns undefined when the tag doesn't exist.
+export async function getManifestDigest(
+	registryToken: string,
+	repo: string,
+	tag: string,
+): Promise<string | undefined> {
+	const [{ statusCode, statusMessage, headers }, body] = await requestAsync({
+		url: `https://${REGISTRY2_HOST}/v2/${repo}/manifests/${tag}`,
+		headers: {
+			Authorization: `Bearer ${registryToken}`,
+			Accept: MANIFEST_ACCEPT_HEADER,
+		},
+		method: 'HEAD',
+	});
+
+	if (statusCode === 404) {
+		return undefined;
+	}
+	if (statusCode !== 200) {
+		throw new Error(
+			`Failed to resolve ${repo}:${tag} to a digest: [${statusCode}] ${statusMessage} ${body}`,
+		);
+	}
+	const digest = headers['docker-content-digest'];
+	if (typeof digest !== 'string' || digest === '') {
+		throw new Error(
+			`Registry did not return a Docker-Content-Digest for ${repo}:${tag}`,
+		);
+	}
+	return digest;
 }
