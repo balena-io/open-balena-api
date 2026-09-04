@@ -32,7 +32,11 @@ export const loginRateLimiter = createRateLimitMiddleware(
 	}),
 );
 
-export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
+export const setup = (
+	app: Application,
+	onLogin: SetupOptions['onLogin'],
+	onRefreshToken: SetupOptions['onRefreshToken'],
+) => {
 	app.post('/login_', loginRateLimiter('body.username'), login(onLogin));
 
 	app.get('/user/v1/whoami', middleware.fullyAuthenticatedUser, whoami);
@@ -48,12 +52,12 @@ export const setup = (app: Application, onLogin: SetupOptions['onLogin']) => {
 		'/user/v1/refresh-token',
 		middleware.partiallyAuthenticatedUser,
 		middleware.permissionRequired('auth.create_token'),
-		refreshToken,
+		refreshToken(onRefreshToken),
 	);
 	app.post(
 		'/user/v1/refresh-token',
 		middleware.partiallyAuthenticatedUser,
 		middleware.permissionRequired('auth.create_token'),
-		refreshToken,
+		refreshToken(onRefreshToken),
 	);
 };
