@@ -1,9 +1,13 @@
-import { REGISTRY_STORAGE_ROOT_PATH } from '../../src/lib/config.js';
+import {
+	REGISTRY2_HOST,
+	REGISTRY_STORAGE_ROOT_PATH,
+} from '../../src/lib/config.js';
 import { randomUUID } from 'node:crypto';
 import {
 	addDeleteObjectsResolver,
 	addListObjectsV2Resolver,
 } from './aws-mock.js';
+import { getMockServer } from './mockttp-server.js';
 
 interface RegistryImage {
 	repository: string;
@@ -88,10 +92,14 @@ export function getManifestObjectKeys(repository: string) {
 	return [...store.objects].filter((key) => key.startsWith(prefix));
 }
 
-export function addCacheImages(repository: string, stages: number) {
+export function addCacheImages(
+	repository: string,
+	stages: number,
+	tags?: string[],
+) {
 	const cacheImages: RegistryImage[] = [];
 	for (let i = 0; i < stages; i++) {
-		cacheImages.push(addImage(`${repository}-${i}`, genDigest()));
+		cacheImages.push(addImage(`${repository}-${i}`, genDigest(), tags));
 	}
 	return cacheImages;
 }
@@ -178,13 +186,91 @@ function registerDeleteObjectsResolver() {
 	});
 }
 
+// Docker Distribution HTTP API mocks for when the registry s3Client
+// isn't available and falls back to making registry API calls.
+
+function getNonDeletedImages(repository: string) {
+	return store.images.filter(
+		(i) => i.repository === repository && !i.isDeleted,
+	);
+}
+
+function parseManifestPath(url: string) {
+	const { pathname } = new URL(url);
+	const [, repo, reference] = /^\/v2\/(.+)\/manifests\/(.+)$/.exec(pathname)!;
+	return { repo, reference };
+}
+
+async function startRegistryApi() {
+	const server = getMockServer();
+
+	await server
+		.forGet(/\/v2\/.+\/tags\/list$/)
+		.forHostname(REGISTRY2_HOST)
+		.always()
+		.thenCallback((req) => {
+			const repo = new URL(req.url).pathname.slice(
+				'/v2/'.length,
+				-'/tags/list'.length,
+			);
+			const images = getNonDeletedImages(repo);
+			if (images.length === 0) {
+				return {
+					statusCode: 404,
+					json: { errors: [{ code: 'NAME_UNKNOWN' }] },
+				};
+			}
+			return {
+				statusCode: 200,
+				json: {
+					name: repo,
+					tags: [...new Set(images.flatMap((i) => i.tags ?? []))],
+				},
+			};
+		});
+
+	await server
+		.forHead(/\/v2\/.+\/manifests\/.+$/)
+		.forHostname(REGISTRY2_HOST)
+		.always()
+		.thenCallback((req) => {
+			const { repo, reference } = parseManifestPath(req.url);
+			const image = getNonDeletedImages(repo).find((i) =>
+				i.tags?.includes(reference),
+			);
+			if (image == null) {
+				return { statusCode: 404 };
+			}
+			return {
+				statusCode: 200,
+				headers: { 'docker-content-digest': image.digest },
+			};
+		});
+
+	await server
+		.forDelete(/\/v2\/.+\/manifests\/.+$/)
+		.forHostname(REGISTRY2_HOST)
+		.always()
+		.thenCallback((req) => {
+			const { repo, reference } = parseManifestPath(req.url);
+			const image = getNonDeletedImages(repo).find(
+				(i) => i.digest === reference,
+			);
+			if (image == null) {
+				return { statusCode: 404 };
+			}
+			image.isDeleted = true;
+			return { statusCode: 202 };
+		});
+}
+
 let disposeS3Resolver: (() => void) | undefined;
 let disposeDeleteObjectsResolver: (() => void) | undefined;
 
-// eslint-disable-next-line @typescript-eslint/require-await -- kept async to match the mock lifecycle contract used by init-tests.
 export async function start() {
 	disposeS3Resolver = registerS3Resolver();
 	disposeDeleteObjectsResolver = registerDeleteObjectsResolver();
+	await startRegistryApi();
 }
 
 export function stop() {

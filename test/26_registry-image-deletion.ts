@@ -3,7 +3,10 @@ import * as registryMock from './test-lib/registry-mock.js';
 import { waitFor } from './test-lib/common.js';
 import * as versions from './test-lib/versions.js';
 import * as config from '../src/lib/config.js';
-import { s3Client } from '../src/features/registry/registry.js';
+import {
+	s3Client,
+	TEST_MOCK_ONLY as registryTestMockOnly,
+} from '../src/features/registry/registry.js';
 import { strict as assert } from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { permissions, sbvrUtils } from '@balena/pinejs';
@@ -36,6 +39,7 @@ export default () => {
 				options?: {
 					releaseId?: number;
 					stages?: number;
+					tags?: string[];
 				},
 			) {
 				const now = new Date();
@@ -68,8 +72,16 @@ export default () => {
 				return {
 					repository,
 					dbImage: image,
-					registryImage: registryMock.addImage(repository, digest),
-					cacheImages: registryMock.addCacheImages(repository, stages),
+					registryImage: registryMock.addImage(
+						repository,
+						digest,
+						options?.tags,
+					),
+					cacheImages: registryMock.addCacheImages(
+						repository,
+						stages,
+						options?.tags,
+					),
 				};
 			}
 
@@ -110,6 +122,7 @@ export default () => {
 				ctx.app1 = fx.applications.app1;
 				ctx.service1 = fx.services.service1;
 				ctx.service2 = fx.services.service2;
+				ctx.service3 = fx.services.service3;
 				await resetLatestTaskIds('delete_registry_images');
 
 				// Create an image that should not be deleted.
@@ -361,6 +374,39 @@ export default () => {
 				const digests = await s3Client.listTagDigests(repo, 'latest');
 				expect(digests).to.have.lengthOf(2);
 				expect(digests).to.have.members([digestA, digestB]);
+			});
+
+			// For environments that store registry data in the registry's
+			// local filesystem and not in an S3 bucket.
+			describe('registry API fallback', () => {
+				// We need to undefine the s3Client so the logic
+				// uses the registry API fallback instead.
+				const realS3Client = s3Client;
+
+				before(() => {
+					registryTestMockOnly.s3Client = undefined;
+				});
+
+				after(() => {
+					registryTestMockOnly.s3Client = realS3Client;
+				});
+
+				it('should mark an image and its cache images for deletion', async () => {
+					const image = await createImage(ctx.service3.id, {
+						stages: 3,
+						tags: ['latest'],
+					});
+					await pineUser.delete({
+						resource: 'image',
+						id: image.dbImage.id,
+					});
+
+					await waitFor({
+						delayMs: 500,
+						checkFn: () => checkIsDeleted([image]),
+					});
+					await expectSettledTasks([image]);
+				});
 			});
 		});
 	});
