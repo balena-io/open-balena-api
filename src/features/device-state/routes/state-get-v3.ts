@@ -334,6 +334,9 @@ const deviceExpand = {
 	device_service_environment_variable: {
 		$select: ['name', 'value', 'service'],
 	},
+	device_profile_override: {
+		$select: ['overrides__profile_name', 'on__application', 'is_active'],
+	},
 	belongs_to__application: {
 		$select: appSelect,
 		$expand: {
@@ -498,6 +501,15 @@ const getAppState = (
 			.activates__profile_name__on__application) {
 			if (ap.on__application.__id === application.id) {
 				active.add(ap.activates__profile_name);
+			}
+		}
+		for (const override of device.device_profile_override) {
+			if (override.on__application.__id === application.id) {
+				if (override.is_active) {
+					active.add(override.overrides__profile_name);
+				} else {
+					active.delete(override.overrides__profile_name);
+				}
 			}
 		}
 		activeProfiles = active;

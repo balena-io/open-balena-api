@@ -2270,6 +2270,70 @@ export default () => {
 					expect(otherServices).to.not.have.property('alpha');
 					expect(otherServices).to.not.have.property('alpha-beta');
 				});
+
+				describe('device profile override augmenting fleet activation', function () {
+					if (versions.lt(version, 'resin')) {
+						return;
+					}
+
+					let overriddenServices: AnyObject;
+
+					before(async () => {
+						const device3 = fx.devices.device3;
+
+						// Device needs an operated-by hostApp release before it can
+						// hold an override targeting that hostApp.
+						await supertest(fx.users.admin)
+							.patch(`/${version}/device(${device3.id})`)
+							.send({ should_be_operated_by__release: hostAppRelease.id })
+							.expect(200);
+
+						// Fleet-level activation only turns on 'alpha'; the device
+						// override augments it: activates 'beta' and deactivates 'alpha'.
+						await supertest(fx.users.admin)
+							.post(`/${version}/device_profile_override`)
+							.send({
+								device: device3.id,
+								overrides__profile_name: 'beta',
+								on__application: hostApp.id,
+								is_active: true,
+							})
+							.expect(201);
+						await supertest(fx.users.admin)
+							.post(`/${version}/device_profile_override`)
+							.send({
+								device: device3.id,
+								overrides__profile_name: 'alpha',
+								on__application: hostApp.id,
+								is_active: false,
+							})
+							.expect(201);
+
+						overriddenServices = await getDeviceState(device3);
+					});
+
+					for (const [serviceName, shouldBeIncluded] of [
+						['hostapp', true], // no profile tags - always included
+						['alpha', false], // fleet-active, but the device override deactivates it
+						['beta', true], // fleet-inactive, but the device override activates it
+						['alpha-beta', true], // alpha off, beta on via override - still active
+						['beta-gamma', true], // beta on via override - now active
+					] as const) {
+						it(`should ${shouldBeIncluded ? 'include' : 'exclude'} '${serviceName}'`, function () {
+							if (shouldBeIncluded) {
+								expect(overriddenServices).to.have.property(serviceName);
+							} else {
+								expect(overriddenServices).to.not.have.property(serviceName);
+							}
+						});
+					}
+
+					it('should not affect the fleet-only activation state of another device', async function () {
+						const device1Services = await getDeviceState(fx.devices.device1);
+						expect(device1Services).to.have.property('alpha');
+						expect(device1Services).to.not.have.property('beta');
+					});
+				});
 			});
 		}
 	});

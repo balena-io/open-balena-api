@@ -10,5 +10,11 @@
 		"belongs_to__user": "admin",
 		"device_type": "raspberry-pi",
 		"uuid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+	},
+	"device3": {
+		"belongs_to__application": "app1",
+		"belongs_to__user": "admin",
+		"device_type": "raspberry-pi",
+		"uuid": "cccccccccccccccccccccccccccccccc"
 	}
 }
