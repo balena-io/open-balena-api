@@ -160,7 +160,7 @@
     "chai": "6.2.2",
     "copyfiles": "2.4.1",
     "husky": "9.1.7",
-    "lint-staged": "17.4.1",
+    "lint-staged": "17.5.0",
     "mocha": "11.8.0",
     "mockttp": "4.6.1",
     "p-timeout": "7.0.1",
