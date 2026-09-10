@@ -297,6 +297,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 			'14.10.2': ['jetson-orin-nx-xavier-nx-devkit'],
 			'14.11.11': ['jetson-orin-nano-devkit-nvme'],
 			'17.6.28': ['iot-gate-imx8plus', 'iot-gate-imx8plus-d1d8'],
+			'19.1.4': ['jetson-agx-thor-devkit'],
 		},
 		{
 			RESIN_HOST_EXTLINUX_fdt: {
@@ -394,6 +395,7 @@ export const DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES: Array<{
 				'jetson-orin-nx-xavier-nx-devkit',
 			],
 			'17.1.2': ['forecr-dsb-ornx-orin-nano-8gb'],
+			'19.1.4': ['jetson-agx-thor-devkit'],
 		},
 		{
 			BALENA_HOST_CONFIG_power_mode: {
