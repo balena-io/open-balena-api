@@ -219,7 +219,7 @@ export const auth = {
 	isJWT,
 	verifyAndResolveJwt,
 	/** @deprecated Will be removed in a future version */
-	refreshToken,
+	refreshToken: refreshToken(undefined),
 };
 export const rateLimiting = {
 	createRateLimitMiddleware,
@@ -308,6 +308,11 @@ export interface SetupOptions {
 
 	onLogin?: (
 		user: Pick<User['Read'], (typeof defaultFindUser$select)[number]>,
+		tx: Tx,
+		req: RequestExcludingInput,
+	) => PromiseLike<void> | void;
+	onRefreshToken?: (
+		creds: jwt.ResolvedUserPayload,
 		tx: Tx,
 		req: RequestExcludingInput,
 	) => PromiseLike<void> | void;
