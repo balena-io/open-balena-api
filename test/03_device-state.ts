@@ -1305,7 +1305,10 @@ export default () => {
 					release2 = fx.releases.release2;
 					release1Image1 = fx.images.release1_image1;
 					release1Image2 = fx.images.release1_image2;
-					servicesById = _.keyBy(Object.values(fx.services), 'id');
+					servicesById = _.keyBy(
+						Object.values(fx.services),
+						(service) => service.id,
+					);
 					pineUser = pineTest.clone({
 						passthrough: { user: admin },
 					});
