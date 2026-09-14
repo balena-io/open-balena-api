@@ -245,7 +245,10 @@ export default () => {
 				const res = await supertest().get('/device-types/v1').expect(200);
 				expect(res.body).to.be.an('array');
 				expect(res.body).to.have.property('length', 19);
-				const rpi3config = _.find(res.body, { slug: 'raspberrypi3' });
+				const rpi3config = _.find(
+					res.body,
+					({ slug }) => slug === 'raspberrypi3',
+				);
 				expect(rpi3config).to.be.an('object');
 				expect(rpi3config).to.have.property('buildId', '2.19.0+rev1.prod');
 			});

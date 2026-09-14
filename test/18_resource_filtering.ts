@@ -252,8 +252,12 @@ export default () => {
 					expect(body)
 						.to.be.an('array')
 						.to.have.lengthOf(applicationCount - 1);
-					expect(_.find(body, { created_at: testApps[0].created_at })).to.not
-						.exist;
+					expect(
+						_.find(
+							body,
+							({ created_at }) => created_at === testApps[0].created_at,
+						),
+					).to.not.exist;
 				});
 
 				it('Should filter applications with created_at less or equal than last', async () => {
@@ -280,7 +284,12 @@ export default () => {
 							},
 						},
 					});
-					expect(_.find(body, { created_at: testApps[0].created_at })).to.exist;
+					expect(
+						_.find(
+							body,
+							({ created_at }) => created_at === testApps[0].created_at,
+						),
+					).to.exist;
 				});
 
 				it('Should filter applications with created_at not equal first one', async () => {

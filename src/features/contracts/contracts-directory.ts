@@ -228,5 +228,5 @@ export const getContracts = async (type: string): Promise<Contract[]> => {
 		}),
 	);
 
-	return _.uniqBy(contracts, 'slug');
+	return _.uniqBy(contracts, (contract) => contract.slug);
 };
