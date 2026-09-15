@@ -43,6 +43,216 @@ export default () => {
 				await fixtures.clean(this.loadedFixtures);
 			});
 
+			describe('application profile catalog', function () {
+				let catalogTestImageProfile1Id: number;
+				let catalogTestImageProfile2Id: number;
+				let catalogTestEntryId: number;
+
+				it('should be able to read a pre-existing catalog entry created for the pre-existing image_profile fixtures', async function () {
+					await expectResourceToMatch(
+						pineUser,
+						'application_profile_catalog',
+						{
+							application: this.hostApp.id,
+							catalogs__profile_name: 'bluetooth',
+						},
+						{
+							catalogs__profile_name: 'bluetooth',
+							description: null,
+						},
+					);
+				});
+
+				it('should create a catalog entry when an image_profile is created', async function () {
+					const { body: imageProfile } = await pineUser
+						.post({
+							resource: 'image_profile',
+							body: {
+								release_image: this.releaseImage1.id,
+								profile_name: 'catalog-test',
+							},
+						})
+						.expect(201);
+					catalogTestImageProfile1Id = imageProfile.id;
+
+					const { body: catalogEntry } = await pineUser
+						.get({
+							resource: 'application_profile_catalog',
+							id: {
+								application: this.app1.id,
+								catalogs__profile_name: 'catalog-test',
+							},
+							options: { $select: 'id' },
+						})
+						.expect(200);
+					assertExists(catalogEntry);
+					catalogTestEntryId = catalogEntry.id;
+				});
+
+				it('should not create a second catalog entry for another image_profile with the same profile name', async function () {
+					const { body: imageProfile } = await pineUser
+						.post({
+							resource: 'image_profile',
+							body: {
+								release_image: this.releaseImage2.id,
+								profile_name: 'catalog-test',
+							},
+						})
+						.expect(201);
+					catalogTestImageProfile2Id = imageProfile.id;
+
+					const { body: catalogEntries } = await pineUser
+						.get({
+							resource: 'application_profile_catalog',
+							options: {
+								$select: 'id',
+								$filter: {
+									application: this.app1.id,
+									catalogs__profile_name: 'catalog-test',
+								},
+							},
+						})
+						.expect(200);
+					expect(catalogEntries).to.have.lengthOf(1);
+					expect(catalogEntries[0]).to.have.property('id', catalogTestEntryId);
+				});
+
+				it('should maintain a single catalog entry when image_profiles with the same profile name are created and deleted concurrently', async function () {
+					const [{ body: imageProfile1 }, { body: imageProfile2 }] =
+						await Promise.all([
+							pineUser
+								.post({
+									resource: 'image_profile',
+									body: {
+										release_image: this.releaseImage1.id,
+										profile_name: 'catalog-test-concurrent',
+									},
+								})
+								.expect(201),
+							pineUser
+								.post({
+									resource: 'image_profile',
+									body: {
+										release_image: this.releaseImage2.id,
+										profile_name: 'catalog-test-concurrent',
+									},
+								})
+								.expect(201),
+						]);
+					expect(imageProfile1.id).to.not.equal(imageProfile2.id);
+
+					const { body: catalogEntries } = await pineUser
+						.get({
+							resource: 'application_profile_catalog',
+							options: {
+								$select: 'id',
+								$filter: {
+									application: this.app1.id,
+									catalogs__profile_name: 'catalog-test-concurrent',
+								},
+							},
+						})
+						.expect(200);
+					expect(catalogEntries).to.have.lengthOf(1);
+
+					await Promise.all([
+						pineUser
+							.delete({ resource: 'image_profile', id: imageProfile1.id })
+							.expect(200),
+						pineUser
+							.delete({ resource: 'image_profile', id: imageProfile2.id })
+							.expect(200),
+					]);
+
+					const { body: remainingCatalogEntries } = await pineUser
+						.get({
+							resource: 'application_profile_catalog',
+							options: {
+								$select: 'id',
+								$filter: {
+									application: this.app1.id,
+									catalogs__profile_name: 'catalog-test-concurrent',
+								},
+							},
+						})
+						.expect(200);
+					expect(remainingCatalogEntries).to.have.lengthOf(0);
+				});
+
+				it('should allow updating a catalog entry description', async function () {
+					await pineUser
+						.patch({
+							resource: 'application_profile_catalog',
+							id: catalogTestEntryId,
+							body: { description: 'Test profile used for catalog coverage' },
+						})
+						.expect(200);
+
+					await expectResourceToMatch(
+						pineUser,
+						'application_profile_catalog',
+						catalogTestEntryId,
+						{ description: 'Test profile used for catalog coverage' },
+					);
+				});
+
+				it('should not allow a client to create a catalog entry directly', async function () {
+					await pineUser
+						.post({
+							resource: 'application_profile_catalog',
+							body: {
+								application: this.app1.id,
+								catalogs__profile_name: 'client-created',
+							},
+						})
+						.expect(401);
+				});
+
+				it('should not allow a client to delete a catalog entry directly', async function () {
+					await pineUser
+						.delete({
+							resource: 'application_profile_catalog',
+							id: catalogTestEntryId,
+						})
+						.expect(401);
+				});
+
+				it('should keep the catalog entry while another image_profile with the same name still exists', async function () {
+					await pineUser
+						.delete({
+							resource: 'image_profile',
+							id: catalogTestImageProfile1Id,
+						})
+						.expect(200);
+
+					const { body: catalogEntry } = await pineUser
+						.get({
+							resource: 'application_profile_catalog',
+							id: catalogTestEntryId,
+							options: { $select: 'id' },
+						})
+						.expect(200);
+					expect(catalogEntry).to.not.be.undefined;
+				});
+
+				it('should delete the catalog entry once no image_profile references it anymore', async function () {
+					await pineUser
+						.delete({
+							resource: 'image_profile',
+							id: catalogTestImageProfile2Id,
+						})
+						.expect(200);
+
+					const { body: catalogEntry } = await pineUser
+						.get({
+							resource: 'application_profile_catalog',
+							id: catalogTestEntryId,
+							options: { $select: 'id' },
+						})
+						.expect(200);
+					expect(catalogEntry).to.be.undefined;
+				});
+			});
 			describe('image profile', function () {
 				describe('create image profile', function () {
 					it('should succeed with mandatory properties', async function () {
