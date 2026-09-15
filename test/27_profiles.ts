@@ -38,6 +38,125 @@ export default () => {
 				await fixtures.clean(this.loadedFixtures);
 			});
 
+			describe('application profile catalog', function () {
+				it('should have created a catalog entry for the pre-existing image_profile fixtures', async function () {
+					const res = await supertest(this.user)
+						.get(
+							`/${version}/application_profile_catalog?$select=catalogs__profile_name,description&$filter=application eq ${this.hostApp.id} and catalogs__profile_name eq 'bluetooth'`,
+						)
+						.expect(200);
+					expect(res.body.d).to.deep.equal([
+						{ catalogs__profile_name: 'bluetooth', description: null },
+					]);
+				});
+
+				it('should create a catalog entry when an image_profile is created', async function () {
+					const res = await supertest(this.user)
+						.post(`/${version}/image_profile`)
+						.send({
+							release_image: this.releaseImage1.id,
+							profile_name: 'catalog-test',
+						})
+						.expect(201);
+					this.catalogTestImageProfile1 = res.body.id;
+
+					const catalog = await supertest(this.user)
+						.get(
+							`/${version}/application_profile_catalog?$select=id&$filter=application eq ${this.app1.id} and catalogs__profile_name eq 'catalog-test'`,
+						)
+						.expect(200);
+					expect(catalog.body.d).to.have.nested.property('length', 1);
+					this.catalogTestEntryId = catalog.body.d[0].id;
+				});
+
+				it('should not create a second catalog entry for another image_profile with the same profile name', async function () {
+					const res = await supertest(this.user)
+						.post(`/${version}/image_profile`)
+						.send({
+							release_image: this.releaseImage2.id,
+							profile_name: 'catalog-test',
+						})
+						.expect(201);
+					this.catalogTestImageProfile2 = res.body.id;
+
+					const catalog = await supertest(this.user)
+						.get(
+							`/${version}/application_profile_catalog?$select=id&$filter=application eq ${this.app1.id} and catalogs__profile_name eq 'catalog-test'`,
+						)
+						.expect(200);
+					expect(catalog.body.d).to.deep.equal([
+						{ id: this.catalogTestEntryId },
+					]);
+				});
+
+				it('should not allow a client to create a catalog entry directly', async function () {
+					await supertest(this.user)
+						.post(`/${version}/application_profile_catalog`)
+						.send({
+							application: this.app1.id,
+							catalogs__profile_name: 'client-created',
+						})
+						.expect(401);
+				});
+
+				it('should not allow a client to delete a catalog entry directly', async function () {
+					await supertest(this.user)
+						.delete(
+							`/${version}/application_profile_catalog(${this.catalogTestEntryId})`,
+						)
+						.expect(401);
+				});
+
+				it('should allow updating a catalog entry description', async function () {
+					await supertest(this.user)
+						.patch(
+							`/${version}/application_profile_catalog(${this.catalogTestEntryId})`,
+						)
+						.send({ description: 'Test profile used for catalog coverage' })
+						.expect(200);
+
+					const res = await supertest(this.user)
+						.get(
+							`/${version}/application_profile_catalog(${this.catalogTestEntryId})?$select=description`,
+						)
+						.expect(200);
+					expect(res.body).to.have.nested.property(
+						'd[0].description',
+						'Test profile used for catalog coverage',
+					);
+				});
+
+				it('should keep the catalog entry while another image_profile with the same name still exists', async function () {
+					await supertest(this.user)
+						.delete(
+							`/${version}/image_profile(${this.catalogTestImageProfile1})`,
+						)
+						.expect(200);
+
+					const res = await supertest(this.user)
+						.get(
+							`/${version}/application_profile_catalog(${this.catalogTestEntryId})?$select=id`,
+						)
+						.expect(200);
+					expect(res.body).to.have.nested.property('d.length', 1);
+				});
+
+				it('should delete the catalog entry once no image_profile references it anymore', async function () {
+					await supertest(this.user)
+						.delete(
+							`/${version}/image_profile(${this.catalogTestImageProfile2})`,
+						)
+						.expect(200);
+
+					const res = await supertest(this.user)
+						.get(
+							`/${version}/application_profile_catalog(${this.catalogTestEntryId})?$select=id`,
+						)
+						.expect(200);
+					expect(res.body).to.have.nested.property('d.length', 0);
+				});
+			});
+
 			describe('image profile', function () {
 				describe('create image profile', function () {
 					it('should succeed with mandatory properties', async function () {
