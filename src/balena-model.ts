@@ -542,6 +542,10 @@ export interface Application {
 			ApplicationProfile['Read']
 		>;
 		application_profile?: Array<ApplicationProfile['Read']>;
+		application__catalogs__profile_name?: Array<
+			ApplicationProfileCatalog['Read']
+		>;
+		application_profile_catalog?: Array<ApplicationProfileCatalog['Read']>;
 		updates__application?: Array<Application['Read']>;
 		owns__device?: Array<Device['Read']>;
 		owns__release?: Array<Release['Read']>;
@@ -552,6 +556,7 @@ export interface Application {
 			DeviceProfileOverride['Read']
 		>;
 		device_profile_override?: Array<DeviceProfileOverride['Read']>;
+		catalogs__profile_name?: Array<ApplicationProfileCatalog['Read']>;
 		is_directly_accessible_by__user?: Array<
 			UserHasDirectAccessToApplication['Read']
 		>;
@@ -1396,6 +1401,25 @@ export interface DeviceProfileOverride {
 	};
 }
 
+export interface ApplicationProfileCatalog {
+	Read: {
+		created_at: Types['Date Time']['Read'];
+		modified_at: Types['Date Time']['Read'];
+		application: { __id: Application['Read']['id'] } | [Application['Read']];
+		catalogs__profile_name: Types['Short Text']['Read'];
+		id: Types['Serial']['Read'];
+		description: Types['Text']['Read'] | null;
+	};
+	Write: {
+		created_at: Types['Date Time']['Write'];
+		modified_at: Types['Date Time']['Write'];
+		application: Application['Write']['id'];
+		catalogs__profile_name: Types['Short Text']['Write'];
+		id: Types['Serial']['Write'];
+		description: Types['Text']['Write'] | null;
+	};
+}
+
 export interface UserHasDirectAccessToApplication {
 	Read: {
 		id: Types['Big Integer']['Read'];
@@ -1456,6 +1480,7 @@ export default interface $Model {
 	release__has__asset_key: ReleaseAsset;
 	application__activates__profile_name__on__application: ApplicationProfile;
 	device__overrides__profile_name__on__application: DeviceProfileOverride;
+	application__catalogs__profile_name: ApplicationProfileCatalog;
 	user__has_direct_access_to__application: UserHasDirectAccessToApplication;
 	// Synonyms
 	user_role: UserHasRole;
@@ -1483,4 +1508,5 @@ export default interface $Model {
 	release_asset: ReleaseAsset;
 	application_profile: ApplicationProfile;
 	device_profile_override: DeviceProfileOverride;
+	application_profile_catalog: ApplicationProfileCatalog;
 }
