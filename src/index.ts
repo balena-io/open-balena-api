@@ -105,6 +105,7 @@ import {
 	refreshToken,
 	publicKeys,
 } from './features/auth/index.js';
+import type { OnRefreshTokenFn } from './features/auth/refresh-token.js';
 import {
 	getIP,
 	getIPv4,
@@ -311,6 +312,7 @@ export interface SetupOptions {
 		tx: Tx,
 		req: RequestExcludingInput,
 	) => PromiseLike<void> | void;
+	onRefreshToken?: OnRefreshTokenFn;
 	onLogWriteStreamInitialized?: (req: RequestExcludingInput) => void;
 	onLogReadStreamInitialized?: (req: RequestExcludingInput) => void;
 
