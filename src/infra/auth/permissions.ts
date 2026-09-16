@@ -248,7 +248,10 @@ export async function createAllPermissions(
 			},
 		})
 		.then(async (perms) => {
-			const permissionsMap = _(perms).keyBy('name').mapValues('id').value();
+			const permissionsMap = _(perms)
+				.keyBy((p) => p.name)
+				.mapValues((p) => p.id)
+				.value();
 			const result: Record<string, Resolvable<number>> = {};
 			for (const permissionName of permissionNames) {
 				if (permissionsMap[permissionName] != null) {
