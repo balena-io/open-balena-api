@@ -31,7 +31,7 @@ services:
       - local-test
 
   minio-server:
-    image: pgsty/minio:RELEASE.2026-08-04T00-00-00Z
+    image: pgsty/minio:RELEASE.2026-08-04T00-00-00Z@sha256:b6bfe7239bfc83fb90d31612d9704d86039dd714f7904b3f1ad68f211e602372
     environment:
       MINIO_ROOT_USER: USERNAME
       MINIO_ROOT_PASSWORD: PASSWORD
@@ -40,7 +40,7 @@ services:
       - local-test
 
   minio-client:
-    image: pgsty/mc:RELEASE.2026-09-13T00-00-00Z
+    image: pgsty/mc:RELEASE.2026-09-13T00-00-00Z@sha256:aa5cc1401b3e1ab482d215d5717e9e69b4f14970a3656f330ed20a549fe19020
     depends_on:
       - minio-server
     entrypoint: >
