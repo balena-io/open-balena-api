@@ -40,7 +40,7 @@ services:
       - local-test
 
   minio-client:
-    image: pgsty/mc:RELEASE.2026-09-13T00-00-00Z@sha256:aa5cc1401b3e1ab482d215d5717e9e69b4f14970a3656f330ed20a549fe19020
+    image: pgsty/mc:RELEASE.2026-09-16T00-00-00Z@sha256:cfc83108c3abb371f8fb84d99c1fdc88f8c237e022409b0081fb7c0a3be634dd
     depends_on:
       - minio-server
     entrypoint: >
