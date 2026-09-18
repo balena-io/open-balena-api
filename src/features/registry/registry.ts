@@ -215,6 +215,28 @@ const resolveWriteAccess = async (
 
 const resolveImageId = multiCacheMemoizee(
 	async (effectiveName: string, tx: Tx): Promise<number | undefined> => {
+		if (effectiveName.startsWith('v2/')) {
+			// Since the legacy image_location prefixes are not in use since 2018,
+			// and as a result the vast majority of the images atm use the new
+			// REGISTRY2_HOST/v2/<uuid> format, and since an exact match query is 100x
+			// faster than a `$endswith`,
+			// as an optimization we first try to find the image using
+			// an exact match optimistically assuming it has a REGISTRY2 url prefix,
+			// and then fallback to `$endswith` if the optimization doesn't return any result.
+			const exactMatchRegistry2Image = await api.resin.get({
+				resource: 'image',
+				passthrough: { req: permissions.rootRead, tx },
+				id: {
+					is_stored_at__image_location: `${REGISTRY2_HOST}/${effectiveName}`,
+				},
+				options: {
+					$select: 'id',
+				},
+			});
+			if (exactMatchRegistry2Image != null) {
+				return exactMatchRegistry2Image.id;
+			}
+		}
 		const [image] = await api.resin.get({
 			resource: 'image',
 			passthrough: { req: permissions.rootRead, tx },
