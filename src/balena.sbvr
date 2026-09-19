@@ -1011,6 +1011,15 @@ Fact type: device overrides profile name on application
 	Necessity: each device profile override has an application that is host and is of a class that is not equal to "block".
 Fact type: device profile override is active
 
+Fact type: application catalogs profile name
+	Synonymous Form: profile name is catalogued by application
+	Term Form: application profile catalog
+	Database Table Name: application profile catalog
+	Necessity: each application profile catalog has a profile name that has a Length (Type) that is greater than 1 and is less than or equal to 100.
+		
+Fact type: application profile catalog has description (Auth)
+	Necessity: each application profile catalog has at most one description (Auth).
+	Necessity: each application profile catalog that has a description (Auth), has a description (Auth) that has a Length (Type) that is less than or equal to 4000.
 
 -- Rules
 

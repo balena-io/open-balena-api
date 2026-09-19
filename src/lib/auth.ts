@@ -65,6 +65,8 @@ export const ROLES: {
 		'resin.image_profile.all',
 		'resin.application_profile.all',
 		'resin.device_profile_override.all',
+		'resin.application_profile_catalog.read?application/canAccess()',
+		'resin.application_profile_catalog.update?application/canAccess()',
 		'resin.organization.read',
 		'resin.organization_membership.read',
 		'resin.release.all',
