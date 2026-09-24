@@ -1,0 +1,32 @@
+{
+	"commandInjection": {
+		"vulnId": "CVE-2021-23337",
+		"source": "INTERNAL",
+		"title": "Command injection in lodash",
+		"description": "Seeded by the test suite. The stack mirrors no vulnerability source, so without seeding there are no findings for a vex document or a policy to act on.",
+		"severity": "HIGH",
+		"affectedComponents": [
+			{
+				"identityType": "PURL",
+				"identity": "pkg:npm/lodash",
+				"version": "4.17.21",
+				"versionType": "EXACT"
+			}
+		]
+	},
+	"prototypePollution": {
+		"vulnId": "CVE-2020-8203",
+		"source": "INTERNAL",
+		"title": "Prototype pollution in lodash",
+		"description": "Seeded by the test suite. This is the vulnerability the vex fixture leaves untriaged, so that a vulnerability policy has something to triage.",
+		"severity": "HIGH",
+		"affectedComponents": [
+			{
+				"identityType": "PURL",
+				"identity": "pkg:npm/lodash",
+				"version": "4.17.21",
+				"versionType": "EXACT"
+			}
+		]
+	}
+}
