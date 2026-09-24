@@ -63,6 +63,7 @@ reneg-sec 0
 
 export enum ADVISORY_LOCK_NAMESPACES {
 	release__revision__belongs_to__application = 1,
+	application_profile_catalog__application = 2,
 }
 
 export const API_HOST = requiredVar('API_HOST');
