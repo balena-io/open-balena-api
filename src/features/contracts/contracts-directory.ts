@@ -107,7 +107,7 @@ const getArchiveLinkForRepo = (repo: RepositoryInfo) => {
 };
 
 export const removeContractDirectory = async () => {
-	await fs.promises.rmdir(CONTRACTS_BASE_DIR, { recursive: true });
+	await fs.promises.rm(CONTRACTS_BASE_DIR, { recursive: true });
 };
 
 const prepareContractDirectory = async (repo: RepositoryInfo) => {
