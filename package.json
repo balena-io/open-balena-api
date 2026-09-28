@@ -83,7 +83,7 @@
     "@types/memoizee": "^0.4.12",
     "@types/morgan": "^1.9.10",
     "@types/ndjson": "^2.0.4",
-    "@types/node": "^24.12.0",
+    "@types/node": "26.6.2",
     "@types/node-schedule": "^2.1.8",
     "@types/on-finished": "^2.3.5",
     "@types/passport-jwt": "^4.0.1",
@@ -170,8 +170,8 @@
     "supertest": "7.2.2"
   },
   "engines": {
-    "node": "^24.5.0",
-    "npm": "^11.5.2"
+    "node": "^26.10.0",
+    "npm": "^11.19.1"
   },
   "mocha": {
     "reporter": "spec",
