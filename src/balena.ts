@@ -8,6 +8,7 @@ import {
 import * as userHasDirectAccessToApplication from './features/applications/models/user__has_direct_access_to__application.js';
 import * as deviceAdditions from './features/devices/models/device-additions.js';
 import * as releaseAdditions from './features/ci-cd/models/release-additions.js';
+import * as applicationProfileCatalogAdditions from './features/profiles/models/application-profile-catalog-additions.js';
 import type { ConfigLoader } from '@balena/pinejs';
 
 const abstractSql = generateAbstractSqlModel(
@@ -27,5 +28,6 @@ renameVarResourcesName(abstractSql);
 userHasDirectAccessToApplication.addToModel(abstractSql);
 deviceAdditions.addToModel(abstractSql);
 releaseAdditions.addToModel(abstractSql);
+applicationProfileCatalogAdditions.addToModel(abstractSql);
 
 optimizeSchema(abstractSql);
