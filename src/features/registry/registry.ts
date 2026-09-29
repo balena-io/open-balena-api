@@ -4,7 +4,11 @@
 import type { Request } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import _ from 'lodash';
-import AWS from '../device-types/storage/aws-sdk-wrapper.js';
+import { DeleteObjectsCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
+import {
+	createS3Client,
+	type S3ClientLike,
+} from '../device-types/storage/aws-sdk-wrapper.js';
 import {
 	multiCacheMemoizee,
 	reqPermissionNormalizer,
@@ -30,6 +34,7 @@ import {
 	REGISTRY_STORAGE_BUCKET,
 	REGISTRY_STORAGE_ENDPOINT,
 	REGISTRY_STORAGE_FORCE_PATH_STYLE,
+	REGISTRY_STORAGE_REGION,
 	REGISTRY_STORAGE_ROOT_PATH,
 	REGISTRY_STORAGE_SECRET_KEY,
 	RESOLVE_IMAGE_ID_CACHE_TIMEOUT,
@@ -743,7 +748,7 @@ const getSubject = async (
 // repositories and all digests for a given repository. The
 // Docker Distribution API doesn't support such queries.
 export class S3Client {
-	private s3: AWS.S3;
+	private s3: S3ClientLike;
 	private bucket: string;
 	private rootPath: string;
 
@@ -754,14 +759,14 @@ export class S3Client {
 		bucket: string;
 		rootPath: string;
 	}) {
-		this.s3 = new AWS.S3({
+		this.s3 = createS3Client({
+			region: REGISTRY_STORAGE_REGION,
 			credentials: {
 				accessKeyId: config.accessKey,
 				secretAccessKey: config.secretKey,
 			},
 			endpoint: config.endpoint,
-			s3ForcePathStyle: REGISTRY_STORAGE_FORCE_PATH_STYLE,
-			signatureVersion: 'v4',
+			forcePathStyle: REGISTRY_STORAGE_FORCE_PATH_STYLE,
 		});
 		this.bucket = config.bucket;
 		this.rootPath = config.rootPath;
@@ -772,14 +777,14 @@ export class S3Client {
 		const children: string[] = [];
 		let continuationToken: string | undefined;
 		do {
-			const res = await this.s3
-				.listObjectsV2({
+			const res = await this.s3.send(
+				new ListObjectsV2Command({
 					Bucket: this.bucket,
 					Prefix: prefix,
 					Delimiter: '/',
 					ContinuationToken: continuationToken,
-				})
-				.promise();
+				}),
+			);
 
 			for (const { Prefix } of res.CommonPrefixes ?? []) {
 				if (Prefix != null) {
@@ -831,13 +836,13 @@ export class S3Client {
 		do {
 			// Stop cleanly between pages when an (optional) signal aborts.
 			signal?.throwIfAborted();
-			const res = await this.s3
-				.listObjectsV2({
+			const res = await this.s3.send(
+				new ListObjectsV2Command({
 					Bucket: this.bucket,
 					Prefix: prefix,
 					ContinuationToken: continuationToken,
-				})
-				.promise();
+				}),
+			);
 
 			const objects = (res.Contents ?? []).flatMap(({ Key }) =>
 				Key != null ? [{ Key }] : [],
@@ -846,12 +851,12 @@ export class S3Client {
 			if (objects.length > 0) {
 				// deleteObjects responds with a 200 even when individual keys
 				// fail, reporting them in the `Errors` array, so check it.
-				const deleteRes = await this.s3
-					.deleteObjects({
+				const deleteRes = await this.s3.send(
+					new DeleteObjectsCommand({
 						Bucket: this.bucket,
 						Delete: { Objects: objects },
-					})
-					.promise();
+					}),
+				);
 				if (deleteRes.Errors != null && deleteRes.Errors.length > 0) {
 					const [err] = deleteRes.Errors;
 					throw new Error(
