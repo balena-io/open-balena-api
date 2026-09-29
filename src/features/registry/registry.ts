@@ -4,7 +4,11 @@
 import type { Request } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import _ from 'lodash';
-import AWS from '../device-types/storage/aws-sdk-wrapper.js';
+import {
+	DeleteObjectsCommand,
+	ListObjectsV2Command,
+	S3Client as AwsS3Client,
+} from '@aws-sdk/client-s3';
 import {
 	multiCacheMemoizee,
 	reqPermissionNormalizer,
@@ -37,6 +41,7 @@ import {
 	RESOLVE_IMAGE_READ_ACCESS_CACHE_TIMEOUT,
 	TOKEN_AUTH_BUILDER_TOKEN,
 	guardTestMockOnly,
+	REGISTRY_STORAGE_REGION,
 } from '../../lib/config.js';
 import {
 	createValidatedRequestHandler,
@@ -743,7 +748,7 @@ const getSubject = async (
 // repositories and all digests for a given repository. The
 // Docker Distribution API doesn't support such queries.
 export class S3Client {
-	private s3: AWS.S3;
+	private s3: AwsS3Client;
 	private bucket: string;
 	private rootPath: string;
 
@@ -754,14 +759,14 @@ export class S3Client {
 		bucket: string;
 		rootPath: string;
 	}) {
-		this.s3 = new AWS.S3({
+		this.s3 = new AwsS3Client({
 			credentials: {
 				accessKeyId: config.accessKey,
 				secretAccessKey: config.secretKey,
 			},
 			endpoint: config.endpoint,
-			s3ForcePathStyle: REGISTRY_STORAGE_FORCE_PATH_STYLE,
-			signatureVersion: 'v4',
+			forcePathStyle: REGISTRY_STORAGE_FORCE_PATH_STYLE,
+			region: REGISTRY_STORAGE_REGION,
 		});
 		this.bucket = config.bucket;
 		this.rootPath = config.rootPath;
@@ -772,14 +777,14 @@ export class S3Client {
 		const children: string[] = [];
 		let continuationToken: string | undefined;
 		do {
-			const res = await this.s3
-				.listObjectsV2({
+			const res = await this.s3.send(
+				new ListObjectsV2Command({
 					Bucket: this.bucket,
 					Prefix: prefix,
 					Delimiter: '/',
 					ContinuationToken: continuationToken,
-				})
-				.promise();
+				}),
+			);
 
 			for (const { Prefix } of res.CommonPrefixes ?? []) {
 				if (Prefix != null) {
@@ -831,13 +836,13 @@ export class S3Client {
 		do {
 			// Stop cleanly between pages when an (optional) signal aborts.
 			signal?.throwIfAborted();
-			const res = await this.s3
-				.listObjectsV2({
+			const res = await this.s3.send(
+				new ListObjectsV2Command({
 					Bucket: this.bucket,
 					Prefix: prefix,
 					ContinuationToken: continuationToken,
-				})
-				.promise();
+				}),
+			);
 
 			const objects = (res.Contents ?? []).flatMap(({ Key }) =>
 				Key != null ? [{ Key }] : [],
@@ -846,12 +851,12 @@ export class S3Client {
 			if (objects.length > 0) {
 				// deleteObjects responds with a 200 even when individual keys
 				// fail, reporting them in the `Errors` array, so check it.
-				const deleteRes = await this.s3
-					.deleteObjects({
+				const deleteRes = await this.s3.send(
+					new DeleteObjectsCommand({
 						Bucket: this.bucket,
 						Delete: { Objects: objects },
-					})
-					.promise();
+					}),
+				);
 				if (deleteRes.Errors != null && deleteRes.Errors.length > 0) {
 					const [err] = deleteRes.Errors;
 					throw new Error(
