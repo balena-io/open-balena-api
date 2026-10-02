@@ -1409,6 +1409,8 @@ export interface ApplicationProfileCatalog {
 		catalogs__profile_name: Types['Short Text']['Read'];
 		id: Types['Serial']['Read'];
 		description: Types['Text']['Read'] | null;
+		available_since__release:
+			{ __id: Release['Read']['id'] } | [Release['Read']] | [] | null;
 	};
 	Write: {
 		created_at: Types['Date Time']['Write'];

@@ -152,6 +152,7 @@ import { addToModel as addUserHasDirectAccessToApplicationToModel } from './feat
 import { getApplicationSlug } from './features/applications/index.js';
 import * as deviceAdditions from './features/devices/models/device-additions.js';
 import { addToModel as addReleaseAdditionsToModel } from './features/ci-cd/models/release-additions.js';
+import { addToModel as addApplicationProfileCatalogAdditionsToModel } from './features/profiles/models/application-profile-catalog-additions.js';
 import { model as balenaModel } from './balena.js';
 import * as v6 from './translations/v6/v6.js';
 import { getV7Translations } from './translations/v7/v7.js';
@@ -259,6 +260,9 @@ export const device = {
 };
 export const release = {
 	addVirtualFieldsToModel: addReleaseAdditionsToModel,
+};
+export const applicationProfileCatalog = {
+	addVirtualFieldsToModel: addApplicationProfileCatalogAdditionsToModel,
 };
 export const deviceTypes = {
 	getAccessibleDeviceTypeJsons,

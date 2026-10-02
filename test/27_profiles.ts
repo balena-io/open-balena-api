@@ -252,6 +252,140 @@ export default () => {
 						.expect(200);
 					expect(catalogEntry).to.be.undefined;
 				});
+
+				describe('available_since__release', function () {
+					let app1Id: number;
+					let serviceId: number;
+					let earlyRelease: AnyObject;
+					let availableSinceCatalogEntryId: number;
+
+					const addProfileToNewRelease = async (commit: string) => {
+						const { body: release } = await pineUser
+							.post({
+								resource: 'release',
+								body: {
+									belongs_to__application: app1Id,
+									commit,
+									status: 'success',
+									composition: {},
+									source: 'local',
+									start_timestamp: Date.now(),
+								},
+							})
+							.expect(201);
+
+						const { body: image } = await pineUser
+							.post({
+								resource: 'image',
+								body: {
+									start_timestamp: Date.now(),
+									is_a_build_of__service: serviceId,
+									status: 'success',
+									push_timestamp: Date.now(),
+								},
+							})
+							.expect(201);
+
+						const { body: releaseImage } = await pineUser
+							.post({
+								resource: 'image__is_part_of__release',
+								body: { image: image.id, is_part_of__release: release.id },
+							})
+							.expect(201);
+
+						await pineUser
+							.post({
+								resource: 'image_profile',
+								body: {
+									release_image: releaseImage.id,
+									profile_name: 'available-since-release-test',
+								},
+							})
+							.expect(201);
+
+						return release;
+					};
+
+					before(async function () {
+						app1Id = this.app1.id;
+						serviceId = this.loadedFixtures.services.app1_service1.id;
+
+						earlyRelease = await addProfileToNewRelease(
+							'available-since-release-test-early',
+						);
+
+						const { body: catalogEntry } = await pineUser
+							.get({
+								resource: 'application_profile_catalog',
+								id: {
+									application: app1Id,
+									catalogs__profile_name: 'available-since-release-test',
+								},
+								options: { $select: 'id' },
+							})
+							.expect(200);
+						assertExists(catalogEntry);
+						availableSinceCatalogEntryId = catalogEntry.id;
+					});
+
+					it('should select available_since__release as the release that carries the profile', async function () {
+						const { body: catalogEntry } = await pineUser
+							.get({
+								resource: 'application_profile_catalog',
+								id: availableSinceCatalogEntryId,
+								options: { $select: 'available_since__release' },
+							})
+							.expect(200);
+						assertExists(catalogEntry);
+						expect(catalogEntry.available_since__release).to.have.property(
+							'__id',
+							earlyRelease.id,
+						);
+					});
+
+					it('should expand available_since__release to the full release row', async function () {
+						const { body: catalogEntry } = await pineUser
+							.get({
+								resource: 'application_profile_catalog',
+								id: availableSinceCatalogEntryId,
+								options: {
+									$select: 'id',
+									$expand: {
+										available_since__release: { $select: ['id', 'commit'] },
+									},
+								},
+							})
+							.expect(200);
+						assertExists(catalogEntry);
+						expect(catalogEntry.available_since__release).to.have.lengthOf(1);
+						expect(catalogEntry.available_since__release[0]).to.deep.include({
+							id: earlyRelease.id,
+							commit: 'available-since-release-test-early',
+						});
+					});
+
+					it('should keep resolving available_since__release to the earlier release once a later release also carries the profile', async function () {
+						const laterRelease = await addProfileToNewRelease(
+							'available-since-release-test-later',
+						);
+
+						const { body: catalogEntry } = await pineUser
+							.get({
+								resource: 'application_profile_catalog',
+								id: availableSinceCatalogEntryId,
+								options: { $select: 'available_since__release' },
+							})
+							.expect(200);
+						assertExists(catalogEntry);
+						expect(catalogEntry.available_since__release).to.have.property(
+							'__id',
+							earlyRelease.id,
+						);
+						expect(catalogEntry.available_since__release.__id).to.not.equal(
+							laterRelease.id,
+						);
+					});
+				});
 			});
 			describe('image profile', function () {
 				describe('create image profile', function () {
