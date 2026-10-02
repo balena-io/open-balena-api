@@ -1,6 +1,28 @@
-import type AWS from 'aws-sdk';
+import {
+	DeleteObjectsCommand,
+	GetObjectCommand,
+	HeadObjectCommand,
+	ListObjectsV2Command,
+	NoSuchKey,
+	NotFound,
+	S3ServiceException,
+} from '@aws-sdk/client-s3';
+import type {
+	DeleteObjectsOutput,
+	DeleteObjectsRequest,
+	GetObjectCommandOutput,
+	GetObjectOutput,
+	GetObjectRequest,
+	HeadObjectRequest,
+	ListObjectsV2Output,
+	ListObjectsV2Request,
+	S3ClientConfig,
+} from '@aws-sdk/client-s3';
+import { sdkStreamMixin } from '@smithy/core/serde';
+import type { AwsCredentialIdentity } from '@smithy/types';
 import { assert } from 'chai';
 import _ from 'lodash';
+import { Readable } from 'node:stream';
 import {
 	IMAGE_STORAGE_ACCESS_KEY,
 	IMAGE_STORAGE_SECRET_KEY,
@@ -15,9 +37,11 @@ type MockedError = {
 	};
 };
 
+const isMockedError = (mock: object): mock is MockedError => 'Error' in mock;
+
 type ListObjectsV2Resolver = (
-	params: AWS.S3.Types.ListObjectsV2Request,
-) => AWS.S3.Types.ListObjectsV2Output | undefined;
+	params: ListObjectsV2Request,
+) => ListObjectsV2Output | undefined;
 
 const listObjectsV2Resolvers: ListObjectsV2Resolver[] = [];
 
@@ -34,8 +58,8 @@ export function addListObjectsV2Resolver(resolver: ListObjectsV2Resolver) {
 }
 
 type DeleteObjectsResolver = (
-	params: AWS.S3.Types.DeleteObjectsRequest,
-) => AWS.S3.Types.DeleteObjectsOutput | undefined;
+	params: DeleteObjectsRequest,
+) => DeleteObjectsOutput | undefined;
 
 const deleteObjectsResolvers: DeleteObjectsResolver[] = [];
 
@@ -54,7 +78,7 @@ export function addDeleteObjectsResolver(resolver: DeleteObjectsResolver) {
 export default (
 	$getObjectMocks: Record<
 		string,
-		| (Omit<AWS.S3.Types.GetObjectOutput, 'LastModified' | 'Body'> & {
+		| (Omit<GetObjectOutput, 'LastModified' | 'Body'> & {
 				LastModified?: string;
 				Body?: string;
 		  })
@@ -62,9 +86,9 @@ export default (
 	>,
 	$listObjectsV2Mocks: Record<
 		string,
-		| (Omit<AWS.S3.Types.ListObjectsV2Output, 'Contents'> & {
+		| (Omit<ListObjectsV2Output, 'Contents'> & {
 				Contents?: Array<
-					Omit<AWS.S3.Types.ListObjectsV2Output['Contents'], 'LastModified'> & {
+					Omit<ListObjectsV2Output['Contents'], 'LastModified'> & {
 						LastModified: string;
 					}
 				>;
@@ -72,139 +96,139 @@ export default (
 		| MockedError
 	>,
 ) => {
-	// AWS S3 Client getObject results have a Buffer on their Body prop
-	// and a Date on their LastModified prop so we have to reconstruct
-	// them from the strings that the mock object holds
+	// AWS S3 Client results have a Date on their LastModified prop so we have to
+	// reconstruct them from the strings that the mock object holds. The Body is
+	// deliberately left as a string, since it has to be turned into a fresh
+	// single-use stream on every request.
 	const getObjectMocks: Record<
 		string,
-		AWS.S3.Types.GetObjectOutput | MockedError
-	> = _.mapValues(
-		$getObjectMocks,
-		(
-			getObjectMock: (typeof $getObjectMocks)[keyof typeof $getObjectMocks],
-		): AWS.S3.Types.GetObjectOutput | MockedError => {
-			return {
-				...getObjectMock,
+		(Omit<GetObjectOutput, 'Body'> & { Body?: string }) | MockedError
+	> = _.mapValues($getObjectMocks, (getObjectMock) => {
+		if (isMockedError(getObjectMock)) {
+			return getObjectMock;
+		}
+		return {
+			...getObjectMock,
 
-				Body:
-					'Body' in getObjectMock && getObjectMock.Body
-						? Buffer.from(getObjectMock.Body)
-						: undefined,
-				LastModified:
-					'LastModified' in getObjectMock && getObjectMock.LastModified
-						? new Date(getObjectMock.LastModified)
-						: undefined,
-			};
-		},
-	);
-	const listObjectsV2Mocks: Record<
-		string,
-		AWS.S3.Types.ListObjectsV2Output | MockedError
-	> = _.mapValues(
-		$listObjectsV2Mocks,
-		(
-			listObjectsV2Mock: (typeof $listObjectsV2Mocks)[keyof typeof $listObjectsV2Mocks],
-		): AWS.S3.Types.ListObjectsV2Output | MockedError => {
+			LastModified: getObjectMock.LastModified
+				? new Date(getObjectMock.LastModified)
+				: undefined,
+		};
+	});
+	const listObjectsV2Mocks: Record<string, ListObjectsV2Output | MockedError> =
+		_.mapValues($listObjectsV2Mocks, (listObjectsV2Mock) => {
+			if (isMockedError(listObjectsV2Mock)) {
+				return listObjectsV2Mock;
+			}
 			return {
 				...listObjectsV2Mock,
 
-				Contents:
-					'Contents' in listObjectsV2Mock && listObjectsV2Mock.Contents
-						? listObjectsV2Mock.Contents.map((contents) => {
-								return {
-									...contents,
-									LastModified:
-										'LastModified' in contents && contents.LastModified
-											? new Date(contents.LastModified)
-											: undefined,
-								};
-							})
-						: undefined,
+				Contents: listObjectsV2Mock.Contents?.map((contents) => {
+					return {
+						...contents,
+						LastModified:
+							'LastModified' in contents && contents.LastModified
+								? new Date(contents.LastModified)
+								: undefined,
+					};
+				}),
 			};
-		},
-	);
+		});
 
-	class NotFoundError extends Error {
-		public statusCode = 404;
+	type S3Op = 'GetObject' | 'HeadObject' | 'ListObjectsV2' | 'DeleteObjects';
 
-		constructor() {
-			super('NotFound');
+	// The fixtures hold the v2 `{ Error: { statusCode } }` shape, which we map
+	// onto what v3 code inspects: `err.$metadata.httpStatusCode` and `err.name`.
+	const toServiceError = (statusCode: number, op: S3Op): Error => {
+		const $metadata = { httpStatusCode: statusCode };
+		if (statusCode === 404) {
+			// HeadObject 404s surface as `NotFound`, GetObject 404s as `NoSuchKey`
+			return op === 'HeadObject'
+				? new NotFound({ $metadata, message: 'NotFound' })
+				: new NoSuchKey({
+						$metadata,
+						message: 'The specified key does not exist.',
+					});
 		}
-	}
-
-	const toReturnType = <T extends (...args: any[]) => any>(
-		result:
-			| Error
-			| MockedError
-			| AWS.S3.Types.GetObjectOutput
-			| AWS.S3.Types.ListObjectsV2Output,
-	) => {
-		return {
-			// eslint-disable-next-line @typescript-eslint/require-await -- We need to return a promise for mocking reasons but we don't need to await.
-			promise: async () => {
-				if (result instanceof Error) {
-					throw result;
-				}
-				if ('Error' in result && result.Error) {
-					const error = new Error();
-					Object.assign(error, result.Error);
-
-					throw error;
-				}
-				return result;
-			},
-		} as ReturnType<T>;
+		const name =
+			statusCode === 403
+				? 'AccessDenied'
+				: statusCode === 401
+					? 'Unauthorized'
+					: 'InternalError';
+		return new S3ServiceException({
+			name,
+			$fault: statusCode >= 500 ? 'server' : 'client',
+			$metadata,
+			message: name,
+		});
 	};
 
-	interface UnauthenticatedRequestParams {
-		[key: string]: any;
-	}
+	// A v3 Body is a single-use stream, so it has to be built per request rather
+	// than once per fixture. An empty Body has to collect back to '' so that an
+	// empty device-type.json keeps counting as a missing one.
+	const toBody = (body: string | undefined) =>
+		sdkStreamMixin(
+			Readable.from(body ? [Buffer.from(body)] : []),
+		) as NonNullable<GetObjectCommandOutput['Body']>;
 
-	class S3Mock {
-		constructor(params: AWS.S3.Types.ClientConfiguration) {
-			if (params.credentials?.accessKeyId === REGISTRY_STORAGE_ACCESS_KEY) {
+	const ok = <T extends object>(output: T) => ({
+		...output,
+		$metadata: { httpStatusCode: 200, attempts: 1, totalRetryDelay: 0 },
+	});
+
+	class S3ClientMock {
+		constructor(config: S3ClientConfig) {
+			const credentials = config.credentials as
+				AwsCredentialIdentity | undefined;
+			if (credentials?.accessKeyId === REGISTRY_STORAGE_ACCESS_KEY) {
 				assert(
-					params.credentials?.secretAccessKey === REGISTRY_STORAGE_SECRET_KEY,
+					credentials?.secretAccessKey === REGISTRY_STORAGE_SECRET_KEY,
 					'Mismatching registry S3 credentials',
 				);
-			} else if (params.accessKeyId === IMAGE_STORAGE_ACCESS_KEY) {
+			} else if (credentials?.accessKeyId === IMAGE_STORAGE_ACCESS_KEY) {
 				assert(
-					params.secretAccessKey === IMAGE_STORAGE_SECRET_KEY,
+					credentials?.secretAccessKey === IMAGE_STORAGE_SECRET_KEY,
 					'Mismatching image S3 credentials',
 				);
-			} else {
+			} else if (credentials?.accessKeyId !== '') {
+				// an empty accessKeyId is the unauthenticated client
 				throw new Error('Unexpected S3 client credentials');
 			}
 		}
 
-		public makeUnauthenticatedRequest(
-			operation: string,
-			params?: UnauthenticatedRequestParams,
-		): AWS.Request<any, AWS.AWSError> {
-			if (operation === 'headObject') {
-				return this.headObject(params as AWS.S3.Types.HeadObjectRequest);
+		// eslint-disable-next-line @typescript-eslint/require-await -- We need to return a promise for mocking reasons but we don't need to await.
+		public async send(command: unknown) {
+			if (command instanceof HeadObjectCommand) {
+				return this.headObject(command.input);
 			}
-			if (operation === 'getObject') {
-				return this.getObject(params as AWS.S3.Types.GetObjectRequest);
+			if (command instanceof GetObjectCommand) {
+				return this.getObject(command.input);
 			}
-			if (operation === 'listObjectsV2') {
-				return this.listObjectsV2(params as AWS.S3.Types.ListObjectsV2Request);
+			if (command instanceof ListObjectsV2Command) {
+				return this.listObjectsV2(command.input);
 			}
-			throw new Error(`AWS Mock: Operation ${operation} isn't implemented`);
+			if (command instanceof DeleteObjectsCommand) {
+				return this.deleteObjects(command.input);
+			}
+			throw new Error(
+				`aws mock: Operation ${(command as any)?.constructor?.name} isn't implemented`,
+			);
 		}
 
-		public headObject(
-			params: AWS.S3.Types.HeadObjectRequest,
-		): ReturnType<AWS.S3['headObject']> {
-			const mock = getObjectMocks[params.Key];
+		private headObject(params: HeadObjectRequest) {
+			const mock = getObjectMocks[params.Key!];
 			if (mock) {
-				const trimmedMock = _.omit(mock, 'Body', 'ContentRange', 'TagCount');
-				return toReturnType<AWS.S3['headObject']>(trimmedMock);
+				if (isMockedError(mock)) {
+					throw toServiceError(mock.Error.statusCode, 'HeadObject');
+				}
+				// HeadObjectOutput holds no Body/ContentRange/TagCount
+				return ok(_.omit(mock, 'Body', 'ContentRange', 'TagCount'));
 			}
 
 			// treat not found IGNORE file mocks as 404
-			if (_.endsWith(params.Key, '/IGNORE')) {
-				return toReturnType<AWS.S3['headObject']>(new NotFoundError());
+			if (params.Key?.endsWith('/IGNORE')) {
+				throw toServiceError(404, 'HeadObject');
 			}
 
 			throw new Error(
@@ -212,25 +236,24 @@ export default (
 			);
 		}
 
-		public getObject(
-			params: AWS.S3.Types.GetObjectRequest,
-		): ReturnType<AWS.S3['getObject']> {
-			const mock = getObjectMocks[params.Key];
+		private getObject(params: GetObjectRequest) {
+			const mock = getObjectMocks[params.Key!];
 			if (!mock) {
 				throw new Error(
 					`aws mock: getObject could not find a mock for ${params.Key}`,
 				);
 			}
-			return toReturnType<AWS.S3['getObject']>(mock);
+			if (isMockedError(mock)) {
+				throw toServiceError(mock.Error.statusCode, 'GetObject');
+			}
+			return ok({ ...mock, Body: toBody(mock.Body) });
 		}
 
-		public listObjectsV2(
-			params: AWS.S3.Types.ListObjectsV2Request,
-		): ReturnType<AWS.S3['listObjectsV2']> {
+		private listObjectsV2(params: ListObjectsV2Request) {
 			for (const resolver of listObjectsV2Resolvers) {
 				const result = resolver(params);
 				if (result != null) {
-					return toReturnType<AWS.S3['listObjectsV2']>(result);
+					return ok(result);
 				}
 			}
 			const mock = listObjectsV2Mocks[params.Prefix!];
@@ -239,16 +262,17 @@ export default (
 					`aws mock: listObjectsV2 could not find a mock for ${params.Prefix}`,
 				);
 			}
-			return toReturnType<AWS.S3['listObjectsV2']>(mock);
+			if (isMockedError(mock)) {
+				throw toServiceError(mock.Error.statusCode, 'ListObjectsV2');
+			}
+			return ok(mock);
 		}
 
-		public deleteObjects(
-			params: AWS.S3.Types.DeleteObjectsRequest,
-		): ReturnType<AWS.S3['deleteObjects']> {
+		private deleteObjects(params: DeleteObjectsRequest) {
 			for (const resolver of deleteObjectsResolvers) {
 				const result = resolver(params);
 				if (result != null) {
-					return toReturnType<AWS.S3['deleteObjects']>(result);
+					return ok(result);
 				}
 			}
 			throw new Error(
@@ -257,5 +281,6 @@ export default (
 		}
 	}
 
-	TEST_MOCK_ONLY.S3 = S3Mock as typeof AWS.S3;
+	// The mock only implements the promise-returning overload of `send`.
+	TEST_MOCK_ONLY.S3Client = S3ClientMock;
 };
