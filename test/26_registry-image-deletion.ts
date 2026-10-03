@@ -146,7 +146,6 @@ export default () => {
 				});
 
 				await waitFor({
-					delayMs: 500,
 					checkFn: () => checkIsDeleted([image]),
 				});
 				await expectSettledTasks([image]);
@@ -169,7 +168,6 @@ export default () => {
 				});
 
 				await waitFor({
-					delayMs: 500,
 					checkFn: () => checkIsDeleted([imageA]) && imageB.isDeleted === true,
 				});
 				await expectSettledTasks([imageA]);
@@ -188,7 +186,6 @@ export default () => {
 					});
 
 					await waitFor({
-						delayMs: 500,
 						checkFn: () => checkIsDeleted([image]),
 					});
 					await expectSettledTasks([image]);
@@ -273,7 +270,6 @@ export default () => {
 				});
 
 				await waitFor({
-					delayMs: 500,
 					checkFn: () => checkIsDeleted([image]),
 				});
 				await expectSettledTasks([image]);
@@ -290,7 +286,6 @@ export default () => {
 				});
 
 				await waitFor({
-					delayMs: 500,
 					checkFn: () => checkIsDeleted([image]),
 				});
 				await expectSettledTasks([image]);
@@ -350,7 +345,6 @@ export default () => {
 				// Assert all images were marked for deletion.
 				const images = [...release1.images, ...release2.images];
 				await waitFor({
-					delayMs: 500,
 					checkFn: () => checkIsDeleted(images),
 				});
 				await expectSettledTasks(images);
@@ -402,7 +396,6 @@ export default () => {
 					});
 
 					await waitFor({
-						delayMs: 500,
 						checkFn: () => checkIsDeleted([image]),
 					});
 					await expectSettledTasks([image]);
