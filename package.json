@@ -83,7 +83,7 @@
     "@types/memoizee": "^0.4.12",
     "@types/morgan": "^1.9.10",
     "@types/ndjson": "^2.0.4",
-    "@types/node": "26.6.3",
+    "@types/node": "26.6.4",
     "@types/node-schedule": "^2.1.8",
     "@types/on-finished": "^2.3.5",
     "@types/passport-jwt": "^4.0.1",
