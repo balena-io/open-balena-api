@@ -109,6 +109,7 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) => {
 			'logs channel': ['Cast', ['Null'], 'Short Text'],
 			'vpn address': ['Cast', ['Null'], 'Short Text'],
 			'should be running-release': 'is pinned on-release',
+			'should be managed by-supervisor release': 'should be managed by-release',
 			// We are redefining the overall_status rather than translating it, so that:
 			// • the v6 overall_status performances does not degrades from the additional FROMs
 			// • the behavior does not change if we later add new statuses in the v7 one
@@ -189,6 +190,22 @@ export const getV6Translations = (abstractSqlModel = v6AbstractSqlModel) => {
 					['EmbeddedText', 'updating'],
 				],
 				['Else', ['EmbeddedText', 'idle']],
+			],
+		},
+		'supervisor release': {
+			$toResource: 'release',
+			abstractSql: [
+				'SelectQuery',
+				[
+					'Select',
+					aliasFields(abstractSqlModel, 'supervisor release', {
+						'supervisor version': 'raw version',
+					}),
+				],
+				[
+					'From',
+					['Alias', ['Resource', `release$${toVersion}`], 'supervisor release'],
+				],
 			],
 		},
 		release: {
