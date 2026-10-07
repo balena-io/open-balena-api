@@ -46,6 +46,7 @@ export const checkDeviceExistsIsFrozen = multiCacheMemoizee(
 
 export interface ResolveDeviceInfoCustomObject {
 	resolvedDeviceIds: Array<Device['Read']['id']>;
+	resolvedDevices: Array<Pick<Device['Read'], 'id' | 'uuid'>>;
 }
 
 const requestParamsUuidResolver = (req: RequestExcludingInput) => [
@@ -93,7 +94,7 @@ export const resolveOrDenyDevicesWithStatus = (
 			await respondFn(req, res, delayMs, deletedStatusCode);
 			return;
 		}
-		const deviceIds: number[] = [];
+		const deviceInfos: Array<Pick<Device['Read'], 'id' | 'uuid'>> = [];
 		for (const uuid of uuids) {
 			const device = await checkDeviceExistsIsFrozen(uuid);
 			// Heads-up: if any of the provided devices is deleted/frozen
@@ -110,10 +111,15 @@ export const resolveOrDenyDevicesWithStatus = (
 				await respondFn(req, res, delayMs, frozenStatusCode);
 				return;
 			}
-			deviceIds.push(device.id);
+			deviceInfos.push({
+				id: device.id,
+				uuid,
+			});
 		}
 		req.custom ??= {};
-		(req.custom as ResolveDeviceInfoCustomObject).resolvedDeviceIds = deviceIds;
+		const custom = req.custom as ResolveDeviceInfoCustomObject;
+		custom.resolvedDeviceIds = deviceInfos.map((d) => d.id);
+		custom.resolvedDevices = deviceInfos;
 		next();
 	});
 };
