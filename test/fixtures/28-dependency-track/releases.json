@@ -1,0 +1,14 @@
+{
+	"release1": {
+		"user": "admin",
+		"application": "app1",
+		"commit": "00000028",
+		"status": "success",
+		"composition": {
+			"services": {
+				"main": {}
+			}
+		},
+		"source": "cloud"
+	}
+}

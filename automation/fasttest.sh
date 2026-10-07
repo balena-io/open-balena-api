@@ -58,7 +58,7 @@ if [[ "$preserve_volumes" == "1" ]]; then
 	echo "Preserving volumes from previous run"
 else
 	echo "Recreating volumes"
-	docker compose -f docker-compose.test-custom.yml up --renew-anon-volumes --force-recreate --detach redis db minio-server minio-client loki
+	docker compose -f docker-compose.test-custom.yml up --renew-anon-volumes --force-recreate --detach redis db minio-server minio-client loki dtrack-db-init dtrack
 fi
 if [[ -z "$test_files" ]]; then
 	echo "Running all tests"

@@ -44,6 +44,7 @@ export async function start() {
 		'redis',
 		'loki',
 		'minio-server',
+		'dtrack',
 	].join(',');
 }
 
