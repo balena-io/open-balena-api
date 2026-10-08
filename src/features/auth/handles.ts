@@ -1,11 +1,15 @@
 import { errors } from '@balena/pinejs';
+import slugify from 'slugify';
 
 const { BadRequestError } = errors;
 
 const normalizeReplacements = /[^\w]+/g;
 
 export const normalizeHandle = (handle: string): string => {
-	return handle.replace(normalizeReplacements, '_').toLowerCase();
+	return slugify(handle, {
+		replacement: '_',
+		lower: true,
+	}).replace(normalizeReplacements, '_');
 };
 
 export const validateHandle = (handle: string) => {
