@@ -138,6 +138,7 @@
     "request": "^2.88.2",
     "rsmq": "^0.13.0",
     "semver": "^7.7.4",
+    "slugify": "^1.6.9",
     "snappy": "^7.3.3",
     "statuses": "^2.0.2",
     "strict-event-emitter-types": "^2.0.0",
