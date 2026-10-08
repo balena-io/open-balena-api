@@ -1,4 +1,4 @@
-FROM balena/open-balena-base:22.0.0-s6-overlay@sha256:b3a88f3cef57811a52c8c80f56400dc8314c1adb136d97b5bf624997a475bd28 AS runtime
+FROM balena/open-balena-base:v22.0.1-s6-overlay@sha256:c82787f0f490c64c644c3828fad0d3facf6d375f0dec331e7f0b4dfda27f3250 AS runtime
 
 EXPOSE 80
 
