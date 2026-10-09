@@ -180,6 +180,10 @@ export const IMAGE_STORAGE_PREFIX = optionalVar(
 	'IMAGE_STORAGE_PREFIX',
 	'images',
 );
+export const IMAGE_STORAGE_REGION = optionalVar(
+	'IMAGE_STORAGE_REGION',
+	'us-east-1',
+);
 export const IMAGE_STORAGE_ACCESS_KEY = optionalVar('IMAGE_STORAGE_ACCESS_KEY');
 export const IMAGE_STORAGE_SECRET_KEY = optionalVar('IMAGE_STORAGE_SECRET_KEY');
 export const IMAGE_STORAGE_FORCE_PATH_STYLE = boolVar(
@@ -491,6 +495,10 @@ export const REGISTRY_STORAGE_ROOT_PATH = optionalVar(
 );
 export const REGISTRY_STORAGE_ENDPOINT = optionalVar(
 	'REGISTRY_STORAGE_ENDPOINT',
+);
+export const REGISTRY_STORAGE_REGION = optionalVar(
+	'REGISTRY_STORAGE_REGION',
+	'us-east-1',
 );
 export const REGISTRY_STORAGE_ACCESS_KEY = optionalVar(
 	'REGISTRY_STORAGE_ACCESS_KEY',
