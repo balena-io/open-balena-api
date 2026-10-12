@@ -68,12 +68,10 @@ export const getDeviceTypeJson = multiCacheMemoizee(
 		if (isIgnored) {
 			return undefined;
 		}
-		const response = await getFile(
+		const body = await getFile(
 			getImageKey(normalizedSlug, buildId, 'device-type.json'),
 		);
-		const deviceType = response?.Body
-			? (JSON.parse(response.Body.toString()) as DeviceTypeJson)
-			: undefined;
+		const deviceType = body ? (JSON.parse(body) as DeviceTypeJson) : undefined;
 		if (deviceType) {
 			deviceType.buildId = buildId;
 		}

@@ -158,7 +158,7 @@ function registerS3Resolver() {
 
 function registerDeleteObjectsResolver() {
 	return addDeleteObjectsResolver((params) => {
-		const objects = params.Delete.Objects;
+		const objects = params.Delete?.Objects ?? [];
 		if (nextDeleteObjectsError != null) {
 			const message = nextDeleteObjectsError;
 			nextDeleteObjectsError = null;
