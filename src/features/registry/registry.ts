@@ -42,6 +42,10 @@ import {
 	createValidatedRequestHandler,
 	z,
 } from '../../infra/validation/index.js';
+import {
+	recordResolveImageIdMetrics,
+	type ResolveImageIdStrategy,
+} from './metrics.js';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;
@@ -215,6 +219,7 @@ const resolveWriteAccess = async (
 
 const resolveImageId = multiCacheMemoizee(
 	async (effectiveName: string, tx: Tx): Promise<number | undefined> => {
+		let fallbackStrategy: ResolveImageIdStrategy = 'endswith';
 		if (effectiveName.startsWith('v2/')) {
 			// Since the legacy image_location prefixes are not in use since 2018,
 			// and as a result the vast majority of the images atm use the new
@@ -223,6 +228,7 @@ const resolveImageId = multiCacheMemoizee(
 			// as an optimization we first try to find the image using
 			// an exact match optimistically assuming it has a REGISTRY2 url prefix,
 			// and then fallback to `$endswith` if the optimization doesn't return any result.
+			const exactMatchStart = performance.now();
 			const exactMatchRegistry2Image = await api.resin.get({
 				resource: 'image',
 				passthrough: { req: permissions.rootRead, tx },
@@ -233,10 +239,17 @@ const resolveImageId = multiCacheMemoizee(
 					$select: 'id',
 				},
 			});
+			recordResolveImageIdMetrics(
+				'exact_match',
+				exactMatchRegistry2Image != null,
+				performance.now() - exactMatchStart,
+			);
 			if (exactMatchRegistry2Image != null) {
 				return exactMatchRegistry2Image.id;
 			}
+			fallbackStrategy = 'endswith_fallback';
 		}
+		const endswithStart = performance.now();
 		const [image] = await api.resin.get({
 			resource: 'image',
 			passthrough: { req: permissions.rootRead, tx },
@@ -249,6 +262,11 @@ const resolveImageId = multiCacheMemoizee(
 				},
 			},
 		});
+		recordResolveImageIdMetrics(
+			fallbackStrategy,
+			image != null,
+			performance.now() - endswithStart,
+		);
 		return image?.id;
 	},
 	{
