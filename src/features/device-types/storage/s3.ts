@@ -30,6 +30,7 @@ function createS3Client() {
 	if (!IMAGE_STORAGE_ACCESS_KEY || !IMAGE_STORAGE_SECRET_KEY) {
 		return new S3Client({
 			...config,
+			credentials: { accessKeyId: '', secretAccessKey: '' },
 			// Send requests unsigned so that public objects can be read without credentials
 			signer: { sign: (request) => Promise.resolve(request) },
 		});
