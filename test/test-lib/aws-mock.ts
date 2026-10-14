@@ -166,9 +166,10 @@ export default (
 				credentials.secretAccessKey === REGISTRY_STORAGE_SECRET_KEY,
 				'Mismatching registry S3 credentials',
 			);
-		} else if (credentials.accessKeyId === IMAGE_STORAGE_ACCESS_KEY) {
+		} else if (credentials.accessKeyId === (IMAGE_STORAGE_ACCESS_KEY ?? '')) {
+			// Without image storage keys the client is unauthenticated and uses empty placeholder credentials
 			assert(
-				credentials.secretAccessKey === IMAGE_STORAGE_SECRET_KEY,
+				credentials.secretAccessKey === (IMAGE_STORAGE_SECRET_KEY ?? ''),
 				'Mismatching image S3 credentials',
 			);
 		} else {
