@@ -17,7 +17,6 @@ import {
 // Even though we only use these when TRUST_PROXY we do not conditionally
 // import them, since that makes the execution order harder to predict.
 import proxyAddr from 'proxy-addr';
-import memoizee from 'memoizee';
 
 export let version: string;
 export function setVersion(v: typeof version) {
@@ -646,17 +645,31 @@ let trustProxyValue:
 	| Exclude<typeof trustProxy, string>
 	| ReturnType<typeof import('proxy-addr').compile>;
 if (typeof trustProxy === 'string') {
-	// If trust proxy is a string then compile the trust function directly and memoize it, since the trust
+	// If trust proxy is a string then compile the trust function directly and cache it, since the trust
 	// function is fairly expensive for such a hot function and if we trust some ips then it's likely
 	// that the majority of trust proxy calls will be coming from those ips - 50% if there's one level
 	// of proxy/load balancing and increasing if there are more levels of proxies/load balancers
+	// We use a plain Map as an LRU cache to avoid the cost of generic machinery on such a hot path
+	// (minimum of twice per request). Maps iterate in insertion order, so re-inserting on every hit
+	// keeps the least recently used entry first
 
 	// Support comma-separated IPs
 	const trustProxyIPs = trustProxy.split(/ *, */);
-	trustProxyValue = memoizee(proxyAddr.compile(trustProxyIPs), {
-		primitive: true,
-		max: 1000,
-	});
+	const compiledTrust = proxyAddr.compile(trustProxyIPs);
+	const trustCache = new Map<string, boolean>();
+	trustProxyValue = (addr: string, i: number): boolean => {
+		let trusted = trustCache.get(addr);
+		if (trusted === undefined) {
+			trusted = compiledTrust(addr, i);
+			if (trustCache.size >= 1000) {
+				trustCache.delete(trustCache.keys().next().value!);
+			}
+		} else {
+			trustCache.delete(addr);
+		}
+		trustCache.set(addr, trusted);
+		return trusted;
+	};
 } else {
 	trustProxyValue = trustProxy;
 }
