@@ -7,6 +7,7 @@ import {
 } from '@balena/pinejs';
 import type { FilterObj } from 'pinejs-client-core';
 import type { CpuArchitecture } from '../../../balena-model.js';
+import type { SemVer } from 'semver';
 
 const { BadRequestError } = pinejsErrors;
 
@@ -39,7 +40,7 @@ hooks.addPureHook('POST', 'resin', 'device', {
 			if (supervisorRelease == null) {
 				return;
 			}
-			// We are not using setSupervisorReleaseResource in a POSTRUN, since that only sets
+			// We are not using setTargetSupervisorReleaseIfNewer in a POSTRUN, since that only sets
 			// the supervisor release FK to device that have no supervisor_release set, and by the
 			// that POSTRUN for a POST, the device would already have a supervisor_release set.
 			request.values.should_be_managed_by__release = supervisorRelease.id;
@@ -53,12 +54,18 @@ hooks.addPureHook('PATCH', 'resin', 'device', {
 	 * using its current reported version.
 	 */
 	async PRERUN(args) {
-		if (args.request.values.supervisor_version != null) {
+		let parsedSupervisorVersion: SemVer | null = null;
+		if (typeof args.request.values.supervisor_version === 'string') {
+			parsedSupervisorVersion = semver.parse(
+				args.request.values.supervisor_version,
+			);
+		}
+		if (parsedSupervisorVersion != null) {
 			const ids = await sbvrUtils.getAffectedIds(args);
-			await setSupervisorReleaseResource(
+			await setTargetSupervisorReleaseIfNewer(
 				args.api,
 				ids,
-				args.request.values.supervisor_version,
+				parsedSupervisorVersion,
 			);
 		}
 	},
@@ -226,10 +233,10 @@ async function getSupervisorReleaseResource(
 	});
 }
 
-async function setSupervisorReleaseResource(
+async function setTargetSupervisorReleaseIfNewer(
 	api: typeof sbvrUtils.api.resin,
 	deviceIds: number[],
-	supervisorVersion: string,
+	supervisorVersion: SemVer,
 ) {
 	if (deviceIds.length === 0) {
 		return;
@@ -240,6 +247,9 @@ async function setSupervisorReleaseResource(
 			$select: ['id'],
 			$expand: {
 				is_of__device_type: { $select: ['is_of__cpu_architecture'] },
+				should_be_managed_by__release: {
+					$select: 'raw_version',
+				},
 			},
 			// if the device already has a supervisor_version, just bail.
 			$filter: {
@@ -249,11 +259,19 @@ async function setSupervisorReleaseResource(
 		},
 	} as const);
 
-	if (devices.length === 0) {
+	const devicesToUpdate = devices.filter((d) => {
+		const [targetSupervisorRelease] = d.should_be_managed_by__release;
+		return (
+			targetSupervisorRelease == null ||
+			semver.gt(supervisorVersion.raw, targetSupervisorRelease.raw_version)
+		);
+	});
+
+	if (devicesToUpdate.length === 0) {
 		return;
 	}
 
-	const devicesByCpuArchId = Map.groupBy(devices, (d) => {
+	const devicesByCpuArchId = Map.groupBy(devicesToUpdate, (d) => {
 		return d.is_of__device_type[0].is_of__cpu_architecture.__id;
 	});
 
@@ -274,7 +292,7 @@ async function setSupervisorReleaseResource(
 
 			const [supervisorRelease] = await getSupervisorReleaseResource(
 				api,
-				supervisorVersion,
+				supervisorVersion.raw,
 				cpuArchId,
 			);
 
