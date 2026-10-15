@@ -1,0 +1,14 @@
+{
+	"name": "open-balena-api test triage of untriaged lodash finding",
+	"description": "Triages the one vulnerability the vex fixture declares without an analysis of its own.",
+	"author": "open-balena-api test suite",
+	"condition": "vuln.id == \"CVE-2020-8203\" && component.name == \"lodash\"",
+	"operation_mode": "APPLY",
+	"priority": 0,
+	"analysis": {
+		"state": "NOT_AFFECTED",
+		"justification": "CODE_NOT_REACHABLE",
+		"details": "Triaged by policy: the vulnerable path is not reachable from this fleet.",
+		"suppress": false
+	}
+}
