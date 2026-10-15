@@ -33,7 +33,6 @@
 		"user": "admin"
 	},
 	"release2_51_0_rev1": {
-		"createAfterRelease": "releaseIntelNucFailed",
 		"notes": "release_tag and semver",
 		"application": "intel-nuc",
 		"composition": {},
@@ -44,7 +43,6 @@
 		"user": "admin"
 	},
 	"release2_51_0_rev2": {
-		"createAfterRelease": "release2_51_0_rev1",
 		"notes": "semver only",
 		"application": "intel-nuc",
 		"composition": {},
@@ -104,7 +102,6 @@
 		"user": "admin"
 	},
 	"releaseNucInvalidated2_52_1rev1SemverOnly": {
-		"createAfterRelease": "releaseNucFailed2_52_1SemverOnly",
 		"note": "remove this release once we allow skipping revisions",
 		"application": "intel-nuc",
 		"composition": {},
@@ -140,7 +137,6 @@
 		"user": "admin"
 	},
 	"unified2_88_5_rev1SemverOnlyRelease": {
-		"createAfterRelease": "unified2_88_5SemverOnlyRelease",
 		"application": "intel-nuc",
 		"composition": {},
 		"source": "cloud",
@@ -166,7 +162,6 @@
 		"user": "admin"
 	},
 	"nucDraft2_90_1rev1SemverOnly": {
-		"createAfterRelease": "nucDraft2_90_1SemverOnly",
 		"application": "intel-nuc",
 		"composition": {},
 		"source": "cloud",
@@ -185,7 +180,6 @@
 		"user": "admin"
 	},
 	"nuc2_90_2SemverOnlyFinalized": {
-		"createAfterRelease": "nuc2_90_2SemverOnlyDraft",
 		"application": "intel-nuc",
 		"composition": {},
 		"source": "cloud",
