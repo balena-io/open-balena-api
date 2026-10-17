@@ -51,6 +51,7 @@ import {
 	ThisShouldNeverHappenError,
 	translateError,
 } from './infra/error-handling/index.js';
+import { redactRequestBody } from './infra/error-handling/redact-request-body.js';
 import {
 	findUser,
 	getUser,
@@ -346,22 +347,43 @@ export async function setup(app: Application, options: SetupOptions) {
 	});
 
 	if (SENTRY_DSN != null) {
+		const piiDenyList = ['forwarded', '-ip', 'remote-', 'via', '-user'];
 		Sentry.init({
 			dsn: SENTRY_DSN,
 			release: options.version,
 			environment: NODE_ENV,
-			skipOpenTelemetrySetup: true,
-			integrations: [
+			// We own the OpenTelemetry setup (see index.js) and only link Sentry events to it
+			enableOpenTelemetrySetup: false,
+			dataCollection: {
+				userInfo: false,
+				cookies: false,
+				httpHeaders: {
+					request: { deny: piiDenyList },
+					response: { deny: piiDenyList },
+				},
+				httpBodies: ['incomingRequest'],
+				urlQueryParams: { deny: piiDenyList },
+				genAI: { inputs: false, outputs: false },
+				databaseQueryData: false,
+				queues: false,
+				graphQL: { document: false, variables: false },
+			},
+			beforeSend: redactRequestBody,
+			integrations: (defaultIntegrations) => [
+				// Dedupe drops an error that repeats the previous one, along with the tags/extras
+				// we attach to each occurrence, so we keep reporting every occurrence instead
+				...defaultIntegrations.filter(({ name }) => name !== 'Dedupe'),
 				Sentry.httpIntegration({
 					ignoreIncomingRequests(url) {
-						return /^\/(:ping|connectivity-check|csp-report|config\/vars)/.test(
+						return /^\/(?:ping|connectivity-check|csp-report|config\/vars)/.test(
 							url,
 						);
 					},
-					ignoreIncomingRequestBody(url) {
-						return /^\/device\/v2\/.*\/log-stream/.test(url);
+					ignoreRequestBody(url) {
+						return /^\/device\/v2\/.*\/(?:logs|log-stream)/.test(url);
 					},
 				}),
+				Sentry.openTelemetryIntegration(),
 			],
 		});
 	}
@@ -451,8 +473,6 @@ export async function setup(app: Application, options: SetupOptions) {
 	const routes = await import('./routes.js');
 	routes.setup(app, options);
 	await options.onInitRoutes?.(app);
-
-	Sentry.setupExpressErrorHandler(app);
 
 	// start consuming the API heartbeat state queue...
 	getDeviceOnlineStateManager().start();
