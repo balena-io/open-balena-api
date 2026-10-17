@@ -61,6 +61,7 @@ export interface DeviceLogsBackend {
 	publish(ctx: LogContext, logs: InternalDeviceLog[]): Promise<any>;
 	subscribe(ctx: LogContext, subscription: Subscription): void;
 	unsubscribe(ctx: LogContext, subscription: Subscription): void;
+	addAdditionalContext?(ctx: Writable<LogContext>): Promise<void>;
 }
 
 export enum StreamState {
