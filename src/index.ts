@@ -359,7 +359,9 @@ export async function setup(app: Application, options: SetupOptions) {
 						);
 					},
 					ignoreIncomingRequestBody(url) {
-						return /^\/device\/v2\/.*\/log-stream/.test(url);
+						return /^\/device\/v(?:2\/.*\/(?:state|log-stream)|3\/state)/.test(
+							url,
+						);
 					},
 				}),
 			],
