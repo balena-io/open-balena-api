@@ -410,6 +410,11 @@ Term: device
 
 Term: release
 
+Term: supervisor release
+
+Fact type: supervisor release has supervisor version
+	Necessity: each supervisor release has exactly one supervisor version
+
 Fact type: release has tag key
 	Term Form: release tag
 	Database Table Name: release tag
@@ -598,6 +603,9 @@ Fact type: device has overall progress
 	Necessity: each device has at most one overall progress
 Fact type: device has supervisor version
 	Necessity: each device has at most one supervisor version
+Fact type: device should be managed by supervisor release
+	Synonymous Form: supervisor release should manage device
+	Necessity: each device should be managed by at most one supervisor release
 Fact type: device has provisioning progress
 	Necessity: each device has at most one provisioning progress
 Fact type: device has provisioning state
