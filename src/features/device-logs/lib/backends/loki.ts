@@ -3,7 +3,6 @@ import { EventEmitter } from 'events';
 import { compressionAlgorithms } from '@grpc/grpc-js';
 
 import loki from 'loki-grpc-client';
-import type { types } from '@balena/pinejs';
 import { errors, sbvrUtils, permissions } from '@balena/pinejs';
 import {
 	LOKI_QUERY_HOST,
@@ -16,7 +15,6 @@ import {
 	LOKI_RETRIES_ENABLED,
 	LOKI_PUSH_TIMEOUT,
 	LOKI_HISTORY_TIMEOUT,
-	DEVICE_LOGS_LOKI_CONTEXT_CACHE_TIMEOUT,
 } from '../../../../lib/config.js';
 import type {
 	DeviceLogsBackend,
@@ -45,7 +43,6 @@ import { omitNanoTimestamp } from '../config.js';
 import { requestAsync } from '../../../../infra/request-promise/index.js';
 import WebSocket from 'ws';
 import querystring from 'node:querystring';
-import { multiCacheMemoizee } from '../../../../infra/cache/multi-level-memoizee.js';
 
 const { BadRequestError } = errors;
 
@@ -88,74 +85,27 @@ function backoff<T extends (...args: any[]) => any>(
 		throw Error(`Backoff exceeded`);
 	};
 }
-const getLokiContext = (() => {
-	const $getLokiContext = _.once(() =>
-		sbvrUtils.api.resin.prepare(
-			{
-				resource: 'application',
-				passthrough: { req: permissions.rootRead },
-				options: {
-					$select: ['id', 'organization'],
-					$filter: {
-						owns__device: {
-							$any: {
-								$alias: 'd',
-								$expr: { d: { id: { '@': 'id' } } },
-							},
+
+const $getLokiContext = _.once(() =>
+	sbvrUtils.api.resin.prepare(
+		{
+			resource: 'application',
+			passthrough: { req: permissions.rootRead },
+			options: {
+				$select: ['id', 'organization'],
+				$filter: {
+					owns__device: {
+						$any: {
+							$alias: 'd',
+							$expr: { d: { id: { '@': 'id' } } },
 						},
 					},
 				},
 			},
-			{ id: ['number'] },
-		),
-	);
-	return multiCacheMemoizee(
-		async (
-			deviceId: number,
-		): Promise<false | { id: string; orgId: string }> => {
-			const [app] = await $getLokiContext()({ id: deviceId });
-			if (app == null) {
-				return false;
-			}
-			return {
-				id: `${app.id}`,
-				orgId: `${app.organization.__id}`,
-			};
 		},
-		{
-			cacheKey: 'getLokiContext',
-			promise: true,
-			primitive: true,
-			maxAge: DEVICE_LOGS_LOKI_CONTEXT_CACHE_TIMEOUT,
-		},
-		{ useVersion: false },
-	);
-})();
-
-/**
- * This converts a standard log context to a loki context, if a loki context is the most common
- * then it would make sense to combine this fetch in the initial context fetch but currently that
- * is not the case anywhere
- */
-async function assertLokiLogContext(
-	ctx: LogContext & Partial<LokiLogContext>,
-): Promise<LokiLogContext> {
-	if ('appId' in ctx && 'orgId' in ctx) {
-		return ctx as types.RequiredField<typeof ctx, 'appId' | 'orgId'>;
-	}
-
-	const app = await getLokiContext(ctx.id);
-
-	if (app === false) {
-		throw new Error(`Device '${ctx.id}' app not found`);
-	}
-
-	// Mutate so that we don't have to repeatedly amend the same context and instead cache it
-	(ctx as Writable<typeof ctx>).appId = app.id;
-	(ctx as Writable<typeof ctx>).orgId = app.orgId;
-
-	return ctx as types.RequiredField<typeof ctx, 'appId' | 'orgId'>;
-}
+		{ id: ['number'] },
+	),
+);
 
 export class LokiBackend implements DeviceLogsBackend {
 	private subscriptions: EventEmitter;
@@ -204,11 +154,9 @@ export class LokiBackend implements DeviceLogsBackend {
 	 * @param count
 	 */
 	public async history(
-		$ctx: LogContext,
+		ctx: LokiLogContext,
 		{ count, start }: HistoryOpts,
 	): Promise<OutputDeviceLog[]> {
-		const ctx = await assertLokiLogContext($ctx);
-
 		const [{ statusCode }, body] = await requestAsync({
 			url: `http://${lokiQueryAddress}/loki/api/v1/query_range`,
 			headers: { 'X-Scope-OrgID': ctx.orgId },
@@ -252,7 +200,7 @@ export class LokiBackend implements DeviceLogsBackend {
 	}
 
 	public async publish(
-		ctx: LogContext,
+		ctx: LokiLogContext,
 		logs: Array<InternalDeviceLog & { version?: number }>,
 	): Promise<any> {
 		const logEntries = this.fromDeviceLogsToEntries(ctx, logs);
@@ -260,23 +208,19 @@ export class LokiBackend implements DeviceLogsBackend {
 		const countLogs = logs.length;
 		incrementPublishCallTotal();
 		incrementPublishLogMessagesTotal(countLogs);
-		const lokiCtx = await assertLokiLogContext(ctx);
-		const stream = this.fromLogEntriesToStream(lokiCtx, logEntries);
+		const stream = this.fromLogEntriesToStream(ctx, logEntries);
 		try {
-			await this.push(lokiCtx, stream);
+			await this.push(ctx, stream);
 			incrementPublishCallSuccessTotal();
 		} catch (err) {
 			incrementPublishCallFailedTotal();
 			incrementPublishLogMessagesDropped(countLogs);
 			if (err.code !== 429) {
 				// Don't capture 429 errors as they are expected during rate limiting
-				captureException(
-					err,
-					`Failed to publish logs for device ${lokiCtx.uuid}`,
-				);
+				captureException(err, `Failed to publish logs for device ${ctx.uuid}`);
 			}
 			throw new BadRequestError(
-				`Failed to publish logs for device ${lokiCtx.uuid}`,
+				`Failed to publish logs for device ${ctx.uuid}`,
 			);
 		}
 	}
@@ -379,8 +323,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		}
 	}
 
-	public async subscribe($ctx: LogContext, subscription: Subscription) {
-		const ctx = await assertLokiLogContext($ctx);
+	public subscribe(ctx: LokiLogContext, subscription: Subscription) {
 		const key = this.getKey(ctx);
 		this.createTailCall(ctx, key);
 
@@ -388,8 +331,7 @@ export class LokiBackend implements DeviceLogsBackend {
 		incrementSubscription();
 	}
 
-	public async unsubscribe($ctx: LogContext, subscription: Subscription) {
-		const ctx = await assertLokiLogContext($ctx);
+	public unsubscribe(ctx: LokiLogContext, subscription: Subscription) {
 		const key = this.getKey(ctx);
 		this.subscriptions.removeListener(key, subscription);
 		decrementSubscription();
@@ -451,5 +393,16 @@ export class LokiBackend implements DeviceLogsBackend {
 		stream.setLabels(labels);
 		stream.setEntriesList(logEntries);
 		return stream;
+	}
+
+	async addAdditionalContext(
+		ctx: Writable<LogContext & Partial<LokiLogContext>>,
+	): Promise<void> {
+		const [app] = await $getLokiContext()({ id: ctx.id });
+		if (app == null) {
+			throw new Error(`Device '${ctx.id}' app not found`);
+		}
+		ctx.appId = `${app.id}`;
+		ctx.orgId = `${app.organization.__id}`;
 	}
 }

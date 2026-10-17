@@ -5,6 +5,7 @@ import { LokiBackend } from '../src/features/device-logs/lib/backends/loki.js';
 import { getNanoTimestamp } from '../src/lib/utils.js';
 import type {
 	InternalDeviceLog,
+	LogContext,
 	LokiLogContext,
 	OutputDeviceLog,
 } from '../src/features/device-logs/lib/struct.js';
@@ -31,7 +32,7 @@ const convertToOutputLog = (log: InternalDeviceLog): OutputDeviceLog => {
 	};
 };
 
-const createContext = (extra = {}): LokiLogContext => {
+const createContext = (extra = {}): LogContext & LokiLogContext => {
 	return {
 		id: 1,
 		uuid: '1',
@@ -96,7 +97,7 @@ export default () => {
 			const log = createLog();
 			const p = pTimeout(
 				new Promise((resolve) => {
-					void loki.subscribe(ctx, resolve);
+					loki.subscribe(ctx, resolve);
 				}),
 				{ milliseconds: 5000, message: 'Subscription did not receive log' },
 			);
@@ -111,7 +112,7 @@ export default () => {
 			const p = pTimeout(
 				new Promise<void>((resolve) => {
 					let countLogs = 0;
-					void loki.subscribe(ctx, () => {
+					loki.subscribe(ctx, () => {
 						countLogs += 1;
 						if (countLogs === 5) {
 							resolve();
