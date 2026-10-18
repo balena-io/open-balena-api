@@ -41,7 +41,6 @@ import {
 	incrementPublishCallTotal,
 } from './metrics.js';
 import { setTimeout } from 'timers/promises';
-import { omitNanoTimestamp } from '../config.js';
 import { requestAsync } from '../../../../infra/request-promise/index.js';
 import WebSocket from 'ws';
 import querystring from 'node:querystring';
@@ -427,14 +426,14 @@ export class LokiBackend implements DeviceLogsBackend {
 	) {
 		const structuredMetadata = this.getStructuredMetadata(ctx);
 		return logs.map((log) => {
+			// Strip nanoTimestamp from the log as it cannot be serialized, and avoid a replacer lets us stay on the stringify fast path
+			const { nanoTimestamp, ...jsonableLog } = log;
 			const timestamp = new loki.Timestamp();
-			timestamp.setSeconds(Math.floor(Number(log.nanoTimestamp / 1000000000n)));
-			timestamp.setNanos(Number(log.nanoTimestamp % 1000000000n));
+			timestamp.setSeconds(Math.floor(Number(nanoTimestamp / 1000000000n)));
+			timestamp.setNanos(Number(nanoTimestamp % 1000000000n));
 			// store log line as JSON
-			const logJson = JSON.stringify(
-				{ ...log, version: VERSION },
-				omitNanoTimestamp,
-			);
+			jsonableLog.version = VERSION;
+			const logJson = JSON.stringify(jsonableLog);
 			// create entry with labels, line and timestamp
 			return new loki.EntryAdapter()
 				.setLine(logJson)
