@@ -1,4 +1,17 @@
 - commits:
+    - subject: "Logs: avoid using a JSON.stringify replacer so we stay on the fast path"
+      hash: 7e78594d7526a41d7f07261a5255d9a4524865fb
+      body: |
+        https://balena.fibery.io/Work/Project/3083
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 50.0.17
+  title: ""
+  date: 2026-10-18T23:26:50.174Z
+- commits:
     - subject: Update dependency @opentelemetry/instrumentation-express to v0.71.1
       hash: 0e922df2281489f524ac9cc395606c35d6e1b84e
       body: |
@@ -14416,6 +14429,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -14448,6 +14462,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -16318,6 +16333,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -16365,6 +16381,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -17323,6 +17340,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -17360,6 +17378,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -18396,6 +18415,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -18424,6 +18444,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -18921,6 +18942,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -19891,6 +19913,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -20036,6 +20059,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -21173,6 +21197,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -21195,6 +21220,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -21699,6 +21725,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -22730,6 +22757,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -22752,6 +22780,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -23256,6 +23285,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -28257,6 +28287,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -28289,6 +28320,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -30473,6 +30505,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -30520,6 +30553,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -31742,6 +31776,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -31779,6 +31814,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -33179,6 +33215,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -33207,6 +33244,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -33836,6 +33874,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -35070,6 +35109,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -35215,6 +35255,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -36616,6 +36657,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -36638,6 +36680,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -37274,6 +37317,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -38569,6 +38613,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -38591,6 +38636,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -39227,6 +39273,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -42535,6 +42582,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -42557,6 +42605,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -43193,6 +43242,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -44491,6 +44541,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -44519,6 +44570,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -45147,6 +45199,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -46379,6 +46432,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/sbvr-types
                                                                 from 3.4.18 to 3.5.0
@@ -46524,6 +46578,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
