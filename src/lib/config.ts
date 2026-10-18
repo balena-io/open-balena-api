@@ -2,6 +2,7 @@ import type { HostPort } from '@balena/env-parsing';
 import { createSecretKey } from 'node:crypto';
 import {
 	boolVar,
+	enumVar,
 	HOURS,
 	intVar,
 	MINUTES,
@@ -327,6 +328,13 @@ const LOKI_HOST = optionalVar('LOKI_HOST');
 export const LOKI_INGESTER_HOST = optionalVar('LOKI_INGESTER_HOST', LOKI_HOST);
 export const LOKI_QUERY_HOST = optionalVar('LOKI_QUERY_HOST', LOKI_HOST);
 export const LOKI_INGESTER_GRPC_PORT = intVar('LOKI_INGESTER_GRPC_PORT', 9095);
+export const LOKI_INGESTER_HTTP_PORT = intVar('LOKI_INGESTER_HTTP_PORT', 3100);
+// How to push logs to Loki: over gRPC, or to Loki's HTTP push API with snappy compressed protobuf, which costs less CPU
+export const LOKI_PUSH_PROTOCOL = enumVar(
+	'LOKI_PUSH_PROTOCOL',
+	['grpc', 'http'],
+	'grpc',
+);
 export const LOKI_QUERY_HTTP_PORT = intVar('LOKI_QUERY_HTTP_PORT', 3100);
 export const LOKI_HISTORY_GZIP = boolVar('LOKI_HISTORY_GZIP', true);
 export const LOKI_HISTORY_TIMEOUT = intVar('LOKI_HISTORY_TIMEOUT', 55000);

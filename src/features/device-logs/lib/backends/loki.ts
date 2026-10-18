@@ -1,23 +1,12 @@
 import _ from 'lodash';
 import { EventEmitter } from 'events';
-import {
-	compressionAlgorithms,
-	credentials,
-	makeGenericClientConstructor,
-	Metadata,
-	status,
-} from '@grpc/grpc-js';
-import type { CallOptions, Client, ServiceError } from '@grpc/grpc-js';
 import { errors, sbvrUtils, permissions } from '@balena/pinejs';
 import {
 	LOKI_QUERY_HOST,
 	LOKI_QUERY_HTTP_PORT,
-	LOKI_INGESTER_HOST,
-	LOKI_INGESTER_GRPC_PORT,
 	LOKI_HISTORY_GZIP,
-	LOKI_GRPC_SEND_GZIP,
-	LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL,
 	LOKI_RETRIES_ENABLED,
+	LOKI_PUSH_PROTOCOL,
 	LOKI_PUSH_TIMEOUT,
 	LOKI_HISTORY_TIMEOUT,
 } from '../../../../lib/config.ts';
@@ -52,7 +41,8 @@ import type {
 	LokiLabelPair,
 	LokiStream,
 } from './loki-push-request.ts';
-import { encodePushRequest } from './loki-push-request.ts';
+import type { LokiPusher } from './loki-pushers.ts';
+import { createGrpcPusher, createHttpPusher } from './loki-pushers.ts';
 
 const { BadRequestError } = errors;
 
@@ -61,42 +51,7 @@ interface LokiDeviceLog extends Omit<InternalDeviceLog, 'nanoTimestamp'> {
 	createdAt?: number;
 }
 
-// invert status object for quick lookup of status identifier using status code
-const statusKeys = _.invert(status);
-
-const notSupported = () => {
-	throw new Error(
-		'Only the client side of the Loki push service is implemented',
-	);
-};
-// The Loki push service, with requests encoded by `encodePushRequest` straight from plain objects rather than by
-// building and serializing google-protobuf messages
-const PusherClient = makeGenericClientConstructor(
-	{
-		push: {
-			path: '/logproto.Pusher/Push',
-			requestStream: false,
-			responseStream: false,
-			requestSerialize: encodePushRequest,
-			requestDeserialize: notSupported,
-			responseSerialize: notSupported,
-			// PushResponse has no fields
-			responseDeserialize: () => ({}),
-		},
-	},
-	'Pusher',
-);
-interface LokiPusherClient extends Client {
-	push(
-		request: LokiStream[],
-		metadata: Metadata,
-		options: Partial<CallOptions>,
-		callback: (err: ServiceError | null) => void,
-	): void;
-}
-
 const lokiQueryAddress = `${LOKI_QUERY_HOST}:${LOKI_QUERY_HTTP_PORT}`;
-const lokiIngesterAddress = `${LOKI_INGESTER_HOST}:${LOKI_INGESTER_GRPC_PORT}`;
 
 const MIN_BACKOFF = 100;
 const MAX_BACKOFF = 10 * 1000;
@@ -150,31 +105,20 @@ const $getLokiContext = _.once(() =>
 
 export class LokiBackend implements DeviceLogsBackend {
 	private subscriptions: EventEmitter;
-	private pusher: LokiPusherClient;
+	private pusher: LokiPusher;
 	private tailCalls: Map<string, WebSocket>;
 
-	constructor() {
+	constructor({
+		pusher = LOKI_PUSH_PROTOCOL === 'http'
+			? createHttpPusher()
+			: createGrpcPusher(),
+	}: { pusher?: LokiPusher } = {}) {
 		this.subscriptions = new EventEmitter();
-		const compressionAlgorithm = LOKI_GRPC_SEND_GZIP
-			? compressionAlgorithms.gzip
-			: compressionAlgorithms.identity;
-		this.pusher = new PusherClient(
-			lokiIngesterAddress,
-			credentials.createInsecure(),
-			{
-				'grpc.default_compression_algorithm': compressionAlgorithm,
-				'grpc.default_compression_level': LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL,
-			},
-		) as unknown as LokiPusherClient;
+		this.pusher = pusher;
 		this.tailCalls = new Map();
-		this.push = backoff(this.push.bind(this), (err: ServiceError): boolean => {
-			incrementLokiPushErrorTotal(
-				err.code ? statusKeys[err.code] : 'UNDEFINED',
-			);
-			return (
-				LOKI_RETRIES_ENABLED &&
-				[status.UNAVAILABLE, status.RESOURCE_EXHAUSTED].includes(err.code ?? -1)
-			);
+		this.push = backoff(this.push.bind(this), (err): boolean => {
+			incrementLokiPushErrorTotal(this.pusher.errorLabel(err));
+			return LOKI_RETRIES_ENABLED && this.pusher.isRetryable(err);
 		});
 	}
 
@@ -263,24 +207,9 @@ export class LokiBackend implements DeviceLogsBackend {
 
 	private async push(ctx: LokiLogContext, stream: LokiStream): Promise<void> {
 		incrementLokiPushTotal();
-		const metadata = new Metadata();
-		metadata.add('x-scope-orgid', ctx.orgId);
 		const startAt = Date.now();
 		try {
-			await new Promise<void>((resolve, reject) => {
-				this.pusher.push(
-					[stream],
-					metadata,
-					{ deadline: startAt + LOKI_PUSH_TIMEOUT },
-					(err) => {
-						if (err) {
-							reject(err);
-						} else {
-							resolve();
-						}
-					},
-				);
-			});
+			await this.pusher.push(ctx.orgId, [stream], startAt + LOKI_PUSH_TIMEOUT);
 		} finally {
 			updateLokiPushDurationHistogram(Date.now() - startAt);
 		}
