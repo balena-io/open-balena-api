@@ -2,6 +2,7 @@ import _ from 'lodash';
 import pTimeout from 'p-timeout';
 import { expect } from 'chai';
 import { LokiBackend } from '../src/features/device-logs/lib/backends/loki.ts';
+import { encodePushRequest } from '../src/features/device-logs/lib/backends/loki-push-request.ts';
 import { getNanoTimestamp } from '../src/lib/utils.ts';
 import type {
 	InternalDeviceLog,
@@ -133,6 +134,76 @@ export default () => {
 			];
 			await loki.publish(ctx, logs);
 			await p;
+		});
+	});
+
+	describe('loki push request encoding', () => {
+		// The expected bytes were produced by serializing the same requests with google-protobuf (loki-grpc-client)
+		const deviceMetadata = [{ name: 'device_id', value: '1' }];
+
+		it('should encode a stream with one entry', () => {
+			expect(
+				encodePushRequest([
+					{
+						labels: '{fleet_id="1"}',
+						entries: [
+							{
+								seconds: 1700000000,
+								nanos: 123456789,
+								line: '{"message":"a log line"}',
+								structuredMetadata: deviceMetadata,
+							},
+						],
+					},
+				]).toString('hex'),
+			).to.equal(
+				'0a490a0e7b666c6565745f69643d2231227d12370a0b0880e2cfaa0610959aef3a12187b226d657373616765223a2261206c6f67206c696e65227d1a0e0a096465766963655f6964120131',
+			);
+		});
+
+		it('should encode multiple streams, omitting empty fields and using multi-byte lengths', () => {
+			expect(
+				encodePushRequest([
+					{
+						labels: '{fleet_id="1"}',
+						entries: [
+							{
+								seconds: 1700000000,
+								nanos: 0,
+								line: '',
+								structuredMetadata: deviceMetadata,
+							},
+							{
+								seconds: 1700000001,
+								nanos: 1,
+								line: 'ünïcödé 🎉',
+								structuredMetadata: [
+									{ name: 'device_id', value: '2' },
+									{ name: 'service', value: 'main' },
+								],
+							},
+						],
+					},
+					{
+						labels: '{fleet_id="2"}',
+						entries: [
+							{
+								seconds: 1,
+								nanos: 999999999,
+								line: 'x'.repeat(200),
+								structuredMetadata: [],
+							},
+						],
+					},
+				]).toString('hex'),
+			).to.equal(
+				'0a690a0e7b666c6565745f69643d2231227d12180a060880e2cfaa061a0e0a096465766963655f6964120131123d0a080881e2cfaa0610011210c3bc6ec3af63c3b664c3a920f09f8e891a0e0a096465766963655f69641201321a0f0a077365727669636512046d61696e0ae8010a0e7b666c6565745f69643d2232227d12d5010a08080110ff93ebdc0312c801' +
+					'78'.repeat(200),
+			);
+		});
+
+		it('should encode an empty request', () => {
+			expect(encodePushRequest([])).to.have.lengthOf(0);
 		});
 	});
 };
