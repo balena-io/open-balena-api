@@ -75,6 +75,3 @@ const getLokiBackend = _.once(async (): Promise<DeviceLogsBackend> => {
 	const { LokiBackend } = await import('./backends/loki.js');
 	return new LokiBackend();
 });
-
-export const omitNanoTimestamp = (key: string, value: any) =>
-	key === 'nanoTimestamp' ? undefined : value;
