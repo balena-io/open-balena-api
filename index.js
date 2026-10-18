@@ -1,3 +1,7 @@
+// Enable automatic schema compilation for zod
+// This must run before any schemas are defined
+import 'zod/compile';
+
 const start = async () => {
 	// Set the desired es version for downstream modules that support it
 	(await import('@balena/es-version')).set('es2022');
