@@ -3,6 +3,9 @@ import { expect } from 'chai';
 import * as fixtures from './test-lib/fixtures.js';
 import { supertest } from './test-lib/supertest.js';
 import { DAYS } from '@balena/env-parsing';
+import { gzipSync } from 'zlib';
+import { waitFor } from './test-lib/common.js';
+import type { OutputDeviceLog } from '../src/features/device-logs/lib/struct.js';
 
 const createLog = (extra = {}) => {
 	return {
@@ -254,5 +257,73 @@ export default () => {
 				expect(res2.body).to.have.lengthOf(8);
 			});
 		}
+
+		// Streaming logs
+
+		describe('log-stream', () => {
+			const streamLogs = (
+				body: string | Buffer,
+				headers: Record<string, string> = {},
+			) => {
+				let req = supertest(ctx.device2.apiKey)
+					.post(`/device/v2/${ctx.device2.uuid}/log-stream`)
+					.set('Content-Type', 'application/x-ndjson');
+				for (const [key, value] of Object.entries(headers)) {
+					req = req.set(key, value);
+				}
+				return req.send(body);
+			};
+			// Streamed logs are published after the response, so poll until they show up
+			const waitForLogs = async (count: number) => {
+				let logs: OutputDeviceLog[];
+				await waitFor({
+					checkFn: async () => {
+						({ body: logs } = await supertest(ctx.user)
+							.get(`/device/v2/${ctx.device2.uuid}/logs`)
+							.expect(200));
+						return logs.length >= count;
+					},
+				});
+				return logs!;
+			};
+
+			before(async () => {
+				const res = await supertest(ctx.user)
+					.post(`/api-key/device/${ctx.device2.id}/device-key`)
+					.expect(200);
+				expect(res.body).to.be.a('string');
+				ctx.device2.apiKey = res.body;
+			});
+
+			it('should store streamed logs with CRLF line endings, empty lines and a final row without a newline', async () => {
+				const messages = ['streamed 1', 'streamed �n�c�d� ??', 'streamed 3'];
+				const [log1, log2, log3] = messages.map((message) =>
+					JSON.stringify(createLog({ message })),
+				);
+				await streamLogs(`${log1}\r\n\n${log2}\n${log3}`).expect(201);
+				const logs = await waitForLogs(3);
+				expect(logs.map((l) => l.message)).to.deep.equal(messages);
+			});
+
+			it('should store gzipped streamed logs', async () => {
+				const body = gzipSync(
+					['gzipped 1', 'gzipped 2']
+						.map((message) => `${JSON.stringify(createLog({ message }))}\n`)
+						.join(''),
+				);
+				await streamLogs(body, { 'Content-Encoding': 'gzip' }).expect(201);
+				const logs = await waitForLogs(5);
+				expect(logs.slice(-2).map((l) => l.message)).to.deep.equal([
+					'gzipped 1',
+					'gzipped 2',
+				]);
+			});
+
+			it('should reject streams with a row that is not valid JSON', async () => {
+				await streamLogs(
+					`${JSON.stringify(createLog())}\n{"broken": \n`,
+				).expect(400);
+			});
+		});
 	});
 };
