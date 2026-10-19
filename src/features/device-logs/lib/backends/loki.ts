@@ -9,7 +9,6 @@ import {
 	LOKI_QUERY_HTTP_PORT,
 	LOKI_INGESTER_HOST,
 	LOKI_INGESTER_GRPC_PORT,
-	LOKI_HISTORY_GZIP,
 	LOKI_GRPC_SEND_GZIP,
 	LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL,
 	LOKI_RETRIES_ENABLED,
@@ -167,8 +166,6 @@ export class LokiBackend implements DeviceLogsBackend {
 				headers: {
 					'X-Scope-OrgID': ctx.orgId,
 					Accept: 'application/json',
-					// Unlike fetch's default, only ask for compression when it's enabled.
-					'Accept-Encoding': LOKI_HISTORY_GZIP ? 'gzip, deflate' : 'identity',
 				},
 				signal: AbortSignal.timeout(LOKI_HISTORY_TIMEOUT),
 			},
