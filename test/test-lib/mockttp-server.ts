@@ -1,4 +1,5 @@
 import * as mockttp from 'mockttp';
+import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { VPN_CONNECT_PROXY_PORT } from '../../src/lib/config.js';
 
@@ -13,6 +14,7 @@ const caCertPath = fileURLToPath(
 );
 
 let mockServer: mockttp.Mockttp | undefined;
+let restoreGlobalProxy: (() => void) | undefined;
 
 export function getMockServer(): mockttp.Mockttp {
 	if (mockServer == null) {
@@ -45,9 +47,15 @@ export async function start() {
 		'loki',
 		'minio-server',
 	].join(',');
+	// `request` reads the proxy env vars on every call, but the global `fetch()`
+	// and http(s) agents only read them once at startup (and only when
+	// NODE_USE_ENV_PROXY=1), so re-apply them now that they have been set.
+	restoreGlobalProxy = http.setGlobalProxyFromEnv();
 }
 
 export async function stop() {
+	restoreGlobalProxy?.();
+	restoreGlobalProxy = undefined;
 	delete process.env.HTTP_PROXY;
 	delete process.env.HTTPS_PROXY;
 	delete process.env.NO_PROXY;

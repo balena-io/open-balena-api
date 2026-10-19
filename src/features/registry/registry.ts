@@ -13,7 +13,6 @@ import {
 	multiCacheMemoizee,
 	reqPermissionNormalizer,
 } from '../../infra/cache/index.js';
-import { requestAsync } from '../../infra/request-promise/index.js';
 import { randomUUID } from 'node:crypto';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
@@ -26,6 +25,7 @@ import {
 import { registryAuth as CERT } from './certs.js';
 import {
 	AUTH_RESINOS_REGISTRY_CODE,
+	EXTERNAL_HTTP_TIMEOUT_MS,
 	GET_SUBJECT_CACHE_TIMEOUT,
 	REGISTRY_TOKEN_AUDIENCE,
 	REGISTRY2_HOST,
@@ -907,21 +907,36 @@ export function generateDeleteToken(subject: string, repo: string) {
 	]);
 }
 
+// Make a Docker Distribution API call to the registry service. Callers must
+// consume the response body so that the underlying connection is released.
+const registryFetch = (
+	path: string,
+	registryToken: string,
+	method: string,
+	headers: Record<string, string> = {},
+) =>
+	fetch(`https://${REGISTRY2_HOST}/v2/${path}`, {
+		method,
+		headers: { Authorization: `Bearer ${registryToken}`, ...headers },
+		signal: AbortSignal.timeout(EXTERNAL_HTTP_TIMEOUT_MS),
+	});
+
 // Make an API call to the registry service to mark images for deletion on next garbage collection
 export async function deleteImage(
 	registryToken: string,
 	repo: string,
 	digest: string,
 ) {
-	const [{ statusCode, statusMessage }, body] = await requestAsync({
-		url: `https://${REGISTRY2_HOST}/v2/${repo}/manifests/${digest}`,
-		headers: { Authorization: `Bearer ${registryToken}` },
-		method: 'DELETE',
-	});
+	const res = await registryFetch(
+		`${repo}/manifests/${digest}`,
+		registryToken,
+		'DELETE',
+	);
+	const body = await res.text();
 
-	if (statusCode !== 202 && statusCode !== 404) {
+	if (res.status !== 202 && res.status !== 404) {
 		throw new Error(
-			`Failed to mark ${repo}/${digest} for deletion: [${statusCode}] ${statusMessage} ${body}`,
+			`Failed to mark ${repo}/${digest} for deletion: [${res.status}] ${res.statusText} ${body}`,
 		);
 	}
 }
@@ -940,20 +955,26 @@ export async function listRepoTags(
 	registryToken: string,
 	repo: string,
 ): Promise<string[] | undefined> {
-	const [{ statusCode, statusMessage }, body] = await requestAsync({
-		url: `https://${REGISTRY2_HOST}/v2/${repo}/tags/list`,
-		headers: { Authorization: `Bearer ${registryToken}` },
-		method: 'GET',
-		json: true,
+	const res = await registryFetch(`${repo}/tags/list`, registryToken, 'GET', {
+		Accept: 'application/json',
 	});
 
-	if (statusCode === 404) {
-		return undefined;
-	}
-	if (statusCode !== 200) {
+	const text = await res.text();
+
+	if (res.status !== 200) {
+		if (res.status === 404) {
+			return undefined;
+		}
 		throw new Error(
-			`Failed to list tags of ${repo}: [${statusCode}] ${statusMessage} ${JSON.stringify(body)}`,
+			`Failed to list tags of ${repo}: [${res.status}] ${res.statusText} ${text}`,
 		);
+	}
+	let body;
+	try {
+		body = JSON.parse(text);
+	} catch {
+		// Treat an invalid JSON body like a repository without tags.
+		return undefined;
 	}
 	if (body?.name !== repo || !Array.isArray(body.tags)) {
 		return undefined;
@@ -968,25 +989,25 @@ export async function getManifestDigest(
 	repo: string,
 	tag: string,
 ): Promise<string | undefined> {
-	const [{ statusCode, statusMessage, headers }, body] = await requestAsync({
-		url: `https://${REGISTRY2_HOST}/v2/${repo}/manifests/${tag}`,
-		headers: {
-			Authorization: `Bearer ${registryToken}`,
-			Accept: MANIFEST_ACCEPT_HEADER,
-		},
-		method: 'HEAD',
-	});
+	const res = await registryFetch(
+		`${repo}/manifests/${tag}`,
+		registryToken,
+		'HEAD',
+		{ Accept: MANIFEST_ACCEPT_HEADER },
+	);
+	// A HEAD response has no body, but cancel it anyway to release the connection.
+	await res.body?.cancel();
 
-	if (statusCode === 404) {
+	if (res.status === 404) {
 		return undefined;
 	}
-	if (statusCode !== 200) {
+	if (res.status !== 200) {
 		throw new Error(
-			`Failed to resolve ${repo}:${tag} to a digest: [${statusCode}] ${statusMessage} ${body}`,
+			`Failed to resolve ${repo}:${tag} to a digest: [${res.status}] ${res.statusText}`,
 		);
 	}
-	const digest = headers['docker-content-digest'];
-	if (typeof digest !== 'string' || digest === '') {
+	const digest = res.headers.get('docker-content-digest');
+	if (digest == null || digest === '') {
 		throw new Error(
 			`Registry did not return a Docker-Content-Digest for ${repo}:${tag}`,
 		);
