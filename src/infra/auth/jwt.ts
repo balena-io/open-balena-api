@@ -13,7 +13,7 @@ import { randomBytesAsync } from '../../lib/utils.js';
 import { getUser } from './auth.js';
 import {
 	JSON_WEB_TOKEN_EXPIRY_MINUTES,
-	JSON_WEB_TOKEN_SECRET,
+	JSON_WEB_TOKEN_SECRET_KEY,
 	JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH,
 } from '../../lib/config.js';
 import type { RequestExcludingInput } from '../validation/index.js';
@@ -235,5 +235,5 @@ export const createJwt = (
 		delete payload.exp;
 	}
 	delete payload.iat;
-	return jsonwebtoken.sign(payload, JSON_WEB_TOKEN_SECRET, jwtOptions);
+	return jsonwebtoken.sign(payload, JSON_WEB_TOKEN_SECRET_KEY, jwtOptions);
 };
