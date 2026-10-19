@@ -1,7 +1,9 @@
 import { expect } from 'chai';
+import { generateKeyPairSync } from 'node:crypto';
 import jsonwebtoken from 'jsonwebtoken';
 import {
 	JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH,
+	JSON_WEB_TOKEN_SECRET_KEY,
 	SUPERUSER_EMAIL,
 	SUPERUSER_PASSWORD,
 } from '../src/lib/config.js';
@@ -608,6 +610,53 @@ export default () => {
 			expect(
 				await getRolePermissions(COMMA_ROLE_NAME.split(',')),
 			).to.deep.equal([]);
+		});
+	});
+
+	describe('jwt signature verification', function () {
+		let claims: jsonwebtoken.JwtPayload;
+
+		before(async function () {
+			const fx = await fixtures.load();
+			// Reuse the claims of a valid session token, so that the tokens below only differ in how they are signed
+			claims = jsonwebtoken.decode(
+				fx.users.admin.token,
+			) as jsonwebtoken.JwtPayload;
+			delete claims.iat;
+			delete claims.exp;
+		});
+
+		it('should accept a token signed with the secret', async function () {
+			const token = jsonwebtoken.sign(claims, JSON_WEB_TOKEN_SECRET_KEY, {
+				expiresIn: 60,
+			});
+			await supertest(token).get('/user/v1/whoami').expect(200);
+		});
+
+		it('should reject a token signed with a different secret', async function () {
+			const token = jsonwebtoken.sign(claims, `not-JSON_WEB_TOKEN_SECRET`, {
+				expiresIn: 60,
+			});
+			await supertest(token).get('/user/v1/whoami').expect(401);
+		});
+
+		it('should reject an unsigned token', async function () {
+			const token = jsonwebtoken.sign(claims, null, {
+				algorithm: 'none',
+				expiresIn: 60,
+			});
+			await supertest(token).get('/user/v1/whoami').expect(401);
+		});
+
+		it('should reject a token signed with an asymmetric algorithm', async function () {
+			const { privateKey } = generateKeyPairSync('rsa', {
+				modulusLength: 2048,
+			});
+			const token = jsonwebtoken.sign(claims, privateKey, {
+				algorithm: 'RS256',
+				expiresIn: 60,
+			});
+			await supertest(token).get('/user/v1/whoami').expect(401);
 		});
 	});
 };

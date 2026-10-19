@@ -1,4 +1,5 @@
 import type { HostPort } from '@balena/env-parsing';
+import { createSecretKey } from 'node:crypto';
 import {
 	boolVar,
 	HOURS,
@@ -198,7 +199,12 @@ export const IMAGE_STORAGE_DEBUG_REQUEST_ERRORS = boolVar(
 export const JSON_WEB_TOKEN_EXPIRY_MINUTES = intVar(
 	'JSON_WEB_TOKEN_EXPIRY_MINUTES',
 );
+// TODO-Major: Remove this export in favor of JSON_WEB_TOKEN_SECRET_KEY
 export const JSON_WEB_TOKEN_SECRET = requiredVar('JSON_WEB_TOKEN_SECRET');
+// Convert the `JSON_WEB_TOKEN_SECRET` string into a secret KeyObject once to avoid performing that work on every use
+export const JSON_WEB_TOKEN_SECRET_KEY = createSecretKey(
+	Buffer.from(JSON_WEB_TOKEN_SECRET),
+);
 export const JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH = boolVar(
 	'JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH',
 	false,

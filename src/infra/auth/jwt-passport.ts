@@ -5,7 +5,7 @@ import { TypedError } from 'typed-error';
 
 import { permissions, sbvrUtils } from '@balena/pinejs';
 
-import { JSON_WEB_TOKEN_SECRET } from '../../lib/config.js';
+import { JSON_WEB_TOKEN_SECRET_KEY } from '../../lib/config.js';
 
 import { captureException } from '../error-handling/index.js';
 import type {
@@ -122,7 +122,7 @@ const processVerifiedJwtPayload = async (
 export const verifyAndResolveJwt = async (token: string): Promise<Creds> => {
 	const decoded = jsonwebtoken.verify(
 		token,
-		JSON_WEB_TOKEN_SECRET,
+		JSON_WEB_TOKEN_SECRET_KEY,
 	) as UnparsedCreds;
 	return await processVerifiedJwtPayload(decoded);
 };
@@ -130,7 +130,8 @@ export const verifyAndResolveJwt = async (token: string): Promise<Creds> => {
 export const createStrategy = () =>
 	new JwtStrategy(
 		{
-			secretOrKey: JSON_WEB_TOKEN_SECRET,
+			// passport-jwt passes this straight through to jsonwebtoken, which accepts a KeyObject, but its types don't
+			secretOrKey: JSON_WEB_TOKEN_SECRET_KEY as unknown as Buffer,
 			jwtFromRequest,
 		},
 		async (jwtUser: UnparsedCreds, done) => {
