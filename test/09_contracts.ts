@@ -1,9 +1,12 @@
+import { mock } from 'node:test';
+import { PassThrough } from 'node:stream';
 import {
 	fetchContractsLocally,
 	getContracts,
 	removeContractDirectory,
 } from '../src/features/contracts/contracts-directory.ts';
 import { expect } from 'chai';
+import { getMockServer } from './test-lib/mockttp-server.ts';
 import { supertest } from './test-lib/supertest.ts';
 import * as versions from './test-lib/versions.ts';
 import {
@@ -148,6 +151,50 @@ export default () => {
 						['raspberry-pi', 'raspberrypi'],
 						'Should include the slug in the list of aliases',
 					);
+				});
+
+				it('should cancel the response body when fetching contracts fails', async () => {
+					// A body that never ends, so it can only be released by cancelling it
+					const body = new PassThrough();
+					body.write('Not Found');
+					await getMockServer()
+						.forGet(
+							`/repos/${contractRepository.owner}/${contractRepository.name}/tarball/`,
+						)
+						.forHostname('api.github.com')
+						.once()
+						.thenStream(404, body);
+
+					// Keep hold of the contracts responses, to check their bodies were released
+					const responses: Response[] = [];
+					const realFetch = globalThis.fetch;
+					const fetchMock = mock.method(
+						globalThis,
+						'fetch',
+						async (...args: Parameters<typeof fetch>) => {
+							const response = await realFetch(...args);
+							if (response.url.startsWith('https://api.github.com/')) {
+								responses.push(response);
+							}
+							return response;
+						},
+					);
+					let err;
+					try {
+						await fetchContractsLocally([contractRepository]);
+					} catch (e) {
+						err = e;
+					} finally {
+						fetchMock.mock.restore();
+						body.destroy();
+					}
+					expect(err).to.be.instanceOf(Error);
+					expect(err.message).to.equal(
+						'Invalid response while fetching contracts: 404 Not Found',
+					);
+					expect(responses).to.have.lengthOf(1);
+					expect(responses[0].status).to.equal(404);
+					expect(responses[0].bodyUsed).to.equal(true);
 				});
 
 				it('should update data as the contracts change', async () => {

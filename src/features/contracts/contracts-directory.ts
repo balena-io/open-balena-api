@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import request from 'request';
 import * as tar from 'tar';
 import glob from 'fast-glob';
 import fs from 'fs';
@@ -125,7 +124,7 @@ const prepareContractDirectory = async (repo: RepositoryInfo) => {
 	return archiveDir;
 };
 
-const getRequestOptions = (repo: RepositoryInfo) => {
+const getRequestInit = (repo: RepositoryInfo): RequestInit => {
 	const auth =
 		repo.token == null
 			? ''
@@ -136,7 +135,7 @@ const getRequestOptions = (repo: RepositoryInfo) => {
 				: // direct token consumption (eg: Personal Access Token authentication)
 					`Bearer ${repo.token}`;
 	return {
-		followRedirect: true,
+		redirect: 'follow',
 		headers: {
 			'User-Agent': 'balena',
 			Authorization: auth,
@@ -148,28 +147,25 @@ const getRequestOptions = (repo: RepositoryInfo) => {
 export const fetchContractsLocally = async (repos: RepositoryInfo[]) => {
 	await Promise.all(
 		repos.map(async (repo) => {
-			const untar = tar.extract({
-				C: await prepareContractDirectory(repo),
-				strip: 1,
-			});
+			const archiveDir = await prepareContractDirectory(repo);
 
-			// We cast to ReadableStream explicitly because `request.get is of type `request.Request` and it controls whether it is a readable or writable stream internally so it is not typings-compatible with ReadableStream, even though it it functionally equivalent.
-			const get = request
-				.get(getArchiveLinkForRepo(repo), getRequestOptions(repo))
-				.on('response', function (this: request.Request, response) {
-					if (response.statusCode !== 200) {
-						// On any non-200 responses just error and abort the request
-						this.emit(
-							'error',
-							new Error(
-								`Invalid response while fetching contracts: ${response.statusMessage}`,
-							),
-						);
-						this.abort();
-					}
-				}) as unknown as NodeJS.ReadableStream;
+			const response = await fetch(
+				getArchiveLinkForRepo(repo),
+				getRequestInit(repo),
+			);
+			if (response.status !== 200 || response.body == null) {
+				// On any non-200 responses just error. We won't consume the body, so
+				// cancel it to release the underlying connection.
+				await response.body?.cancel();
+				throw new Error(
+					`Invalid response while fetching contracts: ${response.status} ${response.statusText}`,
+				);
+			}
 
-			await stream.promises.pipeline(get, untar);
+			await stream.promises.pipeline(
+				response.body,
+				tar.extract({ C: archiveDir, strip: 1 }),
+			);
 		}),
 	);
 };
