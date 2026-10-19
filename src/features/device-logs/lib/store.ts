@@ -77,7 +77,7 @@ const getWriteContext = (() => {
 			}
 		},
 		{
-			cacheKey: 'getDeviceLogsWriteContext',
+			cacheKey: 'getDeviceLogsWriteContext2',
 			promise: true,
 			primitive: true,
 			maxAge: DEVICE_LOGS_WRITE_AUTH_CACHE_TIMEOUT,

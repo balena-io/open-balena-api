@@ -61,7 +61,8 @@ export const read = (
 		},
 		async (req, res) => {
 			try {
-				const ctx = await getReadContext(req);
+				const backend = await getReadBackend();
+				const ctx = await getReadContext(req, backend);
 				const isStreamingRead = req.query.stream === '1';
 				const count = getCount(
 					req.query.count,
@@ -76,10 +77,10 @@ export const read = (
 						: LOGS_DEFAULT_HISTORY_LOOKBACK,
 				);
 				if (isStreamingRead) {
-					await handleStreamingRead(ctx, req, res, { count, start });
+					await handleStreamingRead(ctx, req, res, { count, start }, backend);
 					onLogReadStreamInitialized?.(req);
 				} else {
-					const logs = await getHistory(await getReadBackend(), ctx, {
+					const logs = await getHistory(backend, ctx, {
 						count,
 						start,
 					});
@@ -101,8 +102,8 @@ async function handleStreamingRead(
 	req: RequestExcludingInput,
 	res: Response,
 	{ count, start }: HistoryOpts,
+	backend: DeviceLogsBackend,
 ): Promise<void> {
-	const backend = await getReadBackend();
 	let state: StreamState = StreamState.Buffering;
 	let dropped = 0;
 	const buffer: OutputDeviceLog[] = [];
@@ -284,7 +285,10 @@ function getHistory(
 	return backend.history(ctx, opts);
 }
 
-async function getReadContext(req: RequestExcludingInput): Promise<LogContext> {
+async function getReadContext(
+	req: RequestExcludingInput,
+	backend: DeviceLogsBackend,
+): Promise<LogContext> {
 	const { uuid } = req.params;
 	const device = await api.resin.get({
 		resource: 'device',
@@ -298,8 +302,10 @@ async function getReadContext(req: RequestExcludingInput): Promise<LogContext> {
 	if (!device) {
 		throw new NotFoundError('No device with uuid ' + uuid);
 	}
-	return addRetentionLimit({
+	const ctx = addRetentionLimit({
 		id: device.id,
 		uuid,
 	});
+	await backend?.addAdditionalContext?.(ctx);
+	return ctx;
 }
