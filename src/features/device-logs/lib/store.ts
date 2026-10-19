@@ -64,10 +64,14 @@ const getWriteContext = (() => {
 				if (deviceId == null) {
 					return false;
 				}
-				return addRetentionLimit({
+				const ctx = addRetentionLimit({
 					id: deviceId,
 					uuid,
 				});
+				for (const backend of [primaryBackend, secondaryBackend]) {
+					await backend?.addAdditionalContext?.(ctx);
+				}
+				return ctx;
 			} catch {
 				return false;
 			}
