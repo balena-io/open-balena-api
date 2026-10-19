@@ -33,7 +33,6 @@ import {
 	incrementPublishCallTotal,
 } from './metrics.ts';
 import { setTimeout } from 'timers/promises';
-import { requestAsync } from '../../../../infra/request-promise/index.ts';
 import WebSocket from 'ws';
 import querystring from 'node:querystring';
 import type {
@@ -137,30 +136,56 @@ export class LokiBackend implements DeviceLogsBackend {
 		ctx: LokiLogContext,
 		{ count, start }: HistoryOpts,
 	): Promise<OutputDeviceLog[]> {
-		const [{ statusCode }, body] = await requestAsync({
-			url: `http://${lokiQueryAddress}/loki/api/v1/query_range`,
-			headers: { 'X-Scope-OrgID': ctx.orgId },
-			qs: {
-				query: this.getDeviceQuery(ctx),
-				limit: Number.isFinite(count) ? count : 1000,
-				start: `${BigInt(start) * 1000000n}`,
+		const res = await fetch(
+			`http://${lokiQueryAddress}/loki/api/v1/query_range?${querystring.stringify(
+				{
+					query: this.getDeviceQuery(ctx),
+					limit: Number.isFinite(count) ? count : 1000,
+					start: `${BigInt(start) * 1000000n}`,
+				},
+			)}`,
+			{
+				headers: {
+					'X-Scope-OrgID': ctx.orgId,
+					Accept: 'application/json',
+					// Unlike fetch's default, only ask for compression when it's enabled.
+					'Accept-Encoding': LOKI_HISTORY_GZIP ? 'gzip, deflate' : 'identity',
+				},
+				signal: AbortSignal.timeout(LOKI_HISTORY_TIMEOUT),
 			},
-			timeout: LOKI_HISTORY_TIMEOUT,
-			json: true,
-			gzip: LOKI_HISTORY_GZIP,
-		});
+		);
 
-		if (statusCode !== 200) {
+		if (res.status !== 200) {
+			// Keep the status code in the error even if reading the body fails
+			const errorBody = await res
+				.text()
+				.catch(
+					(err: unknown) =>
+						`<failed to read body: ${err instanceof Error ? err.message : err}>`,
+				);
 			throw new Error(
-				`Failed to fetch loki history, statusCode=${statusCode}, body=${body}`,
+				`Failed to fetch loki history, statusCode=${res.status}, body=${errorBody}`,
 			);
 		}
 
-		return _(
-			body.data.result as Array<{
-				values: Array<[timestamp: string, logLine: string]>;
-			}>,
-		)
+		let body: {
+			data: {
+				result: Array<{
+					values: Array<[timestamp: string, logLine: string]>;
+				}>;
+			};
+		};
+		try {
+			body = await res.json();
+		} catch (err) {
+			// Include the cause in the message as `captureException` only logs the message/stack
+			throw new Error(
+				`Failed to read loki history response: ${err instanceof Error ? err.message : err}`,
+				{ cause: err },
+			);
+		}
+
+		return _(body.data.result)
 			.flatMap(({ values }) => values)
 			.map(([timestamp, logLine]): [bigint, OutputDeviceLog] => {
 				const log: LokiDeviceLog = JSON.parse(logLine);
