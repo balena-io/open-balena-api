@@ -4,7 +4,6 @@ import { errors, sbvrUtils, permissions } from '@balena/pinejs';
 import {
 	LOKI_QUERY_HOST,
 	LOKI_QUERY_HTTP_PORT,
-	LOKI_HISTORY_GZIP,
 	LOKI_RETRIES_ENABLED,
 	LOKI_PUSH_PROTOCOL,
 	LOKI_PUSH_TIMEOUT,
@@ -148,8 +147,6 @@ export class LokiBackend implements DeviceLogsBackend {
 				headers: {
 					'X-Scope-OrgID': ctx.orgId,
 					Accept: 'application/json',
-					// Unlike fetch's default, only ask for compression when it's enabled.
-					'Accept-Encoding': LOKI_HISTORY_GZIP ? 'gzip, deflate' : 'identity',
 				},
 				signal: AbortSignal.timeout(LOKI_HISTORY_TIMEOUT),
 			},
