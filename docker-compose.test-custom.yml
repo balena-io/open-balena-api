@@ -114,6 +114,12 @@ services:
       LOKI_QUERY_HTTP_PORT: 3100
       LOKI_INGESTER_GRPC_PORT: 9095
       LOKI_WRITE_PCT: 100
+      LOKI_READ_PCT: 100
+      LOGS_REDIS_READ_PCT: 0
+      LOGS_REDIS_WRITE_PCT: 100
+      LOGS_LOKI_ENABLED: 'true'
+      LOGS_REDIS_ENABLED: 'true'
+      LOGS_PRIMARY_BACKEND: 'loki'
       REGISTRY2_HOST: registry2.balenadev.io
       REGISTRY_STORAGE_BUCKET: open-balena-registry
       REGISTRY_STORAGE_ROOT_PATH: devenv/docker/registry/v2
