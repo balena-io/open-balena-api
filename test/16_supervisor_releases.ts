@@ -9,8 +9,146 @@ import { expectResourceToMatch } from './test-lib/api-helpers.js';
 
 export default () => {
 	versions.test((version, pineTest) => {
+		if (version === 'v6') {
+			describe('Legacy Supervisor release lookups', () => {
+				let fx: fixtures.Fixtures;
+				let device: fakeDevice.Device;
+				let otherDevice: fakeDevice.Device;
+
+				const lookupUrl = (uuid: string) =>
+					`/v6/device(uuid='${uuid}')?$select=supervisor_version&$expand=should_be_managed_by__supervisor_release($top=1;$select=supervisor_version)`;
+
+				before(async () => {
+					fx = await fixtures.load('16-supervisor-app');
+					device = await fakeDevice.provisionDevice(
+						fx.users.admin,
+						fx.applications.app1.id,
+						undefined,
+						'5.0.1',
+					);
+					otherDevice = await fakeDevice.provisionDevice(
+						fx.users.admin,
+						fx.applications.app1.id,
+					);
+				});
+
+				beforeEach(async () => {
+					await supertest(fx.users.admin)
+						.patch(`/v7/device(${device.id})`)
+						.send({ should_be_managed_by__release: null })
+						.expect(200);
+				});
+
+				after(async () => {
+					await fixtures.clean({ devices: [device, otherDevice] });
+					await fixtures.clean(fx);
+				});
+
+				for (const identity of ['admin', 'device'] as const) {
+					it(`returns distinct reported and desired versions to the ${identity}`, async () => {
+						await supertest(fx.users.admin)
+							.patch(`/v7/device(${device.id})`)
+							.send({
+								should_be_managed_by__release: fx.releases['6.0.1'].id,
+							})
+							.expect(200);
+
+						const { body } = await supertest(
+							identity === 'admin' ? fx.users.admin : device.token,
+						)
+							.get(lookupUrl(device.uuid))
+							.expect(200);
+
+						expect(body.d).to.deep.equal([
+							{
+								supervisor_version: '5.0.1',
+								should_be_managed_by__supervisor_release: [
+									{ supervisor_version: '6.0.1' },
+								],
+							},
+						]);
+					});
+				}
+
+				it('returns an empty expansion when there is no desired release', async () => {
+					const { body } = await supertest(device.token)
+						.get(lookupUrl(device.uuid))
+						.expect(200);
+					expect(body.d).to.deep.equal([
+						{
+							supervisor_version: '5.0.1',
+							should_be_managed_by__supervisor_release: [],
+						},
+					]);
+				});
+
+				it('preserves the revision of the desired release', async () => {
+					await supertest(fx.users.admin)
+						.patch(`/v7/device(${device.id})`)
+						.send({
+							should_be_managed_by__release: fx.releases['8.0.4+rev1'].id,
+						})
+						.expect(200);
+					const { body } = await supertest(device.token)
+						.get(lookupUrl(device.uuid))
+						.expect(200);
+					expect(
+						body.d[0].should_be_managed_by__supervisor_release,
+					).to.deep.equal([{ supervisor_version: '8.0.4+rev1' }]);
+				});
+
+				it('does not expose another device through the legacy expansion', async () => {
+					const { body } = await supertest(otherDevice.token)
+						.get(lookupUrl(device.uuid))
+						.expect(200);
+					expect(body.d).to.deep.equal([]);
+				});
+
+				it('requires authentication for the legacy lookup', async () => {
+					await supertest().get(lookupUrl(device.uuid)).expect(401);
+				});
+
+				for (const method of ['post', 'put', 'patch'] as const) {
+					it(`rejects ${method.toUpperCase()} to the legacy device relationship`, async () => {
+						const { text } = await supertest(fx.users.admin)
+							[method](
+								method === 'post' ? '/v6/device' : `/v6/device(${device.id})`,
+							)
+							.send({
+								should_be_managed_by__supervisor_release:
+									fx.releases['6.0.1'].id,
+							})
+							.expect(400);
+						expect(text).to.include(
+							'The legacy supervisor release relationship is read-only.',
+						);
+					});
+				}
+
+				for (const method of ['post', 'put', 'patch', 'delete'] as const) {
+					it(`rejects ${method.toUpperCase()} to the legacy release resource`, async () => {
+						const { text } = await supertest(fx.users.admin)
+							[method](
+								method === 'post'
+									? '/v6/supervisor_release'
+									: `/v6/supervisor_release(${fx.releases['6.0.1'].id})`,
+							)
+							.send(
+								method === 'delete'
+									? undefined
+									: { supervisor_version: '99.0.0' },
+							)
+							.expect(400);
+						expect(text).to.include(
+							'The legacy supervisor release resource is read-only.',
+						);
+					});
+				}
+			});
+			return;
+		}
 		if (!versions.gt(version, 'v6')) {
-			// Should be managed by supervisor release was added after v6
+			// Native Supervisor targeting requires the v7 release relationship.
 			return;
 		}
 		describe('Devices running supervisor releases', () => {

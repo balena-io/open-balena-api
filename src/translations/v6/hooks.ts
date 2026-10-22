@@ -69,11 +69,26 @@ const translateDeviceIsPinnedOnRelease = translatePropertyTo(
 
 addReadOnlyHook(['PUT', 'POST', 'PATCH'], 'device', {
 	async POSTPARSE({ request }) {
+		if (
+			Object.hasOwn(request.values, 'should_be_managed_by__supervisor_release')
+		) {
+			throw new errors.BadRequestError(
+				'The legacy supervisor release relationship is read-only. Use should_be_managed_by__release in v7 to change the Supervisor target.',
+			);
+		}
 		// Dependent device properties were removed so we block trying to set them
 		if (request.values.is_managed_by__device != null) {
 			throw new errors.BadRequestError();
 		}
 		await translateDeviceIsPinnedOnRelease({ request });
+	},
+});
+
+addReadOnlyHook(['PUT', 'POST', 'PATCH', 'DELETE'], 'supervisor_release', {
+	POSTPARSE() {
+		throw new errors.BadRequestError(
+			'The legacy supervisor release resource is read-only. Use the v7 release resource instead.',
+		);
 	},
 });
 
