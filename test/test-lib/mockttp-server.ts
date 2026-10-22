@@ -46,6 +46,7 @@ export async function start() {
 		'redis',
 		'loki',
 		'minio-server',
+		'dtrack',
 	].join(',');
 	// `request` reads the proxy env vars on every call, but the global `fetch()`
 	// and http(s) agents only read them once at startup (and only when
