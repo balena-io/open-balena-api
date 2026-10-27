@@ -9,7 +9,6 @@ import {
 	LOKI_QUERY_HTTP_PORT,
 	LOKI_INGESTER_HOST,
 	LOKI_INGESTER_GRPC_PORT,
-	LOKI_HISTORY_GZIP,
 	LOKI_GRPC_SEND_GZIP,
 	LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL,
 	LOKI_RETRIES_ENABLED,
@@ -39,7 +38,6 @@ import {
 	incrementPublishCallTotal,
 } from './metrics.js';
 import { setTimeout } from 'timers/promises';
-import { requestAsync } from '../../../../infra/request-promise/index.js';
 import WebSocket from 'ws';
 import querystring from 'node:querystring';
 
@@ -156,30 +154,38 @@ export class LokiBackend implements DeviceLogsBackend {
 		ctx: LokiLogContext,
 		{ count, start }: HistoryOpts,
 	): Promise<OutputDeviceLog[]> {
-		const [{ statusCode }, body] = await requestAsync({
-			url: `http://${lokiQueryAddress}/loki/api/v1/query_range`,
-			headers: { 'X-Scope-OrgID': ctx.orgId },
-			qs: {
-				query: this.getDeviceQuery(ctx),
-				limit: Number.isFinite(count) ? count : 1000,
-				start: `${BigInt(start) * 1000000n}`,
+		const res = await fetch(
+			`http://${lokiQueryAddress}/loki/api/v1/query_range?${querystring.stringify(
+				{
+					query: this.getDeviceQuery(ctx),
+					limit: Number.isFinite(count) ? count : 1000,
+					start: `${BigInt(start) * 1000000n}`,
+				},
+			)}`,
+			{
+				headers: {
+					'X-Scope-OrgID': ctx.orgId,
+					Accept: 'application/json',
+				},
+				signal: AbortSignal.timeout(LOKI_HISTORY_TIMEOUT),
 			},
-			timeout: LOKI_HISTORY_TIMEOUT,
-			json: true,
-			gzip: LOKI_HISTORY_GZIP,
-		});
+		);
 
-		if (statusCode !== 200) {
+		if (res.status !== 200) {
 			throw new Error(
-				`Failed to fetch loki history, statusCode=${statusCode}, body=${body}`,
+				`Failed to fetch loki history, statusCode=${res.status}, body=${await res.text()}`,
 			);
 		}
 
-		return _(
-			body.data.result as Array<{
-				values: Array<[timestamp: string, logLine: string]>;
-			}>,
-		)
+		const body = (await res.json()) as {
+			data: {
+				result: Array<{
+					values: Array<[timestamp: string, logLine: string]>;
+				}>;
+			};
+		};
+
+		return _(body.data.result)
 			.flatMap(({ values }) => values)
 			.map(([timestamp, logLine]): [bigint, OutputDeviceLog] => {
 				const log: LokiDeviceLog = JSON.parse(logLine);
