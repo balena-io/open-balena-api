@@ -5,7 +5,7 @@ import onFinished from 'on-finished';
 import type { permissions } from '@balena/pinejs';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import * as supervisor from './supervisor.js';
-import { createGunzip } from 'zlib';
+import { createGunzip, constants } from 'zlib';
 import ndjson from 'ndjson';
 import {
 	captureException,
@@ -234,7 +234,18 @@ function handleStreamingWrite(
 
 	// Support optional GZip encoding
 	if (req.get('Content-Encoding') === 'gzip') {
-		req.pipe(createGunzip()).on('error', close).pipe(parser);
+		req
+			.pipe(
+				createGunzip({
+					// Set the chunk size such that each stream will get its own buffer rather than pinning part of a
+					// shared slab. Since these are normally long running streams this helps to avoid excessive memory
+					// usage whilst not impacting performance from lots of small allocations.
+					// eslint-disable-next-line no-bitwise
+					chunkSize: Math.max(constants.Z_DEFAULT_CHUNK, Buffer.poolSize >>> 1),
+				}),
+			)
+			.on('error', close)
+			.pipe(parser);
 	} else {
 		req.pipe(parser);
 	}
