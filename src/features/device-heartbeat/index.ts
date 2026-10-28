@@ -4,10 +4,10 @@ import RedisSMQ from 'rsmq';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
-import { captureException } from '../../infra/error-handling/index.js';
-import { isApiKeyWithRole } from '../api-keys/lib.js';
+import { captureException } from '../../infra/error-handling/index.ts';
+import { isApiKeyWithRole } from '../api-keys/lib.ts';
 
-import { events as deviceStateEvents } from '../device-state/index.js';
+import { events as deviceStateEvents } from '../device-state/index.ts';
 
 import {
 	API_HEARTBEAT_STATE_ENABLED,
@@ -15,8 +15,8 @@ import {
 	API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT,
 	DEFAULT_SUPERVISOR_POLL_INTERVAL,
 	REDIS,
-} from '../../lib/config.js';
-import { redis, redisRO } from '../../infra/redis/index.js';
+} from '../../lib/config.ts';
+import { redis, redisRO } from '../../infra/redis/index.ts';
 import { setTimeout } from 'timers/promises';
 
 const { api } = sbvrUtils;
@@ -139,12 +139,14 @@ export const getPollInterval = async (
 export const POLL_JITTER_FACTOR = 1.5;
 
 // these align to the text enums coming from the SBVR definition of available values...
-export enum DeviceOnlineStates {
-	Unknown = 'unknown',
-	Timeout = 'timeout',
-	Offline = 'offline',
-	Online = 'online',
-}
+export const DeviceOnlineStates = {
+	Unknown: 'unknown',
+	Timeout: 'timeout',
+	Offline: 'offline',
+	Online: 'online',
+} as const;
+export type DeviceOnlineStates =
+	(typeof DeviceOnlineStates)[keyof typeof DeviceOnlineStates];
 
 interface MetricEventArgs {
 	startAt: number;

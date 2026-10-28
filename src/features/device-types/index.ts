@@ -1,6 +1,6 @@
 import type { Application } from 'express';
-import { middleware } from '../../infra/auth/index.js';
-import { downloadImageSize, getDeviceType, getDeviceTypes } from './routes.js';
+import { middleware } from '../../infra/auth/index.ts';
+import { downloadImageSize, getDeviceType, getDeviceTypes } from './routes.ts';
 
 export const setup = (app: Application) => {
 	app.get(

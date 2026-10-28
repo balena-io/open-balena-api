@@ -3,24 +3,24 @@ import _ from 'lodash';
 import sinon from 'sinon';
 import randomstring from 'randomstring';
 import { expect } from 'chai';
-import * as fakeDevice from './test-lib/fake-device.js';
-import type { UserObjectParam } from './test-lib/supertest.js';
-import { supertest } from './test-lib/supertest.js';
-import * as versions from './test-lib/versions.js';
-import * as config from '../src/lib/config.js';
+import * as fakeDevice from './test-lib/fake-device.ts';
+import type { UserObjectParam } from './test-lib/supertest.ts';
+import { supertest } from './test-lib/supertest.ts';
+import * as versions from './test-lib/versions.ts';
+import * as config from '../src/lib/config.ts';
 import {
 	DeviceOnlineStates,
 	getInstance as getDeviceOnlineStateManager,
 	getPollInterval,
 	POLL_JITTER_FACTOR,
-} from '../src/features/device-heartbeat/index.js';
-import { assertExists, itExpectsError, waitFor } from './test-lib/common.js';
-import * as fixtures from './test-lib/fixtures.js';
+} from '../src/features/device-heartbeat/index.ts';
+import { assertExists, itExpectsError, waitFor } from './test-lib/common.ts';
+import * as fixtures from './test-lib/fixtures.ts';
 import {
 	expectResourceToMatch,
 	thatIsDateStringAfter,
-} from './test-lib/api-helpers.js';
-import { redis, redisRO } from '../src/infra/redis/index.js';
+} from './test-lib/api-helpers.ts';
+import { redis, redisRO } from '../src/infra/redis/index.ts';
 import { setTimeout } from 'timers/promises';
 import { MINUTES, SECONDS } from '@balena/env-parsing';
 import type { PineTest } from 'pinejs-client-supertest';
@@ -29,7 +29,7 @@ import type {
 	Application,
 	ImageInstall,
 	Service,
-} from '../src/balena-model.js';
+} from '../src/balena-model.ts';
 
 const { api } = sbvrUtils;
 

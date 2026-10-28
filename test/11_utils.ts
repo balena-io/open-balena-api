@@ -1,4 +1,4 @@
-import { withRetries } from '../src/lib/utils.js';
+import { withRetries } from '../src/lib/utils.ts';
 import { expect } from 'chai';
 
 export default () => {

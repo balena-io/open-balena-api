@@ -1,6 +1,6 @@
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import { setDefaultFixtures } from './fixtures.js';
-import type { DeviceType } from '../../src/balena-model.js';
+import { setDefaultFixtures } from './fixtures.ts';
+import type { DeviceType } from '../../src/balena-model.ts';
 
 const { api } = sbvrUtils;
 

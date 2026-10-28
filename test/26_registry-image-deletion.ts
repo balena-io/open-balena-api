@@ -1,19 +1,19 @@
-import * as fixtures from './test-lib/fixtures.js';
-import * as registryMock from './test-lib/registry-mock.js';
-import { waitFor } from './test-lib/common.js';
-import * as versions from './test-lib/versions.js';
-import * as config from '../src/lib/config.js';
+import * as fixtures from './test-lib/fixtures.ts';
+import * as registryMock from './test-lib/registry-mock.ts';
+import { waitFor } from './test-lib/common.ts';
+import * as versions from './test-lib/versions.ts';
+import * as config from '../src/lib/config.ts';
 import {
 	s3Client,
 	TEST_MOCK_ONLY as registryTestMockOnly,
-} from '../src/features/registry/registry.js';
+} from '../src/features/registry/registry.ts';
 import { strict as assert } from 'node:assert';
 import { randomUUID } from 'node:crypto';
 import { permissions, sbvrUtils } from '@balena/pinejs';
 import {
 	expectNewSettledTasks,
 	resetLatestTaskIds,
-} from './test-lib/api-helpers.js';
+} from './test-lib/api-helpers.ts';
 import { expect } from 'chai';
 import sinon from 'sinon';
 

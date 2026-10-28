@@ -4,18 +4,18 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../../infra/error-handling/index.js';
+} from '../../infra/error-handling/index.ts';
 import {
 	multiCacheMemoizee,
 	reqPermissionNormalizer,
-} from '../../infra/cache/index.js';
-import { VPN_AUTH_CACHE_TIMEOUT } from '../../lib/config.js';
-import { checkDeviceExistsIsFrozen } from '../device-state/middleware.js';
+} from '../../infra/cache/index.ts';
+import { VPN_AUTH_CACHE_TIMEOUT } from '../../lib/config.ts';
+import { checkDeviceExistsIsFrozen } from '../device-state/middleware.ts';
 import {
 	createUnvalidatedRequestHandler,
 	createValidatedRequestHandler,
 	z,
-} from '../../infra/validation/index.js';
+} from '../../infra/validation/index.ts';
 
 const { api } = sbvrUtils;
 

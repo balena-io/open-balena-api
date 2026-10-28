@@ -1,7 +1,7 @@
 import type { Application, RequestHandler } from 'express';
 
-import { middleware } from '../../infra/auth/index.js';
-import { downloadImageConfig } from './download.js';
+import { middleware } from '../../infra/auth/index.ts';
+import { downloadImageConfig } from './download.ts';
 
 export const setup = (app: Application) => {
 	app.get(

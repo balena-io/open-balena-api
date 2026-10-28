@@ -6,7 +6,7 @@ import {
 	errors as pinejsErrors,
 } from '@balena/pinejs';
 import type { FilterObj } from 'pinejs-client-core';
-import type { CpuArchitecture } from '../../../balena-model.js';
+import type { CpuArchitecture } from '../../../balena-model.ts';
 
 const { BadRequestError } = pinejsErrors;
 

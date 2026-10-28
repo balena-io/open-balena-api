@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import { Redis } from 'ioredis';
 import * as NodeRedis from 'redis';
-import type { REDIS } from '../../lib/config.js';
+import type { REDIS } from '../../lib/config.ts';
 import { MINUTES } from '@balena/env-parsing';
-import { captureException } from '../error-handling/index.js';
-import { getNodeRedisOptions, getRedisOptions } from './config.js';
+import { captureException } from '../error-handling/index.ts';
+import { getNodeRedisOptions, getRedisOptions } from './config.ts';
 
 export const createIsolatedNodeRedis = async (
 	...args: Parameters<typeof getNodeRedisOptions>

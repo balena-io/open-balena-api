@@ -20,10 +20,10 @@
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import schedule from 'node-schedule';
 import Redlock from 'redlock';
-import type { ScheduledJobRun } from '../../balena-model.js';
-import { captureException } from '../error-handling/index.js';
-import { redis, redisRO } from '../redis/index.js';
-import { DISABLED_SCHEDULED_JOBS } from '../../lib/config.js';
+import type { ScheduledJobRun } from '../../balena-model.ts';
+import { captureException } from '../error-handling/index.ts';
+import { redis, redisRO } from '../redis/index.ts';
+import { DISABLED_SCHEDULED_JOBS } from '../../lib/config.ts';
 
 export type { Job } from 'node-schedule';
 

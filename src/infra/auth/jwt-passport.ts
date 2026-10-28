@@ -5,19 +5,19 @@ import { TypedError } from 'typed-error';
 
 import { permissions, sbvrUtils } from '@balena/pinejs';
 
-import { JSON_WEB_TOKEN_SECRET_KEY } from '../../lib/config.js';
+import { JSON_WEB_TOKEN_SECRET_KEY } from '../../lib/config.ts';
 
-import { captureException } from '../error-handling/index.js';
+import { captureException } from '../error-handling/index.ts';
 import type {
 	ScopedAccessToken,
 	ScopedRolesToken,
 	ScopedToken,
 	TokenUserPayload,
-} from './jwt.js';
-import type { User } from '../../balena-model.js';
+} from './jwt.ts';
+import type { User } from '../../balena-model.ts';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
-import { getGuestActorId, getRolePermissions } from './permissions.js';
-import { createUnvalidatedRequestHandler } from '../validation/index.js';
+import { getGuestActorId, getRolePermissions } from './permissions.ts';
+import { createUnvalidatedRequestHandler } from '../validation/index.ts';
 
 export type { SignOptions } from 'jsonwebtoken';
 

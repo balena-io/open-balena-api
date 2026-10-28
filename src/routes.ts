@@ -1,19 +1,19 @@
 import type { Application } from 'express';
-import type { SetupOptions } from './index.js';
+import type { SetupOptions } from './index.ts';
 
-import * as hostOSAccess from './features/host-os-access/index.js';
-import * as apiKeys from './features/api-keys/index.js';
-import * as deviceConfig from './features/device-config/index.js';
-import * as varsSchema from './features/vars-schema/index.js';
-import * as deviceTypes from './features/device-types/index.js';
-import * as osConfig from './features/os-config/index.js';
-import * as registry from './features/registry/index.js';
-import * as auth from './features/auth/index.js';
-import * as deviceLogs from './features/device-logs/index.js';
-import * as deviceState from './features/device-state/index.js';
-import * as deviceProvisioning from './features/device-provisioning/index.js';
-import * as deviceProxy from './features/device-proxy/index.js';
-import * as vpn from './features/vpn/index.js';
+import * as hostOSAccess from './features/host-os-access/index.ts';
+import * as apiKeys from './features/api-keys/index.ts';
+import * as deviceConfig from './features/device-config/index.ts';
+import * as varsSchema from './features/vars-schema/index.ts';
+import * as deviceTypes from './features/device-types/index.ts';
+import * as osConfig from './features/os-config/index.ts';
+import * as registry from './features/registry/index.ts';
+import * as auth from './features/auth/index.ts';
+import * as deviceLogs from './features/device-logs/index.ts';
+import * as deviceState from './features/device-state/index.ts';
+import * as deviceProvisioning from './features/device-provisioning/index.ts';
+import * as deviceProxy from './features/device-proxy/index.ts';
+import * as vpn from './features/vpn/index.ts';
 
 export const setup = (
 	app: Application,

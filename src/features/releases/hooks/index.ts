@@ -1,1 +1,1 @@
-import './restrict-release-deletion.js';
+import './restrict-release-deletion.ts';

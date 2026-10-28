@@ -2,16 +2,16 @@ import type { Application, Request } from 'express';
 import type { StrictEventEmitter } from 'strict-event-emitter-types';
 
 import { EventEmitter } from 'events';
-import { middleware } from '../../infra/auth/index.js';
+import { middleware } from '../../infra/auth/index.ts';
 
-import { resolveOrDenyDevicesWithStatus } from './middleware.js';
-import { stateV2 } from './routes/state-get-v2.js';
-import { stateV3 } from './routes/state-get-v3.js';
-import { statePatchV2 } from './routes/state-patch-v2.js';
-import { resolveDeviceUuids, statePatchV3 } from './routes/state-patch-v3.js';
-import { fleetStateV3 } from './routes/fleet-state-get-v3.js';
-import type { Device } from '../../balena-model.js';
-import { tagsPatchV3 } from './routes/tags-patch-v3.js';
+import { resolveOrDenyDevicesWithStatus } from './middleware.ts';
+import { stateV2 } from './routes/state-get-v2.ts';
+import { stateV3 } from './routes/state-get-v3.ts';
+import { statePatchV2 } from './routes/state-patch-v2.ts';
+import { resolveDeviceUuids, statePatchV3 } from './routes/state-patch-v3.ts';
+import { fleetStateV3 } from './routes/fleet-state-get-v3.ts';
+import type { Device } from '../../balena-model.ts';
+import { tagsPatchV3 } from './routes/tags-patch-v3.ts';
 
 export {
 	getStateEventAdditionalFields,
@@ -22,13 +22,13 @@ export {
 	addDefaultConfigVariableFn,
 	setDefaultConfigVariables,
 	serviceInstallFromImage,
-} from './state-get-utils.js';
+} from './state-get-utils.ts';
 export {
 	metricsPatchFields,
 	v2ValidPatchFields,
 	v3ValidPatchFields,
 	truncateConstrainedFieldsFactory,
-} from './state-patch-utils.js';
+} from './state-patch-utils.ts';
 
 const gracefulGet = resolveOrDenyDevicesWithStatus(304);
 

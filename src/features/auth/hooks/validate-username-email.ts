@@ -1,7 +1,7 @@
 import { sbvrUtils, hooks, errors } from '@balena/pinejs';
-import { findUser } from '../../../infra/auth/auth.js';
-import { normalizeHandle } from '../handles.js';
-import { USERNAME_BLACKLIST } from '../../../lib/config.js';
+import { findUser } from '../../../infra/auth/auth.ts';
+import { normalizeHandle } from '../handles.ts';
+import { USERNAME_BLACKLIST } from '../../../lib/config.ts';
 
 const { ConflictError } = errors;
 

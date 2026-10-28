@@ -1,8 +1,8 @@
 import cacheManager from 'cache-manager';
 import redisStore from 'cache-manager-ioredis';
-import { version } from '../../lib/config.js';
-import type { Defined } from './index.js';
-import { getRedisOptions } from '../redis/config.js';
+import { version } from '../../lib/config.ts';
+import type { Defined } from './index.ts';
+import { getRedisOptions } from '../redis/config.ts';
 
 const usedCacheKeys = new Set<string>();
 

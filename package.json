@@ -64,8 +64,6 @@
     "@opentelemetry/sdk-node": "0.223.0",
     "@sentry/node": "^10.43.0",
     "@sentry/opentelemetry": "^10.43.0",
-    "@swc-node/register": "^1.11.1",
-    "@swc/core": "^1.15.18",
     "@types/basic-auth": "^1.1.8",
     "@types/cache-manager": "^4.0.6",
     "@types/cache-manager-ioredis": "^2.0.8",
@@ -181,8 +179,7 @@
     "timeout": 20000,
     "delay": true,
     "exit": true,
-    "_": "index.js",
-    "import": "@swc-node/register/esm-register"
+    "_": "index.js"
   },
   "versionist": {
     "publishedAt": "2026-10-27T23:13:03.125Z"

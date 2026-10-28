@@ -1,14 +1,14 @@
 import _ from 'lodash';
 import pTimeout from 'p-timeout';
 import { expect } from 'chai';
-import { LokiBackend } from '../src/features/device-logs/lib/backends/loki.js';
-import { getNanoTimestamp } from '../src/lib/utils.js';
+import { LokiBackend } from '../src/features/device-logs/lib/backends/loki.ts';
+import { getNanoTimestamp } from '../src/lib/utils.ts';
 import type {
 	InternalDeviceLog,
 	LogContext,
 	LokiLogContext,
 	OutputDeviceLog,
-} from '../src/features/device-logs/lib/struct.js';
+} from '../src/features/device-logs/lib/struct.ts';
 import { setTimeout } from 'timers/promises';
 
 const createLog = (

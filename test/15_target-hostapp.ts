@@ -1,15 +1,15 @@
 import * as semver from 'balena-semver';
 import _ from 'lodash';
-import * as fixtures from './test-lib/fixtures.js';
-import * as fakeDevice from './test-lib/fake-device.js';
+import * as fixtures from './test-lib/fixtures.ts';
+import * as fakeDevice from './test-lib/fake-device.ts';
 import { expect } from 'chai';
 
-import type { UserObjectParam } from './test-lib/supertest.js';
-import { supertest } from './test-lib/supertest.js';
-import * as versions from './test-lib/versions.js';
-import type { Application, Device } from '../src/balena-model.js';
-import { expectResourceToMatch } from './test-lib/api-helpers.js';
-import { assertExists, expectToEventually } from './test-lib/common.js';
+import type { UserObjectParam } from './test-lib/supertest.ts';
+import { supertest } from './test-lib/supertest.ts';
+import * as versions from './test-lib/versions.ts';
+import type { Application, Device } from '../src/balena-model.ts';
+import { expectResourceToMatch } from './test-lib/api-helpers.ts';
+import { assertExists, expectToEventually } from './test-lib/common.ts';
 
 export default () => {
 	versions.test((version, pineTest) => {

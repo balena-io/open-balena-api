@@ -1,6 +1,6 @@
 import { hooks, errors } from '@balena/pinejs';
 import { randomUUID } from 'node:crypto';
-import * as haikuName from '../../../infra/haiku-name/index.js';
+import * as haikuName from '../../../infra/haiku-name/index.ts';
 
 const INVALID_NEWLINE_REGEX = /\r|\n/;
 export const isDeviceNameValid = (name: string) => {

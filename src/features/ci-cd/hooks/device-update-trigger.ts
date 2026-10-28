@@ -1,6 +1,6 @@
 import { hooks, permissions } from '@balena/pinejs';
-import { captureException } from '../../../infra/error-handling/index.js';
-import { postDevices } from '../../device-proxy/device-proxy.js';
+import { captureException } from '../../../infra/error-handling/index.ts';
+import { postDevices } from '../../device-proxy/device-proxy.ts';
 
 hooks.addPureHook('PATCH', 'resin', 'device', {
 	POSTRUN: ({ request, tx }) => {

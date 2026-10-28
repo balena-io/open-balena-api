@@ -2,10 +2,10 @@ import _ from 'lodash';
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../../infra/error-handling/index.js';
+} from '../../../infra/error-handling/index.ts';
 import { sbvrUtils, errors } from '@balena/pinejs';
-import { getIP } from '../../../lib/utils.js';
-import type { Device } from '../../../balena-model.js';
+import { getIP } from '../../../lib/utils.ts';
+import type { Device } from '../../../balena-model.ts';
 import {
 	shouldUpdateMetrics,
 	metricsPatchFields,
@@ -15,12 +15,12 @@ import {
 	truncateConstrainedDeviceFields,
 	limitMetricNumbers,
 	normalizeDeviceWriteBody,
-} from '../state-patch-utils.js';
-import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
+} from '../state-patch-utils.ts';
+import type { ResolveDeviceInfoCustomObject } from '../middleware.ts';
 import {
 	createValidatedRequestHandler,
 	z,
-} from '../../../infra/validation/index.js';
+} from '../../../infra/validation/index.ts';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;

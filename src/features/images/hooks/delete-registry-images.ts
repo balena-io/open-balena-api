@@ -1,13 +1,13 @@
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import _ from 'lodash';
-import type { DeleteRegistryImagesTaskParams } from '../tasks/delete-registry-images.js';
-import { s3Client } from '../../registry/registry.js';
+import type { DeleteRegistryImagesTaskParams } from '../tasks/delete-registry-images.ts';
+import { s3Client } from '../../registry/registry.ts';
 import {
 	ASYNC_TASK_ATTEMPT_LIMIT,
 	ASYNC_TASK_DELETE_REGISTRY_IMAGES_BATCH_SIZE,
 	ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED,
 	ASYNC_TASK_DELETE_REGISTRY_IMAGES_OFFSET_MS,
-} from '../../../lib/config.js';
+} from '../../../lib/config.ts';
 
 interface DeleteRequestCustomObject {
 	imagesToCleanup?: DeleteRegistryImagesTaskParams['images'];

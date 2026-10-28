@@ -3,11 +3,11 @@
 declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
 	namespace Express {
-		type Creds = import('../infra/auth/jwt-passport.js').Creds;
+		type Creds = import('../infra/auth/jwt-passport.ts').Creds;
 		// For some reason TS doesn't like v so we had to use `import()`
 		type ResolvedUserPayload =
-			import('../infra/auth/jwt-passport.js').ResolvedUserPayload;
-		type ScopedToken = import('../infra/auth/jwt.js').ScopedToken;
+			import('../infra/auth/jwt-passport.ts').ResolvedUserPayload;
+		type ScopedToken = import('../infra/auth/jwt.ts').ScopedToken;
 		type ApiKey = import('@balena/pinejs').sbvrUtils.ApiKey;
 
 		// `req.user` can be either a full user payload or a scoped token —

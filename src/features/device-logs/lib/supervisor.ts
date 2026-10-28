@@ -4,8 +4,8 @@ import type {
 	InternalDeviceLog,
 	OldSupervisorLog,
 	SupervisorLog,
-} from './struct.js';
-import { getNanoTimestamp } from '../../../lib/utils.js';
+} from './struct.ts';
+import { getNanoTimestamp } from '../../../lib/utils.ts';
 
 const MAX_LOGS_PER_BATCH = 10;
 

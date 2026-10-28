@@ -1,6 +1,6 @@
 import { PineTest } from 'pinejs-client-supertest';
-import { app } from '../../init.js';
-import type { ValidVersion } from './versions.js';
+import { app } from '../../init.ts';
+import type { ValidVersion } from './versions.ts';
 
 export const pineTest: {
 	[version in ValidVersion]: PineTest;

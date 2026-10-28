@@ -4,10 +4,10 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../../infra/error-handling/index.js';
+} from '../../infra/error-handling/index.ts';
 
-import * as deviceTypesLib from './device-types.js';
-import { createValidatedRequestHandler } from '../../infra/validation/index.js';
+import * as deviceTypesLib from './device-types.ts';
+import { createValidatedRequestHandler } from '../../infra/validation/index.ts';
 
 const { api } = sbvrUtils;
 

@@ -7,18 +7,18 @@ import type {
 	ResourceId,
 	ODataOptions,
 } from 'pinejs-client-core';
-import type BalenaModel from '../../src/balena-model.js';
-import type { Release } from '../../src/balena-model.js';
+import type BalenaModel from '../../src/balena-model.ts';
+import type { Release } from '../../src/balena-model.ts';
 import { expect } from 'chai';
-import type { UserObjectParam } from '../test-lib/supertest.js';
-import { supertest } from '../test-lib/supertest.js';
-import type { TokenUserPayload } from '../../src/index.js';
+import type { UserObjectParam } from '../test-lib/supertest.ts';
+import { supertest } from '../test-lib/supertest.ts';
+import type { TokenUserPayload } from '../../src/index.ts';
 import type { RequiredField } from '@balena/pinejs/out/sbvr-api/common-types.js';
-import { assertExists, expectToEventually } from './common.js';
+import { assertExists, expectToEventually } from './common.ts';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import type { tasks } from '@balena/pinejs';
-import type { CreateServiceInstallsTaskParams } from '../../src/features/ci-cd/tasks/service-installs.js';
-import type { DeleteRegistryImagesTaskParams } from '../../src/features/images/tasks/delete-registry-images.js';
+import type { CreateServiceInstallsTaskParams } from '../../src/features/ci-cd/tasks/service-installs.ts';
+import type { DeleteRegistryImagesTaskParams } from '../../src/features/images/tasks/delete-registry-images.ts';
 
 const version = 'resin';
 

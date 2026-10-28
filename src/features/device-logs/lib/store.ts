@@ -1,25 +1,25 @@
 import type { Request, Response } from 'express';
-import type { InternalDeviceLog, LogContext, SupervisorLog } from './struct.js';
+import type { InternalDeviceLog, LogContext, SupervisorLog } from './struct.ts';
 
 import onFinished from 'on-finished';
 import type { permissions } from '@balena/pinejs';
 import { sbvrUtils, errors } from '@balena/pinejs';
-import * as supervisor from './supervisor.js';
+import * as supervisor from './supervisor.ts';
 import { createGunzip, constants } from 'zlib';
 import ndjson from 'ndjson';
 import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../../../infra/error-handling/index.js';
+} from '../../../infra/error-handling/index.ts';
 import {
 	addRetentionLimit,
 	getPrimaryBackend,
 	getSecondaryBackend,
 	LOGS_SECONDARY_BACKEND_ENABLED,
 	shouldPublishToSecondary,
-} from './config.js';
-import type { SetupOptions } from '../../../index.js';
+} from './config.ts';
+import type { SetupOptions } from '../../../index.ts';
 import {
 	DEVICE_LOGS_WRITE_AUTH_CACHE_TIMEOUT,
 	LOGS_BACKEND_UNAVAILABLE_FLUSH_INTERVAL,
@@ -27,15 +27,15 @@ import {
 	LOGS_STREAM_FLUSH_INTERVAL,
 	LOGS_WRITE_BUFFER_LIMIT,
 	NDJSON_CTYPE,
-} from '../../../lib/config.js';
+} from '../../../lib/config.ts';
 import {
 	multiCacheMemoizee,
 	reqPermissionNormalizer,
-} from '../../../infra/cache/index.js';
+} from '../../../infra/cache/index.ts';
 import {
 	createValidatedRequestHandler,
 	z,
-} from '../../../infra/validation/index.js';
+} from '../../../infra/validation/index.ts';
 
 const {
 	UnauthorizedError,

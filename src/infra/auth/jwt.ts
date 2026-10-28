@@ -7,16 +7,16 @@ import jsonwebtoken from 'jsonwebtoken';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
-import type { SignOptions } from './jwt-passport.js';
-import type { User } from '../../balena-model.js';
-import { randomBytesAsync } from '../../lib/utils.js';
-import { getUser } from './auth.js';
+import type { SignOptions } from './jwt-passport.ts';
+import type { User } from '../../balena-model.ts';
+import { randomBytesAsync } from '../../lib/utils.ts';
+import { getUser } from './auth.ts';
 import {
 	JSON_WEB_TOKEN_EXPIRY_MINUTES,
 	JSON_WEB_TOKEN_SECRET_KEY,
 	JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH,
-} from '../../lib/config.js';
-import type { RequestExcludingInput } from '../validation/index.js';
+} from '../../lib/config.ts';
+import type { RequestExcludingInput } from '../validation/index.ts';
 
 const { InternalRequestError } = errors;
 const { api } = sbvrUtils;

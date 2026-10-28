@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import type * as Redis from 'ioredis';
 import type * as NodeRedis from 'redis';
-import { REDIS } from '../../lib/config.js';
+import { REDIS } from '../../lib/config.ts';
 import type { HostPort } from '@balena/env-parsing';
 
 /*

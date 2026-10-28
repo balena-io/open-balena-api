@@ -1,17 +1,17 @@
 import { expect } from 'chai';
-import * as fakeDevice from '../test-lib/fake-device.js';
-import type { UserObjectParam } from '../test-lib/supertest.js';
-import { supertest } from '../test-lib/supertest.js';
+import * as fakeDevice from '../test-lib/fake-device.ts';
+import type { UserObjectParam } from '../test-lib/supertest.ts';
+import { supertest } from '../test-lib/supertest.ts';
 
-import * as fixtures from '../test-lib/fixtures.js';
+import * as fixtures from '../test-lib/fixtures.ts';
 import {
 	addReleaseToApp,
 	addImageToService,
 	addServiceToApp,
 	addImageToRelease,
-} from '../test-lib/api-helpers.js';
-import * as versions from '../test-lib/versions.js';
-import { expectToEventually } from '../test-lib/common.js';
+} from '../test-lib/api-helpers.ts';
+import * as versions from '../test-lib/versions.ts';
+import { expectToEventually } from '../test-lib/common.ts';
 
 const version = 'resin';
 

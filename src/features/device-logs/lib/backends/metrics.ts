@@ -1,17 +1,24 @@
 import { metrics } from '@balena/node-metrics-gatherer';
 
-enum names {
-	api_device_logs_current_subscriptions = 'api_device_logs_current_subscriptions',
-	api_device_logs_subscription_total = 'api_device_logs_subscription_total',
-	api_device_logs_publish_log_messages_total = 'api_device_logs_publish_log_messages_total',
-	api_device_logs_publish_log_messages_dropped = 'api_device_logs_publish_log_messages_dropped',
-	api_device_logs_publish_call_total = 'api_device_logs_publish_call_total',
-	api_device_logs_publish_call_success_total = 'api_device_logs_publish_call_success_total',
-	api_device_logs_publish_call_failed_total = 'api_device_logs_publish_call_failed_total',
-	api_device_logs_loki_push_total = 'api_device_logs_loki_push_total',
-	api_device_logs_loki_push_error_total = 'api_device_logs_loki_push_error_total',
-	api_device_logs_loki_push_duration_milliseconds = 'api_device_logs_loki_push_duration_milliseconds',
-}
+const names = {
+	api_device_logs_current_subscriptions:
+		'api_device_logs_current_subscriptions',
+	api_device_logs_subscription_total: 'api_device_logs_subscription_total',
+	api_device_logs_publish_log_messages_total:
+		'api_device_logs_publish_log_messages_total',
+	api_device_logs_publish_log_messages_dropped:
+		'api_device_logs_publish_log_messages_dropped',
+	api_device_logs_publish_call_total: 'api_device_logs_publish_call_total',
+	api_device_logs_publish_call_success_total:
+		'api_device_logs_publish_call_success_total',
+	api_device_logs_publish_call_failed_total:
+		'api_device_logs_publish_call_failed_total',
+	api_device_logs_loki_push_total: 'api_device_logs_loki_push_total',
+	api_device_logs_loki_push_error_total:
+		'api_device_logs_loki_push_error_total',
+	api_device_logs_loki_push_duration_milliseconds:
+		'api_device_logs_loki_push_duration_milliseconds',
+} as const;
 
 metrics.describe.gauge(
 	names.api_device_logs_current_subscriptions,

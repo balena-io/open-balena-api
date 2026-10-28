@@ -2,20 +2,20 @@ import {
 	fetchContractsLocally,
 	getContracts,
 	removeContractDirectory,
-} from '../src/features/contracts/contracts-directory.js';
+} from '../src/features/contracts/contracts-directory.ts';
 import { expect } from 'chai';
-import { supertest } from './test-lib/supertest.js';
-import * as versions from './test-lib/versions.js';
+import { supertest } from './test-lib/supertest.ts';
+import * as versions from './test-lib/versions.ts';
 import {
 	removeContractInterceptors,
 	mockRepo,
 	addContractInterceptors,
-} from './test-lib/contracts-mock.js';
-import type { RepositoryInfo } from '../src/features/contracts/index.js';
-import { synchronizeContracts } from '../src/features/contracts/index.js';
+} from './test-lib/contracts-mock.ts';
+import type { RepositoryInfo } from '../src/features/contracts/index.ts';
+import { synchronizeContracts } from '../src/features/contracts/index.ts';
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import type { DeviceType, DeviceTypeAlias } from '../src/balena-model.js';
-import { assertExists } from './test-lib/common.js';
+import type { DeviceType, DeviceTypeAlias } from '../src/balena-model.ts';
+import { assertExists } from './test-lib/common.ts';
 
 const contractRepository: RepositoryInfo = {
 	owner: 'balena-io',
@@ -68,7 +68,7 @@ export default () => {
 				await synchronizeContracts([contractRepository]);
 				// Reload the device-type fixtures, since after
 				// synchronizeContracts() the DB IDs have changed.
-				(await import('./test-lib/device-type.js')).loadDefaultFixtures();
+				(await import('./test-lib/device-type.ts')).loadDefaultFixtures();
 			});
 
 			beforeEach(async () => {

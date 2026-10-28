@@ -46,7 +46,7 @@ try {
 			// Don't double load this file
 			continue;
 		}
-		const { default: initFn } = await import(`./${fileName}.js`);
+		const { default: initFn } = await import(`./${fileName}.ts`);
 		describe(fileName, () => {
 			initFn();
 		});
@@ -67,7 +67,7 @@ try {
 			continue;
 		}
 
-		const { default: initFn } = await import(`./scenarios/${fileName}.js`);
+		const { default: initFn } = await import(`./scenarios/${fileName}.ts`);
 		describe(`Scenario: ${fileName}`, () => {
 			initFn();
 		});

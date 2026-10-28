@@ -2,10 +2,10 @@ import { parse as basicAuthParse } from 'basic-auth';
 
 import { errors } from '@balena/pinejs';
 
-import { retrieveAPIKey } from '../../infra/auth/api-keys.js';
+import { retrieveAPIKey } from '../../infra/auth/api-keys.ts';
 
-import { TOKEN_AUTH_BUILDER_TOKEN } from '../../lib/config.js';
-import { createUnvalidatedRequestHandler } from '../../infra/validation/index.js';
+import { TOKEN_AUTH_BUILDER_TOKEN } from '../../lib/config.ts';
+import { createUnvalidatedRequestHandler } from '../../infra/validation/index.ts';
 
 export class NoAuthProvidedError extends errors.UnauthorizedError {}
 

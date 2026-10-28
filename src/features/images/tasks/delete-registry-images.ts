@@ -7,13 +7,13 @@ import {
 	getManifestDigest,
 	listRepoTags,
 	s3Client,
-} from '../../../features/registry/registry.js';
+} from '../../../features/registry/registry.ts';
 import {
 	ASYNC_TASK_ATTEMPT_LIMIT,
 	ASYNC_TASK_DELETE_REGISTRY_IMAGES_CONCURRENCY,
 	ASYNC_TASK_DELETE_REGISTRY_IMAGES_ENABLED,
 	ASYNC_TASK_DELETE_REGISTRY_IMAGES_MAX_TIME_MS,
-} from '../../../lib/config.js';
+} from '../../../lib/config.ts';
 
 // Shared across invocations as a global cap on concurrent registry deletions.
 // If a task times out waiting for a slot, it just re-enqueues the remaining work.

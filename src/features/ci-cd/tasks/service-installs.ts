@@ -4,8 +4,8 @@ import _ from 'lodash';
 import {
 	ASYNC_TASK_ATTEMPT_LIMIT,
 	ASYNC_TASK_CREATE_SERVICE_INSTALLS_MAX_TIME_MS,
-} from '../../../lib/config.js';
-import { ThisShouldNeverHappenError } from '../../../infra/error-handling/index.js';
+} from '../../../lib/config.ts';
+import { ThisShouldNeverHappenError } from '../../../infra/error-handling/index.ts';
 
 const schema = {
 	type: 'object',

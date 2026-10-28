@@ -1,1 +1,1 @@
-import './backfill-device-service-environment-variable.js';
+import './backfill-device-service-environment-variable.ts';

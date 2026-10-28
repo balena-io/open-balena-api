@@ -1,12 +1,12 @@
 import { fileURLToPath } from 'node:url';
 import { expect } from 'chai';
-import * as fixtures from './test-lib/fixtures.js';
-import { supertest } from './test-lib/supertest.js';
+import * as fixtures from './test-lib/fixtures.ts';
+import { supertest } from './test-lib/supertest.ts';
 import {
 	checkFileExists,
 	expectEqualBlobs,
-} from './test-lib/fileupload-helper.js';
-import * as versions from './test-lib/versions.js';
+} from './test-lib/fileupload-helper.ts';
+import * as versions from './test-lib/versions.ts';
 
 export default () => {
 	versions.test((version) => {

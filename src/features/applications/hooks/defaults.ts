@@ -1,7 +1,7 @@
 import { hooks, errors } from '@balena/pinejs';
 import { randomUUID } from 'node:crypto';
 import * as uuid from 'uuid';
-import { DefaultApplicationType } from '../../application-types/application-types.js';
+import { DefaultApplicationType } from '../../application-types/application-types.ts';
 
 // reconstitute the value into a properly formatted UUID...
 const toUuid = (strippedUuid: string): string => {

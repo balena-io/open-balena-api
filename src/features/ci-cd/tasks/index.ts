@@ -1,1 +1,1 @@
-import './service-installs.js';
+import './service-installs.ts';

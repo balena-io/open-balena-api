@@ -1,4 +1,4 @@
-import type Model from '../balena-model.js';
+import type Model from '../balena-model.ts';
 
 declare module '@balena/pinejs' {
 	// eslint-disable-next-line @typescript-eslint/no-namespace

@@ -1,8 +1,8 @@
 import type { hooks, sbvrUtils, types } from '@balena/pinejs';
 import { permissions } from '@balena/pinejs';
 
-import { isJWT } from './jwt-passport.js';
-import type { RequestExcludingInput } from '../validation/index.js';
+import { isJWT } from './jwt-passport.ts';
+import type { RequestExcludingInput } from '../validation/index.ts';
 
 const getAPIKey = async (
 	req:

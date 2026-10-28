@@ -7,10 +7,10 @@ import stream from 'stream';
 import path from 'path';
 import os from 'os';
 import validator from 'validator';
-import type { RepositoryInfo, Contract } from './index.js';
-import { getBase64DataUri } from '../../lib/utils.js';
-import { captureException } from '../../infra/error-handling/index.js';
-import { CONTRACT_ALLOWLIST } from '../../lib/config.js';
+import type { RepositoryInfo, Contract } from './index.ts';
+import { getBase64DataUri } from '../../lib/utils.ts';
+import { captureException } from '../../infra/error-handling/index.ts';
+import { CONTRACT_ALLOWLIST } from '../../lib/config.ts';
 
 const CONTRACTS_BASE_DIR = path.join(os.tmpdir(), 'contracts');
 

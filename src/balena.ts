@@ -3,12 +3,12 @@ import {
 	generateAbstractSqlModel,
 	renameVarResourcesName,
 	optimizeSchema,
-} from './abstract-sql-utils.js';
+} from './abstract-sql-utils.ts';
 
-import * as userHasDirectAccessToApplication from './features/applications/models/user__has_direct_access_to__application.js';
-import * as deviceAdditions from './features/devices/models/device-additions.js';
-import * as releaseAdditions from './features/ci-cd/models/release-additions.js';
-import * as applicationProfileCatalogAdditions from './features/profiles/models/application-profile-catalog-additions.js';
+import * as userHasDirectAccessToApplication from './features/applications/models/user__has_direct_access_to__application.ts';
+import * as deviceAdditions from './features/devices/models/device-additions.ts';
+import * as releaseAdditions from './features/ci-cd/models/release-additions.ts';
+import * as applicationProfileCatalogAdditions from './features/profiles/models/application-profile-catalog-additions.ts';
 import type { ConfigLoader } from '@balena/pinejs';
 
 const abstractSql = generateAbstractSqlModel(

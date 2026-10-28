@@ -1,7 +1,7 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 
-import { getRegistrationRole } from '../../../infra/auth/auth.js';
-import { assignUserRole } from '../../../infra/auth/permissions.js';
+import { getRegistrationRole } from '../../../infra/auth/auth.ts';
+import { assignUserRole } from '../../../infra/auth/permissions.ts';
 
 const { InternalRequestError } = errors;
 const { api } = sbvrUtils;

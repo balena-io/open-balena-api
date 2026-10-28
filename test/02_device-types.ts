@@ -1,11 +1,11 @@
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import * as fixtures from './test-lib/fixtures.js';
+import * as fixtures from './test-lib/fixtures.ts';
 import _ from 'lodash';
 import { expect } from 'chai';
-import * as versions from './test-lib/versions.js';
+import * as versions from './test-lib/versions.ts';
 
-import { supertest } from './test-lib/supertest.js';
-import { itExpectsError } from './test-lib/common.js';
+import { supertest } from './test-lib/supertest.ts';
+import { itExpectsError } from './test-lib/common.ts';
 // All of these test device types are not part of the contracts, so we have to include them manually until we stop syncing with S3.
 const addFakeDeviceTypes = () => {
 	let fakeDeviceTypeIds: number[];

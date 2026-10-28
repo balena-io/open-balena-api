@@ -1,1 +1,1 @@
-import './delete-registry-images.js';
+import './delete-registry-images.ts';

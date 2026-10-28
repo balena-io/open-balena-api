@@ -1,13 +1,13 @@
 import {
 	REGISTRY2_HOST,
 	REGISTRY_STORAGE_ROOT_PATH,
-} from '../../src/lib/config.js';
+} from '../../src/lib/config.ts';
 import { randomUUID } from 'node:crypto';
 import {
 	addDeleteObjectsResolver,
 	addListObjectsV2Resolver,
-} from './aws-mock.js';
-import { getMockServer } from './mockttp-server.js';
+} from './aws-mock.ts';
+import { getMockServer } from './mockttp-server.ts';
 
 interface RegistryImage {
 	repository: string;

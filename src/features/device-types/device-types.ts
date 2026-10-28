@@ -1,16 +1,16 @@
 import * as semver from 'balena-semver';
-import type { DeviceTypeJson } from './device-type-json.js';
+import type { DeviceTypeJson } from './device-type-json.ts';
 import type { sbvrUtils } from '@balena/pinejs';
 import { errors } from '@balena/pinejs';
 
 import {
 	captureException,
 	ThisShouldNeverHappenError,
-} from '../../infra/error-handling/index.js';
+} from '../../infra/error-handling/index.ts';
 
-import { getCompressedSize, getDeviceTypeJson } from './build-info-facade.js';
-import { getDeviceTypeJsons } from './device-types-list.js';
-import type { Release } from '../../balena-model.js';
+import { getCompressedSize, getDeviceTypeJson } from './build-info-facade.ts';
+import { getDeviceTypeJsons } from './device-types-list.ts';
+import type { Release } from '../../balena-model.ts';
 import type { Filter } from 'pinejs-client-core';
 const { BadRequestError, NotFoundError } = errors;
 export type { NotFoundError };

@@ -1,21 +1,21 @@
 import { expect } from 'chai';
 
-import { connectDeviceAndWaitForUpdate } from './test-lib/connect-device-and-wait.js';
-import * as fakeDevice from './test-lib/fake-device.js';
-import type { UserObjectParam } from './test-lib/supertest.js';
-import { supertest } from './test-lib/supertest.js';
-import * as versions from './test-lib/versions.js';
+import { connectDeviceAndWaitForUpdate } from './test-lib/connect-device-and-wait.ts';
+import * as fakeDevice from './test-lib/fake-device.ts';
+import type { UserObjectParam } from './test-lib/supertest.ts';
+import { supertest } from './test-lib/supertest.ts';
+import * as versions from './test-lib/versions.ts';
 
-import * as fixtures from './test-lib/fixtures.js';
+import * as fixtures from './test-lib/fixtures.ts';
 import {
 	addReleaseToApp,
 	addImageToService,
 	addServiceToApp,
 	addImageToRelease,
 	expectResourceToMatch,
-} from './test-lib/api-helpers.js';
-import type { Application, DeviceType, Release } from '../src/balena-model.js';
-import { assertExists, expectToEventually } from './test-lib/common.js';
+} from './test-lib/api-helpers.ts';
+import type { Application, DeviceType, Release } from '../src/balena-model.ts';
+import { assertExists, expectToEventually } from './test-lib/common.ts';
 
 export default () => {
 	versions.test((version, pineTest) => {

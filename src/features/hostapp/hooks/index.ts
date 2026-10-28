@@ -1,1 +1,1 @@
-import './target-hostapp.js';
+import './target-hostapp.ts';

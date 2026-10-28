@@ -2,11 +2,11 @@ import randomstring from 'randomstring';
 import _ from 'lodash';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
-import { multiCacheMemoizee } from '../../infra/cache/index.js';
-import { API_KEY_ROLE_CACHE_TIMEOUT } from '../../lib/config.js';
-import { checkSudoValidity } from '../../infra/auth/jwt.js';
-import { getUser } from '../../infra/auth/auth.js';
-import type { RequestExcludingInput } from '../../infra/validation/index.js';
+import { multiCacheMemoizee } from '../../infra/cache/index.ts';
+import { API_KEY_ROLE_CACHE_TIMEOUT } from '../../lib/config.ts';
+import { checkSudoValidity } from '../../infra/auth/jwt.ts';
+import { getUser } from '../../infra/auth/auth.ts';
+import type { RequestExcludingInput } from '../../infra/validation/index.ts';
 
 const { api } = sbvrUtils;
 const { BadRequestError } = errors;

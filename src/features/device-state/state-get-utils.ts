@@ -4,12 +4,12 @@ import { sbvrUtils, errors } from '@balena/pinejs';
 import {
 	DEFAULT_SUPERVISOR_POLL_INTERVAL,
 	EMPTY_DEVICE_STATE_GET_DELAY_SECONDS,
-} from '../../lib/config.js';
+} from '../../lib/config.ts';
 import {
 	createMultiLevelStore,
 	reqPermissionNormalizer,
-} from '../../infra/cache/index.js';
-import type { Device, Service } from '../../balena-model.js';
+} from '../../infra/cache/index.ts';
+import type { Device, Service } from '../../balena-model.ts';
 
 export const getStateEventAdditionalFields: Array<
 	Exclude<keyof Device['Read'], ExpandableStringKeyOf<Device['Read']>>

@@ -14,11 +14,11 @@ source /etc/s6-overlay/scripts/functions.sh
 [[ -f "config/env" ]] && load_env_file "config/env"
 
 if [[ "${PRODUCTION_MODE:-}" == "true" ]]; then
-	exec node --enable-source-maps --loader @swc-node/register/esm-register index.js
+	exec node --enable-source-maps index.js
 else
 	exec node_modules/.bin/supervisor \
 		--no-restart-on error \
 		--extensions js,node,coffee,sbvr,json,sql,pegjs,ts \
 		--watch src \
-		-- --enable-source-maps --loader @swc-node/register/esm-register index.js
+		-- --enable-source-maps index.js
 fi

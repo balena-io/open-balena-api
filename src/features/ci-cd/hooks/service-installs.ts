@@ -1,14 +1,14 @@
 import _ from 'lodash';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import type { Filter, FilterObj } from 'pinejs-client-core';
-import type { Device, Release } from '../../../balena-model.js';
-import type { CreateServiceInstallsTaskParams } from '../tasks/service-installs.js';
+import type { Device, Release } from '../../../balena-model.ts';
+import type { CreateServiceInstallsTaskParams } from '../tasks/service-installs.ts';
 import {
 	ASYNC_TASK_ATTEMPT_LIMIT,
 	ASYNC_TASK_CREATE_SERVICE_INSTALLS_BATCH_SIZE,
 	ASYNC_TASK_CREATE_SERVICE_INSTALLS_ENABLED,
 	ASYNC_TASKS_ENABLED,
-} from '../../../lib/config.js';
+} from '../../../lib/config.ts';
 
 const createServiceInstallsAsync = async (
 	api: typeof sbvrUtils.api.resin,

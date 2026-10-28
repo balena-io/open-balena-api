@@ -1,5 +1,5 @@
 import { sbvrUtils, hooks, errors } from '@balena/pinejs';
-import { checkDevicesCanBeInApplication } from '../../application-types/application-types.js';
+import { checkDevicesCanBeInApplication } from '../../application-types/application-types.ts';
 
 const INVALID_NEWLINE_REGEX = /\r|\n/;
 export const isDeviceNameValid = (name: string) => {

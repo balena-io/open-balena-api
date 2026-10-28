@@ -1,4 +1,4 @@
-import './numeric-big-integer-hack.js';
+import './numeric-big-integer-hack.ts';
 
 import type { ConfigLoader } from '@balena/pinejs';
 import {
@@ -8,11 +8,11 @@ import {
 	generateAbstractSqlModel,
 	overrideFieldType,
 	renameResourceField,
-} from '../../abstract-sql-utils.js';
-import * as userHasDirectAccessToApplication from '../../features/applications/models/user__has_direct_access_to__application.js';
-import * as DeviceAdditions from '../../features/devices/models/device-additions.js';
+} from '../../abstract-sql-utils.ts';
+import * as userHasDirectAccessToApplication from '../../features/applications/models/user__has_direct_access_to__application.ts';
+import * as DeviceAdditions from '../../features/devices/models/device-additions.ts';
 import { sbvrUtils } from '@balena/pinejs';
-import { z } from '../../infra/validation/index.js';
+import { z } from '../../infra/validation/index.ts';
 
 export const toVersion = 'v7';
 

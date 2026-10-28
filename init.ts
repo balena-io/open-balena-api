@@ -1,13 +1,13 @@
-import type { ApplicationType } from './src/index.js';
+import type { ApplicationType } from './src/index.ts';
 import type { types } from '@balena/pinejs';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import express from 'express';
 import _ from 'lodash';
-import config from './config.js';
+import config from './config.ts';
 import packageJson from './package.json' with { type: 'json' };
 import { promises as fs } from 'fs';
-import { TRUST_PROXY, PORT } from './src/lib/config.js';
-import * as v6 from './src/translations/v6/v6.js';
+import { TRUST_PROXY, PORT } from './src/lib/config.ts';
+import * as v6 from './src/translations/v6/v6.ts';
 
 const getUrl = (req: express.Request) => req.url;
 
@@ -15,9 +15,9 @@ async function onInitModel() {
 	v6.extendValidators();
 
 	const { updateOrInsertModel } =
-		await import('./src/infra/pinejs-client-helpers/index.js');
+		await import('./src/infra/pinejs-client-helpers/index.ts');
 	const appTypes =
-		await import('./src/features/application-types/application-types.js');
+		await import('./src/features/application-types/application-types.ts');
 	const insert: types.OptionalField<ApplicationType, 'slug'> = _.cloneDeep(
 		appTypes.DefaultApplicationType,
 	);
@@ -36,15 +36,15 @@ async function onInitModel() {
 
 async function onInitHooks() {
 	const { createAllPermissions: createAll } =
-		await import('./src/infra/auth/permissions.js');
-	const auth = await import('./src/lib/auth.js');
+		await import('./src/infra/auth/permissions.ts');
+	const auth = await import('./src/lib/auth.ts');
 	const permissionNames = _.union(
 		Object.values(auth.ROLES).flat(),
 		Object.values(auth.KEYS).flatMap((key) => key.permissions),
 	);
-	const { setSyncSettings } = await import('./src/features/contracts/index.js');
+	const { setSyncSettings } = await import('./src/features/contracts/index.ts');
 	const { getAccessibleDeviceTypeJsons } =
-		await import('./src/features/device-types/device-types.js');
+		await import('./src/features/device-types/device-types.ts');
 
 	setSyncSettings({
 		'hw.device-type': {
@@ -139,7 +139,7 @@ async function onInitHooks() {
 
 async function createSuperuser() {
 	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } =
-		await import('./src/lib/config.js');
+		await import('./src/lib/config.ts');
 
 	if (!SUPERUSER_EMAIL || !SUPERUSER_PASSWORD) {
 		return;
@@ -148,10 +148,10 @@ async function createSuperuser() {
 	console.log('Creating superuser account...');
 
 	const { getOrInsertModelId } =
-		await import('./src/infra/pinejs-client-helpers/index.js');
+		await import('./src/infra/pinejs-client-helpers/index.ts');
 
 	const { findUser, registerUser, updatePasswordIfNeeded } =
-		await import('./src/infra/auth/auth.js');
+		await import('./src/infra/auth/auth.ts');
 	const { ConflictError } = errors;
 
 	const data = {
@@ -224,7 +224,7 @@ const init = async () => {
 
 		const doRunTests =
 			(process.env.RUN_TESTS ?? '').trim() === '1'
-				? await import('./test/test-lib/init-tests.js')
+				? await import('./test/test-lib/init-tests.ts')
 				: undefined;
 
 		// we have to load some mocks before the app starts...
@@ -232,7 +232,7 @@ const init = async () => {
 			console.log('Loading mocks...');
 			await doRunTests.preInit();
 		}
-		const { setup } = await import('./src/index.js');
+		const { setup } = await import('./src/index.ts');
 		const { startServer } = await setup(app, {
 			config,
 			version: packageJson.version,

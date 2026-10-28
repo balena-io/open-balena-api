@@ -4,16 +4,16 @@ import _ from 'lodash';
 import type { hooks } from '@balena/pinejs';
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
-import { retrieveAPIKey } from './api-keys.js';
+import { retrieveAPIKey } from './api-keys.ts';
 
-import { getIP } from '../../lib/utils.js';
-import type { User } from '../../balena-model.js';
+import { getIP } from '../../lib/utils.ts';
+import type { User } from '../../balena-model.ts';
 import type {
 	PickDeferred,
 	Deferred,
 } from '@balena/abstract-sql-to-typescript';
-import type { RequestExcludingInput } from '../validation/index.js';
-export { isJWT, verifyAndResolveJwt } from './jwt-passport.js';
+import type { RequestExcludingInput } from '../validation/index.ts';
+export { isJWT, verifyAndResolveJwt } from './jwt-passport.ts';
 
 const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;

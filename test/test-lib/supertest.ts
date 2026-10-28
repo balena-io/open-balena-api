@@ -1,7 +1,7 @@
-import { app } from '../../init.js';
+import { app } from '../../init.ts';
 import $supertest from 'supertest';
-import type { TokenUserPayload } from '../../src/infra/auth/jwt.js';
-import { ThisShouldNeverHappenError } from '../../src/infra/error-handling/index.js';
+import type { TokenUserPayload } from '../../src/infra/auth/jwt.ts';
+import { ThisShouldNeverHappenError } from '../../src/infra/error-handling/index.ts';
 
 export type UserObjectParam = Partial<TokenUserPayload> & { token: string };
 

@@ -1,7 +1,7 @@
-import type Model from '../../balena-model.js';
+import type Model from '../../balena-model.ts';
 import _ from 'lodash';
 import pMap from 'p-map';
-import { fetchContractsLocally, getContracts } from './contracts-directory.js';
+import { fetchContractsLocally, getContracts } from './contracts-directory.ts';
 import type { types } from '@balena/pinejs';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import {
@@ -12,10 +12,10 @@ import {
 	CONTRACTS_PUBLIC_REPO_BRANCH,
 	CONTRACTS_PUBLIC_REPO_NAME,
 	CONTRACTS_PUBLIC_REPO_OWNER,
-} from '../../lib/config.js';
+} from '../../lib/config.ts';
 import { MINUTES } from '@balena/env-parsing';
-import { captureException } from '../../infra/error-handling/index.js';
-import { scheduleJob } from '../../infra/scheduler/index.js';
+import { captureException } from '../../infra/error-handling/index.ts';
+import { scheduleJob } from '../../infra/scheduler/index.ts';
 
 type ValidContractResources =
 	'device_type' | 'cpu_architecture' | 'device_family' | 'device_manufacturer';

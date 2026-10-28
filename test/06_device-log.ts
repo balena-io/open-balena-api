@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { expect } from 'chai';
-import * as fixtures from './test-lib/fixtures.js';
-import { supertest } from './test-lib/supertest.js';
+import * as fixtures from './test-lib/fixtures.ts';
+import { supertest } from './test-lib/supertest.ts';
 import { DAYS } from '@balena/env-parsing';
 import { gzipSync } from 'zlib';
-import { waitFor } from './test-lib/common.js';
-import type { OutputDeviceLog } from '../src/features/device-logs/lib/struct.js';
+import { waitFor } from './test-lib/common.ts';
+import type { OutputDeviceLog } from '../src/features/device-logs/lib/struct.ts';
 
 const createLog = (extra = {}) => {
 	return {

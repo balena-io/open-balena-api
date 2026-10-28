@@ -1,12 +1,12 @@
 import { errors, sbvrUtils } from '@balena/pinejs';
-import { checkUserPassword, getUser } from '../../infra/auth/auth.js';
-import { updateUserXHR } from '../../infra/auth/jwt.js';
-import { captureException } from '../../infra/error-handling/index.js';
+import { checkUserPassword, getUser } from '../../infra/auth/auth.ts';
+import { updateUserXHR } from '../../infra/auth/jwt.ts';
+import { captureException } from '../../infra/error-handling/index.ts';
 import {
 	createValidatedRequestHandler,
 	z,
 	type RequestExcludingInput,
-} from '../../infra/validation/index.js';
+} from '../../infra/validation/index.ts';
 
 const { BadRequestError } = errors;
 

@@ -1,7 +1,7 @@
 import { dbModule, hooks, permissions, sbvrUtils } from '@balena/pinejs';
-import { ADVISORY_LOCK_NAMESPACES } from '../../lib/config.js';
-import { withValidatedValues, z } from '../../infra/validation/index.js';
-import type Model from '../../balena-model.js';
+import { ADVISORY_LOCK_NAMESPACES } from '../../lib/config.ts';
+import { withValidatedValues, z } from '../../infra/validation/index.ts';
+import type Model from '../../balena-model.ts';
 
 const CATALOG_LOCK_NAMESPACE_KEY = 'application_profile_catalog__application';
 dbModule.registerTransactionLockNamespace(

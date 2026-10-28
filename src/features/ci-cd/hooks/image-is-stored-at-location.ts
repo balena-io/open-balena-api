@@ -1,7 +1,7 @@
 import { hooks, permissions, errors } from '@balena/pinejs';
 
-import { REGISTRY2_HOST } from '../../../lib/config.js';
-import { randomBytesAsync } from '../../../lib/utils.js';
+import { REGISTRY2_HOST } from '../../../lib/config.ts';
+import { randomBytesAsync } from '../../../lib/utils.ts';
 
 const { InternalRequestError } = errors;
 

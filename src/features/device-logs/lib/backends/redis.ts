@@ -3,14 +3,14 @@ import { stripIndent } from 'common-tags';
 import { EventEmitter } from 'events';
 import _ from 'lodash';
 import { errors } from '@balena/pinejs';
-import { captureException } from '../../../../infra/error-handling/index.js';
+import { captureException } from '../../../../infra/error-handling/index.ts';
 import {
 	LOGS_DEFAULT_RETENTION_DURATION,
 	LOGS_SUBSCRIPTION_EXPIRY_HEARTBEAT_SECONDS,
 	LOGS_SUBSCRIPTION_EXPIRY_SECONDS,
 	REDIS_LOGS_COMPRESSION_ENABLED,
 	REDIS_LOGS_SHARDED_PUBSUB,
-} from '../../../../lib/config.js';
+} from '../../../../lib/config.ts';
 import type {
 	DeviceLogsBackend,
 	HistoryOpts,
@@ -18,11 +18,11 @@ import type {
 	LogContext,
 	OutputDeviceLog,
 	Subscription,
-} from '../struct.js';
+} from '../struct.ts';
 import {
 	newNodeRedisSubscribeInstance,
 	createIsolatedRedis,
-} from '../../../../infra/redis/index.js';
+} from '../../../../infra/redis/index.ts';
 import type { Result } from 'ioredis';
 
 const SUBSCRIBECMD = REDIS_LOGS_SHARDED_PUBSUB ? 'sSubscribe' : 'subscribe';

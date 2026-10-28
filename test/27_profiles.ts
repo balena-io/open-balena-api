@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import * as fixtures from './test-lib/fixtures.js';
-import * as fakeDevice from './test-lib/fake-device.js';
-import { assertExists } from './test-lib/common.js';
-import { expectResourceToMatch } from './test-lib/api-helpers.js';
-import * as versions from './test-lib/versions.js';
+import * as fixtures from './test-lib/fixtures.ts';
+import * as fakeDevice from './test-lib/fake-device.ts';
+import { assertExists } from './test-lib/common.ts';
+import { expectResourceToMatch } from './test-lib/api-helpers.ts';
+import * as versions from './test-lib/versions.ts';
 
 export default () => {
 	versions.test((version, pineTest) => {

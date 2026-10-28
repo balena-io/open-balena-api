@@ -1,18 +1,18 @@
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../../infra/error-handling/index.js';
+} from '../../../infra/error-handling/index.ts';
 import { sbvrUtils, errors } from '@balena/pinejs';
-import { getIP } from '../../../lib/utils.js';
-import type { DeviceTag } from '../../../balena-model.js';
-import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
-import { checkTagKeyValidity } from '../../tags/validation.js';
-import { resolveDeviceUuids } from './state-patch-v3.js';
+import { getIP } from '../../../lib/utils.ts';
+import type { DeviceTag } from '../../../balena-model.ts';
+import type { ResolveDeviceInfoCustomObject } from '../middleware.ts';
+import { checkTagKeyValidity } from '../../tags/validation.ts';
+import { resolveDeviceUuids } from './state-patch-v3.ts';
 import {
 	createValidatedRequestHandler,
 	type RequestExcludingInput,
 	z,
-} from '../../../infra/validation/index.js';
+} from '../../../infra/validation/index.ts';
 
 const { BadRequestError, UnauthorizedError } = errors;
 const { api } = sbvrUtils;

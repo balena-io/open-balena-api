@@ -1,22 +1,22 @@
 import type { Application } from 'express';
-import type { SetupOptions } from '../../index.js';
+import type { SetupOptions } from '../../index.ts';
 
 import { SECONDS_PER_HOUR } from '@balena/env-parsing';
 import {
 	createRateLimiter,
 	createRateLimitMiddleware,
-} from '../../infra/rate-limiting/index.js';
-import { middleware } from '../../infra/auth/index.js';
-import { login } from './login.js';
+} from '../../infra/rate-limiting/index.ts';
+import { middleware } from '../../infra/auth/index.ts';
+import { login } from './login.ts';
 import {
 	getUserPublicKeys,
 	defaultGetAuthorizedKeysFn,
 	setGetAuthorizedKeysFn,
-} from './public-keys.js';
-import { refreshToken, setOnRefreshToken } from './refresh-token.js';
-import { whoami, actorWhoami } from './whoami.js';
+} from './public-keys.ts';
+import { refreshToken, setOnRefreshToken } from './refresh-token.ts';
+import { whoami, actorWhoami } from './whoami.ts';
 
-export * from './handles.js';
+export * from './handles.ts';
 export { refreshToken };
 export const publicKeys = {
 	defaultGetAuthorizedKeysFn,

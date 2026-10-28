@@ -7,14 +7,14 @@ import {
 } from '@balena/pinejs';
 import type { FilterObj } from 'pinejs-client-core';
 import semverLib from 'semver';
-import { ADVISORY_LOCK_NAMESPACES } from '../../../lib/config.js';
-import { groupByMap } from '../../../lib/utils.js';
-import type { Release } from '../../../balena-model.js';
+import { ADVISORY_LOCK_NAMESPACES } from '../../../lib/config.ts';
+import { groupByMap } from '../../../lib/utils.ts';
+import type { Release } from '../../../balena-model.ts';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 import {
 	captureException,
 	ThisShouldNeverHappenError,
-} from '../../../infra/error-handling/index.js';
+} from '../../../infra/error-handling/index.ts';
 
 const { BadRequestError } = errors;
 

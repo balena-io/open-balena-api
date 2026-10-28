@@ -2,14 +2,14 @@ import { expect } from 'chai';
 import randomstring from 'randomstring';
 import { randomUUID } from 'node:crypto';
 
-import type { UserObjectParam } from './supertest.js';
-import { supertest } from './supertest.js';
-import type { StateV2 } from '../../src/features/device-state/routes/state-get-v2.js';
-import type { StateV3 } from '../../src/features/device-state/routes/state-get-v3.js';
-import type { StatePatchV2Body } from '../../src/features/device-state/routes/state-patch-v2.js';
-import type { StatePatchV3Body } from '../../src/features/device-state/routes/state-patch-v3.js';
-import type { TagsPatchV3Body } from '../../src/features/device-state/routes/tags-patch-v3.js';
-import { config } from '../../src/index.js';
+import type { UserObjectParam } from './supertest.ts';
+import { supertest } from './supertest.ts';
+import type { StateV2 } from '../../src/features/device-state/routes/state-get-v2.ts';
+import type { StateV3 } from '../../src/features/device-state/routes/state-get-v3.ts';
+import type { StatePatchV2Body } from '../../src/features/device-state/routes/state-patch-v2.ts';
+import type { StatePatchV3Body } from '../../src/features/device-state/routes/state-patch-v3.ts';
+import type { TagsPatchV3Body } from '../../src/features/device-state/routes/tags-patch-v3.ts';
+import { config } from '../../src/index.ts';
 
 const version = 'resin';
 

@@ -4,7 +4,7 @@ import _ from 'lodash';
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../../infra/error-handling/index.js';
+} from '../../../infra/error-handling/index.ts';
 import {
 	ConfigurationVarsToLabels,
 	formatImageLocation,
@@ -13,13 +13,13 @@ import {
 	getStateEventAdditionalFields,
 	readTransaction,
 	varListInsert,
-} from '../state-get-utils.js';
+} from '../state-get-utils.ts';
 import { type permissions, sbvrUtils } from '@balena/pinejs';
-import { events } from '../index.js';
-import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
-import { getIP } from '../../../lib/utils.js';
-import type { ExpandedApplicationWithService } from './fleet-state-get-v3.js';
-import { createValidatedRequestHandler } from '../../../infra/validation/index.js';
+import { events } from '../index.ts';
+import type { ResolveDeviceInfoCustomObject } from '../middleware.ts';
+import { getIP } from '../../../lib/utils.ts';
+import type { ExpandedApplicationWithService } from './fleet-state-get-v3.ts';
+import { createValidatedRequestHandler } from '../../../infra/validation/index.ts';
 
 const { api } = sbvrUtils;
 
