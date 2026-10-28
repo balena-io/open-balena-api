@@ -4,10 +4,10 @@ import fs from 'fs';
 import _ from 'lodash';
 import { spawn } from 'node:child_process';
 import path from 'path';
-import configJson from '../config.js';
+import configJson from '../config.ts';
 import type { Migrator } from '@balena/pinejs';
-import { assertExists } from './test-lib/common.js';
-import { fakeSbvrUtils } from './test-lib/fixtures.js';
+import { assertExists } from './test-lib/common.ts';
+import { fakeSbvrUtils } from './test-lib/fixtures.ts';
 import { expect } from 'chai';
 
 // Validate SQL files using squawk

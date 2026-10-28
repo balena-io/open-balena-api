@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { stripIndent } from 'common-tags';
 import { setTimeout } from 'timers/promises';
 import { TypedError } from 'typed-error';
-import { ThisShouldNeverHappenError } from '../../src/infra/error-handling/index.js';
+import { ThisShouldNeverHappenError } from '../../src/infra/error-handling/index.ts';
 import pTimeout from 'p-timeout';
 
 type PredicateFunction = () => Resolvable<boolean>;

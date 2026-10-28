@@ -1,4 +1,4 @@
-import { addHooksForFieldSizeLimitChecks } from './setup-field-size-limits.js';
+import { addHooksForFieldSizeLimitChecks } from './setup-field-size-limits.ts';
 
 for (const model of ['resin', 'Auth']) {
 	addHooksForFieldSizeLimitChecks(model, 'api_key', {

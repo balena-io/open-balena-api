@@ -4,7 +4,7 @@ import * as semver from 'balena-semver';
 import type {
 	Device,
 	ApplicationType as $ApplicationType,
-} from '../../balena-model.js';
+} from '../../balena-model.ts';
 import type { types } from '@balena/pinejs';
 
 export type ApplicationType = types.OptionalField<

@@ -1,3 +1,3 @@
-import './config-var-validation.js';
-import './env-var-validation.js';
-import './vars-update-trigger.js';
+import './config-var-validation.ts';
+import './env-var-validation.ts';
+import './vars-update-trigger.ts';

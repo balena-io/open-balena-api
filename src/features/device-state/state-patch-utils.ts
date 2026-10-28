@@ -1,17 +1,17 @@
 import type { Filter } from 'pinejs-client-core';
-import type { Device, ImageInstall } from '../../balena-model.js';
-import type { StatePatchV2Body } from './routes/state-patch-v2.js';
-import type { StatePatchV3Body } from './routes/state-patch-v3.js';
+import type { Device, ImageInstall } from '../../balena-model.ts';
+import type { StatePatchV2Body } from './routes/state-patch-v2.ts';
+import type { StatePatchV3Body } from './routes/state-patch-v3.ts';
 import {
 	DOWNLOAD_PROGRESS_MAX_REPORT_INTERVAL_SECONDS,
 	IMAGE_INSTALL_CACHE_TIMEOUT_SECONDS,
 	METRICS_MAX_INTEGER_VALUE,
 	METRICS_MAX_REPORT_INTERVAL_SECONDS,
-} from '../../lib/config.js';
-import { createMultiLevelStore } from '../../infra/cache/index.js';
+} from '../../lib/config.ts';
+import { createMultiLevelStore } from '../../infra/cache/index.ts';
 import type { sbvrUtils } from '@balena/pinejs';
 import { permissions } from '@balena/pinejs';
-import { ThisShouldNeverHappenError } from '../../infra/error-handling/index.js';
+import { ThisShouldNeverHappenError } from '../../infra/error-handling/index.ts';
 
 export const v3ValidPatchFields = [
 	'status',

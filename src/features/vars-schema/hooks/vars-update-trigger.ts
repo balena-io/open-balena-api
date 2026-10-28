@@ -1,11 +1,11 @@
-import type BalenaModel from '../../../balena-model.js';
+import type BalenaModel from '../../../balena-model.ts';
 import { sbvrUtils, hooks, permissions } from '@balena/pinejs';
 import type { FilterObj } from 'pinejs-client-core';
 
-import { captureException } from '../../../infra/error-handling/index.js';
+import { captureException } from '../../../infra/error-handling/index.ts';
 
-import { postDevices } from '../../device-proxy/device-proxy.js';
-import type { Device } from '../../../balena-model.js';
+import { postDevices } from '../../device-proxy/device-proxy.ts';
+import type { Device } from '../../../balena-model.ts';
 import { setTimeout } from 'timers/promises';
 
 interface CustomObject {

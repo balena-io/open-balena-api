@@ -5,23 +5,23 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../../infra/error-handling/index.js';
+} from '../../infra/error-handling/index.ts';
 
 import {
 	augmentReqApiKeyPermissions,
 	createDeviceApiKey,
-} from '../api-keys/lib.js';
-import { getDeviceTypeBySlug } from '../device-types/device-types.js';
-import { checkInt } from '../../lib/utils.js';
-import { checkDeviceExistsIsFrozen } from '../device-state/middleware.js';
-import { gracefullyDenyConflictingRegistrations } from './gracefully-deny-conflicting-registrations.js';
+} from '../api-keys/lib.ts';
+import { getDeviceTypeBySlug } from '../device-types/device-types.ts';
+import { checkInt } from '../../lib/utils.ts';
+import { checkDeviceExistsIsFrozen } from '../device-state/middleware.ts';
+import { gracefullyDenyConflictingRegistrations } from './gracefully-deny-conflicting-registrations.ts';
 import onFinished from 'on-finished';
-import type { Device } from '../../balena-model.js';
-import { normalizeDeviceWriteBody } from '../device-state/state-patch-utils.js';
+import type { Device } from '../../balena-model.ts';
+import { normalizeDeviceWriteBody } from '../device-state/state-patch-utils.ts';
 import {
 	createValidatedRequestHandler,
 	z,
-} from '../../infra/validation/index.js';
+} from '../../infra/validation/index.ts';
 
 const { BadRequestError, ConflictError } = errors;
 const { api } = sbvrUtils;

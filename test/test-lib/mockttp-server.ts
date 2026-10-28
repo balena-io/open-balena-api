@@ -1,7 +1,7 @@
 import * as mockttp from 'mockttp';
 import http from 'node:http';
 import { fileURLToPath } from 'node:url';
-import { VPN_CONNECT_PROXY_PORT } from '../../src/lib/config.js';
+import { VPN_CONNECT_PROXY_PORT } from '../../src/lib/config.ts';
 
 // A self-signed CA committed under test/fixtures so mockttp can MITM HTTPS hosts.
 // The same cert is trusted by Node via NODE_EXTRA_CA_CERTS (set in the test env),

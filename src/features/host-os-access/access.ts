@@ -1,9 +1,9 @@
 import { sbvrUtils, errors } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 
-import { reqHasPermission } from '../../infra/auth/auth.js';
-import { captureException } from '../../infra/error-handling/index.js';
-import { createValidatedRequestHandler } from '../../infra/validation/index.js';
+import { reqHasPermission } from '../../infra/auth/auth.ts';
+import { captureException } from '../../infra/error-handling/index.ts';
+import { createValidatedRequestHandler } from '../../infra/validation/index.ts';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;

@@ -1,16 +1,16 @@
-import * as fixtures from './fixtures.js';
-import { supertest, augmentStatusAssertionError } from './supertest.js';
+import * as fixtures from './fixtures.ts';
+import { supertest, augmentStatusAssertionError } from './supertest.ts';
 import {
 	getContractRepos,
 	synchronizeContracts,
-} from '../../src/features/contracts/index.js';
-import { getUserFromToken } from './api-helpers.js';
-import * as config from '../../src/lib/config.js';
+} from '../../src/features/contracts/index.ts';
+import { getUserFromToken } from './api-helpers.ts';
+import * as config from '../../src/lib/config.ts';
 import $getObjectMocks from '../fixtures/s3/getObject.json' with { type: 'json' };
 import listObjectsV2Mocks from '../fixtures/s3/listObjectsV2.json' with { type: 'json' };
-import awsMockSetup from './aws-mock.js';
-import * as mockHttpServer from './mockttp-server.js';
-import * as mockRegistry from './registry-mock.js';
+import awsMockSetup from './aws-mock.ts';
+import * as mockHttpServer from './mockttp-server.ts';
+import * as mockRegistry from './registry-mock.ts';
 
 const version = 'resin';
 
@@ -29,7 +29,7 @@ export const preInit = async () => {
 		await mockHttpServer.stop();
 	});
 
-	const { installContractMocks } = await import('./contracts-mock.js');
+	const { installContractMocks } = await import('./contracts-mock.ts');
 	await installContractMocks();
 
 	config.TEST_MOCK_ONLY.ASYNC_TASKS_ENABLED = true;
@@ -38,14 +38,14 @@ export const preInit = async () => {
 
 	// override the interval used to emit the queue stats event...
 	const { DeviceOnlineStateManager } =
-		await import('../../src/features/device-heartbeat/index.js');
+		await import('../../src/features/device-heartbeat/index.ts');
 	(DeviceOnlineStateManager as any)['QUEUE_STATS_INTERVAL_MSEC'] = 1000;
 };
 
 const loadAdminUserAndOrganization = async () => {
 	// any user we try to create will be the superuser...
 	const { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } =
-		await import('../../src/lib/config.js');
+		await import('../../src/lib/config.ts');
 
 	if (!SUPERUSER_EMAIL || !SUPERUSER_PASSWORD) {
 		console.error(
@@ -79,7 +79,7 @@ const loadAdminUserAndOrganization = async () => {
 
 export const postInit = async () => {
 	await synchronizeContracts(getContractRepos());
-	(await import('./device-type.js')).loadDefaultFixtures();
+	(await import('./device-type.ts')).loadDefaultFixtures();
 
 	const { user, org } = await loadAdminUserAndOrganization();
 	const balenaOsFx = await fixtures.load('00-balena_os');
@@ -93,5 +93,5 @@ export const postInit = async () => {
 			]),
 		),
 	});
-	await import('../00_init.js');
+	await import('../00_init.ts');
 };

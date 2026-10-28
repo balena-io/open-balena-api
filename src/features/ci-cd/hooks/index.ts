@@ -1,7 +1,7 @@
-import './app-update-trigger.js';
-import './device-update-trigger.js';
-import './image-is-stored-at-location.js';
-import './release-update-timestamp.js';
-import './release-versioning.js';
-import './service-installs.js';
-import './track-latest-release.js';
+import './app-update-trigger.ts';
+import './device-update-trigger.ts';
+import './image-is-stored-at-location.ts';
+import './release-update-timestamp.ts';
+import './release-versioning.ts';
+import './service-installs.ts';
+import './track-latest-release.ts';

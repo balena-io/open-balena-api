@@ -1,17 +1,17 @@
 import { expect } from 'chai';
 
-import * as fakeDevice from './test-lib/fake-device.js';
-import * as versions from './test-lib/versions.js';
+import * as fakeDevice from './test-lib/fake-device.ts';
+import * as versions from './test-lib/versions.ts';
 
-import * as fixtures from './test-lib/fixtures.js';
+import * as fixtures from './test-lib/fixtures.ts';
 
-import { assertExists, expectToEventually } from './test-lib/common.js';
-import * as config from '../src/lib/config.js';
-import { supertest } from './test-lib/supertest.js';
+import { assertExists, expectToEventually } from './test-lib/common.ts';
+import * as config from '../src/lib/config.ts';
+import { supertest } from './test-lib/supertest.ts';
 import {
 	expectNewSettledTasks,
 	resetLatestTaskIds,
-} from './test-lib/api-helpers.js';
+} from './test-lib/api-helpers.ts';
 
 export default () => {
 	versions.test((version, pineTest) => {

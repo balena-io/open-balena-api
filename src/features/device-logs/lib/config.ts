@@ -1,4 +1,4 @@
-import type { DeviceLogsBackend, LogContext } from './struct.js';
+import type { DeviceLogsBackend, LogContext } from './struct.ts';
 
 import _ from 'lodash';
 import {
@@ -10,7 +10,7 @@ import {
 	LOGS_PRIMARY_BACKEND,
 	LOGS_REDIS_READ_PCT,
 	LOGS_REDIS_WRITE_PCT,
-} from '../../../lib/config.js';
+} from '../../../lib/config.ts';
 
 const LOGS_SECONDARY_BACKEND =
 	LOGS_PRIMARY_BACKEND === 'loki' ? 'redis' : 'loki';
@@ -67,11 +67,11 @@ export const getSecondaryBackend = _.once(
 );
 
 const getRedisBackend = _.once(async (): Promise<DeviceLogsBackend> => {
-	const { RedisBackend } = await import('./backends/redis.js');
+	const { RedisBackend } = await import('./backends/redis.ts');
 	return new RedisBackend();
 });
 
 const getLokiBackend = _.once(async (): Promise<DeviceLogsBackend> => {
-	const { LokiBackend } = await import('./backends/loki.js');
+	const { LokiBackend } = await import('./backends/loki.ts');
 	return new LokiBackend();
 });

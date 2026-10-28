@@ -10,11 +10,11 @@ import {
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
 	ALLOWED_NAMES,
 	ALLOWED_NAMESPACES,
-} from './env-vars.js';
+} from './env-vars.ts';
 import {
 	createValidatedRequestHandler,
 	z,
-} from '../../infra/validation/index.js';
+} from '../../infra/validation/index.ts';
 
 const { api } = sbvrUtils;
 

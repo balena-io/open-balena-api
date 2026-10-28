@@ -6,16 +6,16 @@ import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../../infra/error-handling/index.js';
+} from '../../infra/error-handling/index.ts';
 
-import { generateConfig } from './device-config.js';
-import { getDeviceTypeJsonBySlug } from '../device-types/device-types.js';
-import { checkInt } from '../../lib/utils.js';
-import { getApiKeyOptsFromRequest } from '../api-keys/lib.js';
+import { generateConfig } from './device-config.ts';
+import { getDeviceTypeJsonBySlug } from '../device-types/device-types.ts';
+import { checkInt } from '../../lib/utils.ts';
+import { getApiKeyOptsFromRequest } from '../api-keys/lib.ts';
 import {
 	createValidatedRequestHandler,
 	z,
-} from '../../infra/validation/index.js';
+} from '../../infra/validation/index.ts';
 
 const { UnauthorizedError, NotFoundError, BadRequestError } = errors;
 const { api } = sbvrUtils;

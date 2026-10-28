@@ -28,7 +28,7 @@ import {
 	REGISTRY_STORAGE_ACCESS_KEY,
 	REGISTRY_STORAGE_BUCKET,
 	REGISTRY_STORAGE_SECRET_KEY,
-} from '../../src/lib/config.js';
+} from '../../src/lib/config.ts';
 
 type MockedError = {
 	Error: {

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import * as fixtures from './test-lib/fixtures.js';
-import { supertest } from './test-lib/supertest.js';
-import * as versions from './test-lib/versions.js';
+import * as fixtures from './test-lib/fixtures.ts';
+import { supertest } from './test-lib/supertest.ts';
+import * as versions from './test-lib/versions.ts';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
 const { api } = sbvrUtils;

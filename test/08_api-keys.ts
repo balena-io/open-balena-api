@@ -1,15 +1,15 @@
-import { VPN_SERVICE_API_KEY } from '../src/lib/config.js';
+import { VPN_SERVICE_API_KEY } from '../src/lib/config.ts';
 import { expect } from 'chai';
-import * as fixtures from './test-lib/fixtures.js';
-import { generateDeviceUuid } from './test-lib/fake-device.js';
-import type { UserObjectParam } from './test-lib/supertest.js';
-import { supertest } from './test-lib/supertest.js';
-import * as versions from './test-lib/versions.js';
+import * as fixtures from './test-lib/fixtures.ts';
+import { generateDeviceUuid } from './test-lib/fake-device.ts';
+import type { UserObjectParam } from './test-lib/supertest.ts';
+import { supertest } from './test-lib/supertest.ts';
+import * as versions from './test-lib/versions.ts';
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import { expectResourceToMatch } from './test-lib/api-helpers.js';
-import { assertExists } from './test-lib/common.js';
-import { loginUserSudoTimeoutAgo } from './test-lib/users.js';
-import type { ApiKey } from '../src/balena-model.js';
+import { expectResourceToMatch } from './test-lib/api-helpers.ts';
+import { assertExists } from './test-lib/common.ts';
+import { loginUserSudoTimeoutAgo } from './test-lib/users.ts';
+import type { ApiKey } from '../src/balena-model.ts';
 
 const { api } = sbvrUtils;
 

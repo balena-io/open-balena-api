@@ -64,10 +64,11 @@ export interface DeviceLogsBackend {
 	addAdditionalContext?(ctx: Writable<LogContext>): Promise<void>;
 }
 
-export enum StreamState {
-	Buffering,
-	Flushing,
-	Writable,
-	Saturated,
-	Closed,
-}
+export const StreamState = {
+	Buffering: 0,
+	Flushing: 1,
+	Writable: 2,
+	Saturated: 3,
+	Closed: 4,
+} as const;
+export type StreamState = (typeof StreamState)[keyof typeof StreamState];

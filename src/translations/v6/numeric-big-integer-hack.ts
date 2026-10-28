@@ -4,7 +4,7 @@ import type * as TypeUtils from '@balena/sbvr-types/out/type-utils.js';
 // We use the TsTypes as the type name here so that it doesn't conflict later
 // when we augment the @balena/sbvr-types Types type.
 type TsTypes = TypeUtils.TsTypes<number, number>;
-export { TsTypes as Types };
+export type { TsTypes as Types };
 export type DbWriteType = number;
 
 // Augmenting is necessary so that the TS v6-model.ts compiles properly

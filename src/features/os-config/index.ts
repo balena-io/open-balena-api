@@ -5,9 +5,9 @@ import {
 	DEVICE_CONFIG_OPENVPN_CONFIG,
 	DEVICE_CONFIG_SSH_AUTHORIZED_KEYS,
 	LOGS_HOST,
-} from '../../lib/config.js';
-import { b64decode } from '../../lib/utils.js';
-import { createValidatedRequestHandler } from '../../infra/validation/index.js';
+} from '../../lib/config.ts';
+import { b64decode } from '../../lib/utils.ts';
+import { createValidatedRequestHandler } from '../../infra/validation/index.ts';
 
 // OS service configurations
 const services = {

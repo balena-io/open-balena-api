@@ -7,11 +7,11 @@ import _ from 'lodash';
 import path from 'path';
 import { randomUUID } from 'node:crypto';
 
-import { API_HOST } from '../../src/lib/config.js';
-import { supertest } from './supertest.js';
-import type { Device, Organization } from '../../src/balena-model.js';
-import type Model from '../../src/balena-model.js';
-import { assertExists, expectToEventually, waitFor } from './common.js';
+import { API_HOST } from '../../src/lib/config.ts';
+import { supertest } from './supertest.ts';
+import type { Device, Organization } from '../../src/balena-model.ts';
+import type Model from '../../src/balena-model.ts';
+import { assertExists, expectToEventually, waitFor } from './common.ts';
 
 const { api } = sbvrUtils;
 const version = 'resin';

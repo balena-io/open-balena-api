@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import type { FilterObj } from 'pinejs-client-core';
-import type BalenaModel from '../../balena-model.js';
+import type BalenaModel from '../../balena-model.ts';
 
 // TODO: Potential races here. They are unlikely but not impossible. Will fix
 // in subsequent PR.

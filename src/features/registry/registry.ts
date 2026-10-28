@@ -12,7 +12,7 @@ import {
 import {
 	multiCacheMemoizee,
 	reqPermissionNormalizer,
-} from '../../infra/cache/index.js';
+} from '../../infra/cache/index.ts';
 import { randomUUID } from 'node:crypto';
 
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
@@ -20,9 +20,9 @@ import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../infra/error-handling/index.js';
+} from '../../infra/error-handling/index.ts';
 
-import { registryAuth as CERT } from './certs.js';
+import { registryAuth as CERT } from './certs.ts';
 import {
 	AUTH_RESINOS_REGISTRY_CODE,
 	EXTERNAL_HTTP_TIMEOUT_MS,
@@ -42,11 +42,11 @@ import {
 	TOKEN_AUTH_BUILDER_TOKEN,
 	guardTestMockOnly,
 	REGISTRY_STORAGE_REGION,
-} from '../../lib/config.js';
+} from '../../lib/config.ts';
 import {
 	createValidatedRequestHandler,
 	z,
-} from '../../infra/validation/index.js';
+} from '../../infra/validation/index.ts';
 
 const { UnauthorizedError } = errors;
 const { api } = sbvrUtils;

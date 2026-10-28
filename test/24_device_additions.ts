@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import type { PineTest } from 'pinejs-client-supertest';
-import * as fixtures from './test-lib/fixtures.js';
-import { type UserObjectParam, supertest } from './test-lib/supertest.js';
-import * as versions from './test-lib/versions.js';
-import { expectResourceToMatch } from './test-lib/api-helpers.js';
+import * as fixtures from './test-lib/fixtures.ts';
+import { type UserObjectParam, supertest } from './test-lib/supertest.ts';
+import * as versions from './test-lib/versions.ts';
+import { expectResourceToMatch } from './test-lib/api-helpers.ts';
 
 export default () => {
 	versions.test(function (version, pineTest) {

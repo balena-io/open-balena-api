@@ -6,22 +6,22 @@ import { sbvrUtils, errors } from '@balena/pinejs';
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../../infra/error-handling/index.js';
+} from '../../../infra/error-handling/index.ts';
 
 import type {
 	DeviceLogsBackend,
 	HistoryOpts,
 	LogContext,
 	OutputDeviceLog,
-} from './struct.js';
-import { StreamState } from './struct.js';
+} from './struct.ts';
+import { StreamState } from './struct.ts';
 import {
 	addRetentionLimit,
 	getPrimaryBackend,
 	getSecondaryBackend,
 	shouldReadFromSecondary,
-} from './config.js';
-import type { SetupOptions } from '../../../index.js';
+} from './config.ts';
+import type { SetupOptions } from '../../../index.ts';
 import {
 	LOGS_DEFAULT_HISTORY_COUNT,
 	LOGS_DEFAULT_HISTORY_LOOKBACK,
@@ -31,14 +31,14 @@ import {
 	LOGS_HEARTBEAT_INTERVAL,
 	LOGS_READ_STREAM_FLUSH_INTERVAL,
 	NDJSON_CTYPE,
-} from '../../../lib/config.js';
+} from '../../../lib/config.ts';
 import { DAYS } from '@balena/env-parsing';
-import { checkInt } from '../../../lib/utils.js';
+import { checkInt } from '../../../lib/utils.ts';
 import {
 	createValidatedRequestHandler,
 	type RequestExcludingInput,
 	z,
-} from '../../../infra/validation/index.js';
+} from '../../../infra/validation/index.ts';
 
 const { NotFoundError } = errors;
 const { api } = sbvrUtils;

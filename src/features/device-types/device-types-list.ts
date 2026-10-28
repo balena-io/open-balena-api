@@ -1,24 +1,24 @@
-import type { DeviceTypeJson } from './device-type-json.js';
+import type { DeviceTypeJson } from './device-type-json.ts';
 import { errors, permissions, sbvrUtils } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 const { InternalRequestError } = errors;
 
-import { captureException } from '../../infra/error-handling/index.js';
+import { captureException } from '../../infra/error-handling/index.ts';
 
-import { getDeviceTypeJson, getLogoUrl } from './build-info-facade.js';
+import { getDeviceTypeJson, getLogoUrl } from './build-info-facade.ts';
 import {
 	getImageKey,
 	IMAGE_STORAGE_PREFIX,
 	listFolders,
-} from './storage/index.js';
-import { multiCacheMemoizee } from '../../infra/cache/index.js';
+} from './storage/index.ts';
+import { multiCacheMemoizee } from '../../infra/cache/index.ts';
 import {
 	DEVICE_TYPES_CACHE_LOCAL_TIMEOUT,
 	DEVICE_TYPES_CACHE_TIMEOUT,
 	CONTRACT_ALLOWLIST,
 	IMAGE_STORAGE_DEBUG_REQUEST_ERRORS,
-} from '../../lib/config.js';
-import { ESR_MIN_MAJOR } from './device-types.js';
+} from '../../lib/config.ts';
+import { ESR_MIN_MAJOR } from './device-types.ts';
 
 const { api } = sbvrUtils;
 

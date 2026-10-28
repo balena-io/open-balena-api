@@ -15,7 +15,7 @@ import {
 	LOKI_RETRIES_ENABLED,
 	LOKI_PUSH_TIMEOUT,
 	LOKI_HISTORY_TIMEOUT,
-} from '../../../../lib/config.js';
+} from '../../../../lib/config.ts';
 import type {
 	DeviceLogsBackend,
 	HistoryOpts,
@@ -24,8 +24,8 @@ import type {
 	LokiLogContext,
 	OutputDeviceLog,
 	Subscription,
-} from '../struct.js';
-import { captureException } from '../../../../infra/error-handling/index.js';
+} from '../struct.ts';
+import { captureException } from '../../../../infra/error-handling/index.ts';
 import {
 	decrementSubscription,
 	incrementSubscription,
@@ -37,9 +37,9 @@ import {
 	incrementLokiPushTotal,
 	updateLokiPushDurationHistogram,
 	incrementPublishCallTotal,
-} from './metrics.js';
+} from './metrics.ts';
 import { setTimeout } from 'timers/promises';
-import { requestAsync } from '../../../../infra/request-promise/index.js';
+import { requestAsync } from '../../../../infra/request-promise/index.ts';
 import WebSocket from 'ws';
 import querystring from 'node:querystring';
 

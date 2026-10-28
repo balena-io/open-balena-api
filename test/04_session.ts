@@ -6,19 +6,19 @@ import {
 	JSON_WEB_TOKEN_SECRET_KEY,
 	SUPERUSER_EMAIL,
 	SUPERUSER_PASSWORD,
-} from '../src/lib/config.js';
+} from '../src/lib/config.ts';
 import {
 	createScopedAccessToken,
 	createScopedRolesToken,
 	generateNewJwtSecret,
-} from '../src/infra/auth/jwt.js';
+} from '../src/infra/auth/jwt.ts';
 
-import * as fixtures from './test-lib/fixtures.js';
-import type { UserObjectParam } from './test-lib/supertest.js';
-import { supertest } from './test-lib/supertest.js';
-import * as versions from './test-lib/versions.js';
-import type { Device } from './test-lib/fake-device.js';
-import type { Application } from '../src/balena-model.js';
+import * as fixtures from './test-lib/fixtures.ts';
+import type { UserObjectParam } from './test-lib/supertest.ts';
+import { supertest } from './test-lib/supertest.ts';
+import * as versions from './test-lib/versions.ts';
+import type { Device } from './test-lib/fake-device.ts';
+import type { Application } from '../src/balena-model.ts';
 import {
 	assignRolePermission,
 	assignUserRole,
@@ -26,12 +26,12 @@ import {
 	getOrInsertRoleId,
 	getRolePermissions,
 	revokeUserRole,
-} from '../src/infra/auth/permissions.js';
+} from '../src/infra/auth/permissions.ts';
 import { permissions as pinePermissions, sbvrUtils } from '@balena/pinejs';
 const { api } = sbvrUtils;
 import { setTimeout } from 'timers/promises';
-import { expectJwt } from './test-lib/api-helpers.js';
-import { assertExists } from './test-lib/common.js';
+import { expectJwt } from './test-lib/api-helpers.ts';
+import { assertExists } from './test-lib/common.ts';
 
 export default () => {
 	versions.test((version) => {

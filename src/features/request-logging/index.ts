@@ -1,9 +1,9 @@
 import type { Application, Request } from 'express';
 import morgan from 'morgan';
-import { getServiceFromRequest } from '../../lib/auth.js';
-import { getIP } from '../../lib/utils.js';
+import { getServiceFromRequest } from '../../lib/auth.ts';
+import { getIP } from '../../lib/utils.ts';
 import { trace } from '@opentelemetry/api';
-import { createUnvalidatedRequestHandler } from '../../infra/validation/index.js';
+import { createUnvalidatedRequestHandler } from '../../infra/validation/index.ts';
 
 export type GetUrlFunction = (req: Request) => string;
 

@@ -1,5 +1,5 @@
-export { resolveOrDenyDevicesWithStatus } from '../features/device-state/middleware.js';
-export type { ResolveDeviceInfoCustomObject } from '../features/device-state/middleware.js';
-export * from '../infra/auth/middleware.js';
-export { loginRateLimiter } from '../features/auth/index.js';
-export { skipLogging } from '../features/request-logging/index.js';
+export { resolveOrDenyDevicesWithStatus } from '../features/device-state/middleware.ts';
+export type { ResolveDeviceInfoCustomObject } from '../features/device-state/middleware.ts';
+export * from '../infra/auth/middleware.ts';
+export { loginRateLimiter } from '../features/auth/index.ts';
+export { skipLogging } from '../features/request-logging/index.ts';

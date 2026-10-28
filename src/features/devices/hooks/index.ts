@@ -1,2 +1,2 @@
-import './defaults-validation.js';
-import './moving.js';
+import './defaults-validation.ts';
+import './moving.ts';

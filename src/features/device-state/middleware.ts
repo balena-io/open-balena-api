@@ -1,15 +1,15 @@
 import type { Response } from 'express';
 import _ from 'lodash';
-import { multiCacheMemoizee } from '../../infra/cache/index.js';
-import type { Device } from '../../balena-model.js';
+import { multiCacheMemoizee } from '../../infra/cache/index.ts';
+import type { Device } from '../../balena-model.ts';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
-import { DEVICE_EXISTS_CACHE_TIMEOUT } from '../../lib/config.js';
+import { DEVICE_EXISTS_CACHE_TIMEOUT } from '../../lib/config.ts';
 import { setTimeout } from 'timers/promises';
 import {
 	createUnvalidatedRequestHandler,
 	type RequestExcludingInput,
-} from '../../infra/validation/index.js';
+} from '../../infra/validation/index.ts';
 
 const { api } = sbvrUtils;
 

@@ -5,11 +5,11 @@ import memoize from 'memoizee';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
-import { findUser } from './auth.js';
-import { captureException } from '../error-handling/index.js';
-import { getOrInsertId } from '../pinejs-client-helpers/index.js';
-import { multiCacheMemoizee } from '../cache/multi-level-memoizee.js';
-import { ROLE_PERMISSIONS_CACHE_TIMEOUT } from '../../lib/config.js';
+import { findUser } from './auth.ts';
+import { captureException } from '../error-handling/index.ts';
+import { getOrInsertId } from '../pinejs-client-helpers/index.ts';
+import { multiCacheMemoizee } from '../cache/multi-level-memoizee.ts';
+import { ROLE_PERMISSIONS_CACHE_TIMEOUT } from '../../lib/config.ts';
 
 const { api } = sbvrUtils;
 

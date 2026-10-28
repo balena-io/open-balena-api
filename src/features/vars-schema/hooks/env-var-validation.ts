@@ -3,7 +3,7 @@ import { hooks } from '@balena/pinejs';
 import {
 	checkEnvVarNameValidity,
 	checkEnvVarValueValidity,
-} from '../env-vars.js';
+} from '../env-vars.ts';
 
 const envVarHook: hooks.Hooks = {
 	POSTPARSE: ({ request }) => {

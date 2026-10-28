@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import { getMockServer } from './mockttp-server.js';
-import { supertest } from './supertest.js';
+import { getMockServer } from './mockttp-server.ts';
+import { supertest } from './supertest.ts';
 
-import { VPN_SERVICE_API_KEY } from '../../src/lib/config.js';
-import { waitFor, TimedOutError } from './common.js';
+import { VPN_SERVICE_API_KEY } from '../../src/lib/config.ts';
+import { waitFor, TimedOutError } from './common.ts';
 
 const registerService = async (version: string) => {
 	const res = await supertest()

@@ -1,8 +1,8 @@
-import { checkSudoValidity } from './jwt.js';
+import { checkSudoValidity } from './jwt.ts';
 
-import { prefetchAPIKey, retrieveAPIKey } from './api-keys.js';
-import { getUser, reqHasPermission } from './auth.js';
-import { createUnvalidatedRequestHandler } from '../validation/index.js';
+import { prefetchAPIKey, retrieveAPIKey } from './api-keys.ts';
+import { getUser, reqHasPermission } from './auth.ts';
+import { createUnvalidatedRequestHandler } from '../validation/index.ts';
 
 /**
  * This checks that a user has provided credentials, they may not be fully authorized, ie they may still need to pass 2fa

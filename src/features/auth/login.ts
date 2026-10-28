@@ -1,14 +1,14 @@
 import { errors, sbvrUtils } from '@balena/pinejs';
-import { comparePassword, findUser } from '../../infra/auth/auth.js';
-import { loginUserXHR } from '../../infra/auth/jwt.js';
-import { captureException } from '../../infra/error-handling/index.js';
+import { comparePassword, findUser } from '../../infra/auth/auth.ts';
+import { loginUserXHR } from '../../infra/auth/jwt.ts';
+import { captureException } from '../../infra/error-handling/index.ts';
 import { permissions } from '@balena/pinejs';
 
-import type { SetupOptions } from '../../index.js';
+import type { SetupOptions } from '../../index.ts';
 import {
 	createValidatedRequestHandler,
 	z,
-} from '../../infra/validation/index.js';
+} from '../../infra/validation/index.ts';
 
 const { BadRequestError, NotFoundError } = errors;
 

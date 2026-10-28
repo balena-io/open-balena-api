@@ -2,12 +2,12 @@ import _ from 'lodash';
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../../infra/error-handling/index.js';
+} from '../../../infra/error-handling/index.ts';
 import { sbvrUtils, errors } from '@balena/pinejs';
-import { getIP } from '../../../lib/utils.js';
-import type { Device, Image, Release } from '../../../balena-model.js';
+import { getIP } from '../../../lib/utils.ts';
+import type { Device, Image, Release } from '../../../balena-model.ts';
 import type { Filter } from 'pinejs-client-core';
-import { metricsPatchFields, v3ValidPatchFields } from '../index.js';
+import { metricsPatchFields, v3ValidPatchFields } from '../index.ts';
 import {
 	deleteOldImageInstalls,
 	limitMetricNumbers,
@@ -15,25 +15,25 @@ import {
 	shouldUpdateMetrics,
 	truncateConstrainedDeviceFields,
 	normalizeDeviceWriteBody,
-} from '../state-patch-utils.js';
-import type { ResolveDeviceInfoCustomObject } from '../middleware.js';
+} from '../state-patch-utils.ts';
+import type { ResolveDeviceInfoCustomObject } from '../middleware.ts';
 import {
 	type RequestExcludingInput,
 	createValidatedRequestHandler,
 	z,
-} from '../../../infra/validation/index.js';
+} from '../../../infra/validation/index.ts';
 
 const { BadRequestError, UnauthorizedError, InternalRequestError } = errors;
 const { api } = sbvrUtils;
 
-enum updateStatusPrecedence {
-	rejected,
-	aborted,
-	downloading,
-	downloaded,
-	'applying changes',
-	done,
-}
+const updateStatusPrecedence = {
+	rejected: 0,
+	aborted: 1,
+	downloading: 2,
+	downloaded: 3,
+	'applying changes': 4,
+	done: 5,
+} as const;
 
 /**
  * These typings should be used as a guide to what should be sent, but cannot be trusted as what actually *is* sent.

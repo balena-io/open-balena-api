@@ -4,9 +4,9 @@ import {
 	CONTRACTS_PUBLIC_REPO_OWNER,
 	CONTRACTS_PUBLIC_REPO_NAME,
 	CONTRACTS_PUBLIC_REPO_BRANCH,
-} from '../../src/lib/config.js';
-import type { RepositoryInfo } from '../../src/features/contracts/index.js';
-import { getMockServer } from './mockttp-server.js';
+} from '../../src/lib/config.ts';
+import type { RepositoryInfo } from '../../src/features/contracts/index.ts';
+import { getMockServer } from './mockttp-server.ts';
 import * as tar from 'tar';
 
 const GITHUB_API_HOST = 'api.github.com';

@@ -1,5 +1,5 @@
 import { hooks } from '@balena/pinejs';
-import { retrieveAPIKey } from '../../../infra/auth/api-keys.js';
+import { retrieveAPIKey } from '../../../infra/auth/api-keys.ts';
 
 hooks.addHook('all', 'all', 'all', {
 	sideEffects: false,

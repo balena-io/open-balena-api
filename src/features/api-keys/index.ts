@@ -1,13 +1,13 @@
 import type { Application } from 'express';
 
-import { middleware } from '../../infra/auth/index.js';
+import { middleware } from '../../infra/auth/index.ts';
 import {
 	createDeviceApiKey,
 	createGenericApiKey,
 	createNamedUserApiKey,
 	createProvisioningApiKey,
 	createUserApiKey,
-} from './routes.js';
+} from './routes.ts';
 
 export const setup = (app: Application) => {
 	/**

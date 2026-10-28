@@ -1,10 +1,10 @@
 import { errors, sbvrUtils } from '@balena/pinejs';
-import { getUser } from '../../infra/auth/auth.js';
+import { getUser } from '../../infra/auth/auth.ts';
 import {
 	captureException,
 	handleHttpErrors,
 	translateError,
-} from '../../infra/error-handling/index.js';
+} from '../../infra/error-handling/index.ts';
 
 import {
 	createGenericApiKey as $createGenericApiKey,
@@ -14,11 +14,11 @@ import {
 	createUserApiKey as $createUserApiKey,
 	getApiKeyOptsFromRequest,
 	supportedActorTypes,
-} from './lib.js';
+} from './lib.ts';
 import {
 	createValidatedRequestHandler,
 	z,
-} from '../../infra/validation/index.js';
+} from '../../infra/validation/index.ts';
 
 export const createGenericApiKey = (version: 'v1' | 'v2') => {
 	const mandatoryExpiryDate = version !== 'v1';

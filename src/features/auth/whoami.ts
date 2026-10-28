@@ -1,14 +1,14 @@
 import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 
-import { getUser } from '../../infra/auth/auth.js';
+import { getUser } from '../../infra/auth/auth.ts';
 import {
 	captureException,
 	handleHttpErrors,
 	ThisShouldNeverHappenError,
-} from '../../infra/error-handling/index.js';
+} from '../../infra/error-handling/index.ts';
 
-import type { User } from '../../balena-model.js';
-import { createValidatedRequestHandler } from '../../infra/validation/index.js';
+import type { User } from '../../balena-model.ts';
+import { createValidatedRequestHandler } from '../../infra/validation/index.ts';
 
 const { api } = sbvrUtils;
 

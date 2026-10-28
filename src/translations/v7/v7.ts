@@ -3,8 +3,8 @@ import {
 	generateAbstractSqlModel,
 	overrideFieldType,
 	renameVarResourcesName,
-} from '../../abstract-sql-utils.js';
-import * as userHasDirectAccessToApplication from '../../features/applications/models/user__has_direct_access_to__application.js';
+} from '../../abstract-sql-utils.ts';
+import * as userHasDirectAccessToApplication from '../../features/applications/models/user__has_direct_access_to__application.ts';
 
 export const toVersion = 'resin';
 

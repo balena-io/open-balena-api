@@ -1,7 +1,7 @@
 import type { Application } from 'express';
 
-import { middleware } from '../../infra/auth/index.js';
-import { hostOSAccess } from './access.js';
+import { middleware } from '../../infra/auth/index.ts';
+import { hostOSAccess } from './access.ts';
 
 export const setup = (app: Application) => {
 	app.get(

@@ -1,6 +1,6 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
-import { captureException } from '../../infra/error-handling/index.js';
-import { setupDeleteCascade } from './setup-delete-cascade.js';
+import { captureException } from '../../infra/error-handling/index.ts';
+import { setupDeleteCascade } from './setup-delete-cascade.ts';
 
 const { api, getAffectedIds } = sbvrUtils;
 

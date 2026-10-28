@@ -6,8 +6,8 @@ import {
 	TOKEN_AUTH_CERT_KID,
 	TOKEN_AUTH_CERT_PUB,
 	TOKEN_AUTH_JWT_ALGO,
-} from '../../lib/config.js';
-import { b64decode } from '../../lib/utils.js';
+} from '../../lib/config.ts';
+import { b64decode } from '../../lib/utils.ts';
 
 const allowedAlgorithms = [
 	'HS256',

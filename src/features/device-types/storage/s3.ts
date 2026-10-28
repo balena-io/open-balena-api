@@ -14,7 +14,7 @@ import {
 	IMAGE_STORAGE_SECRET_KEY,
 	IMAGE_STORAGE_DEBUG_REQUEST_ERRORS,
 	IMAGE_STORAGE_REGION,
-} from '../../../lib/config.js';
+} from '../../../lib/config.ts';
 
 export const getKey = (...parts: string[]): string => parts.join('/');
 

@@ -16,7 +16,10 @@
 		"sourceMap": true,
 		"skipLibCheck": true,
 		"resolveJsonModule": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"rewriteRelativeImportExtensions": true,
+		"erasableSyntaxOnly": true,
+		"verbatimModuleSyntax": true
 	},
 	"include": [
 		"src/**/*.ts"

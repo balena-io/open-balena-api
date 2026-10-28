@@ -1,7 +1,7 @@
-import { fakeTx } from './fixtures.js';
-import { expectJwt, getUserFromToken } from './api-helpers.js';
-import type { TokenUserPayload } from '../../src/infra/auth/jwt.js';
-import { createSessionToken } from '../../src/infra/auth/jwt.js';
+import { fakeTx } from './fixtures.ts';
+import { expectJwt, getUserFromToken } from './api-helpers.ts';
+import type { TokenUserPayload } from '../../src/infra/auth/jwt.ts';
+import { createSessionToken } from '../../src/infra/auth/jwt.ts';
 
 /**
  * Issues a JWT that's from 30' in the past, so that it's no longer a sudo JWT

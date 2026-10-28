@@ -1,15 +1,15 @@
 import { randomUUID } from 'node:crypto';
 import _ from 'lodash';
 import semverLib from 'semver';
-import type { Release } from '../src/balena-model.js';
-import { expectResourceToMatch } from './test-lib/api-helpers.js';
-import * as fixtures from './test-lib/fixtures.js';
+import type { Release } from '../src/balena-model.ts';
+import { expectResourceToMatch } from './test-lib/api-helpers.ts';
+import * as fixtures from './test-lib/fixtures.ts';
 import { expect } from 'chai';
-import type { UserObjectParam } from './test-lib/supertest.js';
-import { supertest } from './test-lib/supertest.js';
-import * as versions from './test-lib/versions.js';
+import type { UserObjectParam } from './test-lib/supertest.ts';
+import { supertest } from './test-lib/supertest.ts';
+import * as versions from './test-lib/versions.ts';
 import { setTimeout } from 'timers/promises';
-import { assertExists } from './test-lib/common.js';
+import { assertExists } from './test-lib/common.ts';
 
 export default () => {
 	versions.test((version, pineTest) => {

@@ -3,9 +3,9 @@ import { type permissions, sbvrUtils } from '@balena/pinejs';
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../infra/error-handling/index.js';
-import { augmentReqApiKeyPermissions } from '../api-keys/lib.js';
-import { createValidatedRequestHandler } from '../../infra/validation/index.js';
+} from '../../infra/error-handling/index.ts';
+import { augmentReqApiKeyPermissions } from '../api-keys/lib.ts';
+import { createValidatedRequestHandler } from '../../infra/validation/index.ts';
 
 export const defaultGetAuthorizedKeysFn = async (
 	req: permissions.PermissionReq,

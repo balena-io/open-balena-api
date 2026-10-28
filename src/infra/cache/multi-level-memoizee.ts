@@ -3,8 +3,8 @@ import _ from 'lodash';
 import type { Options as MemoizeeOptions } from 'memoizee';
 import primitiveKey from 'memoizee/normalizers/primitive.js';
 import { SECONDS } from '@balena/env-parsing';
-import type { Defined, MultiStoreOpt } from './index.js';
-import { createMultiLevelStore } from './index.js';
+import type { Defined, MultiStoreOpt } from './index.ts';
+import { createMultiLevelStore } from './index.ts';
 
 type MultiCacheMemoizeeOpts<T extends (...args: any[]) => any> = {
 	cacheKey?: string;

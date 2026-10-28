@@ -1,12 +1,12 @@
 import { expect } from 'chai';
-import * as fixtures from './test-lib/fixtures.js';
-import * as fakeDevice from './test-lib/fake-device.js';
+import * as fixtures from './test-lib/fixtures.ts';
+import * as fakeDevice from './test-lib/fake-device.ts';
 
-import type { UserObjectParam } from './test-lib/supertest.js';
-import type { Application, Image, Release } from '../src/balena-model.js';
-import { expectResourceToMatch } from './test-lib/api-helpers.js';
+import type { UserObjectParam } from './test-lib/supertest.ts';
+import type { Application, Image, Release } from '../src/balena-model.ts';
+import { expectResourceToMatch } from './test-lib/api-helpers.ts';
 import type { PineTest } from 'pinejs-client-supertest';
-import * as versions from './test-lib/versions.js';
+import * as versions from './test-lib/versions.ts';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
 
 export default () => {

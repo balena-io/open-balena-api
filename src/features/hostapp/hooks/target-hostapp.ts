@@ -6,9 +6,9 @@ import {
 } from '@balena/pinejs';
 import * as semver from 'balena-semver';
 import type { SemVer } from 'semver';
-import type { ReleaseTag, Release } from '../../../balena-model.js';
+import type { ReleaseTag, Release } from '../../../balena-model.ts';
 import type { PickDeferred } from '@balena/abstract-sql-to-typescript';
-import { ThisShouldNeverHappenError } from '../../../infra/error-handling/index.js';
+import { ThisShouldNeverHappenError } from '../../../infra/error-handling/index.ts';
 const { BadRequestError } = pinejsErrors;
 
 /**

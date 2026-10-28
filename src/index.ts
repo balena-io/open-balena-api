@@ -14,12 +14,12 @@ import * as zlib from 'node:zlib';
 
 import * as pine from '@balena/pinejs';
 
-import type { User } from './balena-model.js';
+import type { User } from './balena-model.ts';
 import type {
 	defaultFindUser$select,
 	GetNewUserRoleFunction,
-} from './infra/auth/auth.js';
-import * as jwt from './infra/auth/jwt-passport.js';
+} from './infra/auth/auth.ts';
+import * as jwt from './infra/auth/jwt-passport.ts';
 
 // TODO: Move this into a feature
 passport.use(jwt.createStrategy());
@@ -43,14 +43,14 @@ import {
 	PINEJS_QUEUE_CONCURRENCY,
 	DB_PREPARE_AFTER_N,
 	PINEJS_WEBRESOURCE_MULTIPART_ENABLED,
-} from './lib/config.js';
+} from './lib/config.ts';
 
 import {
 	captureException,
 	handleHttpErrors,
 	ThisShouldNeverHappenError,
 	translateError,
-} from './infra/error-handling/index.js';
+} from './infra/error-handling/index.ts';
 import {
 	findUser,
 	getUser,
@@ -64,7 +64,7 @@ import {
 	checkUserPassword,
 	isJWT,
 	verifyAndResolveJwt,
-} from './infra/auth/auth.js';
+} from './infra/auth/auth.ts';
 import {
 	setUserTokenDataCallback,
 	tokenFields,
@@ -72,7 +72,7 @@ import {
 	loginUserXHR,
 	updateUserXHR,
 	createSessionToken,
-} from './infra/auth/jwt.js';
+} from './infra/auth/jwt.ts';
 import {
 	createAllPermissions,
 	setApiKey,
@@ -82,100 +82,100 @@ import {
 	assignUserPermission,
 	assignUserRole,
 	revokeUserRole,
-} from './infra/auth/permissions.js';
+} from './infra/auth/permissions.ts';
 import {
 	createScopedAccessToken,
 	createScopedRolesToken,
 	createJwt,
-} from './infra/auth/jwt.js';
-import { middleware as authMiddleware } from './infra/auth/index.js';
+} from './infra/auth/jwt.ts';
+import { middleware as authMiddleware } from './infra/auth/index.ts';
 import {
 	augmentReqApiKeyPermissions,
 	isApiKeyWithRole,
 	getApiKeyOptsFromRequest,
-} from './features/api-keys/lib.js';
-import { setupDeleteCascade as addDeleteHookForDependents } from './features/cascade-delete/setup-delete-cascade.js';
-import { addHooksForFieldSizeLimitChecks } from './features/field-size-limits/setup-field-size-limits.js';
+} from './features/api-keys/lib.ts';
+import { setupDeleteCascade as addDeleteHookForDependents } from './features/cascade-delete/setup-delete-cascade.ts';
+import { addHooksForFieldSizeLimitChecks } from './features/field-size-limits/setup-field-size-limits.ts';
 import {
 	updateOrInsertModel,
 	getOrInsertModelId,
-} from './infra/pinejs-client-helpers/index.js';
+} from './infra/pinejs-client-helpers/index.ts';
 import {
 	normalizeHandle,
 	refreshToken,
 	publicKeys,
-} from './features/auth/index.js';
-import type { OnRefreshTokenFn } from './features/auth/refresh-token.js';
+} from './features/auth/index.ts';
+import type { OnRefreshTokenFn } from './features/auth/refresh-token.ts';
 import {
 	getIP,
 	getIPv4,
 	isValidInteger,
 	throttledForEach,
-} from './lib/utils.js';
+} from './lib/utils.ts';
 import {
 	createRateLimitMiddleware,
 	createRateLimiter,
 	getUserIDFromCreds,
-} from './infra/rate-limiting/index.js';
+} from './infra/rate-limiting/index.ts';
 import {
 	getAccessibleDeviceTypeJsons,
 	getDeviceTypeJsonBySlug,
 	getDeviceTypeBySlug,
-} from './features/device-types/device-types.js';
-import { proxy as supervisorProxy } from './features/device-proxy/device-proxy.js';
-import { generateConfig } from './features/device-config/device-config.js';
+} from './features/device-types/device-types.ts';
+import { proxy as supervisorProxy } from './features/device-proxy/device-proxy.ts';
+import { generateConfig } from './features/device-config/device-config.ts';
 import {
 	DeviceOnlineStates,
 	getPollInterval,
 	getInstance as getDeviceOnlineStateManager,
-} from './features/device-heartbeat/index.js';
-import { registryAuth } from './features/registry/certs.js';
+} from './features/device-heartbeat/index.ts';
+import { registryAuth } from './features/registry/certs.ts';
 import {
 	ALLOWED_NAMES,
 	BLOCKED_NAMES,
 	SUPERVISOR_CONFIG_VAR_PROPERTIES,
 	DEVICE_TYPE_SPECIFIC_CONFIG_VAR_PROPERTIES,
-} from './features/vars-schema/env-vars.js';
-import * as baseAuth from './lib/auth.js';
+} from './features/vars-schema/env-vars.ts';
+import * as baseAuth from './lib/auth.ts';
 // TODO: This should not be exported
-import { varListInsert } from './features/device-state/state-get-utils.js';
-import type { GetUrlFunction } from './features/request-logging/index.js';
-import { setupRequestLogging } from './features/request-logging/index.js';
-import { startContractSynchronization } from './features/contracts/index.js';
+import { varListInsert } from './features/device-state/state-get-utils.ts';
+import type { GetUrlFunction } from './features/request-logging/index.ts';
+import { setupRequestLogging } from './features/request-logging/index.ts';
+import { startContractSynchronization } from './features/contracts/index.ts';
 import {
 	defaultRespondFn,
 	setRespondFn,
-} from './features/device-state/middleware.js';
-import type { RequestExcludingInput } from './infra/validation/index.js';
+} from './features/device-state/middleware.ts';
+import type { RequestExcludingInput } from './infra/validation/index.ts';
 
-import { addToModel as addUserHasDirectAccessToApplicationToModel } from './features/applications/models/user__has_direct_access_to__application.js';
-import { getApplicationSlug } from './features/applications/index.js';
-import * as deviceAdditions from './features/devices/models/device-additions.js';
-import { addToModel as addReleaseAdditionsToModel } from './features/ci-cd/models/release-additions.js';
-import { addToModel as addApplicationProfileCatalogAdditionsToModel } from './features/profiles/models/application-profile-catalog-additions.js';
-import { model as balenaModel } from './balena.js';
-import * as v6 from './translations/v6/v6.js';
-import { getV7Translations } from './translations/v7/v7.js';
+import { addToModel as addUserHasDirectAccessToApplicationToModel } from './features/applications/models/user__has_direct_access_to__application.ts';
+import { getApplicationSlug } from './features/applications/index.ts';
+import * as deviceAdditions from './features/devices/models/device-additions.ts';
+import { addToModel as addReleaseAdditionsToModel } from './features/ci-cd/models/release-additions.ts';
+import { addToModel as addApplicationProfileCatalogAdditionsToModel } from './features/profiles/models/application-profile-catalog-additions.ts';
+import { model as balenaModel } from './balena.ts';
+import * as v6 from './translations/v6/v6.ts';
+import { getV7Translations } from './translations/v7/v7.ts';
 
-export * as tags from './features/tags/validation.js';
-export type { TokenUserPayload } from './infra/auth/jwt.js';
-export type { Creds, ResolvedUserPayload } from './infra/auth/jwt-passport.js';
-export type { Access } from './features/registry/registry.js';
-export type { ApplicationType } from './features/application-types/application-types.js';
-export type { DeviceTypeJson } from './features/device-types/device-type-json.js';
+export * as tags from './features/tags/validation.ts';
+export type { TokenUserPayload } from './infra/auth/jwt.ts';
+export type { Creds, ResolvedUserPayload } from './infra/auth/jwt-passport.ts';
+export type { Access } from './features/registry/registry.ts';
+export type { ApplicationType } from './features/application-types/application-types.ts';
+export type { DeviceTypeJson } from './features/device-types/device-type-json.ts';
 
-export type { DefaultApplicationType } from './features/application-types/application-types.js';
-export * as request from './infra/request-promise/index.js';
-export * as redis from './infra/redis/index.js';
-export * as scheduler from './infra/scheduler/index.js';
-export * as validation from './infra/validation/index.js';
-export * as cache from './infra/cache/index.js';
-export * as config from './lib/config.js';
-export * as registry from './features/registry/registry.js';
-export * as abstractSql from './abstract-sql-utils.js';
-export { getFileUploadHandler } from './fileupload-handler.js';
+export type { DefaultApplicationType } from './features/application-types/application-types.ts';
+export * as request from './infra/request-promise/index.ts';
+export * as redis from './infra/redis/index.ts';
+export * as scheduler from './infra/scheduler/index.ts';
+export * as validation from './infra/validation/index.ts';
+export * as cache from './infra/cache/index.ts';
+export * as config from './lib/config.ts';
+export * as registry from './features/registry/registry.ts';
+export * as abstractSql from './abstract-sql-utils.ts';
+export { getFileUploadHandler } from './fileupload-handler.ts';
 
-export * as deviceState from './features/device-state/index.js';
+export * as deviceState from './features/device-state/index.ts';
 export const errors = {
 	captureException,
 	handleHttpErrors,
@@ -227,7 +227,7 @@ export const rateLimiting = {
 	createRateLimitMiddleware,
 	createRateLimiter,
 };
-export * as middleware from './exports/middleware.js';
+export * as middleware from './exports/middleware.ts';
 export const hooks = {
 	addDeleteHookForDependents,
 	addHooksForFieldSizeLimitChecks,
@@ -269,7 +269,7 @@ export const deviceTypes = {
 	getDeviceTypeJsonBySlug,
 	getDeviceTypeBySlug,
 };
-export * as contracts from './exports/contracts.js';
+export * as contracts from './exports/contracts.ts';
 export const envVarsConfig = {
 	ALLOWED_NAMES,
 	BLOCKED_NAMES,
@@ -279,17 +279,17 @@ export const envVarsConfig = {
 
 // Needed so that the augmented `@balena/sbvr-types` typings
 // automatically become available to consumer projects.
-import './translations/v6/numeric-big-integer-hack.js';
+import './translations/v6/numeric-big-integer-hack.ts';
 
 export const translations = {
 	v7: {
 		getTranslations: getV7Translations,
-		loadHooks: () => import('./translations/v7/hooks.js'),
+		loadHooks: () => import('./translations/v7/hooks.ts'),
 	},
 	v6: {
 		getTranslations: v6.getV6Translations,
 		extendValidators: v6.extendValidators,
-		loadHooks: () => import('./translations/v6/hooks.js'),
+		loadHooks: () => import('./translations/v6/hooks.ts'),
 	},
 };
 
@@ -436,13 +436,13 @@ export async function setup(app: Application, options: SetupOptions) {
 		setRegistrationRoleFunc(options.getNewUserRole);
 	}
 
-	await import('./hooks.js');
+	await import('./hooks.ts');
 	await options.onInitHooks?.(app);
 
 	if (ASYNC_TASKS_ENABLED) {
 		pine.env.tasks.queueConcurrency = PINEJS_QUEUE_CONCURRENCY;
 		pine.env.tasks.queueIntervalMS = PINEJS_QUEUE_INTERVAL_MS;
-		await import('./tasks.js');
+		await import('./tasks.ts');
 		await options.onInitTasks?.(app);
 		pine.tasks.worker?.start();
 	}
@@ -450,7 +450,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	pine.env.webResource.multipartUploadEnabled =
 		PINEJS_WEBRESOURCE_MULTIPART_ENABLED;
 
-	const routes = await import('./routes.js');
+	const routes = await import('./routes.ts');
 	routes.setup(app, options);
 	await options.onInitRoutes?.(app);
 

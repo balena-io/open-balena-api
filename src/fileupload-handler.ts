@@ -16,7 +16,7 @@ import {
 	WEBRESOURCES_CLOUDFRONT_PUBLICKEY,
 	WEBRESOURCES_CLOUDFRONT_HOST,
 	WEBRESOURCES_S3_STORAGE_CLASS,
-} from './lib/config.js';
+} from './lib/config.ts';
 
 const getEndpointFromHost = (host: string): string => {
 	return host.startsWith('http') ? host : `https://${host}`;

@@ -20,7 +20,7 @@ import type {
 
 import { sbvrUtils } from '@balena/pinejs';
 import * as AbstractSqlCompiler from '@balena/abstract-sql-compiler';
-import type { validation } from './index.js';
+import type { validation } from './index.ts';
 
 export const { optimizeSchema } = AbstractSqlCompiler.postgres;
 

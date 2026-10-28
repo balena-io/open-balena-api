@@ -1,13 +1,13 @@
 import { expect } from 'chai';
-import type { UserObjectParam } from './test-lib/supertest.js';
-import * as versions from './test-lib/versions.js';
-import * as fixtures from './test-lib/fixtures.js';
+import type { UserObjectParam } from './test-lib/supertest.ts';
+import * as versions from './test-lib/versions.ts';
+import * as fixtures from './test-lib/fixtures.ts';
 import _ from 'lodash';
-import type { Application } from '../src/balena-model.js';
+import type { Application } from '../src/balena-model.ts';
 import { setTimeout } from 'timers/promises';
 import type { PineTest } from 'pinejs-client-supertest';
-import { assertExists, itExpectsError } from './test-lib/common.js';
-import { provisionDevice } from './test-lib/fake-device.js';
+import { assertExists, itExpectsError } from './test-lib/common.ts';
+import { provisionDevice } from './test-lib/fake-device.ts';
 
 export default () => {
 	versions.test((version, pineTest) => {

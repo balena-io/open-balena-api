@@ -3,7 +3,7 @@ import _ from 'lodash';
 export const versions = ['v6', 'v7', 'resin'] as const;
 
 import type { PineTest } from 'pinejs-client-supertest';
-import { pineTest } from './pinetest.js';
+import { pineTest } from './pinetest.ts';
 
 export type ValidVersion = (typeof versions)[number];
 

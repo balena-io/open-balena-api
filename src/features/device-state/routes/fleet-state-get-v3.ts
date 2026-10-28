@@ -2,18 +2,18 @@ import _ from 'lodash';
 import {
 	captureException,
 	handleHttpErrors,
-} from '../../../infra/error-handling/index.js';
+} from '../../../infra/error-handling/index.ts';
 
 import { sbvrUtils, errors, type permissions } from '@balena/pinejs';
-import { getConfig, readTransaction } from '../state-get-utils.js';
-import type { ExpandedRelease, StateV3 } from './state-get-v3.js';
-import { buildAppFromRelease, releaseExpand } from './state-get-v3.js';
+import { getConfig, readTransaction } from '../state-get-utils.ts';
+import type { ExpandedRelease, StateV3 } from './state-get-v3.ts';
+import { buildAppFromRelease, releaseExpand } from './state-get-v3.ts';
 import type { OptionsToResponse } from 'pinejs-client-core';
-import type { Application } from '../../../balena-model.js';
+import type { Application } from '../../../balena-model.ts';
 import {
 	createValidatedRequestHandler,
 	z,
-} from '../../../infra/validation/index.js';
+} from '../../../infra/validation/index.ts';
 const { api } = sbvrUtils;
 const { UnauthorizedError } = errors;
 

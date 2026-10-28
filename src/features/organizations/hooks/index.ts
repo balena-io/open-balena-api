@@ -1,1 +1,1 @@
-import './handle.js';
+import './handle.ts';

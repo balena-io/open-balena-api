@@ -1,5 +1,5 @@
 import { sbvrUtils, hooks } from '@balena/pinejs';
-import { captureException } from '../error-handling/index.js';
+import { captureException } from '../error-handling/index.ts';
 
 export function addDeleteHookForDependents(
 	model: string,

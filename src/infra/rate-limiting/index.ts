@@ -8,14 +8,14 @@ import {
 	RateLimiterRedis,
 	RateLimiterRes,
 } from 'rate-limiter-flexible';
-import { captureException, handleHttpErrors } from '../error-handling/index.js';
+import { captureException, handleHttpErrors } from '../error-handling/index.ts';
 import {
 	RATE_LIMIT_FACTOR,
 	RATE_LIMIT_MEMORY_BACKEND,
-} from '../../lib/config.js';
+} from '../../lib/config.ts';
 import { errors } from '@balena/pinejs';
-import { redis } from '../redis/index.js';
-import type { RequestExcludingInput } from '../validation/index.js';
+import { redis } from '../redis/index.ts';
+import type { RequestExcludingInput } from '../validation/index.ts';
 
 const { TooManyRequestsError } = errors;
 

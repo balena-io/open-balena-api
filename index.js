@@ -40,7 +40,7 @@ const start = async () => {
 
 	sdk.start();
 
-	await import('./init.js');
+	await import('./init.ts');
 };
 
 const numWorkers =
