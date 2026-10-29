@@ -6,7 +6,7 @@ import {
 	LockReleaseError,
 	LockUnavailableError,
 } from '../src/infra/lock/index.ts';
-import { nodeRedis } from '../src/infra/redis/index.ts';
+import { redis } from '../src/infra/redis/index.ts';
 
 const getRejection = async (promise: Promise<unknown>) => {
 	try {
@@ -19,7 +19,7 @@ const getRejection = async (promise: Promise<unknown>) => {
 
 export default () => {
 	describe('Lock', () => {
-		const locker = createLocker(nodeRedis, {
+		const locker = createLocker(redis, {
 			retryCount: 2,
 			retryDelay: 50,
 			retryJitter: 0,
@@ -29,16 +29,16 @@ export default () => {
 			key = `test:lock:${randomUUID()}`;
 		});
 		afterEach(async () => {
-			await nodeRedis.del(key);
+			await redis.del(key);
 		});
 
 		it('should hold the key until unlocked', async () => {
 			const lock = await locker.lock(key, 10000);
-			expect(await nodeRedis.get(key)).to.be.a('string');
-			expect(await nodeRedis.pTTL(key)).to.be.within(1, 10000);
+			expect(await redis.get(key)).to.be.a('string');
+			expect(await redis.pTTL(key)).to.be.within(1, 10000);
 
 			await lock.unlock();
-			expect(await nodeRedis.get(key)).to.equal(null);
+			expect(await redis.get(key)).to.equal(null);
 		});
 
 		it('should allow unlocking more than once', async () => {
@@ -51,9 +51,9 @@ export default () => {
 			{
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars -- released when it goes out of scope
 				await using _lock = await locker.lock(key, 10000);
-				expect(await nodeRedis.get(key)).to.be.a('string');
+				expect(await redis.get(key)).to.be.a('string');
 			}
-			expect(await nodeRedis.get(key)).to.equal(null);
+			expect(await redis.get(key)).to.equal(null);
 		});
 
 		it('should fail with a LockUnavailableError once all the retries are used whilst the lock is held', async () => {
@@ -84,14 +84,14 @@ export default () => {
 			const lock = await locker.lock(key, 50);
 			await setTimeout(100);
 			const otherLock = await locker.lock(key, 10000);
-			const otherValue = await nodeRedis.get(key);
+			const otherValue = await redis.get(key);
 
 			const err = await getRejection(lock.unlock());
 			expect(err).to.be.instanceOf(LockReleaseError);
-			expect(await nodeRedis.get(key)).to.equal(otherValue);
+			expect(await redis.get(key)).to.equal(otherValue);
 
 			await otherLock.unlock();
-			expect(await nodeRedis.get(key)).to.equal(null);
+			expect(await redis.get(key)).to.equal(null);
 		});
 	});
 };

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { setTimeout } from 'timers/promises';
 import { createMultiLevelStore } from '../src/infra/cache/index.ts';
-import { nodeRedis as redis } from '../src/infra/redis/index.ts';
+import { redis } from '../src/infra/redis/index.ts';
 import { version } from '../src/lib/config.ts';
 
 let storeCount = 0;

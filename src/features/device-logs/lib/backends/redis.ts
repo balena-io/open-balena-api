@@ -22,8 +22,8 @@ import type {
 	Subscription,
 } from '../struct.ts';
 import {
-	newNodeRedisSubscribeInstance,
-	createIsolatedNodeRedis,
+	newSubscribeInstance,
+	createIsolatedRedis,
 } from '../../../../infra/redis/index.ts';
 
 const SUBSCRIBECMD = REDIS_LOGS_SHARDED_PUBSUB ? 'sSubscribe' : 'subscribe';
@@ -128,14 +128,14 @@ const scripts = {
 	}),
 };
 
-const redis = await createIsolatedNodeRedis({ instance: 'logs', scripts });
-const redisRO = await createIsolatedNodeRedis({
+const redis = await createIsolatedRedis({ instance: 'logs', scripts });
+const redisRO = await createIsolatedRedis({
 	instance: 'logs',
 	readOnly: true,
 });
 
 // This connection goes into "subscriber mode" and cannot be reused for commands
-const pubSub = await newNodeRedisSubscribeInstance({ instance: 'logs' });
+const pubSub = await newSubscribeInstance({ instance: 'logs' });
 
 const getCompressionLib = _.once(async () => {
 	if (!REDIS_LOGS_COMPRESSION_ENABLED) {

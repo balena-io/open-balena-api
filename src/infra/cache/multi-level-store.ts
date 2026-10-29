@@ -3,7 +3,7 @@ import * as NodeRedis from 'redis';
 import { MINUTES } from '@balena/env-parsing';
 import { version } from '../../lib/config.ts';
 import type { Defined } from './index.ts';
-import { getNodeRedisOptions } from '../redis/config.ts';
+import { getRedisOptions } from '../redis/config.ts';
 
 const DEFAULT_LOCAL_MAX = 500;
 const DEFAULT_LOCAL_TTL = Infinity;
@@ -26,7 +26,7 @@ export type MultiStoreOpt = {
 // of them. We create it here rather than using `infra/redis` because importing that also imports pinejs, and this
 // module must be importable before pinejs is configured, eg so that pinejs' caches can be set up with it
 const createSharedRedis = () => {
-	const redisOpts = getNodeRedisOptions();
+	const redisOpts = getRedisOptions();
 	let redisClient;
 	if ('rootNodes' in redisOpts) {
 		redisClient = NodeRedis.createCluster(redisOpts);

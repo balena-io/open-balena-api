@@ -22,7 +22,7 @@ import schedule from 'node-schedule';
 import type { ScheduledJobRun } from '../../balena-model.ts';
 import { captureException } from '../error-handling/index.ts';
 import { createLocker, LockUnavailableError } from '../lock/index.ts';
-import { nodeRedis, redis, redisRO } from '../redis/index.ts';
+import { redis, redisRO } from '../redis/index.ts';
 import { DISABLED_SCHEDULED_JOBS } from '../../lib/config.ts';
 
 export type { Job } from 'node-schedule';
@@ -45,7 +45,7 @@ const JOB_LOCK_PREFIX = 'api:jobs:execute:';
 const JOB_INFO_PREFIX = 'api:jobs:info:';
 const JOB_DEFAULT_TTL = 5000;
 
-const locker = createLocker(nodeRedis, {
+const locker = createLocker(redis, {
 	retryCount: 2,
 	retryDelay: 50,
 	retryJitter: 50,

@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import type * as Redis from 'ioredis';
 import type * as NodeRedis from 'redis';
 import { REDIS } from '../../lib/config.ts';
 import type { HostPort } from '@balena/env-parsing';
@@ -13,54 +12,8 @@ const redisRetryStrategy = _.constant(200);
 const keepAlive = 0;
 const connectTimeout = 10000;
 
-export const getRedisOptions = ({
-	readOnly = false,
-	instance = 'general',
-	enableAutoPipelining = true,
-}: {
-	readOnly?: boolean;
-	instance?: keyof typeof REDIS;
-	enableAutoPipelining?: boolean;
-} = {}):
-	| {
-			nodes: Redis.ClusterNode[];
-			options: Redis.ClusterOptions;
-	  }
-	| Redis.RedisOptions => {
-	const r = REDIS[instance];
-
-	const redisOptions: Redis.RedisOptions = {
-		retryStrategy: redisRetryStrategy,
-		enableOfflineQueue: false,
-		enableAutoPipelining,
-		keepAlive,
-		connectTimeout,
-	};
-
-	if (r.isCluster) {
-		return {
-			// We ignore the read-only separation in cluster mode as it'll automatically redirect
-			// reads to the replicas so there's no need for manual splitting
-			nodes: r.hosts,
-			options: {
-				clusterRetryStrategy: redisRetryStrategy,
-				enableOfflineQueue: false,
-				scaleReads: 'slave',
-				redisOptions,
-				...r.auth,
-			},
-		};
-	} else {
-		return {
-			...(readOnly ? r.roHost : r.host),
-			...(readOnly ? r.roAuth : r.auth),
-			...redisOptions,
-		};
-	}
-};
-
 const hostPortToUrl = (h: HostPort) => `redis://${h.host}:${h.port}`;
-export const getNodeRedisOptions = ({
+export const getRedisOptions = ({
 	readOnly = false,
 	instance = 'general',
 }: {
@@ -70,7 +23,7 @@ export const getNodeRedisOptions = ({
 	const r = REDIS[instance];
 
 	const commandOptions: NodeRedis.RedisClientOptions['commandOptions'] = {
-		// Keep the v4/ioredis behaviour of having no command timeout rather than the v6 default of 5s,
+		// Keep the v4 behaviour of having no command timeout rather than the v6 default of 5s,
 		// commands already fail fast when disconnected due to `disableOfflineQueue`. This also avoids the
 		// overhead of tracking the timeout
 		timeout: undefined,

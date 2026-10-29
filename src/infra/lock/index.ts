@@ -15,7 +15,7 @@ import { randomBytes } from 'node:crypto';
 import { setTimeout } from 'node:timers/promises';
 import { stripIndent } from 'common-tags';
 import { TypedError } from 'typed-error';
-import type { nodeRedis } from '../redis/index.ts';
+import type { redis } from '../redis/index.ts';
 
 export class LockUnavailableError extends TypedError {}
 export class LockReleaseError extends TypedError {}
@@ -41,7 +41,7 @@ const releaseScript = stripIndent`
 	return 0`;
 
 export const createLocker = (
-	client: typeof nodeRedis,
+	client: typeof redis,
 	{ retryCount, retryDelay, retryJitter }: LockSettings,
 ) => {
 	const acquire = async (key: string, value: string, ttl: number) => {
