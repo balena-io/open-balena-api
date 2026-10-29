@@ -9,7 +9,7 @@ COPY . /usr/src/app
 
 RUN npx tsc --noEmit --project ./tsconfig.build.json
 
-CMD [ "/usr/src/app/entry.sh" ]
+CMD [ "/command/with-contenv", "/command/envfile", "/usr/src/app/config/env", "/usr/src/app/entry.sh" ]
 
 # Set up a test image that can be reused
 FROM runtime AS test
