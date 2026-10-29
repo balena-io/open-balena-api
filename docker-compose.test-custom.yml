@@ -58,7 +58,6 @@ services:
     build:
       context: ./
       target: test
-    entrypoint: []
     command:
       - bash
       - -c
@@ -149,7 +148,6 @@ services:
       WEBRESOURCES_S3_HOST: http://minio-server:9000
       WEBRESOURCES_S3_BUCKET: balena-pine-web-resources
       WEBRESOURCES_S3_MAX_FILESIZE: 50000000
-      S6_KEEP_ENV: 1
 
   sut-fast:
     <<: *sut
