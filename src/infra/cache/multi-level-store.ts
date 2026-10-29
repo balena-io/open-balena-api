@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import { Redis } from 'ioredis';
-import type { Cluster } from 'ioredis';
+import * as NodeRedis from 'redis';
+import { MINUTES } from '@balena/env-parsing';
 import { version } from '../../lib/config.ts';
 import type { Defined } from './index.ts';
-import { getRedisOptions } from '../redis/config.ts';
+import { getNodeRedisOptions } from '../redis/config.ts';
 
 const DEFAULT_LOCAL_MAX = 500;
 const DEFAULT_LOCAL_TTL = Infinity;
@@ -22,18 +22,30 @@ export type MultiStoreOpt = {
 	refreshThreshold?: number;
 };
 
-// All stores share a single connection rather than one each, which also lets ioredis auto-pipeline commands across
-// all of them. We create it here rather than using `infra/redis` because importing that also imports pinejs, and this
+// All stores share a single connection rather than one each, which also lets node-redis pipeline commands across all
+// of them. We create it here rather than using `infra/redis` because importing that also imports pinejs, and this
 // module must be importable before pinejs is configured, eg so that pinejs' caches can be set up with it
-let sharedRedis: Redis | Cluster | undefined;
-const getSharedRedis = () => {
-	if (sharedRedis == null) {
-		const redisOpts = getRedisOptions();
-		sharedRedis =
-			'nodes' in redisOpts
-				? new Redis.Cluster(redisOpts.nodes, redisOpts.options)
-				: new Redis(redisOpts);
+const createSharedRedis = () => {
+	const redisOpts = getNodeRedisOptions();
+	let redisClient;
+	if ('rootNodes' in redisOpts) {
+		redisClient = NodeRedis.createCluster(redisOpts);
+	} else {
+		redisClient = NodeRedis.createClient(redisOpts);
 	}
+	const logError = _.throttle((err: Error) => {
+		// We cannot use `captureException` as importing it also imports pinejs
+		console.error('Multi level store redis error', err);
+	}, 5 * MINUTES);
+	// If not handled will crash the process
+	redisClient.on('error', logError);
+	// We cannot wait for the connection here, but commands fail rather than queueing whilst it is not ready
+	redisClient.connect().catch(logError);
+	return redisClient;
+};
+let sharedRedis: ReturnType<typeof createSharedRedis> | undefined;
+const getSharedRedis = () => {
+	sharedRedis ??= createSharedRedis();
 	return sharedRedis;
 };
 
@@ -157,7 +169,9 @@ export function createMultiLevelStore<T extends Defined>(
 		if (isSharedCacheable(value)) {
 			const json = JSON.stringify(value) ?? '"undefined"';
 			if (sharedTtl) {
-				await redis.setex(fullKey, sharedTtl, json);
+				await redis.set(fullKey, json, {
+					expiration: { type: 'EX', value: sharedTtl },
+				});
 			} else {
 				await redis.set(fullKey, json);
 			}

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { setTimeout } from 'timers/promises';
 import { createMultiLevelStore } from '../src/infra/cache/index.ts';
-import { redis } from '../src/infra/redis/index.ts';
+import { nodeRedis as redis } from '../src/infra/redis/index.ts';
 import { version } from '../src/lib/config.ts';
 
 let storeCount = 0;
@@ -119,7 +119,7 @@ export default () => {
 			});
 			expect(await store.get('got')).to.deep.equal({ a: 2 });
 
-			await redis.del(`${redisKey}wrapped`, `${redisKey}got`);
+			await redis.del([`${redisKey}wrapped`, `${redisKey}got`]);
 			expect(await store.get('wrapped')).to.deep.equal({ a: 1 });
 			expect(await store.get('got')).to.equal(undefined);
 		});
@@ -174,11 +174,11 @@ export default () => {
 			// Using `a` makes `b` the least recently used
 			expect(await store.get('a')).to.equal(1);
 			await store.set('c', 3);
-			await redis.del(
+			await redis.del([
 				`cache$$${cacheKey}$a`,
 				`cache$$${cacheKey}$b`,
 				`cache$$${cacheKey}$c`,
-			);
+			]);
 			expect(await store.get('a')).to.equal(1);
 			expect(await store.get('b')).to.equal(undefined);
 			expect(await store.get('c')).to.equal(3);
@@ -227,7 +227,9 @@ export default () => {
 				useVersion: false,
 			});
 			const redisKey = `cache$$${cacheKey}$key`;
-			await redis.setex(redisKey, 10, '1');
+			await redis.set(redisKey, '1', {
+				expiration: { type: 'EX', value: 10 },
+			});
 			expect(await store.wrap('key', () => 2)).to.equal(1);
 			await setTimeout(50);
 			expect(await redis.get(redisKey)).to.equal('2');
