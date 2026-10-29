@@ -14,7 +14,12 @@ import {
 	getPollInterval,
 	POLL_JITTER_FACTOR,
 } from '../src/features/device-heartbeat/index.ts';
-import { assertExists, itExpectsError, waitFor } from './test-lib/common.ts';
+import {
+	assertExists,
+	itExpectsError,
+	waitFor,
+	waitForUpTo,
+} from './test-lib/common.ts';
 import * as fixtures from './test-lib/fixtures.ts';
 import {
 	expectResourceToMatch,
@@ -67,6 +72,12 @@ const devicePollInterval =
  * we then could end up capturing different heartbeat state changes
  */
 const maxGetStateEventConsumptionTimeout = 100;
+
+/**
+ * The heartbeat queue consumer sleeps this long whenever it finds the queue empty,
+ * so a queued message can get consumed up to this much later than its delay.
+ */
+const heartbeatQueueIdlePollMs = 1000;
 
 export default () => {
 	versions.test((version, pineTest) => {
@@ -727,8 +738,16 @@ export default () => {
 											cache: DeviceOnlineStates.Online,
 										});
 
-										// Wait for the stale (TIMEOUT -> OFFLINE) message queue item to get consumed.
-										await setTimeout(TIMEOUT_SEC * 1000 + 1000);
+										// Wait for the stale (TIMEOUT -> OFFLINE) message queue item to get consumed,
+										// which also clears the write cache after emitting the change event.
+										await waitForUpTo(
+											TIMEOUT_SEC * 1000 + heartbeatQueueIdlePollMs + 1000,
+											async () =>
+												device3ChangeEventSpy.calledWithMatch({
+													newState: DeviceOnlineStates.Offline,
+												}) &&
+												(await getHeartbeatWriteCacheState(device3.id)) == null,
+										);
 
 										// it's expected that the write cache gets cleared when the DB switches to offline
 										expect(await getHeartbeatWriteCacheState(device3.id)).to.be
@@ -846,12 +865,18 @@ export default () => {
 										});
 
 										// Wait long enough for the stale (ONLINE -> TIMEOUT) & (TIMEOUT -> OFFLINE) message queue items to get consumed.
+										// Each of them can get consumed up to heartbeatQueueIdlePollMs after it becomes visible.
 										// TODO: This is only testing the current state and shouldn't be happening.
-										await setTimeout(
+										await waitForUpTo(
 											devicePollInterval -
 												initialWait +
 												TIMEOUT_SEC * 1000 +
+												2 * heartbeatQueueIdlePollMs +
 												1000,
+											() =>
+												device3ChangeEventSpy.calledWithMatch({
+													newState: DeviceOnlineStates.Offline,
+												}),
 										);
 										await expectResourceToMatch(
 											pineUser,

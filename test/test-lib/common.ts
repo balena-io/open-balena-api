@@ -3,7 +3,7 @@ import { stripIndent } from 'common-tags';
 import { setTimeout } from 'timers/promises';
 import { TypedError } from 'typed-error';
 import { ThisShouldNeverHappenError } from '../../src/infra/error-handling/index.ts';
-import pTimeout from 'p-timeout';
+import pTimeout, { TimeoutError } from 'p-timeout';
 
 type PredicateFunction = () => Resolvable<boolean>;
 
@@ -57,6 +57,23 @@ export async function waitFor({
 
 	await promise;
 }
+
+/**
+ * Like waitFor(), but resolves instead of rejecting when maxWait is exceeded,
+ * so that the assertions that follow can report the actual state.
+ */
+export const waitForUpTo = async (
+	maxWait: number,
+	checkFn: Parameters<typeof waitFor>[0]['checkFn'],
+) => {
+	try {
+		await waitFor({ maxWait, checkFn });
+	} catch (err) {
+		if (!(err instanceof TimedOutError || err instanceof TimeoutError)) {
+			throw err;
+		}
+	}
+};
 
 export const itExpectsError = (
 	title: string,
