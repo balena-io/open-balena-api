@@ -6,20 +6,26 @@ import { MINUTES } from '@balena/env-parsing';
 import { captureException } from '../error-handling/index.ts';
 import { getNodeRedisOptions, getRedisOptions } from './config.ts';
 
-export const createIsolatedNodeRedis = async (
-	...args: Parameters<typeof getNodeRedisOptions>
-) => {
-	const redisOpts = getNodeRedisOptions(...args);
+export const createIsolatedNodeRedis = async <
+	S extends NodeRedis.RedisScripts = Record<never, never>,
+>({
+	scripts,
+	...opts
+}: NonNullable<Parameters<typeof getNodeRedisOptions>[0]> & {
+	scripts?: S;
+} = {}) => {
+	const redisOpts = getNodeRedisOptions(opts);
 
 	let redisClient;
 	if ('rootNodes' in redisOpts) {
-		redisClient = NodeRedis.createCluster(
+		redisClient = NodeRedis.createCluster({
 			// We ignore the read-only separation in cluster mode as it'll automatically redirect
 			// reads to the replicas so there's no need for manual splitting
-			redisOpts,
-		);
+			...redisOpts,
+			scripts,
+		});
 	} else {
-		redisClient = NodeRedis.createClient(redisOpts);
+		redisClient = NodeRedis.createClient({ ...redisOpts, scripts });
 	}
 	redisClient.on(
 		// If not handled will crash the process
