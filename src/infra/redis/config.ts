@@ -69,13 +69,22 @@ export const getNodeRedisOptions = ({
 } = {}): NodeRedis.RedisClusterOptions | NodeRedis.RedisClientOptions => {
 	const r = REDIS[instance];
 
+	const commandOptions: NodeRedis.RedisClientOptions['commandOptions'] = {
+		// Keep the v4/ioredis behaviour of having no command timeout rather than the v6 default of 5s,
+		// commands already fail fast when disconnected due to `disableOfflineQueue`. This also avoids the
+		// overhead of tracking the timeout
+		timeout: undefined,
+	};
 	const redisOptions: NodeRedis.RedisClientOptions = {
 		socket: {
 			connectTimeout,
-			keepAlive,
+			keepAlive: true,
+			keepAliveInitialDelay: keepAlive,
 			reconnectStrategy: redisRetryStrategy,
 		},
 		disableOfflineQueue: true,
+		// Only supported by Redis Enterprise, Valkey does not implement `CLIENT MAINT_NOTIFICATIONS`
+		maintNotifications: 'disabled',
 	};
 
 	if (r.isCluster) {
@@ -86,6 +95,7 @@ export const getNodeRedisOptions = ({
 				return { url: hostPortToUrl(h) };
 			}),
 			useReplicas: true,
+			commandOptions,
 			defaults: {
 				...r.auth,
 				...redisOptions,
@@ -96,6 +106,7 @@ export const getNodeRedisOptions = ({
 			url: hostPortToUrl(readOnly ? r.roHost : r.host),
 			...(readOnly ? r.roAuth : r.auth),
 			...redisOptions,
+			commandOptions,
 		};
 	}
 };
