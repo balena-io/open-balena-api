@@ -21,7 +21,11 @@ import { sbvrUtils, permissions } from '@balena/pinejs';
 import schedule from 'node-schedule';
 import type { ScheduledJobRun } from '../../balena-model.ts';
 import { captureException } from '../error-handling/index.ts';
-import { createLocker, LockUnavailableError } from '../lock/index.ts';
+import {
+	createLocker,
+	LockReleaseError,
+	LockUnavailableError,
+} from '../lock/index.ts';
 import { redis, redisRO } from '../redis/index.ts';
 import { DISABLED_SCHEDULED_JOBS } from '../../lib/config.ts';
 
@@ -104,7 +108,8 @@ export const scheduleJob = (
 					// This allows dynamically enabling/disabling jobs without needing to restart the API.
 					return;
 				}
-				const lock = await locker.lock(jobLockKey, ttl);
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars -- released when it goes out of scope
+				await using _lock = await locker.lock(jobLockKey, ttl);
 				const rootApi = api.resin.clone({
 					passthrough: { req: permissions.root },
 				});
@@ -164,18 +169,16 @@ export const scheduleJob = (
 						});
 					}
 					await updateJobInfoExecute(jobInfoKey, job);
-				} finally {
-					try {
-						await lock.unlock();
-					} catch (err) {
-						console.error(`[Scheduler] Failed to unlock job: ${jobId}`, err);
-						captureException(err);
-					}
 				}
 			} catch (err) {
 				if (err instanceof LockUnavailableError) {
 					// this is not really an error
 					console.error(`[Scheduler] Lock already in place for job: ${jobId}.`);
+					return;
+				}
+				if (err instanceof LockReleaseError) {
+					console.error(`[Scheduler] Failed to unlock job: ${jobId}`, err);
+					captureException(err);
 					return;
 				}
 				console.error(
