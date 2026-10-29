@@ -10,19 +10,19 @@
 
 	Under the hood:
 		- node-schedule handles the job management and invocation in each API instance.
-		- redlock is used to ensure only a single instance runs the job, like so:
+		- a redis lock is used to ensure only a single instance runs the job, like so:
 			- When a job is triggered to start,
-			- it acquires a lock via RedLock and runs,
+			- it acquires a lock via the lock lib and runs,
 			- if no lock can be acquired then the instance does not run the job,
 			- upon completion the lock is released.
 */
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import schedule from 'node-schedule';
-import Redlock from 'redlock';
 import type { ScheduledJobRun } from '../../balena-model.ts';
 import { captureException } from '../error-handling/index.ts';
-import { redis, redisRO } from '../redis/index.ts';
+import { createLocker, LockUnavailableError } from '../lock/index.ts';
+import { nodeRedis, redis, redisRO } from '../redis/index.ts';
 import { DISABLED_SCHEDULED_JOBS } from '../../lib/config.ts';
 
 export type { Job } from 'node-schedule';
@@ -31,7 +31,6 @@ const { api } = sbvrUtils;
 
 export type JobFunction = (
 	fireDate: Date,
-	lock: Redlock.Lock,
 	scheduledJobRun: ScheduledJobRun['Read'],
 ) => PromiseLike<void>;
 
@@ -46,17 +45,7 @@ const JOB_LOCK_PREFIX = 'api:jobs:execute:';
 const JOB_INFO_PREFIX = 'api:jobs:info:';
 const JOB_DEFAULT_TTL = 5000;
 
-declare module 'ioredis' {
-	interface RedisCommander {
-		// This overload exists specifically to retain compatibility to `redlock`
-		eval(
-			args: Array<string | number>,
-			callback?: (err: Error | null, res: any) => void,
-		): any;
-	}
-}
-
-const locker = new Redlock([redis], {
+const locker = createLocker(nodeRedis, {
 	retryCount: 2,
 	retryDelay: 50,
 	retryJitter: 50,
@@ -115,7 +104,7 @@ export const scheduleJob = (
 					// This allows dynamically enabling/disabling jobs without needing to restart the API.
 					return;
 				}
-				const lock: Redlock.Lock = await locker.lock(jobLockKey, ttl);
+				const lock = await locker.lock(jobLockKey, ttl);
 				const rootApi = api.resin.clone({
 					passthrough: { req: permissions.root },
 				});
@@ -139,7 +128,7 @@ export const scheduleJob = (
 							},
 						});
 
-						await jobFunction(fireDate, lock, scheduledJobRun);
+						await jobFunction(fireDate, scheduledJobRun);
 
 						console.log(
 							`[Scheduler] Finished job: ${jobId}, next run at ${job.nextInvocation()}`,
@@ -184,18 +173,10 @@ export const scheduleJob = (
 					}
 				}
 			} catch (err) {
-				if (err instanceof Redlock.LockError) {
-					if (
-						/Exceeded\s\d+\sattempts\sto\slock\sthe\sresource\s/.test(
-							err.message,
-						)
-					) {
-						// this is not really an error
-						console.error(
-							`[Scheduler] Lock already in place for job: ${jobId}.`,
-						);
-						return;
-					}
+				if (err instanceof LockUnavailableError) {
+					// this is not really an error
+					console.error(`[Scheduler] Lock already in place for job: ${jobId}.`);
+					return;
 				}
 				console.error(
 					`[Scheduler] Failed to get a lock for job: ${jobId}, failed to get lock!`,
