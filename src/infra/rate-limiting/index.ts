@@ -59,6 +59,8 @@ export const createRateLimiter = (
 		...opts,
 		keyPrefix: `api:ratelimiting:redis:${keyScope}`,
 		storeClient: redis,
+		// The node-redis client is not auto-detected, which would otherwise make it use the ioredis API
+		useRedisPackage: true,
 		insuranceLimiter,
 	});
 
