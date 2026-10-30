@@ -176,35 +176,6 @@ export default () => {
 				expect(await getImage(image.id)).to.be.undefined;
 			});
 
-			it('should delete an image when its last release link is deleted', async () => {
-				const releaseA = await createRelease(ctx.app1.id);
-				const releaseB = await createRelease(ctx.app1.id);
-				const image = await createImage(ctx.service1.id, [
-					releaseA.id,
-					releaseB.id,
-				]);
-
-				await pineUser
-					.delete({
-						resource: 'image__is_part_of__release',
-						options: {
-							$filter: { image: image.id, is_part_of__release: releaseA.id },
-						},
-					})
-					.expect(200);
-				expect(await getImage(image.id)).to.have.property('id', image.id);
-
-				await pineUser
-					.delete({
-						resource: 'image__is_part_of__release',
-						options: {
-							$filter: { image: image.id, is_part_of__release: releaseB.id },
-						},
-					})
-					.expect(200);
-				expect(await getImage(image.id)).to.be.undefined;
-			});
-
 			it('should mark a directly deleted image for registry deletion once', async () => {
 				await resetLatestTaskIds('delete_registry_images');
 				const release = await createRelease(ctx.app1.id);

@@ -1,11 +1,13 @@
 import { sbvrUtils, hooks } from '@balena/pinejs';
+import type { Filter } from 'pinejs-client-core';
 import { captureException } from '../error-handling/index.ts';
 
 export function addDeleteHookForDependents(
 	model: string,
 	resource: string,
 	dependents: {
-		[dependentResource: string]: string | string[];
+		[dependentResource: string]:
+			string | string[] | ((resourceIds: number[]) => Filter);
 	},
 ): void {
 	const dependentResources = Object.keys(dependents);
@@ -22,9 +24,12 @@ export function addDeleteHookForDependents(
 			for (const dependentResource of dependentResources) {
 				const resourceIdField = dependents[dependentResource];
 				try {
-					const filter = Array.isArray(resourceIdField)
-						? resourceIdField.map((f) => ({ [f]: { $in: resourceIds } }))
-						: { [resourceIdField]: { $in: resourceIds } };
+					const filter =
+						typeof resourceIdField === 'function'
+							? resourceIdField(resourceIds)
+							: Array.isArray(resourceIdField)
+								? resourceIdField.map((f) => ({ [f]: { $in: resourceIds } }))
+								: { [resourceIdField]: { $in: resourceIds } };
 					await api.delete({
 						resource: dependentResource,
 						options: {
