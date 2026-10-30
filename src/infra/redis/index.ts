@@ -1,25 +1,30 @@
 import _ from 'lodash';
-import { Redis } from 'ioredis';
 import * as NodeRedis from 'redis';
 import type { REDIS } from '../../lib/config.ts';
 import { MINUTES } from '@balena/env-parsing';
 import { captureException } from '../error-handling/index.ts';
-import { getNodeRedisOptions, getRedisOptions } from './config.ts';
+import { getRedisOptions } from './config.ts';
 
-export const createIsolatedNodeRedis = async (
-	...args: Parameters<typeof getNodeRedisOptions>
-) => {
-	const redisOpts = getNodeRedisOptions(...args);
+export const createIsolatedRedis = async <
+	S extends NodeRedis.RedisScripts = Record<never, never>,
+>({
+	scripts,
+	...opts
+}: NonNullable<Parameters<typeof getRedisOptions>[0]> & {
+	scripts?: S;
+} = {}) => {
+	const redisOpts = getRedisOptions(opts);
 
 	let redisClient;
 	if ('rootNodes' in redisOpts) {
-		redisClient = NodeRedis.createCluster(
+		redisClient = NodeRedis.createCluster({
 			// We ignore the read-only separation in cluster mode as it'll automatically redirect
 			// reads to the replicas so there's no need for manual splitting
-			redisOpts,
-		);
+			...redisOpts,
+			scripts,
+		});
 	} else {
-		redisClient = NodeRedis.createClient(redisOpts);
+		redisClient = NodeRedis.createClient({ ...redisOpts, scripts });
 	}
 	redisClient.on(
 		// If not handled will crash the process
@@ -32,55 +37,15 @@ export const createIsolatedNodeRedis = async (
 	return redisClient;
 };
 
-export const createIsolatedRedis = (
-	...args: Parameters<typeof getRedisOptions>
-) => {
-	const redisOpts = getRedisOptions(...args);
+export const redis = await createIsolatedRedis();
+export const redisRO = await createIsolatedRedis({ readOnly: true });
 
-	let redisClient;
-	if ('nodes' in redisOpts) {
-		redisClient = new Redis.Cluster(
-			// We ignore the read-only separation in cluster mode as it'll automatically redirect
-			// reads to the replicas so there's no need for manual splitting
-			redisOpts.nodes,
-			redisOpts.options,
-		);
-	} else {
-		redisClient = new Redis(redisOpts);
-	}
-	return redisClient.on(
-		// If not handled will crash the process
-		'error',
-		_.throttle((err: Error) => {
-			captureException(err, 'Redis error');
-		}, 5 * MINUTES),
-	);
-};
-
-export const redis = createIsolatedRedis();
-export const redisRO = createIsolatedRedis({ readOnly: true });
-
-export const nodeRedis = await createIsolatedNodeRedis();
-export const nodeRedisRO = await createIsolatedNodeRedis({ readOnly: true });
-
-export const newSubscribeInstance = ({
+export const newSubscribeInstance = async ({
 	instance = 'general',
 }: {
 	instance?: keyof typeof REDIS;
 } = {}) => {
-	return createIsolatedRedis({
-		instance,
-		readOnly: true,
-		enableAutoPipelining: false,
-	});
-};
-
-export const newNodeRedisSubscribeInstance = async ({
-	instance = 'general',
-}: {
-	instance?: keyof typeof REDIS;
-} = {}) => {
-	return await createIsolatedNodeRedis({
+	return await createIsolatedRedis({
 		instance,
 		readOnly: true,
 	});

@@ -431,8 +431,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 					updatedAt,
 				}),
 			} satisfies DeviceOnlineStateManagerMessage),
-			'EX',
-			delay + 5,
+			{ expiration: { type: 'EX', value: delay + 5 } },
 		);
 	}
 

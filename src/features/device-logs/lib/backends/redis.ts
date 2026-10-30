@@ -3,6 +3,8 @@ import { stripIndent } from 'common-tags';
 import { EventEmitter } from 'events';
 import _ from 'lodash';
 import { errors } from '@balena/pinejs';
+import type { CommandParser, RedisArgument } from 'redis';
+import { defineScript } from 'redis';
 import { captureException } from '../../../../infra/error-handling/index.ts';
 import {
 	LOGS_DEFAULT_RETENTION_DURATION,
@@ -20,19 +22,15 @@ import type {
 	Subscription,
 } from '../struct.ts';
 import {
-	newNodeRedisSubscribeInstance,
+	newSubscribeInstance,
 	createIsolatedRedis,
 } from '../../../../infra/redis/index.ts';
-import type { Result } from 'ioredis';
 
 const SUBSCRIBECMD = REDIS_LOGS_SHARDED_PUBSUB ? 'sSubscribe' : 'subscribe';
 const UNSUBSCRIBECMD = REDIS_LOGS_SHARDED_PUBSUB
 	? 'sUnsubscribe'
 	: 'unsubscribe';
 const PUBLISHCMD = REDIS_LOGS_SHARDED_PUBSUB ? 'spublish' : 'publish';
-
-const redis = createIsolatedRedis({ instance: 'logs' });
-const redisRO = createIsolatedRedis({ instance: 'logs', readOnly: true });
 
 const { ServiceUnavailableError, BadRequestError } = errors;
 
@@ -58,21 +56,9 @@ interface RedisDeviceLog extends OutputDeviceLog {
 	version: number;
 }
 
-declare module 'ioredis' {
-	interface RedisCommander<Context> {
-		publishLogs(
-			logsKey: string,
-			bytesWrittenKey: string,
-			subscribersKey: string,
-			...args: [...logs: string[], bytesWritten: number, limit: number]
-		): Result<void, Context>;
-		incrSubscribers(subscribersKey: string): Result<void, Context>;
-		decrSubscribers(subscribersKey: string): Result<number, Context>;
-	}
-}
-
-redis.defineCommand('publishLogs', {
-	lua: stripIndent`
+const scripts = {
+	publishLogs: defineScript({
+		SCRIPT: stripIndent`
 		-- Last arg should be the retention limit
 		local limit = table.remove(ARGV)
 		-- Second last arg should be the bytes total
@@ -94,19 +80,36 @@ redis.defineCommand('publishLogs', {
 		-- Devices with no new logs eventually expire
 		redis.call("pexpire", KEYS[1], ${KEY_EXPIRATION});
 		redis.call("pexpire", KEYS[2], ${KEY_EXPIRATION});`,
-	numberOfKeys: 3,
-});
-
-redis.defineCommand('incrSubscribers', {
-	lua: stripIndent`
+		NUMBER_OF_KEYS: 3,
+		parseCommand(
+			parser: CommandParser,
+			logsKey: RedisArgument,
+			bytesWrittenKey: RedisArgument,
+			subscribersKey: RedisArgument,
+			logs: RedisArgument[],
+			bytesWritten: number,
+			limit: number,
+		) {
+			parser.pushKeys([logsKey, bytesWrittenKey, subscribersKey]);
+			parser.pushVariadic(logs);
+			parser.push(`${bytesWritten}`, `${limit}`);
+		},
+		transformReply: undefined as unknown as () => null,
+	}),
+	incrSubscribers: defineScript({
+		SCRIPT: stripIndent`
 		-- Increment subscribers
 		redis.call("incr", KEYS[1]);
 		-- And set expiry
 		redis.call("expire", KEYS[1], ${LOGS_SUBSCRIPTION_EXPIRY_SECONDS})`,
-	numberOfKeys: 1,
-});
-redis.defineCommand('decrSubscribers', {
-	lua: stripIndent`
+		NUMBER_OF_KEYS: 1,
+		parseCommand(parser: CommandParser, subscribersKey: RedisArgument) {
+			parser.pushKey(subscribersKey);
+		},
+		transformReply: undefined as unknown as () => null,
+	}),
+	decrSubscribers: defineScript({
+		SCRIPT: stripIndent`
 		-- Decrement subscribers
 		local current = redis.call("decr", KEYS[1]);
 		if current <= 0 then
@@ -117,11 +120,22 @@ redis.defineCommand('decrSubscribers', {
 		end
 		-- Return the count so it's possible to log hitting < 0
 		return current`,
-	numberOfKeys: 1,
+		NUMBER_OF_KEYS: 1,
+		parseCommand(parser: CommandParser, subscribersKey: RedisArgument) {
+			parser.pushKey(subscribersKey);
+		},
+		transformReply: undefined as unknown as () => number,
+	}),
+};
+
+const redis = await createIsolatedRedis({ instance: 'logs', scripts });
+const redisRO = await createIsolatedRedis({
+	instance: 'logs',
+	readOnly: true,
 });
 
 // This connection goes into "subscriber mode" and cannot be reused for commands
-const pubSub = await newNodeRedisSubscribeInstance({ instance: 'logs' });
+const pubSub = await newSubscribeInstance({ instance: 'logs' });
 
 const getCompressionLib = _.once(async () => {
 	if (!REDIS_LOGS_COMPRESSION_ENABLED) {
@@ -158,7 +172,7 @@ export class RedisBackend implements DeviceLogsBackend {
 			throw new ServiceUnavailableError();
 		}
 		const key = this.getKey(ctx);
-		const payloads = await redisRO.lrange(
+		const payloads = await redisRO.lRange(
 			key,
 			count === Infinity ? 0 : -count,
 			-1,
@@ -204,7 +218,7 @@ export class RedisBackend implements DeviceLogsBackend {
 			key,
 			bytesWrittenKey,
 			subscribersKey,
-			...redisLogs,
+			redisLogs,
 			bytesWritten,
 			limit,
 		);
@@ -250,9 +264,7 @@ export class RedisBackend implements DeviceLogsBackend {
 	}
 
 	private get connected() {
-		return (
-			redis.status === 'ready' && pubSub.isOpen && redisRO.status === 'ready'
-		);
+		return redis.isReady && pubSub.isOpen && redisRO.isReady;
 	}
 
 	private getKey(ctx: LogContext, suffix = 'logs') {

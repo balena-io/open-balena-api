@@ -167,6 +167,7 @@ export type { DeviceTypeJson } from './features/device-types/device-type-json.ts
 export type { DefaultApplicationType } from './features/application-types/application-types.ts';
 export * as request from './infra/request-promise/index.ts';
 export * as redis from './infra/redis/index.ts';
+export * as lock from './infra/lock/index.ts';
 export * as scheduler from './infra/scheduler/index.ts';
 export * as validation from './infra/validation/index.ts';
 export * as cache from './infra/cache/index.ts';
