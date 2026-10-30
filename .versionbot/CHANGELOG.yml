@@ -1,4 +1,108 @@
 - commits:
+    - subject: Replace the ioredis clients with node-redis
+      hash: df5c81ff63e35cbed4b6eab84e3755d0efeb0127
+      body: |
+        The exported `redis` and `redisRO` clients, `createIsolatedRedis` and
+        `newSubscribeInstance` now use node-redis v6 rather than ioredis, which
+        has a different API, eg `redis.getdel(key)` is now `redis.getDel(key)`
+        and `redis.set(key, value, 'EX', seconds)` is now
+        `redis.set(key, value, { expiration: { type: 'EX', value: seconds } })`.
+        `createIsolatedRedis` is now async, as it waits for the connection.
+
+        The `nodeRedis` and `nodeRedisRO` clients, `createIsolatedNodeRedis`
+        and `newNodeRedisSubscribeInstance` are removed as they are now the
+        same as the clients and functions above.
+
+        https://balena.fibery.io/Work/Project/3083
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+    - subject: Use node-redis for the multi-level-store
+      hash: 795689554e7ae5f04aa4d6a0f0cef15768b237cc
+      body: |
+        https://balena.fibery.io/Work/Project/3083
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Use node-redis for the redis device logs backend
+      hash: a9fe86ca8d2ec4002d2090e03b43ba79d46faa61
+      body: |
+        The logs backend now uses node-redis v6 for its commands as well as for
+        its pub/sub connection, so the `publishLogs`, `incrSubscribers` and
+        `decrSubscribers` lua scripts are defined with `defineScript` rather
+        than ioredis' `defineCommand`. They are still sent with `EVALSHA`,
+        falling back to `EVAL`, with the same keys and arguments, so instances
+        using either client can share the stored logs during a rolling deploy.
+
+        `createIsolatedNodeRedis` now accepts `scripts` to support this.
+
+        https://balena.fibery.io/Work/Project/3083
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Replace redlock with an in-house redis lock
+      hash: 9664063cda34090aed89addcbcbd74518321868a
+      body: |
+        Redlock v4 only works with callback style clients such as ioredis, so
+        the scheduler now uses a lock built on node-redis instead, which is
+        exported as `lock` so that other users of the redis clients can share
+        it. It takes the same `SET NX PX` key with a random value as redlock,
+        and only deletes the key if it still has that value, but:
+        - locks can be released with `await using` as well as `lock.unlock()`
+        - `lock.unlock()` can be called more than once
+        - failing to acquire a lock throws a `LockUnavailableError`, and failing
+          to release an expired lock throws a `LockReleaseError`, rather than a
+          redlock `LockError` for both
+        - redis errors are retried like a held lock, but the last redis error
+          is thrown rather than a `LockUnavailableError`, so the scheduler no
+          longer logs them as the job already being locked
+        - locks cannot be extended
+
+        The `lock` argument is removed from `JobFunction`, as no jobs use it,
+        so `scheduledJobRun` is now the second argument.
+
+        https://balena.fibery.io/Work/Project/3083
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+    - subject: Update redis to v6
+      hash: 7f7e3efcc28b698ad18bc4e84435f84e3eb3c15f
+      body: |
+        The exported `nodeRedis`/`nodeRedisRO` clients and the
+        `createIsolatedNodeRedis`/`newNodeRedisSubscribeInstance` helpers now
+        return node-redis v6 clients, which have a different API to v4, eg
+        `client.quit()` is now `client.close()` and many commands return
+        numbers instead of booleans, see
+        https://github.com/redis/node-redis/blob/master/docs/v4-to-v5.md and
+        https://github.com/redis/node-redis/blob/master/docs/v5-to-v6.md
+
+        The connections now use RESP3, which is the v6 default, and the
+        behaviour that the v6 defaults would otherwise change is kept:
+        - TCP keepalive stays enabled with the OS default delay, as v6 replaced
+          the numeric `keepAlive` with `keepAlive` + `keepAliveInitialDelay`
+        - there is still no command timeout
+        - maintenance notifications are disabled, as they are only supported by
+          Redis Enterprise and so would otherwise add a failing
+          `CLIENT MAINT_NOTIFICATIONS` command to every connection handshake
+
+        https://balena.fibery.io/Work/Project/3083
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+  version: 52.0.0
+  title: ""
+  date: 2026-10-30T16:45:16.985Z
+- commits:
     - subject: Update pgsty/mc Docker tag to RELEASE.2026-10-26T00-00-00Z
       hash: 8616814e31896b5f0ff652b30bf767bfaadbcd86
       body: >
@@ -15861,6 +15965,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -15893,6 +15998,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -17819,6 +17925,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -17866,6 +17973,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -18880,6 +18988,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -18917,6 +19026,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -20009,6 +20119,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -20037,6 +20148,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -20562,6 +20674,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -21588,6 +21701,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -21733,6 +21847,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -22926,6 +23041,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -22948,6 +23064,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -23480,6 +23597,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -24567,6 +24685,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -24589,6 +24708,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -25121,6 +25241,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -30178,6 +30299,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -30210,6 +30332,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -32450,6 +32573,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -32497,6 +32621,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -33775,6 +33900,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -33812,6 +33938,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -35268,6 +35395,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -35296,6 +35424,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -35953,6 +36082,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -37243,6 +37373,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -37388,6 +37519,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -38845,6 +38977,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -38867,6 +39000,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -39531,6 +39665,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -40882,6 +41017,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -40904,6 +41040,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -41568,6 +41705,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -44932,6 +45070,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -44954,6 +45093,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -45618,6 +45758,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -46972,6 +47113,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -47000,6 +47142,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -47656,6 +47799,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -48944,6 +49088,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/sbvr-types
                                                                 from 3.4.18 to 3.5.0
@@ -49089,6 +49234,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
