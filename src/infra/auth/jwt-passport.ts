@@ -85,8 +85,13 @@ const processVerifiedJwtPayload = async (
 	}
 	if ('service' in jwtUser && jwtUser.service) {
 		const { service, apikey } = jwtUser;
-		const apiKeyPermissions = await permissions.getApiKeyPermissions(apikey);
-		return { service, apikey, permissions: apiKeyPermissions };
+		const apiKeyInfo = await permissions.checkApiKey(apikey);
+		return {
+			service,
+			apikey,
+			permissions: apiKeyInfo.permissions,
+			actor: apiKeyInfo.actor,
+		};
 	} else if ('roles' in jwtUser && jwtUser.roles != null) {
 		const { actor } = jwtUser;
 		if ('jwt_secret' in jwtUser && jwtUser.jwt_secret != null) {

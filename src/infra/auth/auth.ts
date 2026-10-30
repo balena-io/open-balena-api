@@ -19,7 +19,7 @@ const { BadRequestError, UnauthorizedError, NotFoundError } = errors;
 const { api } = sbvrUtils;
 
 export const userHasPermission = (
-	user: undefined | sbvrUtils.Actor,
+	user: undefined | Pick<sbvrUtils.Actor, 'permissions'>,
 	permission: string,
 ): boolean => {
 	if (user?.permissions == null) {
