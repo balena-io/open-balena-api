@@ -1,6 +1,5 @@
 import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
-import RedisSMQ from 'rsmq';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
@@ -17,6 +16,8 @@ import {
 	REDIS,
 } from '../../lib/config.ts';
 import { redis, redisRO } from '../../infra/redis/index.ts';
+import type { RedisQueue } from '../../infra/redis-queue/index.ts';
+import { createRedisQueue } from '../../infra/redis-queue/index.ts';
 import { setTimeout } from 'timers/promises';
 
 const { api } = sbvrUtils;
@@ -176,13 +177,13 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 }> {
 	private static readonly REDIS_NAMESPACE = 'device-online-state';
 	private static readonly EXPIRED_QUEUE = 'expired';
-	private static readonly RSMQ_READ_TIMEOUT = 30;
+	private static readonly QUEUE_READ_TIMEOUT = 30;
 	private static readonly QUEUE_STATS_INTERVAL_MSEC = 10000;
 
 	private readonly featureIsEnabled: boolean;
 
 	private isConsuming = false;
-	private rsmq: RedisSMQ;
+	private queue: RedisQueue;
 
 	public constructor() {
 		super();
@@ -193,35 +194,27 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 			return;
 		}
 
-		this.rsmq = new RedisSMQ({
-			// TODO: RSMQ does not currently support a redis cluster
-			...REDIS.general.host,
-			...REDIS.general.auth,
-			ns: DeviceOnlineStateManager.REDIS_NAMESPACE,
-		});
+		const { REDIS_NAMESPACE, EXPIRED_QUEUE } = DeviceOnlineStateManager;
+		this.queue = createRedisQueue(
+			redis,
+			// A cluster requires a hash tag so that all of the queue's keys are in the same slot, whereas
+			// a single instance keeps using the original RSMQ key so that already queued messages are
+			// still processed after upgrading
+			REDIS.general.isCluster
+				? `${REDIS_NAMESPACE}:{${EXPIRED_QUEUE}}`
+				: `${REDIS_NAMESPACE}:${EXPIRED_QUEUE}`,
+		);
 
-		// create the RedisMQ queue and start consuming messages...
-		void this.rsmq
-			.createQueueAsync({ qname: DeviceOnlineStateManager.EXPIRED_QUEUE })
-			.catch((err) => {
-				if (err.name !== 'queueExists') {
-					throw err;
-				}
-			})
-			.then(() => {
-				this.setupQueueStatsEmitter(
-					DeviceOnlineStateManager.QUEUE_STATS_INTERVAL_MSEC,
-				);
-			});
+		this.setupQueueStatsEmitter(
+			DeviceOnlineStateManager.QUEUE_STATS_INTERVAL_MSEC,
+		);
 	}
 
 	private setupQueueStatsEmitter(interval: number) {
 		void setTimeout(interval, undefined, { ref: false }).then(async () => {
 			try {
 				const startAt = Date.now();
-				const queueAttributes = await this.rsmq.getQueueAttributesAsync({
-					qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-				});
+				const queueAttributes = await this.queue.getQueueAttributes();
 				const endAt = Date.now();
 
 				this.emit('stats', {
@@ -235,7 +228,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 			} catch (err) {
 				captureException(
 					err,
-					'RSMQ: Unable to acquire and emit the queue stats.',
+					'DeviceOnlineStateManager: Unable to acquire and emit the queue stats.',
 				);
 			} finally {
 				this.setupQueueStatsEmitter(interval);
@@ -293,13 +286,12 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 
 	private consume() {
 		// pull a message from the queue...
-		void this.rsmq
-			.receiveMessageAsync({
-				qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-				vt: DeviceOnlineStateManager.RSMQ_READ_TIMEOUT, // prevent other consumers seeing the same message (if any) preventing multiple API agents from processing it...
-			})
+		void this.queue
+			.receiveMessage(
+				DeviceOnlineStateManager.QUEUE_READ_TIMEOUT, // prevent other consumers seeing the same message (if any) preventing multiple API agents from processing it...
+			)
 			.then(async (msg) => {
-				if (!('id' in msg)) {
+				if (msg == null) {
 					// no messages to consume, wait a second...
 					await setTimeout(1000);
 					return;
@@ -334,7 +326,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 							);
 							// This not only cleans-up the write cache for housekeeping reasons, but also
 							// invalidates it whenever a device goes Offline.
-							// This way, after an incident/downtime, when the RSMQ resumes processing the pending heartbeat changes
+							// This way, after an incident/downtime, when the queue resumes processing the pending heartbeat changes
 							// and new state GETs arrive, racing to update the DB & write cache's heartbeat state,
 							// the DB & write cache get back in sync (if they have drifted) as soon as each device is marked as Offline,
 							// allowing it to go back Online on the next state GET.
@@ -348,10 +340,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 							);
 					}
 
-					await this.rsmq.deleteMessageAsync({
-						qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-						id,
-					});
+					await this.queue.deleteMessage(id);
 				} catch (err) {
 					captureException(
 						err,
@@ -395,23 +384,19 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		if (previousManagerState?.id != null) {
 			try {
 				// remove the old queued state...
-				await this.rsmq.deleteMessageAsync({
-					qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-					id: previousManagerState.id,
-				});
+				await this.queue.deleteMessage(previousManagerState.id);
 			} catch {
 				// ignore errors when deleting the old queued state, it may have already expired...
 			}
 		}
 
-		const newId = await this.rsmq.sendMessageAsync({
-			qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-			message: JSON.stringify({
+		const newId = await this.queue.sendMessage(
+			JSON.stringify({
 				deviceId,
 				nextState,
 			}),
 			delay,
-		});
+		);
 
 		// if we didn't just update the heartbeat and are in still the same state,
 		// then carry over the original change timestamp.
