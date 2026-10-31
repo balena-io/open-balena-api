@@ -299,18 +299,11 @@ function redisOpts(
 }
 const generalRedis = redisOpts('REDIS');
 
-if (generalRedis.isCluster) {
-	// TODO: This is due to RSMQ
-	throw new Error(
-		'Cluster mode is not supported for the general redis instance',
-	);
-}
-
 export const REDIS = {
 	general: generalRedis,
 	logs: redisOpts(
 		'REDIS_LOGS',
-		[generalRedis.host],
+		generalRedis.isCluster ? generalRedis.hosts : [generalRedis.host],
 		generalRedis.auth,
 		generalRedis.isCluster,
 	),
