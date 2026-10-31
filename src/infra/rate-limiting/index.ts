@@ -59,6 +59,7 @@ export const createRateLimiter = (
 		...opts,
 		keyPrefix: `api:ratelimiting:redis:${keyScope}`,
 		storeClient: redis,
+		useRedisPackage: true,
 		insuranceLimiter,
 	});
 
