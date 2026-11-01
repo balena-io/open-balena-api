@@ -40,6 +40,26 @@ setupDeleteCascade('image__is_part_of__release', {
 setupDeleteCascade('release', {
 	release_asset: 'release',
 	release_tag: 'release',
+	// Images that are not part of any other release. This must run before the
+	// image__is_part_of__release cascade, which removes the links it filters on.
+	image: (releaseIds) => ({
+		image__is_part_of__release: {
+			$any: {
+				$alias: 'ipr',
+				$expr: { ipr: { is_part_of__release: { $in: releaseIds } } },
+			},
+		},
+		$not: {
+			image__is_part_of__release: {
+				$any: {
+					$alias: 'ipr',
+					$expr: {
+						$not: { ipr: { is_part_of__release: { $in: releaseIds } } },
+					},
+				},
+			},
+		},
+	}),
 	image__is_part_of__release: 'is_part_of__release',
 	image_install: 'is_provided_by__release',
 });
