@@ -140,8 +140,10 @@ export function createMultiLevelStore<T extends Defined>(
 		(isCacheableValue == null || isCacheableValue(value) === true);
 	const redis = getSharedRedis();
 
+	// Only the shared cache needs the prefix to separate it from other stores, the local cache belongs to this store alone
+	// so it uses the bare key, which avoids the memory of the prefix and building the string on a local hit
 	let keyPrefix: string;
-	const getKey = (key: string) => {
+	const getSharedKey = (key: string) => {
 		// We include the version so that we get automatic invalidation on updates which might change the memoized fn behavior,
 		// we also calculate the keyPrefix lazily so that the version has a chance to be set as otherwise the memoized function
 		// creation can happen before the version has been initialized
@@ -149,8 +151,8 @@ export function createMultiLevelStore<T extends Defined>(
 		return `${keyPrefix}${key}`;
 	};
 
-	const getShared = async (fullKey: string) => {
-		const json = await redis.get(fullKey);
+	const getShared = async (key: string) => {
+		const json = await redis.get(getSharedKey(key));
 		if (json == null) {
 			return;
 		}
@@ -161,58 +163,56 @@ export function createMultiLevelStore<T extends Defined>(
 		return { value, json };
 	};
 
-	const setAll = async (fullKey: string, value: T) => {
+	const setAll = async (key: string, value: T) => {
 		localCache?.set(
-			fullKey,
+			key,
 			typeof value === 'object' && value !== null ? _.cloneDeep(value) : value,
 		);
 		if (isSharedCacheable(value)) {
 			const json = JSON.stringify(value) ?? '"undefined"';
+			const sharedKey = getSharedKey(key);
 			if (sharedTtl) {
-				await redis.set(fullKey, json, {
+				await redis.set(sharedKey, json, {
 					expiration: { type: 'EX', value: sharedTtl },
 				});
 			} else {
-				await redis.set(fullKey, json);
+				await redis.set(sharedKey, json);
 			}
 		}
 	};
 
 	const refreshing = new Set<string>();
-	const refreshInBackground = (
-		fullKey: string,
-		fn: () => T | Promise<T>,
-	): void => {
-		if (!refreshThreshold || refreshing.has(fullKey)) {
+	const refreshInBackground = (key: string, fn: () => T | Promise<T>): void => {
+		if (!refreshThreshold || refreshing.has(key)) {
 			return;
 		}
-		refreshing.add(fullKey);
+		refreshing.add(key);
 		void (async () => {
 			try {
-				const ttl = await redis.ttl(fullKey);
+				const ttl = await redis.ttl(getSharedKey(key));
 				if (refreshThreshold > ttl) {
 					const value = await fn();
 					if (value !== undefined) {
-						await setAll(fullKey, value);
+						await setAll(key, value);
 					}
 				}
 			} catch {
 				// A failed refresh is ignored, the entry will be fetched again once it expires
 			} finally {
-				refreshing.delete(fullKey);
+				refreshing.delete(key);
 			}
 		})();
 	};
 
 	const fetchAndSet = async (
-		fullKey: string,
+		key: string,
 		fn: () => T | Promise<T>,
 	): Promise<T> => {
 		const value = await fn();
 		if (localCache == null ? !isSharedCacheable(value) : value === undefined) {
 			return value;
 		}
-		await setAll(fullKey, value);
+		await setAll(key, value);
 		return value;
 	};
 	// Concurrent misses for the same key share a single fetch
@@ -220,50 +220,46 @@ export function createMultiLevelStore<T extends Defined>(
 
 	return {
 		get: async (key) => {
-			const fullKey = getKey(key);
-			const localValue = localCache?.get(fullKey);
+			const localValue = localCache?.get(key);
 			if (localValue !== undefined) {
 				return localValue;
 			}
 			// Unlike `wrap`, a value fetched from redis by `get` is not added to the local cache
-			return (await getShared(fullKey))?.value;
+			return (await getShared(key))?.value;
 		},
 		set: async (key, value) => {
-			const fullKey = getKey(key);
 			if (localCache == null && !isSharedCacheable(value)) {
 				throw new Error(`"${value}" is not a cacheable value`);
 			}
-			await setAll(fullKey, value);
+			await setAll(key, value);
 		},
 		delete: async (key) => {
-			const fullKey = getKey(key);
-			localCache?.delete(fullKey);
-			await redis.del(fullKey);
+			localCache?.delete(key);
+			await redis.del(getSharedKey(key));
 		},
 		wrap: async (key, fn) => {
-			const fullKey = getKey(key);
-			const localValue = localCache?.get(fullKey);
+			const localValue = localCache?.get(key);
 			if (localValue !== undefined) {
 				return localValue;
 			}
-			const shared = await getShared(fullKey);
+			const shared = await getShared(key);
 			if (shared != null) {
-				refreshInBackground(fullKey, fn);
+				refreshInBackground(key, fn);
 				// Parsing the json again gives the local cache its own copy more cheaply than cloning
 				localCache?.set(
-					fullKey,
+					key,
 					typeof shared.value === 'object'
 						? JSON.parse(shared.json)
 						: shared.value,
 				);
 				return shared.value;
 			}
-			let pending = pendingFetches.get(fullKey);
+			let pending = pendingFetches.get(key);
 			if (pending == null) {
-				pending = fetchAndSet(fullKey, fn).finally(() => {
-					pendingFetches.delete(fullKey);
+				pending = fetchAndSet(key, fn).finally(() => {
+					pendingFetches.delete(key);
 				});
-				pendingFetches.set(fullKey, pending);
+				pendingFetches.set(key, pending);
 			}
 			return await pending;
 		},
