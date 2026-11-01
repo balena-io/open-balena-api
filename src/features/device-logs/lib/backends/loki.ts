@@ -1,8 +1,13 @@
 import _ from 'lodash';
 import { EventEmitter } from 'events';
-import { compressionAlgorithms } from '@grpc/grpc-js';
-
-import loki from 'loki-grpc-client';
+import {
+	compressionAlgorithms,
+	credentials,
+	makeGenericClientConstructor,
+	Metadata,
+	status,
+} from '@grpc/grpc-js';
+import type { CallOptions, Client, ServiceError } from '@grpc/grpc-js';
 import { errors, sbvrUtils, permissions } from '@balena/pinejs';
 import {
 	LOKI_QUERY_HOST,
@@ -42,6 +47,12 @@ import { setTimeout } from 'timers/promises';
 import { requestAsync } from '../../../../infra/request-promise/index.ts';
 import WebSocket from 'ws';
 import querystring from 'node:querystring';
+import type {
+	LokiEntry,
+	LokiLabelPair,
+	LokiStream,
+} from './loki-push-request.ts';
+import { encodePushRequest } from './loki-push-request.ts';
 
 const { BadRequestError } = errors;
 
@@ -51,7 +62,38 @@ interface LokiDeviceLog extends Omit<InternalDeviceLog, 'nanoTimestamp'> {
 }
 
 // invert status object for quick lookup of status identifier using status code
-const statusKeys = _.invert(loki.status);
+const statusKeys = _.invert(status);
+
+const notSupported = () => {
+	throw new Error(
+		'Only the client side of the Loki push service is implemented',
+	);
+};
+// The Loki push service, with requests encoded by `encodePushRequest` straight from plain objects rather than by
+// building and serializing google-protobuf messages
+const PusherClient = makeGenericClientConstructor(
+	{
+		push: {
+			path: '/logproto.Pusher/Push',
+			requestStream: false,
+			responseStream: false,
+			requestSerialize: encodePushRequest,
+			requestDeserialize: notSupported,
+			responseSerialize: notSupported,
+			// PushResponse has no fields
+			responseDeserialize: () => ({}),
+		},
+	},
+	'Pusher',
+);
+interface LokiPusherClient extends Client {
+	push(
+		request: LokiStream[],
+		metadata: Metadata,
+		options: Partial<CallOptions>,
+		callback: (err: ServiceError | null) => void,
+	): void;
+}
 
 const lokiQueryAddress = `${LOKI_QUERY_HOST}:${LOKI_QUERY_HTTP_PORT}`;
 const lokiIngesterAddress = `${LOKI_INGESTER_HOST}:${LOKI_INGESTER_GRPC_PORT}`;
@@ -108,7 +150,7 @@ const $getLokiContext = _.once(() =>
 
 export class LokiBackend implements DeviceLogsBackend {
 	private subscriptions: EventEmitter;
-	private pusher: loki.PusherClient;
+	private pusher: LokiPusherClient;
 	private tailCalls: Map<string, WebSocket>;
 
 	constructor() {
@@ -116,29 +158,24 @@ export class LokiBackend implements DeviceLogsBackend {
 		const compressionAlgorithm = LOKI_GRPC_SEND_GZIP
 			? compressionAlgorithms.gzip
 			: compressionAlgorithms.identity;
-		this.pusher = new loki.PusherClient(
+		this.pusher = new PusherClient(
 			lokiIngesterAddress,
-			loki.createInsecureCredentials(),
+			credentials.createInsecure(),
 			{
 				'grpc.default_compression_algorithm': compressionAlgorithm,
 				'grpc.default_compression_level': LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL,
 			},
-		);
+		) as unknown as LokiPusherClient;
 		this.tailCalls = new Map();
-		this.push = backoff(
-			this.push.bind(this),
-			(err: loki.ServiceError): boolean => {
-				incrementLokiPushErrorTotal(
-					err.code ? statusKeys[err.code] : 'UNDEFINED',
-				);
-				return (
-					LOKI_RETRIES_ENABLED &&
-					[loki.status.UNAVAILABLE, loki.status.RESOURCE_EXHAUSTED].includes(
-						err.code ?? -1,
-					)
-				);
-			},
-		);
+		this.push = backoff(this.push.bind(this), (err: ServiceError): boolean => {
+			incrementLokiPushErrorTotal(
+				err.code ? statusKeys[err.code] : 'UNDEFINED',
+			);
+			return (
+				LOKI_RETRIES_ENABLED &&
+				[status.UNAVAILABLE, status.RESOURCE_EXHAUSTED].includes(err.code ?? -1)
+			);
+		});
 	}
 
 	public readonly available = true;
@@ -224,25 +261,22 @@ export class LokiBackend implements DeviceLogsBackend {
 		}
 	}
 
-	private async push(
-		ctx: LokiLogContext,
-		stream: loki.StreamAdapter,
-	): Promise<void> {
+	private async push(ctx: LokiLogContext, stream: LokiStream): Promise<void> {
 		incrementLokiPushTotal();
-		const pushRequest = new loki.PushRequest();
-		pushRequest.addStreams(stream);
+		const metadata = new Metadata();
+		metadata.add('x-scope-orgid', ctx.orgId);
 		const startAt = Date.now();
 		try {
-			await new Promise<loki.PushResponse>((resolve, reject) => {
+			await new Promise<void>((resolve, reject) => {
 				this.pusher.push(
-					pushRequest,
-					loki.createOrgIdMetadata(ctx.orgId),
+					[stream],
+					metadata,
 					{ deadline: startAt + LOKI_PUSH_TIMEOUT },
-					(err, response) => {
+					(err) => {
 						if (err) {
 							reject(err);
 						} else {
-							resolve(response);
+							resolve();
 						}
 					},
 				);
@@ -352,10 +386,8 @@ export class LokiBackend implements DeviceLogsBackend {
 		return `o${ctx.orgId}:a${ctx.appId}:d${ctx.id}`;
 	}
 
-	private getStructuredMetadata(ctx: LogContext): loki.LabelPairAdapter[] {
-		return [
-			new loki.LabelPairAdapter().setName('device_id').setValue(`${ctx.id}`),
-		];
+	private getStructuredMetadata(ctx: LogContext): LokiLabelPair[] {
+		return [{ name: 'device_id', value: `${ctx.id}` }];
 	}
 
 	private getLabels(ctx: LokiLogContext): string {
@@ -365,33 +397,25 @@ export class LokiBackend implements DeviceLogsBackend {
 	private fromDeviceLogsToEntries(
 		ctx: LogContext,
 		logs: Array<InternalDeviceLog & { version?: number }>,
-	) {
+	): LokiEntry[] {
 		const structuredMetadata = this.getStructuredMetadata(ctx);
 		return logs.map((log) => {
 			// Strip nanoTimestamp from the log as it cannot be serialized, and avoid a replacer lets us stay on the stringify fast path
 			const { nanoTimestamp, ...jsonableLog } = log;
-			const timestamp = new loki.Timestamp();
-			timestamp.setSeconds(Math.floor(Number(nanoTimestamp / 1000000000n)));
-			timestamp.setNanos(Number(nanoTimestamp % 1000000000n));
-			// store log line as JSON
 			jsonableLog.version = VERSION;
-			const logJson = JSON.stringify(jsonableLog);
-			// create entry with labels, line and timestamp
-			return new loki.EntryAdapter()
-				.setLine(logJson)
-				.setTimestamp(timestamp)
-				.setStructuredmetadataList(structuredMetadata);
+			return {
+				seconds: Math.floor(Number(log.nanoTimestamp / 1000000000n)),
+				nanos: Number(log.nanoTimestamp % 1000000000n),
+				line: JSON.stringify(jsonableLog),
+				structuredMetadata,
+			};
 		});
 	}
 	private fromLogEntriesToStream(
 		ctx: LokiLogContext,
-		logEntries: loki.EntryAdapter[],
-	) {
-		const labels = this.getLabels(ctx);
-		const stream = new loki.StreamAdapter();
-		stream.setLabels(labels);
-		stream.setEntriesList(logEntries);
-		return stream;
+		logEntries: LokiEntry[],
+	): LokiStream {
+		return { labels: this.getLabels(ctx), entries: logEntries };
 	}
 
 	async addAdditionalContext(
