@@ -62,7 +62,17 @@ export const defaultRespondFn = async (
 		// The request is not used again after the delay, and there can be many delayed requests
 		// in parallel, so release the parsed body rather than holding it for the whole delay
 		req.body = undefined;
+		// Likewise stop reading any unread request body (eg log streams) during the delay, leaving it in the
+		// kernel's socket buffer to apply backpressure, rather than buffering up to the highWaterMark in memory
+		const pauseSocket = !req.complete;
+		if (pauseSocket) {
+			req.socket.pause();
+		}
 		await setTimeout(delayMs);
+		if (pauseSocket) {
+			// Resume so that node can discard the rest of the body and reuse the connection once we respond
+			req.socket.resume();
+		}
 	}
 	res.status(status).end();
 };
