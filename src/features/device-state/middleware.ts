@@ -53,12 +53,15 @@ const requestParamsUuidResolver = (req: RequestExcludingInput) => [
 ];
 
 export const defaultRespondFn = async (
-	_req: RequestExcludingInput,
+	req: RequestExcludingInput,
 	res: Response,
 	delayMs: number,
 	status: number,
 ): Promise<void> => {
 	if (delayMs > 0) {
+		// The request is not used again after the delay, and there can be many delayed requests
+		// in parallel, so release the parsed body rather than holding it for the whole delay
+		req.body = undefined;
 		await setTimeout(delayMs);
 	}
 	res.status(status).end();
