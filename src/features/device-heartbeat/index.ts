@@ -1,6 +1,8 @@
+import { stripIndent } from 'common-tags';
 import { EventEmitter } from 'eventemitter3';
 import _ from 'lodash';
-import RedisSMQ from 'rsmq';
+import type { CommandParser, RedisArgument } from 'redis';
+import { defineScript } from 'redis';
 
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
@@ -14,12 +16,61 @@ import {
 	API_HEARTBEAT_STATE_TIMEOUT_SECONDS,
 	API_HEARTBEAT_STATE_ONLINE_UPDATE_CACHE_TIMEOUT,
 	DEFAULT_SUPERVISOR_POLL_INTERVAL,
-	REDIS,
 } from '../../lib/config.ts';
-import { redis, redisRO } from '../../infra/redis/index.ts';
+import {
+	createIsolatedRedis,
+	redis,
+	redisRO,
+} from '../../infra/redis/index.ts';
 import { setTimeout } from 'timers/promises';
 
 const { api } = sbvrUtils;
+
+const scripts = {
+	claimDueMember: defineScript({
+		SCRIPT: stripIndent`
+		-- Take the earliest member that is due
+		local due = redis.call("zrange", KEYS[1], "-inf", ARGV[1], "BYSCORE", "LIMIT", 0, 1)
+		if #due == 0 then
+			return false
+		end
+		-- And hide it from other consumers until the claim expires, at which point it is due again
+		redis.call("zadd", KEYS[1], ARGV[2], due[1])
+		return due[1]`,
+		NUMBER_OF_KEYS: 1,
+		parseCommand(
+			parser: CommandParser,
+			key: RedisArgument,
+			now: number,
+			claimedUntil: number,
+		) {
+			parser.pushKey(key);
+			parser.push(`${now}`, `${claimedUntil}`);
+		},
+		transformReply: undefined as unknown as () => string | null,
+	}),
+	removeClaimedMember: defineScript({
+		SCRIPT: stripIndent`
+		-- Only remove the member if it has not been rescheduled since we claimed it
+		if tonumber(redis.call("zscore", KEYS[1], ARGV[1])) == tonumber(ARGV[2]) then
+			return redis.call("zrem", KEYS[1], ARGV[1])
+		end
+		return 0`,
+		NUMBER_OF_KEYS: 1,
+		parseCommand(
+			parser: CommandParser,
+			key: RedisArgument,
+			member: RedisArgument,
+			claimedUntil: number,
+		) {
+			parser.pushKey(key);
+			parser.push(member, `${claimedUntil}`);
+		},
+		transformReply: undefined as unknown as () => number,
+	}),
+};
+
+const redisWithScripts = await createIsolatedRedis({ scripts });
 
 const getPollIntervalForDevice = _.once(() =>
 	api.resin.prepare(
@@ -155,7 +206,11 @@ interface MetricEventArgs {
 }
 
 interface DeviceOnlineStateManagerMessage {
-	id: string;
+	/**
+	 * The id of the scheduled change in the legacy RSMQ queue, only set by API versions that still schedule changes via RSMQ
+	 * TODO: Remove once no API instances are scheduling changes via RSMQ and the legacy queue has been drained
+	 */
+	id?: string;
 	currentState: DeviceOnlineStates;
 	/** The timestamp that the DB heartbeat was last updated */
 	updatedAt?: number;
@@ -167,22 +222,36 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 	) => void;
 	stats: (
 		args: MetricEventArgs & {
-			totalsent: number;
-			totalrecv: number;
+			/** The number of scheduled state changes */
 			msgs: number;
+			/** The number of scheduled state changes that are either not due yet or currently being processed */
 			hiddenmsgs: number;
 		},
 	) => void;
 }> {
 	private static readonly REDIS_NAMESPACE = 'device-online-state';
-	private static readonly EXPIRED_QUEUE = 'expired';
-	private static readonly RSMQ_READ_TIMEOUT = 30;
+	/**
+	 * A sorted set of the scheduled state changes, with `${deviceId}:${nextState}` members scored by the
+	 * timestamp they are due at, so that rescheduling a device's change replaces it rather than adding another
+	 */
+	private static readonly SCHEDULED_QUEUE = `${DeviceOnlineStateManager.REDIS_NAMESPACE}:scheduled`;
+	/**
+	 * The RSMQ queue that previous API versions scheduled the state changes in, which we keep consuming
+	 * until no API instances are using it and it has been drained
+	 * TODO: Remove once no API instances are scheduling changes via RSMQ and the legacy queue has been drained
+	 */
+	private static readonly LEGACY_RSMQ_QUEUE = `${DeviceOnlineStateManager.REDIS_NAMESPACE}:expired`;
+	private static readonly CLAIM_TIMEOUT_MSEC = 30000;
 	private static readonly QUEUE_STATS_INTERVAL_MSEC = 10000;
+	/** The states that are scheduled as a device's next state, used to replace any change already scheduled for it */
+	private static readonly SCHEDULED_STATES = [
+		DeviceOnlineStates.Timeout,
+		DeviceOnlineStates.Offline,
+	] as const;
 
 	private readonly featureIsEnabled: boolean;
 
 	private isConsuming = false;
-	private rsmq: RedisSMQ;
 
 	public constructor() {
 		super();
@@ -193,49 +262,42 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 			return;
 		}
 
-		this.rsmq = new RedisSMQ({
-			// TODO: RSMQ does not currently support a redis cluster
-			...REDIS.general.host,
-			...REDIS.general.auth,
-			ns: DeviceOnlineStateManager.REDIS_NAMESPACE,
-		});
-
-		// create the RedisMQ queue and start consuming messages...
-		void this.rsmq
-			.createQueueAsync({ qname: DeviceOnlineStateManager.EXPIRED_QUEUE })
-			.catch((err) => {
-				if (err.name !== 'queueExists') {
-					throw err;
-				}
-			})
-			.then(() => {
-				this.setupQueueStatsEmitter(
-					DeviceOnlineStateManager.QUEUE_STATS_INTERVAL_MSEC,
-				);
-			});
+		this.setupQueueStatsEmitter(
+			DeviceOnlineStateManager.QUEUE_STATS_INTERVAL_MSEC,
+		);
 	}
 
 	private setupQueueStatsEmitter(interval: number) {
 		void setTimeout(interval, undefined, { ref: false }).then(async () => {
 			try {
 				const startAt = Date.now();
-				const queueAttributes = await this.rsmq.getQueueAttributesAsync({
-					qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-				});
+				const [msgs, hiddenmsgs, legacyMsgs, legacyHiddenmsgs] =
+					await Promise.all([
+						redisRO.zCard(DeviceOnlineStateManager.SCHEDULED_QUEUE),
+						redisRO.zCount(
+							DeviceOnlineStateManager.SCHEDULED_QUEUE,
+							startAt,
+							'+inf',
+						),
+						redisRO.zCard(DeviceOnlineStateManager.LEGACY_RSMQ_QUEUE),
+						redisRO.zCount(
+							DeviceOnlineStateManager.LEGACY_RSMQ_QUEUE,
+							startAt,
+							'+inf',
+						),
+					]);
 				const endAt = Date.now();
 
 				this.emit('stats', {
 					startAt,
 					endAt,
-					totalsent: queueAttributes.totalsent,
-					totalrecv: queueAttributes.totalrecv,
-					msgs: queueAttributes.msgs,
-					hiddenmsgs: queueAttributes.hiddenmsgs,
+					msgs: msgs + legacyMsgs,
+					hiddenmsgs: hiddenmsgs + legacyHiddenmsgs,
 				});
 			} catch (err) {
 				captureException(
 					err,
-					'RSMQ: Unable to acquire and emit the queue stats.',
+					'DeviceStateManager: Unable to acquire and emit the queue stats.',
 				);
 			} finally {
 				this.setupQueueStatsEmitter(interval);
@@ -291,26 +353,103 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		}
 	}
 
+	private async deleteLegacyChange(id: string) {
+		await redis
+			.multi()
+			.zRem(DeviceOnlineStateManager.LEGACY_RSMQ_QUEUE, id)
+			.hDel(`${DeviceOnlineStateManager.LEGACY_RSMQ_QUEUE}:Q`, [
+				id,
+				`${id}:rc`,
+				`${id}:fr`,
+			])
+			.exec();
+	}
+
+	/**
+	 * Claims the next due state change, hiding it from other consumers for CLAIM_TIMEOUT_MSEC
+	 * so that multiple API agents do not process it, after which it will be consumed again unless removed
+	 */
+	private async claimNextChange(): Promise<
+		| {
+				deviceId: number;
+				nextState: DeviceOnlineStates;
+				legacyId?: string;
+				remove: () => Promise<unknown>;
+		  }
+		| undefined
+	> {
+		const now = Date.now();
+		const claimedUntil = now + DeviceOnlineStateManager.CLAIM_TIMEOUT_MSEC;
+
+		const member = await redisWithScripts.claimDueMember(
+			DeviceOnlineStateManager.SCHEDULED_QUEUE,
+			now,
+			claimedUntil,
+		);
+		if (member != null) {
+			const [memberDeviceId, memberNextState] = member.split(':');
+			return {
+				deviceId: parseInt(memberDeviceId, 10),
+				nextState: memberNextState as DeviceOnlineStates,
+				remove: () =>
+					redisWithScripts.removeClaimedMember(
+						DeviceOnlineStateManager.SCHEDULED_QUEUE,
+						member,
+						claimedUntil,
+					),
+			};
+		}
+
+		// TODO: Remove once no API instances are scheduling changes via RSMQ and the legacy queue has been drained
+		const legacyId = await redisWithScripts.claimDueMember(
+			DeviceOnlineStateManager.LEGACY_RSMQ_QUEUE,
+			now,
+			claimedUntil,
+		);
+		if (legacyId == null) {
+			return;
+		}
+		const message = await redis.hGet(
+			`${DeviceOnlineStateManager.LEGACY_RSMQ_QUEUE}:Q`,
+			legacyId,
+		);
+		if (message == null) {
+			// it was deleted after we claimed it, so there is nothing to process
+			return;
+		}
+		const { deviceId, nextState } = JSON.parse(message) as {
+			deviceId: number;
+			nextState: DeviceOnlineStates;
+		};
+		return {
+			deviceId,
+			nextState,
+			legacyId,
+			remove: () => this.deleteLegacyChange(legacyId),
+		};
+	}
+
 	private consume() {
-		// pull a message from the queue...
-		void this.rsmq
-			.receiveMessageAsync({
-				qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-				vt: DeviceOnlineStateManager.RSMQ_READ_TIMEOUT, // prevent other consumers seeing the same message (if any) preventing multiple API agents from processing it...
-			})
-			.then(async (msg) => {
-				if (!('id' in msg)) {
-					// no messages to consume, wait a second...
+		// pull a state change from the queue...
+		void this.claimNextChange()
+			.then(async (change) => {
+				if (change == null) {
+					// no state changes to consume, wait a second...
 					await setTimeout(1000);
 					return;
 				}
 
-				const { id, message } = msg;
 				try {
-					const { deviceId, nextState } = JSON.parse(message) as {
-						deviceId: number;
-						nextState: DeviceOnlineStates;
-					};
+					const { deviceId, nextState, legacyId } = change;
+
+					// While API versions that schedule changes via RSMQ are still running, a device's latest change might
+					// have been scheduled in the other queue, in which case this one is stale and must not be applied
+					// TODO: Remove once no API instances are scheduling changes via RSMQ and the legacy queue has been drained
+					const managerState = await this.getDeviceOnlineState(deviceId);
+					if (managerState != null && managerState.id !== legacyId) {
+						await change.remove();
+						return;
+					}
 
 					// raise and event for the state change...
 					switch (nextState) {
@@ -334,7 +473,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 							);
 							// This not only cleans-up the write cache for housekeeping reasons, but also
 							// invalidates it whenever a device goes Offline.
-							// This way, after an incident/downtime, when the RSMQ resumes processing the pending heartbeat changes
+							// This way, after an incident/downtime, when the queue resumes processing the pending heartbeat changes
 							// and new state GETs arrive, racing to update the DB & write cache's heartbeat state,
 							// the DB & write cache get back in sync (if they have drifted) as soon as each device is marked as Offline,
 							// allowing it to go back Online on the next state GET.
@@ -348,10 +487,7 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 							);
 					}
 
-					await this.rsmq.deleteMessageAsync({
-						qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-						id,
-					});
+					await change.remove();
 				} catch (err) {
 					captureException(
 						err,
@@ -392,26 +528,30 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		delay: number, // in seconds
 		updatedAt?: number,
 	) {
+		// TODO: Remove once no API instances are scheduling changes via RSMQ and the legacy queue has been drained
 		if (previousManagerState?.id != null) {
 			try {
 				// remove the old queued state...
-				await this.rsmq.deleteMessageAsync({
-					qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-					id: previousManagerState.id,
-				});
+				await this.deleteLegacyChange(previousManagerState.id);
 			} catch {
 				// ignore errors when deleting the old queued state, it may have already expired...
 			}
 		}
 
-		const newId = await this.rsmq.sendMessageAsync({
-			qname: DeviceOnlineStateManager.EXPIRED_QUEUE,
-			message: JSON.stringify({
-				deviceId,
-				nextState,
-			}),
-			delay,
-		});
+		// schedule the next state, replacing any state change already scheduled for the device...
+		await redis
+			.multi()
+			.zAdd(DeviceOnlineStateManager.SCHEDULED_QUEUE, {
+				score: Date.now() + delay * 1000,
+				value: `${deviceId}:${nextState}`,
+			})
+			.zRem(
+				DeviceOnlineStateManager.SCHEDULED_QUEUE,
+				DeviceOnlineStateManager.SCHEDULED_STATES.filter(
+					(state) => state !== nextState,
+				).map((state) => `${deviceId}:${state}`),
+			)
+			.exec();
 
 		// if we didn't just update the heartbeat and are in still the same state,
 		// then carry over the original change timestamp.
@@ -425,7 +565,6 @@ export class DeviceOnlineStateManager extends EventEmitter<{
 		await redis.set(
 			`${DeviceOnlineStateManager.REDIS_NAMESPACE}:${deviceId}`,
 			JSON.stringify({
-				id: newId,
 				currentState,
 				...(updatedAt != null && {
 					updatedAt,
