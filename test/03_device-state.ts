@@ -1846,8 +1846,11 @@ export default () => {
 				});
 
 				it('should throttle metrics-only device state updates [cross-instance]', async () => {
-					// Wait for the local cache to expire
-					await setTimeout(config.METRICS_MAX_REPORT_INTERVAL_SECONDS * 1000);
+					// Wait for the local cache to expire, which tracks expiry to the second and so can keep an entry for up to one
+					// and a half seconds longer than its ttl
+					await setTimeout(
+						(config.METRICS_MAX_REPORT_INTERVAL_SECONDS + 2) * 1000,
+					);
 					// confirm that even the redis cache has expired
 					expect(
 						await redisRO.get(getMetricsRecentlyUpdatedCacheKey(device.uuid)),

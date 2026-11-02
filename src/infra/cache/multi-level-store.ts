@@ -7,6 +7,9 @@ import { getRedisOptions } from '../redis/config.ts';
 
 const DEFAULT_LOCAL_MAX = 500;
 const DEFAULT_LOCAL_TTL = Infinity;
+// The largest Smi on builds with 31 bit Smis, eg with pointer compression, which is used as the expiry of entries without
+// a ttl so that the expiries of all entries can stay Smis
+const NO_EXPIRY = 2 ** 30 - 1;
 
 const usedCacheKeys = new Set<string>();
 
@@ -50,16 +53,29 @@ const getSharedRedis = () => {
 };
 
 /**
+ * Whole seconds since the process started, which stays a Smi so that storing it per entry does not need a HeapNumber
+ * like a millisecond timestamp would. A timer updates it twice a second because reading the clock was a large part of
+ * the cost of a local hit, and it reads the clock rather than counting ticks because timers run late, which would add up
+ * and make entries outlive their ttl by more the longer the ttl
+ */
+const readNowSeconds = () => Math.floor(process.uptime());
+let nowSeconds = readNowSeconds();
+setInterval(() => {
+	nowSeconds = readNowSeconds();
+}, 500).unref();
+
+/**
  * A plain Map LRU with a ttl, which avoids the cost of generic machinery on such a hot path. Maps iterate in insertion
  * order, so re-inserting on every hit keeps the least recently used entry first
  */
 class LocalCache<T> {
 	private entries = new Map<string, { value: T; expiresAt: number }>();
 	private max;
-	private ttlMs;
-	constructor(max: number, ttlMs: number) {
+	private ttl;
+	/** @param ttl In whole seconds, or `Infinity` for no expiry */
+	constructor(max: number, ttl: number) {
 		this.max = max;
-		this.ttlMs = ttlMs;
+		this.ttl = ttl;
 	}
 
 	public get(key: string): T | undefined {
@@ -68,7 +84,9 @@ class LocalCache<T> {
 			return;
 		}
 		this.entries.delete(key);
-		if (entry.expiresAt <= Date.now()) {
+		// Expiring only once the current second is past `expiresAt` means entries live for at least their ttl, less the half
+		// a second that `nowSeconds` can lag behind the clock
+		if (entry.expiresAt < nowSeconds) {
 			return;
 		}
 		this.entries.set(key, entry);
@@ -80,7 +98,10 @@ class LocalCache<T> {
 		if (this.entries.size >= this.max) {
 			this.entries.delete(this.entries.keys().next().value!);
 		}
-		this.entries.set(key, { value, expiresAt: Date.now() + this.ttlMs });
+		this.entries.set(key, {
+			value,
+			expiresAt: this.ttl === Infinity ? NO_EXPIRY : nowSeconds + this.ttl,
+		});
 	}
 
 	public delete(key: string) {
@@ -127,10 +148,11 @@ export function createMultiLevelStore<T extends Defined>(
 	let localCache: LocalCache<T> | undefined;
 	if (local !== false) {
 		const { max, ttl } = { ...baseOpts, ...local };
-		// A max of 0 uses the default, as does a ttl of 0 for no expiry, the same as cache-manager's memory store
+		// A max of 0 uses the default, as does a ttl of 0 for no expiry, the same as cache-manager's memory store. The local
+		// expiry is only tracked to the second, so a fractional ttl is rounded up
 		localCache = new LocalCache(
 			max == null || max === 0 ? DEFAULT_LOCAL_MAX : max,
-			ttl ? ttl * 1000 : DEFAULT_LOCAL_TTL,
+			ttl ? Math.ceil(ttl) : DEFAULT_LOCAL_TTL,
 		);
 	}
 	const { ttl: sharedTtl, refreshThreshold } = { ...baseOpts, ...global };

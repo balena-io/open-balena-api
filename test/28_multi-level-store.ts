@@ -3,6 +3,7 @@ import { setTimeout } from 'timers/promises';
 import { createMultiLevelStore } from '../src/infra/cache/index.ts';
 import { redis } from '../src/infra/redis/index.ts';
 import { version } from '../src/lib/config.ts';
+import { waitFor } from './test-lib/common.ts';
 
 let storeCount = 0;
 const getCacheKey = () => `test-multi-level-store-${storeCount++}`;
@@ -152,14 +153,19 @@ export default () => {
 			const cacheKey = getCacheKey();
 			const store = createMultiLevelStore<number>(cacheKey, {
 				default: { ttl: 60 },
-				local: { ttl: 0.1 },
+				local: { ttl: 1 },
 				useVersion: false,
 			});
 			await store.set('key', 1);
 			await redis.set(`cache$$${cacheKey}$key`, '2');
 			expect(await store.get('key')).to.equal(1);
-			await setTimeout(150);
-			expect(await store.get('key')).to.equal(2);
+			// The local expiry is tracked to the second and the current second is updated twice a second, so an entry lives
+			// for up to one and a half seconds longer than its ttl
+			await waitFor({
+				delayMs: 100,
+				maxWait: 3000,
+				checkFn: async () => (await store.get('key')) === 2,
+			});
 		});
 
 		it('should evict the least recently used local entries beyond max', async function () {
