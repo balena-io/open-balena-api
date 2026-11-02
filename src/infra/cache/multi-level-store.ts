@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import * as NodeRedis from 'redis';
-import { MINUTES } from '@balena/env-parsing';
+import { MINUTES, SECONDS } from '@balena/env-parsing';
 import { version } from '../../lib/config.ts';
 import type { Defined } from './index.ts';
 import { getRedisOptions } from '../redis/config.ts';
@@ -10,6 +10,7 @@ const DEFAULT_LOCAL_TTL = Infinity;
 // The largest Smi on builds with 31 bit Smis, eg with pointer compression, which is used as the expiry of entries without
 // a ttl so that the expiries of all entries can stay Smis
 const NO_EXPIRY = 2 ** 30 - 1;
+const LOCAL_SWEEP_INTERVAL = 10 * SECONDS;
 
 const usedCacheKeys = new Set<string>();
 
@@ -107,7 +108,34 @@ class LocalCache<T> {
 	public delete(key: string) {
 		this.entries.delete(key);
 	}
+
+	/**
+	 * Removes expired entries from the front, stopping at the first live one. Hits move entries to the back without
+	 * extending their expiry, so a few expired entries can be left behind it, but those are removed once they are next
+	 * read or reach the front
+	 */
+	public sweep() {
+		for (const [key, entry] of this.entries) {
+			if (entry.expiresAt >= nowSeconds) {
+				return;
+			}
+			this.entries.delete(key);
+		}
+	}
 }
+
+// Expired entries would otherwise stay in memory until they are read again or are evicted by `max`, which for keys
+// that are only read once means until the cache fills. A single timer sweeps all the caches, rather than one per cache
+const sweptLocalCaches = new Set<LocalCache<unknown>>();
+let localSweepInterval: ReturnType<typeof setInterval> | undefined;
+const sweepExpiredLocalEntries = (localCache: LocalCache<unknown>) => {
+	sweptLocalCaches.add(localCache);
+	localSweepInterval ??= setInterval(() => {
+		for (const cache of sweptLocalCaches) {
+			cache.sweep();
+		}
+	}, LOCAL_SWEEP_INTERVAL).unref();
+};
 
 /**
  * A local in-memory cache in front of a shared redis cache. Values are stored in redis as JSON, and the local cache
@@ -150,10 +178,14 @@ export function createMultiLevelStore<T extends Defined>(
 		const { max, ttl } = { ...baseOpts, ...local };
 		// A max of 0 uses the default, as does a ttl of 0 for no expiry, the same as cache-manager's memory store. The local
 		// expiry is only tracked to the second, so a fractional ttl is rounded up
+		const localTtl = ttl ? Math.ceil(ttl) : DEFAULT_LOCAL_TTL;
 		localCache = new LocalCache(
 			max == null || max === 0 ? DEFAULT_LOCAL_MAX : max,
-			ttl ? Math.ceil(ttl) : DEFAULT_LOCAL_TTL,
+			localTtl,
 		);
+		if (localTtl !== Infinity) {
+			sweepExpiredLocalEntries(localCache);
+		}
 	}
 	const { ttl: sharedTtl, refreshThreshold } = { ...baseOpts, ...global };
 	// redis cannot cache undefined/null values whilst others can, so we explicitly mark those as uncacheable
