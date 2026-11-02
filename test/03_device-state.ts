@@ -14,12 +14,7 @@ import {
 	getPollInterval,
 	POLL_JITTER_FACTOR,
 } from '../src/features/device-heartbeat/index.ts';
-import {
-	assertExists,
-	itExpectsError,
-	waitFor,
-	waitForUpTo,
-} from './test-lib/common.ts';
+import { assertExists, itExpectsError, waitFor } from './test-lib/common.ts';
 import * as fixtures from './test-lib/fixtures.ts';
 import {
 	expectResourceToMatch,
@@ -717,75 +712,32 @@ export default () => {
 									delete tracker.states[device3.id];
 								});
 
-								itExpectsError(
-									'should turn Online and not consume the stale heartbeat redis queue message when a newer state GET has arrived',
-									async function () {
-										await fakeDevice.getState(
-											device3,
-											device3.uuid,
-											stateVersion,
-										);
-										// The write cache has expired so the DB's heartbeat gets updated
-										await waitFor({
-											maxWait: maxGetStateEventConsumptionTimeout,
-											checkFn: () => device3ChangeEventSpy.called,
-										});
-
-										// Confirm that a state GET after the downtime does switch the device to Online
-										// and sets that to the write cache.
-										await expectDeviceHeartbeat(device3.id, {
-											db: DeviceOnlineStates.Online,
-											cache: DeviceOnlineStates.Online,
-										});
-
-										// Wait for the stale (TIMEOUT -> OFFLINE) message queue item to get consumed,
-										// which also clears the write cache after emitting the change event.
-										await waitForUpTo(
-											TIMEOUT_SEC * 1000 + heartbeatQueueIdlePollMs + 1000,
-											async () =>
-												device3ChangeEventSpy.calledWithMatch({
-													newState: DeviceOnlineStates.Offline,
-												}) &&
-												(await getHeartbeatWriteCacheState(device3.id)) == null,
-										);
-
-										// it's expected that the write cache gets cleared when the DB switches to offline
-										expect(await getHeartbeatWriteCacheState(device3.id)).to.be
-											.null;
-
-										await expectResourceToMatch(
-											pineUser,
-											'device',
-											device3.id,
-											{
-												// We use the same description as in the itExpectsError, so that we are sure which part failed.
-												api_heartbeat_state: (prop, value) =>
-													prop.to.equal(
-														DeviceOnlineStates.Online,
-														`The api_heartbeat_state should have become online but it was found ${value}`,
-													),
-											},
-										);
-									},
-									/The api_heartbeat_state should have become online but it was found offline/,
-								);
-
-								it('should switch to Online after a subsequent state GET and not stay stuck as offline forever', async function () {
-									// Confirm that we are in he case that the DB says Offline & the write Cache is cleared up
-									await expectDeviceHeartbeat(device3.id, {
-										db: DeviceOnlineStates.Offline,
-										cache: null,
-									});
-
+								it('should turn Online and not consume the stale heartbeat redis queue message when a newer state GET has arrived', async function () {
 									await fakeDevice.getState(
 										device3,
 										device3.uuid,
 										stateVersion,
 									);
+									// The write cache has expired so the DB's heartbeat gets updated
 									await waitFor({
 										maxWait: maxGetStateEventConsumptionTimeout,
 										checkFn: () => device3ChangeEventSpy.called,
 									});
+
+									// Confirm that a state GET after the downtime does switch the device to Online
+									// and sets that to the write cache.
+									await expectDeviceHeartbeat(device3.id, {
+										db: DeviceOnlineStates.Online,
+										cache: DeviceOnlineStates.Online,
+									});
+									device3ChangeEventSpy.resetHistory();
+
+									// Wait for longer than the stale (TIMEOUT -> OFFLINE) change would have taken to get consumed,
+									// but less than the (ONLINE -> TIMEOUT) change that the state GET scheduled.
+									await setTimeout(
+										TIMEOUT_SEC * 1000 + heartbeatQueueIdlePollMs,
+									);
+									expect(device3ChangeEventSpy.called).to.be.false;
 									await expectDeviceHeartbeat(device3.id, {
 										db: DeviceOnlineStates.Online,
 										cache: DeviceOnlineStates.Online,
@@ -833,81 +785,19 @@ export default () => {
 									delete tracker.states[device3.id];
 								});
 
-								itExpectsError(
-									'should stay Online and not consume the stale heartbeat redis queue message when a newer state GET has arrived',
-									async function () {
-										// The initialWait needs to be near the end of the devicePollInterval, so that
-										// * we make a state GET request before the Online->Timeout queued message gets consumed, so that
-										// * the new write cache item created by the state GET, will still be not expired when the stale (created in the before())
-										// heartbeat change queued messages get fully consumed,
-										const initialWait = 0.8 * devicePollInterval;
-										await setTimeout(initialWait);
-										// confirm that the device is still online after the wait and there was no state change
-										await expectDeviceHeartbeat(device3.id, {
-											db: DeviceOnlineStates.Online,
-											cache: null,
-										});
-										expect(device3ChangeEventSpy.called).to.be.false;
-
-										// Confirm that a state GET after the downtime, does switch the device to Online
-										await fakeDevice.getState(
-											device3,
-											device3.uuid,
-											stateVersion,
-										);
-										await waitFor({
-											maxWait: maxGetStateEventConsumptionTimeout,
-											checkFn: () => device3ChangeEventSpy.called,
-										});
-										await expectDeviceHeartbeat(device3.id, {
-											db: DeviceOnlineStates.Online,
-											cache: DeviceOnlineStates.Online,
-										});
-
-										// Wait long enough for the stale (ONLINE -> TIMEOUT) & (TIMEOUT -> OFFLINE) message queue items to get consumed.
-										// Each of them can get consumed up to heartbeatQueueIdlePollMs after it becomes visible.
-										// TODO: This is only testing the current state and shouldn't be happening.
-										await waitForUpTo(
-											devicePollInterval -
-												initialWait +
-												TIMEOUT_SEC * 1000 +
-												2 * heartbeatQueueIdlePollMs +
-												1000,
-											() =>
-												device3ChangeEventSpy.calledWithMatch({
-													newState: DeviceOnlineStates.Offline,
-												}),
-										);
-										await expectResourceToMatch(
-											pineUser,
-											'device',
-											device3.id,
-											{
-												// We use the same description as in the itExpectsError, so that we are sure which part failed.
-												api_heartbeat_state: (prop, value) =>
-													prop.to.equal(
-														DeviceOnlineStates.Online,
-														`The api_heartbeat_state should have become online but it was found ${value}`,
-													),
-											},
-										);
-										expect(
-											await getHeartbeatWriteCacheState(device3.id),
-										).to.have.property('currentState', 'online');
-									},
-									/The api_heartbeat_state should have become online but it was found offline/,
-								);
-
-								// This tests that when the above race condition is hit, devices will correctly switch to Online after the next state GET,
-								// instead of being stuck forever.
-								// TODO: We should be able to drop this once the ^ test gets fixed.
-								it('should switch to Online after a subsequent state GET and not stay stuck to Offline forever', async function () {
-									// Confirm that we are in he case that the DB says Offline & the write Cache is cleared up
+								it('should stay Online and not consume the stale heartbeat redis queue message when a newer state GET has arrived', async function () {
+									// The initialWait needs to be near the end of the devicePollInterval, so that
+									// we make a state GET request before the stale Online->Timeout queued change gets consumed
+									const initialWait = 0.8 * devicePollInterval;
+									await setTimeout(initialWait);
+									// confirm that the device is still online after the wait and there was no state change
 									await expectDeviceHeartbeat(device3.id, {
-										db: DeviceOnlineStates.Offline,
+										db: DeviceOnlineStates.Online,
 										cache: null,
 									});
+									expect(device3ChangeEventSpy.called).to.be.false;
 
+									// Confirm that a state GET after the downtime, does switch the device to Online
 									await fakeDevice.getState(
 										device3,
 										device3.uuid,
@@ -917,6 +807,21 @@ export default () => {
 										maxWait: maxGetStateEventConsumptionTimeout,
 										checkFn: () => device3ChangeEventSpy.called,
 									});
+									await expectDeviceHeartbeat(device3.id, {
+										db: DeviceOnlineStates.Online,
+										cache: DeviceOnlineStates.Online,
+									});
+									device3ChangeEventSpy.resetHistory();
+
+									// Wait for longer than the stale (ONLINE -> TIMEOUT) change would have taken to get consumed,
+									// but less than the (ONLINE -> TIMEOUT) change that the state GET scheduled.
+									await setTimeout(
+										devicePollInterval -
+											initialWait +
+											heartbeatQueueIdlePollMs +
+											500,
+									);
+									expect(device3ChangeEventSpy.called).to.be.false;
 									await expectDeviceHeartbeat(device3.id, {
 										db: DeviceOnlineStates.Online,
 										cache: DeviceOnlineStates.Online,
