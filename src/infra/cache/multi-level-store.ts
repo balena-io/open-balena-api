@@ -73,6 +73,12 @@ class LocalCache<T> {
 	private entries = new Map<string, { value: T; expiresAt: number }>();
 	private max;
 	private ttl;
+	/**
+	 * Kept between evictions because a new iterator has to step over every deleted slot at the front of the map, and
+	 * those build up until V8 next rehashes it, which made each eviction from a full 100k entry cache take ~10-100µs.
+	 * Every entry before it has been evicted, as entries are only ever added at the back
+	 */
+	private evictionCursor: MapIterator<string> | undefined;
 	/** @param ttl In whole seconds, or `Infinity` for no expiry */
 	constructor(max: number, ttl: number) {
 		this.max = max;
@@ -97,7 +103,12 @@ class LocalCache<T> {
 	public set(key: string, value: T) {
 		this.entries.delete(key);
 		if (this.entries.size >= this.max) {
-			this.entries.delete(this.entries.keys().next().value!);
+			let oldest = this.evictionCursor?.next();
+			if (oldest == null || oldest.done) {
+				this.evictionCursor = this.entries.keys();
+				oldest = this.evictionCursor.next();
+			}
+			this.entries.delete(oldest.value!);
 		}
 		this.entries.set(key, {
 			value,
@@ -115,6 +126,8 @@ class LocalCache<T> {
 	 * read or reach the front
 	 */
 	public sweep() {
+		// An idle iterator keeps every table that V8 has since replaced, and their entries, in memory
+		this.evictionCursor = undefined;
 		for (const [key, entry] of this.entries) {
 			if (entry.expiresAt >= nowSeconds) {
 				return;
@@ -125,7 +138,8 @@ class LocalCache<T> {
 }
 
 // Expired entries would otherwise stay in memory until they are read again or are evicted by `max`, which for keys
-// that are only read once means until the cache fills. A single timer sweeps all the caches, rather than one per cache
+// that are only read once means until the cache fills. A single timer sweeps all the caches, rather than one per cache,
+// including those without a ttl so that their eviction cursor is released
 const sweptLocalCaches = new Set<LocalCache<unknown>>();
 let localSweepInterval: ReturnType<typeof setInterval> | undefined;
 const sweepExpiredLocalEntries = (localCache: LocalCache<unknown>) => {
@@ -178,14 +192,11 @@ export function createMultiLevelStore<T extends Defined>(
 		const { max, ttl } = { ...baseOpts, ...local };
 		// A max of 0 uses the default, as does a ttl of 0 for no expiry, the same as cache-manager's memory store. The local
 		// expiry is only tracked to the second, so a fractional ttl is rounded up
-		const localTtl = ttl ? Math.ceil(ttl) : DEFAULT_LOCAL_TTL;
 		localCache = new LocalCache(
 			max == null || max === 0 ? DEFAULT_LOCAL_MAX : max,
-			localTtl,
+			ttl ? Math.ceil(ttl) : DEFAULT_LOCAL_TTL,
 		);
-		if (localTtl !== Infinity) {
-			sweepExpiredLocalEntries(localCache);
-		}
+		sweepExpiredLocalEntries(localCache);
 	}
 	const { ttl: sharedTtl, refreshThreshold } = { ...baseOpts, ...global };
 	// redis cannot cache undefined/null values whilst others can, so we explicitly mark those as uncacheable
