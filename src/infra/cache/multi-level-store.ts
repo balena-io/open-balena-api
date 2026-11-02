@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import * as NodeRedis from 'redis';
-import { MINUTES } from '@balena/env-parsing';
+import { MINUTES, SECONDS } from '@balena/env-parsing';
 import { version } from '../../lib/config.ts';
 import type { Defined } from './index.ts';
 import { getRedisOptions } from '../redis/config.ts';
@@ -10,6 +10,7 @@ const DEFAULT_LOCAL_TTL = Infinity;
 // The largest Smi on builds with 31 bit Smis, eg with pointer compression, which is used as the expiry of entries without
 // a ttl so that the expiries of all entries can stay Smis
 const NO_EXPIRY = 2 ** 30 - 1;
+const LOCAL_SWEEP_INTERVAL = 10 * SECONDS;
 
 const usedCacheKeys = new Set<string>();
 
@@ -72,6 +73,12 @@ class LocalCache<T> {
 	private entries = new Map<string, { value: T; expiresAt: number }>();
 	private max;
 	private ttl;
+	/**
+	 * Kept between evictions because a new iterator has to step over every deleted slot at the front of the map, and
+	 * those build up until V8 next rehashes it, which made each eviction from a full 100k entry cache take ~10-100µs.
+	 * Every entry before it has been evicted, as entries are only ever added at the back
+	 */
+	private evictionCursor: MapIterator<string> | undefined;
 	/** @param ttl In whole seconds, or `Infinity` for no expiry */
 	constructor(max: number, ttl: number) {
 		this.max = max;
@@ -96,7 +103,12 @@ class LocalCache<T> {
 	public set(key: string, value: T) {
 		this.entries.delete(key);
 		if (this.entries.size >= this.max) {
-			this.entries.delete(this.entries.keys().next().value!);
+			let oldest = this.evictionCursor?.next();
+			if (oldest == null || oldest.done) {
+				this.evictionCursor = this.entries.keys();
+				oldest = this.evictionCursor.next();
+			}
+			this.entries.delete(oldest.value!);
 		}
 		this.entries.set(key, {
 			value,
@@ -107,7 +119,37 @@ class LocalCache<T> {
 	public delete(key: string) {
 		this.entries.delete(key);
 	}
+
+	/**
+	 * Removes expired entries from the front, stopping at the first live one. Hits move entries to the back without
+	 * extending their expiry, so a few expired entries can be left behind it, but those are removed once they are next
+	 * read or reach the front
+	 */
+	public sweep() {
+		// An idle iterator keeps every table that V8 has since replaced, and their entries, in memory
+		this.evictionCursor = undefined;
+		for (const [key, entry] of this.entries) {
+			if (entry.expiresAt >= nowSeconds) {
+				return;
+			}
+			this.entries.delete(key);
+		}
+	}
 }
+
+// Expired entries would otherwise stay in memory until they are read again or are evicted by `max`, which for keys
+// that are only read once means until the cache fills. A single timer sweeps all the caches, rather than one per cache,
+// including those without a ttl so that their eviction cursor is released
+const sweptLocalCaches = new Set<LocalCache<unknown>>();
+let localSweepInterval: ReturnType<typeof setInterval> | undefined;
+const sweepExpiredLocalEntries = (localCache: LocalCache<unknown>) => {
+	sweptLocalCaches.add(localCache);
+	localSweepInterval ??= setInterval(() => {
+		for (const cache of sweptLocalCaches) {
+			cache.sweep();
+		}
+	}, LOCAL_SWEEP_INTERVAL).unref();
+};
 
 /**
  * A local in-memory cache in front of a shared redis cache. Values are stored in redis as JSON, and the local cache
@@ -154,6 +196,7 @@ export function createMultiLevelStore<T extends Defined>(
 			max == null || max === 0 ? DEFAULT_LOCAL_MAX : max,
 			ttl ? Math.ceil(ttl) : DEFAULT_LOCAL_TTL,
 		);
+		sweepExpiredLocalEntries(localCache);
 	}
 	const { ttl: sharedTtl, refreshThreshold } = { ...baseOpts, ...global };
 	// redis cannot cache undefined/null values whilst others can, so we explicitly mark those as uncacheable
