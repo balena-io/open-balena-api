@@ -3,6 +3,12 @@ import pTimeout from 'p-timeout';
 import { expect } from 'chai';
 import { LokiBackend } from '../src/features/device-logs/lib/backends/loki.ts';
 import { encodePushRequest } from '../src/features/device-logs/lib/backends/loki-push-request.ts';
+import type { LokiStream } from '../src/features/device-logs/lib/backends/loki-push-request.ts';
+import {
+	createHttpPusher,
+	LokiHttpPushError,
+} from '../src/features/device-logs/lib/backends/loki-pushers.ts';
+import { uncompressSync } from 'snappy';
 import { getNanoTimestamp } from '../src/lib/utils.ts';
 import type {
 	InternalDeviceLog,
@@ -11,6 +17,7 @@ import type {
 	OutputDeviceLog,
 } from '../src/features/device-logs/lib/struct.ts';
 import { setTimeout } from 'timers/promises';
+import { getMockServer } from './test-lib/mockttp-server.ts';
 
 const createLog = (
 	extra: Partial<InternalDeviceLog> = {},
@@ -204,6 +211,107 @@ export default () => {
 
 		it('should encode an empty request', () => {
 			expect(encodePushRequest([])).to.have.lengthOf(0);
+		});
+	});
+
+	describe('loki http push', () => {
+		const pushError = async (
+			pusher: ReturnType<typeof createHttpPusher>,
+			streams: LokiStream[],
+			deadline = Date.now() + 1000,
+		) => {
+			try {
+				await pusher.push('42', streams, deadline);
+			} catch (err) {
+				return err;
+			}
+			throw new Error('Expected the push to fail');
+		};
+
+		it('should store and retrieve device logs pushed over HTTP', async () => {
+			const loki = new LokiBackend({ pusher: createHttpPusher() });
+			const ctx = createContext();
+			const log = createLog({ message: 'pushed over HTTP' });
+			await loki.publish(ctx, [_.clone(log)]);
+			const history = await loki.history(ctx, { count: 1000, start });
+			expect(history.at(-1)).to.deep.equal(convertToOutputLog(log));
+		});
+
+		it('should fail with the status and message of a push that Loki rejects', async () => {
+			const pusher = createHttpPusher();
+			const err = await pushError(pusher, [
+				{
+					labels: '{fleet_id=}',
+					entries: [
+						{
+							seconds: Math.floor(Date.now() / 1000),
+							nanos: 0,
+							line: '{"message":"a log line"}',
+							structuredMetadata: [],
+						},
+					],
+				},
+			]);
+			expect(err).to.be.instanceOf(LokiHttpPushError);
+			expect(err).to.have.property('code', 400);
+			expect(err.message).to.match(/^Loki push failed with status 400: \S/);
+			expect(pusher.errorLabel(err)).to.equal('HTTP_400');
+			expect(pusher.isRetryable(err)).to.equal(false);
+		});
+
+		describe('requests', () => {
+			// The mock server stands in for Loki's push API, to check the requests and set the responses
+			const createMockPusher = () =>
+				createHttpPusher({ host: '127.0.0.1', port: getMockServer().port });
+			const forPush = () => getMockServer().forPost('/loki/api/v1/push').once();
+
+			const streams: LokiStream[] = [
+				{
+					labels: '{fleet_id="1"}',
+					entries: [
+						{
+							seconds: 1700000000,
+							nanos: 1,
+							line: '{"message":"a log line"}',
+							structuredMetadata: [{ name: 'device_id', value: '1' }],
+						},
+					],
+				},
+			];
+
+			it('should push snappy compressed protobuf to the push API', async () => {
+				const endpoint = await forPush().thenReply(204);
+				await createMockPusher().push('42', streams, Date.now() + 1000);
+				const requests = await endpoint.getSeenRequests();
+				expect(requests).to.have.lengthOf(1);
+				const [{ path, headers, body }] = requests;
+				expect(path).to.equal('/loki/api/v1/push');
+				expect(headers).to.have.property(
+					'content-type',
+					'application/x-protobuf',
+				);
+				expect(headers).to.have.property('x-scope-orgid', '42');
+				expect(uncompressSync(body.buffer)).to.deep.equal(
+					encodePushRequest(streams),
+				);
+			});
+
+			it('should treat Loki being unavailable as retryable', async () => {
+				await forPush().thenReply(503);
+				const pusher = createMockPusher();
+				const err = await pushError(pusher, streams);
+				expect(err).to.have.property('code', 503);
+				expect(pusher.isRetryable(err)).to.equal(true);
+			});
+
+			it('should fail pushes that are still waiting for a response at the deadline', async () => {
+				await forPush().thenTimeout();
+				const pusher = createMockPusher();
+				const err = await pushError(pusher, streams, Date.now() + 100);
+				expect(err).to.have.property('code', 'ETIMEDOUT');
+				expect(pusher.errorLabel(err)).to.equal('ETIMEDOUT');
+				expect(pusher.isRetryable(err)).to.equal(false);
+			});
 		});
 	});
 };
