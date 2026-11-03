@@ -119,7 +119,7 @@ export function buildAppFromRelease(
 	defaultLabels?: Record<string, string>,
 	activeProfiles: ReadonlySet<string> = noActiveProfiles,
 ): NonNullable<LocalStateApp['releases']> {
-	let composition: AnyObject = {};
+	let composition: AnyObject;
 	const services: NonNullable<LocalStateApp['releases']>[string]['services'] =
 		{};
 

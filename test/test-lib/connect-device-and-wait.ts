@@ -57,7 +57,9 @@ export const connectDeviceAndWaitForUpdate = async (
 		});
 	} catch (err) {
 		if (err instanceof TimedOutError) {
-			throw new Error('Request to update device never happened');
+			throw new Error('Request to update device never happened', {
+				cause: err,
+			});
 		} else {
 			throw err;
 		}
