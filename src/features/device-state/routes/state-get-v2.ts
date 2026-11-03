@@ -70,7 +70,7 @@ function buildAppFromRelease(
 	release: ExpandedDevice['should_be_running__release'][number],
 	config: Record<string, string>,
 ): LocalStateApp {
-	let composition: AnyObject = {};
+	let composition: AnyObject;
 	const services: LocalStateApp['services'] = {};
 
 	// Parse the composition to forward values to the device
