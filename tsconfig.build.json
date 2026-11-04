@@ -14,7 +14,6 @@
 		"noUnusedLocals": true,
 		"preserveConstEnums": true,
 		"sourceMap": true,
-		"skipLibCheck": true,
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
 		"rewriteRelativeImportExtensions": true,
