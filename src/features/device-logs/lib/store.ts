@@ -6,7 +6,8 @@ import type { permissions } from '@balena/pinejs';
 import { sbvrUtils, errors } from '@balena/pinejs';
 import * as supervisor from './supervisor.ts';
 import { createGunzip, constants } from 'zlib';
-import ndjson from 'ndjson';
+import type { Readable } from 'stream';
+import { NdjsonParser } from './ndjson-parser.ts';
 import {
 	captureException,
 	handleHttpErrors,
@@ -193,7 +194,6 @@ function handleStreamingWrite(
 
 	const bufferLimit = Math.min(LOGS_WRITE_BUFFER_LIMIT, ctx.retention_limit);
 	const buffer: InternalDeviceLog[] = [];
-	const parser = ndjson.parse();
 
 	function close(err?: Error | null) {
 		if (!res.headersSent) {
@@ -209,46 +209,61 @@ function handleStreamingWrite(
 		}
 	}
 
-	parser.on('error', close).on('data', (sLog: SupervisorLog) => {
-		let log;
-		try {
-			log = supervisor.convertLog(sLog);
-		} catch {
-			return;
-		}
-		if (!log) {
-			return;
-		}
-		if (buffer.length === 0) {
-			schedule();
-		}
-		buffer.push(log);
-		// If we buffer too much or the backend goes down, pause it for back-pressure
-		if (buffer.length >= bufferLimit || !primaryBackend.available) {
-			req.pause();
-		}
-	});
+	// Support optional GZip encoding
+	const source: Readable =
+		req.get('Content-Encoding') === 'gzip'
+			? req
+					.pipe(
+						createGunzip({
+							// Set the chunk size such that each stream will get its own buffer rather than pinning part of a
+							// shared slab. Since these are normally long running streams this helps to avoid excessive memory
+							// usage whilst not impacting performance from lots of small allocations.
+							chunkSize: Math.max(
+								constants.Z_DEFAULT_CHUNK,
+								// eslint-disable-next-line no-bitwise
+								Buffer.poolSize >>> 1,
+							),
+						}),
+					)
+					.on('error', close)
+			: req;
+	const onData = (chunk: Buffer) => {
+		parser.write(chunk);
+	};
+	const parser = new NdjsonParser(
+		(sLog) => {
+			let log;
+			try {
+				log = supervisor.convertLog(sLog as SupervisorLog);
+			} catch {
+				return;
+			}
+			if (!log) {
+				return;
+			}
+			if (buffer.length === 0) {
+				schedule();
+			}
+			buffer.push(log);
+			// If we buffer too much or the backend goes down, pause it for back-pressure
+			if (buffer.length >= bufferLimit || !primaryBackend.available) {
+				req.pause();
+			}
+		},
+		(err) => {
+			// Stop reading once a row can't be parsed
+			source.off('data', onData);
+			source.pause();
+			close(err);
+		},
+	);
 
 	onFinished(req, close);
 	onFinished(res, close);
 
-	// Support optional GZip encoding
-	if (req.get('Content-Encoding') === 'gzip') {
-		req
-			.pipe(
-				createGunzip({
-					// Set the chunk size such that each stream will get its own buffer rather than pinning part of a
-					// shared slab. Since these are normally long running streams this helps to avoid excessive memory
-					// usage whilst not impacting performance from lots of small allocations.
-					// eslint-disable-next-line no-bitwise
-					chunkSize: Math.max(constants.Z_DEFAULT_CHUNK, Buffer.poolSize >>> 1),
-				}),
-			)
-			.on('error', close)
-			.pipe(parser);
-	} else {
-		req.pipe(parser);
-	}
+	source.on('data', onData).on('end', () => {
+		parser.end();
+	});
 
 	let publishScheduled = false;
 

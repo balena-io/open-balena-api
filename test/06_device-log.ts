@@ -4,6 +4,7 @@ import * as fixtures from './test-lib/fixtures.ts';
 import { supertest } from './test-lib/supertest.ts';
 import { DAYS } from '@balena/env-parsing';
 import { gzipSync } from 'zlib';
+import { NdjsonParser } from '../src/features/device-logs/lib/ndjson-parser.ts';
 import { waitFor } from './test-lib/common.ts';
 import type { OutputDeviceLog } from '../src/features/device-logs/lib/struct.ts';
 
@@ -296,7 +297,7 @@ export default () => {
 			});
 
 			it('should store streamed logs with CRLF line endings, empty lines and a final row without a newline', async () => {
-				const messages = ['streamed 1', 'streamed �n�c�d� ??', 'streamed 3'];
+				const messages = ['streamed 1', 'streamed ünïcödé 🎉', 'streamed 3'];
 				const [log1, log2, log3] = messages.map((message) =>
 					JSON.stringify(createLog({ message })),
 				);
@@ -324,6 +325,62 @@ export default () => {
 					`${JSON.stringify(createLog())}\n{"broken": \n`,
 				).expect(400);
 			});
+		});
+	});
+
+	describe('ndjson parser', () => {
+		const parse = (chunks: Array<string | Buffer>) => {
+			const rows: unknown[] = [];
+			const errors: Error[] = [];
+			const parser = new NdjsonParser(
+				(row) => rows.push(row),
+				(err) => errors.push(err),
+			);
+			for (const chunk of chunks) {
+				parser.write(Buffer.from(chunk));
+			}
+			parser.end();
+			return { rows, errors };
+		};
+
+		it('should parse rows split across chunks', () => {
+			const { rows, errors } = parse(['{"a":', '1}\n{"b"', ':2}\n']);
+			expect(rows).to.deep.equal([{ a: 1 }, { b: 2 }]);
+			expect(errors).to.be.empty;
+		});
+
+		it('should parse null rows', () => {
+			const { rows, errors } = parse(['null\n{"a":1}\nnull\r\n', 'null']);
+			expect(rows).to.deep.equal([null, { a: 1 }, null, null]);
+			expect(errors).to.be.empty;
+		});
+
+		it('should parse multi-byte characters split between chunks', () => {
+			const buf = Buffer.from('{"m":"🎉"}\n');
+			// The emoji is bytes 6-9, so this splits it in two
+			const { rows } = parse([buf.subarray(0, 8), buf.subarray(8)]);
+			expect(rows).to.deep.equal([{ m: '🎉' }]);
+		});
+
+		it('should accept CRLF line endings and skip empty lines', () => {
+			const { rows, errors } = parse(['{"a":1}\r\n\r\n\n{"b":2}\r\n']);
+			expect(rows).to.deep.equal([{ a: 1 }, { b: 2 }]);
+			expect(errors).to.be.empty;
+		});
+
+		it('should parse a final row without a newline when the input ends', () => {
+			const { rows } = parse(['{"a":1}\n{"b":2}']);
+			expect(rows).to.deep.equal([{ a: 1 }, { b: 2 }]);
+		});
+
+		it('should report an invalid row once and stop parsing', () => {
+			const { rows, errors } = parse([
+				'{"a":1}\n{"broken"\n{"b":2}\n',
+				'{"c":3}\n',
+			]);
+			expect(rows).to.deep.equal([{ a: 1 }]);
+			expect(errors).to.have.lengthOf(1);
+			expect(errors[0].message).to.equal('Could not parse row {"broken"...');
 		});
 	});
 };
