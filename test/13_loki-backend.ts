@@ -1,5 +1,9 @@
 import _ from 'lodash';
+import diagnosticsChannel from 'node:diagnostics_channel';
+import http from 'node:http';
 import pTimeout from 'p-timeout';
+import { context } from '@opentelemetry/api';
+import { isTracingSuppressed } from '@opentelemetry/core';
 import { expect } from 'chai';
 import { LokiBackend } from '../src/features/device-logs/lib/backends/loki.ts';
 import { encodePushRequest } from '../src/features/device-logs/lib/backends/loki-push-request.ts';
@@ -311,6 +315,56 @@ export default () => {
 				expect(err).to.have.property('code', 'ETIMEDOUT');
 				expect(pusher.errorLabel(err)).to.equal('ETIMEDOUT');
 				expect(pusher.isRetryable(err)).to.equal(false);
+			});
+
+			describe('tracing', () => {
+				const requestCreatedChannel = 'http.client.request.created';
+
+				// This relies on the context manager that index.js, mocha's entry point, registers: without one, contexts
+				// aren't propagated and so tracing is never suppressed
+				it('should push with tracing suppressed, so that the instrumentation of outgoing requests skips it', async () => {
+					await forPush().thenReply(204);
+					await getMockServer().forGet('/traced').once().thenReply(204);
+					// The http.client.request.created channel is published to synchronously from http.request, in the
+					// request's context, and is also how Sentry instruments outgoing requests
+					const tracingSuppressedByPath = new Map<string, boolean>();
+					const onRequestCreated = (message: unknown) => {
+						const { request } = message as { request: http.ClientRequest };
+						tracingSuppressedByPath.set(
+							request.path,
+							isTracingSuppressed(context.active()),
+						);
+					};
+					diagnosticsChannel.subscribe(requestCreatedChannel, onRequestCreated);
+					try {
+						await createMockPusher().push('42', streams, Date.now() + 1000);
+						// A request made after the push, which should still be traced
+						await new Promise<void>((resolve, reject) => {
+							http
+								.get(
+									{
+										host: '127.0.0.1',
+										port: getMockServer().port,
+										path: '/traced',
+									},
+									(res) => {
+										res.resume();
+										res.on('end', resolve);
+									},
+								)
+								.on('error', reject);
+						});
+					} finally {
+						diagnosticsChannel.unsubscribe(
+							requestCreatedChannel,
+							onRequestCreated,
+						);
+					}
+					expect(tracingSuppressedByPath.get('/loki/api/v1/push')).to.equal(
+						true,
+					);
+					expect(tracingSuppressedByPath.get('/traced')).to.equal(false);
+				});
 			});
 		});
 	});

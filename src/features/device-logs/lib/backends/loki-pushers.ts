@@ -1,5 +1,7 @@
 import _ from 'lodash';
 import http from 'node:http';
+import { context } from '@opentelemetry/api';
+import { suppressTracing } from '@opentelemetry/core';
 import {
 	compressionAlgorithms,
 	credentials,
@@ -138,48 +140,53 @@ export const createHttpPusher = ({
 			const { compressSync } = await getSnappy();
 			const body = compressSync(encodePushRequest(streams));
 			await new Promise<void>((resolve, reject) => {
-				const req = http.request(
-					{
-						agent,
-						host,
-						port,
-						method: 'POST',
-						path: '/loki/api/v1/push',
-						headers: {
-							'Content-Type': 'application/x-protobuf',
-							'Content-Length': body.length,
-							'X-Scope-OrgID': orgId,
+				// Loki pushes are made with tracing suppressed so that they skip the OpenTelemetry and Sentry instrumentation
+				// of outgoing requests (see the HttpInstrumentation in index.js), which costs about as much CPU as the
+				// request itself and would send the request's trace and baggage headers to Loki
+				const req = context.with(suppressTracing(context.active()), () =>
+					http.request(
+						{
+							agent,
+							host,
+							port,
+							method: 'POST',
+							path: '/loki/api/v1/push',
+							headers: {
+								'Content-Type': 'application/x-protobuf',
+								'Content-Length': body.length,
+								'X-Scope-OrgID': orgId,
+							},
 						},
-					},
-					(res) => {
-						res.on('error', reject);
-						const statusCode = res.statusCode!;
-						if (statusCode >= 200 && statusCode < 300) {
-							res.resume();
+						(res) => {
+							res.on('error', reject);
+							const statusCode = res.statusCode!;
+							if (statusCode >= 200 && statusCode < 300) {
+								res.resume();
+								res.on('end', () => {
+									clearTimeout(timeout);
+									resolve();
+								});
+								return;
+							}
+							// Loki explains why it rejected a push in the response body
+							let errorBody = '';
+							res.setEncoding('utf8');
+							res.on('data', (chunk: string) => {
+								if (errorBody.length < MAX_ERROR_BODY_LENGTH) {
+									errorBody += chunk;
+								}
+							});
 							res.on('end', () => {
 								clearTimeout(timeout);
-								resolve();
+								reject(
+									new LokiHttpPushError(
+										statusCode,
+										errorBody.slice(0, MAX_ERROR_BODY_LENGTH).trim(),
+									),
+								);
 							});
-							return;
-						}
-						// Loki explains why it rejected a push in the response body
-						let errorBody = '';
-						res.setEncoding('utf8');
-						res.on('data', (chunk: string) => {
-							if (errorBody.length < MAX_ERROR_BODY_LENGTH) {
-								errorBody += chunk;
-							}
-						});
-						res.on('end', () => {
-							clearTimeout(timeout);
-							reject(
-								new LokiHttpPushError(
-									statusCode,
-									errorBody.slice(0, MAX_ERROR_BODY_LENGTH).trim(),
-								),
-							);
-						});
-					},
+						},
+					),
 				);
 				const timeout = setTimeout(() => {
 					req.destroy(
