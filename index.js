@@ -8,10 +8,12 @@ const start = async () => {
 
 	const { SentrySpanProcessor, SentryPropagator, wrapContextManagerClass } =
 		await import('@sentry/opentelemetry');
+	const { context } = await import('@opentelemetry/api');
 	const {
 		CompositePropagator,
 		W3CTraceContextPropagator,
 		W3CBaggagePropagator,
+		isTracingSuppressed,
 	} = await import('@opentelemetry/core');
 	const { AsyncLocalStorageContextManager } =
 		await import('@opentelemetry/context-async-hooks');
@@ -35,7 +37,14 @@ const start = async () => {
 			],
 		}),
 		spanProcessors: [new SentrySpanProcessor()],
-		instrumentations: [new ExpressInstrumentation(), new HttpInstrumentation()],
+		instrumentations: [
+			new ExpressInstrumentation(),
+			new HttpInstrumentation({
+				// Skip outgoing requests made with tracing suppressed, eg Loki pushes and Sentry's own requests, which
+				// would otherwise still go through the instrumentation, only with a non-recording span
+				ignoreOutgoingRequestHook: () => isTracingSuppressed(context.active()),
+			}),
+		],
 	});
 
 	sdk.start();
