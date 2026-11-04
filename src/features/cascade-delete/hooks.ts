@@ -1,12 +1,12 @@
 import { sbvrUtils, hooks, permissions, errors } from '@balena/pinejs';
 import { captureException } from '../../infra/error-handling/index.ts';
-import { setupDeleteCascade } from './setup-delete-cascade.ts';
+import { addDeleteHookForDependents } from './setup-delete-cascade.ts';
 
 const { api, getAffectedIds } = sbvrUtils;
 
 // TODO: These should end up grouped into the features that declare the relationship existence
 
-setupDeleteCascade('application', {
+addDeleteHookForDependents('application', {
 	device: 'belongs_to__application',
 	application_config_variable: 'application',
 	application_environment_variable: 'application',
@@ -16,7 +16,7 @@ setupDeleteCascade('application', {
 	service: 'application',
 });
 
-setupDeleteCascade('device', {
+addDeleteHookForDependents('device', {
 	device_config_variable: 'device',
 	device_environment_variable: 'device',
 	device_profile_override: 'device',
@@ -26,25 +26,25 @@ setupDeleteCascade('device', {
 	service_install: 'device',
 });
 
-setupDeleteCascade('image', {
+addDeleteHookForDependents('image', {
 	image_install: 'installs__image',
 	image__is_part_of__release: 'image',
 });
 
-setupDeleteCascade('image__is_part_of__release', {
+addDeleteHookForDependents('image__is_part_of__release', {
 	image_label: 'release_image',
 	image_profile: 'release_image',
 	image_environment_variable: 'release_image',
 });
 
-setupDeleteCascade('release', {
+addDeleteHookForDependents('release', {
 	release_asset: 'release',
 	release_tag: 'release',
 	image__is_part_of__release: 'is_part_of__release',
 	image_install: 'is_provided_by__release',
 });
 
-setupDeleteCascade('service', {
+addDeleteHookForDependents('service', {
 	device_service_environment_variable: 'service',
 	service_environment_variable: 'service',
 	service_install: 'installs__service',
@@ -52,7 +52,7 @@ setupDeleteCascade('service', {
 	service_label: 'service',
 });
 
-setupDeleteCascade('service_install', {
+addDeleteHookForDependents('service_install', {
 	device_service_environment_variable: 'service_install',
 });
 

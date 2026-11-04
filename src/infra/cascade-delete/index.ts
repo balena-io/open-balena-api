@@ -1,7 +1,7 @@
 import { sbvrUtils, hooks } from '@balena/pinejs';
 import { captureException } from '../error-handling/index.ts';
 
-export function addDeleteHookForDependents(
+export function addCascadeDeleteHook(
 	model: string,
 	resource: string,
 	dependents: {
