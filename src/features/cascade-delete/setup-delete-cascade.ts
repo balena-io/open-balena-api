@@ -1,8 +1,8 @@
-import { addDeleteHookForDependents } from '../../infra/cascade-delete/index.ts';
+import { addCascadeDeleteHook } from '../../infra/cascade-delete/index.ts';
 
-export const setupDeleteCascade = (
+export const addDeleteHookForDependents = (
 	resource: string,
-	dependents: Parameters<typeof addDeleteHookForDependents>[2],
+	dependents: Parameters<typeof addCascadeDeleteHook>[2],
 ) => {
-	addDeleteHookForDependents('resin', resource, dependents);
+	addCascadeDeleteHook('resin', resource, dependents);
 };

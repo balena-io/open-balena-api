@@ -94,7 +94,7 @@ import {
 	isApiKeyWithRole,
 	getApiKeyOptsFromRequest,
 } from './features/api-keys/lib.ts';
-import { setupDeleteCascade as addDeleteHookForDependents } from './features/cascade-delete/setup-delete-cascade.ts';
+import { addDeleteHookForDependents } from './features/cascade-delete/setup-delete-cascade.ts';
 import { addHooksForFieldSizeLimitChecks } from './features/field-size-limits/setup-field-size-limits.ts';
 import {
 	updateOrInsertModel,
