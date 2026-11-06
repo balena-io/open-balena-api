@@ -58,8 +58,8 @@ services:
     build:
       context: ./
       target: test
-    entrypoint: []
     command:
+      - /command/with-contenv
       - bash
       - -c
       - "set -x ; npm run check-model-types-generated && npx mocha"
@@ -149,7 +149,6 @@ services:
       WEBRESOURCES_S3_HOST: http://minio-server:9000
       WEBRESOURCES_S3_BUCKET: balena-pine-web-resources
       WEBRESOURCES_S3_MAX_FILESIZE: 50000000
-      S6_KEEP_ENV: 1
 
   sut-fast:
     <<: *sut
@@ -186,7 +185,7 @@ services:
       NODE_ENV: "${NODE_ENV:-FASTTEST}"
       TEST_VERSIONS: "${TEST_VERSIONS:-}"
       TEST_FILES: "${TEST_FILES:-}"
-    command: npx mocha --bail
+    command: /command/with-contenv npx mocha --bail
     ports:
       - "9228:9229"
 

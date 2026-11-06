@@ -1,5 +1,4 @@
-#!/bin/bash
-# shellcheck disable=SC1091
+#!/usr/bin/env bash
 
 set -euo pipefail
 
@@ -8,10 +7,6 @@ exec > >(exec s6-log p"api[$$]:" 1 || true) 2>&1
 
 # Change to working directory
 cd /usr/src/app || exit 1
-
-# Load environment variables for this service
-source /etc/s6-overlay/scripts/functions.sh
-[[ -f "config/env" ]] && load_env_file "config/env"
 
 if [[ "${PRODUCTION_MODE:-}" == "true" ]]; then
 	exec node --enable-source-maps index.js
