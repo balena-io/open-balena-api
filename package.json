@@ -53,7 +53,7 @@
     "@balena/env-parsing": "^1.2.8",
     "@balena/es-version": "^1.0.4",
     "@balena/node-metrics-gatherer": "^8.0.0",
-    "@balena/pinejs": "^25.0.4",
+    "@balena/pinejs": "file:.local-deps/balena-pinejs.tgz",
     "@balena/pinejs-webresource-cloudfront": "^2.0.2",
     "@balena/pinejs-webresource-s3": "^2.1.27",
     "@grpc/grpc-js": "^1.14.6",

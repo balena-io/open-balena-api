@@ -53,7 +53,7 @@ const jwtFromRequest = ExtractJwt.versionOneCompatibility({
 function verifyJwtAndFetchUser(
 	id: Pick<User['Read'], 'id'>,
 	jwtSecret: string | null,
-): Promise<PickDeferred<User['Read'], 'actor'>>;
+): Promise<PickDeferred<User['Read'], 'actor' | 'credential'>>;
 function verifyJwtAndFetchUser(
 	id: Pick<User['Write'], 'actor'>,
 	jwtSecret: string | null,
@@ -67,7 +67,7 @@ async function verifyJwtAndFetchUser(
 		id,
 		passthrough: { req: permissions.rootRead },
 		options: {
-			$select: 'actor' in id ? 'id' : 'actor',
+			$select: 'actor' in id ? 'id' : ['actor', 'credential'],
 			$filter: { jwt_secret: jwtSecret },
 		},
 	});
@@ -91,6 +91,7 @@ const processVerifiedJwtPayload = async (
 			apikey,
 			permissions: apiKeyInfo.permissions,
 			actor: apiKeyInfo.actor,
+			credential: apiKeyInfo.credential,
 		};
 	} else if ('roles' in jwtUser && jwtUser.roles != null) {
 		const { actor } = jwtUser;
@@ -117,6 +118,8 @@ const processVerifiedJwtPayload = async (
 		const userPermissions = await permissions.getUserPermissions(jwtUser.id);
 		const processedJwtUser = jwtUser as ResolvedUserPayload;
 		processedJwtUser.actor = user.actor.__id;
+		// Nullable until the credential backfill has converged
+		processedJwtUser.credential = user.credential?.__id;
 		processedJwtUser.permissions = userPermissions;
 		return processedJwtUser;
 	} else {

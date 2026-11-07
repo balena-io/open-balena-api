@@ -19,6 +19,21 @@ export interface Actor {
 	};
 }
 
+export interface Credential {
+	Read: {
+		created_at: Types['Date Time']['Read'];
+		modified_at: Types['Date Time']['Read'];
+		id: Types['Serial']['Read'];
+		is_of__user?: Array<User['Read']>;
+		api_key?: Array<ApiKey['Read']>;
+	};
+	Write: {
+		created_at: Types['Date Time']['Write'];
+		modified_at: Types['Date Time']['Write'];
+		id: Types['Serial']['Write'];
+	};
+}
+
 export interface Permission {
 	Read: {
 		created_at: Types['Date Time']['Read'];
@@ -82,6 +97,7 @@ export interface User {
 		created_at: Types['Date Time']['Read'];
 		modified_at: Types['Date Time']['Read'];
 		id: Types['Serial']['Read'];
+		credential: { __id: Credential['Read']['id'] } | [Credential['Read']];
 		actor: { __id: Actor['Read']['id'] } | [Actor['Read']];
 		username: Types['Short Text']['Read'];
 		password: Types['Hashed']['Read'] | null;
@@ -104,6 +120,7 @@ export interface User {
 		created_at: Types['Date Time']['Write'];
 		modified_at: Types['Date Time']['Write'];
 		id: Types['Serial']['Write'];
+		credential: Credential['Write']['id'];
 		actor: Actor['Write']['id'];
 		username: Types['Short Text']['Write'];
 		password: Types['Hashed']['Write'] | null;
@@ -157,6 +174,7 @@ export interface ApiKey {
 		created_at: Types['Date Time']['Read'];
 		modified_at: Types['Date Time']['Read'];
 		id: Types['Serial']['Read'];
+		credential: { __id: Credential['Read']['id'] } | [Credential['Read']];
 		key: Types['Short Text']['Read'];
 		expiry_date: Types['Date Time']['Read'] | null;
 		is_of__actor: { __id: Actor['Read']['id'] } | [Actor['Read']];
@@ -169,6 +187,7 @@ export interface ApiKey {
 		created_at: Types['Date Time']['Write'];
 		modified_at: Types['Date Time']['Write'];
 		id: Types['Serial']['Write'];
+		credential: Credential['Write']['id'];
 		key: Types['Short Text']['Write'];
 		expiry_date: Types['Date Time']['Write'] | null;
 		is_of__actor: Actor['Write']['id'];
@@ -443,6 +462,7 @@ export interface Organization {
 		created_at: Types['Date Time']['Read'];
 		modified_at: Types['Date Time']['Read'];
 		id: Types['Serial']['Read'];
+		actor: { __id: Actor['Read']['id'] } | [Actor['Read']];
 		name: Types['Short Text']['Read'];
 		handle: Types['Short Text']['Read'];
 		user__is_member_of__organization?: Array<OrganizationMembership['Read']>;
@@ -455,6 +475,7 @@ export interface Organization {
 		created_at: Types['Date Time']['Write'];
 		modified_at: Types['Date Time']['Write'];
 		id: Types['Serial']['Write'];
+		actor: Actor['Write']['id'];
 		name: Types['Short Text']['Write'];
 		handle: Types['Short Text']['Write'];
 	};
@@ -1437,6 +1458,7 @@ export interface UserHasDirectAccessToApplication {
 
 export default interface $Model {
 	actor: Actor;
+	credential: Credential;
 	permission: Permission;
 	role: Role;
 	role__has__permission: RoleHasPermission;

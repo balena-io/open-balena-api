@@ -1,6 +1,8 @@
 import './assign-default-user-role.ts';
 import './create-application-actor.ts';
+import './create-credential.ts';
 import './create-device-actor.ts';
+import './create-organization-actor.ts';
 import './create-user-actor.ts';
 import './fetch-api-key.ts';
 import './restrict-user-deletion.ts';
