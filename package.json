@@ -153,7 +153,7 @@
     "lint-staged": "17.6.0",
     "mocha": "12.0.3",
     "mockttp": "4.6.5",
-    "p-timeout": "8.0.0",
+    "p-timeout": "8.1.0",
     "pinejs-client-supertest": "3.2.4",
     "rimraf": "6.1.4",
     "sinon": "22.1.0",
