@@ -72,7 +72,7 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 		required: true,
 		computed: {
 			parallel: 'SAFE',
-			volatility: 'IMMUTABLE',
+			volatility: 'STABLE',
 			definition: semverField,
 		},
 	});
@@ -137,7 +137,7 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 			required: true,
 			computed: {
 				parallel: 'SAFE',
-				volatility: 'IMMUTABLE',
+				volatility: 'STABLE',
 				definition: rawVersionField,
 			},
 		},
@@ -147,7 +147,7 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 			required: true,
 			computed: {
 				parallel: 'SAFE',
-				volatility: 'IMMUTABLE',
+				volatility: 'STABLE',
 				definition: [
 					'Cast',
 					oneLineTrimSqlConcat`{
