@@ -2,7 +2,7 @@ import type {
 	AbstractSqlModel,
 	BooleanTypeNodes,
 	CastNode,
-	FieldNode,
+	ReferencedFieldNode,
 	ExistsNode,
 	NotExistsNode,
 } from '@balena/abstract-sql-compiler';
@@ -30,7 +30,7 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 		'semver prerelease',
 		'semver build',
 		'variant',
-	].map((field): FieldNode => ['Field', field]);
+	].map((field): ReferencedFieldNode => ['ReferencedField', 'release', field]);
 
 	const [hasPrerelease, hasBuild, hasVariant]: BooleanTypeNodes[] = [
 		prereleaseField,
@@ -81,7 +81,11 @@ export const addToModel = (abstractSql: AbstractSqlModel) => {
 		'Cast',
 		[
 			'Floor',
-			['Multiply', ['Totalseconds', ['Field', 'created at']], ['Number', 1000]],
+			[
+				'Multiply',
+				['Totalseconds', ['ReferencedField', 'release', 'created at']],
+				['Number', 1000],
+			],
 		],
 		'Text',
 	];
