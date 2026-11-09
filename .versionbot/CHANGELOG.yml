@@ -1,4 +1,452 @@
 - commits:
+    - subject: Update webresrouce packages
+      hash: 7462ab9768e0c7199060e2bb81d801de162e364c
+      body: |
+        Update @balena/pinejs-webresource-cloudfront from 2.0.2 to 2.0.36
+        Update @balena/pinejs-webresrouce-s3 from 2.1.27 to 2.2.11
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Otavio Jacobi
+      nested:
+        - commits:
+            - subject: Update dependency @balena/sbvr-types to v12
+              hash: 43ac2b7199e1e2ed610e42f7948de9e15867b0d6
+              body: |
+                Update @balena/sbvr-types from 11.3.14 to 12.0.6
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.36
+          title: ""
+          date: 2026-11-02T23:18:50.848Z
+        - commits:
+            - subject: Update dependency @balena/lint to v11
+              hash: b1340569cf0fc20f19d7ae7f48197b18b6686754
+              body: |
+                Update @balena/lint from 9.4.15 to 11.0.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.35
+          title: ""
+          date: 2026-11-02T22:41:24.753Z
+        - commits:
+            - subject: Add a test suite for CloudFrontHandler
+              hash: 4689b47c74b417dd13eb7defdd76c230dc722fb4
+              body: >
+                The tests use node:test with chai expectations.
+
+                tsconfig.json now covers lib and test so `npm run lint`
+                type-checks
+
+                the tests, while the build uses tsconfig.build.json to keep test
+                files
+
+                out of `build/`.
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-webresource-cloudfront-2.0.34
+          title: ""
+          date: 2026-10-28T22:59:14.303Z
+        - commits:
+            - subject: Use primitive mode for the CloudFront signed URL cache
+              hash: 4d53fbff8800e9b015e8944073ebb8edf0a2bc29
+              body: >
+                memoizee's default mode for single-argument functions keeps the
+                cached
+
+                arguments in an array and finds them with indexOf, so every
+                lookup
+
+                (hit or miss) and every expiry scans all cached file keys. With
+                N files
+
+                signed within signedUrlCacheExpireTimeSeconds this makes each
+
+                onPreRespond O(N) and filling the cache O(N^2), e.g. ~550µs per
+                hit
+
+                with 50k cached keys. The file key is always a string, so
+                primitive
+
+                mode, which keys the cache by String(arg) in an object, is
+                equivalent
+
+                and O(1).
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+          version: pinejs-webresource-cloudfront-2.0.33
+          title: ""
+          date: 2026-10-28T01:00:22.567Z
+        - commits:
+            - subject: Update dependency lint-staged to v17.6.0
+              hash: 488437908333746b03bcdbb40b61a32c5083fb3e
+              body: |
+                Update lint-staged from 17.5.1 to 17.6.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.32
+          title: ""
+          date: 2026-10-03T01:31:30.490Z
+        - commits:
+            - subject: Update dependency lint-staged to v17.5.1
+              hash: 3d18730633fd3fe53d8d153790c6d17c4c810fae
+              body: |
+                Update lint-staged from 17.5.0 to 17.5.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.31
+          title: ""
+          date: 2026-09-13T12:02:43.305Z
+        - commits:
+            - subject: Update dependency lint-staged to v17.5.0
+              hash: 0cb833b97344564bd698f525d98cb60e78b13908
+              body: |
+                Update lint-staged from 17.4.1 to 17.5.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.30
+          title: ""
+          date: 2026-09-12T00:06:31.590Z
+        - commits:
+            - subject: Update dependency lint-staged to v17.4.1
+              hash: 4ffdbb1c1a7f71f18eba0bb3d97cd8cdfab62e38
+              body: |
+                Update lint-staged from 17.3.0 to 17.4.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.29
+          title: ""
+          date: 2026-08-30T10:59:21.918Z
+        - commits:
+            - subject: Update dependency flowzonify to v0.4.0
+              hash: bc9f950059f3e1029b26da9b65edaf52b24ac2c7
+              body: |
+                Update flowzonify from 0.0.0 to 0.4.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.28
+          title: ""
+          date: 2026-08-25T11:14:28.009Z
+        - commits:
+            - subject: Update dependency lint-staged to v17.3.0
+              hash: c5f4e91ed8da4ad5885f34cc8ab1c7d858cf51a5
+              body: |
+                Update lint-staged from 17.2.0 to 17.3.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.27
+          title: ""
+          date: 2026-08-08T00:07:58.226Z
+        - commits:
+            - subject: Update dependency lint-staged to v17.2.0
+              hash: 39ceb3a52cc76e09f949565df616aa29be185235
+              body: |
+                Update lint-staged from 17.1.1 to 17.2.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.26
+          title: ""
+          date: 2026-07-26T10:33:25.619Z
+        - commits:
+            - subject: Update dependency lint-staged to v17.1.1
+              hash: 32ffef38581360fc320a3cc09e75811db3816816
+              body: |
+                Update lint-staged from 17.1.0 to 17.1.1
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.25
+          title: ""
+          date: 2026-07-25T06:42:09.822Z
+        - commits:
+            - subject: Update dependency lint-staged to v17.1.0
+              hash: bd2da190a3d38b3191772e5eac011395261b9a1e
+              body: |
+                Update lint-staged from 17.0.8 to 17.1.0
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.24
+          title: ""
+          date: 2026-07-25T00:25:15.073Z
+        - commits:
+            - subject: Update dependency lint-staged to v17.0.8
+              hash: ac472ef814eced7fb8918b7c00dbf5189413a0fe
+              body: |
+                Update lint-staged from 17.0.7 to 17.0.8
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.23
+          title: ""
+          date: 2026-06-27T00:22:47.785Z
+        - commits:
+            - subject: Update typescript to v6
+              hash: b7aa16f02136d44e63b2251520924a0fb1e0e979
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: joshbwlng
+          version: pinejs-webresource-cloudfront-2.0.22
+          title: ""
+          date: 2026-06-18T07:45:00.252Z
+        - commits:
+            - subject: Update dependency lint-staged to v17
+              hash: 0ef5669134bfa3332db2eb7ee0c7b8987d24e176
+              body: |
+                Update lint-staged from 15.5.2 to 17.0.7
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.21
+          title: ""
+          date: 2026-06-09T09:30:12.638Z
+        - commits:
+            - subject: Rename .linstagedrc to .lintstagedrc.json
+              hash: 9c21813b11417f69d2b4ab5cb14c9f458e236233
+              body: |
+                In preparation for lint-staged v17 which recommends this rename
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: joshbwlng
+          version: pinejs-webresource-cloudfront-2.0.20
+          title: ""
+          date: 2026-06-09T09:22:54.696Z
+        - commits:
+            - subject: Pin dependencies
+              hash: 498a9509e717375ff3ca316ed41adfd11408530b
+              body: |
+                Update husky
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.19
+          title: ""
+          date: 2026-05-16T00:24:46.961Z
+        - commits:
+            - subject: Revert flowzone pinning to master
+              hash: 661c7c5e79e2aa276cbcd14654d5d2eb253be11a
+              body: ""
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Kyle Harding
+          version: pinejs-webresource-cloudfront-2.0.18
+          title: ""
+          date: 2026-03-26T17:22:14.225Z
+        - commits:
+            - subject: Update product-os/flowzone digest to 8ea01d3
+              hash: 68a7a0c4b76ebf5828c4ca0570d780b3ef51e297
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.17
+          title: ""
+          date: 2026-03-26T12:14:11.979Z
+        - commits:
+            - subject: Update product-os/flowzone digest to 3eb3c97
+              hash: 67ab2b05eed464c753422d84f49bd97487fa2d39
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.16
+          title: ""
+          date: 2026-03-26T10:22:30.833Z
+        - commits:
+            - subject: Update product-os/flowzone digest to 7b49c1e
+              hash: baee679ef2d413fc61ad787aa844cfdbd1a15e8b
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.15
+          title: ""
+          date: 2026-03-26T09:24:01.658Z
+        - commits:
+            - subject: Update product-os/flowzone digest to 8d926e2
+              hash: 1ae393b795d50c6e7f2eb2df22a6115dd33610e1
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.14
+          title: ""
+          date: 2026-03-26T08:20:32.629Z
+        - commits:
+            - subject: Update product-os/flowzone digest to 20a58d6
+              hash: dbaa18db252b84dd41638985cb80d548a8b7cf8e
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.13
+          title: ""
+          date: 2026-03-26T07:23:11.964Z
+        - commits:
+            - subject: Update product-os/flowzone digest to 7b1359d
+              hash: d433ae5c2456399263afc2d8bffc544c40056456
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.12
+          title: ""
+          date: 2026-03-26T06:24:12.336Z
+        - commits:
+            - subject: Update product-os/flowzone digest to 7b87702
+              hash: 3a2bdf71216880d8129922d0bd9adcc623fa2f64
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.11
+          title: ""
+          date: 2026-03-26T05:36:18.656Z
+        - commits:
+            - subject: Update product-os/flowzone digest to cc9836f
+              hash: 263740b2f8c81f5261c6e4f7e01ecece5c82cc10
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.10
+          title: ""
+          date: 2026-03-26T03:56:34.662Z
+        - commits:
+            - subject: Update product-os/flowzone digest to b79645a
+              hash: 3f5028d3d377ecedd1f7303d7df58b8cef27a168
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.9
+          title: ""
+          date: 2026-03-26T02:52:27.649Z
+        - commits:
+            - subject: Update product-os/flowzone digest to 4815186
+              hash: dac0b096e756fdd40ed9f511a5d3255897be022c
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.8
+          title: ""
+          date: 2026-03-26T01:28:57.313Z
+        - commits:
+            - subject: Update product-os/flowzone digest to 267495d
+              hash: 1e67fa9393e3861c586f237f5faf736d8bbbea85
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.7
+          title: ""
+          date: 2026-03-26T00:09:32.071Z
+        - commits:
+            - subject: Update product-os/flowzone digest to f955793
+              hash: 4c2c6e31db99b286df95c6cac39dbca72b7ffabd
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.6
+          title: ""
+          date: 2026-03-25T23:17:36.520Z
+        - commits:
+            - subject: Update product-os/flowzone digest to 8674dc5
+              hash: 74d375c38b6b080397d1dbba50a501ec2613f973
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.5
+          title: ""
+          date: 2026-03-25T21:42:00.689Z
+        - commits:
+            - subject: Update product-os/flowzone digest to eb703ea
+              hash: 01e88ceaf1f3e567760516a5556416882ad1d934
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.4
+          title: ""
+          date: 2026-03-25T20:10:46.274Z
+        - commits:
+            - subject: Pin product-os/flowzone action to a53cf4b
+              hash: 595c444b693e2773bfc480ac49da0d665a5f12df
+              body: |
+                Update product-os/flowzone
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: balena-renovate[bot]
+          version: pinejs-webresource-cloudfront-2.0.3
+          title: ""
+          date: 2026-03-24T18:24:57.601Z
+  version: 52.2.17
+  title: ""
+  date: 2026-11-09T14:25:26.702Z
+- commits:
     - subject: Update dependency pinejs-client-supertest to v4
       hash: 805d3df0809735e2c8c07f89457c78d81ec4292d
       body: |
@@ -16506,6 +16954,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -16538,6 +16987,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -18514,6 +18964,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -18561,6 +19012,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -19625,6 +20077,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -19662,6 +20115,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -20804,6 +21258,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -20832,6 +21287,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -21382,6 +21838,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -22458,6 +22915,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -22603,6 +23061,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -23846,6 +24305,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -23868,6 +24328,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -24425,6 +24886,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -25562,6 +26024,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -25584,6 +26047,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -26141,6 +26605,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -31248,6 +31713,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -31280,6 +31746,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -33570,6 +34037,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -33617,6 +34085,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -34945,6 +35414,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -34982,6 +35452,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -36488,6 +36959,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -36516,6 +36988,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -37198,6 +37671,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -38538,6 +39012,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -38683,6 +39158,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -40190,6 +40666,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -40212,6 +40689,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -40901,6 +41379,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -42302,6 +42781,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -42324,6 +42804,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -43013,6 +43494,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -46427,6 +46909,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -46449,6 +46932,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -47138,6 +47622,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -48542,6 +49027,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -48570,6 +49056,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -49251,6 +49738,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -50589,6 +51077,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/sbvr-types
                                                                 from 3.4.18 to 3.5.0
@@ -50734,6 +51223,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
