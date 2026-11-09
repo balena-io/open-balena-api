@@ -220,6 +220,11 @@ export async function getUser(
 		const [user] = await getUserQuery()({ key }, undefined, { tx });
 		if (user) {
 			// Store it in `req` to be compatible with JWTs and for caching
+			// WARNING: this `req.user` has no `permissions` entry, so pinejs never uses it
+			// for permissions: `getReqPermissions` only uses `req.user` when
+			// `req.user.permissions != null`, so it falls back to `req.apiKey`, for both the
+			// permissions and the `@__ACTOR_ID` bind. A pine request made with this `req` is
+			// therefore evaluated with the api key's permissions, not the user's.
 			req.user = req.creds = {
 				..._.pick(user, userFields),
 				// Explicitly mark that we didn't run 2fa checks if it's eg an api key
