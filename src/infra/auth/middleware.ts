@@ -3,6 +3,7 @@ import { checkSudoValidity } from './jwt.ts';
 import { prefetchAPIKey, retrieveAPIKey } from './api-keys.ts';
 import { getUser, reqHasPermission } from './auth.ts';
 import { createUnvalidatedRequestHandler } from '../validation/index.ts';
+import { captureException } from '../error-handling/index.ts';
 
 /**
  * This checks that a user has provided credentials, they may not be fully authorized, ie they may still need to pass 2fa
@@ -124,15 +125,17 @@ export const authenticatedJwtOrApiKey = createUnvalidatedRequestHandler(
 export const authenticated = createUnvalidatedRequestHandler(
 	async (req, res, next) => {
 		try {
-			await getUser(req, undefined);
+			await getUser(req, undefined, false);
+		} catch (err) {
+			// Only db errors can reach here
+			captureException(err, 'Error in authenticated middleware');
+			res.status(500).end();
+			return;
+		}
+		if (req.user || req.apiKey) {
 			next();
-			return null;
-		} catch {
-			if (req.apiKey) {
-				next();
-			} else {
-				res.status(401).end();
-			}
+		} else {
+			res.status(401).end();
 		}
 	},
 );
