@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1121.0",
-    "@balena/abstract-sql-compiler": "^11.3.18",
+    "@balena/abstract-sql-compiler": "^11.3.49",
     "@balena/abstract-sql-to-typescript": "^6.1.29",
     "@balena/env-parsing": "^1.2.8",
     "@balena/es-version": "^1.0.4",
