@@ -36,13 +36,13 @@ export const setup = (app: Application) => {
 	app.get(
 		'/device/v2/:uuid/state',
 		gracefulGet,
-		middleware.authenticated,
+		middleware.authenticatedJwtOrApiKey,
 		stateV2,
 	);
 	app.get(
 		'/device/v3/:uuid/state',
 		gracefulGet,
-		middleware.authenticated,
+		middleware.authenticatedJwtOrApiKey,
 		stateV3,
 	);
 	app.patch(
@@ -59,7 +59,7 @@ export const setup = (app: Application) => {
 	);
 	app.get(
 		'/device/v3/fleet/:fleetUuid/state',
-		middleware.authenticated,
+		middleware.authenticatedJwtOrApiKey,
 		fleetStateV3,
 	);
 	app.patch(

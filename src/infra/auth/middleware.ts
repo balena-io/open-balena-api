@@ -95,7 +95,31 @@ export const authenticatedApiKey = createUnvalidatedRequestHandler(
 );
 
 /**
+ * This ensures that a fully authorized JWT user or a valid api key has been passed, returning 401 if not.
+ * Unlike `authenticated`, it doesn't look up the user that owns an api key. Use it for routes whose
+ * handlers don't read `req.user`/`req.creds` for api keys. pinejs would ignore that user anyway, because
+ * it has no `permissions`, and use `req.apiKey` (including its `actor`).
+ */
+export const authenticatedJwtOrApiKey = createUnvalidatedRequestHandler(
+	async (req, res, next) => {
+		try {
+			if (req.user == null) {
+				await retrieveAPIKey(req, undefined);
+			}
+			if (req.user != null || req.apiKey != null) {
+				next();
+			} else {
+				res.status(401).end();
+			}
+		} catch (err) {
+			next(err);
+		}
+	},
+);
+
+/**
  * This ensures that valid credentials have been passed, returning 401 if they have not
+ * @deprecated
  */
 export const authenticated = createUnvalidatedRequestHandler(
 	async (req, res, next) => {

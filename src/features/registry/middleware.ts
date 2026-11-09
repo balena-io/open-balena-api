@@ -11,8 +11,9 @@ export class NoAuthProvidedError extends errors.UnauthorizedError {}
 
 export class InvalidAuthProvidedError extends errors.UnauthorizedError {}
 
-// Resolves permissions and populates req.user object, in case an api key is used
-// in the password field of a basic authentication header. Also works with JWTs.
+// Resolves api key permissions into `req.apiKey`, in case an api key is used in the
+// password field of a basic authentication header. It never sets `req.user` itself: that is
+// only set for JWTs, by the JWT middleware. Also works with JWTs.
 export const basicApiKeyAuthenticate = createUnvalidatedRequestHandler(
 	async (req, res, next) => {
 		const authHeader = req.headers['authorization'];
