@@ -45,10 +45,15 @@ export const fullyAuthenticatedUser = createUnvalidatedRequestHandler(
  * it will also resolve the user the credentials belong to if they are user credentials
  */
 export const resolveCredentialsAndUser = createUnvalidatedRequestHandler(
-	async (req, _res, next) => {
-		await getUser(req, undefined, false);
+	async (req, res, next) => {
+		try {
+			await getUser(req, undefined, false);
+		} catch (err) {
+			captureException(err, 'Error in resolveCredentialsAndUser middleware');
+			res.status(500).end();
+			return;
+		}
 		next();
-		return null;
 	},
 );
 
