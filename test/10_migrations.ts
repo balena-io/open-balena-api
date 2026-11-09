@@ -3,6 +3,7 @@ import { strict as assert } from 'assert';
 import fs from 'fs';
 import _ from 'lodash';
 import { spawn } from 'node:child_process';
+import os from 'node:os';
 import path from 'path';
 import configJson from '../config.ts';
 import type { Migrator } from '@balena/pinejs';
@@ -148,12 +149,15 @@ export default () => {
 						`${type} parts of migration did not resolve to a string`,
 					);
 
-					const tmpPath = `/tmp/${type}-${path.basename(
-						asyncMigrationPath,
-					)}.sql`;
+					await using tmpDir = await fs.promises.mkdtempDisposable(
+						path.join(os.tmpdir(), 'open-balena-api-migrations-'),
+					);
+					const tmpPath = path.join(
+						tmpDir.path,
+						`${type}-${path.basename(asyncMigrationPath)}.sql`,
+					);
 					await fs.promises.writeFile(tmpPath, sql);
 					await validateSql(tmpPath);
-					await fs.promises.unlink(tmpPath);
 				};
 
 				// Sanity check async migrations
