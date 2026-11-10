@@ -15,9 +15,15 @@ const { api } = sbvrUtils;
 
 export const getGuestActorId = memoize(
 	async (): Promise<number> => {
-		const guest = await sbvrUtils.db.readTransaction(
-			async (tx) => await findUser('guest', tx, ['actor']),
-		);
+		// Match pine's own guest lookup (`getGuestPermissions`) and the guest role
+		// sync in `createAllPermissions` exactly, as usernames are only unique
+		// case-sensitively
+		const guest = await api.resin.get({
+			resource: 'user',
+			id: { username: 'guest' },
+			passthrough: { req: permissions.rootRead },
+			options: { $select: 'actor' },
+		});
 		if (guest?.actor == null) {
 			throw new Error('Cannot find guest user');
 		}
