@@ -129,12 +129,15 @@ async function onInitHooks() {
 		},
 	});
 
-	// Pre-fetch the device types and populate the cache w/o blocking the API startup
-	void getAccessibleDeviceTypeJsons(sbvrUtils.api.resin);
-
 	await sbvrUtils.db.transaction((tx) =>
 		createAll(tx, permissionNames, auth.ROLES, auth.KEYS, {}),
 	);
+
+	// Pre-fetch the device types and populate the cache w/o blocking the API startup.
+	// This must start only after the permissions are synced: it is a guest request,
+	// and pine memoizes the guest permissions for the whole process on the first
+	// one, so running it earlier could cache them before the guest has its role.
+	void getAccessibleDeviceTypeJsons(sbvrUtils.api.resin);
 }
 
 async function createSuperuser() {
