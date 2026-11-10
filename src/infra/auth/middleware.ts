@@ -109,7 +109,10 @@ export const authenticatedApiKey = createUnvalidatedRequestHandler(
 export const authenticatedJwtOrApiKey = createUnvalidatedRequestHandler(
 	async (req, res, next) => {
 		try {
-			if (req.user == null) {
+			// Like `getUser`, only resolve an api key if no JWT was used (which sets `req.creds`), so that
+			// a JWT user that still needs to pass 2fa (which sets only `req.partialUser`) can't be
+			// authenticated by also passing an api key. Service JWTs set `req.apiKey` themselves
+			if (req.creds == null) {
 				await retrieveAPIKey(req, undefined);
 			}
 			if (req.user != null || req.apiKey != null) {

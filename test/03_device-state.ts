@@ -8,6 +8,7 @@ import type { UserObjectParam } from './test-lib/supertest.ts';
 import { supertest } from './test-lib/supertest.ts';
 import * as versions from './test-lib/versions.ts';
 import * as config from '../src/lib/config.ts';
+import { createSessionToken } from '../src/infra/auth/jwt.ts';
 import {
 	DeviceOnlineStates,
 	getInstance as getDeviceOnlineStateManager,
@@ -1036,6 +1037,18 @@ export default () => {
 				});
 
 				describe('state GET results', () => {
+					it('should not accept an api key alongside a JWT of a user that still needs to pass 2fa', async () => {
+						assertExists(admin.id);
+						const partialUserToken = await createSessionToken(admin.id, {
+							existingToken: { twoFactorRequired: true },
+							tx: fixtures.fakeTx,
+						});
+						const stateUrl = `/device/${stateVersion}/${device.uuid}/state?apikey=${device.token}`;
+
+						await supertest().get(stateUrl).expect(200);
+						await supertest(partialUserToken).get(stateUrl).expect(401);
+					});
+
 					it('should have different level environment variables injected', async () => {
 						const state = await fakeDevice.getState(
 							admin,
