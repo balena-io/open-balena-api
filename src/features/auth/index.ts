@@ -42,7 +42,7 @@ export const setup = (
 	app.post('/login_', loginRateLimiter('body.username'), login(onLogin));
 
 	app.get('/user/v1/whoami', middleware.fullyAuthenticatedUser, whoami);
-	app.get('/actor/v1/whoami', middleware.authenticated, actorWhoami);
+	app.get('/actor/v1/whoami', middleware.authenticatedJwtOrApiKey, actorWhoami);
 
 	app.get(
 		'/auth/v1/public-keys/:username',

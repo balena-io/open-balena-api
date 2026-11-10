@@ -1,15 +1,17 @@
 import { expect } from 'chai';
-import { generateKeyPairSync } from 'node:crypto';
+import { generateKeyPairSync, randomUUID } from 'node:crypto';
 import jsonwebtoken from 'jsonwebtoken';
 import {
 	JSON_WEB_TOKEN_LIMIT_EXPIRY_REFRESH,
 	JSON_WEB_TOKEN_SECRET_KEY,
 	SUPERUSER_EMAIL,
 	SUPERUSER_PASSWORD,
+	VPN_SERVICE_API_KEY,
 } from '../src/lib/config.ts';
 import {
 	createScopedAccessToken,
 	createScopedRolesToken,
+	createSessionToken,
 	generateNewJwtSecret,
 } from '../src/infra/auth/jwt.ts';
 
@@ -24,6 +26,7 @@ import {
 	assignUserRole,
 	getOrInsertPermissionId,
 	getOrInsertRoleId,
+	getGuestActorId,
 	getRolePermissions,
 	revokeUserRole,
 } from '../src/infra/auth/permissions.ts';
@@ -340,6 +343,91 @@ export default () => {
 				});
 
 				await supertest(accessToken).get('/actor/v1/whoami').expect(401);
+			});
+
+			it('/actor/v1/whoami returns a 401 error when using a scoped user api key that does not have user permissions', async function () {
+				const { id: actor } = (
+					await supertest(admin).get('/actor/v1/whoami').expect(200)
+				).body;
+				const key = randomUUID();
+
+				// Create a user api key that only has access to the user's applications
+				const role = await sbvrUtils.db.transaction(async (tx) => {
+					const $role = await getOrInsertRoleId(
+						'test-actor-whoami-scoped-api-key',
+						tx,
+					);
+					const permission = await getOrInsertPermissionId(
+						'resin.application.read?actor eq @__ACTOR_ID',
+						tx,
+					);
+					await assignRolePermission($role.id, permission.id, tx);
+					const apiKey = await api.Auth.post({
+						resource: 'api_key',
+						passthrough: { req: pinePermissions.root, tx },
+						body: { is_of__actor: actor, key },
+					});
+					await api.Auth.post({
+						resource: 'api_key__has__role',
+						passthrough: { req: pinePermissions.root, tx },
+						body: { api_key: apiKey.id, role: $role.id },
+						options: { returnResource: false },
+					});
+					return $role;
+				});
+
+				try {
+					await supertest(key).get('/actor/v1/whoami').expect(401);
+				} finally {
+					await api.Auth.delete({
+						resource: 'api_key',
+						passthrough: { req: pinePermissions.root },
+						id: { key },
+					});
+					// Only remove the role and its permission link, as the permission
+					// itself might pre-exist assigned to other roles
+					await api.Auth.delete({
+						resource: 'role__has__permission',
+						passthrough: { req: pinePermissions.root },
+						options: { $filter: { role: role.id } },
+					});
+					await api.Auth.delete({
+						resource: 'role',
+						passthrough: { req: pinePermissions.root },
+						id: role.id,
+					});
+				}
+			});
+
+			it('/actor/v1/whoami returns a 401 error when using an api key alongside a JWT of a user that still needs to pass 2fa', async function () {
+				assertExists(admin.id);
+				const partialUserToken = await createSessionToken(admin.id, {
+					existingToken: { twoFactorRequired: true },
+					tx: fixtures.fakeTx,
+				});
+
+				await supertest(partialUserToken).get('/actor/v1/whoami').expect(401);
+				await supertest(partialUserToken)
+					.get(`/actor/v1/whoami?apikey=${userApiKey}`)
+					.expect(401);
+			});
+
+			it('/actor/v1/whoami returns the guest user for a service token', async function () {
+				// Neither the guest user nor the vpn service api key can read users, so this
+				// also checks that service tokens skip the check for user keys/tokens
+				const serviceToken = jsonwebtoken.sign(
+					{ service: 'vpn', apikey: VPN_SERVICE_API_KEY },
+					JSON_WEB_TOKEN_SECRET_KEY,
+					{ expiresIn: 60 },
+				);
+
+				const serviceActor = (
+					await supertest(serviceToken).get('/actor/v1/whoami').expect(200)
+				).body;
+
+				expect(serviceActor.id).to.equal(await getGuestActorId());
+				expect(serviceActor.actorType).to.equal('user');
+				expect(serviceActor.username).to.equal('guest');
 			});
 
 			it('/login_ returns a 401 error if user does not have auth.credentials_login permission', async function () {
