@@ -6,7 +6,10 @@ import memoize from 'memoizee';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 
 import { findUser } from './auth.ts';
-import { captureException } from '../error-handling/index.ts';
+import {
+	captureException,
+	ThisShouldNeverHappenError,
+} from '../error-handling/index.ts';
 import { getOrInsertId } from '../pinejs-client-helpers/index.ts';
 import { multiCacheMemoizee } from '../cache/multi-level-memoizee.ts';
 import { ROLE_PERMISSIONS_CACHE_TIMEOUT } from '../../lib/config.ts';
@@ -345,6 +348,51 @@ export async function createAllPermissions(
 				}
 			}),
 		);
+		// The guest user gets its permissions only from the guest role, as these
+		// apply to every request. So make it hold exactly that role, without an
+		// expiry, and remove any other roles and direct permissions (eg ones that
+		// pine's config loader added, which it never removes). This runs before the
+		// stale permission cleanup so that permissions only the guest had directly
+		// are removed too.
+		if (resolvedRoleMap.guest == null) {
+			throw ThisShouldNeverHappenError('Could not find guest role during init');
+		}
+		try {
+			// Match pine's own guest lookup (`getGuestPermissions`) exactly, as
+			// usernames are only unique case-sensitively
+			const guest = await apiTx.get({
+				resource: 'user',
+				id: { username: 'guest' },
+				options: { $select: 'id' },
+			});
+			if (guest == null) {
+				throw new Error('Cannot find guest user');
+			}
+			const guestRoleId = resolvedRoleMap.guest.id;
+			// An expired guest role row would otherwise be kept as is by
+			// `assignUserRole`, while pine ignores it
+			await apiTx.delete({
+				resource: 'user__has__role',
+				options: {
+					$filter: {
+						user: guest.id,
+						$or: [
+							{ $not: { role: guestRoleId } },
+							{ expiry_date: { $ne: null } },
+						],
+					},
+				},
+			});
+			await assignUserRole(guest.id, guestRoleId, tx);
+			await apiTx.delete({
+				resource: 'user__has__permission',
+				options: { $filter: { user: guest.id } },
+			});
+		} catch (err) {
+			captureException(err, 'Error on configuring the guest user role');
+			throw err;
+		}
+
 		// Remove stale permissions, preserving unassigned ones.
 		const perms = await permissionsCache;
 		try {
