@@ -5,6 +5,7 @@ EXPOSE 80
 # Defaults for vars read directly by libuv and pinejs; the runtime env overrides them
 ENV UV_THREADPOOL_SIZE=128
 ENV PG_SCHEMA=public
+ENV TRANSACTION_TIMEOUT_MS=30000
 
 COPY package.json package-lock.json /usr/src/app/
 RUN HUSKY=0 npm ci --omit=dev && npm cache clean --force
