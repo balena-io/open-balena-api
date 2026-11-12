@@ -336,7 +336,6 @@ export const LOKI_PUSH_PROTOCOL = enumVar(
 	'grpc',
 );
 export const LOKI_QUERY_HTTP_PORT = intVar('LOKI_QUERY_HTTP_PORT', 3100);
-export const LOKI_HISTORY_GZIP = boolVar('LOKI_HISTORY_GZIP', true);
 export const LOKI_HISTORY_TIMEOUT = intVar('LOKI_HISTORY_TIMEOUT', 55000);
 export const LOKI_GRPC_SEND_GZIP = boolVar('LOKI_GRPC_SEND_GZIP', true);
 export const LOKI_GRPC_RECEIVE_COMPRESSION_LEVEL = intVar(
