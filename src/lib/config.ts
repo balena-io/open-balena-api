@@ -68,7 +68,7 @@ export const ADVISORY_LOCK_NAMESPACES = {
 } as const;
 
 export const API_HOST = requiredVar('API_HOST');
-export const PORT = intVar('PORT', 1337);
+export const PORT = intVar('PORT', 80);
 export const API_HEARTBEAT_STATE_ENABLED = intVar(
 	'API_HEARTBEAT_STATE_ENABLED',
 	1, // 1 = enabled, 0 = disabled
@@ -136,7 +136,7 @@ export const CONTRACTS_PRIVATE_REPO_BRANCH = optionalVar(
 export const CONTRACTS_PRIVATE_REPO_TOKEN = optionalVar(
 	'CONTRACTS_PRIVATE_REPO_TOKEN',
 );
-export const DB_POOL_SIZE = intVar('DB_POOL_SIZE', undefined);
+export const DB_POOL_SIZE = intVar('DB_POOL_SIZE', 60);
 export const DB_STATEMENT_TIMEOUT = intVar('DB_STATEMENT_TIMEOUT', 1 * MINUTES);
 export const DB_QUERY_TIMEOUT = intVar(
 	'DB_QUERY_TIMEOUT',
@@ -711,6 +711,7 @@ export const WEBRESOURCES_S3_STORAGE_CLASS = optionalVar(
 );
 export const WEBRESOURCES_CLOUDFRONT_PRIVATEKEY_PATH = optionalVar(
 	'WEBRESOURCES_CLOUDFRONT_PRIVATEKEY_PATH',
+	'/etc/ssl/private/cloudfront-pk.pem',
 );
 export const WEBRESOURCES_CLOUDFRONT_PUBLICKEY = optionalVar(
 	'WEBRESOURCES_CLOUDFRONT_PUBLICKEY',

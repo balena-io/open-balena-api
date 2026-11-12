@@ -2,6 +2,10 @@ FROM balena/open-balena-base:v22.1.3-s6-overlay@sha256:bb0896a9014ed5d09dbf2318b
 
 EXPOSE 80
 
+# Defaults for vars read directly by libuv and pinejs; the runtime env overrides them
+ENV UV_THREADPOOL_SIZE=128
+ENV PG_SCHEMA=public
+
 COPY package.json package-lock.json /usr/src/app/
 RUN HUSKY=0 npm ci --omit=dev && npm cache clean --force
 
@@ -9,7 +13,8 @@ COPY . /usr/src/app
 
 RUN npx tsc --noEmit --project ./tsconfig.build.json
 
-CMD [ "/usr/src/app/entry.sh" ]
+ENV S6_CMD_ARG0=/command/with-contenv
+CMD [ "/command/envfile", "/usr/src/app/config/env", "/usr/src/app/entry.sh" ]
 
 # Set up a test image that can be reused
 FROM runtime AS test
