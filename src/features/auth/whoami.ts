@@ -67,21 +67,6 @@ export const whoami = createValidatedRequestHandler(async (req, res) => {
 export const actorWhoami = createValidatedRequestHandler(async (req, res) => {
 	try {
 		const rawActorInfo = await sbvrUtils.db.readTransaction(async (tx) => {
-			// If this is a user key/token we must validate this is a key that
-			// has permissions for reading username/email
-			if (req.user?.actor != null) {
-				const userWithId = await api.resin.get({
-					resource: 'user',
-					passthrough: { req, tx },
-					id: { actor: req.user.actor },
-					options: { $select: 'id' },
-				});
-
-				if (userWithId == null) {
-					throw new errors.UnauthorizedError();
-				}
-			}
-
 			const actorId = req.apiKey?.actor ?? req.user?.actor;
 
 			if (actorId == null) {
@@ -90,7 +75,7 @@ export const actorWhoami = createValidatedRequestHandler(async (req, res) => {
 				);
 			}
 
-			return await api.resin.get({
+			const actorInfo = await api.resin.get({
 				resource: 'actor',
 				passthrough: { req: permissions.rootRead, tx },
 				id: actorId,
@@ -109,6 +94,35 @@ export const actorWhoami = createValidatedRequestHandler(async (req, res) => {
 					},
 				},
 			});
+
+			// If this is a user key/token we must validate this is a key that
+			// has permissions for reading username/email.
+			// Every JWT sets `req.creds`, but api keys don't because `authenticatedJwtOrApiKey` doesn't
+			// call `getUser`. `authenticatedJwtOrApiKey` rejects JWTs that set neither `req.user` nor
+			// `req.apiKey` (eg 2fa-pending users), so a request with `req.creds` but no `req.user` is a
+			// service token, whose guest actor is also a user but which keeps skipping this check.
+			// So with no `req.creds`, an api key whose actor is a user is a user api key
+			const userActorId =
+				req.user?.actor ??
+				(req.creds == null &&
+				actorInfo != null &&
+				actorInfo.is_of__user.length > 0
+					? actorId
+					: undefined);
+			if (userActorId != null) {
+				const userWithId = await api.resin.get({
+					resource: 'user',
+					passthrough: { req, tx },
+					id: { actor: userActorId },
+					options: { $select: 'id' },
+				});
+
+				if (userWithId == null) {
+					throw new errors.UnauthorizedError();
+				}
+			}
+
+			return actorInfo;
 		});
 
 		if (rawActorInfo == null) {
