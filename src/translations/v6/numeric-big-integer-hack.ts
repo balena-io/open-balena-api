@@ -5,7 +5,7 @@ import type * as TypeUtils from '@balena/sbvr-types/out/type-utils.js';
 // when we augment the @balena/sbvr-types Types type.
 type TsTypes = TypeUtils.TsTypes<number, number>;
 export type { TsTypes as Types };
-export type DbWriteType = number;
+export type DbWriteType = bigint;
 
 // Augmenting is necessary so that the TS v6-model.ts compiles properly
 declare module '@balena/sbvr-types' {
@@ -26,6 +26,4 @@ SbvrTypes.default['Numeric Big Integer'] = {
 		}
 		return parseInt(processedData, 10);
 	},
-
-	validate: SbvrTypes.default.Integer.validate,
 } satisfies TypeUtils.SbvrType<TsTypes['Read'], TsTypes['Write'], DbWriteType>;
