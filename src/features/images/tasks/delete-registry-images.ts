@@ -133,31 +133,7 @@ async function deleteRepo(repo: string, signal: AbortSignal): Promise<void> {
 const deleteRegistryImages = async ({
 	images,
 }: DeleteRegistryImagesTaskParams) => {
-	// Avoid deleting any blobs that are still referenced by other images
-	// This shouldn't normally be necessary as is_stored_at__image_location
-	// should be enforced as unique at the database level, but just in case
-	const stillReferenced = await api.resin.get({
-		resource: 'image',
-		passthrough: { req: permissions.rootRead },
-		options: {
-			$select: ['is_stored_at__image_location'],
-			$filter: {
-				is_stored_at__image_location: {
-					$in: images.map((image) => image.location),
-				},
-			},
-		},
-	});
-
-	// Define what images are actually safe to delete
-	const stillReferencedLocations = new Set(
-		stillReferenced.map((ref) => ref.is_stored_at__image_location),
-	);
-	const remaining = new Set(
-		images
-			.map((image) => image.location)
-			.filter((location) => !stillReferencedLocations.has(location)),
-	);
+	const remaining = new Set(images.map((image) => image.location));
 
 	// Mark images and any of their multi-stage cache images for deletion
 	// Don't let the task run for too long, and create a new task with

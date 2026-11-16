@@ -9,15 +9,12 @@ import {
 } from '../src/features/registry/registry.ts';
 import { strict as assert } from 'node:assert';
 import { randomUUID } from 'node:crypto';
-import { permissions, sbvrUtils } from '@balena/pinejs';
 import {
 	expectNewSettledTasks,
 	resetLatestTaskIds,
 } from './test-lib/api-helpers.ts';
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-const { api } = sbvrUtils;
 
 function stripRegistryHost(location: string) {
 	return location.replace(`${config.REGISTRY2_HOST}/`, '');
@@ -213,51 +210,6 @@ export default () => {
 				});
 
 				await expectSettledTasks([image]);
-			});
-
-			it('should not delete from registry if image is still referenced in database', async () => {
-				const consoleSpy = sinon.spy(console, 'info');
-				try {
-					const image = await createImage(ctx.service2.id);
-
-					// Create a deletion task without deleting the DB record.
-					// The task should detect the image is still referenced and skip it.
-					await api.tasks.post({
-						resource: 'task',
-						passthrough: { req: permissions.root },
-						body: {
-							is_executed_by__handler: 'delete_registry_images',
-							is_executed_with__parameter_set: {
-								images: [
-									{
-										location: image.dbImage.is_stored_at__image_location,
-									},
-								],
-							},
-							attempt_limit: config.ASYNC_TASK_ATTEMPT_LIMIT,
-						},
-					});
-
-					await expectNewSettledTasks('delete_registry_images', [
-						{
-							status: 'succeeded',
-							is_executed_with__parameter_set: {
-								images: [
-									{
-										location: image.dbImage.is_stored_at__image_location,
-									},
-								],
-							},
-						},
-					]);
-					expect(image.registryImage.isDeleted).to.be.false;
-					sinon.assert.calledWithMatch(
-						consoleSpy,
-						'[delete_registry_images_task] Processed 0/0 images',
-					);
-				} finally {
-					consoleSpy.restore();
-				}
 			});
 
 			it('should delete multi-stage cache images when an image is deleted', async () => {
