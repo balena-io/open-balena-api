@@ -645,11 +645,11 @@ export const API_KEY_ROLE_CACHE_TIMEOUT = intVar(
 export const GZIP_COMPRESSION_QUALITY = intVar('GZIP_COMPRESSION_QUALITY', -1);
 export const BROTLI_COMPRESSION_QUALITY = intVar(
 	'BROTLI_COMPRESSION_QUALITY',
-	4,
+	5,
 );
 export const BROTLI_COMPRESSION_WINDOW_BITS = intVar(
 	'BROTLI_COMPRESSION_WINDOW_BITS',
-	undefined,
+	18,
 );
 
 const trustProxy = trustProxyVar('TRUST_PROXY', false);

@@ -498,9 +498,7 @@ function setupMiddleware(app: Application) {
 			brotli: {
 				params: {
 					[zlib.constants.BROTLI_PARAM_QUALITY]: BROTLI_COMPRESSION_QUALITY,
-					[zlib.constants.BROTLI_PARAM_LGWIN]:
-						BROTLI_COMPRESSION_WINDOW_BITS ??
-						zlib.constants.BROTLI_DEFAULT_WINDOW,
+					[zlib.constants.BROTLI_PARAM_LGWIN]: BROTLI_COMPRESSION_WINDOW_BITS,
 				},
 			},
 			// We use a custom filter so that we can explicitly enable compression for ndjson (ie logs)
