@@ -34,10 +34,27 @@ export default () => {
 			const ctx: AnyObject = {};
 			let pineUser: typeof pineTest;
 
+			async function createRelease(applicationId: number) {
+				const now = new Date();
+				const { body: release } = await pineUser.post({
+					resource: 'release',
+					body: {
+						belongs_to__application: applicationId,
+						start_timestamp: now,
+						end_timestamp: now,
+						commit: randomUUID(),
+						status: 'success',
+						composition: {},
+						source: 'local',
+					},
+				});
+				return release;
+			}
+
 			async function createImage(
 				serviceId: number,
 				options?: {
-					releaseId?: number;
+					releaseIds?: number[];
 					stages?: number;
 					tags?: string[];
 				},
@@ -56,12 +73,12 @@ export default () => {
 					},
 				});
 
-				if (options?.releaseId != null) {
+				for (const releaseId of options?.releaseIds ?? []) {
 					await pineUser.post({
 						resource: 'image__is_part_of__release',
 						body: {
 							image: image.id,
-							is_part_of__release: options.releaseId,
+							is_part_of__release: releaseId,
 						},
 					});
 				}
@@ -110,6 +127,27 @@ export default () => {
 				]);
 			}
 
+			async function getImage(imageId: number) {
+				return await api.resin.get({
+					resource: 'image',
+					id: imageId,
+					passthrough: { req: permissions.rootRead },
+					options: { $select: 'id' },
+				});
+			}
+
+			async function getReleaseImageIds(releaseId: number) {
+				const releaseImages = await api.resin.get({
+					resource: 'image__is_part_of__release',
+					passthrough: { req: permissions.rootRead },
+					options: {
+						$select: 'image',
+						$filter: { is_part_of__release: releaseId },
+					},
+				});
+				return releaseImages.map((ri) => ri.image.__id);
+			}
+
 			before(async function () {
 				const fx = await fixtures.load('26-registry-image-deletion');
 				ctx.fixtures = fx;
@@ -120,9 +158,21 @@ export default () => {
 					},
 				});
 				ctx.app1 = fx.applications.app1;
+				ctx.app2 = fx.applications.app2;
 				ctx.service1 = fx.services.service1;
 				ctx.service2 = fx.services.service2;
 				ctx.service3 = fx.services.service3;
+
+				// Applications always track the latest release on creation, which
+				// would make the releases created here undeletable target releases.
+				await pineUser
+					.patch({
+						resource: 'application',
+						id: ctx.app2.id,
+						body: { should_track_latest_release: false },
+					})
+					.expect(200);
+
 				await resetLatestTaskIds('delete_registry_images');
 
 				// Create an image that should not be deleted.
@@ -300,40 +350,110 @@ export default () => {
 				}
 			});
 
-			it('should mark for deletion when images are deleted via a cascade', async () => {
-				const createRelease = async () => {
-					const now = new Date();
-					const { body: release } = await pineUser.post({
+			it('should mark for deletion when the only release of an image is deleted', async () => {
+				const release = await createRelease(ctx.app2.id);
+				const image = await createImage(ctx.service2.id, {
+					releaseIds: [release.id],
+				});
+
+				await pineUser
+					.delete({
 						resource: 'release',
-						body: {
-							belongs_to__application: ctx.app1.id,
-							start_timestamp: now,
-							end_timestamp: now,
-							commit: randomUUID(),
-							status: 'success',
-							composition: {},
-							source: 'local',
+						id: release.id,
+					})
+					.expect(200);
+
+				expect(await getImage(image.dbImage.id)).to.be.undefined;
+				await waitFor({
+					checkFn: () => checkIsDeleted([image]),
+				});
+				await expectSettledTasks([image]);
+			});
+
+			it('should not mark for deletion when another release still includes the image', async () => {
+				const releaseA = await createRelease(ctx.app2.id);
+				const releaseB = await createRelease(ctx.app2.id);
+				const image = await createImage(ctx.service2.id, {
+					releaseIds: [releaseA.id, releaseB.id],
+				});
+
+				await pineUser
+					.delete({
+						resource: 'release',
+						id: releaseA.id,
+					})
+					.expect(200);
+
+				expect(await getImage(image.dbImage.id)).to.have.property(
+					'id',
+					image.dbImage.id,
+				);
+				expect(await getReleaseImageIds(releaseA.id)).to.deep.equal([]);
+				expect(await getReleaseImageIds(releaseB.id)).to.deep.equal([
+					image.dbImage.id,
+				]);
+				await expectNewSettledTasks('delete_registry_images', []);
+				expect(image.registryImage.isDeleted).to.be.false;
+			});
+
+			it('should mark for deletion when all releases of an image are deleted together', async () => {
+				const releaseA = await createRelease(ctx.app2.id);
+				const releaseB = await createRelease(ctx.app2.id);
+				const image = await createImage(ctx.service2.id, {
+					releaseIds: [releaseA.id, releaseB.id],
+				});
+
+				await pineUser
+					.delete({
+						resource: 'release',
+						options: {
+							$filter: { id: { $in: [releaseA.id, releaseB.id] } },
 						},
-					});
+					})
+					.expect(200);
 
-					const [image1, image2] = await Promise.all([
-						createImage(ctx.service1.id, {
-							releaseId: release.id,
-						}),
-						createImage(ctx.service1.id, {
-							releaseId: release.id,
-						}),
-					]);
+				expect(await getImage(image.dbImage.id)).to.be.undefined;
+				await waitFor({
+					checkFn: () => checkIsDeleted([image]),
+				});
+				await expectSettledTasks([image]);
+			});
 
-					return {
-						images: [image1, image2],
-					};
-				};
+			it('should mark for deletion once when an image that is part of a release is deleted', async () => {
+				const release = await createRelease(ctx.app2.id);
+				const image = await createImage(ctx.service2.id, {
+					releaseIds: [release.id],
+				});
 
+				await pineUser
+					.delete({
+						resource: 'image',
+						id: image.dbImage.id,
+					})
+					.expect(200);
+
+				expect(await getImage(image.dbImage.id)).to.be.undefined;
+				await waitFor({
+					checkFn: () => checkIsDeleted([image]),
+				});
+				await expectSettledTasks([image]);
+			});
+
+			it('should mark for deletion when images are deleted via a cascade', async () => {
 				// Create multiple releases for the application.
 				const [release1, release2] = await Promise.all([
-					createRelease(),
-					createRelease(),
+					createRelease(ctx.app1.id),
+					createRelease(ctx.app1.id),
+				]);
+				const images = await Promise.all([
+					createImage(ctx.service1.id, { releaseIds: [release1.id] }),
+					createImage(ctx.service1.id, { releaseIds: [release1.id] }),
+					createImage(ctx.service1.id, { releaseIds: [release2.id] }),
+					createImage(ctx.service1.id, { releaseIds: [release2.id] }),
+					// An image that is part of both releases.
+					createImage(ctx.service1.id, {
+						releaseIds: [release1.id, release2.id],
+					}),
 				]);
 
 				// Delete the application.
@@ -343,7 +463,6 @@ export default () => {
 				});
 
 				// Assert all images were marked for deletion.
-				const images = [...release1.images, ...release2.images];
 				await waitFor({
 					checkFn: () => checkIsDeleted(images),
 				});
