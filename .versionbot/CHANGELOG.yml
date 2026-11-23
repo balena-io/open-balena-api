@@ -1,4 +1,59 @@
 - commits:
+    - subject: Look up the guest actor by exact username
+      hash: 146cfb588926941b1d584b98a90e36152054d022
+      body: |
+        `getGuestActorId` found the guest with `findUser`, which matches
+        usernames case-insensitively, while pine's guest permission lookup and
+        the guest role sync match `guest` exactly. Usernames are only unique
+        case-sensitively, so with a `Guest` user (only possible through the
+        Auth API or direct database writes) the service API keys could be
+        created for a different actor than the one the guest role is synced
+        to. It now uses the same exact lookup.
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+    - subject: Give the guest user its permissions through a synced `guest` role
+      hash: 40a510f9bfa4cf3e10652279e100e1a0e0751881
+      body: |
+        Pine's config loader only ever adds a config user's permissions, so a
+        permission dropped from the guest user's list in config.ts, or one
+        added to the guest by hand, stayed on the guest user forever.
+
+        The guest permissions now live in `ROLES.guest`. On startup,
+        `createAllPermissions` makes the guest user hold exactly that role,
+        without an expiry: it removes the guest's other roles and any expired
+        guest role row (which pine ignores, leaving anonymous requests without
+        permissions), assigns the role, and deletes all of the guest's direct
+        permissions. This runs before the stale permission cleanup, so
+        permissions that only the guest held directly are deleted in the same
+        run. The guest is looked up by its exact username, as pine does, since
+        usernames are only unique case-sensitively. Pine's guest permission
+        lookup already includes role permissions, so anonymous requests keep
+        the same permissions.
+
+        The device type pre-fetch in `onInitHooks` must now start after the
+        permission sync: it is a guest request, and pine memoizes the guest
+        permissions for the life of the process on the first one. Otherwise,
+        on a fresh database, it would cache an empty list before the guest had
+        its role, and anonymous requests would get 401s until a restart.
+
+        Consumers that still give the guest user direct permissions in their
+        pine config, or other roles, will have them removed on every startup,
+        and the guest gets `ROLES.guest` instead. Move those permissions to
+        `ROLES.guest` (or override it) to keep them.
+
+        https://balena.fibery.io/Work/Project/3083
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+      nested: []
+  version: 53.0.0
+  title: ""
+  date: 2026-11-23T15:29:36.225Z
+- commits:
     - subject: Update default brotli settings
       hash: cffd8558375f88e1190b7d372a9c2d1f6fcd3f98
       body: |
@@ -17431,6 +17486,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -17463,6 +17519,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -19485,6 +19542,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -19532,6 +19590,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -20642,6 +20701,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -20679,6 +20739,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -21867,6 +21928,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -21895,6 +21957,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -22468,6 +22531,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -23590,6 +23654,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -23735,6 +23800,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -25024,6 +25090,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -25046,6 +25113,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -25626,6 +25694,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -26809,6 +26878,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -26831,6 +26901,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -27411,6 +27482,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -32564,6 +32636,7 @@
 
 
 
+
                                                                 The internal and
                                                                 external
                                                                 representation of
@@ -32596,6 +32669,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -34932,6 +35006,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/odata-parser
                                                                 from 2.4.6 to 3.0.0
@@ -34979,6 +35054,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -36353,6 +36429,7 @@
 
 
 
+
                                                                         As engine and npm is
                                                                         now required as part
                                                                         of package.json we
@@ -36390,6 +36467,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -37942,6 +38020,7 @@
 
 
 
+
                                                                         This also deprecates
                                                                         the legacy version
                                                                       footer:
@@ -37970,6 +38049,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -38675,6 +38755,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -40061,6 +40142,7 @@
 
 
 
+
                                                                         Update
                                                                         @balena/sbvr-types
                                                                         from 3.4.18 to 3.5.0
@@ -40206,6 +40288,7 @@
                                                                       body: >
                                                                         
                                                                         
+
 
 
 
@@ -41759,6 +41842,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -41781,6 +41865,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -42493,6 +42578,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -43940,6 +44026,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -43962,6 +44049,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -44674,6 +44762,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -48134,6 +48223,7 @@
 
 
 
+
                                                                 As balena-lint
                                                                 rejects `new
                                                                 Boolean()`, `new
@@ -48156,6 +48246,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -48868,6 +48959,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -50318,6 +50410,7 @@
 
 
 
+
                                                                 This also deprecates
                                                                 the legacy version
                                                               footer:
@@ -50346,6 +50439,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -51050,6 +51144,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
@@ -52434,6 +52529,7 @@
 
 
 
+
                                                                 Update
                                                                 @balena/sbvr-types
                                                                 from 3.4.18 to 3.5.0
@@ -52579,6 +52675,7 @@
                                                               body: >
                                                                 
                                                                 
+
 
 
 
