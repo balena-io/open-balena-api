@@ -1,0 +1,20 @@
+{
+	"device1": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"uuid": "cc39fd20d9174a479132a322ca406aec"
+	},
+	"device2": {
+		"belongs_to__application": "app1",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"uuid": "da913a305a844735bde759728d4c8635"
+	},
+	"device3": {
+		"belongs_to__application": "app2",
+		"device_type": "raspberry-pi",
+		"belongs_to__user": "admin",
+		"uuid": "13444fdd07a543828bfcd70b2957020a"
+	}
+}

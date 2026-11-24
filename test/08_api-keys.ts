@@ -5,7 +5,8 @@ import { generateDeviceUuid } from './test-lib/fake-device.ts';
 import type { UserObjectParam } from './test-lib/supertest.ts';
 import { supertest } from './test-lib/supertest.ts';
 import * as versions from './test-lib/versions.ts';
-import { sbvrUtils, permissions } from '@balena/pinejs';
+import { rejects } from 'node:assert/strict';
+import { sbvrUtils, permissions, errors } from '@balena/pinejs';
 import { expectResourceToMatch } from './test-lib/api-helpers.ts';
 import { assertExists } from './test-lib/common.ts';
 import { loginUserSudoTimeoutAgo } from './test-lib/users.ts';
@@ -1050,6 +1051,123 @@ export default () => {
 					});
 				});
 			}
+		});
+
+		describe('expire api keys on actor deletion', function () {
+			const DAY = 24 * 60 * 60 * 1000;
+			let fx: fixtures.Fixtures;
+			let admin: UserObjectParam;
+			const createdKeys: string[] = [];
+
+			const createKey = async (
+				actorType: 'application' | 'device',
+				actorTypeId: number,
+				expiryDate: Date | null = null,
+			) => {
+				const { body: key } = await supertest(admin)
+					.post('/api-key/v1/')
+					.send({
+						actorType,
+						actorTypeId,
+						roles: [
+							actorType === 'device'
+								? 'device-api-key'
+								: 'provisioning-api-key',
+						],
+						expiryDate: expiryDate?.toISOString() ?? null,
+					})
+					.expect(200);
+				expect(key).to.be.a('string');
+				createdKeys.push(key);
+				return key as string;
+			};
+
+			const getExpiryDate = async (key: string) => {
+				const apiKey = await api.resin.get({
+					resource: 'api_key',
+					id: { key },
+					passthrough: { req: permissions.rootRead },
+					options: { $select: 'expiry_date' },
+				});
+				assertExists(apiKey);
+				return apiKey.expiry_date;
+			};
+
+			const expectExpired = async (key: string, since: number) => {
+				const expiryDate = await getExpiryDate(key);
+				assertExists(expiryDate);
+				expect(new Date(expiryDate).getTime())
+					.to.be.at.least(since)
+					.and.at.most(Date.now());
+				await rejects(permissions.checkApiKey(key), errors.PermissionError);
+			};
+
+			const expectUnexpired = async (key: string) => {
+				expect(await getExpiryDate(key)).to.equal(null);
+				await permissions.checkApiKey(key);
+			};
+
+			before(async function () {
+				fx = await fixtures.load('08-expire-actor-api-keys');
+				admin = fx.users.admin;
+			});
+
+			after(async function () {
+				await api.resin.delete({
+					resource: 'api_key',
+					passthrough: { req: permissions.root },
+					options: { $filter: { key: { $in: createdKeys } } },
+				});
+				await fixtures.clean(fx);
+			});
+
+			it('should expire the unexpired api keys of a deleted device', async function () {
+				const { device1, device2 } = fx.devices;
+				const unexpiredKey = await createKey('device', device1.id);
+				const futureExpiryKey = await createKey(
+					'device',
+					device1.id,
+					new Date(Date.now() + DAY),
+				);
+				const expiredKey = await createKey(
+					'device',
+					device1.id,
+					new Date(Date.now() - DAY),
+				);
+				const expiredKeyExpiryDate = await getExpiryDate(expiredKey);
+				const otherDeviceKey = await createKey('device', device2.id);
+				await permissions.checkApiKey(unexpiredKey);
+				await permissions.checkApiKey(futureExpiryKey);
+
+				const deletedAt = Date.now();
+				await supertest(admin)
+					.delete(`/${version}/device(${device1.id})`)
+					.expect(200);
+
+				await expectExpired(unexpiredKey, deletedAt);
+				await expectExpired(futureExpiryKey, deletedAt);
+				expect(await getExpiryDate(expiredKey)).to.equal(expiredKeyExpiryDate);
+				await expectUnexpired(otherDeviceKey);
+			});
+
+			it('should expire the api keys of a deleted application and its devices', async function () {
+				const { app1, app2 } = fx.applications;
+				const { device2, device3 } = fx.devices;
+				const appKey = await createKey('application', app2.id);
+				const deviceKey = await createKey('device', device3.id);
+				const otherAppKey = await createKey('application', app1.id);
+				const otherDeviceKey = await createKey('device', device2.id);
+
+				const deletedAt = Date.now();
+				await supertest(admin)
+					.delete(`/${version}/application(${app2.id})`)
+					.expect(200);
+
+				await expectExpired(appKey, deletedAt);
+				await expectExpired(deviceKey, deletedAt);
+				await expectUnexpired(otherAppKey);
+				await expectUnexpired(otherDeviceKey);
+			});
 		});
 	});
 };
