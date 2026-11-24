@@ -1,4 +1,5 @@
 import './features/auth/hooks/index.ts';
+import './features/api-keys/hooks.ts';
 import './features/applications/hooks/index.ts';
 import './features/application-types/hooks.ts';
 import './features/ci-cd/hooks/index.ts';
