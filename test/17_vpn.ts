@@ -1,7 +1,11 @@
 import randomstring from 'randomstring';
 import { expect } from 'chai';
+import { permissions, sbvrUtils } from '@balena/pinejs';
+import { resetStaleConnections } from '../src/features/vpn/index.ts';
+import { VPN_SERVICE_API_KEY } from '../src/lib/config.ts';
 import * as fixtures from './test-lib/fixtures.ts';
 import { generateDeviceUuid } from './test-lib/fake-device.ts';
+import { registerService } from './test-lib/connect-device-and-wait.ts';
 import { supertest } from './test-lib/supertest.ts';
 
 export default () => {
@@ -100,6 +104,51 @@ export default () => {
 				await supertest(this.deviceKey)
 					.get(`/services/vpn/auth/${this.uuid}`)
 					.expect(200);
+			});
+		});
+
+		describe('resetStaleConnections()', function () {
+			const connect = async (uuid: string): Promise<number> => {
+				const serviceId = await registerService('v7');
+				await supertest()
+					.post('/services/vpn/client-connect')
+					.query({ apikey: VPN_SERVICE_API_KEY })
+					.send({ uuids: [uuid], serviceId })
+					.expect(200);
+				return serviceId;
+			};
+			const getDevice = (id: number) =>
+				sbvrUtils.api.resin.get({
+					resource: 'device',
+					id,
+					passthrough: { req: permissions.root },
+					options: {
+						$select: ['is_connected_to_vpn', 'is_managed_by__service_instance'],
+					},
+				});
+
+			it('should only disconnect the devices of service instances that stopped sending heartbeats', async function () {
+				const staleDevice = await registerDevice();
+				const liveDevice = await registerDevice();
+				const staleServiceId = await connect(staleDevice.uuid);
+				const liveServiceId = await connect(liveDevice.uuid);
+				await sbvrUtils.api.resin.patch({
+					resource: 'service_instance',
+					id: staleServiceId,
+					passthrough: { req: permissions.root },
+					body: { last_heartbeat: new Date(0) },
+				});
+
+				await resetStaleConnections();
+
+				expect(await getDevice(staleDevice.id)).to.deep.include({
+					is_connected_to_vpn: false,
+					is_managed_by__service_instance: null,
+				});
+				expect(await getDevice(liveDevice.id)).to.deep.include({
+					is_connected_to_vpn: true,
+					is_managed_by__service_instance: { __id: liveServiceId },
+				});
 			});
 		});
 	});

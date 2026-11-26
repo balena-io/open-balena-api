@@ -632,6 +632,11 @@ export const VPN_AUTH_CACHE_TIMEOUT = intVar(
 	'VPN_AUTH_CACHE_TIMEOUT',
 	5 * MINUTES,
 );
+// A vpn service instance that has not sent a heartbeat for this long is considered gone
+export const VPN_SERVICE_INSTANCE_HEARTBEAT_TIMEOUT = intVar(
+	'VPN_SERVICE_INSTANCE_HEARTBEAT_TIMEOUT',
+	1 * MINUTES,
+);
 export const DEVICE_LOGS_WRITE_AUTH_CACHE_TIMEOUT = intVar(
 	'DEVICE_LOGS_WRITE_AUTH_CACHE_TIMEOUT',
 	5 * MINUTES,

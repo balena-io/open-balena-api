@@ -5,7 +5,7 @@ import { supertest } from './supertest.ts';
 import { VPN_SERVICE_API_KEY } from '../../src/lib/config.ts';
 import { waitFor, TimedOutError } from './common.ts';
 
-const registerService = async (version: string) => {
+export const registerService = async (version: string) => {
 	const res = await supertest()
 		.post(`/${version}/service_instance`)
 		.query({ apikey: VPN_SERVICE_API_KEY })
