@@ -142,6 +142,7 @@ import { varListInsert } from './features/device-state/state-get-utils.ts';
 import type { GetUrlFunction } from './features/request-logging/index.ts';
 import { setupRequestLogging } from './features/request-logging/index.ts';
 import { startContractSynchronization } from './features/contracts/index.ts';
+import { startStaleConnectionReset } from './features/vpn/index.ts';
 import {
 	defaultRespondFn,
 	setRespondFn,
@@ -461,6 +462,7 @@ export async function setup(app: Application, options: SetupOptions) {
 	getDeviceOnlineStateManager().start();
 
 	startContractSynchronization();
+	startStaleConnectionReset();
 
 	return {
 		app,
