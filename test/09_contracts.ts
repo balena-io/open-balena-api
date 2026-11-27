@@ -1,6 +1,7 @@
 import { mock } from 'node:test';
 import { PassThrough } from 'node:stream';
 import {
+	CONTRACT_FETCH_TIMEOUT,
 	fetchContractsLocally,
 	getContracts,
 	removeContractDirectory,
@@ -151,6 +152,44 @@ export default () => {
 						['raspberry-pi', 'raspberrypi'],
 						'Should include the slug in the list of aliases',
 					);
+				});
+
+				it('should time out fetching contracts after CONTRACT_FETCH_TIMEOUT', async () => {
+					const timeout = new AbortController();
+					const timeoutReason = new DOMException(
+						'The operation was aborted due to timeout',
+						'TimeoutError',
+					);
+					// Simulate the timeout firing once the request reaches the server
+					await getMockServer()
+						.forGet(
+							`/repos/${contractRepository.owner}/${contractRepository.name}/tarball/`,
+						)
+						.forHostname('api.github.com')
+						.once()
+						.thenCallback(() => {
+							timeout.abort(timeoutReason);
+							return { statusCode: 500 };
+						});
+
+					// The timeout is created synchronously, so the mock can be restored straight away,
+					// before any other code gets to call `AbortSignal.timeout`
+					const timeoutMock = mock.method(
+						AbortSignal,
+						'timeout',
+						() => timeout.signal,
+					);
+					// Handle the rejection straight away, so a failed assertion below can't leave it unhandled
+					const errPromise = fetchContractsLocally([contractRepository]).then(
+						() => undefined,
+						(err: unknown) => err,
+					);
+					timeoutMock.mock.restore();
+					expect(
+						timeoutMock.mock.calls.map((call) => call.arguments),
+					).to.deep.equal([[CONTRACT_FETCH_TIMEOUT]]);
+
+					expect(await errPromise).to.equal(timeoutReason);
 				});
 
 				it('should cancel the response body when fetching contracts fails', async () => {

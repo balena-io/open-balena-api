@@ -10,6 +10,15 @@ import type { RepositoryInfo, Contract } from './index.ts';
 import { getBase64DataUri } from '../../lib/utils.ts';
 import { captureException } from '../../infra/error-handling/index.ts';
 import { CONTRACT_ALLOWLIST } from '../../lib/config.ts';
+import { MINUTES } from '@balena/env-parsing';
+
+// The lock TTL of the scheduled contract sync job, ie the time after which the job is
+// considered crashed and another instance can start syncing
+export const CONTRACT_SYNC_TTL = 20 * MINUTES;
+// Fetching is only part of the sync, so it gets half of the TTL. This leaves enough
+// time for the rest of the sync to finish before the lock expires, so a slow fetch
+// can't end up overlapping with another instance's sync
+export const CONTRACT_FETCH_TIMEOUT = CONTRACT_SYNC_TTL / 2;
 
 const CONTRACTS_BASE_DIR = path.join(os.tmpdir(), 'contracts');
 
@@ -145,14 +154,16 @@ const getRequestInit = (repo: RepositoryInfo): RequestInit => {
 
 // Keeps the contract repos locally and in sync with upstream, if accessible.
 export const fetchContractsLocally = async (repos: RepositoryInfo[]) => {
+	// A single timeout for fetching all the repos, which includes streaming their bodies
+	const signal = AbortSignal.timeout(CONTRACT_FETCH_TIMEOUT);
 	await Promise.all(
 		repos.map(async (repo) => {
 			const archiveDir = await prepareContractDirectory(repo);
 
-			const response = await fetch(
-				getArchiveLinkForRepo(repo),
-				getRequestInit(repo),
-			);
+			const response = await fetch(getArchiveLinkForRepo(repo), {
+				...getRequestInit(repo),
+				signal,
+			});
 			if (response.status !== 200 || response.body == null) {
 				// On any non-200 responses just error. We won't consume the body, so
 				// cancel it to release the underlying connection.

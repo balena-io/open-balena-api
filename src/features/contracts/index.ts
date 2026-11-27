@@ -1,7 +1,11 @@
 import type Model from '../../balena-model.ts';
 import _ from 'lodash';
 import pMap from 'p-map';
-import { fetchContractsLocally, getContracts } from './contracts-directory.ts';
+import {
+	CONTRACT_SYNC_TTL,
+	fetchContractsLocally,
+	getContracts,
+} from './contracts-directory.ts';
 import type { types } from '@balena/pinejs';
 import { sbvrUtils, permissions } from '@balena/pinejs';
 import {
@@ -13,7 +17,6 @@ import {
 	CONTRACTS_PUBLIC_REPO_NAME,
 	CONTRACTS_PUBLIC_REPO_OWNER,
 } from '../../lib/config.ts';
-import { MINUTES } from '@balena/env-parsing';
 import { captureException } from '../../infra/error-handling/index.ts';
 import { scheduleJob } from '../../infra/scheduler/index.ts';
 
@@ -356,7 +359,7 @@ export const startContractSynchronization = _.once(() => {
 			// and it should hold the lock to prevent other jobs from starting.
 			// If after that point the job hasn't completed, it is considered
 			// as crashed and the lock is automatically released.
-			ttl: 20 * MINUTES,
+			ttl: CONTRACT_SYNC_TTL,
 		},
 	);
 });
